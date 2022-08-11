@@ -3,3 +3,6 @@
 
 # Python stuff
 __pycache__
+
+# VSCode stuff
+.vscode
