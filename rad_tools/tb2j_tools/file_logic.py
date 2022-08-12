@@ -52,7 +52,7 @@ class ExchangeModel:
         while ':' in self.data[i]:
             self.orb_for_decomposition[self.data[i].split()[0]] = \
                 self.data[i].replace('[', '').replace(']', '')\
-                .replace(',', '').replace('\'', '').split()[1:]
+                .replace(',', '').replace('\'', '').split()[2:]
             i += 1
         return i
 

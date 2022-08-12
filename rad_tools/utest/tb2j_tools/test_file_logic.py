@@ -24,13 +24,46 @@ class TestInputFilename:
 
 class TestReadFunctions:
 
+    tmp_model = ExchangeModel(os.path.join(
+        'rad_tools', 'utest', 'tb2j_tools', 'resourses', 'exchange.out'
+    ))
+
     def test_read_cell(self):
-        tmp_model = ExchangeModel(os.path.join(
-            'rad_tools', 'utest', 'tb2j_tools', 'resourses', 'exchange.out'))
-        assert tmp_model.cell is not None
+        assert self.tmp_model.cell is not None
         cell_values = [[3.588, 0.000, 0.000],
                        [0.000,  4.807,  0.000],
                        [0.000,  0.000, 23.571]]
         for i in range(0, 3):
             for j in range(0, 3):
-                assert tmp_model.cell[i][j] == cell_values[i][j]
+                assert self.tmp_model.cell[i][j] == cell_values[i][j]
+
+    def test_read_atoms(self):
+        assert self.tmp_model.atoms is not None
+        atoms_value = {
+            'Br1': [0.8970, 1.2018, -0.0668, 5.6114,  0.0000, -0.0000, -0.0535],
+            'Cr1': [2.6910, 1.2018,  1.7371, 4.3510, -0.0000,  0.0000,  3.2857],
+            'S1':  [2.6910, 3.6054,  2.2030, 5.0369, -0.0000,  0.0000, -0.2315],
+            'Br2': [2.6910, 3.6054,  5.6376, 5.6111,  0.0000,  0.0000, -0.0537],
+            'Cr2': [0.8970, 3.6054,  3.8336, 4.3519, -0.0000,  0.0000,  3.2863],
+            'S2':  [0.8970, 1.2018,  3.3678, 5.0369, -0.0000, -0.0000, -0.2316]
+        }
+        for key in self.tmp_model.atoms:
+            assert key in atoms_value
+        for key in atoms_value:
+            assert key in self.tmp_model.atoms
+            assert atoms_value[key] == self.tmp_model.atoms[key]
+
+    def test_read_orb_decomposition(self):
+        assert self.tmp_model.orb_for_decomposition is not None
+        orb_decomposition_value = {
+            'Cr1': ['orb_1', 'orb_2', 'orb_3', 'orb_4', 'orb_5',
+                    'orb_6', 'orb_7', 'orb_8', 'orb_9', 'orb_10'],
+            'Cr2': ['orb_1', 'orb_2', 'orb_3', 'orb_4', 'orb_5',
+                    'orb_6', 'orb_7', 'orb_8', 'orb_9', 'orb_10']
+        }
+        for key in self.tmp_model.orb_for_decomposition:
+            assert key in orb_decomposition_value
+        for key in orb_decomposition_value:
+            assert key in self.tmp_model.orb_for_decomposition
+            assert orb_decomposition_value[key] ==\
+                self.tmp_model.orb_for_decomposition[key]
