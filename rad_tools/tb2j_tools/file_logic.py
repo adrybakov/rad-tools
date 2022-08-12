@@ -18,13 +18,15 @@ class ExchangeModel:
         with open(filename, 'r') as file:
             self.data = file.readlines()
         i = 0
+        print(self.data[2])
         while i < len(self.data):
             if self.data[i] in self.headers_to_functions:
-                i = self.headers_to_functions(self.data[i])(i + 1)
+                i = self.headers_to_functions[self.data[i]](i)
             else:
                 i += 1
 
     def read_cell(self, i):
+        i += 1
         self.cell = np.array(
             [
                 list(map(float, self.data[i].split())),
@@ -37,27 +39,29 @@ class ExchangeModel:
 
     def read_atoms(self, i):
         self.atoms = {}
-        i += 2
+        i += 3
         while 'Total' not in self.data[i]:
-            self.atoms[self.data.split()[0]] = list(
-                map(float, self.data.split()[1:]))
+            self.atoms[self.data[i].split()[0]] = list(
+                map(float, self.data[i].split()[1:]))
             i += 1
         return i + 1
 
     def read_orb_decomposition(self, i):
-        i += 1
+        self.orb_for_decomposition = {}
+        i += 2
         while ':' in self.data[i]:
-            self.orb_for_decomposition[self.data.split()[0]] = \
+            self.orb_for_decomposition[self.data[i].split()[0]] = \
                 self.data[i].replace('[', '').replace(']', '')\
-                .replace(',', '').replace('\'', '').split()
+                .replace(',', '').replace('\'', '').split()[1:]
             i += 1
         return i
 
     def read_exchange(self, i):
         i += 1
         while i < len(self.data):
-            while self.minor_sep not in self.data[i]:
-                pass
-            else:
-                pass
+            # while self.minor_sep not in self.data[i]:
+            #     pass
+            # else:
+            #     pass
+            i += 1
         return i
