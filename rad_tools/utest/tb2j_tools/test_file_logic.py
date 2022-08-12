@@ -157,7 +157,7 @@ class TestReadFunctions:
                                   (-0.0002, 0.0001, -0.0001),
                                   3.659),
                              ])
-    def test_eval(self, atom_1, atom_2, R, iso, aniso, dmi, distance):
+    def test_read_exchange_examples(self, atom_1, atom_2, R, iso, aniso, dmi, distance):
         assert self.tmp_model.iso[atom_1][atom_2][R] == iso
         assert self.tmp_model.dmi[atom_1][atom_2][R] == dmi
         assert self.tmp_model.distance[atom_1][atom_2][R] == distance
