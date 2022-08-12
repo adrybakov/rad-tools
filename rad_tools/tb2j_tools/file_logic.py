@@ -15,6 +15,10 @@ class ExchangeModel:
         self.cell = None
         self.atoms = None
         self.orb_for_decomposition = None
+        self.iso = None
+        self.aniso = None
+        self.dmi = None
+        self.distance = None
         with open(filename, 'r') as file:
             self.data = file.readlines()
         i = 0
@@ -56,12 +60,62 @@ class ExchangeModel:
             i += 1
         return i
 
+    def prepare_dicts(self, atom_1, atom_2):
+        if self.iso is None:
+            self.iso = {}
+        if self.aniso is None:
+            self.aniso = {}
+        if self.dmi is None:
+            self.dmi = {}
+        if self.distance is None:
+            self.distance = {}
+        if atom_1 not in self.iso:
+            self.iso[atom_1] = {}
+            self.aniso[atom_1] = {}
+            self.dmi[atom_1] = {}
+            self.distance[atom_1] = {}
+        if atom_2 not in self.iso[atom_1]:
+            self.iso[atom_1][atom_2] = {}
+            self.aniso[atom_1][atom_2] = {}
+            self.dmi[atom_1][atom_2] = {}
+            self.distance[atom_1][atom_2] = {}
+
+    def format_iso(self, i):
+        return float(self.data[i].split()[1])
+
+    def format_aniso(self, i):
+        tmp = []
+        for j in range(0, 3):
+            i += 1
+            tmp.append(list(map(float, self.data[i]
+                                .replace('[', '').replace(']', '').split())))
+        return tmp
+
+    def format_dmi(self, i):
+        return tuple(map(float, self.data[i].replace('(', '').replace(')', '')
+                         .replace('[Testing!]', '').split()[1:]))
+
     def read_exchange(self, i):
-        i += 1
+        i += 2
         while i < len(self.data):
-            # while self.minor_sep not in self.data[i]:
-            #     pass
-            # else:
-            #     pass
+            while i < len(self.data) and self.minor_sep not in self.data[i]:
+                if 'J_iso:' in self.data[i]:
+                    self.iso[atom_1][atom_2][R] = self.format_iso(i)
+                if 'J_ani:' in self.data[i]:
+                    self.aniso[atom_1][atom_2][R] = self.format_aniso(i)
+                if 'DMI:' in self.data[i]:
+                    self.dmi[atom_1][atom_2][R] = self.format_dmi(i)
+                i += 1
+            else:
+                if i < len(self.data):
+                    i += 1
+                    tmp = self.data[i].replace(
+                        '(', '').replace(')', '').replace(',', '').split()
+                    atom_1 = tmp[0]
+                    atom_2 = tmp[1]
+                    R = tuple(map(int, tmp[2:5]))
+                    distance = float(tmp[9])
+                    self.prepare_dicts(atom_1, atom_2)
+                    self.distance[atom_1][atom_2][R] = distance
             i += 1
         return i
