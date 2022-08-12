@@ -67,3 +67,100 @@ class TestReadFunctions:
             assert key in self.tmp_model.orb_for_decomposition
             assert orb_decomposition_value[key] ==\
                 self.tmp_model.orb_for_decomposition[key]
+
+    def test_read_exchange_basic(self):
+        assert self.tmp_model.iso is not None
+        assert self.tmp_model.aniso is not None
+        assert self.tmp_model.dmi is not None
+        assert self.tmp_model.distance is not None
+
+    @pytest.mark.parametrize("atom_1,atom_2,R,iso,aniso,dmi,distance",
+                             [
+                                 ('Cr1', 'Cr1',
+                                  (-1, 0, 0),
+                                  3.5386,
+                                  [[-0.032, 0, 0],
+                                   [0, -0.054, 0],
+                                   [0, 0, -0.028]],
+                                  (0, -0.0163, 0),
+                                  3.588),
+
+                                 ('Cr1', 'Cr2',
+                                  (0, 0, 0),
+                                  3.0830,
+                                  [[-0.009, 0, 0.004],
+                                   [0, -0.013, 0],
+                                   [0.004, 0, -0.007]],
+                                  (-0.0002, 0.0001, 0.0001),
+                                  3.659),
+
+                                 ('Cr1', 'Cr1',
+                                  (0, 1, 0),
+                                  4.1479,
+                                  [[-0.016, 0, 0],
+                                   [0, -0.003, 0],
+                                   [0, 0, -0.008]],
+                                  (-0.0584, 0, 0),
+                                  4.807),
+
+                                 ('Cr1', 'Cr1',
+                                  (-1, 1, 0),
+                                  0.0422,
+                                  [[-0.007, 0, 0],
+                                   [0, -0.006, 0],
+                                   [0, 0, -0.005]],
+                                  (0.0194, -0.0170, 0),
+                                  5.999),
+
+                                 ('Cr2', 'Cr2',
+                                  (0, -1, 0),
+                                  4.1423,
+                                  [[-0.016, 0, 0],
+                                   [0, -0.003, 0],
+                                   [0, 0, -0.008]],
+                                  (-0.0568, 0, 0),
+                                  4.807),
+
+                                 ('Cr2', 'Cr2',
+                                  (0, 2, 0),
+                                  0.1209,
+                                  [[-0.001, 0, 0],
+                                   [0, 0, 0],
+                                   [0, 0, 0]],
+                                  (0.0363, 0, 0),
+                                  9.614),
+
+                                 ('Cr2', 'Cr1',
+                                  (1, -1, 0),
+                                  0.0038,
+                                  [[-0.001, 0, 0],
+                                   [0, -0.001, 0],
+                                   [0, 0, -0.001]],
+                                  (0, 0, 0),
+                                  9.239),
+
+                                 ('Cr1', 'Cr2',
+                                  (1, -2, 0),
+                                  0.5503,
+                                  [[-0.001, 0, 0],
+                                   [0, -0.002, 0],
+                                   [0, 0, -0.001]],
+                                  (0.0001, -0.0001, 0),
+                                  7.721),
+
+                                 ('Cr2', 'Cr1',
+                                  (-1, 1, 0),
+                                  3.0830,
+                                  [[-0.009, 0, -0.004],
+                                   [0, -0.013, 0],
+                                   [-0.004, 0, -0.007]],
+                                  (-0.0002, 0.0001, -0.0001),
+                                  3.659),
+                             ])
+    def test_eval(self, atom_1, atom_2, R, iso, aniso, dmi, distance):
+        assert self.tmp_model.iso[atom_1][atom_2][R] == iso
+        assert self.tmp_model.dmi[atom_1][atom_2][R] == dmi
+        assert self.tmp_model.distance[atom_1][atom_2][R] == distance
+        for i in range(0, 3):
+            for j in range(0, 3):
+                assert self.tmp_model.aniso[atom_1][atom_2][R][i][j] == aniso[i][j]
