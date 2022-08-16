@@ -186,16 +186,16 @@ class TestFilter(TestExchangeModel):
                     i += 1
         return i
 
-    def test_filter_by_distance(self):
-        self.tmp_model.filter(distance=4.807)
-        assert self.count_entries(self.tmp_model.distance) == 16
-        assert self.count_entries(self.tmp_model.iso) == 16
-        assert self.count_entries(self.tmp_model.aniso) == 16
-        assert self.count_entries(self.tmp_model.dmi) == 16
-
-    def test_filter_by_distance(self):
-        self.tmp_model.filter(distance=6)
-        assert self.count_entries(self.tmp_model.distance) == 24
-        assert self.count_entries(self.tmp_model.iso) == 24
-        assert self.count_entries(self.tmp_model.aniso) == 24
-        assert self.count_entries(self.tmp_model.dmi) == 24
+    @pytest.mark.parametrize("distance, elements_number", (
+        (4.807, 16),
+        (6, 24),
+        (0, 0),
+        (5, 16),
+        (4, 12)
+    ))
+    def test_filter_by_distance(self, distance, elements_number):
+        self.tmp_model.filter(distance=distance)
+        assert self.count_entries(self.tmp_model.iso) == elements_number
+        assert self.count_entries(self.tmp_model.aniso) == elements_number
+        assert self.count_entries(self.tmp_model.dmi) == elements_number
+        assert self.count_entries(self.tmp_model.distance) == elements_number
