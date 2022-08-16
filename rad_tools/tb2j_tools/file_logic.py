@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import numpy as np
 
 
@@ -14,20 +16,58 @@ class ExchangeModel:
         self.minor_sep = '-' * 88 + '\n'
         self.cell = None
         self.atoms = None
-        self.orb_for_decomposition = None
+        self.magnetic_atoms = []
         self.iso = None
         self.aniso = None
         self.dmi = None
         self.distance = None
+        self.resolved_data_attributes = {
+            'iso': self.iso,
+            'aniso': self.aniso,
+            'dmi': self.dmi,
+            'distance': self.distance
+        }
+        self.resolved_data = [
+            None,
+            None,
+            None,
+            None
+        ]
+        self.resolved_data_nofilter = [
+            None,
+            None,
+            None,
+            None
+        ]
+        self.resolved_data_keys = {
+            'iso': 0,
+            'aniso': 1,
+            'dmi': 2,
+            'distance': 3
+        }
+        self.resolved_data_names_to_read = {
+            'iso': 'J_iso:',
+            'aniso': 'J_ani:',
+            'dmi': 'DMI:',
+            'distance': None
+        }
+        self.resolved_data_format_functions = {
+            'iso': self.format_iso,
+            'aniso': self.format_aniso,
+            'dmi': self.format_dmi,
+            'distance': None
+        }
         with open(filename, 'r') as file:
             self.data = file.readlines()
         i = 0
-        print(self.data[2])
         while i < len(self.data):
             if self.data[i] in self.headers_to_functions:
                 i = self.headers_to_functions[self.data[i]](i)
             else:
                 i += 1
+
+    def update_attributes(self):
+        for
 
     def read_cell(self, i):
         i += 1
@@ -61,24 +101,13 @@ class ExchangeModel:
         return i
 
     def prepare_dicts(self, atom_1, atom_2):
-        if self.iso is None:
-            self.iso = {}
-        if self.aniso is None:
-            self.aniso = {}
-        if self.dmi is None:
-            self.dmi = {}
-        if self.distance is None:
-            self.distance = {}
-        if atom_1 not in self.iso:
-            self.iso[atom_1] = {}
-            self.aniso[atom_1] = {}
-            self.dmi[atom_1] = {}
-            self.distance[atom_1] = {}
-        if atom_2 not in self.iso[atom_1]:
-            self.iso[atom_1][atom_2] = {}
-            self.aniso[atom_1][atom_2] = {}
-            self.dmi[atom_1][atom_2] = {}
-            self.distance[atom_1][atom_2] = {}
+        for d in range(0, len(self.resolved_data)):
+            if self.resolved_data[d] is None:
+                self.resolved_data[d] = {}
+            if atom_1 not in self.resolved_data[d]:
+                self.resolved_data[d][atom_1] = {}
+            if atom_2 not in self.resolved_data[d][atom_1]:
+                self.resolved_data[d][atom_1][atom_2] = {}
 
     def format_iso(self, i):
         return float(self.data[i].split()[1])
@@ -99,12 +128,14 @@ class ExchangeModel:
         i += 2
         while i < len(self.data):
             while i < len(self.data) and self.minor_sep not in self.data[i]:
-                if 'J_iso:' in self.data[i]:
-                    self.iso[atom_1][atom_2][R] = self.format_iso(i)
-                if 'J_ani:' in self.data[i]:
-                    self.aniso[atom_1][atom_2][R] = self.format_aniso(i)
-                if 'DMI:' in self.data[i]:
-                    self.dmi[atom_1][atom_2][R] = self.format_dmi(i)
+                for name in self.resolved_data_names_to_read:
+                    if self.resolved_data_names_to_read[name]\
+                        and self.resolved_data_names_to_read[name]\
+                            in self.data[i]:
+                        self.resolved_data[
+                            self.resolved_data_keys[name]
+                        ][atom_1][atom_2][R] =\
+                            self.resolved_data_format_functions[name](i)
                 i += 1
             else:
                 if i < len(self.data):
@@ -115,7 +146,35 @@ class ExchangeModel:
                     atom_2 = tmp[1]
                     R = tuple(map(int, tmp[2:5]))
                     distance = float(tmp[9])
+                    if atom_1 not in self.magnetic_atoms:
+                        self.magnetic_atoms.append(atom_1)
+                    if atom_2 not in self.magnetic_atoms:
+                        self.magnetic_atoms.append(atom_2)
                     self.prepare_dicts(atom_1, atom_2)
-                    self.distance[atom_1][atom_2][R] = distance
+                    self.resolved_data[
+                        self.resolved_data_keys['distance']
+                    ][atom_1][atom_2][R] = distance
             i += 1
         return i
+
+    def filter(self, distance=None, template=None):
+        if distance is not None and template is not None:
+            raise ValueError("Do not try to filter by distance and\
+                             by template at the same time, please")
+        if distance is not None:
+            for d in range(0, len(self.resolved_data)):
+                if self.resolved_data_nofilter[d] is None:
+                    self.resolved_data_nofilter[d] =\
+                        deepcopy(self.resolved_data[d])
+                else:
+                    self.resolved_data[d] =\
+                        deepcopy(self.resolved_data_nofilter[d])
+
+            for atom_1 in self.resolved_data_nofilter[d]:
+                for atom_2 in self.resolved_data_nofilter[d][atom_1]:
+                    for R in self.resolved_data_nofilter[d][atom_1][atom_2]:
+                        del self.resolved_data[d][atom_1][atom_2][R]
+                    if not self.resolved_data[d][atom_1][atom_2]:
+                        del self.resolved_data[d][atom_1][atom_2]
+                if not self.resolved_data[d][atom_1]:
+                    del self.resolved_data[d][atom_1]

@@ -6,7 +6,14 @@ import numpy as np
 from rad_tools.tb2j_tools.file_logic import ExchangeModel
 
 
-class TestInputFilename:
+class TestExchangeModel:
+
+    tmp_model = ExchangeModel(os.path.join(
+        'rad_tools', 'utest', 'tb2j_tools', 'resourses', 'exchange.out'
+    ))
+
+
+class TestInputFilename(TestExchangeModel):
 
     def test_empty_filename(self):
         with pytest.raises(TypeError):
@@ -22,11 +29,7 @@ class TestInputFilename:
             'rad_tools', 'utest', 'tb2j_tools', 'resourses', 'exchange.out'))
 
 
-class TestReadFunctions:
-
-    tmp_model = ExchangeModel(os.path.join(
-        'rad_tools', 'utest', 'tb2j_tools', 'resourses', 'exchange.out'
-    ))
+class TestReadFunctions(TestExchangeModel):
 
     def test_read_cell(self):
         assert self.tmp_model.cell is not None
@@ -164,3 +167,35 @@ class TestReadFunctions:
         for i in range(0, 3):
             for j in range(0, 3):
                 assert self.tmp_model.aniso[atom_1][atom_2][R][i][j] == aniso[i][j]
+
+    def test_magnetic_atoms(self):
+        assert self.tmp_model.magnetic_atoms == ['Cr1', 'Cr2']
+
+
+class TestFilter(TestExchangeModel):
+
+    def test_wrong_entry(self):
+        with pytest.raises(ValueError):
+            self.tmp_model.filter(distance=4, template='some_template')
+
+    def count_entries(self, dictionary):
+        i = 0
+        for atom_1 in dictionary:
+            for atom_2 in dictionary[atom_1]:
+                for R in dictionary[atom_1][atom_2]:
+                    i += 1
+        return i
+
+    def test_filter_by_distance(self):
+        self.tmp_model.filter(distance=4.807)
+        assert self.count_entries(self.tmp_model.distance) == 16
+        assert self.count_entries(self.tmp_model.iso) == 16
+        assert self.count_entries(self.tmp_model.aniso) == 16
+        assert self.count_entries(self.tmp_model.dmi) == 16
+
+    def test_filter_by_distance(self):
+        self.tmp_model.filter(distance=6)
+        assert self.count_entries(self.tmp_model.distance) == 24
+        assert self.count_entries(self.tmp_model.iso) == 24
+        assert self.count_entries(self.tmp_model.aniso) == 24
+        assert self.count_entries(self.tmp_model.dmi) == 24
