@@ -174,9 +174,18 @@ class TestReadFunctions(TestExchangeModel):
 
 class TestFilter(TestExchangeModel):
 
-    def test_double_conditions(self):
+    @pytest.mark.parametrize("distance,number,template", (
+        (4.807, 34, None),
+        (4.807, None, 'some_template'),
+        (None, 34, 'some_template'),
+        (4.807, 34, 'some_template'),
+        (None, None, None),
+    ))
+    def test_invalid_conditions(self, distance, number, template):
         with pytest.raises(ValueError):
-            self.tmp_model.filter(distance=4, template='some_template')
+            self.tmp_model.filter(distance=distance,
+                                  number=number,
+                                  template=template)
 
     def count_entries(self, dictionary):
         i = 0

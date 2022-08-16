@@ -144,10 +144,19 @@ class ExchangeModel:
             else:
                 self.data[d] = deepcopy(self.data_nofilter[d])
 
-    def filter(self, distance=None, template=None):
-        if distance is not None and template is not None:
-            raise ValueError("Do not try to filter by distance and\
-                             by template at the same time, please")
+    # TODO write logic for sorting with several conditions
+    # (to make it possible to sort with more then one condition)
+    def filter(self, distance=None, number=None, template=None):
+        statment = (int(bool(distance is not None)) +
+                    int(bool(number is not None)) +
+                    int(bool(template is not None)))
+        if statment != 1:
+            raise ValueError("Do not try to filter by several/none parameters "
+                             "at the same time, please\n"
+                             f"You specified:\n"
+                             f"distance: {distance}\n"
+                             f"template: {template}\n"
+                             f"number: {number}\n")
         if distance is not None:
             self.synchronise_data()
             for d in range(0, len(self.data)):
