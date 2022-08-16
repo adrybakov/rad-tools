@@ -174,7 +174,7 @@ class TestReadFunctions(TestExchangeModel):
 
 class TestFilter(TestExchangeModel):
 
-    def test_wrong_entry(self):
+    def test_double_conditions(self):
         with pytest.raises(ValueError):
             self.tmp_model.filter(distance=4, template='some_template')
 
@@ -191,7 +191,8 @@ class TestFilter(TestExchangeModel):
         (6, 24),
         (0, 0),
         (5, 16),
-        (4, 12)
+        (4.0, 12),
+        (1000, 72)
     ))
     def test_filter_by_distance(self, distance, elements_number):
         self.tmp_model.filter(distance=distance)

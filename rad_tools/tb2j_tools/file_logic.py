@@ -162,4 +162,7 @@ class ExchangeModel:
                             del self.data[d][atom_1][atom_2]
                     if not self.data[d][atom_1]:
                         del self.data[d][atom_1]
+        # TODO
+        if template is not None:
+            pass
         self.update_attributes()
