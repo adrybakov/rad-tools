@@ -1,2 +1,2 @@
 # Script Collection
-Various scripts which were usufull during my PhD
+Various scripts which were useful during my PhD
