@@ -1,6 +1,9 @@
+from os.path import isdir, join
+from os import rmdir
+
 import pytest
 
-from rad_tools.routines import TerminalCoulours, get_256_colours
+from rad_tools.routines import TerminalCoulours, get_256_colours, check_make
 
 
 class TestTerminalColours:
@@ -44,3 +47,12 @@ class TestTerminalColours:
         assert get_256_colours(0) == '\033[38:5:0m'
         assert get_256_colours(255) == '\033[38:5:255m'
         assert get_256_colours(34) == '\033[38:5:34m'
+
+
+def test_check_make():
+    with pytest.raises(FileNotFoundError):
+        check_make(join('sadfsd', 'sdfgsd'))
+    check_make('tmp')
+    assert isdir('tmp') == True
+    check_make('tmp')
+    rmdir('tmp')

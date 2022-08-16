@@ -1,3 +1,6 @@
+from os import mkdir
+
+
 class TerminalCoulours:
 
     BLACK = '\u001b[30m'
@@ -20,3 +23,10 @@ def get_256_colours(n: int):
         raise ValueError(f'Integer n have to be in range 0 <= n <= 255. '
                          f'You provided n = {n}, type<n> = {type(n)}')
     return f'\033[38:5:{n}m'
+
+
+def check_make(path):
+    try:
+        mkdir(path)
+    except FileExistsError:
+        pass
