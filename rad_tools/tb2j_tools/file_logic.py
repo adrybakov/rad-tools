@@ -26,6 +26,7 @@ class ExchangeModel:
 
     """
 
+    # TODO write all the docs
     def __init__(self, filename: str) -> None:
 
         self.cell = []
