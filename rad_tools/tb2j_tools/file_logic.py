@@ -20,26 +20,20 @@ class ExchangeModel:
         self.cell = None
         self.atoms = None
         self.magnetic_atoms = []
+        self.list_for_sort = []
         self.data = [None, None, None, None]
-        self.data_nofilter = [None, None, None, None]
-        self.keys = {
-            'iso': 0,
-            'aniso': 1,
-            'dmi': 2,
-            'distance': 3
-        }
-        self.names_to_read = {
-            'iso': 'J_iso:',
-            'aniso': 'J_ani:',
-            'dmi': 'DMI:',
-            'distance': self.minor_sep
-        }
-        self.format_functions = {
-            'iso': self.format_iso,
-            'aniso': self.format_aniso,
-            'dmi': self.format_dmi,
-            'distance': self.format_distance
-        }
+        self.keys = {'iso': 0,
+                     'aniso': 1,
+                     'dmi': 2,
+                     'distance': 3}
+        self.names_to_read = {'iso': 'J_iso:',
+                              'aniso': 'J_ani:',
+                              'dmi': 'DMI:',
+                              'distance': self.minor_sep}
+        self.format_functions = {'iso': self.format_iso,
+                                 'aniso': self.format_aniso,
+                                 'dmi': self.format_dmi,
+                                 'distance': self.format_distance}
         with open(filename, 'r') as file:
             self.file_data = file.readlines()
         i = 0
@@ -49,12 +43,17 @@ class ExchangeModel:
             else:
                 i += 1
         self.update_attributes()
+        self.data_nofilter = deepcopy(self.data)
 
     def update_attributes(self):
         self.iso = self.data[self.keys['iso']]
         self.aniso = self.data[self.keys['aniso']]
         self.dmi = self.data[self.keys['dmi']]
         self.distance = self.data[self.keys['distance']]
+
+    def reset_data(self):
+        for d in range(0, len(self.data)):
+            self.data[d] = None
 
     def read_cell(self, i):
         i += 1
@@ -87,14 +86,13 @@ class ExchangeModel:
             i += 1
         return i
 
-    def prepare_dicts(self, atom_1, atom_2):
-        for d in range(0, len(self.data)):
-            if self.data[d] is None:
-                self.data[d] = {}
-            if atom_1 not in self.data[d]:
-                self.data[d][atom_1] = {}
-            if atom_2 not in self.data[d][atom_1]:
-                self.data[d][atom_1][atom_2] = {}
+    def prepare_dicts(self, atom_1, atom_2, key):
+        if self.data[key] is None:
+            self.data[key] = {}
+        if atom_1 not in self.data[key]:
+            self.data[key][atom_1] = {}
+        if atom_2 not in self.data[key][atom_1]:
+            self.data[key][atom_1][atom_2] = {}
 
     def format_iso(self, i):
         return float(self.file_data[i].split()[1])
@@ -123,7 +121,9 @@ class ExchangeModel:
             self.magnetic_atoms.append(self.atom_1)
         if self.atom_2 not in self.magnetic_atoms:
             self.magnetic_atoms.append(self.atom_2)
-        self.prepare_dicts(self.atom_1, self.atom_2)
+        self.list_for_sort.append((self.atom_1, self.atom_2, self.R, distance))
+        self.prepare_dicts(self.atom_1, self.atom_2,
+                           key=self.keys['distance'])
         return distance
 
     def read_exchange(self, i):
@@ -132,46 +132,59 @@ class ExchangeModel:
             for name in self.names_to_read:
                 if (self.names_to_read[name] and
                         self.names_to_read[name] in self.file_data[i]):
+                    if name != 'distance':
+                        self.prepare_dicts(self.atom_1,
+                                           self.atom_2,
+                                           key=self.keys[name])
                     self.data[self.keys[name]][self.atom_1][self.atom_2][self.R]\
                         = self.format_functions[name](i)
             i += 1
         return i
 
-    def synchronise_data(self):
-        for d in range(0, len(self.data)):
-            if self.data_nofilter[d] is None:
-                self.data_nofilter[d] = deepcopy(self.data[d])
-            else:
-                self.data[d] = deepcopy(self.data_nofilter[d])
-
     # TODO write logic for sorting with several conditions
     # (to make it possible to sort with more then one condition)
-    def filter(self, distance=None, number=None, template=None):
-        statment = (int(bool(distance is not None)) +
-                    int(bool(number is not None)) +
-                    int(bool(template is not None)))
-        if statment != 1:
-            raise ValueError("Do not try to filter by several/none parameters "
-                             "at the same time, please\n"
-                             f"You specified:\n"
-                             f"distance: {distance}\n"
-                             f"template: {template}\n"
-                             f"number: {number}\n")
-        if distance is not None:
-            self.synchronise_data()
-            for d in range(0, len(self.data)):
-                for atom_1 in self.data_nofilter[d]:
-                    for atom_2 in self.data_nofilter[d][atom_1]:
-                        for R in self.data_nofilter[d][atom_1][atom_2]:
-                            if self.data_nofilter[
-                                self.keys['distance']
-                            ][atom_1][atom_2][R] > distance:
-                                del self.data[d][atom_1][atom_2][R]
-                        if not self.data[d][atom_1][atom_2]:
-                            del self.data[d][atom_1][atom_2]
-                    if not self.data[d][atom_1]:
-                        del self.data[d][atom_1]
+    def filter(self,
+               distance=None,
+               number=None,
+               template=None,
+               from_scratch=False):
+        if from_scratch:
+            self.data = deepcopy(self.data_nofilter)
+
         # TODO
         if template is not None:
             pass
+        if number is not None:
+            tmp = deepcopy(self.data)
+            self.reset_data()
+            for d in range(0, len(tmp)):
+                if tmp[d] is not None:
+                    for i in range(0, min(number, len(self.list_for_sort))):
+                        atom_1 = self.list_for_sort[i][0]
+                        atom_2 = self.list_for_sort[i][1]
+                        R = self.list_for_sort[i][2]
+                        self.prepare_dicts(atom_1,
+                                           atom_2,
+                                           key=d)
+                        self.data[d][atom_1][atom_2][R] =\
+                            tmp[d][atom_1][atom_2][R]
+
+        if distance is not None:
+            tmp = deepcopy(self.data)
+            for d in range(0, len(tmp)):
+                if tmp[d] is not None:
+                    for atom_1 in tmp[d]:
+                        for atom_2 in tmp[d][atom_1]:
+                            for R in tmp[d][atom_1][atom_2]:
+                                if tmp[
+                                    self.keys['distance']
+                                ][atom_1][atom_2][R] > distance:
+                                    del self.data[d][atom_1][atom_2][R]
+                            if not self.data[d][atom_1][atom_2]:
+                                del self.data[d][atom_1][atom_2]
+                        if not self.data[d][atom_1]:
+                            del self.data[d][atom_1]
+                    if not self.data[d]:
+                        self.data[d] = None
+
         self.update_attributes()

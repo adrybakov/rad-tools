@@ -174,38 +174,92 @@ class TestReadFunctions(TestExchangeModel):
 
 class TestFilter(TestExchangeModel):
 
-    @pytest.mark.parametrize("distance,number,template", (
-        (4.807, 34, None),
-        (4.807, None, 'some_template'),
-        (None, 34, 'some_template'),
-        (4.807, 34, 'some_template'),
-        (None, None, None),
-    ))
-    def test_invalid_conditions(self, distance, number, template):
-        with pytest.raises(ValueError):
-            self.tmp_model.filter(distance=distance,
-                                  number=number,
-                                  template=template)
-
     def count_entries(self, dictionary):
         i = 0
-        for atom_1 in dictionary:
-            for atom_2 in dictionary[atom_1]:
-                for R in dictionary[atom_1][atom_2]:
-                    i += 1
+        if dictionary is not None:
+            for atom_1 in dictionary:
+                for atom_2 in dictionary[atom_1]:
+                    for R in dictionary[atom_1][atom_2]:
+                        i += 1
         return i
 
-    @pytest.mark.parametrize("distance, elements_number", (
-        (4.807, 16),
-        (6, 24),
-        (0, 0),
-        (5, 16),
-        (4.0, 12),
-        (1000, 72)
+    @pytest.mark.parametrize("distance,elements_number,from_scratch", (
+        (4.807, 16, False),
+        (6, 24, True),
+        (0, 0, False),
+        (0, 0, True),
+        (5, 16, True),
+        (4.0, 12, False),
+        (1000, 72, True)
     ))
-    def test_filter_by_distance(self, distance, elements_number):
-        self.tmp_model.filter(distance=distance)
+    def test_filter_by_distance(self, distance, elements_number, from_scratch):
+        self.tmp_model.filter(distance=distance, from_scratch=from_scratch)
         assert self.count_entries(self.tmp_model.iso) == elements_number
         assert self.count_entries(self.tmp_model.aniso) == elements_number
         assert self.count_entries(self.tmp_model.dmi) == elements_number
         assert self.count_entries(self.tmp_model.distance) == elements_number
+
+    @pytest.mark.parametrize("number,elements_number,from_scratch", (
+        (16, 16, False),
+        (24, 24, True),
+        (0, 0, False),
+        (0, 0, True),
+        (16, 16, True),
+        (12, 12, False),
+        (72, 72, True),
+        (100, 72, True)
+    ))
+    def test_filter_by_number(self, number, elements_number, from_scratch):
+        self.tmp_model.filter(number=number, from_scratch=from_scratch)
+        assert self.count_entries(self.tmp_model.iso) == elements_number
+        assert self.count_entries(self.tmp_model.aniso) == elements_number
+        assert self.count_entries(self.tmp_model.dmi) == elements_number
+        assert self.count_entries(self.tmp_model.distance) == elements_number
+
+    @pytest.mark.parametrize("distance,number,elements_number,from_scratch", (
+        (4.807, 16, 16, False),
+        (6, 24, 24, True),
+        (0, 0, 0, False),
+        (0, 0, 0, True),
+        (5, 16, 16, True),
+        (4.0, 12, 12, False),
+        (1000, 72, 72, True),
+        (1000, 36, 36, True),
+        (0, 36, 0, True),
+        (8, 36, 36, True)
+    ))
+    def test_filter_by_number_and_distance(self,
+                                           distance,
+                                           number,
+                                           elements_number,
+                                           from_scratch):
+        self.tmp_model.filter(distance=distance,
+                              number=number,
+                              from_scratch=from_scratch)
+        assert self.count_entries(self.tmp_model.iso) == elements_number
+        assert self.count_entries(self.tmp_model.aniso) == elements_number
+        assert self.count_entries(self.tmp_model.dmi) == elements_number
+        assert self.count_entries(self.tmp_model.distance) == elements_number
+
+    def test_filter_from_scratch(self):
+        self.tmp_model.filter(distance=0,
+                              number=None,
+                              from_scratch=False)
+        assert self.count_entries(self.tmp_model.iso) == 0
+        assert self.count_entries(self.tmp_model.aniso) == 0
+        assert self.count_entries(self.tmp_model.dmi) == 0
+        assert self.count_entries(self.tmp_model.distance) == 0
+        self.tmp_model.filter(distance=None,
+                              number=16,
+                              from_scratch=False)
+        assert self.count_entries(self.tmp_model.iso) != 16
+        assert self.count_entries(self.tmp_model.aniso) != 16
+        assert self.count_entries(self.tmp_model.dmi) != 16
+        assert self.count_entries(self.tmp_model.distance) != 16
+        self.tmp_model.filter(distance=None,
+                              number=16,
+                              from_scratch=True)
+        assert self.count_entries(self.tmp_model.iso) == 16
+        assert self.count_entries(self.tmp_model.aniso) == 16
+        assert self.count_entries(self.tmp_model.dmi) == 16
+        assert self.count_entries(self.tmp_model.distance) == 16
