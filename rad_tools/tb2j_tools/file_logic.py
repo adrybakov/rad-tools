@@ -141,8 +141,7 @@ class ExchangeModel:
             i += 1
         return i
 
-    # TODO write logic for sorting with several conditions
-    # (to make it possible to sort with more then one condition)
+    # TODO write sorting with template after the template will be done
     def filter(self,
                distance=None,
                number=None,
