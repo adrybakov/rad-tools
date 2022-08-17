@@ -43,7 +43,8 @@ if __name__ == '__main__':
     parser.add_argument("-t", "--template",
                         type=str,
                         default=None,
-                        help="Template for filtering the Exchange, it have to be a plain text file "
+                        help="Template for filtering the Exchange, "
+                        "it have to be a plain text file "
                         "which will passedf to the Template class")
 
     args = parser.parse_args()
