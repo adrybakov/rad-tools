@@ -8,6 +8,11 @@ class ExchangeModel:
     Keeping resolved data from the file
     and provide a number of functions to process it.
 
+    Parameters
+    ----------
+    filename : str
+        Path to the TB2J *.out file.
+
     Attributes
     ----------
 
@@ -22,14 +27,6 @@ class ExchangeModel:
     """
 
     def __init__(self, filename: str) -> None:
-        """
-        Initialization function
-
-        Parameters
-        ----------
-        filename : str
-            Path to the TB2J *.out file.
-        """
 
         self.cell = []
         self.atoms = {}
