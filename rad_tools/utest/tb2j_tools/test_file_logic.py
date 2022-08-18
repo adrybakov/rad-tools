@@ -183,7 +183,7 @@ class TestFilter(TestExchangeModel):
                         i += 1
         return i
 
-    @pytest.mark.parametrize("distance,elements_number,from_scratch", (
+    @pytest.mark.parametrize("distance,elements_number,from_scratch", [
         (4.807, 16, False),
         (6, 24, True),
         (0, 0, False),
@@ -191,7 +191,7 @@ class TestFilter(TestExchangeModel):
         (5, 16, True),
         (4.0, 12, False),
         (1000, 72, True)
-    ))
+    ])
     def test_filter_by_distance(self, distance, elements_number, from_scratch):
         self.tmp_model.filter(distance=distance, from_scratch=from_scratch)
         assert self.count_entries(self.tmp_model.iso) == elements_number
@@ -199,7 +199,7 @@ class TestFilter(TestExchangeModel):
         assert self.count_entries(self.tmp_model.dmi) == elements_number
         assert self.count_entries(self.tmp_model.distance) == elements_number
 
-    @pytest.mark.parametrize("number,elements_number,from_scratch", (
+    @pytest.mark.parametrize("number,elements_number,from_scratch", [
         (16, 16, False),
         (24, 24, True),
         (0, 0, False),
@@ -208,7 +208,7 @@ class TestFilter(TestExchangeModel):
         (12, 12, False),
         (72, 72, True),
         (100, 72, True)
-    ))
+    ])
     def test_filter_by_number(self, number, elements_number, from_scratch):
         self.tmp_model.filter(number=number, from_scratch=from_scratch)
         assert self.count_entries(self.tmp_model.iso) == elements_number
@@ -216,7 +216,7 @@ class TestFilter(TestExchangeModel):
         assert self.count_entries(self.tmp_model.dmi) == elements_number
         assert self.count_entries(self.tmp_model.distance) == elements_number
 
-    @pytest.mark.parametrize("distance,number,elements_number,from_scratch", (
+    @pytest.mark.parametrize("distance,number,elements_number,from_scratch", [
         (4.807, 16, 16, False),
         (6, 24, 24, True),
         (0, 0, 0, False),
@@ -227,7 +227,7 @@ class TestFilter(TestExchangeModel):
         (1000, 36, 36, True),
         (0, 36, 0, True),
         (8, 36, 36, True)
-    ))
+    ])
     def test_filter_by_number_and_distance(self,
                                            distance,
                                            number,
