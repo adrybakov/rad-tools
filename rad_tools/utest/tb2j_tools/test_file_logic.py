@@ -5,6 +5,8 @@ import numpy as np
 
 from rad_tools.tb2j_tools.file_logic import ExchangeModel
 
+# TODO MAy be write tests more specific to the functions
+
 
 class TestExchangeModel:
 
