@@ -256,6 +256,13 @@ class TestFilter(TestExchangeModel):
         assert self.count_entries(self.tmp_model.aniso) != 16
         assert self.count_entries(self.tmp_model.dmi) != 16
         assert self.count_entries(self.tmp_model.distance) != 16
+        self.tmp_model.filter(distance=5,
+                              number=None,
+                              from_scratch=False)
+        assert self.count_entries(self.tmp_model.iso) != 16
+        assert self.count_entries(self.tmp_model.aniso) != 16
+        assert self.count_entries(self.tmp_model.dmi) != 16
+        assert self.count_entries(self.tmp_model.distance) != 16
         self.tmp_model.filter(distance=None,
                               number=16,
                               from_scratch=True)

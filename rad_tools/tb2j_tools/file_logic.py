@@ -1,4 +1,5 @@
 from copy import deepcopy
+from typing import Union
 
 
 class ExchangeModel:
@@ -15,8 +16,75 @@ class ExchangeModel:
 
     Attributes
     ----------
+    cell : list of list of float
+        3x3 matrix of lattice vectors in Angstrom.
+        Directly read from "Cell (Angstrom):" section 
+        of TB2J file.
+        [
+            [a_x, a_y, a_z],
+            [b_x, b_y, b_z],
+            [c_x, x_y, c_z]
+        ]
 
+    atoms : dict 
+        Info read from "Atoms:" section  of TB2J file.
+        Keys are the marks of atoms (str), values are the 
+        list of float with the data
+        {
+            "Atom_1" : [x, y, z, ...],
+            ...
+        }
 
+    magnetic_atoms : list of str
+        list of atom's marks for which the entry in "Exchange:" 
+        section of TB2J file is present.
+
+    iso : dict
+        Isotropic Exchange parameters read from 
+        "Exchange:" section of TB2J file. 
+        atom_1: str - mark of the atom in central unit cell.
+        atom_2: str - mark of the atom in the other unit cell.
+        R - radius vector between the central unit cell and the other unit cell.
+        R = (a_step: int, b_step: int, c_step: int). 
+        J_iso: float -  Isotropic exchange parameter 
+        in the notation of TB2J in meV.
+        {
+            "atom_1" : 
+            {
+                "atom_2": 
+                {
+                    R : J_iso,
+                    ...
+                },
+                ...
+            },
+            ...
+        }
+
+    aniso : dict
+        Anisotropic symmetric Exchange parameters read 
+        from "Exchange:" section of TB2J file. 
+        Structure is the same as in iso, but with J_aniso
+        instead of J_iso.
+        J_aniso : list of list of float
+        [
+            [J_xx, J_xy, J_xz],
+            [J_yx, J_yy, J_yz],
+            [J_zx, J_zy, J_zz]
+        ]
+        Note: J_ij = J_ji.
+
+    dmi : dict
+        Dzyaloshinskii-Moriya interaction parameters read 
+        from "Exchange:" section of TB2J file. 
+        Structure is the same as in iso, but with D
+        instead of J_iso.
+        D: tuple of float - DM vector (D_x, D_y, D_z)
+
+    distance : dict
+        Distance between pairs of magnetic atoms. 
+        Structure is the same as in iso, but with d instead of J_iso.
+        d : float - distance between two magnetic atoms in Angstrom.
 
     Methods
     -------
@@ -26,13 +94,15 @@ class ExchangeModel:
 
     """
 
-    # TODO write all the docs
     def __init__(self, filename: str) -> None:
 
         self.cell = []
         self.atoms = {}
         self.magnetic_atoms = []
-        self.data = []
+        self.iso = {}
+        self.aniso = {}
+        self.dmi = {}
+        self.distance = {}
 
         self.__major_sep = '=' * 90 + '\n'
         self.__minor_sep = '-' * 88 + '\n'
@@ -43,7 +113,7 @@ class ExchangeModel:
                                         ',': None,
                                         '\'': None})
 
-        self.headers_to_functions = {
+        self.__headers_to_functions = {
             'Cell (Angstrom):\n': self._read_cell,
             'Atoms:  \n': self._read_atoms,
             'Orbitals used in decomposition: \n': self._read_orb_decomposition,
@@ -60,83 +130,243 @@ class ExchangeModel:
                                    'aniso': self._format_aniso,
                                    'dmi': self._format_dmi,
                                    'distance': self._format_distance}
+
+        self.__data = []
         i = 0
         for key in self.__names_to_read:
             self.__index[key] = i
-            self.data.append({})
+            self.__data.append({})
             i += 1
         with open(filename, 'r') as file:
-            self._file_data = file.readlines()
+            self.__file_data = file.readlines()
         i = 0
-        while i < len(self._file_data):
-            if self._file_data[i] in self.headers_to_functions:
-                i = self.headers_to_functions[self._file_data[i]](i)
+        while i < len(self.__file_data):
+            if self.__file_data[i] in self.__headers_to_functions:
+                i = self.__headers_to_functions[self.__file_data[i]](i)
             else:
                 i += 1
         self._update_attributes()
-        self.__data_nofilter = deepcopy(self.data)
+        self.__data_nofilter = deepcopy(self.__data)
 
     def _update_attributes(self):
-        self.iso = self.data[self.__index['iso']]
-        self.aniso = self.data[self.__index['aniso']]
-        self.dmi = self.data[self.__index['dmi']]
-        self.distance = self.data[self.__index['distance']]
+        """
+        Updates the values of public attributes based on the 
+        state of the main <<working horse>> of this class `.__data`.
+        """
+
+        self.iso = self.__data[self.__index['iso']]
+        self.aniso = self.__data[self.__index['aniso']]
+        self.dmi = self.__data[self.__index['dmi']]
+        self.distance = self.__data[self.__index['distance']]
 
     def _reset_data(self):
-        for d in range(0, len(self.data)):
-            self.data[d] = {}
+        """
+        Reset the data in `.__data` to the empty dict.
+        """
 
-    def _read_cell(self, i):
+        for d in range(0, len(self.__data)):
+            self.__data[d] = {}
+
+    def _read_cell(self, i: int):
+        """
+        Read and format the information about cell vectors.
+
+        `.cell` attribute will be filled with content here.
+
+        Parameters
+        ----------
+        i : int
+            Index of the line with Cell section header 
+            (see `.__headers_to_functions`) in the `.__file_data`.
+
+        Returns
+        -------
+        i : int
+            Index of next line after the last line with the cell data 
+            in the `.__file_data`.
+        """
+
         i += 1
         self.cell = [
-            list(map(float, self._file_data[i].split())),
-            list(map(float, self._file_data[i + 1].split())),
-            list(map(float, self._file_data[i + 2].split()))
+            list(map(float, self.__file_data[i].split())),
+            list(map(float, self.__file_data[i + 1].split())),
+            list(map(float, self.__file_data[i + 2].split()))
         ]
         return i + 3
 
-    def _read_atoms(self, i):
+    def _read_atoms(self, i: int):
+        """
+        Read and format the information about the atoms.
+
+        `.atoms` attribute will be filled with content here.
+
+        Parameters
+        ----------
+        i : int
+            Index of the line with Atoms section header 
+            (see `.__headers_to_functions`) in the `.__file_data`.
+
+        Returns
+        -------
+        i : int
+            Index of next line after the last line with the atoms data 
+            in the `.__file_data` 
+            (next line after the one that contains "Total" in it).
+        """
+
         i += 3
-        while 'Total' not in self._file_data[i]:
-            self.atoms[self._file_data[i].split()[0]] = list(
-                map(float, self._file_data[i].split()[1:]))
+        while 'Total' not in self.__file_data[i]:
+            self.atoms[self.__file_data[i].split()[0]] = list(
+                map(float, self.__file_data[i].split()[1:]))
             i += 1
         return i + 1
 
-    def _read_orb_decomposition(self, i):
+    def _read_orb_decomposition(self, i: int):
+        """
+        Read and format the information about the names 
+        of orbitals for orbital decomposition.
+
+        `.orb_for_decomposition` attribute will be filled with content here.
+        May be useless since the names of orbital are meaningless in TB2J, 
+        but who knows.
+
+        Parameters
+        ----------
+        i : int
+            Index of the line with Orbitals used in decomposition section 
+            header (see `.__headers_to_functions`) in the `.__file_data`.
+
+        Returns
+        -------
+        i : int
+            Index of next line after the last line with the orbital 
+            decomposition data in the `.__file_data`.
+        """
+
         self.orb_for_decomposition = {}
         i += 2
-        while ':' in self._file_data[i]:
-            self.orb_for_decomposition[self._file_data[i].split()[0]] =\
-                self._file_data[i].translate(self.__garbage).split()[2:]
+        while ':' in self.__file_data[i]:
+            self.orb_for_decomposition[self.__file_data[i].split()[0]] =\
+                self.__file_data[i].translate(self.__garbage).split()[2:]
             i += 1
         return i
 
-    def _prepare_dicts(self, atom_1, atom_2, key):
-        if atom_1 not in self.data[key]:
-            self.data[key][atom_1] = {}
-        if atom_2 not in self.data[key][atom_1]:
-            self.data[key][atom_1][atom_2] = {}
+    def _prepare_dicts(self, atom_1: str, atom_2: str, key: int):
+        """
+        Since the `.__data` attribute is an array of nested dicts
+        the dicts have to be prepared. This function does it.
 
-    def _format_iso(self, i):
-        return float(self._file_data[i].split()[1])
+        Parameters
+        ----------
+        atom_1 : str
+            mark of the first-level atom (see `iso`). 
+        atom_2 : str
+            mark of the second-level atom (see `iso`). 
+        key : int
+            Index of the dict in `.__data` to prepare. 
+            It is recommended to use `.__index` attribute with desired keyword 
+            (i.e. "iso", "aniso", ...) for passing the `key` to this function.
+        """
 
-    def _format_aniso(self, i):
-        tmp = []
+        if atom_1 not in self.__data[key]:
+            self.__data[key][atom_1] = {}
+        if atom_2 not in self.__data[key][atom_1]:
+            self.__data[key][atom_1][atom_2] = {}
+
+    def _format_iso(self, i: int):
+        """
+        Format the isotropic exchange parameter from the line of TB2J file 
+        to float.
+
+        Parameters
+        ----------
+        i : int
+            Index of the line with isotropic exchange parameter header 
+            (see `.__names_to_read`) in `.__file_data`.
+
+        Returns
+        -------
+        J_iso : float
+            Isotropic exchange parameter in meV. In the notation of TB2J.
+        """
+
+        return float(self.__file_data[i].split()[1])
+
+    def _format_aniso(self, i: int):
+        """
+        Format the anisotropic exchange parameter from the lines of TB2J file.
+
+        Parameters
+        ----------
+        i : int
+            Index of the line with anisotropic exchange parameter header 
+            (see `.__names_to_read`) in `.__file_data`.
+
+        Returns
+        -------
+        J_aniso : list of list of float
+            Symmetric anisotropic exchange 3x3 matrix in meV. 
+            In the notation of TB2J.
+        """
+
+        J_aniso = []
         for _ in range(0, 3):
             i += 1
-            tmp.append(list(map(float, self._file_data[i]
+            J_aniso.append(list(map(float, self.__file_data[i]
                                 .translate(self.__garbage).split())))
-        return tmp
+        return J_aniso
 
-    def _format_dmi(self, i):
-        return tuple(map(float, self._file_data[i].translate(self.__garbage)
+    def _format_dmi(self, i: int):
+        """
+        Format the Dzyaloshinskii-Moriya interaction parameter 
+        from the lines of TB2J file.
+
+        Parameters
+        ----------
+        i : int
+            Index of the line with Dzyaloshinskii-Moriya interaction parameter 
+            header (see `.__names_to_read`) in `.__file_data`.
+
+        Returns
+        -------
+        D : tuple of float
+            Dzyaloshinskii-Moriya interaction vector in meV. 
+            In the notation of TB2J.
+        """
+
+        return tuple(map(float, self.__file_data[i].translate(self.__garbage)
                          .replace('Testing!', '').split()[1:]))
 
-    def _format_distance(self, i):
+    def _format_distance(self, i: int):
+        """
+        Format the first line of TB2J file`s small exchange block.
+
+        This function is more important then the other formatters. 
+        It sets the `atom_1`, `atom_2` and `R` which are valid for current 
+        exchange block and fill `.magnetic_atoms` and `.__list_for_sort` with
+        content.
+
+        Parameters
+        ----------
+        i : int
+            Index of the line previous to the first line of exchange block 
+            (see `.__names_to_read`) in `.__file_data`.
+
+        Returns
+        -------
+        atom_1 : str
+            mark of the first-level atom (see `iso`). 
+        atom_2 : str
+            mark of the second-level atom (see `iso`). 
+        R : tuple of float
+            Radius vector between the central unit cell and the other unit cell.
+        distance : float
+            Distance between pair (`atom_1`, `atom_2`) in Angstrom. 
+        """
+
         i += 1
 
-        tmp = self._file_data[i].translate(self.__garbage).split()
+        tmp = self.__file_data[i].translate(self.__garbage).split()
         atom_1 = tmp[0]
         atom_2 = tmp[1]
         R = tuple(map(int, tmp[2:5]))
@@ -150,12 +380,31 @@ class ExchangeModel:
         self.__list_for_sort.append((atom_1, atom_2, R, distance))
         return atom_1, atom_2, R, distance
 
-    def _read_exchange(self, i):
+    def _read_exchange(self, i: int):
+        """
+        Read and format the Exchange section.
+
+        `.__data` attribute and corresponding public attributes will be 
+        filled with content here.
+
+        Parameters
+        ----------
+        i : int
+            Index of the line with Exchange section header 
+            (see `.__headers_to_functions`) in the `.__file_data`.
+
+        Returns
+        -------
+        i : int
+            Index of next line after the last line of Exchange section in the 
+            `.__file_data`. This is effectivly the len(`self.__file_data`)
+        """
+
         i += 2
-        while i < len(self._file_data):
+        while i < len(self.__file_data):
             for name in self.__names_to_read:
                 if (self.__names_to_read[name] and
-                        self.__names_to_read[name] in self._file_data[i]):
+                        self.__names_to_read[name] in self.__file_data[i]):
 
                     if name == 'distance':
                         atom_1, atom_2, R, tmp =\
@@ -166,28 +415,52 @@ class ExchangeModel:
                     self._prepare_dicts(atom_1,
                                         atom_2,
                                         key=self.__index[name])
-                    self.data[self.__index[name]][atom_1][atom_2][R] = tmp
+                    self.__data[self.__index[name]][atom_1][atom_2][R] = tmp
             i += 1
         return i
 
     # TODO write sorting with template after the template will be done
     def filter(self,
-               distance=None,
-               number=None,
+               distance: Union[float, int] = None,
+               number: int = None,
                template=None,
-               from_scratch=False):
+               from_scratch: bool = False):
+        """
+        Filter the Exchange entries based on the given conditions.
+
+        The result will be defined by logical conjugate of the conditions. 
+        Saying so the filtering will be performed for each given condition 
+        one by one.
+
+        `.__data` attribute and corresponding public attributes will be 
+        updated here.
+
+        Parameters
+        ----------
+        distance : float | int, optional
+            Distance for sorting, the condition is the less or equal.
+        number : int, optional
+            The exact amount of interaction pairs to be kept. The pairs are 
+            sorted by distance and basically have exactly the same order as in 
+            TB2J file (from top to down). It will be interpreted as the amount 
+            of exchange blocks in TB2J file to be kept.
+        from_scratch : bool, default=False
+            If True then the data will be restored from the original file 
+            (through `.__data_nofilter` attribute) before sorting.
+        """
+
         if from_scratch:
-            self.data = deepcopy(self.__data_nofilter)
+            self.__data = deepcopy(self.__data_nofilter)
 
         # TODO
         if template is not None:
             pass
 
         if number is not None:
-            tmp = deepcopy(self.data)
+            tmp = deepcopy(self.__data)
             self._reset_data()
             for d in range(0, len(tmp)):
-                if tmp[d] is not None:
+                if tmp[d]:
                     for i in range(0, min(number, len(self.__list_for_sort))):
                         atom_1 = self.__list_for_sort[i][0]
                         atom_2 = self.__list_for_sort[i][1]
@@ -195,25 +468,25 @@ class ExchangeModel:
                         self._prepare_dicts(atom_1,
                                             atom_2,
                                             key=d)
-                        self.data[d][atom_1][atom_2][R] =\
+                        self.__data[d][atom_1][atom_2][R] =\
                             tmp[d][atom_1][atom_2][R]
 
         if distance is not None:
-            tmp = deepcopy(self.data)
+            tmp = deepcopy(self.__data)
             for d in range(0, len(tmp)):
-                if tmp[d] is not None:
+                if tmp[d]:
                     for atom_1 in tmp[d]:
                         for atom_2 in tmp[d][atom_1]:
                             for R in tmp[d][atom_1][atom_2]:
                                 if tmp[
                                     self.__index['distance']
                                 ][atom_1][atom_2][R] > distance:
-                                    del self.data[d][atom_1][atom_2][R]
-                            if not self.data[d][atom_1][atom_2]:
-                                del self.data[d][atom_1][atom_2]
-                        if not self.data[d][atom_1]:
-                            del self.data[d][atom_1]
-                    if not self.data[d]:
-                        self.data[d] = None
+                                    del self.__data[d][atom_1][atom_2][R]
+                            if not self.__data[d][atom_1][atom_2]:
+                                del self.__data[d][atom_1][atom_2]
+                        if not self.__data[d][atom_1]:
+                            del self.__data[d][atom_1]
+                    if not self.__data[d]:
+                        self.__data[d] = {}
 
         self._update_attributes()
