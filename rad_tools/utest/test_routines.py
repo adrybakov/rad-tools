@@ -3,7 +3,7 @@ from os import rmdir
 
 import pytest
 
-from rad_tools.routines import TerminalCoulours, get_256_colours, check_make
+from rad_tools.routines import *
 
 
 class TestTerminalColours:
@@ -25,7 +25,7 @@ class TestTerminalColours:
         assert TerminalCoulours.ERROR == TerminalCoulours.RED
 
 
-def test_get_256_colours(self):
+def test_get_256_colours():
     print("\n Please check that the following colour's table "
           "looks beautifull:\n")
     for i in range(0, 16):
@@ -58,3 +58,72 @@ def test_check_make():
     check_make('tmp')
     assert isdir('tmp') == True
     rmdir('tmp')
+
+
+@pytest.mark.parametrize("J_iso,J_aniso,dmi,J_matrix", [
+    (1,
+     None,
+     None,
+     [[1, 0, 0],
+      [0, 1., 0],
+      [0, 0, 1]]),
+
+    (1,
+     [[1, 0, 0],
+      [0, 1., 0],
+      [0, 0, 1]],
+        None,
+     [[2, 0, 0],
+      [0, 2., 0],
+      [0, 0, 2]]),
+
+    (1.23,
+     [[0.01, 5., 0.004],
+      [5., -0.003, 0],
+      [0.004, 0, .034]],
+        None,
+        [[1.24, 5., 0.004],
+         [5., 1.227, 0],
+         [0.004, 0, 1.264]]),
+
+    (None,
+     [[0.01, 5., 0.004],
+      [5., -0.003, 0],
+      [0.004, 0, .034]],
+        None,
+        [[0.01, 5., 0.004],
+         [5., -0.003, 0],
+         [0.004, 0, 0.034]]),
+
+    (0,
+     [[0.01, 5., 0.004],
+      [5., -0.003, 0],
+      [0.004, 0, .034]],
+        None,
+        [[0.01, 5., 0.004],
+         [5., -0.003, 0],
+         [0.004, 0, 0.034]]),
+
+    (None,
+     [[0.01, 5., 0.004],
+      [5., -0.003, 0],
+      [0.004, 0, .034]],
+        (0, 0, 0),
+        [[0.01, 5., 0.004],
+         [5., -0.003, 0],
+         [0.004, 0, 0.034]]),
+
+    (None,
+     [[0.01, 5., 0.005],
+      [5., -0.003, 0],
+      [0.005, 0, .034]],
+        (1, 0.06, -0.001),
+        [[0.01, 4.999, -0.055],
+         [5.001, -0.003, 1],
+         [0.065, -1, 0.034]]),
+
+])
+def test_matrix_exchange(J_iso, J_aniso, dmi, J_matrix):
+    assert matrix_exchange(J_iso=J_iso,
+                           J_aniso=J_aniso,
+                           dmi=dmi) == J_matrix
