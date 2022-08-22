@@ -13,7 +13,7 @@ class ExchangeTemplate:
     def __init__(self, filename: str) -> None:
 
         self.template = {}
-        self.__names_for_plot = {}
+        self.names_for_plot = {}
 
         self.__headers_to_functions = {
             'Neighbors template:\n': self._read_neighbors
@@ -48,7 +48,7 @@ class ExchangeTemplate:
         if atom_2 not in dict[atom_1]:
             dict[atom_1][atom_2] = {}
 
-    def read_neighbors(self, i: int):
+    def _read_neighbors(self, i: int):
         """
         Read and format the Neighbors section.
 
@@ -70,20 +70,25 @@ class ExchangeTemplate:
         while self.__major_sep not in self.__file_data[i]:
             if self.__minor_sep in self.__file_data[i]:
                 i += 1
-                self.template[self.__file_data[i].split()[0]] = {}
+                key = self.__file_data[i].split()[0]
+                self.template[key] = {}
                 try:
-                    self.__names_for_plot[self.__file_data[i].split()[0]] =\
-                        self.__file_data[i].split()[1]
+                    self.names_for_plot[key] = self.__file_data[i].split()[1]
                 except IndexError:
-                    self.__names_for_plot[self.__file_data[i].split()[0]] =\
-                        self.__file_data[i].split()[0]
+                    self.names_for_plot[key] = key
+                i += 1
                 while (self.__minor_sep not in self.__file_data[i] and
                        self.__major_sep not in self.__file_data[i]):
                     atom_1, atom_2 = tuple(self.__file_data[i].split()[:2])
                     R = tuple(map(int, self.__file_data[i].split()[2:5]))
-                    self._prepare_dict(self.template, atom_1, atom_2)
-                    self.template[atom_1][atom_2][R] = True
+                    self._prepare_dict(self.template[key], atom_1, atom_2)
+                    self.template[key][atom_1][atom_2][R] = True
                     i += 1
             else:
                 i += 1
         return i
+
+
+if __name__ == "__main__":
+    tmp = ExchangeTemplate("rad_tools/utest/tb2j_tools/resourses/template.txt")
+    print('haha')
