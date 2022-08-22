@@ -1,6 +1,8 @@
 from copy import deepcopy
 from typing import Union
 
+from rad_tools.tb2j_tools.template_logic import ExchangeTemplate
+
 
 class ExchangeModel:
     """
@@ -44,8 +46,8 @@ class ExchangeModel:
         "Exchange:" section of TB2J file. 
         atom_1: str - mark of the atom in central unit cell.
         atom_2: str - mark of the atom in the other unit cell.
-        R - radius vector between the central unit cell and the other unit cell.
-        R = (a_step: int, b_step: int, c_step: int). 
+        R_v - radius vector between the central unit cell and the other unit cell.
+        R_v = (a_step: int, b_step: int, c_step: int). 
         J_iso: float -  Isotropic exchange parameter 
         in the notation of TB2J in meV.
         {
@@ -53,7 +55,7 @@ class ExchangeModel:
             {
                 "atom_2": 
                 {
-                    R : J_iso,
+                    R_v : J_iso,
                     ...
                 },
                 ...
@@ -342,7 +344,7 @@ class ExchangeModel:
         Format the first line of TB2J file`s small exchange block.
 
         This function is more important then the other formatters. 
-        It sets the `atom_1`, `atom_2` and `R` which are valid for current 
+        It sets the `atom_1`, `atom_2` and `R_v` which are valid for current 
         exchange block and fill `.magnetic_atoms` and `.__list_for_sort` with
         content.
 
@@ -358,7 +360,7 @@ class ExchangeModel:
             mark of the first-level atom (see `iso`). 
         atom_2 : str
             mark of the second-level atom (see `iso`). 
-        R : tuple of float
+        R_v : tuple of float
             Radius vector between the central unit cell and the other unit cell.
         distance : float
             Distance between pair (`atom_1`, `atom_2`) in Angstrom. 
@@ -369,7 +371,7 @@ class ExchangeModel:
         tmp = self.__file_data[i].translate(self.__garbage).split()
         atom_1 = tmp[0]
         atom_2 = tmp[1]
-        R = tuple(map(int, tmp[2:5]))
+        R_v = tuple(map(int, tmp[2:5]))
         distance = float(tmp[9])
 
         if atom_1 not in self.magnetic_atoms:
@@ -377,8 +379,8 @@ class ExchangeModel:
         if atom_2 not in self.magnetic_atoms:
             self.magnetic_atoms.append(atom_2)
 
-        self.__list_for_sort.append((atom_1, atom_2, R, distance))
-        return atom_1, atom_2, R, distance
+        self.__list_for_sort.append((atom_1, atom_2, R_v, distance))
+        return atom_1, atom_2, R_v, distance
 
     def _read_exchange(self, i: int):
         """
@@ -407,7 +409,7 @@ class ExchangeModel:
                         self.__names_to_read[name] in self.__file_data[i]):
 
                     if name == 'distance':
-                        atom_1, atom_2, R, tmp =\
+                        atom_1, atom_2, R_v, tmp =\
                             self.__format_functions[name](i)
                     else:
                         tmp = self.__format_functions[name](i)
@@ -415,15 +417,14 @@ class ExchangeModel:
                     self._prepare_dicts(atom_1,
                                         atom_2,
                                         key=self.__index[name])
-                    self.__data[self.__index[name]][atom_1][atom_2][R] = tmp
+                    self.__data[self.__index[name]][atom_1][atom_2][R_v] = tmp
             i += 1
         return i
 
-    # TODO write sorting with template after the template will be done
     def filter(self,
                distance: Union[float, int] = None,
                number: int = None,
-               template=None,
+               template: ExchangeTemplate = None,
                from_scratch: bool = False):
         """
         Filter the Exchange entries based on the given conditions.
@@ -444,6 +445,8 @@ class ExchangeModel:
             sorted by distance and basically have exactly the same order as in 
             TB2J file (from top to down). It will be interpreted as the amount 
             of exchange blocks in TB2J file to be kept.
+        template : ExchangeTemplate
+            template instance for filtering neighbors
         from_scratch : bool, default=False
             If True then the data will be restored from the original file 
             (through `.__data_nofilter` attribute) before sorting.
@@ -452,24 +455,35 @@ class ExchangeModel:
         if from_scratch:
             self.__data = deepcopy(self.__data_nofilter)
 
-        # TODO
-        if template is not None:
-            pass
+        tmp_list = []
+        if template is not None and number is not None:
+            for i in self.__list_for_sort[:number]:
+                if (i not in tmp_list and
+                        (i[0], i[1], i[2]) in template.plained_template):
+                    tmp_list.append(i)
+        elif template is not None:
+            for i in template.plained_template:
+                if i not in tmp_list:
+                    tmp_list.append(i)
+        elif number is not None:
+            for i in self.__list_for_sort[:number]:
+                if i not in tmp_list:
+                    tmp_list.append(i)
 
-        if number is not None:
+        if template is not None or number is not None:
             tmp = deepcopy(self.__data)
             self._reset_data()
             for d in range(0, len(tmp)):
                 if tmp[d]:
-                    for i in range(0, min(number, len(self.__list_for_sort))):
-                        atom_1 = self.__list_for_sort[i][0]
-                        atom_2 = self.__list_for_sort[i][1]
-                        R = self.__list_for_sort[i][2]
+                    for i in range(0, len(tmp_list)):
+                        atom_1 = tmp_list[i][0]
+                        atom_2 = tmp_list[i][1]
+                        R_v = tmp_list[i][2]
                         self._prepare_dicts(atom_1,
                                             atom_2,
                                             key=d)
-                        self.__data[d][atom_1][atom_2][R] =\
-                            tmp[d][atom_1][atom_2][R]
+                        self.__data[d][atom_1][atom_2][R_v] =\
+                            tmp[d][atom_1][atom_2][R_v]
 
         if distance is not None:
             tmp = deepcopy(self.__data)
@@ -477,11 +491,11 @@ class ExchangeModel:
                 if tmp[d]:
                     for atom_1 in tmp[d]:
                         for atom_2 in tmp[d][atom_1]:
-                            for R in tmp[d][atom_1][atom_2]:
+                            for R_v in tmp[d][atom_1][atom_2]:
                                 if tmp[
                                     self.__index['distance']
-                                ][atom_1][atom_2][R] > distance:
-                                    del self.__data[d][atom_1][atom_2][R]
+                                ][atom_1][atom_2][R_v] > distance:
+                                    del self.__data[d][atom_1][atom_2][R_v]
                             if not self.__data[d][atom_1][atom_2]:
                                 del self.__data[d][atom_1][atom_2]
                         if not self.__data[d][atom_1]:

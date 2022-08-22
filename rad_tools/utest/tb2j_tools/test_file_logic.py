@@ -4,6 +4,7 @@ import pytest
 import numpy as np
 
 from rad_tools.tb2j_tools.file_logic import ExchangeModel
+from rad_tools.tb2j_tools.template_logic import ExchangeTemplate
 
 # TODO MAy be write tests more specific to the functions
 
@@ -12,6 +13,9 @@ class TestExchangeModel:
 
     tmp_model = ExchangeModel(os.path.join(
         'rad_tools', 'utest', 'tb2j_tools', 'resourses', 'exchange.out'
+    ))
+    template = ExchangeTemplate(os.path.join(
+        'rad_tools', 'utest', 'tb2j_tools', 'resourses', 'template.txt'
     ))
 
 
@@ -272,3 +276,39 @@ class TestFilter(TestExchangeModel):
         assert self.count_entries(self.tmp_model.aniso) == 16
         assert self.count_entries(self.tmp_model.dmi) == 16
         assert self.count_entries(self.tmp_model.distance) == 16
+
+    def test_filter_by_template(self):
+        self.tmp_model.filter(distance=None,
+                              number=None,
+                              template=self.template,
+                              from_scratch=False)
+        assert self.count_entries(self.tmp_model.iso) == 16
+        assert self.count_entries(self.tmp_model.aniso) == 16
+        assert self.count_entries(self.tmp_model.dmi) == 16
+        assert self.count_entries(self.tmp_model.distance) == 16
+
+    @pytest.mark.parametrize("distance,number,elements_number,from_scratch", [
+        (4.807, 16, 16, False),
+        (6, 24, 16, True),
+        (0, 0, 0, False),
+        (0, 0, 0, True),
+        (5, 16, 16, True),
+        (4.0, 12, 12, False),
+        (1000, 72, 16, True),
+        (1000, 36, 16, True),
+        (0, 36, 0, True),
+        (8, 36, 16, True)
+    ])
+    def test_filter_by_number_and_distance_and_template(self,
+                                                        distance,
+                                                        number,
+                                                        elements_number,
+                                                        from_scratch):
+        self.tmp_model.filter(distance=distance,
+                              number=number,
+                              template=self.template,
+                              from_scratch=from_scratch)
+        assert self.count_entries(self.tmp_model.iso) == elements_number
+        assert self.count_entries(self.tmp_model.aniso) == elements_number
+        assert self.count_entries(self.tmp_model.dmi) == elements_number
+        assert self.count_entries(self.tmp_model.distance) == elements_number

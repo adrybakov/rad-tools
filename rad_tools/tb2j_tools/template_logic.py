@@ -14,6 +14,7 @@ class ExchangeTemplate:
 
         self.template = {}
         self.names_for_plot = {}
+        self.plained_template = []
 
         self.__headers_to_functions = {
             'Neighbors template:\n': self._read_neighbors
@@ -86,9 +87,20 @@ class ExchangeTemplate:
                     i += 1
             else:
                 i += 1
+        self._plain_template()
         return i
 
+    def _plain_template(self):
+        """
+        Translate `.template` into the list.
 
-if __name__ == "__main__":
-    tmp = ExchangeTemplate("rad_tools/utest/tb2j_tools/resourses/template.txt")
-    print('haha')
+        `.plained_template` = [(atom_1, atom_2, R), ...]
+        """
+        self.plained_template = []
+        for name in self.template:
+            for atom_1 in self.template[name]:
+                for atom_2 in self.template[name][atom_1]:
+                    for R in self.template[name][atom_1][atom_2]:
+                        self.plained_template.append((atom_1,
+                                                      atom_2,
+                                                      R))
