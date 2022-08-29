@@ -12,10 +12,10 @@ from rad_tools.tb2j_tools.template_logic import ExchangeTemplate
 class TestExchangeModel:
 
     tmp_model = ExchangeModel(os.path.join(
-        'rad_tools', 'utest', 'tb2j_tools', 'resourses', 'exchange.out'
+        'utest', 'tb2j_tools', 'resourses', 'exchange.out'
     ))
     template = ExchangeTemplate(os.path.join(
-        'rad_tools', 'utest', 'tb2j_tools', 'resourses', 'template.txt'
+        'utest', 'tb2j_tools', 'resourses', 'template.txt'
     ))
 
 
@@ -32,7 +32,7 @@ class TestInputFilename(TestExchangeModel):
 
     def test_correct_filename(self):
         tmp_model = ExchangeModel(os.path.join(
-            'rad_tools', 'utest', 'tb2j_tools', 'resourses', 'exchange.out'))
+            'utest', 'tb2j_tools', 'resourses', 'exchange.out'))
 
 
 class TestReadFunctions(TestExchangeModel):
