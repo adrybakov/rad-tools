@@ -1,5 +1,6 @@
 from os import mkdir
 from typing import Union
+import numpy as np
 
 
 class TerminalCoulours:
@@ -60,59 +61,64 @@ def check_make(path: str):
         pass
 
 
-def matrix_exchange(J_iso: Union[float, int] = None,
-                    J_aniso: list = None,
-                    dmi: Union[tuple, list] = None):
+def exchange_from_matrix():
+    pass
+
+
+def exchange_to_matrix(iso=None, aniso=None, dmi=None):
     """
-    Recompute different types of exchange into a common matrix form.
-
-    Matrix from of isotropic exchange:
-    |J_iso   0     0  |
-    |  0   J_iso   0  |
-    |  0     0   J_iso|
-
-    Symmetric anisotropic exchange already in the matrix form:
-    |J_xx J_xy J_xz|
-    |J_yx J_yy J_yz|
-    |J_zx J_zy J_zz|
-    Note: J_ij = J_ji
-
-    Matrix from of DMI:
-    |  0   D_z -D_y|
-    |-D_z   0   D_x|
-    | D_y -D_x   0 |
+    Combine isotropic, anisotropic and dmi exchange into exchange matrix.
 
     Parameters
     ----------
-    J_iso : float | int
-        Isotropic exchange parameter.
-    J_aniso : list of list of float
-        Symmetric anisotropic exchange 3x3 matrix.
-    dmi : tuple | list of float
-        Dzyaloshinskii-Moriya interaction vector.
+    iso : float
+        Value of isotropic exchange parameter in meV.
+    aniso : 3 x 3 array_like
+        Matrix of symmetric anisotropic exchange in meV.
+    dmi : 1 x 3 array_like
+        Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz) in meV.
 
     Returns
     -------
-    J_matrix : list of list of float
-        Matrix form of exchange parameter.
+    matrix : 3 x 3 np.ndarray of floats
+        Exchange matrix in meV.
     """
-
-    J_matrix = [[0., 0., 0.],
-                [0., 0., 0.],
-                [0., 0., 0.]]
-    if J_iso is not None:
-        for i in range(0, 3):
-            J_matrix[i][i] += J_iso
-
-    if J_aniso is not None:
-        for i in range(0, 3):
-            for j in range(0, 3):
-                J_matrix[i][j] += J_aniso[i][j]
+    matrix = np.zeros((3, 3), dtype=float)
+    if aniso is not None:
+        matrix += np.array(aniso, dtype=float)
+    if iso is not None:
+        matrix += iso * np.identity(3, dtype=float)
     if dmi is not None:
-        J_matrix[0][1] += dmi[2]  # D_z
-        J_matrix[0][2] -= dmi[1]  # -D_y
-        J_matrix[1][0] -= dmi[2]  # -D_z
-        J_matrix[1][2] += dmi[0]  # D_x
-        J_matrix[2][0] += dmi[1]  # D_y
-        J_matrix[2][1] -= dmi[0]  # -D_x
-    return J_matrix
+        matrix += np.array([[0, dmi[2], -dmi[1]],
+                            [-dmi[2], 0, dmi[0]],
+                            [dmi[1], -dmi[0], 0]],
+                           dtype=float)
+    return matrix
+
+
+def exchange_from_matrix(matrix):
+    """
+    Decompose matrix into isotropic, anisotropic and dmi exchange.
+
+    Parameters
+    ----------
+    matrix : 3 x 3 array_like
+        Exchange matrix in meV.
+
+    Returns
+    -------
+    iso : float
+        Value of isotropic exchange parameter in meV.
+    aniso : 3 x 3 np.ndarray of floats
+        Matrix of symmetric anisotropic exchange in meV.
+    dmi : 1 x 3 np.ndarray of floats
+        Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz) in meV.
+    """
+    matrix = np.array(matrix, dtype=float)
+    symm = (matrix + matrix.T) / 2
+    assym = (matrix - matrix.T) / 2
+    dmi = np.array([assym[1][2], assym[2][0], assym[0][1]],
+                   dtype=float)
+    iso = np.trace(symm) / 3
+    aniso = symm - iso * np.identity(3, dtype=float)
+    return iso, aniso, dmi
