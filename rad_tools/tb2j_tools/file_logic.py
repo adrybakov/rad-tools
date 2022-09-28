@@ -1,7 +1,114 @@
 from copy import deepcopy
-from typing import Union
+from typing import Union, Tuple
+import numpy as np
 
 from rad_tools.tb2j_tools.template_logic import ExchangeTemplate
+
+
+class Bond:
+    """
+    Class with implemented logic for one bond
+
+    Parameters
+    ----------
+    iso : float
+        Value of isotropic exchange parameter in meV. If `iso` is 
+        not specified then it will be 0.
+        J
+        Matrix from:
+
+             J | 0 | 0 
+            ---|---|---
+             0 | J | 0 
+            ---|---|---
+             0 | 0 | J 
+    aniso : 3 x 3 np.ndarray of floats
+        3 x 3 matrix of symmetric anisotropic exchange in meV. If `aniso` 
+        is not specified then it will be filled with zeros.
+            J_xx | J_xy | J_xz
+            -----|------|-----
+            J_xy | J_yy | J_yz
+            -----|------|-----
+            J_xz | J_yz | J_zz
+    dmi : 3 x 1 np.ndarray of floats
+        Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz) in meV. If `dmi` 
+        is not specified then it will be filled with zeros.
+        [D_x, D_y, D_z]
+        Matrix form:
+               0  |  D_z | -D_y
+            ------|------|------
+             -D_z |   0  | D_x
+            ------|------|------
+              D_y | -D_x |  0
+    matrix : 3 x 3 np.ndarray of floats
+        Exchange matrix in meV. If `matrix` is specified then `iso`, 
+        `aniso` and `dmi` will be ignored and derived from `matrix`.
+        If `matrix` is not specified then it will be derived from 
+        `iso`, `aniso` and `dmi`.
+            J_xx | J_xy | J_xz
+            -----|------|-----
+            J_yx | J_yy | J_yz
+            -----|------|-----
+            J_zx | J_zy | J_zz
+    """
+
+    def __init__(self,
+                 iso=None,
+                 aniso=None,
+                 dmi=None,
+                 matrix=None) -> None:
+        self.iso = 0.
+        self.aniso = np.zeros((3, 3), dtype=float)
+        self.dmi = np.zeros(3, dtype=float)
+        self.matrix = np.zeros((3, 3), dtype=float)
+        if matrix is not None:
+            self.matrix = np.array(matrix, dtype=float)
+            self.from_matrix()
+        else:
+            if iso is not None:
+                self.iso = float(iso)
+            if aniso is not None:
+                self.aniso = np.array(aniso, dtype=float)
+            if dmi is not None:
+                self.dmi = np.array(dmi, dtype=float)
+            self.to_matrix()
+
+    def to_matrix(self):
+        """
+        Combine isotropic, anisotropic and dmi exchange into exchange matrix.
+
+        Parameters
+        ----------
+        isotropic : float
+            Value of isotropic exchange parameter in meV.
+        anisotropic : 3 x 3 np.ndarray of floats
+            Matrix of symmetric anisotropic exchange in meV.
+        dmi : 3 x 1 np.ndarray of floats
+            Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz) in meV.
+        """
+        self.matrix = np.zeros((3, 3), dtype=float)
+        self.matrix += self.aniso
+        self.matrix += self.iso * np.identity(3, dtype=float)
+        self.matrix += np.array([[0, self.dmi[2], -self.dmi[1]],
+                                 [-self.dmi[2], 0, self.dmi[0]],
+                                 [self.dmi[1], -self.dmi[0], 0]],
+                                dtype=float)
+
+    def from_matrix(self):
+        """
+        Decompose matrix into isotropic, anisotropic and dmi exchange.
+
+        Parameters
+        ----------
+        matrix : 3 x 3 np.ndarray of floats
+            Exchange matrix in meV.
+        """
+        symm = (self.matrix + self.matrix.T) / 2
+        assym = (self.matrix - self.matrix.T) / 2
+        self.dmi = np.array([assym[1][2], assym[2][0], assym[0][1]],
+                            dtype=float)
+        self.iso = np.trace(symm) / 3
+        self.aniso = symm - self.iso * np.identity(3, dtype=float)
 
 
 class ExchangeModel:
