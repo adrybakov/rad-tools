@@ -3,6 +3,7 @@ from typing import Union, Tuple
 import numpy as np
 
 from rad_tools.tb2j_tools.template_logic import ExchangeTemplate
+from rad_tools.routines import exchange_from_matrix, exchange_to_matrix
 
 
 class Bond:
@@ -56,14 +57,16 @@ class Bond:
                  iso=None,
                  aniso=None,
                  dmi=None,
-                 matrix=None) -> None:
+                 matrix=None,
+                 distance=None) -> None:
         self.iso = 0.
         self.aniso = np.zeros((3, 3), dtype=float)
         self.dmi = np.zeros(3, dtype=float)
         self.matrix = np.zeros((3, 3), dtype=float)
+
         if matrix is not None:
             self.matrix = np.array(matrix, dtype=float)
-            self.from_matrix()
+            self.iso, self.aniso, self.dmi = exchange_from_matrix(self.matrix)
         else:
             if iso is not None:
                 self.iso = float(iso)
@@ -71,44 +74,176 @@ class Bond:
                 self.aniso = np.array(aniso, dtype=float)
             if dmi is not None:
                 self.dmi = np.array(dmi, dtype=float)
-            self.to_matrix()
+            self.matrix = exchange_to_matrix(self.iso, self.aniso, self.dmi)
 
-    def to_matrix(self):
+        if distance is not None:
+            self.dis = float(distance)
+
+
+class ExchangeModel:
+    """
+    Class containing the whole information extracted from TB2J *.out
+
+    Keeping resolved data from the file
+    and provide a number of functions to process it.
+
+    Attributes
+    ----------
+    cell : 3 x 3 np.ndarray of floats
+        3 x 3 matrix of lattice vectors in Angstrom.
+            a_x | a_y | a_z
+            ----|-----|----
+            b_x | b_y | b_z
+            ----|-----|----
+            c_x | x_y | c_z
+
+    atoms : dict 
+        Dictioanry of atoms and their coordinates in  the unit cell
+        {
+            "Atom_1" : [x, y, z],
+            ...
+        }
+
+    magnetic_atoms : list of strings
+        list of atom's marks for which the entry in "Exchange:" 
+        section of TB2J file is present.
+
+    Methods
+    -------
+    filter(distance=None, number=None, template=None, from_scratch=False)
+        Filter all present exchange parameters
+        with respect to the provided conditions
+
+    """
+
+    def __init__(self) -> None:
+        self.cell = []
+        self.magnetic_atoms = []
+        self.bonds = {}
+
+    def add_bond(self, bond: Bond, atom1: str, atom2: str, R: Tuple[int]):
         """
-        Combine isotropic, anisotropic and dmi exchange into exchange matrix.
+        Add one bond to the model.
 
         Parameters
         ----------
-        isotropic : float
-            Value of isotropic exchange parameter in meV.
-        anisotropic : 3 x 3 np.ndarray of floats
-            Matrix of symmetric anisotropic exchange in meV.
-        dmi : 3 x 1 np.ndarray of floats
-            Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz) in meV.
+        bond : Bond
+            An instance of Bond Class with the information about 
+            exchange parameters.
+        atom1 : str
+            Name of atom1 in (0, 0, 0) unit cell.
+        atom2 : str 
+            Name of atom2 in R unit cell.
+        R : tuple of ints
+            Radius vector of the unit cell for atom2.
         """
-        self.matrix = np.zeros((3, 3), dtype=float)
-        self.matrix += self.aniso
-        self.matrix += self.iso * np.identity(3, dtype=float)
-        self.matrix += np.array([[0, self.dmi[2], -self.dmi[1]],
-                                 [-self.dmi[2], 0, self.dmi[0]],
-                                 [self.dmi[1], -self.dmi[0], 0]],
-                                dtype=float)
+        if atom1 not in self.magnetic_atoms:
+            self.magnetic_atoms.append(atom1)
+        if atom2 not in self.magnetic_atoms:
+            self.magnetic_atoms.append(atom2)
+        if atom1 not in self.bonds:
+            self.bonds[atom1] = {}
+        if atom2 not in self.bonds[atom1]:
+            self.bonds[atom1][atom2] = {}
+        self.bonds[atom1][atom2][R] = bond
 
-    def from_matrix(self):
+    def remove_bond(self, atom1: str, atom2: str, R: Tuple[int]):
         """
-        Decompose matrix into isotropic, anisotropic and dmi exchange.
+        Remove one bond from the model.
 
         Parameters
         ----------
-        matrix : 3 x 3 np.ndarray of floats
-            Exchange matrix in meV.
+        atom1 : str
+            Name of atom1 in (0, 0, 0) unit cell.
+        atom2 : str 
+            Name of atom2 in R unit cell.
+        R : tuple of ints
+            Radius vector of the unit cell for atom2.
         """
-        symm = (self.matrix + self.matrix.T) / 2
-        assym = (self.matrix - self.matrix.T) / 2
-        self.dmi = np.array([assym[1][2], assym[2][0], assym[0][1]],
-                            dtype=float)
-        self.iso = np.trace(symm) / 3
-        self.aniso = symm - self.iso * np.identity(3, dtype=float)
+        del self.bonds[atom1][atom2][R]
+        if not self.bonds[atom1][atom2]:
+            del self.bonds[atom1][atom2]
+        if not self.bonds[atom1]:
+            del self.bonds[atom1]
+
+    def copy_itself(self):
+        return deepcopy(self)
+
+    def filter(self,
+               distance: Union[float, int] = None,
+               number: int = None,
+               template: list = None):
+        """
+        Filter the exchange entries based on the given conditions.
+
+        The result will be defined by logical conjugate of the conditions. 
+        Saying so the filtering will be performed for each given condition 
+        one by one.
+        Note: this method is not modifying the instance at which it is called.
+        It will create a new instance with sorted `bonds` and all the other
+        attributes will be copied (through deepcopy).
+
+        Parameters
+        ----------
+        distance : float or int, optional
+            Distance for sorting, the condition is <<less or equal>>.
+        number : int, optional
+            The exact amount of interaction pairs to be kept. The pairs are 
+            sorted by distance.
+        template : list
+            List of pairs for keeping. Specifying atom1, atom2, R.
+            [(atom1, atom2, R), ...]
+        """
+
+        tmp_list = []
+        if template is not None and number is not None:
+            for i in self.__list_for_sort[:number]:
+                if (i not in tmp_list and
+                        (i[0], i[1], i[2]) in template.plained_template):
+                    tmp_list.append(i)
+        elif template is not None:
+            for i in template.plained_template:
+                if i not in tmp_list:
+                    tmp_list.append(i)
+        elif number is not None:
+            for i in self.__list_for_sort[:number]:
+                if i not in tmp_list:
+                    tmp_list.append(i)
+
+        if template is not None or number is not None:
+            tmp = deepcopy(self.__data)
+            self._reset_data()
+            for d in range(0, len(tmp)):
+                if tmp[d]:
+                    for i in range(0, len(tmp_list)):
+                        atom_1 = tmp_list[i][0]
+                        atom_2 = tmp_list[i][1]
+                        R_v = tmp_list[i][2]
+                        self._prepare_dicts(atom_1,
+                                            atom_2,
+                                            key=d)
+                        self.__data[d][atom_1][atom_2][R_v] =\
+                            tmp[d][atom_1][atom_2][R_v]
+
+        if distance is not None:
+            tmp = deepcopy(self.__data)
+            for d in range(0, len(tmp)):
+                if tmp[d]:
+                    for atom_1 in tmp[d]:
+                        for atom_2 in tmp[d][atom_1]:
+                            for R_v in tmp[d][atom_1][atom_2]:
+                                if tmp[
+                                    self.__index['distance']
+                                ][atom_1][atom_2][R_v] > distance:
+                                    del self.__data[d][atom_1][atom_2][R_v]
+                            if not self.__data[d][atom_1][atom_2]:
+                                del self.__data[d][atom_1][atom_2]
+                        if not self.__data[d][atom_1]:
+                            del self.__data[d][atom_1]
+                    if not self.__data[d]:
+                        self.__data[d] = {}
+
+        self._update_attributes()
 
 
 class ExchangeModel:
@@ -148,53 +283,6 @@ class ExchangeModel:
         list of atom's marks for which the entry in "Exchange:" 
         section of TB2J file is present.
 
-    iso : dict
-        Isotropic Exchange parameters read from 
-        "Exchange:" section of TB2J file. 
-        atom_1: str - mark of the atom in central unit cell.
-        atom_2: str - mark of the atom in the other unit cell.
-        R_v - radius vector between the central unit cell and the other unit cell.
-        R_v = (a_step: int, b_step: int, c_step: int). 
-        J_iso: float -  Isotropic exchange parameter 
-        in the notation of TB2J in meV.
-        {
-            "atom_1" : 
-            {
-                "atom_2": 
-                {
-                    R_v : J_iso,
-                    ...
-                },
-                ...
-            },
-            ...
-        }
-
-    aniso : dict
-        Anisotropic symmetric Exchange parameters read 
-        from "Exchange:" section of TB2J file. 
-        Structure is the same as in iso, but with J_aniso
-        instead of J_iso.
-        J_aniso : list of list of float
-        [
-            [J_xx, J_xy, J_xz],
-            [J_yx, J_yy, J_yz],
-            [J_zx, J_zy, J_zz]
-        ]
-        Note: J_ij = J_ji.
-
-    dmi : dict
-        Dzyaloshinskii-Moriya interaction parameters read 
-        from "Exchange:" section of TB2J file. 
-        Structure is the same as in iso, but with D
-        instead of J_iso.
-        D: tuple of float - DM vector (D_x, D_y, D_z)
-
-    distance : dict
-        Distance between pairs of magnetic atoms. 
-        Structure is the same as in iso, but with d instead of J_iso.
-        d : float - distance between two magnetic atoms in Angstrom.
-
     Methods
     -------
     filter(distance=None, number=None, template=None, from_scratch=False)
@@ -208,10 +296,7 @@ class ExchangeModel:
         self.cell = []
         self.atoms = {}
         self.magnetic_atoms = []
-        self.iso = {}
-        self.aniso = {}
-        self.dmi = {}
-        self.distance = {}
+        self.bonds = {}
 
         self.__major_sep = '=' * 90 + '\n'
         self.__minor_sep = '-' * 88 + '\n'
