@@ -188,7 +188,6 @@ def test_exchange_to_matrix(iso, aniso, dmi, matrix):
 ])
 def test_exchange_from_matrix(iso, aniso, dmi, matrix):
     iso_d, aniso_d, dmi_d = exchange_from_matrix(matrix)
-    print(iso, aniso, dmi)
 
     assert iso == round(iso_d, 4)
 

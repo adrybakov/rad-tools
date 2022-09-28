@@ -135,7 +135,7 @@ class ExchangeModel:
     """
 
     def __init__(self) -> None:
-        self.cell = np.aeros((3, 3), dtype=float)
+        self.cell = np.zeros((3, 3), dtype=float)
         self.magnetic_atoms = {}
         self.bonds = {}
 
@@ -217,7 +217,7 @@ class ExchangeModel:
         """
         if atom1 in self.bonds and \
             atom2 in self.bonds[atom1] and \
-                R in self.bonds[atom1[atom2]]:
+                R in self.bonds[atom1][atom2]:
             del self.bonds[atom1][atom2][R]
             if not self.bonds[atom1][atom2]:
                 del self.bonds[atom1][atom2]
@@ -252,13 +252,16 @@ class ExchangeModel:
             for atom1, atom2, R in template:
                 filtered_model.add_bond(self.bonds[atom1][atom2][R],
                                         atom1, atom2, R)
-
+        bonds_for_removal = []
         if distance is not None:
             for atom1 in filtered_model.bonds:
                 for atom2 in filtered_model.bonds[atom1]:
-                    for R in filtered_model[atom1][atom2]:
-                        if filtered_model[atom1][atom2][R].dis > distance:
-                            filtered_model.remove_bond(atom1, atom2, R)
+                    for R in filtered_model.bonds[atom1][atom2]:
+                        if filtered_model.bonds[atom1][atom2][R].dis > distance:
+                            bonds_for_removal.append((atom1, atom2, R))
+        for atom1, atom2, R in bonds_for_removal:
+            filtered_model.remove_bond(atom1, atom2, R)
+        return filtered_model
 
 
 class ExchangeModelTB2J(ExchangeModel):
@@ -308,9 +311,10 @@ class ExchangeModelTB2J(ExchangeModel):
             if line and self._atoms_flag in line:
                 line = file.readline()
                 line = file.readline()
+                line = file.readline().split()
                 while line and self._atom_end_flag not in line:
-                    line = file.readline().split()
                     self._atoms[line[0]] = tuple(map(float, line[1:4]))
+                    line = file.readline().split()
 
             if line and self._exchange_flag in line:
                 break
