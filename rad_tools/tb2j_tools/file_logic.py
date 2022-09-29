@@ -8,7 +8,7 @@ from rad_tools.routines import exchange_from_matrix, exchange_to_matrix
 
 class Bond:
     """
-    Class with implemented logic for one bond
+    Class with implemented logic for one bond.
 
     Parameters
     ----------
@@ -127,11 +127,11 @@ class ExchangeModel:
         Add magnetic atom to the model.
 
     remove_atom(name)
-        Remove magnetic atom from the model
+        Remove magnetic atom from the model.
 
     filter(distance=None, number=None, template=None, from_scratch=False)
         Filter all present exchange parameters
-        with respect to the provided conditions
+        with respect to the provided conditions.
     """
 
     def __init__(self) -> None:
@@ -150,7 +150,7 @@ class ExchangeModel:
         ----------
         name : str
             Mark for the atom. Note: if an atom with the same mark already 
-            exists in `magnetic_atoms` then it will be rewritten
+            exists in `magnetic_atoms` then it will be rewritten.
         x : int or float
             x coordinate of the atom, in Angstroms.
         y : int or float
@@ -273,6 +273,8 @@ class ExchangeModelTB2J(ExchangeModel):
     filename : str
         Path to the TB2J *.out file.
     """
+
+    # Flags for reading from TB2J file
     _major_sep = '=' * 90 + '\n'
     _minor_sep = '-' * 88 + '\n'
     _garbage = str.maketrans({'(': None,
@@ -288,6 +290,8 @@ class ExchangeModelTB2J(ExchangeModel):
     _iso_flag = 'J_iso:'
     _aniso_flag = 'J_ani:'
     _dmi_flag = 'DMI:'
+
+    # Store info about all atoms, not only magnetic ones
     _atoms = {}
 
     def __init__(self, filename: str) -> None:
@@ -316,6 +320,7 @@ class ExchangeModelTB2J(ExchangeModel):
                     self._atoms[line[0]] = tuple(map(float, line[1:4]))
                     line = file.readline().split()
 
+            # Check if the exchange section is reached
             if line and self._exchange_flag in line:
                 break
 
