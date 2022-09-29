@@ -53,6 +53,8 @@ class Bond:
             J_zx | J_zy | J_zz
     """
 
+    distance_tolerance = 0.00001
+
     def __init__(self,
                  iso=None,
                  aniso=None,
@@ -79,6 +81,41 @@ class Bond:
 
         if distance is not None:
             self.dis = float(distance)
+
+    def __add__(self, other):
+        iso = (self.iso + other.iso)
+        aniso = (self.aniso + other.aniso)
+        dmi = (self.dmi + other.dmi)
+        if self.dis - other.dis < self.distance_tolerance:
+            dis = self.dis
+        else:
+            raise ValueError('Two bonds have different distance, could hot add. '
+                             f'(Tolerance: {self.distance_tolerance})')
+        return Bond(iso=iso, aniso=aniso, dmi=dmi, distance=dis)
+
+    def __sub__(self, other):
+        iso = (self.iso - other.iso)
+        aniso = (self.aniso - other.aniso)
+        dmi = (self.dmi - other.dmi)
+        if self.dis - other.dis < self.distance_tolerance:
+            dis = self.dis
+        else:
+            raise ValueError('Two bonds have different distance, '
+                             'could hot subtraction. '
+                             f'(Tolerance: {self.distance_tolerance})')
+        return Bond(iso=iso, aniso=aniso, dmi=dmi, distance=dis)
+
+    def __mul__(self, number: Union[float, int]):
+        iso = self.iso * number
+        aniso = self.aniso * number
+        dmi = self.dmi * number
+        return Bond(iso=iso, aniso=aniso, dmi=dmi, distance=self.dis)
+
+    def __rmul__(self, number: Union[float, int]):
+        iso = number * self.iso
+        aniso = number * self.aniso
+        dmi = number * self.dmi
+        return Bond(iso=iso, aniso=aniso, dmi=dmi, distance=self.dis)
 
 
 class ExchangeModel:
@@ -315,6 +352,36 @@ class ExchangeModel:
                     Z = max(abs(x1), abs(x2), Z)
         return X, Y, Z
 
+    def remove_double_bonds(self):
+        """
+        Remove double bonds.
+
+        If for atom pair atom1, atom2 exist bond 1-2 and 2-1 they will be merged.
+        All values will be calcuated as (1-2 + 2-1) / 2.
+        Note: this method is not modifying the instance at which it is called.
+        It will create a new instance with sorted `bonds` and all the other
+        attributes will be copied (through deepcopy).
+
+        Returns
+        -------
+        undoubled_model : ExchangeModel
+            Exchange model after reoving double bonds.
+        """
+        unbounded_model = deepcopy(self)
+        for atom1 in self.bonds:
+            for atom2 in self.bonds[atom1]:
+                if atom1 in unbounded_model.bonds and\
+                   atom2 in unbounded_model.bonds[atom1] and\
+                   (0, 0, 0) in unbounded_model.bonds[atom1][atom2] and\
+                   atom2 in unbounded_model.bonds and\
+                   atom1 in unbounded_model.bonds[atom2] and\
+                   (0, 0, 0) in unbounded_model.bonds[atom2][atom1]:
+                    unbounded_model.bonds[atom1][atom2][(0, 0, 0)] = \
+                        (unbounded_model.bonds[atom1][atom2][(0, 0, 0)] +
+                            unbounded_model.bonds[atom2][atom1][(0, 0, 0)]) * 0.5
+                    unbounded_model.remove_bond(atom2, atom1, (0, 0, 0))
+        return unbounded_model
+
     def filter(self,
                distance: Union[float, int] = None,
                template: list = None,
@@ -339,6 +406,11 @@ class ExchangeModel:
         R_vector : tuple of ints or list of tuples of ints
             Tuple of 3 integers or list of tuples, specifying the R vectors, 
             which will be kept after filtering.
+
+        Returns
+        -------
+        filtered_model : ExchangeModel
+            Exchange model after filtering.
         """
         filtered_model = deepcopy(self)
 
