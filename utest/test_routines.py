@@ -11,18 +11,18 @@ class TestTerminalColours:
     def test_for_human(self):
         print("\n Please check that the following colours "
               "are displayed correctly:\n")
-        print(f'{TerminalCoulours.BLACK}BLACK{TerminalCoulours.RESET}',
-              f'{TerminalCoulours.RED}RED{TerminalCoulours.RESET}',
-              f'{TerminalCoulours.GREEN}GREEN{TerminalCoulours.RESET}',
-              f'{TerminalCoulours.YELLOW}YELLOW{TerminalCoulours.RESET}',
-              f'{TerminalCoulours.BLUE}BLUE{TerminalCoulours.RESET}',
-              f'{TerminalCoulours.MAGENTA}MAGENTA{TerminalCoulours.RESET}',
-              f'{TerminalCoulours.CYAN}CYAN{TerminalCoulours.RESET}',
-              f'{TerminalCoulours.WHITE}WHITE{TerminalCoulours.RESET}',
+        print(f'{BLACK}BLACK{RESET}',
+              f'{RED}RED{RESET}',
+              f'{GREEN}GREEN{RESET}',
+              f'{YELLOW}YELLOW{RESET}',
+              f'{BLUE}BLUE{RESET}',
+              f'{MAGENTA}MAGENTA{RESET}',
+              f'{CYAN}CYAN{RESET}',
+              f'{WHITE}WHITE{RESET}',
               sep='\n')
-        assert TerminalCoulours.WARNING == TerminalCoulours.YELLOW
-        assert TerminalCoulours.OK == TerminalCoulours.GREEN
-        assert TerminalCoulours.ERROR == TerminalCoulours.RED
+        assert WARNING == YELLOW
+        assert OK == GREEN
+        assert ERROR == RED
 
 
 def test_get_256_colours():
@@ -32,7 +32,7 @@ def test_get_256_colours():
         for j in range(0, 16):
             print(f'{get_256_colours(16 * i + j)}'
                   f'{16 * i + j:3}'
-                  f'{TerminalCoulours.RESET}',
+                  f'{RESET}',
                   end=' ')
         print()
     with pytest.raises(ValueError):
