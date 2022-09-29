@@ -129,7 +129,7 @@ class ExchangeModel:
     remove_atom(name)
         Remove magnetic atom from the model.
 
-    filter(distance=None, number=None, template=None, from_scratch=False)
+    filter(distance=None, template=None, R_vector=None)
         Filter all present exchange parameters
         with respect to the provided conditions.
     """
