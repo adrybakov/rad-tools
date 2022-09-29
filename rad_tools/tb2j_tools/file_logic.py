@@ -13,18 +13,18 @@ class Bond:
     Parameters
     ----------
     iso : float
-        Value of isotropic exchange parameter in meV. If `iso` is 
+        Value of isotropic exchange parameter in meV. If `iso` is
         not specified then it will be 0.
         J
         Matrix from:
 
-             J | 0 | 0 
+             J | 0 | 0
             ---|---|---
-             0 | J | 0 
+             0 | J | 0
             ---|---|---
-             0 | 0 | J 
+             0 | 0 | J
     aniso : 3 x 3 np.ndarray of floats
-        3 x 3 matrix of symmetric anisotropic exchange in meV. If `aniso` 
+        3 x 3 matrix of symmetric anisotropic exchange in meV. If `aniso`
         is not specified then it will be filled with zeros.
             J_xx | J_xy | J_xz
             -----|------|-----
@@ -32,7 +32,7 @@ class Bond:
             -----|------|-----
             J_xz | J_yz | J_zz
     dmi : 3 x 1 np.ndarray of floats
-        Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz) in meV. If `dmi` 
+        Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz) in meV. If `dmi`
         is not specified then it will be filled with zeros.
         [D_x, D_y, D_z]
         Matrix form:
@@ -42,9 +42,9 @@ class Bond:
             ------|------|------
               D_y | -D_x |  0
     matrix : 3 x 3 np.ndarray of floats
-        Exchange matrix in meV. If `matrix` is specified then `iso`, 
+        Exchange matrix in meV. If `matrix` is specified then `iso`,
         `aniso` and `dmi` will be ignored and derived from `matrix`.
-        If `matrix` is not specified then it will be derived from 
+        If `matrix` is not specified then it will be derived from
         `iso`, `aniso` and `dmi`.
             J_xx | J_xy | J_xz
             -----|------|-----
@@ -98,7 +98,7 @@ class ExchangeModel:
             ----|-----|----
             c_x | x_y | c_z
 
-    magnetic_atoms : dict 
+    magnetic_atoms : dict
        Dictionary with keys : str - marks of atoms and value : 1 x 3 np.ndarray
        - coordinate of the atom in Angstroms.
 
@@ -149,7 +149,7 @@ class ExchangeModel:
         Parameters
         ----------
         name : str
-            Mark for the atom. Note: if an atom with the same mark already 
+            Mark for the atom. Note: if an atom with the same mark already
             exists in `magnetic_atoms` then it will be rewritten.
         x : int or float
             x coordinate of the atom, in Angstroms.
@@ -164,13 +164,13 @@ class ExchangeModel:
         """
         Remove magnetic atom from the model
 
-        Note: this method will remove atom from `magnetic_atoms` and all the 
+        Note: this method will remove atom from `magnetic_atoms` and all the
         bonds, which starts or ends in this atom.
 
         Parameters
         ----------
         name : str
-            Mark for the atom. 
+            Mark for the atom.
         """
         if name in self.magnetic_atoms:
             del self.magnetic_atoms[name]
@@ -187,11 +187,11 @@ class ExchangeModel:
         Parameters
         ----------
         bond : Bond
-            An instance of Bond Class with the information about 
+            An instance of Bond Class with the information about
             exchange parameters.
         atom1 : str
             Name of atom1 in (0, 0, 0) unit cell.
-        atom2 : str 
+        atom2 : str
             Name of atom2 in R unit cell.
         R : tuple of ints
             Radius vector of the unit cell for atom2.
@@ -210,7 +210,7 @@ class ExchangeModel:
         ----------
         atom1 : str
             Name of atom1 in (0, 0, 0) unit cell.
-        atom2 : str 
+        atom2 : str
             Name of atom2 in R unit cell.
         R : tuple of ints
             Radius vector of the unit cell for atom2.
@@ -229,6 +229,32 @@ class ExchangeModel:
         b = np.sqrt(np.sum(self.cell[1]**2))
         c = np.sqrt(np.sum(self.cell[2]**2))
         return a, b, c
+
+    def get_atom_coordinates(self, atom1, atom2, R):
+        x1 = self.magnetic_atoms[atom1][0]
+        y1 = self.magnetic_atoms[atom1][1]
+        z1 = self.magnetic_atoms[atom1][2]
+
+        x2 = np.sum((R * self.cell.T).T, axis=0)[0] +\
+            self.magnetic_atoms[atom2][0]
+        y2 = np.sum((R * self.cell.T).T, axis=0)[1] +\
+            self.magnetic_atoms[atom2][1]
+        z2 = np.sum((R * self.cell.T).T, axis=0)[2] +\
+            self.magnetic_atoms[atom2][2]
+        return x1, y1, z1, x2, y2, z2
+
+    def get_space_dimensions(self):
+        X, Y, Z = 0, 0, 0
+        for atom1 in self.bonds:
+            for atom2 in self.bonds[atom1]:
+                for R in self.bonds[atom1][atom2]:
+                    x1, y1, z1, x2, y2, z2 = self.get_atom_coordinates(atom1,
+                                                                       atom2,
+                                                                       R)
+                    X = max(x1, x2, X)
+                    Y = max(x1, x2, Y)
+                    Z = max(x1, x2, Z)
+        return X, Y, Z
 
     def filter(self,
                distance: Union[float, int] = None,
@@ -352,6 +378,9 @@ class ExchangeModelTB2J(ExchangeModel):
             atom2 = line[1]
             R = tuple(map(int, line[2:5]))
             distance = float(line[-1])
+            iso = None,
+            aniso = None
+            dmi = None
             while line and self._minor_sep not in line:
                 line = file.readline()
 
