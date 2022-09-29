@@ -151,10 +151,13 @@ class ExchangeModel:
         name : str
             Mark for the atom. Note: if an atom with the same mark already
             exists in `magnetic_atoms` then it will be rewritten.
+
         x : int or float
             x coordinate of the atom, in Angstroms.
+
         y : int or float
             y coordinate of the atom, in Angstroms.
+
         z : int or float
             z coordinate of the atom, in Angstroms.
         """
@@ -210,8 +213,10 @@ class ExchangeModel:
         ----------
         atom1 : str
             Name of atom1 in (0, 0, 0) unit cell.
+
         atom2 : str
             Name of atom2 in R unit cell.
+
         R : tuple of ints
             Radius vector of the unit cell for atom2.
         """
@@ -225,12 +230,49 @@ class ExchangeModel:
                 del self.bonds[atom1]
 
     def get_lattice_vectors_length(self):
+        """
+        Getter for the lattice vectors length.
+
+        Returns
+        -------
+        a : float
+            Length of lattice vector a.
+
+        b : float
+            Length of lattice vector b.
+
+        c : float
+            Length of lattice vector c.
+        """
         a = np.sqrt(np.sum(self.cell[0]**2))
         b = np.sqrt(np.sum(self.cell[1]**2))
         c = np.sqrt(np.sum(self.cell[2]**2))
         return a, b, c
 
     def get_atom_coordinates(self, atom1, atom2, R):
+        """
+        Getter for the pair of atom coordinates.
+
+        Returns
+        -------
+        x1 : float
+            x coordinate of atom1 in the cell (0 0 0).
+
+        y1 : float
+            y coordinate of atom1 in the cell (0 0 0).
+
+        z1 : float
+            z coordinate of atom1 in the cell (0 0 0).
+
+        x2 : float
+            x coordinate of atom2 in the cell R.
+
+        y2 : float
+            y coordinate of atom2 in the cell R.
+
+        z2 : float
+            z coordinate of atom2 in the cell R.
+        """
         x1 = self.magnetic_atoms[atom1][0]
         y1 = self.magnetic_atoms[atom1][1]
         z1 = self.magnetic_atoms[atom1][2]
@@ -244,6 +286,23 @@ class ExchangeModel:
         return x1, y1, z1, x2, y2, z2
 
     def get_space_dimensions(self):
+        """
+        Getter for the sample size.
+
+        Return the maximum coordinate for all 3 axes.
+        Maximumm is taken for all directions.
+
+        Returns
+        -------
+        X : float
+            Maximum x coordinate.
+
+        Y : float
+            Maximum y coordinate.
+
+        Z : float
+            Maximum z coordinate.
+        """
         X, Y, Z = 0, 0, 0
         for atom1 in self.bonds:
             for atom2 in self.bonds[atom1]:
@@ -251,9 +310,9 @@ class ExchangeModel:
                     x1, y1, z1, x2, y2, z2 = self.get_atom_coordinates(atom1,
                                                                        atom2,
                                                                        R)
-                    X = max(x1, x2, X)
-                    Y = max(x1, x2, Y)
-                    Z = max(x1, x2, Z)
+                    X = max(abs(x1), abs(x2), X)
+                    Y = max(abs(x1), abs(x2), Y)
+                    Z = max(abs(x1), abs(x2), Z)
         return X, Y, Z
 
     def filter(self,
