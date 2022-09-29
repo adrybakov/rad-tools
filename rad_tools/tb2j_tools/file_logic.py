@@ -226,7 +226,8 @@ class ExchangeModel:
 
     def filter(self,
                distance: Union[float, int] = None,
-               template: list = None):
+               template: list = None,
+               R_vector: Union[list[Tuple[int]], Tuple[int]] = None):
         """
         Filter the exchange entries based on the given conditions.
 
@@ -244,6 +245,9 @@ class ExchangeModel:
         template : list
             List of pairs for keeping. Specifying atom1, atom2, R.
             [(atom1, atom2, R), ...]
+        R_vector : tuple of ints or list of tuples of ints
+            Tuple of 3 integers or list of tuples, specifying the R vectors, 
+            which will be kept after filtering.
         """
         filtered_model = deepcopy(self)
 
@@ -252,13 +256,22 @@ class ExchangeModel:
             for atom1, atom2, R in template:
                 filtered_model.add_bond(self.bonds[atom1][atom2][R],
                                         atom1, atom2, R)
-        bonds_for_removal = []
-        if distance is not None:
+        bonds_for_removal = set()
+        if R_vector is not None:
+            if type(R_vector) == tuple:
+                R_vector = {R_vector}
+            elif type(R_vector) == list:
+                R_vector = set(R_vector)
+        if distance is not None or R_vector is not None:
             for atom1 in filtered_model.bonds:
                 for atom2 in filtered_model.bonds[atom1]:
                     for R in filtered_model.bonds[atom1][atom2]:
-                        if filtered_model.bonds[atom1][atom2][R].dis > distance:
-                            bonds_for_removal.append((atom1, atom2, R))
+                        if distance is not None and \
+                                filtered_model.bonds[atom1][atom2][R].dis > distance:
+                            bonds_for_removal.add((atom1, atom2, R))
+                        if R_vector is not None and not R in R_vector:
+                            bonds_for_removal.add((atom1, atom2, R))
+
         for atom1, atom2, R in bonds_for_removal:
             filtered_model.remove_bond(atom1, atom2, R)
         return filtered_model

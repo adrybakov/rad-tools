@@ -1,4 +1,5 @@
 import os
+from re import template
 
 import pytest
 import numpy as np
@@ -191,6 +192,17 @@ class TestFilter(TestExchangeModelTB2J):
         filtered_model = self.model.filter(distance=distance)
         assert self.count_entries(filtered_model.bonds) == elements_number
 
+    @pytest.mark.parametrize("R_vector, elements_number", [
+        ((0, 0, 0), 2),
+        ([(0, 0, 0), (1, 0, 0)], 6),
+        ([(0, 0, 0), (1, 0, 0), (-1, 0, 0)], 10),
+        ([], 0),
+        ([(0, 0, 0), (1, 0, 0), (1, 0, 0)], 6)
+    ])
+    def test_filter_by_R_vector(self, R_vector, elements_number):
+        filtered_model = self.model.filter(R_vector=R_vector)
+        assert self.count_entries(filtered_model.bonds) == elements_number
+
     def test_filter_by_template(self):
         filtered_model = self.model.filter(
             template=self.template)
@@ -210,4 +222,29 @@ class TestFilter(TestExchangeModelTB2J):
                                              elements_number):
         filtered_model = self.model.filter(distance=distance,
                                            template=self.template)
+        assert self.count_entries(filtered_model.bonds) == elements_number
+
+    @pytest.mark.parametrize("R_vector, elements_number", [
+        ((0, 0, 0), 2),
+        ([(0, 0, 0), (1, 0, 0)], 5),
+        ([(0, 0, 0), (1, 0, 0), (-1, 0, 0)], 8),
+        ([], 0),
+        ([(0, 0, 0), (1, 0, 0), (1, 0, 0)], 5)
+    ])
+    def test_filter_by_R_vector_and_template(self, R_vector, elements_number):
+        filtered_model = self.model.filter(
+            R_vector=R_vector, template=self.template)
+        assert self.count_entries(filtered_model.bonds) == elements_number
+
+    @pytest.mark.parametrize("distance, R_vector, elements_number", [
+        (0, (0, 0, 0), 0),
+        (10, (0, 0, 0), 2),
+        (5, [(0, 0, 0), (1, 0, 0)], 5),
+        (10, [(0, 0, 0), (1, 0, 0), (-1, 0, 0)], 10),
+        (5, [(0, 0, 0), (1, 0, 0), (-1, 0, 0)], 8),
+        (100, [], 0)
+    ])
+    def test_filter_by_R_vector(self, distance, R_vector, elements_number):
+        filtered_model = self.model.filter(
+            R_vector=R_vector, distance=distance)
         assert self.count_entries(filtered_model.bonds) == elements_number
