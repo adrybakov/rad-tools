@@ -224,6 +224,12 @@ class ExchangeModel:
             if not self.bonds[atom1]:
                 del self.bonds[atom1]
 
+    def get_lattice_vectors_length(self):
+        a = np.sqrt(np.sum(self.cell[0]**2))
+        b = np.sqrt(np.sum(self.cell[1]**2))
+        c = np.sqrt(np.sum(self.cell[2]**2))
+        return a, b, c
+
     def filter(self,
                distance: Union[float, int] = None,
                template: list = None,

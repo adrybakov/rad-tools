@@ -248,3 +248,20 @@ class TestFilter(TestExchangeModelTB2J):
         filtered_model = self.model.filter(
             R_vector=R_vector, distance=distance)
         assert self.count_entries(filtered_model.bonds) == elements_number
+
+
+class TestExchangeModel:
+
+    @pytest.mark.parametrize("a, b, c, A, B, C", [
+        ((1, 0, 0), (0, 1, 0), (0, 0, 1), 1, 1, 1),
+        ((3.588, 0, 0), (0, 4.807, 0), (0, 0, 23.571), 3.588, 4.807, 23.571),
+        ((4, 3, 0), (0, 0, 0), (0, 0, 0), 5, 0, 0),
+        ((0, 0, 0), (4, 3, 0), (0, 0, 0), 0, 5, 0),
+        ((0, 0, 0), (0, 0, 0), (4, 3, 0), 0, 0, 5),
+    ])
+    def test_get_lattice_vectors_length(self, a, b, c, A, B, C):
+        model = ExchangeModel()
+        model.cell = np.array([a, b, c], dtype=float)
+        assert A == round(model.get_lattice_vectors_length()[0], 4)
+        assert B == round(model.get_lattice_vectors_length()[1], 4)
+        assert C == round(model.get_lattice_vectors_length()[2], 4)
