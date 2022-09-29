@@ -1,4 +1,5 @@
 from os import mkdir
+from os.path import split, isdir, join
 from typing import Union
 import numpy as np
 
@@ -40,24 +41,31 @@ def get_256_colours(n: int):
     return f'\033[38:5:{n}m'
 
 
-def check_make(path: str):
+def check_make_dir(path: str):
     """
     Check if directory exist, create one if not.
+
+    If parent dir does not exist this script will create one, recursively. 
 
     Parameters
     ----------
     path : str
         path to the desired directory
     """
+    head = path
+    tail = ''
+    dirs_to_make = []
+    while not isdir(head) and head:
+        try:
+            mkdir(head)
+        except FileNotFoundError:
+            head, tail = split(head)
+            dirs_to_make.append(tail)
 
-    try:
-        mkdir(path)
-    except FileExistsError:
-        pass
-
-
-def exchange_from_matrix():
-    pass
+    dirs_to_make.reverse()
+    for dir in dirs_to_make:
+        head = join(head, dir)
+        mkdir(head)
 
 
 def exchange_to_matrix(iso=None, aniso=None, dmi=None):

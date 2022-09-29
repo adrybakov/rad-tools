@@ -1,5 +1,5 @@
 from os.path import isdir, join
-from os import rmdir
+from os import rmdir, getcwd
 
 import pytest
 
@@ -50,14 +50,55 @@ def test_get_256_colours():
     assert get_256_colours(34) == '\033[38:5:34m'
 
 
-def test_check_make():
-    with pytest.raises(FileNotFoundError):
-        check_make(join('sadfsd', 'sdfgsd'))
-    check_make('tmp')
+def test_check_make_dir_simple():
+
+    check_make_dir('tmp')
     assert isdir('tmp') == True
-    check_make('tmp')
-    assert isdir('tmp') == True
+
     rmdir('tmp')
+
+
+def test_check_make_dir_simple_twice():
+
+    check_make_dir('tmp')
+    assert isdir('tmp') == True
+
+    check_make_dir('tmp')
+    assert isdir('tmp') == True
+
+    rmdir('tmp')
+
+
+def test_check_make_dir_complex():
+
+    check_make_dir(join('tmp', 'tmp_inside'))
+    assert isdir('tmp') == True
+    assert isdir(join('tmp', 'tmp_inside')) == True
+
+    rmdir(join('tmp', 'tmp_inside'))
+    rmdir('tmp')
+
+
+def test_check_make_dir_complex_twice():
+
+    check_make_dir(join('tmp', 'tmp_inside'))
+    assert isdir('tmp') == True
+    assert isdir(join('tmp', 'tmp_inside')) == True
+
+    check_make_dir(join('tmp', 'tmp_inside'))
+    assert isdir('tmp') == True
+    assert isdir(join('tmp', 'tmp_inside')) == True
+
+    rmdir(join('tmp', 'tmp_inside'))
+    rmdir('tmp')
+
+
+def test_check_make_dir_abs_path():
+
+    check_make_dir(join(getcwd(), 'tmp'))
+    assert isdir(join(getcwd(), 'tmp')) == True
+
+    rmdir(join(getcwd(), 'tmp'))
 
 
 @pytest.mark.parametrize("iso, aniso, dmi, matrix", [
