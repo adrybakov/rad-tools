@@ -2,6 +2,7 @@ from os import mkdir
 from os.path import split, isdir, join
 from typing import Union
 import numpy as np
+from math import asin, sqrt
 
 # Teminal colors
 BLACK = '\u001b[30m'
@@ -125,3 +126,70 @@ def exchange_from_matrix(matrix):
     iso = np.trace(symm) / 3
     aniso = symm - iso * np.identity(3, dtype=float)
     return iso, aniso, dmi
+
+
+def atom_mark_to_latex(mark):
+    """
+    Latexifier for atom marks of the form Cr12.
+
+    Parameters
+    ----------
+    mark : str
+        Mark of atom.
+
+    Returns
+    -------
+    new_mark : str
+        Latex version of the mark.
+    """
+    numbers = '0123456789'
+    new_mark = '$'
+    insert_underline = False
+    for symbol in mark:
+        if symbol in numbers and not insert_underline:
+            insert_underline = True
+            new_mark += '_{'
+        new_mark += symbol
+    new_mark += '}$'
+    return new_mark
+
+
+def rot_angle(x: Union[int, float], y: Union[int, float]):
+    """
+    Rotational ange from 2D vector.
+
+    Mathematically positive => counterclockwise.
+    From [0 to 360)
+
+    Parameters
+    ----------
+    x : float or int
+        x coordinate of a vector.
+    y : float or int
+        y coordinate of a vector.
+    """
+    try:
+        sin = abs(y) / sqrt(x**2 + y**2)
+    except ZeroDivisionError:
+        raise ValueError('Angle is ill defined (x = y = 0).')
+    if x > 0:
+        if y > 0:
+            return asin(sin) / np.pi * 180
+        elif y == 0:
+            return 0
+        elif y < 0:
+            return 360 - asin(sin) / np.pi * 180
+    elif x == 0:
+        if y > 0:
+            return 90
+        elif y == 0:
+            raise ValueError('Angle is ill defined (x = y = 0).')
+        elif y < 0:
+            return 270
+    elif x < 0:
+        if y > 0:
+            return 180 - asin(sin) / np.pi * 180
+        elif y == 0:
+            return 180
+        elif y < 0:
+            return 180 + asin(sin) / np.pi * 180

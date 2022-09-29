@@ -236,3 +236,30 @@ def test_exchange_from_matrix(iso, aniso, dmi, matrix):
         assert round(dmi[i], 4) == round(dmi_d[i], 4)
         for j in range(0, 3):
             assert round(aniso[i][j], 4) == round(aniso_d[i][j], 4)
+
+
+@pytest.mark.parametrize("mark, new_mark", [
+    ('Cr1', '$Cr_{1}$'),
+    ('Cr11', '$Cr_{11}$'),
+])
+def test_atom_mark_to_latex(mark, new_mark):
+    assert atom_mark_to_latex(mark) == new_mark
+
+
+@pytest.mark.parametrize("x, y, angle", [
+    (1, 0, 0),
+    (1, 1, 45),
+    (0, 1, 90),
+    (-1, 1, 135),
+    (-1, 0, 180),
+    (-1, -1, 225),
+    (0, -1, 270),
+    (1, -1, 315),
+])
+def test_rot_angle(x, y, angle):
+    assert round(rot_angle(x, y), 4) == round(angle, 4)
+
+
+def test_rot_angle_ill_case():
+    with pytest.raises(ValueError):
+        rot_angle(0, 0)
