@@ -73,13 +73,13 @@ def plot_2d(filename, out_dir, wtp='iso', draw_cells=False,
                             va='bottom', ha='right',
                             rotation_mode='anchor',
                             rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
-                            fontsize=10)
+                            fontsize=fontsize)
                 elif wtp == 'distance':
                     ax.text(xm, ym, round(bond.dis, 4),
                             va='bottom', ha='right',
                             rotation_mode='anchor',
                             rotation=rot_angle(x2 - x1, y2 - y1),
-                            fontsize=10)
+                            fontsize=fontsize)
 
     if draw_cells:
         cells = model.get_cells()
