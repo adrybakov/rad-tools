@@ -96,39 +96,37 @@ def plot_2d(filename, out_dir, wtp='iso', draw_cells=False,
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser(description="Script for visualisation of "
-                            "TB2J results")
+    parser = ArgumentParser(description="Script for visualisation of TB2J results",
+                            epilog="See the docs: ")
 
     parser.add_argument("-f", "--file",
                         type=str,
                         required=True,
-                        help="TB2J *.out file")
+                        help="""
+                        Relative or absulute path to the *exchange.out* file,
+                        including the name and extention of the file itself.
+                        """)
     parser.add_argument("-op", "--output-dir",
                         type=str,
                         default='.',
-                        help="Directory for saving outputs "
-                        "if there will be one. "
-                        "Could be non-existing, "
-                        "but the parent directory have to exist")
+                        help="""
+                        Relative or absolute path to the directory for 
+                        saving output.
+                        """)
     parser.add_argument("-wtp", "--what-to-plot",
                         type=str,
                         choices=['iso', 'distance'],
                         default='iso',
-                        help="What to plot? Isotropic exchange by default")
+                        help="Type of data for display.")
     parser.add_argument("-dc", "--draw-cells",
                         action="store_true",
                         default=False,
-                        help="Whenever to draw the supercells. "
-                        "False by default")
+                        help="Whenever to draw the supercell`s shape.")
     parser.add_argument("-R", "--R-vector",
                         type=int,
                         nargs="*",
                         default=None,
-                        help="R vectors for filtering the model. "
-                        "Specify 3n integers, they will be split into vectors. "
-                        "(First 3 -> R_1, ...) "
-                        "If 3n+1 or 3n+2 integers are specified then "
-                        "the last 1 or 2 numbers will be ignored")
+                        help="R vectors for filtering the model.")
     parser.add_argument("-maxd", "--max-distance",
                         type=float,
                         default=None,
