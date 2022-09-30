@@ -9,8 +9,8 @@ Currently sorting by R vector, distance and template file is supported.
 Parameters
 ----------
 
---filename, -f
-~~~~~~~~~~~~~~~~~~~~~~
+``--filename``, ``-f``
+
 Relative or absulute path to the *exchange.out* file, 
 including the name and extention of the file itself.
 
@@ -31,18 +31,18 @@ is reacheed.
   *type* : str
 
 ``--what-to-plot``, ``-wtp``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Type of data for display.
 
-Specifying the data for display at the graph. 
-Isotropic exchange parameters are displayed by default. 
-Currently available for display: Isotropic exchange parameter, distance.
+  Specifying the data for display at the graph. 
+  Isotropic exchange parameters are displayed by default. 
+  Currently available for display: Isotropic exchange parameter, distance.
 
-*default* : iso 
+    *default* : iso 
 
-*type* : str
+    *type* : str
 
-*choices* : iso, distance
+    *choices* : iso, distance
 
 ``--draw-cells``, ``-dc``
 ~~~~~~~~~~~~~~~~~~~~~~~~~
