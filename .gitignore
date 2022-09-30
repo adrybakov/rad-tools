@@ -6,3 +6,9 @@ __pycache__
 
 # VSCode stuff
 .vscode
+
+# Build
+build
+dist
+rad_tools.egg-info
+
