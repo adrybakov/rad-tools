@@ -1,10 +1,10 @@
 ``tb2j_plotter.py``
 ===================
-Script for visualisation of TB2J exchange.out file.
+Script for visualisation of TB2J results.
 ---------------------------------------------------
 
 Display Isotropic exchange or distances, each value in a separate picture
-by default. Currently sorting by R vectors, distances and template file 
+by default. Currently filtering by R vectors, distances and template file 
 is supported.
 
 Parameters

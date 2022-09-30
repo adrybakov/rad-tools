@@ -13,5 +13,6 @@ Update : ``pip3 install rad-tools --upgrade``
 Script for visualisation of TB2J exchange.out file.
 ---------------------------------------------------
 
-Allows the user to visualise the exchange.out file. 
-Currently sorting by R vector, distance and template file is supported.
+Display Isotropic exchange or distances, each value in a separate picture 
+by default. Currently filtering by R vectors, distances and template file 
+is supported.
