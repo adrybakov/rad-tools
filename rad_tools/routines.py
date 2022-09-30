@@ -154,7 +154,7 @@ def atom_mark_to_latex(mark):
     return new_mark
 
 
-def rot_angle(x: Union[int, float], y: Union[int, float]):
+def rot_angle(x: Union[int, float], y: Union[int, float], dummy=False):
     """
     Rotational ange from 2D vector.
 
@@ -178,6 +178,8 @@ def rot_angle(x: Union[int, float], y: Union[int, float]):
         elif y == 0:
             return 0
         elif y < 0:
+            if not dummy:
+                return -asin(sin) / np.pi * 180
             return 360 - asin(sin) / np.pi * 180
     elif x == 0:
         if y > 0:
@@ -185,11 +187,19 @@ def rot_angle(x: Union[int, float], y: Union[int, float]):
         elif y == 0:
             raise ValueError('Angle is ill defined (x = y = 0).')
         elif y < 0:
+            if not dummy:
+                return 90
             return 270
     elif x < 0:
         if y > 0:
+            if not dummy:
+                return -asin(sin) / np.pi * 180
             return 180 - asin(sin) / np.pi * 180
         elif y == 0:
+            if not dummy:
+                return 0
             return 180
         elif y < 0:
+            if not dummy:
+                return asin(sin) / np.pi * 180
             return 180 + asin(sin) / np.pi * 180

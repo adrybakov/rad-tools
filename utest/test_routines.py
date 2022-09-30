@@ -256,7 +256,21 @@ def test_atom_mark_to_latex(mark, new_mark):
     (0, -1, 270),
     (1, -1, 315),
 ])
-def test_rot_angle(x, y, angle):
+def test_rot_angle_dummy(x, y, angle):
+    assert round(rot_angle(x, y, dummy=True), 4) == round(angle, 4)
+
+
+@pytest.mark.parametrize("x, y, angle", [
+    (1, 0, 0),
+    (1, 1, 45),
+    (0, 1, 90),
+    (-1, 1, -45),
+    (-1, 0, 0),
+    (-1, -1, 45),
+    (0, -1, 90),
+    (1, -1, -45),
+])
+def test_rot_angle_not_dummy(x, y, angle):
     assert round(rot_angle(x, y), 4) == round(angle, 4)
 
 
