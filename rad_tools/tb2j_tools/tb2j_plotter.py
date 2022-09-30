@@ -10,7 +10,7 @@ from rad_tools.tb2j_tools.file_logic import ExchangeModelTB2J
 from rad_tools.routines import check_make_dir, atom_mark_to_latex, rot_angle
 
 
-def plot_2d(filename, out_dir,
+def plot_2d(filename, out_dir, wtp='iso', draw_cells=False,
             min_distance=None, max_distance=None,
             template=None, R_vector=None,
             double_bonds=False):
@@ -20,9 +20,10 @@ def plot_2d(filename, out_dir,
                          max_distance=max_distance,
                          R_vector=R_vector,
                          template=template)
+    dummy = False
     if not double_bonds:
         model = model.remove_double_bonds()
-    a, b, c = model.get_lattice_vectors_length()
+        dummy = True
     X, Y, Z = model.get_space_dimensions()
     if X == 0 and Y == 0:
         X = Y = 1
@@ -66,18 +67,29 @@ def plot_2d(filename, out_dir,
                 ax.text(x2, y2, atom_mark_to_latex(atom2),
                         va='center', ha='center',
                         fontsize=15)
-                if double_bonds:
+                if wtp == 'iso':
                     ax.text(xm, ym, bond.iso,
                             va='bottom', ha='right',
                             rotation_mode='anchor',
-                            rotation=rot_angle(x2 - x1, y2 - y1, dummy=True),
+                            rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
                             fontsize=10)
-                else:
-                    ax.text(xm, ym, bond.iso,
+                elif wtp == 'distance':
+                    ax.text(xm, ym, bond.dis,
                             va='bottom', ha='right',
                             rotation_mode='anchor',
                             rotation=rot_angle(x2 - x1, y2 - y1),
                             fontsize=10)
+
+    if draw_cells:
+        cells = model.get_cells()
+        a_x, a_y, a_z = tuple(model.cell[0])
+        b_x, b_y, b_z = tuple(model.cell[1])
+        for Rx, Ry, Rz in cells:
+            Rx = Rx * (a_x + b_x)
+            Ry = Ry * (a_y + b_y)
+            ax.plot(np.array([0, a_x, a_x + b_x, b_x, 0]) + Rx,
+                    np.array([0, a_y, a_y + b_y, b_y, 0]) + Ry,
+                    linewidth=1, color="#BCBF5A")
 
     plt.savefig(join(out_dir, f'{split(filename)[1]}.png'), dpi=400)
 
@@ -97,6 +109,16 @@ if __name__ == '__main__':
                         "if there will be one. "
                         "Could be non-existing, "
                         "but the parent directory have to exist")
+    parser.add_argument("-wtp", "--what-to-plot",
+                        type=str,
+                        choices=['iso', 'distance'],
+                        default='iso',
+                        help="What to plot? Isotropic exchange by default")
+    parser.add_argument("-dc", "--draw-cells",
+                        action="store_true",
+                        default=False,
+                        help="Whenever to draw the supercells. "
+                        "False by default")
     parser.add_argument("-R", "--R-vector",
                         type=int,
                         nargs="*",
@@ -149,6 +171,8 @@ if __name__ == '__main__':
 
     plot_2d(filename=args.file,
             out_dir=args.output_dir,
+            wtp=args.what_to_plot,
+            draw_cells=args.draw_cells,
             min_distance=args.min_distance,
             max_distance=args.max_distance,
             template=args.template,
