@@ -10,14 +10,22 @@ from rad_tools.tb2j_tools.file_logic import ExchangeModelTB2J
 from rad_tools.routines import check_make_dir, atom_mark_to_latex, rot_angle
 
 
-def plot_2d(filename, out_dir, max_distance=None, template=None, R_vector=None):
-    model = ExchangeModelTB2J(filename)
-    model = model.filter(distance=max_distance,
-                         R_vector=R_vector,
-                         template=template).remove_double_bonds()
+def plot_2d(filename, out_dir,
+            min_distance=None, max_distance=None,
+            template=None, R_vector=None,
+            double_bonds=False):
 
+    model = ExchangeModelTB2J(filename)
+    model = model.filter(min_distance=min_distance,
+                         max_distance=max_distance,
+                         R_vector=R_vector,
+                         template=template)
+    if not double_bonds:
+        model = model.remove_double_bonds()
     a, b, c = model.get_lattice_vectors_length()
     X, Y, Z = model.get_space_dimensions()
+    if X == 0 and Y == 0:
+        X = Y = 1
     fontsize = 10 * 1.1 * Y / 5
     plt.rcParams.update({'font.size': fontsize})
     mpl.rcParams.update({'axes.linewidth': 1.1 * Y / 5})
@@ -58,11 +66,18 @@ def plot_2d(filename, out_dir, max_distance=None, template=None, R_vector=None):
                 ax.text(x2, y2, atom_mark_to_latex(atom2),
                         va='center', ha='center',
                         fontsize=15)
-                ax.text(xm, ym, bond.iso,
-                        va='bottom', ha='right',
-                        rotation_mode='anchor',
-                        rotation=rot_angle(x2 - x1, y2 - y1),
-                        fontsize=10)
+                if double_bonds:
+                    ax.text(xm, ym, bond.iso,
+                            va='bottom', ha='right',
+                            rotation_mode='anchor',
+                            rotation=rot_angle(x2 - x1, y2 - y1, dummy=True),
+                            fontsize=10)
+                else:
+                    ax.text(xm, ym, bond.iso,
+                            va='bottom', ha='right',
+                            rotation_mode='anchor',
+                            rotation=rot_angle(x2 - x1, y2 - y1),
+                            fontsize=10)
 
     plt.savefig(join(out_dir, f'{split(filename)[1]}.png'), dpi=400)
 
@@ -91,11 +106,23 @@ if __name__ == '__main__':
                         "(First 3 -> R_1, ...) "
                         "If 3n+1 or 3n+2 integers are specified then "
                         "the last 1 or 2 numbers will be ignored")
-    parser.add_argument("-d", "--max-distance",
+    parser.add_argument("-maxd", "--max-distance",
                         type=float,
                         default=None,
                         help="Maximum distance for the neighbors to be shown "
                         "(<=)"
+                        )
+    parser.add_argument("-mind", "--min-distance",
+                        type=float,
+                        default=None,
+                        help="Minimum distance for the neighbors to be shown "
+                        "(>=)"
+                        )
+    parser.add_argument("-d", "--distance",
+                        type=float,
+                        default=None,
+                        help="Exact distance for the neighbors to be shown "
+                        "(=)"
                         )
     parser.add_argument("-t", "--template",
                         type=str,
@@ -103,8 +130,16 @@ if __name__ == '__main__':
                         help="Template for filtering the Exchange, "
                         "it have to be a plain text file "
                         "which will be passed to the Template class")
+    parser.add_argument("-db", "--double-bonds",
+                        default=False,
+                        action="store_true",
+                        help="Whenever to show both directions "
+                        "of the bond (if they are in TB2J file at first place)")
 
     args = parser.parse_args()
+
+    if args.distance is not None:
+        args.min_distance = args.max_distance = args.distance
 
     check_make_dir(args.output_dir)
     if args.R_vector is not None:
@@ -114,6 +149,8 @@ if __name__ == '__main__':
 
     plot_2d(filename=args.file,
             out_dir=args.output_dir,
+            min_distance=args.min_distance,
             max_distance=args.max_distance,
             template=args.template,
-            R_vector=args.R_vector)
+            R_vector=args.R_vector,
+            double_bonds=args.double_bonds)
