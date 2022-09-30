@@ -9,11 +9,3 @@ Script for visualisation of TB2J exchange.out file.
 
 Allows the user to visualise the exchange.out file. 
 Currently sorting by R vector, distance and template file is supported.
-
-
-
-
-
-
-
-
