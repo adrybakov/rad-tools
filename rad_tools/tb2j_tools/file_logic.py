@@ -352,6 +352,24 @@ class ExchangeModel:
                     Z = max(abs(x1), abs(x2), Z)
         return X, Y, Z
 
+    def get_cells(self):
+        """
+        Getter for the list of cells.
+
+        Return the list of R, specifying all cell that are present in the model.
+
+        Returns
+        -------
+        cells : list of tuples of ints
+            List of R.
+        """
+        cells = set()
+        for atom1 in self.bonds:
+            for atom2 in self.bonds[atom1]:
+                for R in self.bonds[atom1][atom2]:
+                    cells.add(R)
+        return list(cells)
+
     # TODO It is ugly, redo in a beautifull way.
     def remove_double_bonds(self):
         """
