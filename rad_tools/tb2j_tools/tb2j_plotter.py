@@ -1,10 +1,10 @@
 from argparse import ArgumentParser
 from os.path import join, split
+from math import atan
 
 from matplotlib import pyplot as plt
 import matplotlib as mpl
 import numpy as np
-from math import atan
 
 from rad_tools.tb2j_tools.file_logic import ExchangeModelTB2J
 from rad_tools.routines import check_make_dir, atom_mark_to_latex, rot_angle
