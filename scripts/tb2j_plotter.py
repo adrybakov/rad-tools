@@ -97,7 +97,9 @@ def plot_2d(filename, out_dir, wtp='iso', draw_cells=False,
 
 if __name__ == '__main__':
     parser = ArgumentParser(description="Script for visualisation of TB2J results",
-                            epilog="See the docs: ")
+                            epilog="""
+                            See the docs: 
+                            https://github.com/adrybakov/rad-tools/blob/master/doc/tb2j_plotter.rst""")
 
     parser.add_argument("-f", "--file",
                         type=str,
@@ -130,32 +132,29 @@ if __name__ == '__main__':
     parser.add_argument("-maxd", "--max-distance",
                         type=float,
                         default=None,
-                        help="Maximum distance for the neighbors to be shown "
-                        "(<=)"
+                        help="Maximum distance (<=)."
                         )
     parser.add_argument("-mind", "--min-distance",
                         type=float,
                         default=None,
-                        help="Minimum distance for the neighbors to be shown "
-                        "(>=)"
+                        help="Minimum distance. (>=)"
                         )
     parser.add_argument("-d", "--distance",
                         type=float,
                         default=None,
-                        help="Exact distance for the neighbors to be shown "
-                        "(=)"
+                        help="Exact distance. (=)"
                         )
     parser.add_argument("-t", "--template",
                         type=str,
                         default=None,
-                        help="Template for filtering the Exchange, "
-                        "it have to be a plain text file "
-                        "which will be passed to the Template class")
+                        help="""
+                        Relative or absulute path to the template file, 
+                        including the name and extention of the file itself.
+                        """)
     parser.add_argument("-db", "--double-bonds",
                         default=False,
                         action="store_true",
-                        help="Whenever to show both directions "
-                        "of the bond (if they are in TB2J file at first place)")
+                        help="Whenever to keep both bonds.")
 
     args = parser.parse_args()
 
