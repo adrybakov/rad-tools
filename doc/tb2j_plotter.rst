@@ -32,7 +32,7 @@ is reacheed.
 
 ``--what-to-plot``, ``-wtp``
 
-Type of data for display.
+  Type of data for display.
 
   Specifying the data for display at the graph. 
   Isotropic exchange parameters are displayed by default. 
