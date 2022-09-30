@@ -69,13 +69,13 @@ def plot_2d(filename, out_dir, wtp='iso', draw_cells=False,
                         va='center', ha='center',
                         fontsize=15)
                 if wtp == 'iso':
-                    ax.text(xm, ym, bond.iso,
+                    ax.text(xm, ym, round(bond.iso, 4),
                             va='bottom', ha='right',
                             rotation_mode='anchor',
                             rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
                             fontsize=10)
                 elif wtp == 'distance':
-                    ax.text(xm, ym, bond.dis,
+                    ax.text(xm, ym, round(bond.dis, 4),
                             va='bottom', ha='right',
                             rotation_mode='anchor',
                             rotation=rot_angle(x2 - x1, y2 - y1),
