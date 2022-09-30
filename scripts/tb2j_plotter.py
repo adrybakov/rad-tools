@@ -86,10 +86,10 @@ def plot_2d(filename, out_dir, wtp='iso', draw_cells=False,
         a_x, a_y, a_z = tuple(model.cell[0])
         b_x, b_y, b_z = tuple(model.cell[1])
         for Rx, Ry, Rz in cells:
-            Rx = Rx * (a_x + b_x)
-            Ry = Ry * (a_y + b_y)
-            ax.plot(np.array([0, a_x, a_x + b_x, b_x, 0]) + Rx,
-                    np.array([0, a_y, a_y + b_y, b_y, 0]) + Ry,
+            X_shift = Rx * a_x + Ry * b_x
+            Y_shift = Rx * a_y + Ry * b_y
+            ax.plot(np.array([0, a_x, a_x + b_x, b_x, 0]) + X_shift,
+                    np.array([0, a_y, a_y + b_y, b_y, 0]) + Y_shift,
                     linewidth=1, color="#BCBF5A")
 
     plt.savefig(join(out_dir, f'{split(filename)[1]}.png'), dpi=400)
