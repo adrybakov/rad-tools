@@ -352,6 +352,7 @@ class ExchangeModel:
                     Z = max(abs(x1), abs(x2), Z)
         return X, Y, Z
 
+    # TODO It is ugly, redo in a beautifull way.
     def remove_double_bonds(self):
         """
         Remove double bonds.
@@ -383,7 +384,8 @@ class ExchangeModel:
         return unbounded_model
 
     def filter(self,
-               distance: Union[float, int] = None,
+               max_distance: Union[float, int] = None,
+               min_distance: Union[float, int] = None,
                template: list = None,
                R_vector: Union[list[Tuple[int]], Tuple[int]] = None):
         """
@@ -398,11 +400,16 @@ class ExchangeModel:
 
         Parameters
         ----------
-        distance : float or int, optional
+        max_distance : float or int, optional
             Distance for sorting, the condition is <<less or equal>>.
+
+        min_distance : float or int, optional
+            Distance for sorting, the condition is <<more or equal>>.
+
         template : list
             List of pairs for keeping. Specifying atom1, atom2, R.
             [(atom1, atom2, R), ...]
+
         R_vector : tuple of ints or list of tuples of ints
             Tuple of 3 integers or list of tuples, specifying the R vectors, 
             which will be kept after filtering.
@@ -425,13 +432,21 @@ class ExchangeModel:
                 R_vector = {R_vector}
             elif type(R_vector) == list:
                 R_vector = set(R_vector)
-        if distance is not None or R_vector is not None:
+        if min_distance is not None or\
+           max_distance is not None or\
+           R_vector is not None:
             for atom1 in filtered_model.bonds:
                 for atom2 in filtered_model.bonds[atom1]:
                     for R in filtered_model.bonds[atom1][atom2]:
-                        if distance is not None and \
-                                filtered_model.bonds[atom1][atom2][R].dis > distance:
+
+                        dis = filtered_model.bonds[atom1][atom2][R].dis
+
+                        if max_distance is not None and dis > max_distance:
                             bonds_for_removal.add((atom1, atom2, R))
+
+                        if min_distance is not None and dis < min_distance:
+                            bonds_for_removal.add((atom1, atom2, R))
+
                         if R_vector is not None and not R in R_vector:
                             bonds_for_removal.add((atom1, atom2, R))
 
