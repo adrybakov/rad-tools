@@ -3,16 +3,16 @@
 Script for visualisation of TB2J exchange.out file.
 ---------------------------------------------------
 
-Allows the user to visualise the exchange.out file. 
-Currently sorting by R vector, distance and template file is supported.
+Display Isotropic exchange or distances.
+Currently sorting by R vectors, distances and template file is supported.
 
 Parameters
 ----------
 
 ``--filename``, ``-f``
 
-    Relative or absulute path to the *exchange.out* file, 
-    including the name and extention of the file itself.
+    Relative or absulute path to the TB2J exchange output file, 
+    including the name and extention of the file.
 
         *required* : True
 
@@ -20,11 +20,11 @@ Parameters
 
 ``--output-dir``, ``-op``
 
-    Relative or absolute path to the directory for saving output.
+    Relative or absolute path to the directory for saving outputs.
 
-    If the directory does not exist the it will be created from the path.
-    The creation will be applied recursevly until the existent directory 
-    is reached.
+    If the directory does not exist then it is created from the specified path.
+    The creation is applied recursevly to the path, starting from the right
+    until the existent directory is reached.
 
         *default* : current directory
         
@@ -34,22 +34,21 @@ Parameters
 
     Type of data for display.
 
-    Specifying the data for display at the graph. 
-    Isotropic exchange parameters are displayed by default. 
+    Specifying the data for display at the graph. Everything is displayed by default. 
     Currently available for display: Isotropic exchange parameter, distance.
 
-        *default* : iso 
+        *default* : all
 
         *type* : str
 
-        *choices* : iso, distance
+        *choices* : all, iso, distance
 
 ``--draw-cells``, ``-dc``
 
     Whenever to draw the supercell`s shape.
 
     If specified then the shape of all supercells 
-    presented in the model after filtering will be drawn.
+    presented in the model after filtering is drawn.
 
         *default* : False
 
@@ -59,12 +58,12 @@ Parameters
 
     R vectors for filtering the model.
 
-    In TB2J outputs a bond is defined by atom 1 (from) and atom 2 (to). 
-    Atom 1 always located in (0, 0, 0) supercell, while atom2 is located in 
+    In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to). 
+    Atom 1 always located in (0, 0, 0) supercell, while atom 2 is located in 
     R = (i, j, k) supercell. This parameter tells to keep only the bonds
     for which atom 2 is located in one of specified R supercells. 
-    In order to specify one supercells provide a number of integers 
-    separated by spaces. They will be grouped by three to form an R vectors 
+    In order to specify supercells provide a set of integers 
+    separated by spaces. They will be grouped by three to form a set of R vectors 
     starting from the left. If the last group will contain 1 or 2 integers 
     they will be ignored.
 
@@ -76,7 +75,7 @@ Parameters
 
 ``--max-distance``, ``-maxd``
 
-    Maximum distance. (<=) 
+    (<=) Maximum distance.
 
     All the bonds with the distance beetwen atom 1 and atom 2 
     greater then maximum distance will be excluded from the model.
@@ -87,7 +86,7 @@ Parameters
 
 ``--min-distance``, ``-mind``
 
-    Minimum distance. (>=)
+    (>=) Minimum distance.
 
     All the bonds with the distance beetwen atom 1 and atom 2 
     lower then minimum distance will be excluded from the model.
@@ -98,16 +97,16 @@ Parameters
 
 ``--distance``, ``-d``
 
-    Exact distance. (=)
+    (=) Exact distance.
 
-    Only the bonds with the distance exact as this one will remain in the model.
-    Note that with this parameter specified there is no point in specifying 
-    maximum or minimum distance.
+    Only the bonds with the distance exact as this one remains in the model.
+    Note: there is no point in specifying maximum or minimum distance when 
+    this parameter is specified.
 
 ``--template``, ``-t``
 
-    Relative or absulute path to the template file, 
-    including the name and extention of the file itself.
+    Relative or absolute path to the template file, 
+    including the name and extention of the file.
 
     #TODO
 
@@ -119,21 +118,15 @@ Parameters
 
     Whenever to keep both bonds.
 
-    In TB2J file for R = (0, 0, 0) there is two bonds for the pair of 
-    atom 1 and atom 2: from 1 to 2 and from 2 to 1. Isotropic and 
+    In TB2J file there is two bonds for the pair of atom 1 and atom 2: 
+    from 1 to 2 and from 2 to 1 (when R = (0, 0, 0)). Isotropic and 
     anisotropic exchange and distance usially are exactly the same. 
     DMI vector have the same module and opposite directions. 
-    If this parameter specifyied then both bonds will be displayed. 
-    Otherwise bonds will be combined in one by taking the average beetween
-    exchange poarameters (Note that it will force DMI to be equal to zero).
+    If this parameter is specifyied then both bonds are displayed. 
+    Otherwise bonds are combined in one by taking the average beetween
+    exchange parameters (Note that it forces DMI to be equal to zero).
 
         *default* : False
 
         *action* : store_true
-
-
-
-
-
-    
-
+ 
