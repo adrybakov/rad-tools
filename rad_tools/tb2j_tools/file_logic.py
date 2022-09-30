@@ -69,7 +69,6 @@ class Bond:
 
         if matrix is not None:
             self.matrix = np.array(matrix, dtype=float)
-            self.iso, self.aniso, self.dmi = exchange_from_matrix(self.matrix)
         else:
             if iso is not None:
                 self.iso = float(iso)
@@ -78,6 +77,8 @@ class Bond:
             if dmi is not None:
                 self.dmi = np.array(dmi, dtype=float)
             self.matrix = exchange_to_matrix(self.iso, self.aniso, self.dmi)
+        # To ensure the correct decomposition
+        self.iso, self.aniso, self.dmi = exchange_from_matrix(self.matrix)
 
         if distance is not None:
             self.dis = float(distance)
