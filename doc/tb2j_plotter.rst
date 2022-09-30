@@ -3,8 +3,9 @@
 Script for visualisation of TB2J exchange.out file.
 ---------------------------------------------------
 
-Display Isotropic exchange or distances.
-Currently sorting by R vectors, distances and template file is supported.
+Display Isotropic exchange or distances, each value in a separate picture
+by default. Currently sorting by R vectors, distances and template file 
+is supported.
 
 Parameters
 ----------
@@ -45,7 +46,8 @@ Parameters
 
     Type of data for display.
 
-    Specifying the data for display at the graph. Everything is displayed by default. 
+    Specifying the data for display at the graph. 
+    Everything is displayed by default, each value in a separate picture. 
     Currently available for display: Isotropic exchange parameter, distance.
 
         *default* : all
