@@ -12,3 +12,5 @@ build
 dist
 rad_tools.egg-info
 
+exchange.out
+

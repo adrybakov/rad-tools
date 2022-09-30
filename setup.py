@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 __version__ = "0.0.0.1"
 
-long_description = """Collection of scripts from my PhD"""
+long_description = """Collection of scripts from my PhD."""
 
 setup(
     name='rad-tools',
@@ -13,6 +13,8 @@ setup(
     author='Andrey Rybakov',
     author_email='rybakov.ad@icloud.com',
     license='MIT license',
+    url='https://github.com/adrybakov/rad-tools',
+    download_url='https://github.com/adrybakov/rad-tools.git',
     packages=find_packages(),
     scripts=[
         'scripts/tb2j_plotter.py'
