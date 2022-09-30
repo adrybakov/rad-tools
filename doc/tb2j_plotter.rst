@@ -11,12 +11,12 @@ Parameters
 
 ``--filename``, ``-f``
 ~~~~~~~~~~~~~~~~~~~~~~
-Relative or absulute path to the *exchange.out* file, 
-including the name and extention of the file itself.
+   Relative or absulute path to the *exchange.out* file, 
+   including the name and extention of the file itself.
 
-*required* : True
+   *required* : True
 
-*type* : str
+   *type* : str
 
 ``--output-dir``, ``-op``
 ~~~~~~~~~~~~~~~~~~~~~~~~~
