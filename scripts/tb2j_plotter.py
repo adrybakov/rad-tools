@@ -1,3 +1,4 @@
+#! /usr/local/bin/python3
 from argparse import ArgumentParser
 from os.path import join, split
 from math import atan
