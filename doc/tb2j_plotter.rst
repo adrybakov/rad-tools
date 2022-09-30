@@ -19,16 +19,16 @@ including the name and extention of the file itself.
    *type* : str
 
 ``--output-dir``, ``-op``
-~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Relative or absolute path to the directory for saving output.
 
 If the directory does not exist the it will be created from the path.
 The creation will be applied recursevly until the existent directory 
 is reacheed.
 
-*default* : current directory
+  *default* : current directory
         
-*type* : str
+  *type* : str
 
 ``--what-to-plot``, ``-wtp``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
