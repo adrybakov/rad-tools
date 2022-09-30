@@ -9,7 +9,7 @@ Currently sorting by R vector, distance and template file is supported.
 Parameters
 ----------
 
-``--filename``, ``-f``
+--filename, -f
 ~~~~~~~~~~~~~~~~~~~~~~
    Relative or absulute path to the *exchange.out* file, 
    including the name and extention of the file itself.
