@@ -11,7 +11,8 @@ from rad_tools.tb2j_tools.file_logic import ExchangeModelTB2J
 from rad_tools.routines import check_make_dir, atom_mark_to_latex, rot_angle
 
 
-def plot_2d(filename, out_dir, wtp='iso', draw_cells=False,
+def plot_2d(filename, out_dir='.', out_name='exchange',
+            wtp='iso', draw_cells=False,
             min_distance=None, max_distance=None,
             template=None, R_vector=None,
             double_bonds=False):
@@ -21,10 +22,12 @@ def plot_2d(filename, out_dir, wtp='iso', draw_cells=False,
                          max_distance=max_distance,
                          R_vector=R_vector,
                          template=template)
-    dummy = False
+    dummy = True
+    ha = 'right'
     if not double_bonds:
         model = model.remove_double_bonds()
-        dummy = True
+        dummy = False
+        ha = 'center'
     X, Y, Z = model.get_space_dimensions()
     if X == 0 and Y == 0:
         X = Y = 1
@@ -64,21 +67,21 @@ def plot_2d(filename, out_dir, wtp='iso', draw_cells=False,
 
                 ax.text(x1, y1, atom_mark_to_latex(atom1),
                         va='center', ha='center',
-                        fontsize=15)
+                        fontsize=1.5 * fontsize)
                 ax.text(x2, y2, atom_mark_to_latex(atom2),
                         va='center', ha='center',
-                        fontsize=15)
+                        fontsize=1.5 * fontsize)
                 if wtp == 'iso':
                     ax.text(xm, ym, round(bond.iso, 4),
-                            va='bottom', ha='right',
+                            va='bottom', ha=ha,
                             rotation_mode='anchor',
                             rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
                             fontsize=fontsize)
                 elif wtp == 'distance':
                     ax.text(xm, ym, round(bond.dis, 4),
-                            va='bottom', ha='right',
+                            va='bottom', ha=ha,
                             rotation_mode='anchor',
-                            rotation=rot_angle(x2 - x1, y2 - y1),
+                            rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
                             fontsize=fontsize)
 
     if draw_cells:
@@ -92,7 +95,7 @@ def plot_2d(filename, out_dir, wtp='iso', draw_cells=False,
                     np.array([0, a_y, a_y + b_y, b_y, 0]) + Y_shift,
                     linewidth=1, color="#BCBF5A")
 
-    plt.savefig(join(out_dir, f'{split(filename)[1]}.png'), dpi=400)
+    plt.savefig(join(out_dir, f'{out_name}.{wtp}.png'), dpi=400)
 
 
 if __name__ == '__main__':
@@ -100,6 +103,8 @@ if __name__ == '__main__':
                             epilog="""
                             See the docs: 
                             https://github.com/adrybakov/rad-tools/blob/master/doc/tb2j_plotter.rst""")
+
+    plot_data_type = ['iso', 'distance']
 
     parser.add_argument("-f", "--file",
                         type=str,
@@ -115,10 +120,14 @@ if __name__ == '__main__':
                         Relative or absolute path to the directory for 
                         saving output.
                         """)
+    parser.add_argument("-on", "--output-name",
+                        type=str,
+                        default='exchange',
+                        help="Seedname for the output files.")
     parser.add_argument("-wtp", "--what-to-plot",
                         type=str,
-                        choices=['iso', 'distance'],
-                        default='iso',
+                        choices=['all'] + plot_data_type,
+                        default='all',
                         help="Type of data for display.")
     parser.add_argument("-dc", "--draw-cells",
                         action="store_true",
@@ -167,12 +176,26 @@ if __name__ == '__main__':
                                  dtype=int).reshape((len(args.R_vector)//3, 3))
         args.R_vector = list(map(tuple, args.R_vector.tolist()))
 
-    plot_2d(filename=args.file,
-            out_dir=args.output_dir,
-            wtp=args.what_to_plot,
-            draw_cells=args.draw_cells,
-            min_distance=args.min_distance,
-            max_distance=args.max_distance,
-            template=args.template,
-            R_vector=args.R_vector,
-            double_bonds=args.double_bonds)
+    if args.what_to_plot == 'all':
+        for data_type in plot_data_type:
+            plot_2d(filename=args.file,
+                    out_dir=args.output_dir,
+                    out_name=args.output_name,
+                    wtp=data_type,
+                    draw_cells=args.draw_cells,
+                    min_distance=args.min_distance,
+                    max_distance=args.max_distance,
+                    template=args.template,
+                    R_vector=args.R_vector,
+                    double_bonds=args.double_bonds)
+    else:
+        plot_2d(filename=args.file,
+                out_dir=args.output_dir,
+                out_name=args.output_name,
+                wtp=args.what_to_plot,
+                draw_cells=args.draw_cells,
+                min_distance=args.min_distance,
+                max_distance=args.max_distance,
+                template=args.template,
+                R_vector=args.R_vector,
+                double_bonds=args.double_bonds)

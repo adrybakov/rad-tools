@@ -30,6 +30,17 @@ Parameters
         
         *type* : str
 
+``--output-name``, ``-on``
+
+    Seedname for the output files.
+
+    Output file will have the following name structure:
+    *seedname*.*display_data_type*.png
+
+        *default* : exchange
+        
+        *type* : str
+
 ``--what-to-plot``, ``-wtp``
 
     Type of data for display.

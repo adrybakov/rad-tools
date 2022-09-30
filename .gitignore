@@ -12,5 +12,6 @@ build
 dist
 rad_tools.egg-info
 
-exchange.out
+# Folder for debugging
+debug
 
