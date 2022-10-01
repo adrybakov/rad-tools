@@ -154,21 +154,35 @@ class ExchangeModel:
     Methods
     -------
 
-    add_bond(bond, atom1, atom2, R)
-        Add one bond to the model.
-
-    remove_bond(atom1, atom2, R)
-        Remove one bond from the model.
-
-    add_atom(name, x, y, z)
+    add_atom
         Add magnetic atom to the model.
 
-    remove_atom(name)
+    remove_atom
         Remove magnetic atom from the model.
 
-    filter(distance=None, template=None, R_vector=None)
-        Filter all present exchange parameters
-        with respect to the provided conditions.
+    add_bond
+        Add one bond to the model.
+
+    remove_bond
+        Remove one bond from the model.
+
+    get_lattice_vectors_length
+        Getter for the lattice vectors length.
+
+    get_atom_coordinates
+        Getter for the pair of atom coordinates.
+
+    get_space_dimensions
+        Getter for the sample size.
+
+    get_cells
+        Getter for the list of cells.
+
+    remove_double_bonds
+        Remove double bonds.
+
+    filter
+        Filter the exchange entries based on the given conditions.
     """
 
     def __init__(self) -> None:
@@ -481,6 +495,7 @@ class ExchangeModelTB2J(ExchangeModel):
 
     Parameters
     ----------
+    
     filename : str
         Path to the TB2J output file.
     """

@@ -2,6 +2,6 @@ API Reference
 =============
 
 .. toctree::
-   :maxdepth: 5
+   :maxdepth: 4  
 
    rad_tools

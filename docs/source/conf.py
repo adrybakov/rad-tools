@@ -12,7 +12,6 @@
 #
 import pathlib
 import sys
-from os.path import join, dirname
 sys.path.insert(0, pathlib.Path(__file__).parents[2].resolve().as_posix())
 
 
@@ -33,12 +32,13 @@ release = '0.0.1.0'
 # ones.
 extensions = [
     'sphinx.ext.duration',
-    'sphinx.ext.doctest',
     'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
     'sphinx.ext.viewcode',
     'numpydoc',
 ]
+
+# Add any paths that contain templates here, relative to this directory.
+templates_path = ['_templates']
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -52,3 +52,4 @@ exclude_patterns = []
 # a list of builtin themes.
 
 html_theme = 'sphinx_book_theme'
+html_static_path = ['_static']
