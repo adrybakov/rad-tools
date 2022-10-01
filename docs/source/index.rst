@@ -13,5 +13,7 @@ Welcome to rad-tools's documentation!
    :maxdepth: 6
    :caption: Contents:
 
+   usage
+   tb2j_plotter
    api
 
