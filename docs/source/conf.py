@@ -36,13 +36,9 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
-    'autoapi.extension',
     'sphinx.ext.viewcode',
     'numpydoc',
 ]
-
-# AutoApi
-autoapi_dirs = [join("..", "..", "rad_tools"), join("..", "..", "scripts")]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.

@@ -10,6 +10,8 @@ Welcome to rad-tools's documentation!
     This project is under active development.
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 6
    :caption: Contents:
+
+   api
 

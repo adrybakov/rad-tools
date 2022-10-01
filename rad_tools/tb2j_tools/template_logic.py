@@ -8,6 +8,19 @@ class ExchangeTemplate:
     ----------
     filename : str
         Path to the template file.
+
+    Methods
+    -------
+    
+    _prepare_dict
+        Prepare the array of nested dicts.
+
+    _read_neighbors
+        Read and format the Neighbors section.
+
+    _plain_template
+        Translate ``template`` into the list.
+    
     """
 
     def __init__(self, filename: str) -> None:
