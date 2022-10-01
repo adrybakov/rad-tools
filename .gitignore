@@ -3,6 +3,7 @@
 
 # Python stuff
 __pycache__
+.venv
 
 # VSCode stuff
 .vscode
@@ -10,7 +11,7 @@ __pycache__
 # Build
 build
 dist
-rad_tools.egg-info
+*.egg-info
 
 # Folder for debugging
 debug
