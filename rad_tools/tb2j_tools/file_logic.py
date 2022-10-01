@@ -13,45 +13,53 @@ class Bond:
 
     Parameters
     ----------
-    iso : float
-        Value of isotropic exchange parameter in meV. If `iso` is
-        not specified then it will be 0.
-        J
-        Matrix from:
 
-             J | 0 | 0
-            ---|---|---
-             0 | J | 0
-            ---|---|---
-             0 | 0 | J
+    iso : float
+        Value of isotropic exchange parameter in meV. If ``iso`` is
+        not specified then it will be 0.
+
+        Matrix form: ::
+
+            [[J, 0, 0],
+             [0, J, 0],
+             [0, 0, J]]
+
     aniso : 3 x 3 np.ndarray of floats
-        3 x 3 matrix of symmetric anisotropic exchange in meV. If `aniso`
+        3 x 3 matrix of symmetric anisotropic exchange in meV. If ``aniso`` 
         is not specified then it will be filled with zeros.
-            J_xx | J_xy | J_xz
-            -----|------|-----
-            J_xy | J_yy | J_yz
-            -----|------|-----
-            J_xz | J_yz | J_zz
+
+        Matrix form: ::
+
+            [[J_xx, J_xy, J_xz],
+             [J_xy, J_yy, J_yz],
+             [J_xz, J_yz, J_zz]]
+
     dmi : 3 x 1 np.ndarray of floats
-        Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz) in meV. If `dmi`
+        Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz) in meV. If ``dmi`` 
         is not specified then it will be filled with zeros.
-        [D_x, D_y, D_z]
-        Matrix form:
-               0  |  D_z | -D_y
-            ------|------|------
-             -D_z |   0  | D_x
-            ------|------|------
-              D_y | -D_x |  0
+
+        Vector form: ::
+            
+            (D_x, D_y, D_z)
+
+        Matrix form: ::
+
+            [[0, D_z, -D_y],
+             [-D_z, 0, D_x],
+             [D_y, -D_x, 0]]
+
     matrix : 3 x 3 np.ndarray of floats
-        Exchange matrix in meV. If `matrix` is specified then `iso`,
-        `aniso` and `dmi` will be ignored and derived from `matrix`.
-        If `matrix` is not specified then it will be derived from
-        `iso`, `aniso` and `dmi`.
-            J_xx | J_xy | J_xz
-            -----|------|-----
-            J_yx | J_yy | J_yz
-            -----|------|-----
-            J_zx | J_zy | J_zz
+        Exchange matrix in meV. If ``matrix`` is specified then ``iso`` ,
+        ``aniso`` and ``dmi`` will be ignored and derived from ``matrix`` .
+        If ``matrix`` is not specified then it will be derived from
+        ``iso`` , ``aniso`` and ``dmi`` .
+
+        Matrix form ::
+
+            [[J_xx, J_xy, J_xz],
+             [J_yx, J_yy, J_yz],
+             [J_zx, J_zy, J_zz]]
+
     """
 
     distance_tolerance = 0.00001
@@ -122,40 +130,30 @@ class Bond:
 
 class ExchangeModel:
     """
-    Class containing the whole information extracted from TB2J *.out
-
-    Keeping resolved data from the file
-    and provide a number of functions to process it.
+    Class with the logic for the exchange model.
 
     Attributes
     ----------
+
     cell : 3 x 3 np.ndarray of floats
-        3 x 3 matrix of lattice vectors in Angstrom.
-            a_x | a_y | a_z
-            ----|-----|----
-            b_x | b_y | b_z
-            ----|-----|----
-            c_x | x_y | c_z
+        3 x 3 matrix of lattice vectors in Angstrom. 
 
     magnetic_atoms : dict
        Dictionary with keys : str - marks of atoms and value : 1 x 3 np.ndarray
-       - coordinate of the atom in Angstroms.
+       - coordinate of the atom in Angstroms.::
+
+            [[a_x  a_y  a_z],
+             [b_x  b_y  b_z],
+             [c_x  x_y  c_z]]
 
     bonds : dict
-        Dictionary of bonds.
-        {
-            Atom_1: {
-                Atom_2: {
-                    R: bond,
-                    ...
-                },
-                ...
-            },
-            ...
-        }
+        Dictionary of bonds. ::
+
+            {Atom_1: {Atom_2: {R: bond, ...}, ...}, ...}
 
     Methods
     -------
+
     add_bond(bond, atom1, atom2, R)
         Add one bond to the model.
 
@@ -189,7 +187,7 @@ class ExchangeModel:
         ----------
         name : str
             Mark for the atom. Note: if an atom with the same mark already
-            exists in `magnetic_atoms` then it will be rewritten.
+            exists in ``magnetic_atoms`` then it will be rewritten.
 
         x : int or float
             x coordinate of the atom, in Angstroms.
@@ -206,7 +204,7 @@ class ExchangeModel:
         """
         Remove magnetic atom from the model
 
-        Note: this method will remove atom from `magnetic_atoms` and all the
+        Note: this method will remove atom from ``magnetic_atoms`` and all the
         bonds, which starts or ends in this atom.
 
         Parameters
@@ -380,7 +378,7 @@ class ExchangeModel:
         If for atom pair atom1, atom2 exist bond 1-2 and 2-1 they will be merged.
         All values will be calcuated as (1-2 + 2-1) / 2.
         Note: this method is not modifying the instance at which it is called.
-        It will create a new instance with sorted `bonds` and all the other
+        It will create a new instance with sorted ``bonds`` and all the other
         attributes will be copied (through deepcopy).
 
         Returns
@@ -415,11 +413,12 @@ class ExchangeModel:
         Saying so the filtering will be performed for each given condition 
         one by one.
         Note: this method is not modifying the instance at which it is called.
-        It will create a new instance with sorted `bonds` and all the other
+        It will create a new instance with sorted ``bonds`` and all the other
         attributes will be copied (through deepcopy).
 
         Parameters
         ----------
+
         max_distance : float or int, optional
             Distance for sorting, the condition is <<less or equal>>.
 
@@ -436,6 +435,7 @@ class ExchangeModel:
 
         Returns
         -------
+
         filtered_model : ExchangeModel
             Exchange model after filtering.
         """
@@ -477,12 +477,12 @@ class ExchangeModel:
 
 class ExchangeModelTB2J(ExchangeModel):
     """
-    Class containing the exchange model extracted from TB2J *.out
+    Class containing the exchange model extracted from TB2J output file.
 
     Parameters
     ----------
     filename : str
-        Path to the TB2J *.out file.
+        Path to the TB2J output file.
     """
 
     # Flags for reading from TB2J file
