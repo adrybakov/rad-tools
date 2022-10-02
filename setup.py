@@ -1,4 +1,3 @@
-from importlib.metadata import entry_points
 from setuptools import setup, find_packages
 from rad_tools import __version__
 
