@@ -136,15 +136,15 @@ class ExchangeModel:
     ----------
 
     cell : 3 x 3 np.ndarray of floats
-        3 x 3 matrix of lattice vectors in Angstrom. 
-
-    magnetic_atoms : dict
-       Dictionary with keys : str - marks of atoms and value : 1 x 3 np.ndarray
-       - coordinate of the atom in Angstroms.::
+        3 x 3 matrix of lattice vectors in Angstrom.::
 
             [[a_x  a_y  a_z],
              [b_x  b_y  b_z],
              [c_x  x_y  c_z]]
+
+    magnetic_atoms : dict
+       Dictionary with keys : str - marks of atoms and value : 1 x 3 np.ndarray
+       - coordinate of the atom in Angstroms.
 
     bonds : dict
         Dictionary of bonds. ::
