@@ -304,6 +304,17 @@ class ExchangeModel:
         """
         Getter for the pair of atom coordinates.
 
+        Parameters
+        ----------
+        atom1 : str
+            Name of atom1 in (0, 0, 0) unit cell.
+
+        atom2 : str
+            Name of atom2 in R unit cell.
+
+        R : tuple of ints
+            Radius vector of the unit cell for atom2.
+
         Returns
         -------
         x1 : float
