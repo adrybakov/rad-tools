@@ -419,7 +419,7 @@ class ExchangeModel:
                max_distance: Union[float, int] = None,
                min_distance: Union[float, int] = None,
                template: list = None,
-               R_vector: Union[list[Tuple[int]], Tuple[int]] = None):
+               R_vector: Tuple[int] = None):
         """
         Filter the exchange entries based on the given conditions.
 
