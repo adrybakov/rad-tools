@@ -1,3 +1,2 @@
-rad-tools>=0.0.0.5
 numpydoc
 sphinx_copybutton
