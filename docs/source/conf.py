@@ -39,9 +39,9 @@ extensions = [
     'sphinx_rtd_theme',
     'sphinx_copybutton',
 ]
-numpydoc_class_members_toctree = False
 
-master_doc='index'
+# Solve the problem with warnings
+numpydoc_class_members_toctree = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -61,20 +61,23 @@ exclude_patterns = []
 # html_theme = 'alabaster'
 html_theme = "sphinx_rtd_theme"
 html_static_path = ['_static']
+
+# Logo
+html_logo = 'logo.png'
 html_theme_options = {
-    'display_version': True,
+    'logo_only': True,
+    'display_version': False,
     'prev_next_buttons_location': 'bottom',
     'style_external_links': False,
-    'vcs_pageview_mode': '',
-    'style_nav_header_background': '#008C8C',
+    'style_nav_header_background': '#4E7F6C',
     # Toc options
     'collapse_navigation': False,
     'sticky_navigation': True,
     'navigation_depth': 4,
     'includehidden': True,
     'titles_only': False}
-github_url = 'https://github.com/adrybakov/rad-tools'
 
+# Integration of GitHub
 html_context = {
     "display_github": True, # Integrate GitHub
     "github_user": "adrybakov", # Username
