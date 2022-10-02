@@ -16,8 +16,14 @@ Then execute the following in your terminal:
 
    pip install rad-tools
 
-tb2j_plotter.py `docs <https://rad-tools.adrybakov.com/en/latest/tb2j_plotter.html>`_
-============================================================================================
+Documentation
+=============
+
+Documentations is available 
+`here. <https://rad-tools.adrybakov.com/en/latest/tb2j_plotter.html>`_
+
+tb2j_plotter.py (`docs <https://rad-tools.adrybakov.com/en/latest/tb2j_plotter.html>`_)
+=======================================================================================
 Script for visualisation of TB2J results.
 
 Display Isotropic exchange and distances (one output file for each). 
