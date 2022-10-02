@@ -14,9 +14,14 @@ Then execute the following in your terminal:
 
 tb2j_plotter.py `docs <https://github.com/adrybakov/rad-tools/blob/master/doc/tb2j_plotter.rst>`_
 ============================================================================================
-Script for visualisation of TB2J exchange.out file.
----------------------------------------------------
+Script for visualisation of TB2J results.
 
-Display Isotropic exchange or distances, each value in a separate picture 
-by default. Currently filtering by R vectors, distances and template file 
+Display Isotropic exchange and distances (one output file for each). 
+Output files will have the following name structure: 
+*output-name.display_data_type.png*
+
+Currently filtering by R vectors, distances and template file 
 is supported.
+
+``--filename`` (or ``-f``) argument is required, the rest of them are optional.
+
