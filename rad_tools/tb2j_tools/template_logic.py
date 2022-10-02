@@ -1,6 +1,6 @@
 class ExchangeTemplate:
     """
-    Provide a template for sorting the exchange from *.out TB2J file.
+    Provide a template for sorting the exchange from TB2J file.
 
     In addition store the technical details for plotting, orbital decompozition.
 
@@ -8,6 +8,19 @@ class ExchangeTemplate:
     ----------
     filename : str
         Path to the template file.
+
+    Methods
+    -------
+    
+    _prepare_dict
+        Prepare the array of nested dicts.
+
+    _read_neighbors
+        Read and format the Neighbors section.
+
+    _plain_template
+        Translate ``template`` into the list.
+    
     """
 
     def __init__(self, filename: str) -> None:
@@ -53,20 +66,20 @@ class ExchangeTemplate:
         """
         Read and format the Neighbors section.
 
-        `.__data` attribute and corresponding public attributes will be
+        ``__data`` attribute and corresponding public attributes will be
         filled with content here.
 
         Parameters
         ----------
         i : int
             Index of the line with Neighbor section header
-            (see `.__headers_to_functions`) in the `.__file_data`.
+            (see ``__headers_to_functions`` ) in the ``__file_data`` .
 
         Returns
         -------
         i : int
             Index of next line after the last line of Neighbors section in the
-            `.__file_data`.
+            ``__file_data`` .
         """
         while self.__major_sep not in self.__file_data[i]:
             if self.__minor_sep in self.__file_data[i]:
@@ -92,9 +105,9 @@ class ExchangeTemplate:
 
     def _plain_template(self):
         """
-        Translate `.template` into the list.
+        Translate ``template`` into the list.
 
-        `.plained_template` = [(atom_1, atom_2, R), ...]
+        ``plained_template`` = [(atom_1, atom_2, R), ...]
         """
         self.plained_template = []
         for name in self.template:

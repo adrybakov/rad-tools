@@ -16,3 +16,9 @@ dist
 # Folder for debugging
 debug
 
+# Docs
+docs/make.bat
+docs/Makefile
+docs/build
+source/_static
+source/_templates
