@@ -1,7 +1,8 @@
 from importlib.metadata import entry_points
 from setuptools import setup, find_packages
+from rad_tools import __version__
 
-__version__ = "0.0.0.3"
+__version__ = __version__
 
 with open('README.rst', 'r') as file:
     long_description = ''

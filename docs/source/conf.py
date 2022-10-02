@@ -13,6 +13,7 @@
 import pathlib
 import sys
 import sphinx_rtd_theme
+from rad_tools import __version__
 sys.path.insert(0, pathlib.Path(__file__).parents[2].resolve().as_posix())
 
 
@@ -23,7 +24,7 @@ copyright = '2022, Andrey Rybakov'
 author = 'Andrey Rybakov'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.1.0'
+release = __version__
 
 
 # -- General configuration ---------------------------------------------------
