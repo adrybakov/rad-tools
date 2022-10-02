@@ -102,7 +102,7 @@ if __name__ == '__main__':
     parser = ArgumentParser(description="Script for visualisation of TB2J results",
                             epilog="""
                             See the docs: 
-                            https://github.com/adrybakov/rad-tools/blob/master/doc/tb2j_plotter.rst""")
+                            https://rad-tools.adrybakov.com/en/latest/tb2j_plotter.html""")
 
     plot_data_type = ['iso', 'distance']
 
@@ -141,17 +141,17 @@ if __name__ == '__main__':
     parser.add_argument("-maxd", "--max-distance",
                         type=float,
                         default=None,
-                        help="Maximum distance (<=)."
+                        help="(<=) Maximum distance."
                         )
     parser.add_argument("-mind", "--min-distance",
                         type=float,
                         default=None,
-                        help="Minimum distance. (>=)"
+                        help="(>=) Minimum distance."
                         )
     parser.add_argument("-d", "--distance",
                         type=float,
                         default=None,
-                        help="Exact distance. (=)"
+                        help="(=) Exact distance."
                         )
     parser.add_argument("-t", "--template",
                         type=str,
