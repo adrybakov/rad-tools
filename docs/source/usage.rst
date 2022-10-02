@@ -11,7 +11,10 @@ Then execute the following in your terminal:
 
    $ pip install rad-tools
 
-For update:
+.. _update:
+
+Update
+------
 
 .. code-block:: console
 

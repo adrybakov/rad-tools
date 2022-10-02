@@ -6,6 +6,10 @@
 Welcome to rad-tools's documentation!
 =====================================
 
+
+Last version: |release| (:ref:`update <update>`)
+------------------------------------------------------------------------
+
 .. note::
     This project is under active development.
 

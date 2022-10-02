@@ -80,5 +80,13 @@ html_context = {
     "conf_py_path": "/docs/", # Path in the checkout to the docs root
 }
 
-
+# Variables with access from .rst files
+variables_to_export = [
+    "project",
+    "copyright",
+    "release",
+]
+frozen_locals = dict(locals())
+rst_epilog = '\n'.join(map(lambda x: f".. |{x}| replace:: {frozen_locals[x]}", variables_to_export))
+del frozen_locals
 
