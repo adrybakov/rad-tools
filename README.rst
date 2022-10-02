@@ -20,7 +20,7 @@ Documentation
 =============
 
 Documentations is available 
-`here. <https://rad-tools.adrybakov.com/en/latest/tb2j_plotter.html>`_
+`here. <https://rad-tools.adrybakov.com/en/latest/index.html>`_
 
 tb2j_plotter.py (`docs <https://rad-tools.adrybakov.com/en/latest/tb2j_plotter.html>`_)
 =======================================================================================
