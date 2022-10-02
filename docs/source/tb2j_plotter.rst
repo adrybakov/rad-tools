@@ -6,8 +6,13 @@ Display Isotropic exchange and distances (one output file for each).
 Output files will have the following name structure: 
 *output-name.display_data_type.png*
 
-Currently filtering by R vectors, distances and template file 
-is supported.
+Currently filtering by 
+R vectors (see :ref:`R-vector <tb2j_plotter_R-vector>`), 
+distances (see :ref:`max-distance <tb2j_plotter_max-distance>`,
+:ref:`min-distance <tb2j_plotter_min-distance>` and
+:ref:`distance <tb2j_plotter_distance>`), 
+and template file (see :ref:`template <tb2j_plotter_template>`), is supported. 
+The result will be defined by logical conjugate of the specified conditions.
 
 ``--filename`` (or ``-f``) argument is required, the rest of them are optional.
 
@@ -164,6 +169,8 @@ Arguments
 
         *action* : store_true
 
+.. _tb2j_plotter_R-vector:
+
 ``--R-vector``, ``-R``
 
     R vectors for filtering the model.
@@ -183,6 +190,8 @@ Arguments
 
         *nargs* : *
 
+.. _tb2j_plotter_max-distance:
+
 ``--max-distance``, ``-maxd``
 
     (<=) Maximum distance.
@@ -193,6 +202,8 @@ Arguments
         *default* : None
 
         *type* : float
+
+.. _tb2j_plotter_min-distance:
 
 ``--min-distance``, ``-mind``
 
@@ -205,6 +216,8 @@ Arguments
 
         *type* : float
 
+.. _tb2j_plotter_distance:
+
 ``--distance``, ``-d``
 
     (=) Exact distance.
@@ -212,6 +225,8 @@ Arguments
     Only the bonds with the exact distance remains in the model.
     Note: there is no point in specifying maximum or minimum distance when 
     this parameter is specified.
+
+.. _tb2j_plotter_template:
 
 ``--template``, ``-t``
 
