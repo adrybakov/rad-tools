@@ -38,7 +38,9 @@ extensions = [
     'sphinx.ext.viewcode',
     'numpydoc',
     'sphinx_rtd_theme',
+    'sphinx_copybutton',
 ]
+numpydoc_class_members_toctree = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

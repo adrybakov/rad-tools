@@ -7,7 +7,7 @@ Welcome to rad-tools's documentation!
 =====================================
 
 
-Last version: |release| (:ref:`update <update>`)
+Last version: |release| (see how to :ref:`update <update>`)
 ------------------------------------------------------------------------
 
 .. note::

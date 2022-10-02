@@ -9,27 +9,30 @@ Then execute the following in your terminal:
 
 .. code-block:: console
 
-   $ pip install rad-tools
+   pip install rad-tools
 
 .. _update:
 
 Update
 ------
 
+If you want to update the package to the last available version (|release|)
+run the following in your terminal:
+
 .. code-block:: console
 
-   $ pip install rad-tools --upgrade
+   pip install rad-tools --upgrade
 
 TB2J plotter
 -------------
 
-Display help message:
+Whenever you forget how to use the script do not hesitate and display the help message!
 
 .. code-block:: python
 
     tb2j_plotter.py -h
 
-Plot all distances and all isotropic exchange parameters 
+Simpliest usage example: plot all distances and all isotropic exchange parameters 
 from *exchange.out* file:
 
 .. code-block:: python

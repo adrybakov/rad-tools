@@ -2,12 +2,102 @@
 ===================
 Script for visualisation of TB2J results.
 
-Display Isotropic exchange or distances, each value in a separate picture
-by default. Currently filtering by R vectors, distances and template file 
+Display Isotropic exchange and distances (one output file for each). 
+Output files will have the following name structure: 
+*output-name.display_data_type.png*
+
+Currently filtering by R vectors, distances and template file 
 is supported.
 
-Parameters
-----------
+``--filename`` (or ``-f``) argument is required, the rest of them are optional.
+
+.. _tb2j_plotter_example:
+
+Usage example
+-------------
+
+    Imagine you are executing the ``tb2j_plotter.py`` sccript from the 
+    folder *example* and your filestructure looks like the following
+
+    .. code-block:: text
+
+        example/
+        ├── exchange.out
+        └── output/
+        
+    Now lets run the script
+
+    .. code-block:: console
+
+        tb2j_plotter.py -f exchange.out 
+
+    After the execution your *example* folder will look like that
+    
+    .. code-block:: text
+
+        example/
+        ├── exchange.out
+        ├── exchange.iso.png
+        ├── exchange.distance.png
+        └── output/
+
+    Script produced two output files *exchange.iso.png*
+    and *exchange.distance.png*. Common seedname *exchange* comes by default 
+    (see :ref:`output-name <tb2j_plotter_output-name>`). *iso* and *distance* 
+    indicate the plotted data 
+    (see :ref:`what-to-plot <tb2j_plotter_what-to-plot>`). 
+    Note that output files are not located in *output* folder since the 
+    current folder is used for output by default
+    (see :ref:`output-dir <tb2j_plotter_output-dir>`). Lets save the output in 
+    the *output* folder
+
+    .. code-block:: console
+
+        tb2j_plotter.py -f exchange.out -op output
+
+    Now *example* folder should look like this
+
+    .. code-block:: text
+
+        example/
+        ├── exchange.out
+        ├── exchange.iso.png
+        ├── exchange.distance.png
+        └── output/
+            ├── exchange.iso.png
+            └── exchange.distance.png
+
+    Output files have the same names, but they are saved in the *output* 
+    folder as your specifyed by ``-op`` argument.
+
+    Note: It is not necessary to specify a path to the existin folder, 
+    for example try to execute
+
+    .. code-block:: console
+
+        tb2j_plotter.py -f exchange.out -op output/bar/foo
+
+    The sript will create folder *bar* inside of the folder *output* and folder 
+    *foo* inside of the folder *bar*. The structure of the *example* folder now 
+    should look like that:
+
+    .. code-block:: text
+
+        example/
+        ├── exchange.out
+        ├── exchange.iso.png
+        ├── exchange.distance.png
+        └── output/
+            ├── exchange.iso.png
+            |── exchange.distance.png
+            └── bar/
+                └── foo/
+                    ├── exchange.iso.png
+                    └── exchange.distance.png
+
+
+Arguments
+---------
 
 ``--filename``, ``-f``
 
@@ -18,28 +108,36 @@ Parameters
 
         *type* : str
 
+.. _tb2j_plotter_output-dir:
+
 ``--output-dir``, ``-op``
 
-    Relative or absolute path to the directory for saving outputs.
+    Relative or absolute path to the folder for saving outputs.
 
-    If the directory does not exist then it is created from the specified path.
+    If the folder does not exist then it is created from the specified path.
     The creation is applied recursevly to the path, starting from the right
-    until the existent directory is reached.
+    until the existing folder is reached.
 
         *default* : current directory
         
         *type* : str
 
+.. _tb2j_plotter_output-name:
+
 ``--output-name``, ``-on``
 
     Seedname for the output files.
 
-    Output file will have the following name structure:
-    *seedname*.*display_data_type*.png
+    Output files will have the following name structure:
+    *output-name.display_data_type.png*
 
         *default* : exchange
         
         *type* : str
+
+    See also: :ref:`example <tb2j_plotter_example>`
+
+.. _tb2j_plotter_what-to-plot:
 
 ``--what-to-plot``, ``-wtp``
 
@@ -60,7 +158,7 @@ Parameters
     Whenever to draw the supercell`s shape.
 
     If specified then the shape of all supercells 
-    presented in the model after filtering is drawn.
+    presented in the model (after filtering) is drawn.
 
         *default* : False
 
@@ -71,13 +169,13 @@ Parameters
     R vectors for filtering the model.
 
     In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to). 
-    Atom 1 always located in (0, 0, 0) supercell, while atom 2 is located in 
-    R = (i, j, k) supercell. This parameter tells to keep only the bonds
-    for which atom 2 is located in one of specified R supercells. 
-    In order to specify supercells provide a set of integers 
-    separated by spaces. They will be grouped by three to form a set of R vectors 
-    starting from the left. If the last group will contain 1 or 2 integers 
-    they will be ignored.
+    Atom 1 is always located in (0, 0, 0) supercell, while atom 2 is located in 
+    R = (i, j, k) supercell. This parameter tells the script to keep only the 
+    bonds for which atom 2 is located in one of specified R supercells. 
+    In order to specify supercells provide a set of integers separated 
+    by spaces. They are grouped by three starting from the left to form a set 
+    of R vectors. If the last group will contain 1 or 2 integers they will be 
+    ignored.
 
         *default* : None
 
@@ -90,7 +188,7 @@ Parameters
     (<=) Maximum distance.
 
     All the bonds with the distance beetwen atom 1 and atom 2 
-    greater then maximum distance will be excluded from the model.
+    greater then maximum distance are excluded from the model.
 
         *default* : None
 
@@ -101,7 +199,7 @@ Parameters
     (>=) Minimum distance.
 
     All the bonds with the distance beetwen atom 1 and atom 2 
-    lower then minimum distance will be excluded from the model.
+    lower then minimum distance are excluded from the model.
 
         *default* : None
 
@@ -111,7 +209,7 @@ Parameters
 
     (=) Exact distance.
 
-    Only the bonds with the distance exact as this one remains in the model.
+    Only the bonds with the exact distance remains in the model.
     Note: there is no point in specifying maximum or minimum distance when 
     this parameter is specified.
 
@@ -130,7 +228,7 @@ Parameters
 
     Whenever to keep both bonds.
 
-    In TB2J file there is two bonds for the pair of atom 1 and atom 2: 
+    In TB2J file there are two bonds for the pair of atom 1 and atom 2: 
     from 1 to 2 and from 2 to 1 (when R = (0, 0, 0)). Isotropic and 
     anisotropic exchange and distance usially are exactly the same. 
     DMI vector have the same module and opposite directions. 
