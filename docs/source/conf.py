@@ -12,7 +12,6 @@
 #
 import pathlib
 import sys
-import sphinx_rtd_theme
 from rad_tools import __version__
 sys.path.insert(0, pathlib.Path(__file__).parents[2].resolve().as_posix())
 
@@ -71,7 +70,7 @@ html_theme_options = {
     'sticky_navigation': True,
     'navigation_depth': 4,
     'includehidden': True,
-    'titles_only': False,}
+    'titles_only': False}
 github_url = 'https://github.com/adrybakov/rad-tools'
 
 html_context = {
