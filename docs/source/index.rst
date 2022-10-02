@@ -16,4 +16,5 @@ Welcome to rad-tools's documentation!
    usage
    tb2j_plotter
    api
+   release-notes
 
