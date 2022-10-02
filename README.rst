@@ -2,6 +2,10 @@ Script Collection
 =================
 Various scripts which were useful during my PhD.
 
+.. image:: https://readthedocs.org/projects/rad-tools/badge/?version=latest
+    :target: https://rad-tools.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+
 Installation
 ------------
 
