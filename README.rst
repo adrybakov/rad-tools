@@ -16,7 +16,7 @@ Then execute the following in your terminal:
 
    pip install rad-tools
 
-tb2j_plotter.py `docs <https://github.com/adrybakov/rad-tools/blob/master/doc/tb2j_plotter.rst>`_
+tb2j_plotter.py `docs <https://rad-tools.adrybakov.com/en/latest/tb2j_plotter.html>`_
 ============================================================================================
 Script for visualisation of TB2J results.
 
