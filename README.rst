@@ -2,6 +2,7 @@ Script Collection
 =================
 Various scripts which were useful during my PhD.
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 .. image:: https://readthedocs.org/projects/rad-tools/badge/?version=latest
     :target: https://rad-tools.adrybakov.com/en/latest/?badge=latest
     :alt: Documentation Status
