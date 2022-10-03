@@ -1,29 +1,6 @@
 """
 Collection of small routines and constants, 
 which may be used across the whole package.
-
-Routines
---------
-
-get_256_colours
-    ANSI escape codes for terminal color with 256-colours support
-    (see: https://en.wikipedia.org/wiki/ANSI_escape_code).
-
-check_make_dir
-    Check if directory exist, create one if not.
-
-exchange_to_matrix
-    Combine isotropic, anisotropic and dmi exchange into exchange matrix.
-
-exchange_from_matrix
-    Decompose matrix into isotropic, anisotropic and dmi exchange.
-
-atom_mark_to_latex
-    Latexifier for atom marks of the form Cr12.
-
-rot_angle
-    Rotational ange from 2D vector.
-
 """
 
 from os import mkdir
