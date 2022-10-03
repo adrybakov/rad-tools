@@ -11,19 +11,53 @@ from math import asin, sqrt
 
 # Teminal colors
 BLACK = '\u001b[30m'
+"""
+ANSI escape code for black color of the text.
+"""
 RED = '\u001b[31m'
+"""
+ANSI escape code for red color of the text.
+"""
 GREEN = '\u001b[32m'
+"""
+ANSI escape code for green color of the text.
+"""
 YELLOW = '\u001b[33m'
+"""
+ANSI escape code for yellow color of the text.
+"""
 BLUE = "\u001b[34m"
+"""
+ANSI escape code for blue color of the text.
+"""
 MAGENTA = '\u001b[35m'
+"""
+ANSI escape code for magenta color of the text.
+"""
 CYAN = '\u001b[36m'
+"""
+ANSI escape code for cyan color of the text.
+"""
 WHITE = '\u001b[37m'
+"""
+ANSI escape code for white color of the text.
+"""
 RESET = ' \u001b[0m'
-
+"""
+ANSI escape code for resetting color to default.
+"""
 WARNING = YELLOW
+"""
+ANSI escape code for warnings.
+"""
 OK = GREEN
+"""
+ANSI escape code for ok messages.
+"""
 ERROR = RED
-
+"""
+ANSI escape code for errors.
+"""
 
 def get_256_colours(n: int):
     """
