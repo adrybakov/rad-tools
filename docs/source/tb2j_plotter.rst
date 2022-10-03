@@ -10,7 +10,7 @@ distances (see :ref:`max-distance <tb2j_plotter_max-distance>`,
 :ref:`min-distance <tb2j_plotter_min-distance>` and
 :ref:`distance <tb2j_plotter_distance>`), 
 and template file (see :ref:`template <tb2j_plotter_template>`). 
-The result will be defined by logical conjugate of the specified conditions.
+The result is defined by logical conjugate of the specified conditions.
 
 ``--filename`` (or ``-f``) argument is required, the rest of them are optional.
 
