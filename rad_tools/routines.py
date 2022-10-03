@@ -158,7 +158,9 @@ def exchange_from_matrix(matrix):
 
 def atom_mark_to_latex(mark):
     """
-    Latexifier for atom marks of the form Cr12.
+    Latexifier for atom marks. 
+    
+    Cr12 -> Cr\ :sub:`12`\.
 
     Parameters
     ----------
