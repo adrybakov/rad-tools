@@ -256,4 +256,30 @@ Arguments
         *default* : False
 
         *action* : store_true
+
+.. _tb2j_plotter_scale_atoms:
+
+``--scale-atoms``, ``-sa``
+
+    Scale for the size of atom marks.
+
+    Use it if you want to display atom marks bigger or smaller. 
+    Have to be positive.
+
+        *default* : 1
+
+        *type* : float
+
+.. _tb2j_plotter_scale_data:
+
+``--scale-data``, ``-sd``
+
+    Scale for the size of data text.
+
+    Use it if you want to display data text marks bigger or smaller. 
+    Have to be positive.
+
+        *default* : 1
+
+        *type* : float
  

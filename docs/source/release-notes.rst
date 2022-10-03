@@ -1,6 +1,12 @@
 Release notes
 =============
 
+0.0.0.6
+-------
+
+Add arguments :ref:`--scale-data <tb2j_plotter_scale_data>` and 
+:ref:`--scale-atoms <tb2j_plotter_scale_atoms>` to the ``tb2j_plotter.py``.
+
 0.0.0.5
 -------
 

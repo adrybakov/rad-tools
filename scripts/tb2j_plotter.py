@@ -1,6 +1,6 @@
 #! /usr/local/bin/python3
 from argparse import ArgumentParser
-from os.path import join, split
+from os.path import join, split, abspath
 from math import atan
 
 from matplotlib import pyplot as plt
@@ -8,14 +8,24 @@ import matplotlib as mpl
 import numpy as np
 
 from rad_tools.tb2j_tools.file_logic import ExchangeModelTB2J
-from rad_tools.routines import check_make_dir, atom_mark_to_latex, rot_angle
+from rad_tools.routines import check_make_dir, atom_mark_to_latex, rot_angle,\
+     OK, RESET
 
 
-def plot_2d(filename, out_dir='.', out_name='exchange',
-            wtp='iso', draw_cells=False,
-            min_distance=None, max_distance=None,
-            template=None, R_vector=None,
-            double_bonds=False):
+def plot_2d(filename, out_dir='.', 
+            out_name='exchange',
+            wtp='iso', 
+            draw_cells=False,
+            min_distance=None, 
+            max_distance=None,
+            template=None, 
+            R_vector=None,
+            double_bonds=False,
+            scale_atoms=1,
+            scale_data=1):
+
+    messages = {'iso': "isotropic exchange",
+    "distance": "distances"}
 
     model = ExchangeModelTB2J(filename)
     model = model.filter(min_distance=min_distance,
@@ -50,7 +60,7 @@ def plot_2d(filename, out_dir='.', out_name='exchange',
     label_ax.set_xlim(0, 1)
     label_ax.set_ylim(0, 1)
     label_ax.axis('off')
-
+    
     for atom1 in model.bonds:
         for atom2 in model.bonds[atom1]:
             for R in model.bonds[atom1][atom2]:
@@ -67,22 +77,22 @@ def plot_2d(filename, out_dir='.', out_name='exchange',
 
                 ax.text(x1, y1, atom_mark_to_latex(atom1),
                         va='center', ha='center',
-                        fontsize=1.5 * fontsize)
+                        fontsize=1.5 * fontsize * scale_atoms)
                 ax.text(x2, y2, atom_mark_to_latex(atom2),
                         va='center', ha='center',
-                        fontsize=1.5 * fontsize)
+                        fontsize=1.5 * fontsize * scale_atoms)
                 if wtp == 'iso':
                     ax.text(xm, ym, round(bond.iso, 4),
                             va='bottom', ha=ha,
                             rotation_mode='anchor',
                             rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
-                            fontsize=fontsize)
+                            fontsize=fontsize * scale_data)
                 elif wtp == 'distance':
                     ax.text(xm, ym, round(bond.dis, 4),
                             va='bottom', ha=ha,
                             rotation_mode='anchor',
                             rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
-                            fontsize=fontsize)
+                            fontsize=fontsize * scale_data)
 
     if draw_cells:
         cells = model.get_cells()
@@ -95,7 +105,9 @@ def plot_2d(filename, out_dir='.', out_name='exchange',
                     np.array([0, a_y, a_y + b_y, b_y, 0]) + Y_shift,
                     linewidth=1, color="#BCBF5A")
 
-    plt.savefig(join(out_dir, f'{out_name}.{wtp}.png'), dpi=400)
+    png_path = join(out_dir, f'{out_name}.{wtp}.png')
+    plt.savefig(png_path, dpi=400)
+    print(f'{OK}Plot with {wtp} is in {abspath(png_path)}{RESET}')
 
 
 if __name__ == '__main__':
@@ -164,6 +176,14 @@ if __name__ == '__main__':
                         default=False,
                         action="store_true",
                         help="Whenever to keep both bonds.")
+    parser.add_argument("-sa", "--scale-atoms",
+                        default=1,
+                        type=float,
+                        help="Scale for the size of atom marks.")
+    parser.add_argument("-sd", "--scale-data",
+                        default=1,
+                        type=float,
+                        help="Scale for the size of data text.")
 
     args = parser.parse_args()
 
@@ -187,7 +207,9 @@ if __name__ == '__main__':
                     max_distance=args.max_distance,
                     template=args.template,
                     R_vector=args.R_vector,
-                    double_bonds=args.double_bonds)
+                    double_bonds=args.double_bonds,
+                    scale_atoms=args.scale_atoms,
+                    scale_data=args.scale_data)
     else:
         plot_2d(filename=args.file,
                 out_dir=args.output_dir,
@@ -198,4 +220,6 @@ if __name__ == '__main__':
                 max_distance=args.max_distance,
                 template=args.template,
                 R_vector=args.R_vector,
-                double_bonds=args.double_bonds)
+                double_bonds=args.double_bonds,
+                scale_atoms=args.scale_atoms,
+                scale_data=args.scale_data)
