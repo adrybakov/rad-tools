@@ -4,7 +4,7 @@ Release notes
 0.0.0.7
 -------
 
-Add the :doc:`phonopy_plotter.py <phonopy_plotter.rst>` script
+Add the :doc:`phonopy_plotter.py <phonopy_plotter>` script
 
 0.0.0.6
 -------
