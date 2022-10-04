@@ -19,6 +19,7 @@ Last version: |release| (see how to :ref:`update <update>`)
 
    usage
    tb2j_plotter
+   phonopy_plotter
    api
    release-notes
 

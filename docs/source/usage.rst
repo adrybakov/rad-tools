@@ -45,3 +45,12 @@ from *exchange.out* file for the bonds with distance <= 5 Angstrom:
 .. code-block:: python
 
     tb2j_plotter.py -f exchange.out -maxd 5
+
+Phonopy plotter
+---------------
+
+Whenever you forget how to use the script do not hesitate and display the help message!
+
+.. code-block:: python
+
+    phonopy_plotter.py -h

@@ -38,6 +38,7 @@ extensions = [
     'numpydoc',
     'sphinx_rtd_theme',
     'sphinx_copybutton',
+    'sphinx.ext.intersphinx',
 ]
 
 # Solve the problem with warnings

@@ -20,7 +20,8 @@ setup(
     download_url='https://github.com/adrybakov/rad-tools.git',
     packages=find_packages(),
     scripts=[
-        'scripts/tb2j_plotter.py'
+        'scripts/tb2j_plotter.py',
+        'scripts/phonopy_plotter.py'
     ],
     install_requires=[
         'numpy', 'matplotlib'
