@@ -1,7 +1,7 @@
 #! /usr/local/bin/python3
 from argparse import ArgumentParser
 from os.path import join, split, abspath
-from math import atan
+from math import atan, sqrt
 
 from matplotlib import pyplot as plt
 import matplotlib as mpl
@@ -22,8 +22,11 @@ def plot_2d(filename, out_dir='.',
             R_vector=None,
             double_bonds=False,
             scale_atoms=1,
-            scale_data=1):
+            scale_data=1,
+            atoms=None,
+            title=None):
 
+    mode_name = "2d"
     messages = {'iso': "isotropic exchange",
     "distance": "distances"}
 
@@ -32,6 +35,9 @@ def plot_2d(filename, out_dir='.',
                          max_distance=max_distance,
                          R_vector=R_vector,
                          template=template)
+    if atoms is None:
+        atoms = model.magnetic_atoms
+
     dummy = True
     ha = 'right'
     if not double_bonds:
@@ -105,9 +111,125 @@ def plot_2d(filename, out_dir='.',
                     np.array([0, a_y, a_y + b_y, b_y, 0]) + Y_shift,
                     linewidth=1, color="#BCBF5A")
 
+    if title is not None:
+        ax.set_title(title, fontsize=1.5 * fontsize)
+
     png_path = join(out_dir, f'{out_name}.{wtp}.png')
     plt.savefig(png_path, dpi=400)
-    print(f'{OK}Plot with {wtp} is in {abspath(png_path)}{RESET}')
+    print(f'{OK}{mode_name} plot with {wtp} is in {abspath(png_path)}{RESET}')
+
+def get_molecule_center(atoms, exclude_atoms):
+    filtered_atoms = {}
+    for atom in atoms:
+        keep = True
+        for exclude_atom in exclude_atoms:
+            if exclude_atom in atom:
+                keep = False
+                break
+        if keep:
+            filtered_atoms[atom] = atoms[atom]
+    atoms = filtered_atoms
+    x_min, y_min, z_min = None, None, None
+    x_max, y_max, z_max = None, None, None
+    for atom in atoms:
+        x, y, z = atoms[atom]
+
+        if x_min is None:
+            x_min = x
+        else:
+            x_min = min(x, x_min)
+        if y_min is None:
+            y_min = y
+        else:
+            y_min = min(y, y_min)
+        if z_min is None:
+            z_min = z
+        else:
+            z_min = min(z, z_min)
+
+        if x_max is None:
+            x_max = x
+        else:
+            x_max = max(x, x_max)
+        if y_max is None:
+            y_max = y
+        else:
+            y_max = max(y, y_max)
+        if z_max is None:
+            z_max = z
+        else:
+            z_max = max(z, z_max)
+            return (x_min + x_max) / 2, (y_min + y_max) / 2, (z_min + z_max) / 2
+
+def get_distance(x1, y1, z1, x2, y2, z2):
+    return sqrt((x2 - x1)**2 + (y2-y1)**2 + (z2-z1)**2)
+
+def plot_molecule(filename, out_dir='.', 
+            out_name='exchange',
+            wtp='iso', 
+            draw_cells=False,
+            min_distance=None, 
+            max_distance=None,
+            template=None, 
+            R_vector=None,
+            double_bonds=False,
+            scale_atoms=1,
+            scale_data=1,
+            atoms=None,
+            title=None):
+
+    mpl.rcParams.update(mpl.rcParamsDefault)
+    mode_name = "molecule"
+    messages = {'iso': "isotropic exchange",
+    "distance": "distances"}
+
+    model = ExchangeModelTB2J(filename)
+    model = model.filter(min_distance=min_distance,
+                         max_distance=max_distance,
+                         R_vector=R_vector,
+                         template=template)
+
+    if atoms is None:
+        atoms = model.magnetic_atoms
+
+    fig, ax = plt.subplots()
+    
+    ax.set_xlabel('Distance to the molecule center, Angstroms')
+    if wtp == 'iso':
+        ax.set_ylabel('Isotropic exchange parameter, meV')
+    elif wtp == 'distance':
+        ax.set_ylabel('Bond length, Angstroms')
+    
+    
+    data = [[], []]
+    x, y, z = get_molecule_center(model._atoms, atoms)
+    print(f"{OK}Molecule center is detected at "
+          f"({round(x, 4)}, {round(y, 4)}, {round(z, 4)}){RESET}")
+    
+    for atom1 in model.bonds:
+        for atom2 in model.bonds[atom1]:
+            for R in model.bonds[atom1][atom2]:
+                xa, ya, za = model.get_bond_coordinate(atom1, atom2, R)
+                d = get_distance(x, y, z, xa, ya, za)
+                bond = model.bonds[atom1][atom2][R]
+                data[0].append(d)
+                if wtp == 'iso':
+                    data[1].append(bond.iso)
+                elif wtp == 'distance':
+                    data[1].append(bond.dis)
+    data = np.array(data).T.tolist()
+
+    data.sort(key=lambda x: x[0])
+    data = np.array(data).T.tolist()
+    ax.plot(data[0], data[1], "o-", color="black")
+    if title is not None:
+        ax.set_title(title, fontsize=15)
+    
+
+    png_path = join(out_dir, f'{out_name}.{mode_name}.{wtp}.png')
+    plt.savefig(png_path, dpi=400)
+    print(f'{OK}{mode_name} plot with {wtp} is in {abspath(png_path)}{RESET}')
+
 
 
 if __name__ == '__main__':
@@ -117,6 +239,7 @@ if __name__ == '__main__':
                             https://rad-tools.adrybakov.com/en/latest/tb2j_plotter.html""")
 
     plot_data_type = ['iso', 'distance']
+    plot_mode = {"2d" : plot_2d, "molecule" : plot_molecule}
 
     parser.add_argument("-f", "--file",
                         type=str,
@@ -125,6 +248,15 @@ if __name__ == '__main__':
                         Relative or absulute path to the *exchange.out* file,
                         including the name and extention of the file itself.
                         """)
+    parser.add_argument("-m", "--mode",
+                        type=str,
+                        default="2d",
+                        choices=["all", "2d", "molecule"],
+                        help="Mode of plotting.")
+    parser.add_argument("-a", "--atoms",
+                        type=str,
+                        default = None,
+                        nargs="*")
     parser.add_argument("-op", "--output-dir",
                         type=str,
                         default='.',
@@ -184,6 +316,10 @@ if __name__ == '__main__':
                         default=1,
                         type=float,
                         help="Scale for the size of data text.")
+    parser.add_argument("--title",
+                        default=None,
+                        type=str,
+                        help="Title for the plots.")
 
     args = parser.parse_args()
 
@@ -196,9 +332,16 @@ if __name__ == '__main__':
                                  dtype=int).reshape((len(args.R_vector)//3, 3))
         args.R_vector = list(map(tuple, args.R_vector.tolist()))
 
-    if args.what_to_plot == 'all':
+    if args.what_to_plot != 'all':
+        plot_data_type = [args.what_to_plot]
+    if args.mode != 'all':
+        plot_mode = [plot_mode[key] for key in [args.mode]]
+    else:
+        plot_mode = [plot_mode[key] for key in plot_mode]
+
+    for mode in plot_mode:
         for data_type in plot_data_type:
-            plot_2d(filename=args.file,
+            mode(filename=args.file,
                     out_dir=args.output_dir,
                     out_name=args.output_name,
                     wtp=data_type,
@@ -209,17 +352,6 @@ if __name__ == '__main__':
                     R_vector=args.R_vector,
                     double_bonds=args.double_bonds,
                     scale_atoms=args.scale_atoms,
-                    scale_data=args.scale_data)
-    else:
-        plot_2d(filename=args.file,
-                out_dir=args.output_dir,
-                out_name=args.output_name,
-                wtp=args.what_to_plot,
-                draw_cells=args.draw_cells,
-                min_distance=args.min_distance,
-                max_distance=args.max_distance,
-                template=args.template,
-                R_vector=args.R_vector,
-                double_bonds=args.double_bonds,
-                scale_atoms=args.scale_atoms,
-                scale_data=args.scale_data)
+                    scale_data=args.scale_data,
+                    atoms=args.atoms,
+                    title=args.title)

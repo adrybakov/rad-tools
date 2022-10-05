@@ -115,6 +115,42 @@ Arguments
 
         *type* : str
 
+.. _tb2j_plotter_mode:
+
+``--mode``, ``-m``
+
+    Mode of plotting.
+
+    Two modes are supported: structure with the view from above 
+    and the plots with *value* over distance between bond and 
+    the center of the molecule.
+
+        *default* : all
+
+        *type* : str
+
+        *choices* : all, 2d, molecule
+    
+    .. note::
+        If you are plotting in molecule mode it is recommended to specify 
+        ``--substrate_atoms`` argument.
+
+.. _tb2j_plotter_substrate_atoms:
+
+``--substrate_atoms``, ``-suba``
+
+    Atoms from the substrate
+
+    Marks of atoms from the substracte (Same as in TB2J). 
+    You can specify only names. For example instead of "Cr12" one can provide 
+    "Cr" and then all Cr atoms will be thouth as a substrate ones. 
+
+        *default* : Magnetic atoms
+
+        *type* : str
+
+        *nargs* : *
+
 .. _tb2j_plotter_output-dir:
 
 ``--output-dir``, ``-op``
@@ -282,4 +318,16 @@ Arguments
         *default* : 1
 
         *type* : float
+
+.. _tb2j_plotter_title:
+
+``--title``
+
+    Title for the plots
+
+    Title will be displayed in the picture.
+
+        *default* : None
+
+        *type* : str
  

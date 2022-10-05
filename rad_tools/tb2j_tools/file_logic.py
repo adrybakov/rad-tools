@@ -172,6 +172,9 @@ class ExchangeModel:
     get_atom_coordinates
         Getter for the pair of atom coordinates.
 
+    get_bond_coordinate
+        Getter for the middle point of the bond.
+
     get_space_dimensions
         Getter for the sample size.
 
@@ -560,6 +563,7 @@ class ExchangeModelTB2J(ExchangeModel):
     _dmi_flag = 'DMI:'
 
     # Store info about all atoms, not only magnetic ones
+    # {mark: (x, y, z), ...}
     _atoms = {}
 
     def __init__(self, filename: str) -> None:
