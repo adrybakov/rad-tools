@@ -347,6 +347,37 @@ class ExchangeModel:
             self.magnetic_atoms[atom2][2]
         return x1, y1, z1, x2, y2, z2
 
+    def get_bond_coordinate(self, atom1, atom2, R):
+        """
+        Getter for the middle point of the bond.
+
+        Parameters
+        ----------
+        atom1 : str
+            Name of atom1 in (0, 0, 0) unit cell.
+
+        atom2 : str
+            Name of atom2 in R unit cell.
+
+        R : tuple of ints
+            Radius vector of the unit cell for atom2.
+
+        Returns
+        -------
+        x : float
+            x coordinate of the point in the middle of bond.
+
+        y : float
+            y coordinate of the point in the middle of bond.
+
+        z : float
+            z coordinate of the point in the middle of bond.
+
+        """
+        x1, y1, z1, x2, y2, z2 = self.get_atom_coordinates(atom1, atom2, R)
+
+        return (x1 + x2) / 2, (y1 + y2) / 2, (z1 + z2) / 2
+
     def get_space_dimensions(self):
         """
         Getter for the sample size.
