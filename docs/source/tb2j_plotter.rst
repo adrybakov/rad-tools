@@ -38,7 +38,7 @@ Usage example
 
         tb2j_plotter.py -f exchange.out 
 
-    After the execution your *example* folder will look like that
+    After the execution your *example* folder will look similar to this
     
     .. code-block:: text
 
