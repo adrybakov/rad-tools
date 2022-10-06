@@ -24,7 +24,7 @@ Usage example
 -------------
 
     Imagine you are executing the ``tb2j_plotter.py`` sccript from the 
-    folder *example* and your filestructure looks like the following
+    folder *example* and your file structure looks like the following
 
     .. code-block:: text
 
