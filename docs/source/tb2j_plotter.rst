@@ -125,7 +125,7 @@ Arguments
     and the plots with *value* over distance between bond and 
     the center of the molecule.
 
-        *default* : all
+        *default* : 2d
 
         *type* : str
 

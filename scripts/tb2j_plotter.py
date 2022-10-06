@@ -236,7 +236,8 @@ if __name__ == '__main__':
     parser = ArgumentParser(description="Script for visualisation of TB2J results",
                             epilog="""
                             See the docs: 
-                            https://rad-tools.adrybakov.com/en/latest/tb2j_plotter.html""")
+                            https://rad-tools.adrybakov.com/en/latest/tb2j_plotter.html
+                            """)
 
     plot_data_type = ['iso', 'distance']
     plot_mode = {"2d" : plot_2d, "molecule" : plot_molecule}
@@ -247,79 +248,170 @@ if __name__ == '__main__':
                         help="""
                         Relative or absulute path to the *exchange.out* file,
                         including the name and extention of the file itself.
-                        """)
+                        """
+                        )
     parser.add_argument("-m", "--mode",
                         type=str,
                         default="2d",
                         choices=["all", "2d", "molecule"],
-                        help="Mode of plotting.")
+                        help="""
+                        Mode of plotting.
+
+    Two modes are supported: structure with the view from above 
+    and the plots with *value* over distance between bond and 
+    the center of the molecule.
+                        """
+                        )
     parser.add_argument("-a", "--atoms",
                         type=str,
                         default = None,
-                        nargs="*")
+                        nargs="*",
+                        help="""
+                        Atoms from the substrate
+
+    Marks of atoms from the substracte (Same as in TB2J). 
+    You can specify only names. For example instead of "Cr12" one can provide 
+    "Cr" and then all Cr atoms will be thouth as a substrate ones.
+                        """
+                        )
     parser.add_argument("-op", "--output-dir",
                         type=str,
                         default='.',
                         help="""
-                        Relative or absolute path to the directory for 
-                        saving output.
-                        """)
+                        Relative or absolute path to the folder for saving outputs.
+
+    If the folder does not exist then it is created from the specified path.
+    The creation is applied recursevly to the path, starting from the right
+    until the existing folder is reached.
+                        """
+                        )
     parser.add_argument("-on", "--output-name",
                         type=str,
                         default='exchange',
-                        help="Seedname for the output files.")
+                        help="""
+                        Seedname for the output files.
+
+    Output files will have the following name structure:
+    output-name.display_data_type.png
+                        """
+                        )
     parser.add_argument("-wtp", "--what-to-plot",
                         type=str,
                         choices=['all'] + plot_data_type,
                         default='all',
-                        help="Type of data for display.")
+                        help="""
+                        Type of data for display.
+
+    Specifying the data for display at the graph. 
+    Everything is displayed by default, each value in a separate picture. 
+    Currently available for display: Isotropic exchange parameter, distance.
+                        """
+                        )
     parser.add_argument("-dc", "--draw-cells",
                         action="store_true",
                         default=False,
-                        help="Whenever to draw the supercell`s shape.")
+                        help="""
+                        Whenever to draw the supercell`s shape.
+
+    If specified then the shape of all supercells 
+    presented in the model (after filtering) is drawn.
+                        """
+                        )
     parser.add_argument("-R", "--R-vector",
                         type=int,
                         nargs="*",
                         default=None,
-                        help="R vectors for filtering the model.")
+                        help="""
+                        R vectors for filtering the model.
+
+    In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to). 
+    Atom 1 is always located in (0, 0, 0) supercell, while atom 2 is located in 
+    R = (i, j, k) supercell. This parameter tells the script to keep only the 
+    bonds for which atom 2 is located in one of specified R supercells. 
+    In order to specify supercells provide a set of integers separated 
+    by spaces. They are grouped by three starting from the left to form a set 
+    of R vectors. If the last group will contain 1 or 2 integers they will be 
+    ignored.
+                        """
+                        )
     parser.add_argument("-maxd", "--max-distance",
                         type=float,
                         default=None,
-                        help="(<=) Maximum distance."
+                        help="""
+                        (<=) Maximum distance.
+
+    All the bonds with the distance beetwen atom 1 and atom 2 
+    greater then maximum distance are excluded from the model.
+                        """
                         )
     parser.add_argument("-mind", "--min-distance",
                         type=float,
                         default=None,
-                        help="(>=) Minimum distance."
+                        help="""
+                        (>=) Minimum distance.
+
+    All the bonds with the distance beetwen atom 1 and atom 2 
+    lower then minimum distance are excluded from the model.
+                        """
                         )
     parser.add_argument("-d", "--distance",
                         type=float,
                         default=None,
-                        help="(=) Exact distance."
+                        help="""
+                        (=) Exact distance.
+
+    Only the bonds with the exact distance remains in the model.
+    Note: there is no point in specifying maximum or minimum distance when 
+    this parameter is specified.
+                        """
                         )
     parser.add_argument("-t", "--template",
                         type=str,
                         default=None,
                         help="""
-                        Relative or absulute path to the template file, 
-                        including the name and extention of the file itself.
+                        Relative or absolute path to the template file, 
+                        including the name and extention of the file.
                         """)
     parser.add_argument("-db", "--double-bonds",
                         default=False,
                         action="store_true",
-                        help="Whenever to keep both bonds.")
+                        help="""
+                        Whenever to keep both bonds.
+
+    In TB2J file there are two bonds for the pair of atom 1 and atom 2: 
+    from 1 to 2 and from 2 to 1 (when R = (0, 0, 0)). Isotropic and 
+    anisotropic exchange and distance usially are exactly the same. 
+    DMI vector have the same module and opposite directions. 
+    If this parameter is specifyied then both bonds are displayed. 
+    Otherwise bonds are combined in one by taking the average beetween
+    exchange parameters (Note that it forces DMI to be equal to zero).
+                        """)
     parser.add_argument("-sa", "--scale-atoms",
                         default=1,
                         type=float,
-                        help="Scale for the size of atom marks.")
+                        help="""
+                        Scale for the size of atom marks.
+
+    Use it if you want to display atom marks bigger or smaller. 
+    Have to be positive.
+                        """)
     parser.add_argument("-sd", "--scale-data",
                         default=1,
                         type=float,
-                        help="Scale for the size of data text.")
+                        help="""
+                        Scale for the size of data text.
+
+    Use it if you want to display data text marks bigger or smaller. 
+    Have to be positive.
+                        """)
     parser.add_argument("--title",
                         default=None,
                         type=str,
-                        help="Title for the plots.")
+                        help="""
+                        Title for the plots
+
+    Title will be displayed in the picture.
+                        """)
 
     args = parser.parse_args()
 
