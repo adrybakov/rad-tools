@@ -7,7 +7,7 @@ tb2j_tools
    :show-inheritance:
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    rad_tools.tb2j_tools.file_logic
    rad_tools.tb2j_tools.map_logic

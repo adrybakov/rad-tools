@@ -39,6 +39,7 @@ extensions = [
     'sphinx_rtd_theme',
     'sphinx_copybutton',
     'sphinx.ext.intersphinx',
+    'sphinx.ext.autosectionlabel',
 ]
 
 # Solve the problem with warnings
@@ -81,11 +82,11 @@ html_theme_options = {
 
 # Integration of GitHub
 html_context = {
-    "display_github": True, # Integrate GitHub
-    "github_user": "adrybakov", # Username
-    "github_repo": "rad-tools", # Repo name
-    "github_version": "master", # Version
-    "conf_py_path": "/docs/", # Path in the checkout to the docs root
+    "display_github": True,  # Integrate GitHub
+    "github_user": "adrybakov",  # Username
+    "github_repo": "rad-tools",  # Repo name
+    "github_version": "master",  # Version
+    "conf_py_path": "/docs/",  # Path in the checkout to the docs root
 }
 
 # Variables with access from .rst files
@@ -95,6 +96,6 @@ variables_to_export = [
     "release",
 ]
 frozen_locals = dict(locals())
-rst_epilog = '\n'.join(map(lambda x: f".. |{x}| replace:: {frozen_locals[x]}", variables_to_export))
+rst_epilog = '\n'.join(
+    map(lambda x: f".. |{x}| replace:: {frozen_locals[x]}", variables_to_export))
 del frozen_locals
-

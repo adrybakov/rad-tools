@@ -143,9 +143,9 @@ Arguments
 
     Marks of atoms from the substracte (Same as in TB2J). 
     You can specify only names. For example instead of "Cr12" one can provide 
-    "Cr" and then all Cr atoms will be thouth as a substrate ones. 
+    "Cr" and then all Cr atoms will be considered as a substrate ones. 
 
-        *default* : Magnetic atoms
+        *default* : :py:attr:`.rad_tools.tb2j_tools.file_logic.ExchangeModel.magnetic_atoms`
 
         *type* : str
 

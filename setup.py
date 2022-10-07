@@ -21,7 +21,7 @@ setup(
     packages=find_packages(),
     scripts=[
         'scripts/tb2j_plotter.py',
-        'scripts/phonopy_plotter.py'
+        'scripts/phonopy_plotter.py',
     ],
     install_requires=[
         'numpy', 'matplotlib'

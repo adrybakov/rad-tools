@@ -7,7 +7,7 @@ rad\_tools
    :show-inheritance:
 
 .. toctree::
-   :maxdepth: 4   
+   :maxdepth: 1   
 
    rad_tools.routines
    rad_tools.tb2j_tools
