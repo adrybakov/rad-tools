@@ -9,16 +9,16 @@ import numpy as np
 
 from rad_tools.tb2j_tools.file_logic import ExchangeModelTB2J
 from rad_tools.routines import check_make_dir, atom_mark_to_latex, rot_angle,\
-     OK, RESET
+    OK, RESET
 
 
-def plot_2d(filename, out_dir='.', 
+def plot_2d(filename, out_dir='.',
             out_name='exchange',
-            wtp='iso', 
+            wtp='iso',
             draw_cells=False,
-            min_distance=None, 
+            min_distance=None,
             max_distance=None,
-            template=None, 
+            template=None,
             R_vector=None,
             double_bonds=False,
             scale_atoms=1,
@@ -28,7 +28,7 @@ def plot_2d(filename, out_dir='.',
 
     mode_name = "2d"
     messages = {'iso': "isotropic exchange",
-    "distance": "distances"}
+                "distance": "distances"}
 
     model = ExchangeModelTB2J(filename)
     model = model.filter(min_distance=min_distance,
@@ -66,7 +66,7 @@ def plot_2d(filename, out_dir='.',
     label_ax.set_xlim(0, 1)
     label_ax.set_ylim(0, 1)
     label_ax.axis('off')
-    
+
     for atom1 in model.bonds:
         for atom2 in model.bonds[atom1]:
             for R in model.bonds[atom1][atom2]:
@@ -118,6 +118,7 @@ def plot_2d(filename, out_dir='.',
     plt.savefig(png_path, dpi=400)
     print(f'{OK}{mode_name} plot with {wtp} is in {abspath(png_path)}{RESET}')
 
+
 def get_molecule_center(atoms, exclude_atoms):
     filtered_atoms = {}
     for atom in atoms:
@@ -161,27 +162,29 @@ def get_molecule_center(atoms, exclude_atoms):
             z_max = max(z, z_max)
             return (x_min + x_max) / 2, (y_min + y_max) / 2, (z_min + z_max) / 2
 
+
 def get_distance(x1, y1, z1, x2, y2, z2):
     return sqrt((x2 - x1)**2 + (y2-y1)**2 + (z2-z1)**2)
 
-def plot_molecule(filename, out_dir='.', 
-            out_name='exchange',
-            wtp='iso', 
-            draw_cells=False,
-            min_distance=None, 
-            max_distance=None,
-            template=None, 
-            R_vector=None,
-            double_bonds=False,
-            scale_atoms=1,
-            scale_data=1,
-            atoms=None,
-            title=None):
+
+def plot_molecule(filename, out_dir='.',
+                  out_name='exchange',
+                  wtp='iso',
+                  draw_cells=False,
+                  min_distance=None,
+                  max_distance=None,
+                  template=None,
+                  R_vector=None,
+                  double_bonds=False,
+                  scale_atoms=1,
+                  scale_data=1,
+                  atoms=None,
+                  title=None):
 
     mpl.rcParams.update(mpl.rcParamsDefault)
     mode_name = "molecule"
     messages = {'iso': "isotropic exchange",
-    "distance": "distances"}
+                "distance": "distances"}
 
     model = ExchangeModelTB2J(filename)
     model = model.filter(min_distance=min_distance,
@@ -193,19 +196,18 @@ def plot_molecule(filename, out_dir='.',
         atoms = model.magnetic_atoms
 
     fig, ax = plt.subplots()
-    
+
     ax.set_xlabel('Distance to the molecule center, Angstroms')
     if wtp == 'iso':
         ax.set_ylabel('Isotropic exchange parameter, meV')
     elif wtp == 'distance':
         ax.set_ylabel('Bond length, Angstroms')
-    
-    
+
     data = [[], []]
     x, y, z = get_molecule_center(model._atoms, atoms)
     print(f"{OK}Molecule center is detected at "
           f"({round(x, 4)}, {round(y, 4)}, {round(z, 4)}){RESET}")
-    
+
     for atom1 in model.bonds:
         for atom2 in model.bonds[atom1]:
             for R in model.bonds[atom1][atom2]:
@@ -224,12 +226,10 @@ def plot_molecule(filename, out_dir='.',
     ax.plot(data[0], data[1], "o-", color="black")
     if title is not None:
         ax.set_title(title, fontsize=15)
-    
 
     png_path = join(out_dir, f'{out_name}.{mode_name}.{wtp}.png')
     plt.savefig(png_path, dpi=400)
     print(f'{OK}{mode_name} plot with {wtp} is in {abspath(png_path)}{RESET}')
-
 
 
 if __name__ == '__main__':
@@ -240,7 +240,7 @@ if __name__ == '__main__':
                             """)
 
     plot_data_type = ['iso', 'distance']
-    plot_mode = {"2d" : plot_2d, "molecule" : plot_molecule}
+    plot_mode = {"2d": plot_2d, "molecule": plot_molecule}
 
     parser.add_argument("-f", "--file",
                         type=str,
@@ -264,7 +264,7 @@ if __name__ == '__main__':
                         )
     parser.add_argument("-a", "--atoms",
                         type=str,
-                        default = None,
+                        default=None,
                         nargs="*",
                         help="""
                         Atoms from the substrate
@@ -434,16 +434,16 @@ if __name__ == '__main__':
     for mode in plot_mode:
         for data_type in plot_data_type:
             mode(filename=args.file,
-                    out_dir=args.output_dir,
-                    out_name=args.output_name,
-                    wtp=data_type,
-                    draw_cells=args.draw_cells,
-                    min_distance=args.min_distance,
-                    max_distance=args.max_distance,
-                    template=args.template,
-                    R_vector=args.R_vector,
-                    double_bonds=args.double_bonds,
-                    scale_atoms=args.scale_atoms,
-                    scale_data=args.scale_data,
-                    atoms=args.atoms,
-                    title=args.title)
+                 out_dir=args.output_dir,
+                 out_name=args.output_name,
+                 wtp=data_type,
+                 draw_cells=args.draw_cells,
+                 min_distance=args.min_distance,
+                 max_distance=args.max_distance,
+                 template=args.template,
+                 R_vector=args.R_vector,
+                 double_bonds=args.double_bonds,
+                 scale_atoms=args.scale_atoms,
+                 scale_data=args.scale_data,
+                 atoms=args.atoms,
+                 title=args.title)

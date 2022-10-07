@@ -1,6 +1,11 @@
 Release notes
 =============
 
+0.0.0.9
+-------
+
+Better help messages in :doc:`tb2j_plotter.py <tb2j_plotter>` script
+
 0.0.0.8
 -------
 
