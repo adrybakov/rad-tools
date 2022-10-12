@@ -55,6 +55,7 @@ html_theme_options = {
     "twitter_url": "https://twitter.com/adrybakov",
     "show_nav_level": 2,
     "use_edit_page_button": True,
+    "navbar_end": ["navbar-icon-links.html"]
 }
 
 html_context = {
@@ -64,11 +65,12 @@ html_context = {
     "github_repo": "rad-tools",  # Repo name
     "github_version": "master",  # Version
     "doc_path": "docs/source",  # Path in the checkout to the docs root
+    'docsearch_disabled': False,
 }
 
-# html_sidebars = {
-#     "**": ["sidebar-nav-bs", "sidebar-ethical-ads"]
-# }
+html_sidebars = {
+    "**": ["search-field.html", "sidebar-nav-bs.html", "sidebar-ethical-ads"]
+}
 
 # Custom variables with access from .rst files
 variables_to_export = [
