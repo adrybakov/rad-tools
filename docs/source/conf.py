@@ -66,9 +66,9 @@ html_context = {
     "doc_path": "docs/source",  # Path in the checkout to the docs root
 }
 
-html_sidebars = {
-    "**": ["sidebar-nav-bs", "sidebar-ethical-ads"]
-}
+# html_sidebars = {
+#     "**": ["sidebar-nav-bs", "sidebar-ethical-ads"]
+# }
 
 # Custom variables with access from .rst files
 variables_to_export = [
