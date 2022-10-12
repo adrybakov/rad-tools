@@ -69,7 +69,7 @@ html_context = {
 }
 
 html_sidebars = {
-    "**": ["search-field.html", "sidebar-nav-bs.html", "sidebar-ethical-ads"]
+    "**": ["search-field.html"]
 }
 
 # Custom variables with access from .rst files
