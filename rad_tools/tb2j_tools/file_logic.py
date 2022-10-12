@@ -39,7 +39,7 @@ class Bond:
         is not specified then it will be filled with zeros.
 
         Vector form: ::
-            
+
             (D_x, D_y, D_z)
 
         Matrix form: ::
@@ -62,7 +62,7 @@ class Bond:
 
     """
 
-    distance_tolerance = 0.00001
+    distance_tolerance = 1E-05
 
     def __init__(self,
                  iso=None,
@@ -150,42 +150,6 @@ class ExchangeModel:
         Dictionary of bonds. ::
 
             {Atom_1: {Atom_2: {R: bond, ...}, ...}, ...}
-
-    Methods
-    -------
-
-    add_atom
-        Add magnetic atom to the model.
-
-    remove_atom
-        Remove magnetic atom from the model.
-
-    add_bond
-        Add one bond to the model.
-
-    remove_bond
-        Remove one bond from the model.
-
-    get_lattice_vectors_length
-        Getter for the lattice vectors length.
-
-    get_atom_coordinates
-        Getter for the pair of atom coordinates.
-
-    get_bond_coordinate
-        Getter for the middle point of the bond.
-
-    get_space_dimensions
-        Getter for the sample size.
-
-    get_cells
-        Getter for the list of cells.
-
-    remove_double_bonds
-        Remove double bonds.
-
-    filter
-        Filter the exchange entries based on the given conditions.
     """
 
     def __init__(self) -> None:
@@ -540,7 +504,7 @@ class ExchangeModelTB2J(ExchangeModel):
 
     Parameters
     ----------
-    
+
     filename : str
         Path to the TB2J output file.
     """
