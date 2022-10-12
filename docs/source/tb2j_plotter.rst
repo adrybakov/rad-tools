@@ -53,10 +53,12 @@ and *exchange.distance.png*. Common seedname *exchange* comes by default
 (see :ref:`output-name <tb2j_plotter_output-name>`). *iso* and *distance* 
 indicate the plotted data 
 (see :ref:`what-to-plot <tb2j_plotter_what-to-plot>`). 
-Note that output files are not located in *output* folder since the 
-current folder is used for output by default
-(see :ref:`output-dir <tb2j_plotter_output-dir>`). Lets save the output in 
-the *output* folder
+
+.. important::
+    That output files are not located in *output* folder since the 
+    current folder is used for output by default
+    (see :ref:`output-dir <tb2j_plotter_output-dir>`). Lets save the output in 
+    the *output* folder
 
 .. code-block:: console
 
@@ -77,7 +79,7 @@ Now *example* folder should look like this
 Output files have the same names, but they are saved in the *output* 
 folder as your specifyed by ``-op`` argument.
 
-Note: It is not necessary to specify a path to the existin folder, 
+It is not necessary to specify a path to the existing folder, 
 for example try to execute
 
 .. code-block:: console
@@ -131,7 +133,7 @@ the center of the molecule.
 
     *choices* : all, 2d, molecule
     
-.. note::
+.. hint::
     If you are plotting in molecule mode it is recommended to specify 
     ``--substrate_atoms`` argument.
 
@@ -261,8 +263,10 @@ lower then minimum distance are excluded from the model.
 (=) Exact distance.
 
 Only the bonds with the exact distance remains in the model.
-Note: there is no point in specifying maximum or minimum distance when 
-this parameter is specified.
+
+.. hint::
+    There is no point in specifying maximum or minimum distance when 
+    this parameter is specified.
 
 .. _tb2j_plotter_template:
 
@@ -287,11 +291,15 @@ anisotropic exchange and distance usially are exactly the same.
 DMI vector have the same module and opposite directions. 
 If this parameter is specifyied then both bonds are displayed. 
 Otherwise bonds are combined in one by taking the average beetween
-exchange parameters (Note that it forces DMI to be equal to zero).
+exchange parameters. 
 
     *default* : False
 
     *action* : store_true
+
+.. caution::
+    If this parameter is not specified then it is highly probable that
+    DMI will be equal to zero even if it is not zero in TB2J file.
 
 .. _tb2j_plotter_scale_atoms:
 
