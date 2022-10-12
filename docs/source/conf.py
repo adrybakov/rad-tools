@@ -1,42 +1,25 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# This file only contains a selection of the most common options. For a full
-# list see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
-
-# -- Path setup --------------------------------------------------------------
-
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
 from os.path import abspath
 import sys
 from rad_tools import __version__
 sys.path.insert(0, abspath('..'))
 
 
-# -- Project information -----------------------------------------------------
-
+# Project information
 project = 'rad-tools'
 copyright = '2022, Andrey Rybakov'
 author = 'Andrey Rybakov'
 
-# The full version, including alpha/beta/rc tags
+# Project version
 release = __version__
 
 
-# -- General configuration ---------------------------------------------------
-
-# Add any Sphinx extension module names here, as strings. They can be
-# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
-# ones.
+# -- General configuration
 extensions = [
     'sphinx.ext.duration',
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'numpydoc',
-    'sphinx_rtd_theme',
+    # 'sphinx_rtd_theme',
     'sphinx_copybutton',
     'sphinx.ext.intersphinx',
     'sphinx.ext.autosectionlabel',
@@ -59,37 +42,35 @@ exclude_patterns = []
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 
-# html_theme = 'sphinx_book_theme'
+html_theme = 'pydata_sphinx_theme'
 # html_theme = 'alabaster'
-html_theme = "sphinx_rtd_theme"
+# html_theme = "sphinx_rtd_theme"
 html_static_path = ['_static']
 
 # Logo
-html_logo = 'img/logo.png'
+html_logo = 'img/logo-black.png'
 html_favicon = 'img/favicon.png'
 html_theme_options = {
-    'logo_only': True,
-    'display_version': False,
-    'prev_next_buttons_location': 'bottom',
-    'style_external_links': False,
-    'style_nav_header_background': '#4E7F6C',
-    # Toc options
-    'collapse_navigation': False,
-    'sticky_navigation': True,
-    'navigation_depth': 4,
-    'includehidden': True,
-    'titles_only': False}
+    "github_url": "https://github.com/adrybakov/rad-tools",
+    "twitter_url": "https://twitter.com/adrybakov",
+    "show_nav_level": 2,
+    "use_edit_page_button": True,
+}
 
-# Integration of GitHub
 html_context = {
+    # "default_mode": "light",
     "display_github": True,  # Integrate GitHub
     "github_user": "adrybakov",  # Username
     "github_repo": "rad-tools",  # Repo name
     "github_version": "master",  # Version
-    "conf_py_path": "/docs/",  # Path in the checkout to the docs root
+    "doc_path": "docs/source",  # Path in the checkout to the docs root
 }
 
-# Variables with access from .rst files
+html_sidebars = {
+    "**": ["sidebar-nav-bs", "sidebar-ethical-ads"]
+}
+
+# Custom variables with access from .rst files
 variables_to_export = [
     "project",
     "copyright",
