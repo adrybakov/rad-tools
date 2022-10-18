@@ -236,7 +236,7 @@ if __name__ == '__main__':
     parser = ArgumentParser(description="Script for visualisation of TB2J results",
                             epilog="""
                             See the docs: 
-                            https://rad-tools.adrybakov.com/en/latest/tb2j_plotter.html
+                            https://rad-tools.adrybakov.com/en/latest/user_guide/tb2j_plotter.html
                             """)
 
     plot_data_type = ['iso', 'distance']
