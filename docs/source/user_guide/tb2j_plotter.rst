@@ -1,5 +1,9 @@
+.. _tb2j_plotter:
+
+*******************
 ``tb2j_plotter.py``
-===================
+*******************
+
 Script for visualisation of TB2J results.
 
 Display Isotropic exchange and distances (one output file for each). 

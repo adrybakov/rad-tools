@@ -1,5 +1,6 @@
+************
 Installation
-============
+************
 
 First make sure that you have python3 and pip installed.
 Then execute the following in your terminal:

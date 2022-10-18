@@ -1,5 +1,6 @@
+**********
 tb2j_tools
-==========
+**********
 
 .. automodule:: rad_tools.tb2j_tools
    :members:
@@ -7,7 +8,7 @@ tb2j_tools
    :show-inheritance:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    rad_tools.tb2j_tools.file_logic
    rad_tools.tb2j_tools.map_logic

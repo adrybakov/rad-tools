@@ -1,15 +1,16 @@
+*************
 Release notes
-=============
+*************
 
 0.0.0.10
 --------
 
-Add tb2j_refractor.py script.
+Add :ref:`tb2j_refractor.py <tb2j_refractor>` script.
 
 0.0.0.9
 -------
 
-Better help messages in :doc:`tb2j_plotter.py <tb2j_plotter>` script.
+Better help messages in :ref:`tb2j_plotter.py <tb2j_plotter>` script.
 
 0.0.0.8
 -------
@@ -25,7 +26,7 @@ Add argument to ``tb2j_plotter.py`` for title for the pictures
 0.0.0.7
 -------
 
-Add the :doc:`phonopy_plotter.py <phonopy_plotter>` script.
+Add the :ref:`phonopy_plotter.py <phonopy_plotter>` script.
 
 0.0.0.6
 -------

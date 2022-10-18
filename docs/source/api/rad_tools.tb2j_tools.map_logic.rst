@@ -1,5 +1,6 @@
+*********
 map_logic
----------
+*********
 
 .. automodule:: rad_tools.tb2j_tools.map_logic
    :members:

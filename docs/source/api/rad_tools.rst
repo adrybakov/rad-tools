@@ -1,5 +1,6 @@
+**********
 rad\_tools
-==========
+**********
 
 .. automodule:: rad_tools
    :members:
@@ -7,7 +8,7 @@ rad\_tools
    :show-inheritance:
 
 .. toctree::
-   :maxdepth: 2   
+   :maxdepth: 1   
 
    rad_tools.routines
-   rad_tools.tb2j_tools
+   rad_tools.tb2j_tools 
