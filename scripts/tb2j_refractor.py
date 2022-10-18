@@ -52,7 +52,8 @@ def main(filename, out_dir, out_name, template):
 if __name__ == '__main__':
     parser = ArgumentParser(description="Script for refractoring of TB2J results",
                             epilog="""
-                            #TODO
+                            See the docs: 
+                            https://rad-tools.adrybakov.com/en/latest/user_guide/tb2j_refractor.html
                             """)
 
     parser.add_argument("-f", "--file",
@@ -81,7 +82,7 @@ if __name__ == '__main__':
                         Seedname for the output files.
 
     Output files will have the following name structure:
-    output-name.display_data_type.png
+    output-name
                         """
                         )
     parser.add_argument("-t", "--template",
