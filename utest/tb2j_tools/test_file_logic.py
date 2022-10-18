@@ -11,7 +11,7 @@ from rad_tools.tb2j_tools.template_logic import *
 class TestExchangeModelTB2J:
 
     model = ExchangeModelTB2J(os.path.join(
-        'utest', 'tb2j_tools', 'resourses', 'exchange.out'
+        'tb2j_tools', 'resourses', 'exchange.out'
     ))
     template = [('Cr1', 'Cr1', (1, 0, 0)), ('Cr1', 'Cr1', (-1, 0, 0)),
                 ('Cr2', 'Cr2', (1, 0, 0)), ('Cr2', 'Cr2', (-1, 0, 0)),
@@ -42,7 +42,7 @@ class TestInputFilename(TestExchangeModelTB2J):
 
     def test_correct_filename(self):
         model = ExchangeModelTB2J(os.path.join(
-            'utest', 'tb2j_tools', 'resourses', 'exchange.out'))
+            'tb2j_tools', 'resourses', 'exchange.out'))
 
 
 class TestReadFunctions(TestExchangeModelTB2J):
