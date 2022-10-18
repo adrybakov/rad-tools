@@ -76,7 +76,10 @@ class ExchangeTemplate:
         -------
         plained_template : list
             List with the bond specifications:
-            [(atom_1, atom_2, R), ...]
+
+            .. code-block:: python
+
+                [(atom_1, atom_2, R), ...]
         """
         plained_template = []
         for name in self.names:
