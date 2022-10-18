@@ -46,16 +46,21 @@ html_theme = 'pydata_sphinx_theme'
 # html_theme = 'alabaster'
 # html_theme = "sphinx_rtd_theme"
 html_static_path = ['_static']
+html_css_files = ["rad-tools.css"]
 
 # Logo
-html_logo = 'img/logo-black.png'
+# html_logo = 'img/logo-black.png'
 html_favicon = 'img/favicon.png'
 html_theme_options = {
     "github_url": "https://github.com/adrybakov/rad-tools",
     "twitter_url": "https://twitter.com/adrybakov",
     "show_nav_level": 2,
     "use_edit_page_button": True,
-    "navbar_end": ["theme-switcher.html", "navbar-icon-links.html"]
+    "navbar_end": ["theme-switcher.html", "navbar-icon-links.html"],
+    "logo": {
+        "image_light": "logo_black.png",
+        "image_dark": "logo_white.png",
+    },
 }
 
 html_context = {
