@@ -7,19 +7,18 @@ Welcome to rad-tools's documentation!
 =====================================
 
 
-Last version: |release| (see how to :ref:`update <update>`)
+Last version: |release|
 ------------------------------------------------------------------------
 
-.. note::
+.. warning::
     This project is under active development.
 
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
 
-   usage
-   tb2j_plotter
-   phonopy_plotter
+   installation
+   guide
    api
    release-notes
 
