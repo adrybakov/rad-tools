@@ -1,14 +1,30 @@
 class ExchangeTemplate:
     """
-    Provide a template for sorting the exchange from TB2J file.
+    Store a template for sorting the exchange from TB2J file.
 
-    In addition store the technical details for plotting, orbital decompozition.
+    In addition stores the technical details for plotting, 
+    orbital decompozition, etc.
 
     Parameters
     ----------
     filename : str
         Path to the template file.
+
+    Attributes
+    ----------
+    names : dict
+        Dictionary of neighbours from the template file.
+
+        ::
+            {name : [(atom1, atom2, R), ...], ...}
+
+    latex_names : dict
+        The dictionary of Letex version of names from `names`.
+
+        ::
+            {name : latex_name, ...}
     """
+
     # Constants
     _major_sep = '=' * 90 + '\n'
     _minor_sep = '-' * 88 + '\n'
