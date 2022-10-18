@@ -15,13 +15,15 @@ class ExchangeTemplate:
     names : dict
         Dictionary of neighbours from the template file.
 
-        ::
+        .. code-block:: python
+
             {name : [(atom1, atom2, R), ...], ...}
 
     latex_names : dict
         The dictionary of Letex version of names from `names`.
 
-        ::
+        .. code-block:: python
+
             {name : latex_name, ...}
     """
 
