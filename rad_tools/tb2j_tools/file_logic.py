@@ -11,7 +11,7 @@ class Bond:
     """
     Class with implemented logic for one bond.
 
-    Parameters
+    Attributes
     ----------
 
     iso : float
@@ -40,7 +40,7 @@ class Bond:
 
         Vector form: ::
 
-            (D_x, D_y, D_z)
+            [D_x, D_y, D_z]
 
         Matrix form: ::
 
