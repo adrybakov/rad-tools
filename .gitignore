@@ -15,6 +15,7 @@ dist
 
 # Folder for debugging
 debug
+logodesign
 
 # Docs
 docs/make.bat
