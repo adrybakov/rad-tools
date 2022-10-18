@@ -2,7 +2,7 @@ Release notes
 =============
 
 0.0.0.10
--------
+--------
 
 Add tb2j_refractor.py script.
 

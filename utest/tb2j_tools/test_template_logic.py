@@ -18,13 +18,13 @@ class TestInputFilename():
 
     def test_correct_filename(self):
         tmp_model = ExchangeTemplate(os.path.join(
-            'tb2j_tools', 'resourses', 'exchange.out'))
+            'utest', 'tb2j_tools', 'resourses', 'exchange.out'))
 
 
 class TestExchangeTemplate:
 
     tmp_model = ExchangeTemplate(os.path.join(
-        'tb2j_tools', 'resourses', 'template.txt'
+        'utest', 'tb2j_tools', 'resourses', 'template.txt'
     ))
 
 
