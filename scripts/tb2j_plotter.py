@@ -418,7 +418,10 @@ if __name__ == '__main__':
     if args.distance is not None:
         args.min_distance = args.max_distance = args.distance
 
-    makedirs(args.output_dir)
+    try:
+        makedirs(args.output_dir)
+    except FileExistsError:
+        pass
     
     if args.R_vector is not None:
         args.R_vector = np.array(args.R_vector[:len(args.R_vector) // 3 * 3],

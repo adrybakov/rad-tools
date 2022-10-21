@@ -510,8 +510,8 @@ class ExchangeModelTB2J(ExchangeModel):
     """
 
     # Flags for reading from TB2J file
-    _major_sep = '=' * 90 + '\n'
-    _minor_sep = '-' * 88 + '\n'
+    _major_sep = '=' * 90
+    _minor_sep = '-' * 88
     _garbage = str.maketrans({'(': None,
                               ')': None,
                               '[': None,

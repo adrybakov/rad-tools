@@ -93,7 +93,10 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    makedirs(args.output_dir)
+    try:
+        makedirs(args.output_dir)
+    except FileExistsError:
+        pass
 
     main(filename=args.file,
          out_dir=args.output_dir,

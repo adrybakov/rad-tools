@@ -28,8 +28,8 @@ class ExchangeTemplate:
     """
 
     # Constants
-    _major_sep = '=' * 90 + '\n'
-    _minor_sep = '-' * 88 + '\n'
+    _major_sep = '=' * 90
+    _minor_sep = '-' * 88
     _neighbors_flag = 'Neighbors template:'
 
     def __init__(self, filename: str) -> None:
@@ -90,5 +90,6 @@ class ExchangeTemplate:
 
 if __name__ == "__main__":
     tmp = ExchangeTemplate(
-        "/Users/rybakov.ad/Projects/rad-tools/utest/tb2j_tools/resourses/template.txt")
+        # "/Users/rybakov.ad/Projects/rad-tools/utest/tb2j_tools/resourses/template.txt")
+        "/Users/rybakov.ad/Projects/rad-tools/debug/nii2/template.txt")
     print('here')
