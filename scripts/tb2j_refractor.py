@@ -40,9 +40,9 @@ def main(filename, out_dir, out_name, template):
 {name}
     Isotropic: {round(J_iso, 4)}
     Anisotropic: 
-    {J_aniso[0]}
-    {J_aniso[1]}
-    {J_aniso[2]}
+    {round(J_aniso[0][0], 4)} {round(J_aniso[0][1], 4)} {round(J_aniso[0][2], 4)}
+    {round(J_aniso[1][0], 4)} {round(J_aniso[1][1], 4)} {round(J_aniso[1][2], 4)}
+    {round(J_aniso[2][0], 4)} {round(J_aniso[2][1], 4)} {round(J_aniso[2][2], 4)}
     DMI: {round(DMI[0], 4)} {round(DMI[1], 4)} {round(DMI[2], 4)}
     |DMI|: {round(abs_DMI, 4)}
     |DMI/J| {round(abs(abs_DMI/J_iso), 4)}
@@ -82,7 +82,7 @@ if __name__ == '__main__':
                         )
     parser.add_argument("-on", "--output-name",
                         type=str,
-                        default='exchange_refr',
+                        default='exchange_refr.txt',
                         help="""
                         Seedname for the output files.
                         """
