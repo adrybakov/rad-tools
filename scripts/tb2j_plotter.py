@@ -1,4 +1,5 @@
 #! /usr/local/bin/python3
+
 from argparse import ArgumentParser
 from os.path import join, abspath
 from os import makedirs
@@ -88,28 +89,48 @@ def plot_2d(filename, out_dir='.',
                         va='center', ha='center',
                         fontsize=1.5 * fontsize * scale_atoms)
                 if wtp == 'iso':
-                    ax.text(xm, ym, round(bond.iso, 4),
+                    ax.text(xm, ym, str(round(bond.iso, 4)),
                             va='bottom', ha=ha,
                             rotation_mode='anchor',
                             rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
                             fontsize=fontsize * scale_data)
                 elif wtp == 'distance':
-                    ax.text(xm, ym, round(bond.dis, 4),
+                    ax.text(xm, ym, str(round(bond.dis, 4)),
                             va='bottom', ha=ha,
                             rotation_mode='anchor',
                             rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
                             fontsize=fontsize * scale_data)
 
     if draw_cells:
+        xlims = ax.get_xlim()
+        ylims = ax.get_ylim()
         cells = model.get_cells()
         a_x, a_y, a_z = tuple(model.cell[0])
         b_x, b_y, b_z = tuple(model.cell[1])
+        Rx_min = 0
+        Rx_max = 0
+        Ry_min = 0
+        Ry_max = 0
+        Rz_min = 0
+        Rz_max = 0
         for Rx, Ry, Rz in cells:
-            X_shift = Rx * a_x + Ry * b_x
-            Y_shift = Rx * a_y + Ry * b_y
-            ax.plot(np.array([0, a_x, a_x + b_x, b_x, 0]) + X_shift,
-                    np.array([0, a_y, a_y + b_y, b_y, 0]) + Y_shift,
-                    linewidth=1, color="#BCBF5A")
+            Rx_min = min(Rx, Rx_min)
+            Rx_max = max(Rx, Rx_max)
+            Ry_min = min(Ry, Ry_min)
+            Ry_max = max(Ry, Ry_max)
+            Rz_min = min(Rz, Rz_min)
+            Rz_max = max(Rz, Rz_max)
+        
+        for i in range(Rx_min, Rx_max + 1):
+            for j in range(Ry_min, Ry_max + 1):
+                for k in range(Rz_min, Rz_max + 1):
+                    X_shift = i * a_x + j * b_x
+                    Y_shift = i * a_y + j * b_y
+                    ax.plot(np.array([0, a_x, a_x + b_x, b_x, 0]) + X_shift,
+                            np.array([0, a_y, a_y + b_y, b_y, 0]) + Y_shift,
+                            linewidth=1, color="#BCBF5A")
+        ax.set_xlim(*xlims)
+        ax.set_ylim(*ylims)
 
     if title is not None:
         ax.set_title(title, fontsize=1.5 * fontsize)
@@ -235,7 +256,7 @@ def plot_molecule(filename, out_dir='.',
 if __name__ == '__main__':
     parser = ArgumentParser(description="Script for visualisation of TB2J results",
                             epilog="""
-                            See the docs: 
+                            For the full description of arguments see the docs: 
                             https://rad-tools.adrybakov.com/en/latest/user_guide/tb2j_plotter.html
                             """)
 
@@ -256,10 +277,6 @@ if __name__ == '__main__':
                         choices=["all", "2d", "molecule"],
                         help="""
                         Mode of plotting.
-
-    Two modes are supported: structure with the view from above 
-    and the plots with *value* over distance between bond and 
-    the center of the molecule.
                         """
                         )
     parser.add_argument("-a", "--atoms",
@@ -267,11 +284,7 @@ if __name__ == '__main__':
                         default=None,
                         nargs="*",
                         help="""
-                        Atoms from the substrate
-
-    Marks of atoms from the substracte (Same as in TB2J). 
-    You can specify only names. For example instead of "Cr12" one can provide 
-    "Cr" and then all Cr atoms will be thouth as a substrate ones.
+                        Atoms from the substrate.
                         """
                         )
     parser.add_argument("-op", "--output-dir",
@@ -279,10 +292,6 @@ if __name__ == '__main__':
                         default='.',
                         help="""
                         Relative or absolute path to the folder for saving outputs.
-
-    If the folder does not exist then it is created from the specified path.
-    The creation is applied recursevly to the path, starting from the right
-    until the existing folder is reached.
                         """
                         )
     parser.add_argument("-on", "--output-name",
@@ -290,9 +299,6 @@ if __name__ == '__main__':
                         default='exchange',
                         help="""
                         Seedname for the output files.
-
-    Output files will have the following name structure:
-    output-name.display_data_type.png
                         """
                         )
     parser.add_argument("-wtp", "--what-to-plot",
@@ -301,10 +307,6 @@ if __name__ == '__main__':
                         default='all',
                         help="""
                         Type of data for display.
-
-    Specifying the data for display at the graph. 
-    Everything is displayed by default, each value in a separate picture. 
-    Currently available for display: Isotropic exchange parameter, distance.
                         """
                         )
     parser.add_argument("-dc", "--draw-cells",
@@ -312,9 +314,6 @@ if __name__ == '__main__':
                         default=False,
                         help="""
                         Whenever to draw the supercell`s shape.
-
-    If specified then the shape of all supercells 
-    presented in the model (after filtering) is drawn.
                         """
                         )
     parser.add_argument("-R", "--R-vector",
@@ -323,15 +322,6 @@ if __name__ == '__main__':
                         default=None,
                         help="""
                         R vectors for filtering the model.
-
-    In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to). 
-    Atom 1 is always located in (0, 0, 0) supercell, while atom 2 is located in 
-    R = (i, j, k) supercell. This parameter tells the script to keep only the 
-    bonds for which atom 2 is located in one of specified R supercells. 
-    In order to specify supercells provide a set of integers separated 
-    by spaces. They are grouped by three starting from the left to form a set 
-    of R vectors. If the last group will contain 1 or 2 integers they will be 
-    ignored.
                         """
                         )
     parser.add_argument("-maxd", "--max-distance",
@@ -339,9 +329,6 @@ if __name__ == '__main__':
                         default=None,
                         help="""
                         (<=) Maximum distance.
-
-    All the bonds with the distance beetwen atom 1 and atom 2 
-    greater then maximum distance are excluded from the model.
                         """
                         )
     parser.add_argument("-mind", "--min-distance",
@@ -349,9 +336,6 @@ if __name__ == '__main__':
                         default=None,
                         help="""
                         (>=) Minimum distance.
-
-    All the bonds with the distance beetwen atom 1 and atom 2 
-    lower then minimum distance are excluded from the model.
                         """
                         )
     parser.add_argument("-d", "--distance",
@@ -359,13 +343,9 @@ if __name__ == '__main__':
                         default=None,
                         help="""
                         (=) Exact distance.
-
-    Only the bonds with the exact distance remains in the model.
-    Note: there is no point in specifying maximum or minimum distance when 
-    this parameter is specified.
                         """
                         )
-    parser.add_argument("-t", "--template",
+    parser.add_argument("-tf", "--template",
                         type=str,
                         default=None,
                         help="""
@@ -377,40 +357,24 @@ if __name__ == '__main__':
                         action="store_true",
                         help="""
                         Whenever to keep both bonds.
-
-    In TB2J file there are two bonds for the pair of atom 1 and atom 2: 
-    from 1 to 2 and from 2 to 1 (when R = (0, 0, 0)). Isotropic and 
-    anisotropic exchange and distance usially are exactly the same. 
-    DMI vector have the same module and opposite directions. 
-    If this parameter is specifyied then both bonds are displayed. 
-    Otherwise bonds are combined in one by taking the average beetween
-    exchange parameters (Note that it forces DMI to be equal to zero).
                         """)
     parser.add_argument("-sa", "--scale-atoms",
                         default=1,
                         type=float,
                         help="""
                         Scale for the size of atom marks.
-
-    Use it if you want to display atom marks bigger or smaller. 
-    Have to be positive.
                         """)
     parser.add_argument("-sd", "--scale-data",
                         default=1,
                         type=float,
                         help="""
                         Scale for the size of data text.
-
-    Use it if you want to display data text marks bigger or smaller. 
-    Have to be positive.
                         """)
-    parser.add_argument("--title",
+    parser.add_argument("-t", "--title",
                         default=None,
                         type=str,
                         help="""
-                        Title for the plots
-
-    Title will be displayed in the picture.
+                        Title for the plots.
                         """)
 
     args = parser.parse_args()

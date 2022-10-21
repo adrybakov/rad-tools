@@ -1,4 +1,5 @@
 #! /usr/local/bin/python3
+
 from argparse import ArgumentParser
 from os.path import join
 from os import makedirs
@@ -48,13 +49,13 @@ def main(filename, out_dir, out_name, template):
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser(description="Script for refractoring of TB2J results",
+    parser = ArgumentParser(description="Script for extracting of template-based model from TB2J results.",
                             epilog="""
-                            See the docs: 
+                            For the full description of arguments see the docs: 
                             https://rad-tools.adrybakov.com/en/latest/user_guide/tb2j_refractor.html
                             """)
 
-    parser.add_argument("-f", "--file",
+    parser.add_argument("-f", "--filename",
                         type=str,
                         required=True,
                         help="""
@@ -62,15 +63,19 @@ if __name__ == '__main__':
                         including the name and extention of the file itself.
                         """
                         )
+    parser.add_argument("-t", "--template",
+                        type=str,
+                        required=True,
+                        help="""
+                        Relative or absolute path to the template file, 
+                        including the name and extention of the file.
+                        """)
     parser.add_argument("-op", "--output-dir",
                         type=str,
                         default='.',
                         help="""
-                        Relative or absolute path to the folder for saving outputs.
-
-    If the folder does not exist then it is created from the specified path.
-    The creation is applied recursevly to the path, starting from the right
-    until the existing folder is reached.
+                        Relative or absolute path to the folder 
+                        for saving outputs.
                         """
                         )
     parser.add_argument("-on", "--output-name",
@@ -78,18 +83,9 @@ if __name__ == '__main__':
                         default='exchange_refr',
                         help="""
                         Seedname for the output files.
-
-    Output files will have the following name structure:
-    output-name
                         """
                         )
-    parser.add_argument("-t", "--template",
-                        type=str,
-                        default=None,
-                        help="""
-                        Relative or absolute path to the template file, 
-                        including the name and extention of the file.
-                        """)
+    
 
     args = parser.parse_args()
 
@@ -98,7 +94,7 @@ if __name__ == '__main__':
     except FileExistsError:
         pass
 
-    main(filename=args.file,
+    main(filename=args.filename,
          out_dir=args.output_dir,
          out_name=args.output_name,
          template=args.template)

@@ -1,3 +1,5 @@
+#! /usr/local/bin/python3
+
 from argparse import ArgumentParser
 from os.path import join
 from os import makedirs

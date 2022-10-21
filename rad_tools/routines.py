@@ -3,11 +3,9 @@ Collection of small routines and constants,
 which may be used across the whole package.
 """
 
-from os import mkdir
-from os.path import split, isdir, join
 from typing import Union
 import numpy as np
-from math import asin, sqrt
+from math import asin, sqrt, pi
 
 # Teminal colors
 BLACK = "\u001b[30m"
@@ -182,19 +180,21 @@ def rot_angle(x: Union[int, float], y: Union[int, float], dummy=False):
     y : float or int
         y coordinate of a vector.
     """
+    # rot_cos = x / (x ** 2 + y ** 2) ** 0.5
+    # rot_angle = m.acos(rot_cos) / m.pi * 180
     try:
         sin = abs(y) / sqrt(x**2 + y**2)
     except ZeroDivisionError:
         raise ValueError('Angle is ill defined (x = y = 0).')
     if x > 0:
         if y > 0:
-            return asin(sin) / np.pi * 180
+            return asin(sin) / pi * 180
         elif y == 0:
             return 0
         elif y < 0:
             if not dummy:
-                return -asin(sin) / np.pi * 180
-            return 360 - asin(sin) / np.pi * 180
+                return -asin(sin) / pi * 180
+            return 360 - asin(sin) / pi * 180
     elif x == 0:
         if y > 0:
             return 90
@@ -207,13 +207,13 @@ def rot_angle(x: Union[int, float], y: Union[int, float], dummy=False):
     elif x < 0:
         if y > 0:
             if not dummy:
-                return -asin(sin) / np.pi * 180
-            return 180 - asin(sin) / np.pi * 180
+                return -asin(sin) / pi * 180
+            return 180 - asin(sin) / pi * 180
         elif y == 0:
             if not dummy:
                 return 0
             return 180
         elif y < 0:
             if not dummy:
-                return asin(sin) / np.pi * 180
-            return 180 + asin(sin) / np.pi * 180
+                return asin(sin) / pi * 180
+            return 180 + asin(sin) / pi * 180

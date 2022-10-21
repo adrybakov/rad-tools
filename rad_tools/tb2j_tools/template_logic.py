@@ -28,8 +28,8 @@ class ExchangeTemplate:
     """
 
     # Constants
-    _major_sep = '=' * 90
-    _minor_sep = '-' * 88
+    _major_sep = '=' * 20
+    _minor_sep = '-' * 20
     _neighbors_flag = 'Neighbors template:'
 
     def __init__(self, filename: str) -> None:
