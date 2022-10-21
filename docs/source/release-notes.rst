@@ -2,6 +2,17 @@
 Release notes
 *************
 
+0.0.2
+--------
+
+Add script for producint template of template.
+
+0.0.1
+--------
+
+Change versioning style, correct bugs in template logic.
+
+
 0.0.0.10
 --------
 

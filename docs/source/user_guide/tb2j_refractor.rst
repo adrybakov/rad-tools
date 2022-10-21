@@ -4,4 +4,4 @@
 ``tb2j_refractor.py``
 *********************
 
-Script for visualisation of TB2J results.
+Script for extracting of template-based model from TB2J results.
