@@ -5,7 +5,8 @@ Release notes
 0.0.2
 --------
 
-Add script for producint template of template.
+Add script for production of template of template. 
+Fix bugs in :ref:`tb2j_plotter.py <tb2j_plotter>`.
 
 0.0.1
 --------
@@ -31,7 +32,7 @@ to the center of the bond (see
 :ref:`mode <tb2j_plotter_mode>` and 
 :ref:`substrate_atoms <tb2j_plotter_substrate_atoms>`).
 
-Add argument to ``tb2j_plotter.py`` for title for the pictures 
+Add argument to :ref:`tb2j_plotter.py <tb2j_plotter>` for title for the pictures 
 (see :ref:`title <tb2j_plotter_title>`).
 
 0.0.0.7
@@ -43,7 +44,8 @@ Add the :ref:`phonopy_plotter.py <phonopy_plotter>` script.
 -------
 
 Add arguments :ref:`scale-data <tb2j_plotter_scale_data>` and 
-:ref:`scale-atoms <tb2j_plotter_scale_atoms>` to the ``tb2j_plotter.py``.
+:ref:`scale-atoms <tb2j_plotter_scale_atoms>` to the 
+:ref:`tb2j_plotter.py <tb2j_plotter>`.
 
 0.0.0.5
 -------
