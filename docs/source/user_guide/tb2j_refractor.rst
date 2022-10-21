@@ -4,7 +4,8 @@
 ``tb2j_refractor.py``
 *********************
 
-Script for extracting of template-based model from TB2J results.
+Script for extracting of template-based model from 
+`TB2J <https://tb2j.readthedocs.io/en/latest/>`_ results.
 
 Arguments
 =========
@@ -31,6 +32,8 @@ including the name and extention of the file.
     *required* : True
 
     *type* : str
+
+See also: :ref:`template <rad_make_template>`
 
 
 .. _tb2j_refractor_output-dir:

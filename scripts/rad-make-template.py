@@ -14,7 +14,7 @@ def provide_template(output_dir=".", output_name="template.txt"):
         "atom1 atom2 1 0 0\n"\
         "atom1 atom1 -1 0 2\n" +\
         '-' * 20 + "\n" + \
-        "J2 $J_2$\n"\
+        "J2\n"\
         "atom2 atom1 9 5 -3\n"\
         "atom1 atom2 1 4 0\n"\
         "atom2 atom2 1 0 2\n" +\
@@ -25,7 +25,7 @@ def provide_template(output_dir=".", output_name="template.txt"):
     
 
 if __name__ == "__main__":
-    parser = ArgumentParser(description="Script for template creation")
+    parser = ArgumentParser(description="Script for the creation of template`s template")
 
     parser.add_argument("-op", "--output-dir",
                         type=str,

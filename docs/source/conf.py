@@ -22,7 +22,6 @@ extensions = [
     # 'sphinx_rtd_theme',
     'sphinx_copybutton',
     'sphinx.ext.intersphinx',
-    'sphinx.ext.autosectionlabel',
 ]
 
 # Solve the problem with warnings

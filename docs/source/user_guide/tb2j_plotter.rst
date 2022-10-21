@@ -4,7 +4,8 @@
 ``tb2j_plotter.py``
 *******************
 
-Script for visualisation of TB2J results.
+Script for visualisation of 
+`TB2J <https://tb2j.readthedocs.io/en/latest/>`_ results.
 
 Display Isotropic exchange and distances (one output file for each). 
 
@@ -281,6 +282,10 @@ lower then minimum distance are excluded from the model.
 
 Only the bonds with the exact distance remains in the model.
 
+    *default* : None
+
+    *type* : float
+
 .. hint::
     There is no point in specifying maximum or minimum distance when 
     this parameter is specified.
@@ -293,11 +298,11 @@ Only the bonds with the exact distance remains in the model.
 Relative or absolute path to the template file, 
 including the name and extention of the file.
 
-#TODO
+    *default* : None
 
-*default* : None
+    *type* : str
 
-*type* : str
+See also: :ref:`template <rad_make_template>`
 
 
 .. _tb2j_plotter_double-bonds:

@@ -8,3 +8,4 @@ Scripts
    tb2j_plotter
    phonopy_plotter
    tb2j_refractor
+   rad-make-template
