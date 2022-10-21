@@ -1,16 +1,14 @@
 #! /usr/local/bin/python3
 from argparse import ArgumentParser
-from os.path import join, split, abspath
-from math import atan, sqrt
-from statistics import mode
+from os.path import join
+from os import makedirs
+from math import sqrt
 
-from matplotlib import pyplot as plt
-import matplotlib as mpl
 import numpy as np
 
 from rad_tools.tb2j_tools.file_logic import ExchangeModelTB2J
 from rad_tools.tb2j_tools.template_logic import ExchangeTemplate
-from rad_tools.routines import check_make_dir, OK, RESET
+from rad_tools.routines import  OK, RESET
 
 
 def main(filename, out_dir, out_name, template):
@@ -95,7 +93,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    check_make_dir(args.output_dir)
+    makedirs(args.output_dir)
 
     main(filename=args.file,
          out_dir=args.output_dir,

@@ -1,15 +1,15 @@
 #! /usr/local/bin/python3
 from argparse import ArgumentParser
-from os.path import join, split, abspath
-from math import atan, sqrt
+from os.path import join, abspath
+from os import makedirs
+from math import sqrt
 
 from matplotlib import pyplot as plt
 import matplotlib as mpl
 import numpy as np
 
 from rad_tools.tb2j_tools.file_logic import ExchangeModelTB2J
-from rad_tools.routines import check_make_dir, atom_mark_to_latex, rot_angle,\
-    OK, RESET
+from rad_tools.routines import atom_mark_to_latex, rot_angle, OK, RESET
 
 
 def plot_2d(filename, out_dir='.',
@@ -418,7 +418,8 @@ if __name__ == '__main__':
     if args.distance is not None:
         args.min_distance = args.max_distance = args.distance
 
-    check_make_dir(args.output_dir)
+    makedirs(args.output_dir)
+    
     if args.R_vector is not None:
         args.R_vector = np.array(args.R_vector[:len(args.R_vector) // 3 * 3],
                                  dtype=int).reshape((len(args.R_vector)//3, 3))

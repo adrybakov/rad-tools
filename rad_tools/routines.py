@@ -81,34 +81,6 @@ def get_256_colours(n: int):
                          f'You provided n = {n}, type<n> = {type(n)}')
     return f'\033[38:5:{n}m'
 
-
-def check_make_dir(path: str):
-    """
-    Check if directory exist, create one if not.
-
-    If parent dir does not exist this script will create one, recursively. 
-
-    Parameters
-    ----------
-    path : str
-        path to the desired directory
-    """
-    head = path
-    tail = ''
-    dirs_to_make = []
-    while not isdir(head) and head:
-        try:
-            mkdir(head)
-        except FileNotFoundError:
-            head, tail = split(head)
-            dirs_to_make.append(tail)
-
-    dirs_to_make.reverse()
-    for dir in dirs_to_make:
-        head = join(head, dir)
-        mkdir(head)
-
-
 def exchange_to_matrix(iso=None, aniso=None, dmi=None):
     """
     Combine isotropic, anisotropic and dmi exchange into exchange matrix.
