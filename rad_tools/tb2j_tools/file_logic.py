@@ -393,7 +393,26 @@ class ExchangeModel:
                     cells.add(R)
         return list(cells)
 
+    def get_bond_list(self):
+        """
+        Getter for the list of bonds from the model.
+
+        Returns
+        -------
+        bond_list : list
+            List with all the bonds from the model.::
+
+                [(atom1, atom2, R), ...]
+        """
+        bond_list = []
+        for atom1 in self.bonds:
+            for atom2 in self.bonds[atom1]:
+                for R in self.bonds[atom1][atom2]:
+                    bond_list.append((atom1, atom2, R))
+        return bond_list
+
     # TODO It is ugly, redo in a beautifull way.
+
     def remove_double_bonds(self):
         """
         Remove double bonds.
@@ -534,6 +553,7 @@ class ExchangeModelTB2J(ExchangeModel):
         super().__init__()
         file = open(filename, 'r')
         line = True
+        self.file_order = []
 
         # Read everything before exchange
         while line:
@@ -568,6 +588,7 @@ class ExchangeModelTB2J(ExchangeModel):
             atom1 = line[0]
             atom2 = line[1]
             R = tuple(map(int, line[2:5]))
+            self.file_order.append((atom1, atom2, R))
             distance = float(line[-1])
             iso = None,
             aniso = None
@@ -602,3 +623,27 @@ class ExchangeModelTB2J(ExchangeModel):
                 self.add_atom(atom2, *self._atoms[atom2])
             bond = Bond(iso=iso, aniso=aniso, dmi=dmi, distance=distance)
             self.add_bond(bond, atom1, atom2, R)
+
+    # TODO Think about the Class type problem
+    def filter(self,
+               max_distance: Union[float, int] = None,
+               min_distance: Union[float, int] = None,
+               template: list = None,
+               R_vector: Tuple[int] = None):
+        """
+        Filter the exchange entries based on the given conditions.
+
+        Call :py:meth:`ExchangeModel.filter` method from parent class and
+        update :py:attr:`file_order`. 
+        """
+        filtered_model = deepcopy(self)
+        result = super().filter(max_distance, min_distance, template, R_vector)
+        filtered_model.file_order = []
+        filtered_model.bonds = result.bonds
+        filtered_model.cell = result.cell
+        filtered_model.magnetic_atoms = result.magnetic_atoms
+        bond_list = set(filtered_model.get_bond_list())
+        for key in self.file_order:
+            if key in bond_list:
+                filtered_model.file_order.append(key)
+        return filtered_model

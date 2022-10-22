@@ -302,7 +302,7 @@ including the name and extention of the file.
 
     *type* : str
 
-See also: :ref:`template <rad_make_template>`
+See also: :ref:`template <rad-make-template>`
 
 
 .. _tb2j_plotter_double-bonds:

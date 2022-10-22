@@ -2,14 +2,20 @@
 Release notes
 *************
 
-0.0.2
---------
+0.0.3
+-----
 
-Add script for production of template of template. 
+Add possibility to make draft of the template file form TB2J file in
+:ref:`rad-make-template.py <rad-make-template>` script.
+
+0.0.2
+-----
+
+Add :ref:`rad-make-template.py <rad-make-template>` script. 
 Fix bugs in :ref:`tb2j_plotter.py <tb2j_plotter>`.
 
 0.0.1
---------
+-----
 
 Change versioning style, correct bugs in template logic.
 

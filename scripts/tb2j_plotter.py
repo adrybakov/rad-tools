@@ -120,7 +120,7 @@ def plot_2d(filename, out_dir='.',
             Ry_max = max(Ry, Ry_max)
             Rz_min = min(Rz, Rz_min)
             Rz_max = max(Rz, Rz_max)
-        
+
         for i in range(Rx_min, Rx_max + 1):
             for j in range(Ry_min, Ry_max + 1):
                 for k in range(Rz_min, Rz_max + 1):
@@ -263,7 +263,7 @@ if __name__ == '__main__':
     plot_data_type = ['iso', 'distance']
     plot_mode = {"2d": plot_2d, "molecule": plot_molecule}
 
-    parser.add_argument("-f", "--file",
+    parser.add_argument("-f", "--filename",
                         type=str,
                         required=True,
                         help="""
@@ -386,7 +386,7 @@ if __name__ == '__main__':
         makedirs(args.output_dir)
     except FileExistsError:
         pass
-    
+
     if args.R_vector is not None:
         args.R_vector = np.array(args.R_vector[:len(args.R_vector) // 3 * 3],
                                  dtype=int).reshape((len(args.R_vector)//3, 3))
@@ -401,7 +401,7 @@ if __name__ == '__main__':
 
     for mode in plot_mode:
         for data_type in plot_data_type:
-            mode(filename=args.file,
+            mode(filename=args.filename,
                  out_dir=args.output_dir,
                  out_name=args.output_name,
                  wtp=data_type,

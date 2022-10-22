@@ -1,10 +1,23 @@
-.. _rad_make_template:
+.. _rad-make-template:
 
 ************************
 ``rad-make-template.py``
 ************************
 
 Script for the creation of template`s template.
+
+This script can provide blank template or template based on the TB2J
+*exchange.out* file (see :ref:`filename <rad-make-template_filename>`). 
+Several filtering options are supported for the case of TB2J-based template 
+(:ref:`R-vector <rad-make-template_R-vector>`, 
+:ref:`max-distance <rad-make-template_max-distance>`,
+:ref:`min-distance <rad-make-template_min-distance>`,
+:ref:`distance <rad-make-template_distance>`).
+
+.. important::
+
+    When template is made on the base of TB2J file it is still necessary to
+    group bonds into neighbors and add names by hand afterwards.
 
 
 Template specification
@@ -73,7 +86,7 @@ Lines 14: Footer of the file. 20 or more "=" symbols.
 Arguments
 =========
 
-.. _rad_make_template_output-dir:
+.. _rad-make-template_output-dir:
 
 ``--output-dir``, ``-op``
 -------------------------
@@ -84,7 +97,7 @@ Relative or absolute path to the folder for saving outputs.
     *type* : str
 
 
-.. _rad_make_template_output-name:
+.. _rad-make-template_output-name:
 
 ``--output-name``, ``-on``
 --------------------------
@@ -93,3 +106,82 @@ Template file name, default "template.txt"
     *default* : template.txt
 
     *type* : str
+
+
+.. _rad-make-template_filename:
+
+``--filename``, ``-f``
+----------------------
+Relative or absulute path to the TB2J exchange output file, 
+including the name and extention of the file.
+
+    *default* : None 
+
+    *type* : str
+
+
+.. _rad-make-template_R-vector:
+
+``--R-vector``, ``-R``
+----------------------
+R vectors for filtering the model.
+
+In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to). 
+Atom 1 is always located in (0, 0, 0) supercell, while atom 2 is located in 
+R = (i, j, k) supercell. This parameter tells the script to keep only the 
+bonds for which atom 2 is located in one of specified R supercells. 
+In order to specify supercells provide a set of integers separated 
+by spaces. They are grouped by three starting from the left to form a set 
+of R vectors. If the last group will contain 1 or 2 integers they will be 
+ignored.
+
+    *default* : None
+
+    *type* : int
+
+    *nargs* : *
+
+
+.. _rad-make-template_max-distance:
+
+``--max-distance``, ``-maxd``
+-----------------------------
+(<=) Maximum distance.
+
+All the bonds with the distance beetwen atom 1 and atom 2 
+greater then maximum distance are excluded from the model.
+
+    *default* : None
+
+    *type* : float
+
+
+.. _rad-make-template_min-distance:
+
+``--min-distance``, ``-mind``
+-----------------------------
+(>=) Minimum distance.
+
+All the bonds with the distance beetwen atom 1 and atom 2 
+lower then minimum distance are excluded from the model.
+
+    *default* : None
+
+    *type* : float
+
+
+.. _rad-make-template_distance:
+
+``--distance``, ``-d``
+----------------------
+(=) Exact distance.
+
+Only the bonds with the exact distance remains in the model.
+
+    *default* : None
+
+    *type* : float
+
+.. hint::
+    There is no point in specifying maximum or minimum distance when 
+    this parameter is specified.
