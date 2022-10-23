@@ -39,21 +39,21 @@ def main(filename, out_dir, out_name, template):
             out_file.write(f"{name}\n" +
                            f"    Isotropic: {round(J_iso, 4)}\n" +
                            f"    Anisotropic:\n" +
-                           f"{round(J_aniso[0][0], 4)} " +
-                           f"{round(J_aniso[0][1], 4)} " +
-                           f"{round(J_aniso[0][2], 4)}\n" +
-                           f"{round(J_aniso[1][0], 4)} " +
-                           f"{round(J_aniso[1][1], 4)} " +
-                           f"{round(J_aniso[1][2], 4)}\n" +
-                           f"{round(J_aniso[2][0], 4)} " +
-                           f"{round(J_aniso[2][1], 4)} " +
-                           f"{round(J_aniso[2][2], 4)}\n" +
-                           f"DMI: " +
-                           f"{round(DMI[0], 4)} " +
-                           f"{round(DMI[1], 4)} " +
-                           f"{round(DMI[2], 4)}\n" +
-                           f"| DMI |: {round(abs_DMI, 4)}\n" +
-                           f"| DMI/J | {round(abs(abs_DMI/J_iso), 4)}\n\n")
+                           f"        {round(J_aniso[0][0], 4)} " +
+                           f"    {round(J_aniso[0][1], 4)} " +
+                           f"    {round(J_aniso[0][2], 4)}\n" +
+                           f"        {round(J_aniso[1][0], 4)} " +
+                           f"    {round(J_aniso[1][1], 4)} " +
+                           f"    {round(J_aniso[1][2], 4)}\n" +
+                           f"        {round(J_aniso[2][0], 4)} " +
+                           f"    {round(J_aniso[2][1], 4)} " +
+                           f"    {round(J_aniso[2][2], 4)}\n" +
+                           f"    DMI: " +
+                           f"    {round(DMI[0], 4)} " +
+                           f"    {round(DMI[1], 4)} " +
+                           f"    {round(DMI[2], 4)}\n" +
+                           f"    | DMI |: {round(abs_DMI, 4)}\n" +
+                           f"    | DMI/J | {round(abs(abs_DMI/J_iso), 4)}\n\n")
 
     print(f"{OK}Extracted exchange info is in " +
           f"{abspath(join(out_dir, out_name))}{RESET}")
