@@ -6,6 +6,10 @@ Release notes
 ===
 The big renaming passed.
 
+0.1.1
+-----
+Fix bugs in :ref:`tb2j-prefractor.py <tb2j-refractor>`.
+
 0.1.0
 -----
 Scripts were renamed:
