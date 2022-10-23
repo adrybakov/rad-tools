@@ -8,7 +8,7 @@ The big renaming passed.
 
 0.1.1
 -----
-Fix bugs in :ref:`tb2j-prefractor.py <tb2j-refractor>`.
+Fix bugs in :ref:`tb2j-refractor.py <tb2j-refractor>`.
 
 0.1.0
 -----
@@ -16,7 +16,7 @@ Scripts were renamed:
 
 tb2j_plotter.py to :ref:`tb2j-plotter.py <tb2j-plotter>`
 
-tb2j_prefractor.py to :ref:`tb2j-prefractor.py <tb2j-refractor>`
+tb2j_refractor.py to :ref:`tb2j-refractor.py <tb2j-refractor>`
 
 phonopy_plotter.py to :ref:`phonopy-plotter.py <phonopy-plotter>`
 
