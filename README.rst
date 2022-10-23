@@ -3,7 +3,7 @@ Script Collection
 Various scripts which were useful during my PhD.
 
 .. image:: https://readthedocs.org/projects/rad-tools/badge/?version=stable
-    :target: https://rad-tools.adrybakov.com/en/latest/?badge=stable
+    :target: https://rad-tools.adrybakov.com/en/stable/?badge=stable
     :alt: Documentation Status
 
 Installation
