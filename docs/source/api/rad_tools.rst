@@ -1,5 +1,5 @@
 **********
-rad\_tools
+rad_tools
 **********
 
 .. automodule:: rad_tools
@@ -10,5 +10,6 @@ rad\_tools
 .. toctree::
    :maxdepth: 1   
 
+   rad_tools.exchange
+   rad_tools.map
    rad_tools.routines
-   rad_tools.tb2j_tools 

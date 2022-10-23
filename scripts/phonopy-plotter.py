@@ -2,7 +2,7 @@
 
 from argparse import ArgumentParser
 
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
 import numpy as np
 import yaml
 
@@ -54,7 +54,8 @@ def plot(file, kp=None, constant=1, on="output"):
                 kp[i] = '$\Gamma$'
         ax.xaxis.set_ticks(K_points, kp, fontsize=15)
         for k_point in K_points:
-            ax.vlines(k_point, 0, 1, transform=ax.get_xaxis_transform(), color='black', linewidths=0.5)
+            ax.vlines(k_point, 0, 1, transform=ax.get_xaxis_transform(),
+                      color='black', linewidths=0.5)
     plt.show()
     if constant != 1:
         output = yaml.dump(data)
@@ -65,14 +66,16 @@ def plot(file, kp=None, constant=1, on="output"):
 if __name__ == '__main__':
     parser = ArgumentParser(description='Fit Exchange parameters map')
 
-    parser.add_argument("-file", type=str, default='/Users/rybakov.ad/Projects/rad-tools/debug/band.yaml',
+    parser.add_argument("-file", type=str, default='band.yaml',
                         help="Path to the band.yaml file")
     parser.add_argument("-kp",  type=str, default=None,
                         nargs='*',
                         help="K-path, example: -kp G X R Y G")
-    parser.add_argument('-constant', type=float, default=1, help="Constant for conversion. "
-                                                                    "The values will be multiplied by it")
-    parser.add_argument('-on', type=str, default="output", help="output name file")
+    parser.add_argument('-constant', type=float, default=1,
+                        help="Constant for conversion. "
+                        "The values will be multiplied by it")
+    parser.add_argument('-on', type=str, default="output",
+                        help="output name file")
     args = parser.parse_args()
     if args.file:
         plot(args.file, kp=args.kp, constant=args.constant, on=args.on)

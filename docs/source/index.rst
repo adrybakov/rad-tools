@@ -12,7 +12,7 @@ Last version: |release|
    :caption: Contents:
 
    installation
-   user_guide/guide
+   user-guide/guide
    api/api
    release-notes
 

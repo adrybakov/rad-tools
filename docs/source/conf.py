@@ -22,7 +22,11 @@ extensions = [
     # 'sphinx_rtd_theme',
     'sphinx_copybutton',
     'sphinx.ext.intersphinx',
+    'sphinx.ext.todo',
 ]
+
+# todo
+todo_include_todos = True
 
 # Solve the problem with warnings
 numpydoc_class_members_toctree = False

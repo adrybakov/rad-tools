@@ -3,7 +3,6 @@ Collection of small routines and constants,
 which may be used across the whole package.
 """
 
-from typing import Union
 import numpy as np
 from math import asin, sqrt, pi
 
@@ -58,7 +57,7 @@ ANSI escape code for errors.
 """
 
 
-def get_256_colours(n: int):
+def get_256_colours(n):
     """
     ANSI escape codes for terminal color with 256-colours support
     (see: https://en.wikipedia.org/wiki/ANSI_escape_code).
@@ -78,6 +77,7 @@ def get_256_colours(n: int):
         raise ValueError(f'Integer n have to be in range 0 <= n <= 255. '
                          f'You provided n = {n}, type<n> = {type(n)}')
     return f'\033[38:5:{n}m'
+
 
 def exchange_to_matrix(iso=None, aniso=None, dmi=None):
     """
@@ -166,7 +166,7 @@ def atom_mark_to_latex(mark):
     return new_mark
 
 
-def rot_angle(x: Union[int, float], y: Union[int, float], dummy=False):
+def rot_angle(x, y, dummy=False):
     """
     Rotational ange from 2D vector.
 

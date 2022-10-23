@@ -1,15 +1,34 @@
 from copy import deepcopy
-from typing import Union, Tuple
 
 import numpy as np
 
-from rad_tools.tb2j_tools.template_logic import ExchangeTemplate
 from rad_tools.routines import exchange_from_matrix, exchange_to_matrix
 
 
 class Bond:
     """
     Class with implemented logic for one bond.
+
+    Parameters
+    ----------
+
+    iso : int or float, default 0
+        Value of isotropic exchange parameter in meV. 
+
+    aniso : 3 x 3 np.ndarray, default np.zeros((3, 3))
+        3 x 3 matrix of symmetric anisotropic exchange in meV. 
+
+    dmi : 3 x 1 np.ndarray, default np.zeros(3)
+        Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz) in meV. 
+
+    matrix : 3 x 3 np.ndarray, default np.zeros((3, 3))
+        Exchange matrix in meV. If ``matrix`` is specified then ``iso`` ,
+        ``aniso`` and ``dmi`` will be ignored and derived from ``matrix`` .
+        If ``matrix`` is not specified then it will be derived from
+        ``iso`` , ``aniso`` and ``dmi`` .
+
+    distance : float, default 0
+        Lenght of the bond.
 
     Attributes
     ----------
@@ -25,7 +44,7 @@ class Bond:
              [0, 0, J]]
 
     aniso : 3 x 3 np.ndarray of floats
-        3 x 3 matrix of symmetric anisotropic exchange in meV. If ``aniso`` 
+        3 x 3 matrix of symmetric anisotropic exchange in meV. If ``aniso``
         is not specified then it will be filled with zeros.
 
         Matrix form: ::
@@ -35,7 +54,7 @@ class Bond:
              [J_xz, J_yz, J_zz]]
 
     dmi : 3 x 1 np.ndarray of floats
-        Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz) in meV. If ``dmi`` 
+        Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz) in meV. If ``dmi``
         is not specified then it will be filled with zeros.
 
         Vector form: ::
@@ -60,37 +79,33 @@ class Bond:
              [J_yx, J_yy, J_yz],
              [J_zx, J_zy, J_zz]]
 
+    distance : float
+        Lenght of the bond.
+
     """
 
     distance_tolerance = 1E-05
 
     def __init__(self,
-                 iso=None,
-                 aniso=None,
-                 dmi=None,
-                 matrix=None,
-                 distance=None) -> None:
+                 iso=0,
+                 aniso=np.zeros((3, 3)),
+                 dmi=np.zeros(3),
+                 matrix=np.zeros((3, 3)),
+                 distance=0.) -> None:
         self.iso = 0.
         self.aniso = np.zeros((3, 3), dtype=float)
         self.dmi = np.zeros(3, dtype=float)
         self.matrix = np.zeros((3, 3), dtype=float)
-        self.dis = 0.
+        self.dis = float(distance)
 
-        if matrix is not None:
-            self.matrix = np.array(matrix, dtype=float)
-        else:
-            if iso is not None:
-                self.iso = float(iso)
-            if aniso is not None:
-                self.aniso = np.array(aniso, dtype=float)
-            if dmi is not None:
-                self.dmi = np.array(dmi, dtype=float)
+        self.matrix = np.array(matrix, dtype=float)
+        if (self.matrix == np.zeros((3, 3))).all():
+            self.iso = float(iso)
+            self.aniso = np.array(aniso, dtype=float)
+            self.dmi = np.array(dmi, dtype=float)
             self.matrix = exchange_to_matrix(self.iso, self.aniso, self.dmi)
         # To ensure the correct decomposition
         self.iso, self.aniso, self.dmi = exchange_from_matrix(self.matrix)
-
-        if distance is not None:
-            self.dis = float(distance)
 
     def __add__(self, other):
         iso = (self.iso + other.iso)
@@ -115,13 +130,13 @@ class Bond:
                              f'(Tolerance: {self.distance_tolerance})')
         return Bond(iso=iso, aniso=aniso, dmi=dmi, distance=dis)
 
-    def __mul__(self, number: Union[float, int]):
+    def __mul__(self, number):
         iso = self.iso * number
         aniso = self.aniso * number
         dmi = self.dmi * number
         return Bond(iso=iso, aniso=aniso, dmi=dmi, distance=self.dis)
 
-    def __rmul__(self, number: Union[float, int]):
+    def __rmul__(self, number):
         iso = number * self.iso
         aniso = number * self.aniso
         dmi = number * self.dmi
@@ -157,10 +172,7 @@ class ExchangeModel:
         self.magnetic_atoms = {}
         self.bonds = {}
 
-    def add_atom(self, name: str,
-                 x: Union[int, float],
-                 y: Union[int, float],
-                 z: Union[int, float]):
+    def add_atom(self, name, x, y, z):
         """
         Add magnetic atom to the model.
 
@@ -181,7 +193,7 @@ class ExchangeModel:
         """
         self.magnetic_atoms[name] = (float(x), float(y), float(z))
 
-    def remove_atom(self, name: str):
+    def remove_atom(self, name):
         """
         Remove magnetic atom from the model
 
@@ -201,14 +213,14 @@ class ExchangeModel:
             if name in self.bonds[atom1]:
                 del self.bonds[atom1][name]
 
-    def add_bond(self, bond: Bond, atom1: str, atom2: str, R: Tuple[int]):
+    def add_bond(self, bond, atom1, atom2, R):
         """
         Add one bond to the model.
 
         Parameters
         ----------
-        bond : Bond
-            An instance of Bond Class with the information about
+        bond : :py:class:`Bond`
+            An instance of :py:class:`Bond` class with the information about
             exchange parameters.
         atom1 : str
             Name of atom1 in (0, 0, 0) unit cell.
@@ -223,7 +235,7 @@ class ExchangeModel:
             self.bonds[atom1][atom2] = {}
         self.bonds[atom1][atom2][R] = bond
 
-    def remove_bond(self, atom1: str, atom2: str, R: Tuple[int]):
+    def remove_bond(self, atom1, atom2, R):
         """
         Remove one bond from the model.
 
@@ -412,7 +424,6 @@ class ExchangeModel:
         return bond_list
 
     # TODO It is ugly, redo in a beautifull way.
-
     def remove_double_bonds(self):
         """
         Remove double bonds.
@@ -437,26 +448,25 @@ class ExchangeModel:
                    atom2 in unbounded_model.bonds and\
                    atom1 in unbounded_model.bonds[atom2] and\
                    (0, 0, 0) in unbounded_model.bonds[atom2][atom1]:
-                    unbounded_model.bonds[atom1][atom2][(0, 0, 0)] = \
-                        (unbounded_model.bonds[atom1][atom2][(0, 0, 0)] +
-                            unbounded_model.bonds[atom2][atom1][(0, 0, 0)]) * 0.5
+                    unbounded_model.bonds[atom1][atom2][(0, 0, 0)] = (unbounded_model.bonds[atom1][atom2][(0, 0, 0)] +
+                                                                      unbounded_model.bonds[atom2][atom1][(0, 0, 0)]) * 0.5
                     unbounded_model.remove_bond(atom2, atom1, (0, 0, 0))
         return unbounded_model
 
     def filter(self,
-               max_distance: Union[float, int] = None,
-               min_distance: Union[float, int] = None,
-               template: list = None,
-               R_vector: Tuple[int] = None):
+               max_distance=None,
+               min_distance=None,
+               template=None,
+               R_vector=None):
         """
         Filter the exchange entries based on the given conditions.
 
-        The result will be defined by logical conjugate of the conditions. 
-        Saying so the filtering will be performed for each given condition 
+        The result will be defined by logical conjugate of the conditions.
+        Saying so the filtering will be performed for each given condition
         one by one.
         Note: this method is not modifying the instance at which it is called.
-        It will create a new instance with sorted ``bonds`` and all the other
-        attributes will be copied (through deepcopy).
+        It will create a new instance with sorted :py:attr:`bonds` and all the other
+        attributes will be copied (through :py:func:`deepcopy`).
 
         Parameters
         ----------
@@ -472,7 +482,7 @@ class ExchangeModel:
             [(atom1, atom2, R), ...]
 
         R_vector : tuple of ints or list of tuples of ints
-            Tuple of 3 integers or list of tuples, specifying the R vectors, 
+            Tuple of 3 integers or list of tuples, specifying the R vectors,
             which will be kept after filtering.
 
         Returns
@@ -533,7 +543,7 @@ class ExchangeModelTB2J(ExchangeModel):
     _minor_sep = '-' * 88
     _garbage = str.maketrans({'(': None,
                               ')': None,
-                              '[': None,
+                             '[': None,
                               ']': None,
                               ',': None,
                               '\'': None})
@@ -549,7 +559,7 @@ class ExchangeModelTB2J(ExchangeModel):
     # {mark: (x, y, z), ...}
     _atoms = {}
 
-    def __init__(self, filename: str) -> None:
+    def __init__(self, filename) -> None:
         super().__init__()
         file = open(filename, 'r')
         line = True
@@ -624,17 +634,17 @@ class ExchangeModelTB2J(ExchangeModel):
             bond = Bond(iso=iso, aniso=aniso, dmi=dmi, distance=distance)
             self.add_bond(bond, atom1, atom2, R)
 
-    # TODO Think about the Class type problem
+    # TODO Think about the class type problem
     def filter(self,
-               max_distance: Union[float, int] = None,
-               min_distance: Union[float, int] = None,
-               template: list = None,
-               R_vector: Tuple[int] = None):
+               max_distance=None,
+               min_distance=None,
+               template=None,
+               R_vector=None):
         """
         Filter the exchange entries based on the given conditions.
 
         Call :py:meth:`ExchangeModel.filter` method from parent class and
-        update :py:attr:`file_order`. 
+        update :py:attr:`file_order`.
         """
         filtered_model = deepcopy(self)
         result = super().filter(max_distance, min_distance, template, R_vector)

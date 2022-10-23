@@ -1,10 +1,10 @@
-.. _phonopy_plotter:
+.. _phonopy-plotter:
 
 **********************
-``phonopy_plotter.py``
+``phonopy-plotter.py``
 **********************
 
 Script for visualisation of phonopy results.
 
-.. note::
+.. todo::
     Docs to be written

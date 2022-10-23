@@ -12,7 +12,7 @@ Add possibility to make draft of the template file form TB2J file in
 -----
 
 Add :ref:`rad-make-template.py <rad-make-template>` script. 
-Fix bugs in :ref:`tb2j_plotter.py <tb2j_plotter>`.
+Fix bugs in :ref:`tb2j-plotter.py <tb2j-plotter>`.
 
 0.0.1
 -----
@@ -23,40 +23,40 @@ Change versioning style, correct bugs in template logic.
 0.0.0.10
 --------
 
-Add :ref:`tb2j_refractor.py <tb2j_refractor>` script.
+Add :ref:`tb2j-refractor.py <tb2j-refractor>` script.
 
 0.0.0.9
 -------
 
-Better help messages in :ref:`tb2j_plotter.py <tb2j_plotter>` script.
+Better help messages in :ref:`tb2j-plotter.py <tb2j-plotter>` script.
 
 0.0.0.8
 -------
 
 Add possibility to plot parameters vs distance from the center of the molecule
 to the center of the bond (see 
-:ref:`mode <tb2j_plotter_mode>` and 
-:ref:`substrate_atoms <tb2j_plotter_substrate_atoms>`).
+:ref:`mode <tb2j-plotter_mode>` and 
+:ref:`substrate-atoms <tb2j-plotter_substrate-atoms>`).
 
-Add argument to :ref:`tb2j_plotter.py <tb2j_plotter>` for title for the pictures 
-(see :ref:`title <tb2j_plotter_title>`).
+Add argument to :ref:`tb2j-plotter.py <tb2j-plotter>` for title for the pictures 
+(see :ref:`title <tb2j-plotter_title>`).
 
 0.0.0.7
 -------
 
-Add the :ref:`phonopy_plotter.py <phonopy_plotter>` script.
+Add the :ref:`phonopy-plotter.py <phonopy-plotter>` script.
 
 0.0.0.6
 -------
 
-Add arguments :ref:`scale-data <tb2j_plotter_scale_data>` and 
-:ref:`scale-atoms <tb2j_plotter_scale_atoms>` to the 
-:ref:`tb2j_plotter.py <tb2j_plotter>`.
+Add arguments :ref:`scale-data <tb2j-plotter_scale-data>` and 
+:ref:`scale-atoms <tb2j-plotter_scale-atoms>` to the 
+:ref:`tb2j-plotter.py <tb2j-plotter>`.
 
 0.0.0.5
 -------
 
-Fix the problem with the file_logic docs. 
+Fix the problem with the :py:mod:`model` docs. 
 
 0.0.0.4
 -------

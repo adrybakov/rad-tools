@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from rad_tools.tb2j_tools.template_logic import ExchangeTemplate
+from rad_tools.exchange.template import ExchangeTemplate
 
 
 class TestInputFilename():
@@ -18,13 +18,13 @@ class TestInputFilename():
 
     def test_correct_filename(self):
         tmp_model = ExchangeTemplate(os.path.join(
-            'utest', 'tb2j_tools', 'resourses', 'exchange.out'))
+            'utest', 'exchange', 'resourses', 'exchange.out'))
 
 
 class TestExchangeTemplate:
 
     tmp_model = ExchangeTemplate(os.path.join(
-        'utest', 'tb2j_tools', 'resourses', 'template.txt'
+        'utest', 'exchange', 'resourses', 'template.txt'
     ))
 
 

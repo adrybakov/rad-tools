@@ -32,7 +32,7 @@ class ExchangeTemplate:
     _minor_sep = '-' * 20
     _neighbors_flag = 'Neighbors template:'
 
-    def __init__(self, filename: str) -> None:
+    def __init__(self, filename) -> None:
 
         self.names = {}
         self.latex_names = {}

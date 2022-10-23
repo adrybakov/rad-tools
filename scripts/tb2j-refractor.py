@@ -1,15 +1,15 @@
 #! /usr/local/bin/python3
 
 from argparse import ArgumentParser
-from os.path import join
+from os.path import join, abspath
 from os import makedirs
 from math import sqrt
 
 import numpy as np
 
-from rad_tools.tb2j_tools.file_logic import ExchangeModelTB2J
-from rad_tools.tb2j_tools.template_logic import ExchangeTemplate
-from rad_tools.routines import  OK, RESET
+from rad_tools.exchange.model import ExchangeModelTB2J
+from rad_tools.exchange.template import ExchangeTemplate
+from rad_tools.routines import OK, RESET
 
 
 def main(filename, out_dir, out_name, template):
@@ -36,32 +36,42 @@ def main(filename, out_dir, out_name, template):
             J_aniso /= len(template.names[name])
             DMI /= len(template.names[name])
             abs_DMI /= len(template.names[name])
-            out_file.write(f"""
-{name}
-    Isotropic: {round(J_iso, 4)}
-    Anisotropic: 
-    {round(J_aniso[0][0], 4)} {round(J_aniso[0][1], 4)} {round(J_aniso[0][2], 4)}
-    {round(J_aniso[1][0], 4)} {round(J_aniso[1][1], 4)} {round(J_aniso[1][2], 4)}
-    {round(J_aniso[2][0], 4)} {round(J_aniso[2][1], 4)} {round(J_aniso[2][2], 4)}
-    DMI: {round(DMI[0], 4)} {round(DMI[1], 4)} {round(DMI[2], 4)}
-    |DMI|: {round(abs_DMI, 4)}
-    |DMI/J| {round(abs(abs_DMI/J_iso), 4)}
+            out_file.write(f"{name}\n" +
+                           f"    Isotropic: {round(J_iso, 4)}\n" +
+                           f"    Anisotropic:\n" +
+                           f"{round(J_aniso[0][0], 4)} " +
+                           f"{round(J_aniso[0][1], 4)} " +
+                           f"{round(J_aniso[0][2], 4)}\n" +
+                           f"{round(J_aniso[1][0], 4)} " +
+                           f"{round(J_aniso[1][1], 4)} " +
+                           f"{round(J_aniso[1][2], 4)}\n" +
+                           f"{round(J_aniso[2][0], 4)} " +
+                           f"{round(J_aniso[2][1], 4)} " +
+                           f"{round(J_aniso[2][2], 4)}\n" +
+                           f"DMI: " +
+                           f"{round(DMI[0], 4)} " +
+                           f"{round(DMI[1], 4)} " +
+                           f"{round(DMI[2], 4)}\n" +
+                           f"| DMI |: {round(abs_DMI, 4)}\n" +
+                           f"| DMI/J | {round(abs(abs_DMI/J_iso), 4)}\n\n")
 
-""")
+    print(f"{OK}Extracted exchange info is in " +
+          f"{abspath(join(out_dir, out_name))}{RESET}")
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser(description="Script for extracting of template-based model from TB2J results.",
-                            epilog="""
-                            For the full description of arguments see the docs: 
-                            https://rad-tools.adrybakov.com/en/latest/user_guide/tb2j_refractor.html
-                            """)
+    parser = ArgumentParser(
+        description="Script for extracting of template-based model from TB2J results.",
+        epilog="""
+            For the full description of arguments see the docs:
+            https: // rad-tools.adrybakov.com/en/stable/user-guide/tb2j-refractor.html
+            """)
 
     parser.add_argument("-f", "--filename",
                         type=str,
                         required=True,
                         help="""
-                        Relative or absulute path to the *exchange.out* file,
+                        Relative or absulute path to the * exchange.out * file,
                         including the name and extention of the file itself.
                         """
                         )
@@ -69,14 +79,14 @@ if __name__ == '__main__':
                         type=str,
                         required=True,
                         help="""
-                        Relative or absolute path to the template file, 
+                        Relative or absolute path to the template file,
                         including the name and extention of the file.
                         """)
     parser.add_argument("-op", "--output-dir",
                         type=str,
                         default='.',
                         help="""
-                        Relative or absolute path to the folder 
+                        Relative or absolute path to the folder
                         for saving outputs.
                         """
                         )
@@ -87,7 +97,6 @@ if __name__ == '__main__':
                         Seedname for the output files.
                         """
                         )
-    
 
     args = parser.parse_args()
 

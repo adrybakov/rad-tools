@@ -1,7 +1,7 @@
-.. _tb2j_refractor:
+.. _tb2j-refractor:
 
 *********************
-``tb2j_refractor.py``
+``tb2j-refractor.py``
 *********************
 
 Script for extracting of template-based model from 
@@ -10,7 +10,7 @@ Script for extracting of template-based model from
 Arguments
 =========
 
-.. _tb2j_refractor_filename:
+.. _tb2j-refractor_filename:
 
 ``--filename``, ``-f``
 ----------------------
@@ -22,7 +22,7 @@ including the name and extention of the file itself.
     *type* : str
 
 
-.. _tb2j_refractor_template:
+.. _tb2j-refractor_template:
 
 ``--template``, ``-t``
 ----------------------
@@ -36,7 +36,7 @@ including the name and extention of the file.
 See also: :ref:`template <rad-make-template>`
 
 
-.. _tb2j_refractor_output-dir:
+.. _tb2j-refractor_output-dir:
 
 ``--output-dir``, ``-op``
 -------------------------
@@ -51,7 +51,7 @@ until the existing folder is reached.
     *type* : str
 
 
-.. _tb2j_refractor_output-name:
+.. _tb2j-refractor_output-name:
 
 ``--output-name``, ``-on``
 --------------------------
@@ -59,6 +59,6 @@ Seedname for the output files.
 
 Output files will have the following name structure: *output-name*
 
-    *default* : exchange_refr
+    *default* : exchange_refr.txt
 
     *type* : str

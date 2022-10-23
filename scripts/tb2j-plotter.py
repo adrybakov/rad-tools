@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 import matplotlib as mpl
 import numpy as np
 
-from rad_tools.tb2j_tools.file_logic import ExchangeModelTB2J
+from rad_tools.exchange.model import ExchangeModelTB2J
 from rad_tools.routines import atom_mark_to_latex, rot_angle, OK, RESET
 
 
@@ -254,11 +254,12 @@ def plot_molecule(filename, out_dir='.',
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser(description="Script for visualisation of TB2J results",
-                            epilog="""
-                            For the full description of arguments see the docs: 
-                            https://rad-tools.adrybakov.com/en/latest/user_guide/tb2j_plotter.html
-                            """)
+    parser = ArgumentParser(
+        description="Script for visualisation of TB2J results",
+        epilog="""
+               For the full description of arguments see the docs: 
+               https://rad-tools.adrybakov.com/en/stable/user-guide/tb2j-plotter.html
+               """)
 
     plot_data_type = ['iso', 'distance']
     plot_mode = {"2d": plot_2d, "molecule": plot_molecule}

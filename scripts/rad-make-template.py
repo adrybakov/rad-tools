@@ -1,35 +1,36 @@
 #! /usr/local/bin/python3
 
 from argparse import ArgumentParser
-from os.path import join
+from os.path import join, abspath
 from os import makedirs
 
 import numpy as np
 
-from rad_tools.tb2j_tools.file_logic import ExchangeModelTB2J
+from rad_tools.exchange.model import ExchangeModelTB2J
+from rad_tools.routines import OK, RESET, YELLOW
 
 
-def provide_template(output_dir=".", output_name="template.txt",
+def provide_template(out_dir=".", out_name="template.txt",
                      tb2j_filename=None,
                      min_distance=None,
                      max_distance=None,
                      R_vector=None):
-    template = '=' * 20 + "\n" + \
-        "Neighbors template:\n"\
-        "i j R_a R_b R_c\n" +\
-        '-' * 20 + "\n" + \
-        "J1 $J_1$\n"\
-        "atom1 atom2 0 0 0\n"\
-        "atom1 atom2 1 0 0\n"\
-        "atom1 atom1 -1 0 2\n" +\
-        '-' * 20 + "\n" + \
-        "J2\n"\
-        "atom2 atom1 9 5 -3\n"\
-        "atom1 atom2 1 4 0\n"\
-        "atom2 atom2 1 0 2\n" +\
-        '=' * 20 + "\n"
+    template = ('=' * 20 + "\n" +
+                "Neighbors template:\n" +
+                "i j R_a R_b R_c\n" +
+                '-' * 20 + "\n" +
+                "J1 $J_1$\n" +
+                "atom1 atom2 0 0 0\n" +
+                "atom1 atom2 1 0 0\n" +
+                "atom1 atom1 -1 0 2\n" +
+                '-' * 20 + "\n" +
+                "J2\n" +
+                "atom2 atom1 9 5 -3\n" +
+                "atom1 atom2 1 4 0\n" +
+                "atom2 atom2 1 0 2\n" +
+                '=' * 20 + "\n")
 
-    with open(join(output_dir, output_name), "w") as file:
+    with open(join(out_dir, out_name), "w") as file:
         if tb2j_filename is None:
             file.write(template)
         else:
@@ -44,11 +45,19 @@ def provide_template(output_dir=".", output_name="template.txt",
             for atom1, atom2, R in model.file_order:
                 file.write(f"{atom1} {atom2} {R[0]} {R[1]} {R[2]}\n")
             file .write('=' * 20 + "\n")
+    print(f"{OK}Template draft is in " +
+          f"{abspath(join(out_dir, out_name))}{RESET}")
+    print(f"{YELLOW}Do not forget to correct the template draft " +
+          f"to your needs!{RESET}")
 
 
 if __name__ == "__main__":
     parser = ArgumentParser(
-        description="Script for the creation of template`s template")
+        description="Script for the creation of template`s template",
+        epilog="""
+            For the full description of arguments see the docs:
+            https://rad-tools.adrybakov.com/en/stable/user-guide/rad-make-template.html
+            """)
 
     parser.add_argument("-op", "--output-dir",
                         type=str,
@@ -117,8 +126,8 @@ if __name__ == "__main__":
                                  dtype=int).reshape((len(args.R_vector)//3, 3))
         args.R_vector = list(map(tuple, args.R_vector.tolist()))
 
-    provide_template(output_dir=args.output_dir,
-                     output_name=args.output_name,
+    provide_template(out_dir=args.output_dir,
+                     out_name=args.output_name,
                      tb2j_filename=args.filename,
                      min_distance=args.min_distance,
                      max_distance=args.max_distance,

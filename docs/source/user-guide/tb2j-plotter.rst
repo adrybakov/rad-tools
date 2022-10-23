@@ -1,34 +1,34 @@
-.. _tb2j_plotter:
+.. _tb2j-plotter:
 
 *******************
-``tb2j_plotter.py``
+``tb2j-plotter.py``
 *******************
 
 Script for visualisation of 
 `TB2J <https://tb2j.readthedocs.io/en/latest/>`_ results.
 
-Display Isotropic exchange and distances (one output file for each). 
+Display isotropic exchange and distances (one output file for each). 
 
 Supports filtering by 
-R vectors (see :ref:`R-vector <tb2j_plotter_R-vector>`), 
-distances (see :ref:`max-distance <tb2j_plotter_max-distance>`,
-:ref:`min-distance <tb2j_plotter_min-distance>` and
-:ref:`distance <tb2j_plotter_distance>`), 
-and template file (see :ref:`template <tb2j_plotter_template>`). 
+R vectors (see :ref:`R-vector <tb2j-plotter_R-vector>`), 
+distances (see :ref:`max-distance <tb2j-plotter_max-distance>`,
+:ref:`min-distance <tb2j-plotter_min-distance>` and
+:ref:`distance <tb2j-plotter_distance>`), 
+and template file (see :ref:`template <tb2j-plotter_template>`). 
 The result is defined by logical conjugate of the specified conditions.
 
 ``--filename`` (or ``-f``) argument is required, the rest of them are optional.
 
 
 Output files will have the following name structure: 
-*output-name.display_data_type.png*
+*output-name.display-data-type.png*
 
-.. _tb2j_plotter_example:
+.. _tb2j-plotter_example:
 
 Usage example
 =============
 
-Imagine you are executing the ``tb2j_plotter.py`` sccript from the 
+Imagine you are executing the ``tb2j-plotter.py`` sccript from the 
 folder *example* and your file structure looks like the following
 
 .. code-block:: text
@@ -41,7 +41,7 @@ Now lets run the script
 
 .. code-block:: console
 
-    tb2j_plotter.py -f exchange.out 
+    tb2j-plotter.py -f exchange.out 
 
 After the execution your *example* folder will look similar to this
     
@@ -55,20 +55,20 @@ After the execution your *example* folder will look similar to this
 
 Script produced two output files *exchange.iso.png*
 and *exchange.distance.png*. Common seedname *exchange* comes by default 
-(see :ref:`output-name <tb2j_plotter_output-name>`). *iso* and *distance* 
+(see :ref:`output-name <tb2j-plotter_output-name>`). *iso* and *distance* 
 indicate the plotted data 
-(see :ref:`what-to-plot <tb2j_plotter_what-to-plot>`). 
+(see :ref:`what-to-plot <tb2j-plotter_what-to-plot>`). 
 
 .. important::
     That output files are not located in *output* folder since the 
     current folder is used for output by default
-    (see :ref:`output-dir <tb2j_plotter_output-dir>`). 
+    (see :ref:`output-dir <tb2j-plotter_output-dir>`). 
     
 Lets save the output in the *output* folder:
 
 .. code-block:: console
 
-    tb2j_plotter.py -f exchange.out -op output
+    tb2j-plotter.py -f exchange.out -op output
 
 Now *example* folder should look like this
 
@@ -90,7 +90,7 @@ for example try to execute
 
 .. code-block:: console
 
-    tb2j_plotter.py -f exchange.out -op output/bar/foo
+    tb2j-plotter.py -f exchange.out -op output/bar/foo
 
 The sript will create folder *bar* inside of the folder *output* and folder 
 *foo* inside of the folder *bar*. The structure of the *example* folder now 
@@ -114,7 +114,7 @@ should look like that:
 Arguments
 =========
 
-.. _tb2j_plotter_filename:
+.. _tb2j-plotter_filename:
 
 ``--filename``, ``-f``
 ----------------------
@@ -126,7 +126,7 @@ including the name and extention of the file.
     *type* : str
 
 
-.. _tb2j_plotter_mode:
+.. _tb2j-plotter_mode:
 
 ``--mode``, ``-m``
 ------------------
@@ -144,12 +144,12 @@ the center of the molecule.
     
 .. hint::
     If you are plotting in molecule mode it is recommended to specify 
-    ``--substrate_atoms`` argument.
+    ``--substrate-atoms`` argument.
 
 
-.. _tb2j_plotter_substrate_atoms:
+.. _tb2j-plotter_substrate-atoms:
 
-``--substrate_atoms``, ``-suba``
+``--substrate-atoms``, ``-suba``
 --------------------------------
 Atoms from the substrate
 
@@ -157,14 +157,14 @@ Marks of atoms from the substracte (Same as in TB2J).
 You can specify only names. For example instead of "Cr12" one can provide 
 "Cr" and then all Cr atoms will be considered as a substrate ones. 
 
-    *default* : :py:class:`magnetic_atoms <.rad_tools.tb2j_tools.file_logic.ExchangeModel`
+    *default* : :py:class:`magnetic_atoms <.rad_tools.exchange.model.ExchangeModel`
 
     *type* : str
 
     *nargs* : *
 
 
-.. _tb2j_plotter_output-dir:
+.. _tb2j-plotter_output-dir:
 
 ``--output-dir``, ``-op``
 -------------------------
@@ -179,23 +179,23 @@ until the existing folder is reached.
     *type* : str
 
 
-.. _tb2j_plotter_output-name:
+.. _tb2j-plotter_output-name:
 
 ``--output-name``, ``-on``
 --------------------------
 Seedname for the output files.
 
 Output files will have the following name structure:
-*output-name.display_data_type.png*
+*output-name.display-data-type.png*
 
     *default* : exchange
         
     *type* : str
 
-See also: :ref:`example <tb2j_plotter_example>`
+See also: :ref:`example <tb2j-plotter_example>`
 
 
-.. _tb2j_plotter_what-to-plot:
+.. _tb2j-plotter_what-to-plot:
 
 ``--what-to-plot``, ``-wtp``
 ----------------------------
@@ -224,7 +224,7 @@ presented in the model (after filtering) is drawn.
     *action* : store_true
 
 
-.. _tb2j_plotter_R-vector:
+.. _tb2j-plotter_R-vector:
 
 ``--R-vector``, ``-R``
 ----------------------
@@ -246,7 +246,7 @@ ignored.
     *nargs* : *
 
 
-.. _tb2j_plotter_max-distance:
+.. _tb2j-plotter_max-distance:
 
 ``--max-distance``, ``-maxd``
 -----------------------------
@@ -260,7 +260,7 @@ greater then maximum distance are excluded from the model.
     *type* : float
 
 
-.. _tb2j_plotter_min-distance:
+.. _tb2j-plotter_min-distance:
 
 ``--min-distance``, ``-mind``
 -----------------------------
@@ -274,7 +274,7 @@ lower then minimum distance are excluded from the model.
     *type* : float
 
 
-.. _tb2j_plotter_distance:
+.. _tb2j-plotter_distance:
 
 ``--distance``, ``-d``
 ----------------------
@@ -291,7 +291,7 @@ Only the bonds with the exact distance remains in the model.
     this parameter is specified.
 
 
-.. _tb2j_plotter_template:
+.. _tb2j-plotter_template:
 
 ``--template``, ``-tf``
 -----------------------
@@ -305,7 +305,7 @@ including the name and extention of the file.
 See also: :ref:`template <rad-make-template>`
 
 
-.. _tb2j_plotter_double-bonds:
+.. _tb2j-plotter_double-bonds:
 
 ``--double-bonds``, ``-db``
 ---------------------------
@@ -328,7 +328,7 @@ exchange parameters.
     DMI will be equal to zero even if it is not zero in TB2J file.
 
 
-.. _tb2j_plotter_scale_atoms:
+.. _tb2j-plotter_scale-atoms:
 
 ``--scale-atoms``, ``-sa``
 --------------------------
@@ -342,7 +342,7 @@ Have to be positive.
     *type* : float
 
 
-.. _tb2j_plotter_scale_data:
+.. _tb2j-plotter_scale-data:
 
 ``--scale-data``, ``-sd``
 -------------------------
@@ -356,7 +356,7 @@ Have to be positive.
     *type* : float
 
 
-.. _tb2j_plotter_title:
+.. _tb2j-plotter_title:
 
 ``--title``, ``t``
 ------------------

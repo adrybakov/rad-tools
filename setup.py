@@ -20,15 +20,16 @@ setup(
     download_url='https://github.com/adrybakov/rad-tools.git',
     packages=find_packages(),
     scripts=[
-        'scripts/tb2j_plotter.py',
-        'scripts/phonopy_plotter.py',
-        'scripts/tb2j_refractor.py',
+        'scripts/tb2j-plotter.py',
+        'scripts/phonopy-plotter.py',
+        'scripts/tb2j-refractor.py',
         'scripts/rad-make-template.py'
     ],
     install_requires=[
         'numpy', 'matplotlib'
     ],
     classifiers=[
+        'Development Status :: 3 - Alpha',
         'Programming Language :: Python :: 3',
         'Operating System :: OS Independent',
         'Intended Audience :: Science/Research',

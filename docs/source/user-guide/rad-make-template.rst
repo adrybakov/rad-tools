@@ -63,7 +63,7 @@ Format of the bond specification:
 
 .. code-block:: text
 
-    Atom_1_mark Atom_2_mark R
+    Atom-1_mark Atom-2_mark R
 
 Where R is a real-space vector of the unit cell in which the second atom is 
 located (Atom 1 always located in R = (0, 0, 0)).

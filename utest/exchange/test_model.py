@@ -4,14 +4,14 @@ from re import template
 import pytest
 import numpy as np
 
-from rad_tools.tb2j_tools.file_logic import *
-from rad_tools.tb2j_tools.template_logic import *
+from rad_tools.exchange.model import *
+from rad_tools.exchange.template import *
 
 
 class TestExchangeModelTB2J:
 
     model = ExchangeModelTB2J(os.path.join(
-        'utest', 'tb2j_tools', 'resourses', 'exchange.out'
+        'utest', 'exchange', 'resourses', 'exchange.out'
     ))
     template = [('Cr1', 'Cr1', (1, 0, 0)), ('Cr1', 'Cr1', (-1, 0, 0)),
                 ('Cr2', 'Cr2', (1, 0, 0)), ('Cr2', 'Cr2', (-1, 0, 0)),
@@ -42,7 +42,7 @@ class TestInputFilename(TestExchangeModelTB2J):
 
     def test_correct_filename(self):
         model = ExchangeModelTB2J(os.path.join(
-            'utest', 'tb2j_tools', 'resourses', 'exchange.out'))
+            'utest', 'exchange', 'resourses', 'exchange.out'))
 
 
 class TestReadFunctions(TestExchangeModelTB2J):
@@ -180,6 +180,10 @@ class TestFilter(TestExchangeModelTB2J):
                     for R in dictionary[atom1][atom2]:
                         i += 1
         return i
+
+    def test_instance_data_type(self):
+        filtered_model = self.model.filter(max_distance=5)
+        assert type(self.model) == type(filtered_model)
 
     @pytest.mark.parametrize("max_distance, elements_number", [
         (4.807, 16),
