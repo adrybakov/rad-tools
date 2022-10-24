@@ -18,3 +18,5 @@ Other scripts.
    :maxdepth: 1
 
    phonopy-plotter
+   rad-jarvis
+

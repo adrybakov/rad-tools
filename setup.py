@@ -23,7 +23,8 @@ setup(
         'scripts/tb2j-plotter.py',
         'scripts/phonopy-plotter.py',
         'scripts/tb2j-refractor.py',
-        'scripts/rad-make-template.py'
+        'scripts/rad-make-template.py',
+        'scripts/rad-jarvis.py'
     ],
     install_requires=[
         'numpy', 'matplotlib'
