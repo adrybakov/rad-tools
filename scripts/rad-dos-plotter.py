@@ -47,12 +47,15 @@ def read_dos(filename, efermi=0):
 
 def decompose_filename(filename):
     atom_type = filename.split("(")[1].split(")")[0]
+    atom_number = filename.split("#")[1].split("(")[0]
     orbital_type = filename.split("(")[2].split(")")[0]
-    return atom_type, orbital_type
+    orbital_number = filename.split("#")[2].split("(")[0]
+    return atom_type, orbital_type, atom_number, orbital_number
 
 
 def manager(filename, out_dir, out_name, window=None):
-    atom_type, orbital_type = decompose_filename(basename(filename))
+    atom_type, orbital_type, atom_number, orbital_number = decompose_filename(
+        basename(filename))
     dos = read_dos(filename)
 
     fig, ax = plt.subplots(figsize=(12, 4))
@@ -86,7 +89,8 @@ def manager(filename, out_dir, out_name, window=None):
     if window is not None:
         ax.set_xlim(*tuple(window))
 
-    png_path = join(out_dir, f"{out_name}.{atom_type}.{orbital_type}.png")
+    png_path = join(
+        out_dir, f"{out_name}.#{atom_number}({atom_type})_wfc#{orbital_number}({orbital_type}).png")
     plt.savefig(png_path, dpi=400)
     print(f'{OK}Plot is in {abspath(png_path)}{RESET}')
 

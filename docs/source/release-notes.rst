@@ -6,6 +6,11 @@ Release notes
 ===
 Add script :ref:`rad-dos-plotter.py <rad-dos-plotter>`
 
+0.2.1
+-----
+
+Correct output file name in :ref:`rad-dos-plotter.py <rad-dos-plotter>`.
+
 0.1.1
 -----
 Fix bugs in :ref:`tb2j-refractor.py <tb2j-refractor>`.
