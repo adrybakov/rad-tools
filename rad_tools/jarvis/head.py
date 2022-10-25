@@ -31,6 +31,7 @@ class Action:
             return 0
         elif self.name in self.tb2j:
             print(f"{GREEN}Start to set up TB2J calculation{RESET}")
+            tb2j_action = TB2JAction("Begin")
         elif self.name == "Initiate":
             pass
         else:
@@ -46,3 +47,9 @@ class Action:
         i = randint(0, len(self.confusions) - 1)
         print(i)
         print(f"{GREEN}{self.confusions[i]}{RESET}")
+
+
+class TB2JAction(Action):
+
+    def __init__(self, name) -> None:
+        super().__init__(name)
