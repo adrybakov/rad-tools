@@ -2,6 +2,14 @@
 Release notes
 *************
 
+0.2
+===
+Add script :ref:`rad-dos-plotter.py <rad-dos-plotter>`
+
+0.1.1
+-----
+Fix bugs in :ref:`tb2j-refractor.py <tb2j-refractor>`.
+
 0.1
 ===
 The big renaming passed.

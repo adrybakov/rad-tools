@@ -19,4 +19,5 @@ Other scripts.
 
    phonopy-plotter
    rad-jarvis
+   rad-dos-plotter
 
