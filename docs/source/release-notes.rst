@@ -6,6 +6,10 @@ Release notes
 ===
 Add script :ref:`rad-dos-plotter.py <rad-dos-plotter>`
 
+0.2.2
+-----
+Add interactive mode to the :ref:`rad-dos-plotter.py <rad-dos-plotter>`.
+
 0.2.1
 -----
 

@@ -53,7 +53,7 @@ def decompose_filename(filename):
     return atom_type, orbital_type, atom_number, orbital_number
 
 
-def manager(filename, out_dir, out_name, window=None):
+def manager(filename, out_dir, out_name, window=None, interactive=False):
     atom_type, orbital_type, atom_number, orbital_number = decompose_filename(
         basename(filename))
     dos = read_dos(filename)
@@ -89,10 +89,13 @@ def manager(filename, out_dir, out_name, window=None):
     if window is not None:
         ax.set_xlim(*tuple(window))
 
-    png_path = join(
-        out_dir, f"{out_name}.#{atom_number}({atom_type})_wfc#{orbital_number}({orbital_type}).png")
-    plt.savefig(png_path, dpi=400)
-    print(f'{OK}Plot is in {abspath(png_path)}{RESET}')
+    if interactive:
+        plt.show()
+    else:
+        png_path = join(
+            out_dir, f"{out_name}.#{atom_number}({atom_type})_wfc#{orbital_number}({orbital_type}).png")
+        plt.savefig(png_path, dpi=400)
+        print(f'{OK}Plot is in {abspath(png_path)}{RESET}')
 
 
 if __name__ == "__main__":
@@ -131,6 +134,12 @@ if __name__ == "__main__":
                         help="""
                         Energy window.
                         """)
+    parser.add_argument("-i", "--interactive",
+                        action="store_true",
+                        default=False,
+                        help="""
+                        Whenever you wnat to interact with the graph.
+                        """)
 
     args = parser.parse_args()
 
@@ -142,4 +151,5 @@ if __name__ == "__main__":
         manager(filename=args.filename,
                 out_dir=args.output_dir,
                 out_name=args.output_name,
-                window=args.window)
+                window=args.window,
+                interactive=args.interactive)
