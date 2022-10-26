@@ -6,6 +6,12 @@ Release notes
 ===
 Add script :ref:`rad-dos-plotter.py <rad-dos-plotter>`
 
+0.2.3
+-----
+Change output behaviour in :ref:`tb2j-refractor.py <tb2j-refractor>`.
+Now by default output is passed to the standart output stream.
+
+
 0.2.2
 -----
 Add interactive mode to the :ref:`rad-dos-plotter.py <rad-dos-plotter>`.
