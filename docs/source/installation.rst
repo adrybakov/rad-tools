@@ -12,7 +12,7 @@ Then execute the following in your terminal:
 Update
 ======
 
-If you want to update the package to the last available version (|release|)
+If you want to update the package to the latest available version (|release|)
 run the following in your terminal:
 
 .. code-block:: console
