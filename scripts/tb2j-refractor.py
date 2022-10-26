@@ -9,54 +9,61 @@ import numpy as np
 
 from rad_tools.exchange.model import ExchangeModelTB2J
 from rad_tools.exchange.template import ExchangeTemplate
-from rad_tools.routines import OK, RESET
+from rad_tools.routines import OK, RESET, spaces_around
 
 
 def main(filename, out_dir, out_name, template):
 
     model = ExchangeModelTB2J(filename)
     template = ExchangeTemplate(template)
-    with open(join(out_dir, out_name), "w") as out_file:
-        for name in template.names:
-            J_iso = 0
-            J_aniso = np.zeros((3, 3), dtype=float)
-            DMI = np.zeros(3, dtype=float)
-            abs_DMI = 0
-            for bond in template.names[name]:
-                atom1 = bond[0]
-                atom2 = bond[1]
-                R = bond[2]
-                J_iso += model.bonds[atom1][atom2][R].iso
-                J_aniso += model.bonds[atom1][atom2][R].aniso
-                DMI += model.bonds[atom1][atom2][R].dmi
-                abs_DMI += sqrt(model.bonds[atom1][atom2][R].dmi[0]**2 +
-                                model.bonds[atom1][atom2][R].dmi[1]**2 +
-                                model.bonds[atom1][atom2][R].dmi[2]**2)
-            J_iso /= len(template.names[name])
-            J_aniso /= len(template.names[name])
-            DMI /= len(template.names[name])
-            abs_DMI /= len(template.names[name])
-            out_file.write(f"{name}\n" +
-                           f"    Isotropic: {round(J_iso, 4)}\n" +
-                           f"    Anisotropic:\n" +
-                           f"        {round(J_aniso[0][0], 4)} " +
-                           f"    {round(J_aniso[0][1], 4)} " +
-                           f"    {round(J_aniso[0][2], 4)}\n" +
-                           f"        {round(J_aniso[1][0], 4)} " +
-                           f"    {round(J_aniso[1][1], 4)} " +
-                           f"    {round(J_aniso[1][2], 4)}\n" +
-                           f"        {round(J_aniso[2][0], 4)} " +
-                           f"    {round(J_aniso[2][1], 4)} " +
-                           f"    {round(J_aniso[2][2], 4)}\n" +
-                           f"    DMI: " +
-                           f"    {round(DMI[0], 4)} " +
-                           f"    {round(DMI[1], 4)} " +
-                           f"    {round(DMI[2], 4)}\n" +
-                           f"    | DMI |: {round(abs_DMI, 4)}\n" +
-                           f"    | DMI/J | {round(abs(abs_DMI/J_iso), 4)}\n\n")
 
-    print(f"{OK}Extracted exchange info is in " +
-          f"{abspath(join(out_dir, out_name))}{RESET}")
+    for name in template.names:
+        J_iso = 0
+        J_aniso = np.zeros((3, 3), dtype=float)
+        DMI = np.zeros(3, dtype=float)
+        abs_DMI = 0
+        for bond in template.names[name]:
+            atom1 = bond[0]
+            atom2 = bond[1]
+            R = bond[2]
+            J_iso += model.bonds[atom1][atom2][R].iso
+            J_aniso += model.bonds[atom1][atom2][R].aniso
+            DMI += model.bonds[atom1][atom2][R].dmi
+            abs_DMI += sqrt(model.bonds[atom1][atom2][R].dmi[0]**2 +
+                            model.bonds[atom1][atom2][R].dmi[1]**2 +
+                            model.bonds[atom1][atom2][R].dmi[2]**2)
+        J_iso /= len(template.names[name])
+        J_aniso /= len(template.names[name])
+        DMI /= len(template.names[name])
+        abs_DMI /= len(template.names[name])
+        output_line = (
+            f"    Isotropic: {round(J_iso, 4)}\n" +
+            f"    Anisotropic:\n" +
+            f"        {spaces_around(round(J_aniso[0][0], 4), nchars=7)}  " +
+            f"{spaces_around(round(J_aniso[0][1], 4), nchars=7)}  " +
+            f"{spaces_around(round(J_aniso[0][2], 4), nchars=7)}\n" +
+            f"        {spaces_around(round(J_aniso[1][0], 4), nchars=7)}  " +
+            f"{spaces_around(round(J_aniso[1][1], 4), nchars=7)}  " +
+            f"{spaces_around(round(J_aniso[1][2], 4), nchars=7)}\n" +
+            f"        {spaces_around(round(J_aniso[2][0], 4), nchars=7)}  " +
+            f"{spaces_around(round(J_aniso[2][1], 4), nchars=7)}  " +
+            f"{spaces_around(round(J_aniso[2][2], 4), nchars=7)}\n" +
+            f"    DMI: " +
+            f"{round(DMI[0], 4)} " +
+            f"{round(DMI[1], 4)} " +
+            f"{round(DMI[2], 4)}\n" +
+            f"    |DMI|: {round(abs_DMI, 4)}\n" +
+            f"    |DMI/J| {round(abs(abs_DMI/J_iso), 4)}\n")
+
+        if out_name is not None:
+            with open(join(out_dir, out_name), "w") as out_file:
+                out_file.write(f"{name}\n" + output_line + "\n")
+        else:
+            print(f"{OK}{name}{RESET}")
+            print(output_line)
+    if out_name is not None:
+        print(f"{OK}Extracted exchange info is in " +
+              f"{abspath(join(out_dir, out_name))}{RESET}")
 
 
 if __name__ == '__main__':
@@ -84,7 +91,7 @@ if __name__ == '__main__':
                         """)
     parser.add_argument("-op", "--output-dir",
                         type=str,
-                        default='.',
+                        default=".",
                         help="""
                         Relative or absolute path to the folder
                         for saving outputs.
@@ -92,7 +99,7 @@ if __name__ == '__main__':
                         )
     parser.add_argument("-on", "--output-name",
                         type=str,
-                        default='exchange_refr.txt',
+                        default=None,
                         help="""
                         Seedname for the output files.
                         """

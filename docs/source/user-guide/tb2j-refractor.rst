@@ -58,7 +58,9 @@ until the existing folder is reached.
 Seedname for the output files.
 
 Output files will have the following name structure: *output-name*
+If this parameter is not specified then result will be printed in 
+standart output stream.
 
-    *default* : exchange_refr.txt
+    *default* : None
 
     *type* : str
