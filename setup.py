@@ -25,7 +25,8 @@ setup(
         'scripts/tb2j-refractor.py',
         'scripts/rad-make-template.py',
         'scripts/rad-jarvis.py',
-        'scripts/rad-dos-plotter.py'
+        'scripts/rad-dos-plotter.py',
+        'scripts/energy-method-analyser.py'
     ],
     install_requires=[
         'numpy', 'matplotlib'
