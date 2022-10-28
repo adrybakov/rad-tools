@@ -6,8 +6,7 @@
 
 Script for visualisation of projected density of states.
 
-Currently plot the content of separate file. Pdos for *up* states is
-be plotted with positive sign, Pdos for *down* states is plotted with 
+Currently plot the content of separate file. Pdos for *up* states is plotted with positive sign, Pdos for *down* states is plotted with 
 negative sign. Summed Pdos from the file (2 and 3 column) is
 plotted in grey background.
 
