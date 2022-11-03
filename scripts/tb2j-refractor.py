@@ -17,6 +17,7 @@ def main(filename, out_dir, out_name, template):
     model = ExchangeModelTB2J(filename)
     template = ExchangeTemplate(template)
 
+    output_line = ""
     for name in template.names:
         J_iso = 0
         J_aniso = np.zeros((3, 3), dtype=float)
@@ -36,7 +37,8 @@ def main(filename, out_dir, out_name, template):
         J_aniso /= len(template.names[name])
         DMI /= len(template.names[name])
         abs_DMI /= len(template.names[name])
-        output_line = (
+        output_line += (
+            f"{name}\n" +
             f"    Isotropic: {round(J_iso, 4)}\n" +
             f"    Anisotropic:\n" +
             f"        {spaces_around(round(J_aniso[0][0], 4), nchars=7)}  " +
@@ -53,17 +55,15 @@ def main(filename, out_dir, out_name, template):
             f"{round(DMI[1], 4)} " +
             f"{round(DMI[2], 4)}\n" +
             f"    |DMI|: {round(abs_DMI, 4)}\n" +
-            f"    |DMI/J| {round(abs(abs_DMI/J_iso), 4)}\n")
+            f"    |DMI/J| {round(abs(abs_DMI/J_iso), 4)}\n\n")
 
-        if out_name is not None:
-            with open(join(out_dir, out_name), "w") as out_file:
-                out_file.write(f"{name}\n" + output_line + "\n")
-        else:
-            print(f"{OK}{name}{RESET}")
-            print(output_line)
     if out_name is not None:
+        with open(join(out_dir, out_name), "w") as out_file:
+            out_file.write(output_line)
         print(f"{OK}Extracted exchange info is in " +
               f"{abspath(join(out_dir, out_name))}{RESET}")
+    else:
+        print(f"{OK}{output_line}{RESET}")
 
 
 if __name__ == '__main__':

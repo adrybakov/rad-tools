@@ -6,6 +6,11 @@ Release notes
 ===
 Add script :ref:`rad-dos-plotter.py <rad-dos-plotter>`
 
+0.2.4
+-----
+Bug fix in :ref:`tb2j-refractor.py <tb2j-refractor>`. 
+Only last exchange from template was shown, now all of them are.
+
 0.2.3
 -----
 Change output behaviour in :ref:`tb2j-refractor.py <tb2j-refractor>`.
