@@ -102,8 +102,7 @@ def plot_2d(filename, out_dir='.',
                             rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
                             fontsize=fontsize * scale_data)
                 elif wtp == 'dmi':
-                    ax.
-                    ax.text(xm, ym, str(round(bond.dis, 4)),
+                    ax.text(xm, ym, str(round(sqrt(np.sum(bond.dmi**2)), 4)),
                             va='bottom', ha=ha,
                             rotation_mode='anchor',
                             rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
@@ -231,6 +230,8 @@ def plot_molecule(filename, out_dir='.',
         ax.set_ylabel('Isotropic exchange parameter, meV')
     elif wtp == 'distance':
         ax.set_ylabel('Bond length, Angstroms')
+    elif wtp == 'dmi':
+        ax.set_ylabel('|DMI|, meV')
 
     data = [[], []]
     x, y, z = get_molecule_center(model._atoms, atoms)
@@ -248,6 +249,8 @@ def plot_molecule(filename, out_dir='.',
                     data[1].append(bond.iso)
                 elif wtp == 'distance':
                     data[1].append(bond.dis)
+                elif wtp == 'dmi':
+                    data[1].append(sqrt(np.sum(bond.dmi**2)))
     data = np.array(data).T.tolist()
 
     data.sort(key=lambda x: x[0])
