@@ -203,13 +203,13 @@ Type of data for display.
 
 Specifying the data for display at the graph. 
 Everything is displayed by default, each value in a separate picture. 
-Currently available for display: Isotropic exchange parameter, distance.
+Currently available for display: Isotropic exchange parameter, distance, DMI.
 
     *default* : all
 
     *type* : str
 
-    *choices* : all, iso, distance
+    *choices* : all, iso, distance, dmi
 
 
 ``--draw-cells``, ``-dc``

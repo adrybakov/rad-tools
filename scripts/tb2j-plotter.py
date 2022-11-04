@@ -29,7 +29,8 @@ def plot_2d(filename, out_dir='.',
 
     mode_name = "2d"
     messages = {'iso': "isotropic exchange",
-                "distance": "distances"}
+                "distance": "distances",
+                "dmi": "dmi"}
 
     model = ExchangeModelTB2J(filename)
     model = model.filter(min_distance=min_distance,
@@ -95,6 +96,13 @@ def plot_2d(filename, out_dir='.',
                             rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
                             fontsize=fontsize * scale_data)
                 elif wtp == 'distance':
+                    ax.text(xm, ym, str(round(bond.dis, 4)),
+                            va='bottom', ha=ha,
+                            rotation_mode='anchor',
+                            rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
+                            fontsize=fontsize * scale_data)
+                elif wtp == 'dmi':
+                    ax.
                     ax.text(xm, ym, str(round(bond.dis, 4)),
                             va='bottom', ha=ha,
                             rotation_mode='anchor',
@@ -261,7 +269,7 @@ if __name__ == '__main__':
                https://rad-tools.adrybakov.com/en/stable/user-guide/tb2j-plotter.html
                """)
 
-    plot_data_type = ['iso', 'distance']
+    plot_data_type = ['iso', 'distance', 'dmi']
     plot_mode = {"2d": plot_2d, "molecule": plot_molecule}
 
     parser.add_argument("-f", "--filename",
