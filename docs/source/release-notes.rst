@@ -6,6 +6,11 @@ Release notes
 ===
 Add script :ref:`rad-dos-plotter.py <rad-dos-plotter>`
 
+0.2.6
+-----
+Add :ref:`-dmi <tb2j-refractor_dmi>` flag
+to :ref:`tb2j-refractor.py <tb2j-refractor>` script.
+
 0.2.5
 -----
 Add |DMI| as an output data type to :ref:`tb2j-plotter.py <tb2j-plotter>` 

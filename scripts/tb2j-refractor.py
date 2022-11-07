@@ -12,7 +12,7 @@ from rad_tools.exchange.template import ExchangeTemplate
 from rad_tools.routines import OK, RESET, spaces_around
 
 
-def main(filename, out_dir, out_name, template):
+def main(filename, out_dir, out_name, template, dmi=False):
 
     model = ExchangeModelTB2J(filename)
     template = ExchangeTemplate(template)
@@ -50,12 +50,27 @@ def main(filename, out_dir, out_name, template):
             f"        {spaces_around(round(J_aniso[2][0], 4), nchars=7)}  " +
             f"{spaces_around(round(J_aniso[2][1], 4), nchars=7)}  " +
             f"{spaces_around(round(J_aniso[2][2], 4), nchars=7)}\n" +
-            f"    DMI: " +
-            f"{round(DMI[0], 4)} " +
-            f"{round(DMI[1], 4)} " +
-            f"{round(DMI[2], 4)}\n" +
             f"    |DMI|: {round(abs_DMI, 4)}\n" +
-            f"    |DMI/J| {round(abs(abs_DMI/J_iso), 4)}\n\n")
+            f"    |DMI/J| {round(abs(abs_DMI/J_iso), 4)}\n")
+
+        if dmi:
+            for bond in template.names[name]:
+                atom1 = bond[0]
+                atom2 = bond[1]
+                R = bond[2]
+                DMI = model.bonds[atom1][atom2][R].dmi
+                output_line += (
+                    f"    DMI: " +
+                    f"{spaces_around(round(DMI[0], 4), nchars=7)} " +
+                    f"{spaces_around(round(DMI[1], 4), nchars=7)} " +
+                    f"{spaces_around(round(DMI[2], 4), nchars=7)} {R}\n")
+            output_line += "\n"
+        else:
+            output_line += (
+                f"    DMI: " +
+                f"{round(DMI[0], 4)} " +
+                f"{round(DMI[1], 4)} " +
+                f"{round(DMI[2], 4)}\n\n")
 
     if out_name is not None:
         with open(join(out_dir, out_name), "w") as out_file:
@@ -104,6 +119,14 @@ if __name__ == '__main__':
                         Seedname for the output files.
                         """
                         )
+    parser.add_argument("-dmi",
+                        action="store_true",
+                        default=False,
+                        help="""
+                        Whenever to print each dmi vector 
+                        for each exchange group separately.
+                        """
+                        )
 
     args = parser.parse_args()
 
@@ -115,4 +138,5 @@ if __name__ == '__main__':
     main(filename=args.filename,
          out_dir=args.output_dir,
          out_name=args.output_name,
-         template=args.template)
+         template=args.template,
+         dmi=args.dmi)

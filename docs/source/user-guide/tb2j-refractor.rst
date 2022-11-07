@@ -64,3 +64,14 @@ standart output stream.
     *default* : None
 
     *type* : str
+
+
+.. _tb2j-refractor_dmi:
+
+``-dmi``
+--------
+Whenever to print each dmi vector for each exchange group separately.
+                        
+    *action* : store_true
+    
+    *default* : False
