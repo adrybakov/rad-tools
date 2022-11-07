@@ -203,7 +203,7 @@ Type of data for display.
 
 Specifying the data for display at the graph. 
 Everything is displayed by default, each value in a separate picture. 
-Currently available for display: Isotropic exchange parameter, distance, |DMI|.
+Currently available for display: Isotropic exchange parameter, distance, \|DMI\|.
 
     *default* : all
 

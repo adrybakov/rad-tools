@@ -13,7 +13,7 @@ to :ref:`tb2j-refractor.py <tb2j-refractor>` script.
 
 0.2.5
 -----
-Add |DMI| as an output data type to :ref:`tb2j-plotter.py <tb2j-plotter>` 
+Add \|DMI\| as an output data type to :ref:`tb2j-plotter.py <tb2j-plotter>` 
 (see: :ref:`what-to-plot <tb2j-plotter_what-to-plot>`)
 
 0.2.4
