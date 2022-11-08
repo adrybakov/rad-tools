@@ -383,8 +383,8 @@ class ExchangeModel:
                                                                        atom2,
                                                                        R)
                     X = max(abs(x1), abs(x2), X)
-                    Y = max(abs(x1), abs(x2), Y)
-                    Z = max(abs(x1), abs(x2), Z)
+                    Y = max(abs(y1), abs(y2), Y)
+                    Z = max(abs(z1), abs(z2), Z)
         return X, Y, Z
 
     def get_cells(self):

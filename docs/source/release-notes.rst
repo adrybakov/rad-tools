@@ -6,6 +6,11 @@ Release notes
 ===
 Add script :ref:`rad-dos-plotter.py <rad-dos-plotter>`
 
+0.2.7
+-----
+Change the behaviour of the drawing in 
+:ref:`tb2j-plotter.py <tb2j-plotter>` script.
+
 0.2.6
 -----
 Add :ref:`-dmi <tb2j-refractor_dmi>` flag
