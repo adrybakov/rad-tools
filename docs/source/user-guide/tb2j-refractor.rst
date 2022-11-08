@@ -75,3 +75,14 @@ Whenever to print each dmi vector for each exchange group separately.
     *action* : store_true
     
     *default* : False
+
+
+.. _tb2j-refractor_verbose:
+
+``--verbose``, ``-v``
+---------------------
+    Whenever to print each neighbor in the template in a verbose way.
+    
+    *action* : store_true
+    
+    *default* : False

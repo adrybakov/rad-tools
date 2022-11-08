@@ -12,7 +12,9 @@ from rad_tools.exchange.template import ExchangeTemplate
 from rad_tools.routines import OK, RESET, spaces_around
 
 
-def main(filename, out_dir, out_name, template, dmi=False):
+def main(filename, out_dir, out_name, template, dmi=False, verbose=False):
+    if verbose and dmi:
+        dmi = False
 
     model = ExchangeModelTB2J(filename)
     template = ExchangeTemplate(template)
@@ -37,40 +39,80 @@ def main(filename, out_dir, out_name, template, dmi=False):
         J_aniso /= len(template.names[name])
         DMI /= len(template.names[name])
         abs_DMI /= len(template.names[name])
-        output_line += (
-            f"{name}\n" +
-            f"    Isotropic: {round(J_iso, 4)}\n" +
-            f"    Anisotropic:\n" +
-            f"        {spaces_around(round(J_aniso[0][0], 4), nchars=7)}  " +
-            f"{spaces_around(round(J_aniso[0][1], 4), nchars=7)}  " +
-            f"{spaces_around(round(J_aniso[0][2], 4), nchars=7)}\n" +
-            f"        {spaces_around(round(J_aniso[1][0], 4), nchars=7)}  " +
-            f"{spaces_around(round(J_aniso[1][1], 4), nchars=7)}  " +
-            f"{spaces_around(round(J_aniso[1][2], 4), nchars=7)}\n" +
-            f"        {spaces_around(round(J_aniso[2][0], 4), nchars=7)}  " +
-            f"{spaces_around(round(J_aniso[2][1], 4), nchars=7)}  " +
-            f"{spaces_around(round(J_aniso[2][2], 4), nchars=7)}\n" +
-            f"    |DMI|: {round(abs_DMI, 4)}\n" +
-            f"    |DMI/J| {round(abs(abs_DMI/J_iso), 4)}\n")
-
-        if dmi:
+        output_line += (f"{name}\n")
+        if verbose:
             for bond in template.names[name]:
                 atom1 = bond[0]
                 atom2 = bond[1]
                 R = bond[2]
+                J_iso = model.bonds[atom1][atom2][R].iso
+                J_aniso = model.bonds[atom1][atom2][R].aniso
                 DMI = model.bonds[atom1][atom2][R].dmi
+                abs_DMI = sqrt(model.bonds[atom1][atom2][R].dmi[0]**2 +
+                               model.bonds[atom1][atom2][R].dmi[1]**2 +
+                               model.bonds[atom1][atom2][R].dmi[2]**2)
+                matrix = model.bonds[atom1][atom2][R].matrix
                 output_line += (
-                    f"    DMI: " +
-                    f"{spaces_around(round(DMI[0], 4), nchars=7)} " +
-                    f"{spaces_around(round(DMI[1], 4), nchars=7)} " +
-                    f"{spaces_around(round(DMI[2], 4), nchars=7)} {R}\n")
-            output_line += "\n"
+                    f"  {atom1} {atom2} ({R[0]}, {R[1]}, {R[2]})\n"
+                    f"    Isotropic: {round(J_iso, 4)}\n" +
+                    f"    Anisotropic:\n" +
+                    f"        {spaces_around(round(J_aniso[0][0], 4), nchars=7)}  " +
+                    f"{spaces_around(round(J_aniso[0][1], 4), nchars=7)}  " +
+                    f"{spaces_around(round(J_aniso[0][2], 4), nchars=7)}\n" +
+                    f"        {spaces_around(round(J_aniso[1][0], 4), nchars=7)}  " +
+                    f"{spaces_around(round(J_aniso[1][1], 4), nchars=7)}  " +
+                    f"{spaces_around(round(J_aniso[1][2], 4), nchars=7)}\n" +
+                    f"        {spaces_around(round(J_aniso[2][0], 4), nchars=7)}  " +
+                    f"{spaces_around(round(J_aniso[2][1], 4), nchars=7)}  " +
+                    f"{spaces_around(round(J_aniso[2][2], 4), nchars=7)}\n" +
+                    f"    |DMI|: {round(abs_DMI, 4)}\n" +
+                    f"    |DMI/J| {round(abs(abs_DMI/J_iso), 4)}\n"
+                    f"    Matrix:\n" +
+                    f"        {spaces_around(round(matrix[0][0], 4), nchars=7)}  " +
+                    f"{spaces_around(round(matrix[0][1], 4), nchars=7)}  " +
+                    f"{spaces_around(round(matrix[0][2], 4), nchars=7)}\n" +
+                    f"        {spaces_around(round(matrix[1][0], 4), nchars=7)}  " +
+                    f"{spaces_around(round(matrix[1][1], 4), nchars=7)}  " +
+                    f"{spaces_around(round(matrix[1][2], 4), nchars=7)}\n" +
+                    f"        {spaces_around(round(matrix[2][0], 4), nchars=7)}  " +
+                    f"{spaces_around(round(matrix[2][1], 4), nchars=7)}  " +
+                    f"{spaces_around(round(matrix[2][2], 4), nchars=7)}\n\n")
+
         else:
             output_line += (
-                f"    DMI: " +
-                f"{round(DMI[0], 4)} " +
-                f"{round(DMI[1], 4)} " +
-                f"{round(DMI[2], 4)}\n\n")
+                f"    Isotropic: {round(J_iso, 4)}\n" +
+                f"    Anisotropic:\n" +
+                f"        {spaces_around(round(J_aniso[0][0], 4), nchars=7)}  " +
+                f"{spaces_around(round(J_aniso[0][1], 4), nchars=7)}  " +
+                f"{spaces_around(round(J_aniso[0][2], 4), nchars=7)}\n" +
+                f"        {spaces_around(round(J_aniso[1][0], 4), nchars=7)}  " +
+                f"{spaces_around(round(J_aniso[1][1], 4), nchars=7)}  " +
+                f"{spaces_around(round(J_aniso[1][2], 4), nchars=7)}\n" +
+                f"        {spaces_around(round(J_aniso[2][0], 4), nchars=7)}  " +
+                f"{spaces_around(round(J_aniso[2][1], 4), nchars=7)}  " +
+                f"{spaces_around(round(J_aniso[2][2], 4), nchars=7)}\n" +
+                f"    |DMI|: {round(abs_DMI, 4)}\n" +
+                f"    |DMI/J| {round(abs(abs_DMI/J_iso), 4)}\n")
+
+            if dmi:
+                for bond in template.names[name]:
+                    atom1 = bond[0]
+                    atom2 = bond[1]
+                    R = bond[2]
+                    DMI = model.bonds[atom1][atom2][R].dmi
+                    output_line += (
+                        f"    DMI: " +
+                        f"{spaces_around(round(DMI[0], 4), nchars=7)} " +
+                        f"{spaces_around(round(DMI[1], 4), nchars=7)} " +
+                        f"{spaces_around(round(DMI[2], 4), nchars=7)} {R}\n")
+                output_line += "\n"
+            else:
+                output_line += (
+                    f"    DMI: " +
+                    f"{round(DMI[0], 4)} " +
+                    f"{round(DMI[1], 4)} " +
+                    f"{round(DMI[2], 4)}\n")
+        output_line += "\n"
 
     if out_name is not None:
         with open(join(out_dir, out_name), "w") as out_file:
@@ -127,6 +169,14 @@ if __name__ == '__main__':
                         for each exchange group separately.
                         """
                         )
+    parser.add_argument("-v", "--verbose",
+                        action="store_true",
+                        default=False,
+                        help="""
+                        Whenever to print each neighbor in the template 
+                        in a verbose way.
+                        """
+                        )
 
     args = parser.parse_args()
 
@@ -139,4 +189,5 @@ if __name__ == '__main__':
          out_dir=args.output_dir,
          out_name=args.output_name,
          template=args.template,
-         dmi=args.dmi)
+         dmi=args.dmi,
+         verbose=args.verbose)
