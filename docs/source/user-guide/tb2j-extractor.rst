@@ -71,8 +71,8 @@ where
 
     J_matrix = np.array(
         [[J_xx, J_xy, J_xz],
-         [J_xy, J_yy, J_yz],
-         [J_xz, J_yz, J_zz]])
+         [J_yx, J_yy, J_yz],
+         [J_zx, J_zy, J_zz]])
 
 Content of .txt file is organised as: ::
 
@@ -88,8 +88,8 @@ Content of .txt file is organised as: ::
         |DMI/J|: |DMI|/|J|
         Matrix:
             J_xx J_xy J_xz
-            J_xy J_yy J_yz
-            J_xz J_yz J_zz
+            J_yx J_yy J_yz
+            J_zx J_zy J_zz
       
       ...
     
