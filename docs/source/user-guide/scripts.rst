@@ -9,7 +9,7 @@ outputs.
    :maxdepth: 1
 
    tb2j-plotter
-   tb2j-refractor
+   tb2j-extractor
    rad-make-template
 
 Other scripts.

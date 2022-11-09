@@ -1,19 +1,19 @@
-.. _tb2j-refractor:
+.. _tb2j-extractor:
 
 *********************
-``tb2j-refractor.py``
+``tb2j-extractor.py``
 *********************
 
 Script for extracting of template-based model from 
 `TB2J <https://tb2j.readthedocs.io/en/latest/>`_ results.
 
 
-.. _tb2j-refractor_verbose-ref:
+.. _tb2j-extractor_verbose-ref:
 
 Verbose output
 ==============
-If :ref:`verbose <tb2j-refractor_verbose>` and 
-:ref:`output-name <tb2j-refractor_output-name>` arguments are provided to 
+If :ref:`verbose <tb2j-extractor_verbose>` and 
+:ref:`output-name <tb2j-extractor_output-name>` arguments are provided to 
 the script then output will be written in .txt and .py files.
 Content of the .py file is organised in a following manner:
 
@@ -98,7 +98,7 @@ Content of .txt file is organised as: ::
 Arguments
 =========
 
-.. _tb2j-refractor_filename:
+.. _tb2j-extractor_filename:
 
 ``--filename``, ``-f``
 ----------------------
@@ -110,7 +110,7 @@ including the name and extention of the file itself.
     *type* : str
 
 
-.. _tb2j-refractor_template:
+.. _tb2j-extractor_template:
 
 ``--template``, ``-t``
 ----------------------
@@ -124,7 +124,7 @@ including the name and extention of the file.
 See also: :ref:`template <rad-make-template>`
 
 
-.. _tb2j-refractor_output-dir:
+.. _tb2j-extractor_output-dir:
 
 ``--output-dir``, ``-op``
 -------------------------
@@ -139,7 +139,7 @@ until the existing folder is reached.
     *type* : str
 
 
-.. _tb2j-refractor_output-name:
+.. _tb2j-extractor_output-name:
 
 ``--output-name``, ``-on``
 --------------------------
@@ -154,7 +154,7 @@ standart output stream.
     *type* : str
 
 
-.. _tb2j-refractor_dmi:
+.. _tb2j-extractor_dmi:
 
 ``-dmi``
 --------
@@ -165,7 +165,7 @@ Whenever to print each dmi vector for each exchange group separately.
     *default* : False
 
 
-.. _tb2j-refractor_verbose:
+.. _tb2j-extractor_verbose:
 
 ``--verbose``, ``-v``
 ---------------------

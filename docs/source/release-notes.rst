@@ -6,15 +6,19 @@ Release notes
 ===
 Add script :ref:`rad-dos-plotter.py <rad-dos-plotter>`
 
+0.2.10
+------
+Rename tb2j-refractor.py to :ref:`tb2j-extractor.py <tb2j-extractor>`
+
 0.2.9
 -----
-Add pythonic :ref:`verbose <tb2j-refractor_verbose-ref>` output
-to :ref:`tb2j-refractor.py <tb2j-refractor>` script.
+Add pythonic :ref:`verbose <tb2j-extractor_verbose-ref>` output
+to the :ref:`tb2j-refractor.py <tb2j-extractor>` script.
 
 0.2.8
 -----
-Add :ref:`--verbose <tb2j-refractor_verbose>` flag
-to :ref:`tb2j-refractor.py <tb2j-refractor>` script.
+Add :ref:`verbose <tb2j-extractor_verbose>` flag
+to the :ref:`tb2j-refractor.py <tb2j-extractor>` script.
 
 0.2.7
 -----
@@ -23,8 +27,8 @@ Change the behaviour of the drawing in
 
 0.2.6
 -----
-Add :ref:`-dmi <tb2j-refractor_dmi>` flag
-to :ref:`tb2j-refractor.py <tb2j-refractor>` script.
+Add :ref:`-dmi <tb2j-extractor_dmi>` flag
+to :ref:`tb2j-refractor.py <tb2j-extractor>` script.
 
 0.2.5
 -----
@@ -33,12 +37,12 @@ Add \|DMI\| as an output data type to :ref:`tb2j-plotter.py <tb2j-plotter>`
 
 0.2.4
 -----
-Bug fix in :ref:`tb2j-refractor.py <tb2j-refractor>`. 
+Bug fix in :ref:`tb2j-refractor.py <tb2j-extractor>`. 
 Only last exchange from template was shown, now all of them are.
 
 0.2.3
 -----
-Change output behaviour in :ref:`tb2j-refractor.py <tb2j-refractor>`.
+Change output behaviour in :ref:`tb2j-refractor.py <tb2j-extractor>`.
 Now by default output is passed to the standart output stream.
 
 
@@ -53,7 +57,7 @@ Correct output file name in :ref:`rad-dos-plotter.py <rad-dos-plotter>`.
 
 0.1.1
 -----
-Fix bugs in :ref:`tb2j-refractor.py <tb2j-refractor>`.
+Fix bugs in :ref:`tb2j-refractor.py <tb2j-extractor>`.
 
 0.1
 ===
@@ -61,7 +65,7 @@ The big renaming passed.
 
 0.1.1
 -----
-Fix bugs in :ref:`tb2j-refractor.py <tb2j-refractor>`.
+Fix bugs in :ref:`tb2j-refractor.py <tb2j-extractor>`.
 
 0.1.0
 -----
@@ -69,7 +73,7 @@ Scripts were renamed:
 
 tb2j_plotter.py to :ref:`tb2j-plotter.py <tb2j-plotter>`
 
-tb2j_refractor.py to :ref:`tb2j-refractor.py <tb2j-refractor>`
+tb2j_refractor.py to :ref:`tb2j-refractor.py <tb2j-extractor>`
 
 phonopy_plotter.py to :ref:`phonopy-plotter.py <phonopy-plotter>`
 
@@ -108,7 +112,7 @@ Change versioning style, correct bugs in template logic.
 
 0.0.0.10
 --------
-Add :ref:`tb2j-refractor.py <tb2j-refractor>` script.
+Add :ref:`tb2j-refractor.py <tb2j-extractor>` script.
 
 0.0.0.9
 -------

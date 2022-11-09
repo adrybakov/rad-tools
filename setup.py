@@ -22,7 +22,7 @@ setup(
     scripts=[
         'scripts/tb2j-plotter.py',
         'scripts/phonopy-plotter.py',
-        'scripts/tb2j-refractor.py',
+        'scripts/tb2j-extractor.py',
         'scripts/rad-make-template.py',
         'scripts/rad-dos-plotter.py'
     ],

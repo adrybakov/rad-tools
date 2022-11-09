@@ -5,7 +5,7 @@ RAD-tools documentation
 Latest version: |release|
 
 .. warning::
-    This project is under active development.
+    This project is under ACTIVE development.
 
 .. toctree::
    :maxdepth: 1
