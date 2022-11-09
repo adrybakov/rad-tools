@@ -7,6 +7,94 @@
 Script for extracting of template-based model from 
 `TB2J <https://tb2j.readthedocs.io/en/latest/>`_ results.
 
+
+.. _tb2j-refractor_verbose-ref:
+
+Verbose output
+==============
+If :ref:`verbose <tb2j-refractor_verbose>` and 
+:ref:`output-name <tb2j-refractor_output-name>` arguments are provided to 
+the script then output will be written in .txt and .py files.
+Content of the .py file is organised in a following manner:
+
+.. code-block:: python
+
+    import numpy as np 
+    iso = {
+        name:
+        {
+            (i, j, k): J_iso,
+            ...
+        },
+        ...
+    }
+
+    aniso = {
+        name:
+        {
+            (i, j, k): J_aniso,
+            ...
+        },
+        ...
+    }
+
+    dmi = {
+        name:
+        {
+            (i, j, k): DMI,
+            ...
+        },
+        ...
+    }
+
+    matrix = {
+        name:
+        {
+            (i, j, k): J_matrix,
+            ...
+        },
+        ...
+    }
+
+where 
+
+.. code-block:: python
+
+    type(J_iso) = float
+
+    J_aniso = np.array(
+        [[J_aniso_xx, J_aniso_xy, J_aniso_xz],
+        [J_aniso_xy, J_aniso_yy, J_aniso_yz],
+        [J_aniso_xz, J_aniso_yz, J_aniso_zz]])
+
+    DMI = np.array([D_x, D_y, D_z])
+
+    J_matrix = np.array(
+        [[J_xx, J_xy, J_xz],
+        [J_xy, J_yy, J_yz],
+        [J_xz, J_yz, J_zz]])
+
+Content of .txt file is organised as: ::
+
+    name
+      atom1 atom2 (i, j, k)
+        Isotropic: J_iso
+        Anisotropic:
+            J_aniso_xx J_aniso_xy J_aniso_xz
+            J_aniso_xy J_aniso_yy J_aniso_yz
+            J_aniso_xz J_aniso_yz J_aniso_zz
+        DMI: D_x D_y D_z
+        |DMI|: |DMI|
+        |DMI/J|: |DMI|/|J|
+        Matrix:
+            J_xx J_xy J_xz
+            J_xy J_yy J_yz
+            J_xz J_yz J_zz
+      
+      ...
+    
+    ...
+
 Arguments
 =========
 

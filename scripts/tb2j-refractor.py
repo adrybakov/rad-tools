@@ -20,27 +20,20 @@ def main(filename, out_dir, out_name, template, dmi=False, verbose=False):
     template = ExchangeTemplate(template)
 
     output_line = ""
+    if verbose:
+        output_python_iso = "iso = {\n"
+        output_python_aniso = "aniso = {\n"
+        output_python_dmi = "dmi = {\n"
+        output_python_matrix = "matrix = {\n"
     for name in template.names:
-        J_iso = 0
-        J_aniso = np.zeros((3, 3), dtype=float)
-        DMI = np.zeros(3, dtype=float)
-        abs_DMI = 0
-        for bond in template.names[name]:
-            atom1 = bond[0]
-            atom2 = bond[1]
-            R = bond[2]
-            J_iso += model.bonds[atom1][atom2][R].iso
-            J_aniso += model.bonds[atom1][atom2][R].aniso
-            DMI += model.bonds[atom1][atom2][R].dmi
-            abs_DMI += sqrt(model.bonds[atom1][atom2][R].dmi[0]**2 +
-                            model.bonds[atom1][atom2][R].dmi[1]**2 +
-                            model.bonds[atom1][atom2][R].dmi[2]**2)
-        J_iso /= len(template.names[name])
-        J_aniso /= len(template.names[name])
-        DMI /= len(template.names[name])
-        abs_DMI /= len(template.names[name])
+
         output_line += (f"{name}\n")
         if verbose:
+            output_python_iso += f"    '{name}':\n" + "    {\n"
+            output_python_aniso += f"    '{name}':\n" + "    {\n"
+            output_python_dmi += f"    '{name}':\n" + "    {\n"
+            output_python_matrix += f"    '{name}':\n" + "    {\n"
+
             for bond in template.names[name]:
                 atom1 = bond[0]
                 atom2 = bond[1]
@@ -52,8 +45,28 @@ def main(filename, out_dir, out_name, template, dmi=False, verbose=False):
                                model.bonds[atom1][atom2][R].dmi[1]**2 +
                                model.bonds[atom1][atom2][R].dmi[2]**2)
                 matrix = model.bonds[atom1][atom2][R].matrix
+                output_python_iso += (
+                    8 * " " +
+                    f"({R[0]}, {R[1]}, {R[2]}): {J_iso},\n")
+                output_python_aniso += (
+                    8 * " " +
+                    f"({R[0]}, {R[1]}, {R[2]}): np.array([" +
+                    f"[{J_aniso[0][0]}, {J_aniso[0][1]}, {J_aniso[0][2]}], " +
+                    f"[{J_aniso[1][0]}, {J_aniso[1][1]}, {J_aniso[1][2]}], " +
+                    f"[{J_aniso[2][0]}, {J_aniso[2][1]}, {J_aniso[2][2]}]]),\n")
+                output_python_dmi += (
+                    8 * " " +
+                    f"({R[0]}, {R[1]}, {R[2]}):" +
+                    f" np.array([{DMI[0]}, {DMI[1]}, {DMI[2]}]),\n")
+                output_python_matrix += (
+                    8 * " " +
+                    f"({R[0]}, {R[1]}, {R[2]}): np.array([" +
+                    f"[{matrix[0][0]}, {matrix[0][1]}, {matrix[0][2]}], " +
+                    f"[{matrix[1][0]}, {matrix[1][1]}, {matrix[1][2]}], " +
+                    f"[{matrix[2][0]}, {matrix[2][1]}, {matrix[2][2]}]]),\n")
+
                 output_line += (
-                    f"  {atom1} {atom2} ({R[0]}, {R[1]}, {R[2]})\n"
+                    f"  {atom1} {atom2} ({R[0]}, {R[1]}, {R[2]})\n" +
                     f"    Isotropic: {round(J_iso, 4)}\n" +
                     f"    Anisotropic:\n" +
                     f"        {spaces_around(round(J_aniso[0][0], 4), nchars=7)}  " +
@@ -65,8 +78,11 @@ def main(filename, out_dir, out_name, template, dmi=False, verbose=False):
                     f"        {spaces_around(round(J_aniso[2][0], 4), nchars=7)}  " +
                     f"{spaces_around(round(J_aniso[2][1], 4), nchars=7)}  " +
                     f"{spaces_around(round(J_aniso[2][2], 4), nchars=7)}\n" +
+                    f"    DMI: {round(DMI[0], 4)} " +
+                    f"{round(DMI[1], 4)} " +
+                    f"{round(DMI[2], 4)}\n"
                     f"    |DMI|: {round(abs_DMI, 4)}\n" +
-                    f"    |DMI/J| {round(abs(abs_DMI/J_iso), 4)}\n"
+                    f"    |DMI/J| {round(abs(abs_DMI/J_iso), 4)}\n" +
                     f"    Matrix:\n" +
                     f"        {spaces_around(round(matrix[0][0], 4), nchars=7)}  " +
                     f"{spaces_around(round(matrix[0][1], 4), nchars=7)}  " +
@@ -78,7 +94,30 @@ def main(filename, out_dir, out_name, template, dmi=False, verbose=False):
                     f"{spaces_around(round(matrix[2][1], 4), nchars=7)}  " +
                     f"{spaces_around(round(matrix[2][2], 4), nchars=7)}\n\n")
 
+            output_python_iso += "    },\n"
+            output_python_aniso += "    },\n"
+            output_python_dmi += "    },\n"
+            output_python_matrix += "    },\n"
+
         else:
+            J_iso = 0
+            J_aniso = np.zeros((3, 3), dtype=float)
+            DMI = np.zeros(3, dtype=float)
+            abs_DMI = 0
+            for bond in template.names[name]:
+                atom1 = bond[0]
+                atom2 = bond[1]
+                R = bond[2]
+                J_iso += model.bonds[atom1][atom2][R].iso
+                J_aniso += model.bonds[atom1][atom2][R].aniso
+                DMI += model.bonds[atom1][atom2][R].dmi
+                abs_DMI += sqrt(model.bonds[atom1][atom2][R].dmi[0]**2 +
+                                model.bonds[atom1][atom2][R].dmi[1]**2 +
+                                model.bonds[atom1][atom2][R].dmi[2]**2)
+            J_iso /= len(template.names[name])
+            J_aniso /= len(template.names[name])
+            DMI /= len(template.names[name])
+            abs_DMI /= len(template.names[name])
             output_line += (
                 f"    Isotropic: {round(J_iso, 4)}\n" +
                 f"    Anisotropic:\n" +
@@ -115,10 +154,24 @@ def main(filename, out_dir, out_name, template, dmi=False, verbose=False):
         output_line += "\n"
 
     if out_name is not None:
-        with open(join(out_dir, out_name), "w") as out_file:
+        with open(join(out_dir, out_name + ".txt"), "w") as out_file:
             out_file.write(output_line)
         print(f"{OK}Extracted exchange info is in " +
-              f"{abspath(join(out_dir, out_name))}{RESET}")
+              f"{abspath(join(out_dir, out_name + '.txt'))}{RESET}")
+        if verbose:
+            output_python_iso += "}\n\n"
+            output_python_aniso += "}\n\n"
+            output_python_dmi += "}\n\n"
+            output_python_matrix += "}\n\n"
+            with open(join(out_dir, out_name + ".py"), "w") as out_python:
+                out_python.write("import numpy as np\n")
+                out_python.write(output_python_iso)
+                out_python.write(output_python_aniso)
+                out_python.write(output_python_dmi)
+                out_python.write(output_python_matrix)
+            print(f"{OK}Verbose info is in " +
+                  f"{abspath(join(out_dir, out_name + '.py'))}{RESET}")
+
     else:
         print(f"{OK}{output_line}{RESET}")
 
@@ -165,7 +218,7 @@ if __name__ == '__main__':
                         action="store_true",
                         default=False,
                         help="""
-                        Whenever to print each dmi vector 
+                        Whenever to print each dmi vector
                         for each exchange group separately.
                         """
                         )
@@ -173,7 +226,7 @@ if __name__ == '__main__':
                         action="store_true",
                         default=False,
                         help="""
-                        Whenever to print each neighbor in the template 
+                        Whenever to print each neighbor in the template
                         in a verbose way.
                         """
                         )

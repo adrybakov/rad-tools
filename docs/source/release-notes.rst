@@ -6,6 +6,11 @@ Release notes
 ===
 Add script :ref:`rad-dos-plotter.py <rad-dos-plotter>`
 
+0.2.9
+-----
+Add pythonic :ref:`verbose <tb2j-refractor_verbose-ref>` output
+to :ref:`tb2j-refractor.py <tb2j-refractor>` script.
+
 0.2.8
 -----
 Add :ref:`--verbose <tb2j-refractor_verbose>` flag
