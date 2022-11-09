@@ -24,7 +24,6 @@ setup(
         'scripts/phonopy-plotter.py',
         'scripts/tb2j-refractor.py',
         'scripts/rad-make-template.py',
-        'scripts/rad-jarvis.py',
         'scripts/rad-dos-plotter.py'
     ],
     install_requires=[
