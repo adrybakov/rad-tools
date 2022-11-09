@@ -70,7 +70,7 @@ if __name__ == "__main__":
                         type=str,
                         default='template.txt',
                         help="""
-                        Template file name, default "template.txt"
+                        Template filename.
                         """
                         )
     parser.add_argument("-f", "--filename",

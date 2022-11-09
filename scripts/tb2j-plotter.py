@@ -341,7 +341,7 @@ if __name__ == '__main__':
                         action="store_true",
                         default=False,
                         help="""
-                        Whenever to draw the supercell`s shape.
+                        Whenever to draw the cells.
                         """
                         )
     parser.add_argument("-R", "--R-vector",

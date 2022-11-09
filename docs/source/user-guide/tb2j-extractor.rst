@@ -64,15 +64,15 @@ where
 
     J_aniso = np.array(
         [[J_aniso_xx, J_aniso_xy, J_aniso_xz],
-        [J_aniso_xy, J_aniso_yy, J_aniso_yz],
-        [J_aniso_xz, J_aniso_yz, J_aniso_zz]])
+         [J_aniso_xy, J_aniso_yy, J_aniso_yz],
+         [J_aniso_xz, J_aniso_yz, J_aniso_zz]])
 
     DMI = np.array([D_x, D_y, D_z])
 
     J_matrix = np.array(
         [[J_xx, J_xy, J_xz],
-        [J_xy, J_yy, J_yz],
-        [J_xz, J_yz, J_zz]])
+         [J_xy, J_yy, J_yz],
+         [J_xz, J_yz, J_zz]])
 
 Content of .txt file is organised as: ::
 

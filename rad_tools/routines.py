@@ -57,38 +57,6 @@ ANSI escape code for errors.
 """
 
 
-def spaces_around(line, nchars, align="left"):
-    """
-    Space surrounder.
-
-    Parameters
-    ----------
-    line : str
-    nchars : int
-    align : str
-        "left", "center" or "right"
-
-    Returns
-    -------
-    out_line : str
-        line in a form that len(out_line) = max(nchars, len(line)).
-    """
-    line = str(line)
-
-    nchars = max(0, nchars - len(line))
-
-    if align == "left":
-        return line + " " * nchars
-
-    if align == "right":
-        return " " * nchars + line
-
-    if align == "center":
-        return (" " * (nchars // 2) +
-                line +
-                " " * (nchars // 2 + nchars % 2))
-
-
 def get_256_colours(n):
     """
     ANSI escape codes for terminal color with 256-colours support
@@ -249,3 +217,35 @@ def rot_angle(x, y, dummy=False):
             if not dummy:
                 return asin(sin) / pi * 180
             return 180 + asin(sin) / pi * 180
+
+
+def spaces_around(line, nchars, align="left"):
+    """
+    Space surrounder.
+
+    Parameters
+    ----------
+    line : str
+    nchars : int
+    align : str, default "left"
+        "left", "center" or "right"
+
+    Returns
+    -------
+    out_line : str
+        line in a form that len(out_line) = max(nchars, len(line)).
+    """
+    line = str(line)
+
+    nchars = max(0, nchars - len(line))
+
+    if align == "left":
+        return line + " " * nchars
+
+    if align == "right":
+        return " " * nchars + line
+
+    if align == "center":
+        return (" " * (nchars // 2) +
+                line +
+                " " * (nchars // 2 + nchars % 2))

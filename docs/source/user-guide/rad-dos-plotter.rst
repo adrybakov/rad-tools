@@ -4,11 +4,13 @@
 ``rad-dos-plotter.py``
 **********************
 
-Script for visualisation of projected density of states.
+Script for visualisation of projected density of states from 
+`Quantum-ESPRESSO <https://www.quantum-espresso.org/>`_.
 
-Currently plot the content of separate file. Pdos for *up* states is plotted with positive sign, Pdos for *down* states is plotted with 
-negative sign. Summed Pdos from the file (2 and 3 column) is
-plotted in grey background.
+Detect the labels based on the name of the file and print its content.
+Pdos for *up* states is plotted with positive sign, 
+Pdos for *down* states is plotted with negative sign. 
+Summed Pdos from the file (2 and 3 column) is plotted in grey background.
 
 Arguments
 =========
@@ -17,7 +19,7 @@ Arguments
 
 ``--filename``, ``-f``
 ----------------------
-Relative or absulute path to the dos file,
+Relative or absolute path to the dos file,
 including the name and extention of the file itself.
 
     *required* : True
@@ -33,7 +35,7 @@ Relative or absolute path to the folder for saving outputs.
 
     *default* : current directory
 
-    *tyoe* : str
+    *type* : str
 
 
 .. _rad-dos-plotter_output-name:
@@ -70,7 +72,7 @@ Interactive mode flag.
 
 If specified then :py:func:`plt.show()` function will be called 
 instead of saving graph to the file, which will open standart 
-pyplot interactive window with the plot.
+pyplot interactive window.
 
     *default* : False
 

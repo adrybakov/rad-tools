@@ -7,7 +7,17 @@
 Script for visualisation of 
 `TB2J <https://tb2j.readthedocs.io/en/latest/>`_ results.
 
-Display isotropic exchange and distances (one output file for each). 
+In the main :ref:`mode <tb2j-plotter_mode>` (2d) script displays isotropic exchange, 
+distances and DMI (one output file for each). In the most user cases this mode 
+of plotting is used (and it is set by default), so if you want to plot the 
+graph of exchange interaction in 2d material with the view from above it is 
+safe to completely ignore :ref:`mode <tb2j-plotter_mode>` and 
+:ref:`atoms <tb2j-plotter_atoms>` arguments.
+
+In the molecule :ref:`mode <tb2j-plotter_mode>` script plots isotropic exchange, 
+distances and DMI vs the distance from the middle of the bond 
+to the center of the molecule. Used to analyse TB2J calculations 
+with the molecules at the surface of 2d material.
 
 Supports filtering by 
 R vectors (see :ref:`R-vector <tb2j-plotter_R-vector>`), 
@@ -21,14 +31,16 @@ The result is defined by logical conjugate of the specified conditions.
 
 
 Output files will have the following name structure: 
-*output-name.display-data-type.png*
+*output-name.display-data-type.png* 
+(or *output-name.molecule.display-data-type.png* in molecule 
+:ref:`mode <tb2j-plotter_mode>`)
 
 .. _tb2j-plotter_example:
 
 Usage example
 =============
 
-Imagine you are executing the ``tb2j-plotter.py`` sccript from the 
+Imagine you are executing the ``tb2j-plotter.py`` script from the 
 folder *example* and your file structure looks like the following
 
 .. code-block:: text
@@ -92,7 +104,7 @@ for example try to execute
 
     tb2j-plotter.py -f exchange.out -op output/bar/foo
 
-The sript will create folder *bar* inside of the folder *output* and folder 
+The script will create folder *bar* inside of the folder *output* and folder 
 *foo* inside of the folder *bar*. The structure of the *example* folder now 
 should look like that:
 
@@ -144,20 +156,20 @@ the center of the molecule.
     
 .. hint::
     If you are plotting in molecule mode it is recommended to specify 
-    ``--substrate-atoms`` argument.
+    ``--atoms`` argument.
 
 
-.. _tb2j-plotter_substrate-atoms:
+.. _tb2j-plotter_atoms:
 
-``--substrate-atoms``, ``-suba``
---------------------------------
-Atoms from the substrate
+``--atoms``, ``-a``
+-------------------
+Atoms from the substrate.
 
 Marks of atoms from the substracte (Same as in TB2J). 
 You can specify only names. For example instead of "Cr12" one can provide 
 "Cr" and then all Cr atoms will be considered as a substrate ones. 
 
-    *default* : :py:class:`magnetic_atoms <.rad_tools.exchange.model.ExchangeModel`
+    *default* : None
 
     *type* : str
 
@@ -201,7 +213,7 @@ See also: :ref:`example <tb2j-plotter_example>`
 ----------------------------
 Type of data for display.
 
-Specifying the data for display at the graph. 
+Specifying the data which will be displayed in the graphs. 
 Everything is displayed by default, each value in a separate picture. 
 Currently available for display: Isotropic exchange parameter, distance, \|DMI\|.
 
@@ -214,9 +226,9 @@ Currently available for display: Isotropic exchange parameter, distance, \|DMI\|
 
 ``--draw-cells``, ``-dc``
 -------------------------
-Whenever to draw the supercell`s shape.
+Whenever to draw the cells.
 
-If specified then the shape of all supercells 
+If specified then the shape of all cells 
 presented in the model (after filtering) is drawn.
 
     *default* : False
@@ -253,7 +265,7 @@ ignored.
 (<=) Maximum distance.
 
 All the bonds with the distance beetwen atom 1 and atom 2 
-greater then maximum distance are excluded from the model.
+greater than maximum distance are excluded from the model.
 
     *default* : None
 
@@ -267,7 +279,7 @@ greater then maximum distance are excluded from the model.
 (>=) Minimum distance.
 
 All the bonds with the distance beetwen atom 1 and atom 2 
-lower then minimum distance are excluded from the model.
+lower than minimum distance are excluded from the model.
 
     *default* : None
 
@@ -288,7 +300,7 @@ Only the bonds with the exact distance remains in the model.
 
 .. hint::
     There is no point in specifying maximum or minimum distance when 
-    this parameter is specified.
+    this parameter is provided.
 
 
 .. _tb2j-plotter_template:

@@ -28,7 +28,7 @@ class Bond:
         ``iso`` , ``aniso`` and ``dmi`` .
 
     distance : float, default 0
-        Lenght of the bond.
+        Length of the bond.
 
     Attributes
     ----------
@@ -80,7 +80,7 @@ class Bond:
              [J_zx, J_zy, J_zz]]
 
     distance : float
-        Lenght of the bond.
+        Length of the bond.
 
     """
 
@@ -151,7 +151,7 @@ class ExchangeModel:
     ----------
 
     cell : 3 x 3 np.ndarray of floats
-        3 x 3 matrix of lattice vectors in Angstrom.::
+        3 x 3 matrix of lattice vectors in Angstrom. ::
 
             [[a_x  a_y  a_z],
              [b_x  b_y  b_z],
@@ -478,8 +478,9 @@ class ExchangeModel:
             Distance for sorting, the condition is <<more or equal>>.
 
         template : list
-            List of pairs for keeping. Specifying atom1, atom2, R.
-            [(atom1, atom2, R), ...]
+            List of pairs, which will remain in the model. ::
+
+                [(atom1, atom2, R), ...]
 
         R_vector : tuple of ints or list of tuples of ints
             Tuple of 3 integers or list of tuples, specifying the R vectors,

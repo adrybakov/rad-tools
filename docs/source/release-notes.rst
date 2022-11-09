@@ -27,7 +27,7 @@ Change the behaviour of the drawing in
 
 0.2.6
 -----
-Add :ref:`-dmi <tb2j-extractor_dmi>` flag
+Add :ref:`dmi <tb2j-extractor_dmi>` flag
 to :ref:`tb2j-refractor.py <tb2j-extractor>` script.
 
 0.2.5
@@ -54,10 +54,6 @@ Add interactive mode to the :ref:`rad-dos-plotter.py <rad-dos-plotter>`.
 -----
 
 Correct output file name in :ref:`rad-dos-plotter.py <rad-dos-plotter>`.
-
-0.1.1
------
-Fix bugs in :ref:`tb2j-refractor.py <tb2j-extractor>`.
 
 0.1
 ===
@@ -93,7 +89,7 @@ Module :doc:`map <api/rad_tools.map>` was moved out of
 
 0.0
 ===
-Preliminary stage of the project, the main problem gere is a messy organisation.
+Preliminary stage of the project, the main problem here is a messy organisation.
 
 0.0.3
 -----
@@ -123,7 +119,7 @@ Better help messages in :ref:`tb2j-plotter.py <tb2j-plotter>` script.
 Add possibility to plot parameters vs distance from the center of the molecule
 to the center of the bond (see 
 :ref:`mode <tb2j-plotter_mode>` and 
-:ref:`substrate-atoms <tb2j-plotter_substrate-atoms>`).
+:ref:`atoms <tb2j-plotter_atoms>`).
 
 Add argument to :ref:`tb2j-plotter.py <tb2j-plotter>` for title for the pictures 
 (see :ref:`title <tb2j-plotter_title>`).
@@ -140,7 +136,7 @@ Add arguments :ref:`scale-data <tb2j-plotter_scale-data>` and
 
 0.0.0.5
 -------
-Fix the problem with the :py:mod:`exchange` docs. 
+Fix the problem with the :py:mod:`.exchange` docs. 
 
 0.0.0.4
 -------
