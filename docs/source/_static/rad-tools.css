@@ -1,21 +1,32 @@
+
+html[data-theme="light"] {
+  --pst-color-primary: #506EC3;
+}
+
+html[data-theme="dark"] {
+  --pst-color-primary: #4A85BE;
+}
+
 h1 {
-    color: #414042; 
+    color: #272B3A; 
   }
 
-html[data-theme=dark] h1 {
-  color: #f1f2f2;
-}
-  
 h2 {
-    color: #4d77cf; /* han blue */
+    color: #354760; /* han blue */
     letter-spacing: -.03em;
   }
-  
-h3 {
-    color: #013243; /* warm black */
-    letter-spacing: -.03em;
-  }
+
+
+html[data-theme=dark] h1 {
+  color: #FDFEFF;
+}
+
+html[data-theme=dark] h2 {
+  color: #FDFEFF; /* han blue */
+  letter-spacing: -.03em;
+}
 
 .footer-item {
   text-align: center;
 }
+
