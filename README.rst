@@ -20,4 +20,4 @@ Documentation
 =============
 
 Documentations is available 
-`here. <https://rad-tools.adrybakov.com/en/latest/index.html>`_
+`here. <https://rad-tools.adrybakov.com>`_
