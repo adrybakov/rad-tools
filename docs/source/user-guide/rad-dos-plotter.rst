@@ -17,10 +17,9 @@ Arguments
 
 .. _rad-dos-plotter_filename:
 
-``--filename``, ``-f``
-----------------------
-Relative or absolute path to the dos file,
-including the name and extention of the file itself.
+-f, --filename 
+    Relative or absolute path to the dos file,
+    including the name and extention of the file itself.
 
     *required* : True
 
@@ -29,7 +28,7 @@ including the name and extention of the file itself.
 
 .. _rad-dos-plotter_output-dir:
 
-``--output-dir``, ``-op``
+``-op``, ``--output-dir`` 
 -------------------------
 Relative or absolute path to the folder for saving outputs.
 
