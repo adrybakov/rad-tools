@@ -11,8 +11,8 @@ In the main :ref:`mode <tb2j-plotter_mode>` (2d) script displays isotropic excha
 distances and DMI (one output file for each). In the most user cases this mode 
 of plotting is used (and it is set by default), so if you want to plot the 
 graph of exchange interaction in 2d material with the view from above it is 
-safe to completely ignore :ref:`mode <tb2j-plotter_mode>` and 
-:ref:`atoms <tb2j-plotter_atoms>` arguments.
+safe to completely ignore :ref:`--mode <tb2j-plotter_mode>` and 
+:ref:`--atoms <tb2j-plotter_atoms>` arguments.
 
 In the molecule :ref:`mode <tb2j-plotter_mode>` script plots isotropic exchange, 
 distances and DMI vs the distance from the middle of the bond 
@@ -20,11 +20,11 @@ to the center of the molecule. Used to analyse TB2J calculations
 with the molecules at the surface of 2d material.
 
 Supports filtering by 
-R vectors (see :ref:`R-vector <tb2j-plotter_R-vector>`), 
-distances (see :ref:`max-distance <tb2j-plotter_max-distance>`,
-:ref:`min-distance <tb2j-plotter_min-distance>` and
-:ref:`distance <tb2j-plotter_distance>`), 
-and template file (see :ref:`template-file <tb2j-plotter_template-file>`). 
+R vectors (see :ref:`--R-vector <tb2j-plotter_R-vector>`), 
+distances (see :ref:`--max-distance <tb2j-plotter_max-distance>`,
+:ref:`--min-distance <tb2j-plotter_min-distance>` and
+:ref:`--distance <tb2j-plotter_distance>`), 
+and template file (see :ref:`--template-file <tb2j-plotter_template-file>`). 
 The result is defined by logical conjugate of the specified conditions.
 
 ``--filename`` (or ``-f``) argument is required, the rest of them are optional.
@@ -67,14 +67,14 @@ After the execution your *example* folder will look similar to this
 
 Script produced two output files *exchange.iso.png*
 and *exchange.distance.png*. Common seedname *exchange* comes by default 
-(see :ref:`output-name <tb2j-plotter_output-name>`). *iso* and *distance* 
+(see :ref:`--output-name <tb2j-plotter_output-name>`). *iso* and *distance* 
 indicate the plotted data 
-(see :ref:`what-to-plot <tb2j-plotter_what-to-plot>`). 
+(see :ref:`--what-to-plot <tb2j-plotter_what-to-plot>`). 
 
 .. important::
     That output files are not located in *output* folder since the 
     current folder is used for output by default
-    (see :ref:`output-dir <tb2j-plotter_output-dir>`). 
+    (see :ref:`--output-dir <tb2j-plotter_output-dir>`). 
     
 Lets save the output in the *output* folder:
 
@@ -95,7 +95,7 @@ Now *example* folder should look like this
         └── exchange.distance.png
 
 Output files have the same names, but they are saved in the *output* 
-folder as your specifyed by ``-op`` argument.
+folder as your specifyed by :ref:`-op (--output-dir) <tb2j-plotter_output-dir>` argument.
 
 It is not necessary to specify a path to the existing folder, 
 for example try to execute

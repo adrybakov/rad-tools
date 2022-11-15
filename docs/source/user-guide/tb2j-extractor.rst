@@ -12,8 +12,8 @@ Script for extracting of template-based model from
 
 Verbose output
 ==============
-If :ref:`verbose <tb2j-extractor_verbose>` and 
-:ref:`output-name <tb2j-extractor_output-name>` arguments are provided to 
+If :ref:`--verbose <tb2j-extractor_verbose>` and 
+:ref:`--output-name <tb2j-extractor_output-name>` arguments are provided to 
 the script then output will be written in .txt and .py files.
 Content of the .py file is organised in a following manner:
 
@@ -170,7 +170,7 @@ Whenever to print each dmi vector for each exchange group separately.
 -v, --verbose
 -------------
 Whenever to print each neighbor from a 
-:ref:`template <tb2j-extractor_template-file>` file in a verbose way.
+:ref:`template file <tb2j-extractor_template-file>` in a verbose way.
     
     *action* : store_true
     
