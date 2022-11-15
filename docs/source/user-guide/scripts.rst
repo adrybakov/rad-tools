@@ -2,7 +2,7 @@
 Scripts
 *******
 
-For every script use --help or -h option in consolu in order to display 
+For any script use --help or -h option in console in order to display 
 help message with the short summary of the arguments.
 
 .. code-block:: console
