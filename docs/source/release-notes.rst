@@ -6,18 +6,24 @@ Release notes
 ===
 Add script :ref:`rad-dos-plotter.py <rad-dos-plotter>`
 
+0.2.11
+------
+Rename --template option in 
+:ref:`tb2j-extractor.py <tb2j-extractor>` script into 
+:ref:`--template-file <tb2j-extractor_template-file>`. 
+
 0.2.10
 ------
 Rename tb2j-refractor.py to :ref:`tb2j-extractor.py <tb2j-extractor>`
 
 0.2.9
 -----
-Add pythonic :ref:`verbose <tb2j-extractor_verbose-ref>` output
+Add pythonic :ref:`--verbose <tb2j-extractor_verbose-ref>` output
 to the :ref:`tb2j-refractor.py <tb2j-extractor>` script.
 
 0.2.8
 -----
-Add :ref:`verbose <tb2j-extractor_verbose>` flag
+Add :ref:`--verbose <tb2j-extractor_verbose>` flag
 to the :ref:`tb2j-refractor.py <tb2j-extractor>` script.
 
 0.2.7
@@ -27,13 +33,13 @@ Change the behaviour of the drawing in
 
 0.2.6
 -----
-Add :ref:`dmi <tb2j-extractor_dmi>` flag
+Add :ref:`-dmi <tb2j-extractor_dmi>` flag
 to :ref:`tb2j-refractor.py <tb2j-extractor>` script.
 
 0.2.5
 -----
 Add \|DMI\| as an output data type to :ref:`tb2j-plotter.py <tb2j-plotter>` 
-(see: :ref:`what-to-plot <tb2j-plotter_what-to-plot>`)
+(see: :ref:`--what-to-plot <tb2j-plotter_what-to-plot>`)
 
 0.2.4
 -----
@@ -118,11 +124,11 @@ Better help messages in :ref:`tb2j-plotter.py <tb2j-plotter>` script.
 -------
 Add possibility to plot parameters vs distance from the center of the molecule
 to the center of the bond (see 
-:ref:`mode <tb2j-plotter_mode>` and 
-:ref:`atoms <tb2j-plotter_atoms>`).
+:ref:`--mode <tb2j-plotter_mode>` and 
+:ref:`--atoms <tb2j-plotter_atoms>`).
 
 Add argument to :ref:`tb2j-plotter.py <tb2j-plotter>` for title for the pictures 
-(see :ref:`title <tb2j-plotter_title>`).
+(see :ref:`--title <tb2j-plotter_title>`).
 
 0.0.0.7
 -------
@@ -130,8 +136,8 @@ Add the :ref:`phonopy-plotter.py <phonopy-plotter>` script.
 
 0.0.0.6
 -------
-Add arguments :ref:`scale-data <tb2j-plotter_scale-data>` and 
-:ref:`scale-atoms <tb2j-plotter_scale-atoms>` to the 
+Add arguments :ref:`--scale-data <tb2j-plotter_scale-data>` and 
+:ref:`--scale-atoms <tb2j-plotter_scale-atoms>` to the 
 :ref:`tb2j-plotter.py <tb2j-plotter>`.
 
 0.0.0.5
