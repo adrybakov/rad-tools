@@ -99,7 +99,7 @@ def manager(filename, out_dir, out_name, window=None, interactive=False):
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser(description="Script for visualisation of DOS",
+    parser = ArgumentParser(description="Script for visualisation of projected density of states.",
                             epilog="""
                For the full description of arguments see the docs: 
                https://rad-tools.adrybakov.com/en/stable/user-guide/rad-dos-plotter.html
@@ -138,7 +138,7 @@ if __name__ == "__main__":
                         action="store_true",
                         default=False,
                         help="""
-                        Whenever you wnat to interact with the graph.
+                        Interactive mode flag.
                         """)
 
     args = parser.parse_args()

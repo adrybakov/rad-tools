@@ -25,6 +25,8 @@ extensions = [
     'sphinx.ext.todo',
 ]
 
+smartquotes = False
+
 # todo
 todo_include_todos = True
 

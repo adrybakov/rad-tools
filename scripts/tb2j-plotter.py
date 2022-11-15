@@ -29,7 +29,8 @@ def plot_2d(filename, out_dir='.',
 
     mode_name = "2d"
     messages = {'iso': "isotropic exchange",
-                "distance": "distances"}
+                "distance": "distances",
+                "dmi": "dmi"}
 
     model = ExchangeModelTB2J(filename)
     model = model.filter(min_distance=min_distance,
@@ -48,25 +49,26 @@ def plot_2d(filename, out_dir='.',
     X, Y, Z = model.get_space_dimensions()
     if X == 0 and Y == 0:
         X = Y = 1
-    fontsize = 10 * 1.1 * Y / 5
-    plt.rcParams.update({'font.size': fontsize})
-    mpl.rcParams.update({'axes.linewidth': 1.1 * Y / 5})
-    mpl.rcParams.update({'xtick.major.width': 1.1 * Y / 5})
-    mpl.rcParams.update({'ytick.major.width': 1.1 * Y / 5})
-    mpl.rcParams.update({'xtick.major.size': 5 * 1.1 * Y / 5})
-    mpl.rcParams.update({'ytick.major.size': 5 * 1.1 * Y / 5})
-    mpl.rcParams.update({'xtick.major.pad': 5 * 1.1 * Y / 5})
-    mpl.rcParams.update({'ytick.major.pad': 5 * 1.1 * Y / 5})
-    mpl.rcParams.update({'axes.labelpad': 1.1 * Y / 5})
+    linewidth = 1
+    fontsize = 11
+    # plt.rcParams.update({'font.size': fontsize})
+    # mpl.rcParams.update({'axes.linewidth': 1.1 * Y / 5})
+    # mpl.rcParams.update({'xtick.major.width': 1.1 * Y / 5})
+    # mpl.rcParams.update({'ytick.major.width': 1.1 * Y / 5})
+    # mpl.rcParams.update({'xtick.major.size': 5 * 1.1 * Y / 5})
+    # mpl.rcParams.update({'ytick.major.size': 5 * 1.1 * Y / 5})
+    # mpl.rcParams.update({'xtick.major.pad': 5 * 1.1 * Y / 5})
+    # mpl.rcParams.update({'ytick.major.pad': 5 * 1.1 * Y / 5})
+    # mpl.rcParams.update({'axes.labelpad': 1.1 * Y / 5})
 
-    fig = plt.figure(figsize=(1.1 * X, 1.1 * Y))
+    if X < Y:
+        fig = plt.figure(figsize=(6.4*X/Y, 4.8))
+    else:
+        fig = plt.figure(figsize=(6.4, 4.8*Y/X))
     ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
+    ax.set_aspect("equal")
     ax.set_xlabel('x, Angstroms')
     ax.set_ylabel('y, Angstroms')
-    label_ax = fig.add_axes([0.85, 0.1, 0.1, 0.8])
-    label_ax.set_xlim(0, 1)
-    label_ax.set_ylim(0, 1)
-    label_ax.axis('off')
 
     for atom1 in model.bonds:
         for atom2 in model.bonds[atom1]:
@@ -100,10 +102,17 @@ def plot_2d(filename, out_dir='.',
                             rotation_mode='anchor',
                             rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
                             fontsize=fontsize * scale_data)
+                elif wtp == 'dmi':
+                    ax.text(xm, ym, str(round(sqrt(np.sum(bond.dmi**2)), 4)),
+                            va='bottom', ha=ha,
+                            rotation_mode='anchor',
+                            rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
+                            fontsize=fontsize * scale_data)
+
+    xlims = (ax.get_xlim()[0] - 0.5, ax.get_xlim()[1] + 0.5)
+    ylims = (ax.get_ylim()[0] - 0.5, ax.get_ylim()[1] + 0.5)
 
     if draw_cells:
-        xlims = ax.get_xlim()
-        ylims = ax.get_ylim()
         cells = model.get_cells()
         a_x, a_y, a_z = tuple(model.cell[0])
         b_x, b_y, b_z = tuple(model.cell[1])
@@ -121,22 +130,36 @@ def plot_2d(filename, out_dir='.',
             Rz_min = min(Rz, Rz_min)
             Rz_max = max(Rz, Rz_max)
 
-        for i in range(Rx_min, Rx_max + 1):
-            for j in range(Ry_min, Ry_max + 1):
-                for k in range(Rz_min, Rz_max + 1):
-                    X_shift = i * a_x + j * b_x
-                    Y_shift = i * a_y + j * b_y
-                    ax.plot(np.array([0, a_x, a_x + b_x, b_x, 0]) + X_shift,
-                            np.array([0, a_y, a_y + b_y, b_y, 0]) + Y_shift,
-                            linewidth=1, color="#BCBF5A")
-        ax.set_xlim(*xlims)
-        ax.set_ylim(*ylims)
+        for i in range(Rx_min, Rx_max + 2):
+            for j in range(Ry_min, Ry_max + 2):
+                for k in range(Rz_min, Rz_max + 2):
+                    ax.plot([Rx_min * a_x + j * b_x,
+                             (Rx_max + 1) * a_x + j * b_x],
+                            [Rx_min * a_y + j * b_y,
+                             (Rx_max + 1) * a_y + j * b_y],
+                            linewidth=linewidth, color="#DFDFDF")
+                    ax.plot([i * a_x + Ry_min * b_x,
+                             i * a_x + (Ry_max + 1) * b_x],
+                            [i * a_y + Ry_min * b_y,
+                            i * a_y + (Ry_max + 1) * b_y],
+                            linewidth=linewidth, color="#DFDFDF")
+                    # X_shift = i * a_x + j * b_x
+                    # Y_shift = i * a_y + j * b_y
+                    # ax.plot(np.array([0, a_x, a_x + b_x, b_x, 0]) + X_shift,
+                    #         np.array([0, a_y, a_y + b_y, b_y, 0]) + Y_shift,
+                    #         linewidth=linewidth, color="#BCBF5A", alpha=0.7)
+        ax.plot(np.array([0, a_x, a_x + b_x, b_x, 0]),
+                np.array([0, a_y, a_y + b_y, b_y, 0]),
+                linewidth=linewidth, color="#CA7371")
+
+    ax.set_xlim(*xlims)
+    ax.set_ylim(*ylims)
 
     if title is not None:
         ax.set_title(title, fontsize=1.5 * fontsize)
 
     png_path = join(out_dir, f'{out_name}.{wtp}.png')
-    plt.savefig(png_path, dpi=400)
+    plt.savefig(png_path, dpi=400, bbox_inches="tight")
     print(f'{OK}{mode_name} plot with {wtp} is in {abspath(png_path)}{RESET}')
 
 
@@ -223,6 +246,8 @@ def plot_molecule(filename, out_dir='.',
         ax.set_ylabel('Isotropic exchange parameter, meV')
     elif wtp == 'distance':
         ax.set_ylabel('Bond length, Angstroms')
+    elif wtp == 'dmi':
+        ax.set_ylabel('|DMI|, meV')
 
     data = [[], []]
     x, y, z = get_molecule_center(model._atoms, atoms)
@@ -240,6 +265,8 @@ def plot_molecule(filename, out_dir='.',
                     data[1].append(bond.iso)
                 elif wtp == 'distance':
                     data[1].append(bond.dis)
+                elif wtp == 'dmi':
+                    data[1].append(sqrt(np.sum(bond.dmi**2)))
     data = np.array(data).T.tolist()
 
     data.sort(key=lambda x: x[0])
@@ -257,11 +284,11 @@ if __name__ == '__main__':
     parser = ArgumentParser(
         description="Script for visualisation of TB2J results",
         epilog="""
-               For the full description of arguments see the docs: 
+               For the full description of arguments see the docs:
                https://rad-tools.adrybakov.com/en/stable/user-guide/tb2j-plotter.html
                """)
 
-    plot_data_type = ['iso', 'distance']
+    plot_data_type = ['iso', 'distance', 'dmi']
     plot_mode = {"2d": plot_2d, "molecule": plot_molecule}
 
     parser.add_argument("-f", "--filename",
@@ -314,7 +341,7 @@ if __name__ == '__main__':
                         action="store_true",
                         default=False,
                         help="""
-                        Whenever to draw the supercell`s shape.
+                        Whenever to draw the cells.
                         """
                         )
     parser.add_argument("-R", "--R-vector",
@@ -350,7 +377,7 @@ if __name__ == '__main__':
                         type=str,
                         default=None,
                         help="""
-                        Relative or absolute path to the template file, 
+                        Relative or absolute path to the template file,
                         including the name and extention of the file.
                         """)
     parser.add_argument("-db", "--double-bonds",

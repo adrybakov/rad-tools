@@ -2,6 +2,14 @@
 Scripts
 *******
 
+For every script use --help or -h option in consolu in order to display 
+help message with the short summary of the arguments.
+
+.. code-block:: console
+
+   script-name.py -h
+
+
 Scripts for analysing `TB2J <https://tb2j.readthedocs.io/en/latest/>`_ 
 outputs.
 
@@ -9,7 +17,7 @@ outputs.
    :maxdepth: 1
 
    tb2j-plotter
-   tb2j-refractor
+   tb2j-extractor
    rad-make-template
 
 Other scripts.
@@ -18,6 +26,5 @@ Other scripts.
    :maxdepth: 1
 
    phonopy-plotter
-   rad-jarvis
    rad-dos-plotter
 
