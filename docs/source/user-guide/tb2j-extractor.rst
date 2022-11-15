@@ -100,8 +100,8 @@ Arguments
 
 .. _tb2j-extractor_filename:
 
-``--filename``, ``-f``
-----------------------
+-f, --filename
+--------------
 Relative or absulute path to the *exchange.out* file,
 including the name and extention of the file itself.
 
@@ -110,10 +110,10 @@ including the name and extention of the file itself.
     *type* : str
 
 
-.. _tb2j-extractor_template:
+.. _tb2j-extractor_template-file:
 
-``--template``, ``-t``
-----------------------
+-tf, --template-file
+--------------------
 Relative or absolute path to the template file, 
 including the name and extention of the file.
 
@@ -126,8 +126,8 @@ See also: :ref:`template <rad-make-template>`
 
 .. _tb2j-extractor_output-dir:
 
-``--output-dir``, ``-op``
--------------------------
+-op, --output-dir
+-----------------
 Relative or absolute path to the folder for saving outputs.
 
 If the folder does not exist then it is created from the specified path.
@@ -141,8 +141,8 @@ until the existing folder is reached.
 
 .. _tb2j-extractor_output-name:
 
-``--output-name``, ``-on``
---------------------------
+-on, --output-name
+------------------
 Seedname for the output files.
 
 Output files will have the following name structure: *output-name*
@@ -156,8 +156,8 @@ standart output stream.
 
 .. _tb2j-extractor_dmi:
 
-``-dmi``
---------
+-dmi
+----
 Whenever to print each dmi vector for each exchange group separately.
                         
     *action* : store_true
@@ -167,9 +167,10 @@ Whenever to print each dmi vector for each exchange group separately.
 
 .. _tb2j-extractor_verbose:
 
-``--verbose``, ``-v``
----------------------
-    Whenever to print each neighbor in the template in a verbose way.
+-v, --verbose
+-------------
+Whenever to print each neighbor from a 
+:ref:`template <tb2j-extractor_template-file>` file in a verbose way.
     
     *action* : store_true
     

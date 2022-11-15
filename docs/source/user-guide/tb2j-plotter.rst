@@ -24,7 +24,7 @@ R vectors (see :ref:`R-vector <tb2j-plotter_R-vector>`),
 distances (see :ref:`max-distance <tb2j-plotter_max-distance>`,
 :ref:`min-distance <tb2j-plotter_min-distance>` and
 :ref:`distance <tb2j-plotter_distance>`), 
-and template file (see :ref:`template <tb2j-plotter_template>`). 
+and template file (see :ref:`template-file <tb2j-plotter_template-file>`). 
 The result is defined by logical conjugate of the specified conditions.
 
 ``--filename`` (or ``-f``) argument is required, the rest of them are optional.
@@ -128,8 +128,8 @@ Arguments
 
 .. _tb2j-plotter_filename:
 
-``--filename``, ``-f``
-----------------------
+-f, --filename
+--------------
 Relative or absulute path to the TB2J exchange output file, 
 including the name and extention of the file.
 
@@ -140,8 +140,8 @@ including the name and extention of the file.
 
 .. _tb2j-plotter_mode:
 
-``--mode``, ``-m``
-------------------
+-m, --mode
+----------
 Mode of plotting.
 
 Two modes are supported: structure with the view from above 
@@ -161,8 +161,8 @@ the center of the molecule.
 
 .. _tb2j-plotter_atoms:
 
-``--atoms``, ``-a``
--------------------
+-a, --atoms
+-----------
 Atoms from the substrate.
 
 Marks of atoms from the substracte (Same as in TB2J). 
@@ -178,8 +178,8 @@ You can specify only names. For example instead of "Cr12" one can provide
 
 .. _tb2j-plotter_output-dir:
 
-``--output-dir``, ``-op``
--------------------------
+-op, --output-dir
+-----------------
 Relative or absolute path to the folder for saving outputs.
 
 If the folder does not exist then it is created from the specified path.
@@ -193,8 +193,8 @@ until the existing folder is reached.
 
 .. _tb2j-plotter_output-name:
 
-``--output-name``, ``-on``
---------------------------
+-on, --output-name
+------------------
 Seedname for the output files.
 
 Output files will have the following name structure:
@@ -209,8 +209,8 @@ See also: :ref:`example <tb2j-plotter_example>`
 
 .. _tb2j-plotter_what-to-plot:
 
-``--what-to-plot``, ``-wtp``
-----------------------------
+-wtp, --what-to-plot
+--------------------
 Type of data for display.
 
 Specifying the data which will be displayed in the graphs. 
@@ -224,8 +224,8 @@ Currently available for display: Isotropic exchange parameter, distance, \|DMI\|
     *choices* : all, iso, distance, dmi
 
 
-``--draw-cells``, ``-dc``
--------------------------
+-dc, --draw-cells
+-----------------
 Whenever to draw the cells.
 
 If specified then the shape of all cells 
@@ -238,8 +238,8 @@ presented in the model (after filtering) is drawn.
 
 .. _tb2j-plotter_R-vector:
 
-``--R-vector``, ``-R``
-----------------------
+-R, --R-vector
+--------------
 R vectors for filtering the model.
 
 In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to). 
@@ -260,8 +260,8 @@ ignored.
 
 .. _tb2j-plotter_max-distance:
 
-``--max-distance``, ``-maxd``
------------------------------
+-maxd, --max-distance
+---------------------
 (<=) Maximum distance.
 
 All the bonds with the distance beetwen atom 1 and atom 2 
@@ -274,8 +274,8 @@ greater than maximum distance are excluded from the model.
 
 .. _tb2j-plotter_min-distance:
 
-``--min-distance``, ``-mind``
------------------------------
+-mind, --min-distance
+---------------------
 (>=) Minimum distance.
 
 All the bonds with the distance beetwen atom 1 and atom 2 
@@ -288,8 +288,8 @@ lower than minimum distance are excluded from the model.
 
 .. _tb2j-plotter_distance:
 
-``--distance``, ``-d``
-----------------------
+-d, --distance
+--------------
 (=) Exact distance.
 
 Only the bonds with the exact distance remains in the model.
@@ -303,10 +303,10 @@ Only the bonds with the exact distance remains in the model.
     this parameter is provided.
 
 
-.. _tb2j-plotter_template:
+.. _tb2j-plotter_template-file:
 
-``--template``, ``-tf``
------------------------
+-tf, --template-file
+--------------------
 Relative or absolute path to the template file, 
 including the name and extention of the file.
 
@@ -319,8 +319,8 @@ See also: :ref:`template <rad-make-template>`
 
 .. _tb2j-plotter_double-bonds:
 
-``--double-bonds``, ``-db``
----------------------------
+-db, --double-bonds
+-------------------
 Whenever to keep both bonds.
 
 In TB2J file there are two bonds for the pair of atom 1 and atom 2: 
@@ -337,13 +337,14 @@ exchange parameters.
 
 .. caution::
     If this parameter is not specified then it is highly probable that
-    DMI will be equal to zero even if it is not zero in TB2J file.
+    DMI will be equal to zero even if it is not zero in TB2J file. 
+    Moreover, it is necessary to check anisotropy matrices as well.
 
 
 .. _tb2j-plotter_scale-atoms:
 
-``--scale-atoms``, ``-sa``
---------------------------
+-sa, --scale-atoms
+------------------
 Scale for the size of atom marks.
 
 Use it if you want to display atom marks bigger or smaller. 
@@ -356,8 +357,8 @@ Have to be positive.
 
 .. _tb2j-plotter_scale-data:
 
-``--scale-data``, ``-sd``
--------------------------
+-sd, --scale-data
+-----------------
 Scale for the size of data text.
 
 Use it if you want to display data text marks bigger or smaller. 
@@ -370,8 +371,8 @@ Have to be positive.
 
 .. _tb2j-plotter_title:
 
-``--title``, ``t``
-------------------
+-t, --title
+-----------
 Title for the plots
 
 Title will be displayed in the picture.

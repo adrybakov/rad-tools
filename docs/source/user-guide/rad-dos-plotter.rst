@@ -17,9 +17,10 @@ Arguments
 
 .. _rad-dos-plotter_filename:
 
--f, --filename 
-    Relative or absolute path to the dos file,
-    including the name and extention of the file itself.
+-f, --filename
+--------------
+Relative or absolute path to the dos file,
+including the name and extention of the file itself.
 
     *required* : True
 
@@ -28,8 +29,8 @@ Arguments
 
 .. _rad-dos-plotter_output-dir:
 
-``-op``, ``--output-dir`` 
--------------------------
+-op, --output-dir
+-----------------
 Relative or absolute path to the folder for saving outputs.
 
     *default* : current directory
@@ -39,8 +40,8 @@ Relative or absolute path to the folder for saving outputs.
 
 .. _rad-dos-plotter_output-name:
 
-``--output-name``, ``-on``
---------------------------
+-on, --output-name
+------------------
 Seedname for the output files.
 
     *default* : pdos
@@ -50,8 +51,8 @@ Seedname for the output files.
 
 .. _rad-dos-plotter_window:
 
-``--window``, ``-w``
---------------------
+-w, --window
+------------
 Energy window.
 
 DOS will be plotted in the energy limits ``window[0]< E < window[1]``
@@ -65,8 +66,8 @@ DOS will be plotted in the energy limits ``window[0]< E < window[1]``
 
 .. _rad-dos-plotter_interactive:
 
-``--interactive``, ``-i``
--------------------------
+-i, --interactive
+------------------
 Interactive mode flag.
 
 If specified then :py:func:`plt.show()` function will be called 

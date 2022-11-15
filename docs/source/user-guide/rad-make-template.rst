@@ -6,9 +6,9 @@
 
 Script for the creation of template`s draft.
 
-This script can provide blank template or template based on the TB2J
+This script can provide blank template file or template file based on the TB2J
 *exchange.out* file (see :ref:`filename <rad-make-template_filename>`). 
-Several filtering options are supported for the case of TB2J-based template 
+Several filtering options are supported for the case of TB2J-based template file 
 (:ref:`R-vector <rad-make-template_R-vector>`, 
 :ref:`max-distance <rad-make-template_max-distance>`,
 :ref:`min-distance <rad-make-template_min-distance>`,
@@ -16,17 +16,18 @@ Several filtering options are supported for the case of TB2J-based template
 
 .. important::
 
-    When template is made on the base of TB2J file it is still necessary to
-    group bonds into neighbors and add names by hand afterwards.
+    When template file is made on the base of TB2J file it is still necessary 
+    to group bonds into neighbors and add names by hand afterwards.
 
 
 Template specification
 ======================
 
-Template helps to choose particular bonds for filtering of exchange model or 
-for extracting model with grouped parameters (:math:`J_1`, :math:`J_2`, ...).
+Template file helps to choose particular bonds for filtering of exchange model 
+or for extracting model with grouped parameters 
+(i.e. :math:`J_1`, :math:`J_2`, ...).
 
-Here is the draft of the template which is provided by the scripts:
+Here is the draft of the template file which is provided by the script:
 
 .. code-block:: text
 
@@ -52,7 +53,7 @@ Line 2: Flag of the neighbors section, have to be in the file.
 Line 3: Format of the bond specification line.
 
 Line 4: Neighbor separator. Separates different neighbors
-(:math:`J_1`, :math:`J_2`, ...) in the neighbors template. 
+(:math:`J_1`, :math:`J_2`, ...) in the neighbors template file. 
 20 or more "-" symbols.
 
 Line 5: Name of the neighbor and the 
@@ -91,8 +92,8 @@ Arguments
 
 .. _rad-make-template_output-dir:
 
-``--output-dir``, ``-op``
--------------------------
+-op, --output-dir
+-----------------
 Relative or absolute path to the folder for saving outputs.
 
     *default* : current directory
@@ -102,8 +103,8 @@ Relative or absolute path to the folder for saving outputs.
 
 .. _rad-make-template_output-name:
 
-``--output-name``, ``-on``
---------------------------
+-on, --output-name
+------------------
 Template filename.
 
     *default* : template.txt
@@ -113,8 +114,8 @@ Template filename.
 
 .. _rad-make-template_filename:
 
-``--filename``, ``-f``
-----------------------
+-f, --filename
+--------------
 Relative or absulute path to the TB2J exchange output file, 
 including the name and extention of the file.
 
@@ -125,8 +126,8 @@ including the name and extention of the file.
 
 .. _rad-make-template_R-vector:
 
-``--R-vector``, ``-R``
-----------------------
+-R, --R-vector
+--------------
 R vectors for filtering the model.
 
 In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to). 
@@ -147,8 +148,8 @@ ignored.
 
 .. _rad-make-template_max-distance:
 
-``--max-distance``, ``-maxd``
------------------------------
+-maxd, --max-distance
+---------------------
 (<=) Maximum distance.
 
 All the bonds with the distance beetwen atom 1 and atom 2 
@@ -161,8 +162,8 @@ greater than maximum distance are excluded from the model.
 
 .. _rad-make-template_min-distance:
 
-``--min-distance``, ``-mind``
------------------------------
+-mind, --min-distance
+---------------------
 (>=) Minimum distance.
 
 All the bonds with the distance beetwen atom 1 and atom 2 
@@ -175,8 +176,8 @@ lower than minimum distance are excluded from the model.
 
 .. _rad-make-template_distance:
 
-``--distance``, ``-d``
-----------------------
+-d, --distance
+--------------
 (=) Exact distance.
 
 Only the bonds with the exact distance remains in the model.

@@ -192,7 +192,7 @@ if __name__ == '__main__':
                         including the name and extention of the file itself.
                         """
                         )
-    parser.add_argument("-t", "--template",
+    parser.add_argument("-tf", "--template",
                         type=str,
                         required=True,
                         help="""
