@@ -6,6 +6,10 @@ Release notes
 ===
 Add script :ref:`rad-dos-plotter.py <rad-dos-plotter>`
 
+0.2.12
+------
+Bugfix in :ref:`tb2j-plotter.py <tb2j-plotter>` script. 
+
 0.2.11
 ------
 Rename --template option in 
