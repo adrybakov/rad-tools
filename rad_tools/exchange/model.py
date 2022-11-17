@@ -12,16 +12,16 @@ class Bond:
     Parameters
     ----------
 
-    iso : int or float, default 0
+    iso : int or float, default None
         Value of isotropic exchange parameter in meV. 
 
-    aniso : 3 x 3 np.ndarray, default np.zeros((3, 3))
+    aniso : 3 x 3 np.ndarray, None
         3 x 3 matrix of symmetric anisotropic exchange in meV. 
 
-    dmi : 3 x 1 np.ndarray, default np.zeros(3)
+    dmi : 3 x 1 np.ndarray, None
         Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz) in meV. 
 
-    matrix : 3 x 3 np.ndarray, default np.zeros((3, 3))
+    matrix : 3 x 3 np.ndarray, None
         Exchange matrix in meV. If ``matrix`` is specified then ``iso`` ,
         ``aniso`` and ``dmi`` will be ignored and derived from ``matrix`` .
         If ``matrix`` is not specified then it will be derived from
@@ -87,23 +87,29 @@ class Bond:
     distance_tolerance = 1E-05
 
     def __init__(self,
-                 iso=0,
-                 aniso=np.zeros((3, 3)),
-                 dmi=np.zeros(3),
-                 matrix=np.zeros((3, 3)),
-                 distance=0.) -> None:
+                 iso=None,
+                 aniso=None,
+                 dmi=None,
+                 matrix=None,
+                 distance=None) -> None:
         self.iso = 0.
         self.aniso = np.zeros((3, 3), dtype=float)
         self.dmi = np.zeros(3, dtype=float)
         self.matrix = np.zeros((3, 3), dtype=float)
-        self.dis = float(distance)
+        self.dis = 0.
 
-        self.matrix = np.array(matrix, dtype=float)
+        if matrix is not None:
+            self.matrix = np.array(matrix, dtype=float)
         if (self.matrix == np.zeros((3, 3))).all():
-            self.iso = float(iso)
-            self.aniso = np.array(aniso, dtype=float)
-            self.dmi = np.array(dmi, dtype=float)
+            if iso is not None:
+                self.iso = float(iso)
+            if aniso is not None:
+                self.aniso = np.array(aniso, dtype=float)
+            if dmi is not None:
+                self.dmi = np.array(dmi, dtype=float)
             self.matrix = exchange_to_matrix(self.iso, self.aniso, self.dmi)
+            if distance is not None:
+                self.dis = float(distance)
         # To ensure the correct decomposition
         self.iso, self.aniso, self.dmi = exchange_from_matrix(self.matrix)
 
@@ -658,3 +664,8 @@ class ExchangeModelTB2J(ExchangeModel):
             if key in bond_list:
                 filtered_model.file_order.append(key)
         return filtered_model
+
+
+if __name__ == "__main__":
+    a = ExchangeModelTB2J(
+        "/Users/rybakov.ad/Projects/rad-tools/debug/bug-alberto/exchange.out")
