@@ -1,10 +1,12 @@
-
 html[data-theme="light"] {
   --pst-color-primary: #506EC3;
+  --pst-color-inline-code: #FF459C;
 }
 
 html[data-theme="dark"] {
   --pst-color-primary: #4A85BE;
+  --pst-color-inline-code: #C398E3;
+  
 }
 
 h1 {
