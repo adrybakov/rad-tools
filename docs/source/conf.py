@@ -17,6 +17,7 @@ release = __version__
 extensions = [
     'sphinx.ext.duration',
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
     'sphinx.ext.viewcode',
     'numpydoc',
     # 'sphinx_rtd_theme',
@@ -24,6 +25,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
 ]
+autosummary_generate = True
 
 smartquotes = False
 

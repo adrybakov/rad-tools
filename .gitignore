@@ -19,5 +19,5 @@ logodesign
 
 # Docs
 docs/make.bat
-docs/Makefile
 docs/build
+docs/source/api/_autosummary

@@ -85,16 +85,16 @@ phonopy_plotter.py to :ref:`phonopy-plotter.py <phonopy-plotter>`
 
 Modules were renamed:
 
-file_logic to :doc:`model <api/rad_tools.exchange.model>`
+file_logic to :doc:`model <api/_autosummary/rad_tools.exchange.model>`
 
-template_logic to :doc:`template <api/rad_tools.exchange.template>`
+template_logic to :doc:`template <api/_autosummary/rad_tools.exchange.template>`
 
-map_logic to :doc:`map <api/rad_tools.map>`
+map_logic to :doc:`map <api/_autosummary/rad_tools.map>`
 
-tb2j_tools was renamed to :doc:`exchange <api/rad_tools.exchange>`
+tb2j_tools was renamed to :doc:`exchange <api/_autosummary/rad_tools.exchange>`
 
-Module :doc:`map <api/rad_tools.map>` was moved out of 
-:doc:`exchange <api/rad_tools.exchange>`.
+Module :doc:`map <api/_autosummary/rad_tools.map>` was moved out of 
+:doc:`exchange <api/_autosummary/rad_tools.exchange>`.
 
 
 0.0

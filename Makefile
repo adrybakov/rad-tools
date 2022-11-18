@@ -16,6 +16,10 @@ html:
 	@pip3 install . --upgrade
 	@$(SPHINXBUILD) -M html "docs/$(SOURCEDIR)" "docs/$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
+clean:
+	@rm -r docs/build
+	@rm -r docs/source/api/_autosummary
+
 test:
 	@pip3 install . --upgrade
 	@pip3 install pytest
