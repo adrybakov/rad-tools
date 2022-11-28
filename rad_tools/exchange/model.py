@@ -19,7 +19,7 @@ class Bond:
         3 x 3 matrix of symmetric anisotropic exchange in meV. 
 
     dmi : 3 x 1 np.ndarray, None
-        Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz) in meV. 
+        Dzyaroshinsky-Moria interaction vector :math:`(Dx, Dy, Dz)` in meV. 
 
     matrix : 3 x 3 np.ndarray, None
         Exchange matrix in meV. If ``matrix`` is specified then ``iso`` ,
