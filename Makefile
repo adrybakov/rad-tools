@@ -19,6 +19,8 @@ html:
 clean:
 	@rm -r docs/build
 	@rm -r docs/source/api/_autosummary
+	@rm -r rad_tools.egg-info
+	@rm -r build
 
 test:
 	@pip3 install . --upgrade
