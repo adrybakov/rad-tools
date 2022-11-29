@@ -17,11 +17,11 @@ html:
 	@$(SPHINXBUILD) -M html "docs/$(SOURCEDIR)" "docs/$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 clean:
-	@rm -r docs/build
-	@rm -r docs/source/api/_autosummary
-	@rm -r rad_tools.egg-info
-	@rm -r build
-	@rm -r dist
+	-@rm -r docs/build
+	-@rm -r docs/source/api/_autosummary
+	-@rm -r rad_tools.egg-info
+	-@rm -r build
+	-@rm -r dist
 
 test:
 	@pip3 install . --upgrade
@@ -46,4 +46,5 @@ help:
 	@echo "    test - for executing the testing suite"
 	@echo "    html - for building the html docs"
 	@echo "    pip - for publishing the package to PyPi index"
+	@echo "    clean - for cleaning all files from docs and pip routines"
 	@echo "\x1b[0m"
