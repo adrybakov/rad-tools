@@ -249,3 +249,26 @@ def spaces_around(line, nchars, align="left"):
         return (" " * (nchars // 2) +
                 line +
                 " " * (nchars // 2 + nchars % 2))
+
+
+def strip_digits(line: str):
+    r"""
+    Remove all digits from the string
+
+    Parameters
+    ----------
+    line : str
+        Input string.
+
+    Returns
+    -------
+    new_line : str
+        ``line`` without digits
+    """
+
+    new_line = ""
+    numbers = "1234567890"
+    for char in line:
+        if char not in numbers:
+            new_line += char
+    return new_line

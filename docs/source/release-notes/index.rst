@@ -2,6 +2,10 @@
 Release notes
 *************
 
+0.3
+===
+Add script :ref:`identify-wannier-centres.py<identify-wannier-centres>`
+
 0.2
 ===
 Add script :ref:`rad-dos-plotter.py <rad-dos-plotter>`
