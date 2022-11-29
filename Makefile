@@ -32,9 +32,9 @@ pip:
 #   @echo "\x1b[33m"
 #	@echo "pip is disabled for your own safety"
 #	@echo "\x1b[0m"
-	@rm -r dist
-	@rm -r build
-	@rm -r rad_tools.egg-info
+	-@rm -r dist
+	-@rm -r build
+	-@rm -r rad_tools.egg-info
 	@python3 setup.py sdist bdist_wheel 
 	@python3 -m twine upload --repository pypi dist/* --verbose
 
