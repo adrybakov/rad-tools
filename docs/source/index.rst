@@ -11,8 +11,8 @@ Latest version: |release|
    :maxdepth: 1
    :caption: Contents:
 
-   installation
+   user-guide/installation
    user-guide/index
    api/index
-   release-notes
+   release-notes/index
 

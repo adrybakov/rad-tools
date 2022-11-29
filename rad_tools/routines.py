@@ -1,4 +1,4 @@
-"""
+r"""
 Collection of small routines and constants, 
 which may be used across the whole package.
 """
@@ -58,9 +58,9 @@ ANSI escape code for errors.
 
 
 def get_256_colours(n):
-    """
+    r"""
     ANSI escape codes for terminal color with 256-colours support
-    (see: https://en.wikipedia.org/wiki/ANSI_escape_code).
+    (see: :ANSI:`wiki <>`).
 
     Parameters
     ----------
@@ -80,7 +80,7 @@ def get_256_colours(n):
 
 
 def exchange_to_matrix(iso=None, aniso=None, dmi=None):
-    """
+    r"""
     Combine isotropic, anisotropic and dmi exchange into exchange matrix.
 
     Parameters
@@ -111,7 +111,7 @@ def exchange_to_matrix(iso=None, aniso=None, dmi=None):
 
 
 def exchange_from_matrix(matrix):
-    """
+    r"""
     Decompose matrix into isotropic, anisotropic and dmi exchange.
 
     Parameters
@@ -139,7 +139,7 @@ def exchange_from_matrix(matrix):
 
 
 def atom_mark_to_latex(mark):
-    """
+    r"""
     Latexifier for atom marks. 
 
     Cr12 -> Cr\ :sub:`12`\.
@@ -167,7 +167,7 @@ def atom_mark_to_latex(mark):
 
 
 def rot_angle(x, y, dummy=False):
-    """
+    r"""
     Rotational ange from 2D vector.
 
     Mathematically positive => counterclockwise.
@@ -220,7 +220,7 @@ def rot_angle(x, y, dummy=False):
 
 
 def spaces_around(line, nchars, align="left"):
-    """
+    r"""
     Space surrounder.
 
     Parameters

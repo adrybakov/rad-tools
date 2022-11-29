@@ -4,7 +4,7 @@ from tracemalloc import start
 
 
 class CalculationMap:
-    """
+    r"""
     Mapper.
 
     Attributes
@@ -24,7 +24,7 @@ class CalculationMap:
                       name,
                       values=None,
                       range=None):
-        """
+        r"""
         Add parameter to the class.
 
         Parameters

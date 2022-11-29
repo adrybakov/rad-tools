@@ -19,8 +19,8 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.viewcode',
+    'sphinx.ext.extlinks',
     'numpydoc',
-    # 'sphinx_rtd_theme',
     'sphinx_copybutton',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
@@ -28,6 +28,10 @@ extensions = [
 autosummary_generate = True
 
 smartquotes = False
+
+# Extlinks
+extlinks = {'ANSI': (
+    'https://en.wikipedia.org/wiki/ANSI_escape_code%s', None), }
 
 # todo
 todo_include_todos = True

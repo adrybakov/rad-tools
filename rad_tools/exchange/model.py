@@ -6,7 +6,7 @@ from rad_tools.routines import exchange_from_matrix, exchange_to_matrix
 
 
 class Bond:
-    """
+    r"""
     Class with implemented logic for one bond.
 
     Parameters
@@ -19,7 +19,7 @@ class Bond:
         3 x 3 matrix of symmetric anisotropic exchange in meV. 
 
     dmi : 3 x 1 np.ndarray, None
-        Dzyaroshinsky-Moria interaction vector :math:`(Dx, Dy, Dz)` in meV. 
+        Dzyaroshinsky-Moria interaction vector :math:`(D_x, D_y, D_z)` in meV. 
 
     matrix : 3 x 3 np.ndarray, None
         Exchange matrix in meV. If ``matrix`` is specified then ``iso`` ,
@@ -150,7 +150,7 @@ class Bond:
 
 
 class ExchangeModel:
-    """
+    r"""
     Class with the logic for the exchange model.
 
     Attributes
@@ -179,7 +179,7 @@ class ExchangeModel:
         self.bonds = {}
 
     def add_atom(self, name, x, y, z):
-        """
+        r"""
         Add magnetic atom to the model.
 
         Parameters
@@ -200,7 +200,7 @@ class ExchangeModel:
         self.magnetic_atoms[name] = (float(x), float(y), float(z))
 
     def remove_atom(self, name):
-        """
+        r"""
         Remove magnetic atom from the model
 
         Note: this method will remove atom from ``magnetic_atoms`` and all the
@@ -220,7 +220,7 @@ class ExchangeModel:
                 del self.bonds[atom1][name]
 
     def add_bond(self, bond, atom1, atom2, R):
-        """
+        r"""
         Add one bond to the model.
 
         Parameters
@@ -242,7 +242,7 @@ class ExchangeModel:
         self.bonds[atom1][atom2][R] = bond
 
     def remove_bond(self, atom1, atom2, R):
-        """
+        r"""
         Remove one bond from the model.
 
         Parameters
@@ -266,7 +266,7 @@ class ExchangeModel:
                 del self.bonds[atom1]
 
     def get_lattice_vectors_length(self):
-        """
+        r"""
         Getter for the lattice vectors length.
 
         Returns
@@ -286,7 +286,7 @@ class ExchangeModel:
         return a, b, c
 
     def get_atom_coordinates(self, atom1, atom2, R):
-        """
+        r"""
         Getter for the pair of atom coordinates.
 
         Parameters
@@ -333,7 +333,7 @@ class ExchangeModel:
         return x1, y1, z1, x2, y2, z2
 
     def get_bond_coordinate(self, atom1, atom2, R):
-        """
+        r"""
         Getter for the middle point of the bond.
 
         Parameters
@@ -364,7 +364,7 @@ class ExchangeModel:
         return (x1 + x2) / 2, (y1 + y2) / 2, (z1 + z2) / 2
 
     def get_space_dimensions(self):
-        """
+        r"""
         Getter for the sample size.
 
         Return the maximum coordinate for all 3 axes.
@@ -394,7 +394,7 @@ class ExchangeModel:
         return X, Y, Z
 
     def get_cells(self):
-        """
+        r"""
         Getter for the list of cells.
 
         Return the list of R, specifying all cell that are present in the model.
@@ -412,7 +412,7 @@ class ExchangeModel:
         return list(cells)
 
     def get_bond_list(self):
-        """
+        r"""
         Getter for the list of bonds from the model.
 
         Returns
@@ -431,7 +431,7 @@ class ExchangeModel:
 
     # TODO It is ugly, redo in a beautifull way.
     def remove_double_bonds(self):
-        """
+        r"""
         Remove double bonds.
 
         If for atom pair atom1, atom2 exist bond 1-2 and 2-1 they will be merged.
@@ -464,7 +464,7 @@ class ExchangeModel:
                min_distance=None,
                template=None,
                R_vector=None):
-        """
+        r"""
         Filter the exchange entries based on the given conditions.
 
         The result will be defined by logical conjugate of the conditions.
@@ -535,7 +535,7 @@ class ExchangeModel:
 
 
 class ExchangeModelTB2J(ExchangeModel):
-    """
+    r"""
     Class containing the exchange model extracted from TB2J output file.
 
     Parameters
@@ -647,7 +647,7 @@ class ExchangeModelTB2J(ExchangeModel):
                min_distance=None,
                template=None,
                R_vector=None):
-        """
+        r"""
         Filter the exchange entries based on the given conditions.
 
         Call :py:meth:`ExchangeModel.filter` method from parent class and
@@ -664,8 +664,3 @@ class ExchangeModelTB2J(ExchangeModel):
             if key in bond_list:
                 filtered_model.file_order.append(key)
         return filtered_model
-
-
-if __name__ == "__main__":
-    a = ExchangeModelTB2J(
-        "/Users/rybakov.ad/Projects/rad-tools/debug/bug-alberto/exchange.out")

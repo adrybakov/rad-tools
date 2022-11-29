@@ -1,5 +1,5 @@
 class ExchangeTemplate:
-    """
+    r"""
     Store a template for sorting the exchange from TB2J file.
 
     In addition stores the technical details for plotting, 
@@ -69,7 +69,7 @@ class ExchangeTemplate:
                             line = file.readline()
 
     def get_list(self):
-        """
+        r"""
         Translate bonds present in the template into the list.
 
         Returns
@@ -86,10 +86,3 @@ class ExchangeTemplate:
             for atom1, atom2, R in self.names[name]:
                 plained_template.append((atom1, atom2, R))
         return plained_template
-
-
-if __name__ == "__main__":
-    tmp = ExchangeTemplate(
-        # "/Users/rybakov.ad/Projects/rad-tools/utest/tb2j_tools/resourses/template.txt")
-        "/Users/rybakov.ad/Projects/rad-tools/debug/nii2/template.txt")
-    print('here')
