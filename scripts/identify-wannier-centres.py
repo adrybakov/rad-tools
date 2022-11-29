@@ -10,6 +10,26 @@ from rad_tools.routines import strip_digits, WARNING, RESET
 
 
 def search_on_atoms(centre, atoms):
+    r"""
+    Search the closest atom to the given centre position.
+
+    Parameters
+    ----------
+    centre : array
+        xyz coordinates of the centre.
+    atoms : list
+        List of atom names and coordinates of the form: ::
+
+            [(name, [x, y, z]), ...]
+
+    Returns
+    -------
+    min_span : float
+        Distance from the centre to the closest atom.
+    name : str
+        Name of the closest atom.
+    """
+
     min_span = 10000
     name = "None"
     for atom, a_coord in atoms:
@@ -20,6 +40,26 @@ def search_on_atoms(centre, atoms):
 
 
 def search_between_atoms(centre, atoms):
+    r"""
+    Search the closest bond centre to the given centre position.
+
+    Parameters
+    ----------
+    centre : array
+        xyz coordinates of the centre.
+    atoms : list
+        List of atom names and coordinates of the form: ::
+
+            [(name, [x, y, z]), ...]
+
+    Returns
+    -------
+    min_span : float
+        Distance from the centre to the bond`s centre.
+    name : str
+        Name of the closest bond`s centre (atom1-atom2).
+    """
+
     pairs = []
     for i, atom in enumerate(atoms):
         for j in range(i+1, len(atoms)):
