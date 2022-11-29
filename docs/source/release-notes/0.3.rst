@@ -1,0 +1,6 @@
+.. _release-notes_0.3:
+
+***********
+Version 0.3
+***********
+Add script :ref:`identify-wannier-centres.py<identify-wannier-centres>`
