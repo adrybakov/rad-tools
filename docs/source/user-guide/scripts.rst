@@ -9,6 +9,8 @@ help message with the short summary of the arguments.
 
    script-name.py -h
 
+All the files used in the usage examples are available :examples:`here <>`.
+
 
 Scripts for analysing `TB2J <https://tb2j.readthedocs.io/en/latest/>`_ 
 outputs.

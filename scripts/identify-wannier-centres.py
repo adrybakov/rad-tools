@@ -2,6 +2,7 @@
 
 from argparse import ArgumentParser
 from math import sqrt
+from os.path import split, join
 
 import numpy as np
 
@@ -28,7 +29,7 @@ def search_between_atoms(centre, atoms):
     return search_on_atoms(centre, pairs)
 
 
-def identify(filename, span=0.1):
+def identify(filename, span, out_dir, out_name):
     separation_tolerance = 10E-5
 
     # Read atoms and centres
@@ -63,10 +64,10 @@ def identify(filename, span=0.1):
                   "try to increase --span\n" +
                   f"{RESET}" +
                   f"    span limit = {span}\n" +
-                  f"    centre`s min span = {min_span_atom:.8f} " +
-                  f"(with {atom} atom)\n"
-                  f"    centre`s min span = {min_span_pair:.8f} " +
-                  f"(with centre point between {pair} atoms)\n")
+                  f"    minimum distance to the atom = {min_span_atom:.8f} " +
+                  f"({atom})\n"
+                  f"    minimum distance to the bond`s centre = {min_span_pair:.8f} " +
+                  f"({pair})\n")
             centres_names.append("None")
         elif abs(min_span_atom - min_span_pair) < separation_tolerance:
             centres_names.append(f"{atom} or {pair}")
@@ -76,7 +77,7 @@ def identify(filename, span=0.1):
             centres_names.append(pair)
 
     # Write the output
-    with open(f"{filename}_identified", "w") as file:
+    with open(join(out_dir, out_name), "w") as file:
         file.write(f"{len(atoms) + len(centres):6.0f}\n")
         file.write(f"{file_stats}")
         for c_i, center in enumerate(centres):
@@ -108,6 +109,27 @@ if __name__ == "__main__":
                         help="""
                         Distance tolerance between centre and atom. (in Angstrom)
                         """)
+    parser.add_argument("-op", "--output-dir",
+                        type=str,
+                        default=None,
+                        help="""
+                        Relative or absolute path to the folder
+                        for saving outputs.
+                        """
+                        )
+    parser.add_argument("-on", "--output-name",
+                        type=str,
+                        default=None,
+                        help="""
+                        Seedname for the output files.
+                        """
+                        )
     args = parser.parse_args()
 
-    identify(args.filename, args.span)
+    head, tail = split(args.filename)
+    if args.output_dir is None:
+        args.output_dir = head
+    if args.output_name is None:
+        args.output_name = tail + "_identified"
+    identify(args.filename, args.span,
+             out_dir=args.output_dir, out_name=args.output_name)

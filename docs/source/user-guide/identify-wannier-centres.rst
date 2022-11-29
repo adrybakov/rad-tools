@@ -28,38 +28,9 @@ distance span for the search.
 Usage example
 =============
 
-The example_centres.xyz file looks like this: ::
+The example_centres.xyz file looks like this:
 
-        28
-     Wannier centres, written by Wannier90 on16Sep2022 at 12:23:35 
-    X          2.70102543       1.20456455       1.74829100
-    X          2.70102543       1.20456455       1.73136237
-    X          2.70102542       1.20456454       1.71844477
-    X          2.70102540       1.20456454       1.74850456
-    X          2.70102542       1.20456455       1.74171453
-    X          0.90034180       3.61369365       3.82242305
-    X          0.90034181       3.61369365       3.83936190
-    X          0.90034181       3.61369365       3.85226490
-    X          0.90034182       3.61369365       3.82220340
-    X          0.90034181       3.61369365       3.82899496
-    X          2.70102543       3.61369365       2.21721708
-    X          2.70102542       3.61369367       2.29147179
-    X          2.70102540       3.61369365       2.17808141
-    X          0.90034181       1.20456453       3.35355250
-    X          0.90034181       1.20456457       3.27930790
-    X          0.90034180       1.20456458       3.39269417
-    X          0.90034181       1.20456455      -0.05695451
-    X          0.90034182       1.20456455       0.02140611
-    X          0.90034181       1.20456456      -0.04741017
-    X          2.70102542       3.61369365       5.62773652
-    X          2.70102542       3.61369366       5.54938336
-    X          2.70102542       3.61369365       5.61819448
-    Br         0.90034179       1.20456453      -0.07878122
-    Br         2.70102536       3.61369358       5.64955786
-    Cr         2.70102536       1.20456453       1.73263498
-    Cr         0.90034179       3.61369358       3.83807392
-    S          2.70102536       3.61369358       2.20990738
-    S          0.90034179       1.20456453       3.36085407
+.. literalinclude:: /../examples/identify-wannier-centres/example_centres.xyz
 
 Lets run the code:
 
@@ -67,58 +38,46 @@ Lets run the code:
 
     identify-wannier-centres.py example_centres.xyz
 
-This command will create an output file example_centre.xyz_identified 
-in the directory of the input file with the following content: ::
+This command creates an output file example_centre.xyz_identified 
+in the directory of the input file with the following content:
 
-    28
-     Wannier centres, written by Wannier90 on16Sep2022 at 12:23:35 
-    X          2.70102543       1.20456455       1.74829100   ->   Cr1 
-    X          2.70102543       1.20456455       1.73136237   ->   Cr1 
-    X          2.70102542       1.20456454       1.71844477   ->   Cr1 
-    X          2.70102540       1.20456454       1.74850456   ->   Cr1 
-    X          2.70102542       1.20456455       1.74171453   ->   Cr1 
-    X          0.90034180       3.61369365       3.82242305   ->   Cr2 
-    X          0.90034181       3.61369365       3.83936190   ->   Cr2 
-    X          0.90034181       3.61369365       3.85226490   ->   Cr2 
-    X          0.90034182       3.61369365       3.82220340   ->   Cr2 
-    X          0.90034181       3.61369365       3.82899496   ->   Cr2 
-    X          2.70102543       3.61369365       2.21721708   ->   S1  
-    X          2.70102542       3.61369367       2.29147179   ->   S1  
-    X          2.70102540       3.61369365       2.17808141   ->   S1  
-    X          0.90034181       1.20456453       3.35355250   ->   S2  
-    X          0.90034181       1.20456457       3.27930790   ->   S2  
-    X          0.90034180       1.20456458       3.39269417   ->   S2  
-    X          0.90034181       1.20456455      -0.05695451   ->   Br1 
-    X          0.90034182       1.20456455       0.02140611   ->   None
-    X          0.90034181       1.20456456      -0.04741017   ->   Br1 
-    X          2.70102542       3.61369365       5.62773652   ->   Br2 
-    X          2.70102542       3.61369366       5.54938336   ->   None
-    X          2.70102542       3.61369365       5.61819448   ->   Br2 
-    Br         0.90034179       1.20456453      -0.07878122   ->   Br1 
-    Br         2.70102536       3.61369358       5.64955786   ->   Br2 
-    Cr         2.70102536       1.20456453       1.73263498   ->   Cr1 
-    Cr         0.90034179       3.61369358       3.83807392   ->   Cr2 
-    S          2.70102536       3.61369358       2.20990738   ->   S1  
-    S          0.90034179       1.20456453       3.36085407   ->   S2 
+.. literalinclude:: /../examples/identify-wannier-centres/example_centres.xyz_identified
 
 and produce the following output in the console:
 
 .. code-block::
     :emphasize-lines: 1,6
 
-    Centre [0.90034182 1.20456455 0.02140611] unindentified, try to increase --span
+    Centre [0.90034182 1.20456455 0.02140611] unindentified, 
+    try to increase --span
     span limit = 0.1
-    centre`s min span = 0.10018733 (with Br1 atom)
-    centre`s min span = 1.50401109 (with centre point between Br1-Br1 atoms)
+    minimum distance to the atom = 0.10018733 (Br1)
+    minimum distance to the bond`s centre = 1.20808898 (Br1-Cr1)
 
-    Centre [2.70102542 3.61369366 5.54938336] unindentified, try to increase --span
+    Centre [2.70102542 3.61369366 5.54938336] unindentified, 
+    try to increase --span
     span limit = 0.1
-    centre`s min span = 0.10017450 (with Br2 atom)
-    centre`s min span = 3.37808251 (with centre point between Br2-Cr1 atoms)
+    minimum distance to the atom = 0.10017450 (Br2)
+    minimum distance to the bond`s centre = 1.20812019 (Br2-Cr2)
+    
+which means that two centres are not identified. 
+The script provides the distance to the closest atom 
+and to the closest centre of the bond between some pair of the atoms
+for each unidentified centre. 
 
-which means that two centres was not identified. The script provides the span 
-the closest atom and to the closest centre point between some pair of the atoms
-for each unidentified centre.
+As one can see first unidentified centre is quite close to the Br1 and 
+the second one to the Br2, let us extend the span a little bit in order to 
+correctly identify all the atoms:
+
+.. code-block:: console
+
+    identify-wannier-centres.py example_centres.xyz --span 0.11 --output-name example_centres.xyz_bigger_span
+
+This command produces example_centres.xyz_bigger_span file:
+
+.. literalinclude:: /../examples/identify-wannier-centres/example_centres.xyz_bigger_span
+
+where all the centres are correctly Identified.
 
 Arguments
 =========
@@ -144,3 +103,23 @@ If some atoms remains unidentified try to increase the span
     *default* : 0.1
 
     *type* : float
+
+.. _identify-wannier-centres_output-dir:
+
+-op, --output-dir
+-----------------
+Relative or absolute path to the folder for saving outputs.
+
+    *default* : the directory of the input file
+        
+    *type* : str
+
+.. _identify-wannier-centres_output-name:
+
+-on, --output-name
+------------------
+Seedname for the output files.
+
+    *default* : Name of the input file + "_identified"
+
+    *type* : str

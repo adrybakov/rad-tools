@@ -31,7 +31,9 @@ smartquotes = False
 
 # Extlinks
 extlinks = {'ANSI': (
-    'https://en.wikipedia.org/wiki/ANSI_escape_code%s', None), }
+    'https://en.wikipedia.org/wiki/ANSI_escape_code%s', None),
+    'examples': (
+    'https://github.com/adrybakov/rad-tools/tree/stable/docs/examples%s', None), }
 
 # todo
 todo_include_todos = True
