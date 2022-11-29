@@ -46,7 +46,7 @@ in the directory of the input file with the following content:
 and produce the following output in the console:
 
 .. code-block::
-    :emphasize-lines: 1,6
+    :emphasize-lines: 1,7
 
     Centre [0.90034182 1.20456455 0.02140611] unindentified, 
     try to increase --span
