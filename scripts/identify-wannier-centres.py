@@ -8,30 +8,28 @@ import numpy as np
 from rad_tools.routines import strip_digits, WARNING, RESET
 
 
-def search_on_atoms(centre, atoms, span):
+def search_on_atoms(centre, atoms):
+    min_span = 10000
     name = "None"
-    min_span = 100
-    atom = ""
     for atom, a_coord in atoms:
-        if sqrt(np.sum((centre - a_coord)**2)) < span:
-            name = atom
         if sqrt(np.sum((centre - a_coord)**2)) < min_span:
             min_span = sqrt(np.sum((centre - a_coord)**2))
-            atom = atom
-    return name, min_span, atom
+            name = atom
+    return min_span, name
 
 
-def search_between_atoms(centre, atoms, span):
+def search_between_atoms(centre, atoms):
     pairs = []
     for i, atom in enumerate(atoms):
         for j in range(i+1, len(atoms)):
             pair = f"{atom[0]}-{atoms[j][0]}"
             p_coord = (atom[1]+atoms[j][1])/2
             pairs.append((pair, p_coord))
-    return search_on_atoms(centre, pairs, span)
+    return search_on_atoms(centre, pairs)
 
 
 def identify(filename, span=0.1):
+    separation_tolerance = 10E-5
 
     # Read atoms and centres
     atom_counter = {}
@@ -55,27 +53,27 @@ def identify(filename, span=0.1):
     # Identify centres localization
     centres_names = []
     for centre in centres:
-        name_atom, min_span_atom, atom = search_on_atoms(
-            centre, atoms, span)
-        name_pair, min_span_pair, pair = search_between_atoms(
-            centre, atoms, span)
-        if name_atom == "None" and name_pair == "None":
-            # print(f"{WARNING}" +
-            #       f"Centre {centre} unindentified, " +
-            #       "try to increase --span\n" +
-            #       f"{RESET}" +
-            #       f"    span limit = {span}\n" +
-            #       f"    centre`s min span = {min_span_atom:.8f} " +
-            #       f"(with {atom} atom)\n"
-            #       f"    centre`s min span = {min_span_pair:.8f} " +
-            #       f"(with centre point between {pair} atoms)\n")
-            pass
-        print(name_atom, min_span_atom, atom,
-              name_pair, min_span_pair, pair)
-        if min_span_atom < min_span_pair:
-            centres_names.append(name_atom)
+        min_span_atom, atom = search_on_atoms(
+            centre, atoms)
+        min_span_pair, pair = search_between_atoms(
+            centre, atoms)
+        if min_span_atom > span and min_span_pair > span:
+            print(f"{WARNING}" +
+                  f"Centre {centre} unindentified, " +
+                  "try to increase --span\n" +
+                  f"{RESET}" +
+                  f"    span limit = {span}\n" +
+                  f"    centre`s min span = {min_span_atom:.8f} " +
+                  f"(with {atom} atom)\n"
+                  f"    centre`s min span = {min_span_pair:.8f} " +
+                  f"(with centre point between {pair} atoms)\n")
+            centres_names.append("None")
+        elif abs(min_span_atom - min_span_pair) < separation_tolerance:
+            centres_names.append(f"{atom} or {pair}")
+        elif min_span_atom < min_span_pair:
+            centres_names.append(atom)
         else:
-            centres_names.append(name_pair)
+            centres_names.append(pair)
 
     # Write the output
     with open(f"{filename}_identified", "w") as file:

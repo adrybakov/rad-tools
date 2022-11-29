@@ -8,11 +8,22 @@ Identify wannier centres with respect to the atom or to
 the point between the atom`s pair.
 
 Use :ref:`--span <identify-wannier-centres_span>` option to increase the 
-distance tolerance for the search.
+distance span for the search.
 
-If the centre is unidentified at the end the "None" 
-will appear in the output file and additional information 
-will be present in the console.
+* If the centre is associated with some atom
+    then ``-> atom`` will appear in the output file.
+
+* If the centre is associated with some centre point between two atoms
+    then ``-> atom1-atom2`` will appear in the output file.
+
+* If the centre is unidentified 
+    then ``-> None`` 
+    will appear in the output file and additional information 
+    will be present in the console.
+
+* If the centre is equally close to the atom and to the point between two atoms 
+    then ``-> atom or atom1-atom2`` will appear in the output file 
+    (tolerance :math:`10^{-5}`).
 
 Usage example
 =============
