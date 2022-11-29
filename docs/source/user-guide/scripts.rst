@@ -27,4 +27,5 @@ Other scripts.
 
    phonopy-plotter
    rad-dos-plotter
+   identify-wannier-centres
 

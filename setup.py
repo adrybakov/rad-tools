@@ -24,7 +24,8 @@ setup(
         'scripts/phonopy-plotter.py',
         'scripts/tb2j-extractor.py',
         'scripts/rad-make-template.py',
-        'scripts/rad-dos-plotter.py'
+        'scripts/rad-dos-plotter.py',
+        'scripts/identify-wannier-centres.py',
     ],
     install_requires=[
         'numpy', 'matplotlib'
