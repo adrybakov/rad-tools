@@ -1,0 +1,10 @@
+Centre ['X', array([0.90034182, 1.20456455, 0.02140611])] unindentified, try to increase span
+    span limit = 0.1
+    minimum distance to the atom = 0.10018733 (Br1)
+    minimum distance to the bond`s centre = 1.20808898 (Br1-Cr1)
+
+Centre ['X', array([2.70102542, 3.61369366, 5.54938336])] unindentified, try to increase span
+    span limit = 0.1
+    minimum distance to the atom = 0.10017450 (Br2)
+    minimum distance to the bond`s centre = 1.20812019 (Br2-Cr2)
+

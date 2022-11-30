@@ -5,6 +5,10 @@ Version 0.3
 ***********
 Add script :ref:`identify-wannier-centres.py<identify-wannier-centres>`
 
+0.3.2
+-----
+Bugfix in :ref:`identify-wannier-centres.py <identify-wannier-centres>` script.
+
 0.3.1
 -----
 Add :ref:`--output-dir <identify-wannier-centres_output-dir>`

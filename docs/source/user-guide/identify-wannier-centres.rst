@@ -34,7 +34,7 @@ The example_centres.xyz file looks like this:
 
 Lets run the code:
 
-.. code-block:: console
+.. code-block:: bash
 
     identify-wannier-centres.py example_centres.xyz
 
@@ -45,31 +45,20 @@ in the directory of the input file with the following content:
 
 and produce the following output in the console:
 
-.. code-block::
-    :emphasize-lines: 1,7
-
-    Centre [0.90034182 1.20456455 0.02140611] unindentified, 
-    try to increase --span
-    span limit = 0.1
-    minimum distance to the atom = 0.10018733 (Br1)
-    minimum distance to the bond`s centre = 1.20808898 (Br1-Cr1)
-
-    Centre [2.70102542 3.61369366 5.54938336] unindentified, 
-    try to increase --span
-    span limit = 0.1
-    minimum distance to the atom = 0.10017450 (Br2)
-    minimum distance to the bond`s centre = 1.20812019 (Br2-Cr2)
+.. literalinclude:: /../examples/identify-wannier-centres/console_output.txt
+   :language: text
     
 which means that two centres are not identified. 
-The script provides the distance to the closest atom 
+The script provides in the console the distance to the closest atom 
 and to the closest centre of the bond between some pair of the atoms
-for each unidentified centre. 
+for each unidentified centre. In the output file some information about 
+inedentified centres are provided as well.
 
 As one can see first unidentified centre is quite close to the Br1 and 
 the second one to the Br2, let us extend the span a little bit in order to 
 correctly identify all the atoms:
 
-.. code-block:: console
+.. code-block:: bash
 
     identify-wannier-centres.py example_centres.xyz --span 0.11 --output-name example_centres.xyz_bigger_span
 
@@ -123,3 +112,11 @@ Seedname for the output files.
     *default* : Name of the input file + "_identified"
 
     *type* : str
+
+.. _identify-wannier-centres_no-colour:
+
+-nc, --no-colour
+----------------
+Turn off coloured output.
+
+    *default* : False

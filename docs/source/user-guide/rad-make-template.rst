@@ -29,22 +29,9 @@ or for extracting model with grouped parameters
 
 Here is the draft of the template file which is provided by the script:
 
-.. code-block:: text
-
-    1   ====================
-    2   Neighbors template:
-    3   i j R_a R_b R_c
-    4   --------------------
-    5   J1 $J_1$
-    6   atom1 atom2 0 0 0
-    7   atom1 atom2 1 0 0
-    8   atom1 atom1 -1 0 2
-    9   --------------------
-    10  J2
-    11  atom2 atom1 9 5 -3
-    12  atom1 atom2 1 4 0
-    13  atom2 atom2 1 0 2
-    14  ====================    
+.. literalinclude:: /../examples/rad-make-template/template_demo.txt
+    :language: text
+    :linenos:   
 
 Line 1: Header of the file. 20 or more "=" symbols.
 
