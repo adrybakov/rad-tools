@@ -13,7 +13,7 @@ BUILDDIR      = build
 
 # $(O) is meant as a shortcut for $(SPHINXOPTS).
 html: 
-	@pip3 install . --upgrade
+	@make examples
 	@$(SPHINXBUILD) -M html "docs/$(SOURCEDIR)" "docs/$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 clean:
@@ -47,4 +47,15 @@ help:
 	@echo "    html - for building the html docs"
 	@echo "    pip - for publishing the package to PyPi index"
 	@echo "    clean - for cleaning all files from docs and pip routines"
+	@echo "    examples - for updating all examples"
+	@echo "    push - for git push with updated examples"
 	@echo "\x1b[0m"
+
+examples:
+	@pip3 install . --upgrade
+	@identify-wannier-centres.py docs/examples/identify-wannier-centres/example_centres.xyz -nc > docs/examples/identify-wannier-centres/console_output.txt
+	@identify-wannier-centres.py docs/examples/identify-wannier-centres/example_centres.xyz --span 0.11 --output-name example_centres.xyz_bigger_span
+	@rad-make-template.py -op docs/examples/rad-make-template -on template_demo.txt
+
+push: examples
+	@git push
