@@ -47,7 +47,7 @@ It will produce the following file with the full template from the file:
 
 This template is very long since original TB2J file includes a lot of 
 interaction pairs, lets filter some of them and keep only the interactions 
-with the distance :math:`<= 8` Angstrom.
+with the distance <= 8 Angstrom.
 
 .. code-block:: bash
 
