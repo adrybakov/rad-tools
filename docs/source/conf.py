@@ -25,6 +25,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.mathjax',
+    'sphinx_design'
 ]
 
 autosummary_generate = True
@@ -35,7 +36,7 @@ smartquotes = False
 extlinks = {'ANSI': (
     'https://en.wikipedia.org/wiki/ANSI_escape_code%s', None),
     'examples': (
-    'https://github.com/adrybakov/rad-tools/tree/stable/docs/examples%s', None), }
+    'https://github.com/adrybakov/rad-tools/tree/stable/docs/examples/%s', '%s'), }
 
 # todo
 todo_include_todos = True

@@ -20,9 +20,58 @@ Several filtering options are supported for the case of TB2J-based template file
     to group bonds into neighbors and add names by hand afterwards.
 
 
+Usage example
+=============
+The simpliest example of usage is the creation of template draft 
+(see :ref:`template specification <template-draft>`). The following command will produce it:
+
+.. code-block:: bash
+
+    rad-make-template.py
+
+For more advance user-case the file exchange.out from 
+:examples:`examples folder <rad-make-template>` is be used. 
+
+Run the code:
+
+.. code-block:: bash
+
+    rad-make-template.py -f exchange.out -on full_template.txt
+
+It will produce the following file with the full template from the file:
+
+.. dropdown:: full_template.txt
+
+   .. literalinclude:: /../examples/rad-make-template/full_template.txt
+    :language: text
+
+This template is very long since original TB2J file includes a lot of 
+interaction pairs, lets filter some of them and keep only the interactions 
+with the distance :math:`<= 8` Angstrom.
+
+.. code-block:: bash
+
+    rad-make-template.py -f exchange.out -on filtered_template.txt -maxd 8
+
+.. dropdown:: filtered_template.txt
+
+   .. literalinclude:: /../examples/rad-make-template/filtered_template.txt
+    :language: text
+
+Now for futher usage one only have to introduce grouping with respect to 
+some exchange model to produce the final template file:
+
+.. dropdown:: filtered_template_grouped.txt
+
+   .. literalinclude:: /../examples/rad-make-template/filtered_template_grouped.txt
+    :language: text
+
+Check the :ref:`rad-make-template_arguments` section for more sorting options.
+
+.. _template-draft:
+
 Template specification
 ======================
-
 Template file helps to choose particular bonds for filtering of exchange model 
 or for extracting model with grouped parameters 
 (i.e. :math:`J_1`, :math:`J_2`, ...).
@@ -73,26 +122,16 @@ associated with the second neighbor.
 
 Lines 14: Footer of the file. 20 or more "=" symbols.
 
+.. _rad-make-template_arguments:
 
 Arguments
 =========
-
-.. _rad-make-template_output-dir:
-
--op, --output-dir
------------------
-Relative or absolute path to the folder for saving outputs.
-
-    *default* : current directory
-        
-    *type* : str
-
 
 .. _rad-make-template_output-name:
 
 -on, --output-name
 ------------------
-Template filename.
+Relative or absolute path to the template output file.
 
     *default* : template.txt
 

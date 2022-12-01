@@ -1,7 +1,7 @@
 #! /usr/local/bin/python3
 
 from argparse import ArgumentParser
-from os.path import join, abspath
+from os.path import join, abspath, split
 from os import makedirs
 
 import numpy as np
@@ -10,7 +10,7 @@ from rad_tools.exchange.model import ExchangeModelTB2J
 from rad_tools.routines import OK, RESET, YELLOW
 
 
-def provide_template(out_dir=".", out_name="template.txt",
+def provide_template(out_name="template.txt",
                      tb2j_filename=None,
                      min_distance=None,
                      max_distance=None,
@@ -30,7 +30,7 @@ def provide_template(out_dir=".", out_name="template.txt",
                 "atom2 atom2 1 0 2\n" +
                 '=' * 20 + "\n")
 
-    with open(join(out_dir, out_name), "w") as file:
+    with open(out_name, "w") as file:
         if tb2j_filename is None:
             file.write(template)
         else:
@@ -46,7 +46,7 @@ def provide_template(out_dir=".", out_name="template.txt",
                 file.write(f"{atom1} {atom2} {R[0]} {R[1]} {R[2]}\n")
             file .write('=' * 20 + "\n")
     print(f"{OK}Template draft is in " +
-          f"{abspath(join(out_dir, out_name))}{RESET}")
+          f"{abspath(out_name)}{RESET}")
     print(f"{YELLOW}Do not forget to correct the template draft " +
           f"to your needs!{RESET}")
 
@@ -59,18 +59,11 @@ if __name__ == "__main__":
             https://rad-tools.adrybakov.com/en/stable/user-guide/rad-make-template.html
             """)
 
-    parser.add_argument("-op", "--output-dir",
-                        type=str,
-                        default='.',
-                        help="""
-                        Relative or absolute path to the folder for saving outputs.
-                        """
-                        )
     parser.add_argument("-on", "--output-name",
                         type=str,
                         default='template.txt',
                         help="""
-                        Template filename.
+                        Relative or absolute path to the template output file.
                         """
                         )
     parser.add_argument("-f", "--filename",
@@ -114,8 +107,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     try:
-        makedirs(args.output_dir)
+        makedirs(split(args.output_name)[0])
     except FileExistsError:
+        pass
+    except FileNotFoundError:
         pass
 
     if args.distance is not None:
@@ -126,8 +121,7 @@ if __name__ == "__main__":
                                  dtype=int).reshape((len(args.R_vector)//3, 3))
         args.R_vector = list(map(tuple, args.R_vector.tolist()))
 
-    provide_template(out_dir=args.output_dir,
-                     out_name=args.output_name,
+    provide_template(out_name=args.output_name,
                      tb2j_filename=args.filename,
                      min_distance=args.min_distance,
                      max_distance=args.max_distance,

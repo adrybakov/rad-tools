@@ -5,6 +5,12 @@ Version 0.3
 ***********
 Add script :ref:`identify-wannier-centres.py<identify-wannier-centres>`
 
+0.3.3
+-----
+Moved from output_name and output_dir parameter to one 
+:ref:`--output-name <rad-make-template_output-name>` parameter in
+:ref:`rad-make-template.py <rad-make-template>` script.
+
 0.3.2
 -----
 Bugfix in :ref:`identify-wannier-centres.py <identify-wannier-centres>` script.
