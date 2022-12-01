@@ -51,7 +51,7 @@ folder *example* and your file structure looks like the following
         
 Now lets run the script
 
-.. code-block:: console
+.. code-block:: bash
 
     tb2j-plotter.py -f exchange.out 
 
@@ -78,7 +78,7 @@ indicate the plotted data
     
 Lets save the output in the *output* folder:
 
-.. code-block:: console
+.. code-block:: bash
 
     tb2j-plotter.py -f exchange.out -op output
 
@@ -100,7 +100,7 @@ folder as your specifyed by :ref:`-op (--output-dir) <tb2j-plotter_output-dir>` 
 It is not necessary to specify a path to the existing folder, 
 for example try to execute
 
-.. code-block:: console
+.. code-block:: bash
 
     tb2j-plotter.py -f exchange.out -op output/bar/foo
 
@@ -121,7 +121,6 @@ should look like that:
             └── foo/
                 ├── exchange.iso.png
                 └── exchange.distance.png
-
 
 Arguments
 =========

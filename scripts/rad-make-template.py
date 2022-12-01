@@ -20,14 +20,14 @@ def provide_template(out_name="template.txt",
                 "i j R_a R_b R_c\n" +
                 '-' * 20 + "\n" +
                 "J1 $J_1$\n" +
-                "atom1 atom2 0 0 0\n" +
-                "atom1 atom2 1 0 0\n" +
-                "atom1 atom1 -1 0 2\n" +
+                "atom1 atom2  0  0  0\n" +
+                "atom1 atom2  1  0  0\n" +
+                "atom1 atom1 -1  0  2\n" +
                 '-' * 20 + "\n" +
                 "J2\n" +
-                "atom2 atom1 9 5 -3\n" +
-                "atom1 atom2 1 4 0\n" +
-                "atom2 atom2 1 0 2\n" +
+                "atom2 atom1  9  5 -3\n" +
+                "atom1 atom2  1  4  0\n" +
+                "atom2 atom2  1  0  2\n" +
                 '=' * 20 + "\n")
 
     with open(out_name, "w") as file:
@@ -43,7 +43,8 @@ def provide_template(out_name="template.txt",
                         "i j R_a R_b R_c\n" +
                         '-' * 20 + "\n")
             for atom1, atom2, R in model.file_order:
-                file.write(f"{atom1} {atom2} {R[0]} {R[1]} {R[2]}\n")
+                file.write(f"{atom1:4} {atom2:4} " +
+                           f"{R[0]:3.0f} {R[1]:3.0f} {R[2]:3.0f}\n")
             file .write('=' * 20 + "\n")
     print(f"{OK}Template draft is in " +
           f"{abspath(out_name)}{RESET}")

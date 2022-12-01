@@ -3,12 +3,12 @@ Neighbors template:
 i j R_a R_b R_c
 --------------------
 J1 $J_1$
-atom1 atom2 0 0 0
-atom1 atom2 1 0 0
-atom1 atom1 -1 0 2
+atom1 atom2  0  0  0
+atom1 atom2  1  0  0
+atom1 atom1 -1  0  2
 --------------------
 J2
-atom2 atom1 9 5 -3
-atom1 atom2 1 4 0
-atom2 atom2 1 0 2
+atom2 atom1  9  5 -3
+atom1 atom2  1  4  0
+atom2 atom2  1  0  2
 ====================
