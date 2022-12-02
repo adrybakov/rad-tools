@@ -38,14 +38,14 @@ def provide_template(out_name="template.txt",
             model = model.filter(min_distance=min_distance,
                                  max_distance=max_distance,
                                  R_vector=R_vector)
-            file .write('=' * 20 + "\n" +
-                        "Neighbors template:\n" +
-                        "i j R_a R_b R_c\n" +
-                        '-' * 20 + "\n")
+            file.write('=' * 20 + "\n" +
+                       "Neighbors template:\n" +
+                       "i j R_a R_b R_c\n" +
+                       '-' * 20 + "\n")
             for atom1, atom2, R in model.file_order:
                 file.write(f"{atom1:4} {atom2:4} " +
                            f"{R[0]:3.0f} {R[1]:3.0f} {R[2]:3.0f}\n")
-            file .write('=' * 20 + "\n")
+            file.write('=' * 20 + "\n")
     print(f"{OK}Template draft is in " +
           f"{abspath(out_name)}{RESET}")
     print(f"{YELLOW}Do not forget to correct the template draft " +

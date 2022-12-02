@@ -9,7 +9,7 @@ import numpy as np
 
 from rad_tools.exchange.model import ExchangeModelTB2J
 from rad_tools.exchange.template import ExchangeTemplate
-from rad_tools.routines import OK, RESET, spaces_around
+from rad_tools.routines import OK, RESET
 
 
 def main(filename, out_dir, out_name, template, dmi=False, verbose=False):
@@ -66,33 +66,33 @@ def main(filename, out_dir, out_name, template, dmi=False, verbose=False):
                     f"[{matrix[2][0]}, {matrix[2][1]}, {matrix[2][2]}]]),\n")
 
                 output_line += (
-                    f"  {atom1} {atom2} ({R[0]}, {R[1]}, {R[2]})\n" +
-                    f"    Isotropic: {round(J_iso, 4)}\n" +
+                    f"  {atom1:3} {atom2:3} ({R[0]:2.0f}, {R[1]:2.0f}, {R[2]:2.0f})\n" +
+                    f"    Isotropic: {J_iso:.4f}\n" +
                     f"    Anisotropic:\n" +
-                    f"        {spaces_around(round(J_aniso[0][0], 4), nchars=7)}  " +
-                    f"{spaces_around(round(J_aniso[0][1], 4), nchars=7)}  " +
-                    f"{spaces_around(round(J_aniso[0][2], 4), nchars=7)}\n" +
-                    f"        {spaces_around(round(J_aniso[1][0], 4), nchars=7)}  " +
-                    f"{spaces_around(round(J_aniso[1][1], 4), nchars=7)}  " +
-                    f"{spaces_around(round(J_aniso[1][2], 4), nchars=7)}\n" +
-                    f"        {spaces_around(round(J_aniso[2][0], 4), nchars=7)}  " +
-                    f"{spaces_around(round(J_aniso[2][1], 4), nchars=7)}  " +
-                    f"{spaces_around(round(J_aniso[2][2], 4), nchars=7)}\n" +
-                    f"    DMI: {round(DMI[0], 4)} " +
-                    f"{round(DMI[1], 4)} " +
-                    f"{round(DMI[2], 4)}\n"
-                    f"    |DMI|: {round(abs_DMI, 4)}\n" +
-                    f"    |DMI/J| {round(abs(abs_DMI/J_iso), 4)}\n" +
+                    f"        {J_aniso[0][0]:7.4f}  " +
+                    f"{J_aniso[0][1]:7.4f}  " +
+                    f"{J_aniso[0][2]:7.4f}\n" +
+                    f"        {J_aniso[1][0]:7.4f}  " +
+                    f"{J_aniso[1][1]:7.4f}  " +
+                    f"{J_aniso[1][2]:7.4f}\n" +
+                    f"        {J_aniso[2][0]:7.4f}  " +
+                    f"{J_aniso[2][1]:7.4f}  " +
+                    f"{J_aniso[2][2]:7.4f}\n" +
+                    f"    DMI: {DMI[0]:.4f} " +
+                    f"{DMI[1]:.4f} " +
+                    f"{DMI[2]:.4f}\n"
+                    f"    |DMI|: {abs_DMI:.4f}\n" +
+                    f"    |DMI/J| {abs_DMI/J_iso:.4f}\n" +
                     f"    Matrix:\n" +
-                    f"        {spaces_around(round(matrix[0][0], 4), nchars=7)}  " +
-                    f"{spaces_around(round(matrix[0][1], 4), nchars=7)}  " +
-                    f"{spaces_around(round(matrix[0][2], 4), nchars=7)}\n" +
-                    f"        {spaces_around(round(matrix[1][0], 4), nchars=7)}  " +
-                    f"{spaces_around(round(matrix[1][1], 4), nchars=7)}  " +
-                    f"{spaces_around(round(matrix[1][2], 4), nchars=7)}\n" +
-                    f"        {spaces_around(round(matrix[2][0], 4), nchars=7)}  " +
-                    f"{spaces_around(round(matrix[2][1], 4), nchars=7)}  " +
-                    f"{spaces_around(round(matrix[2][2], 4), nchars=7)}\n\n")
+                    f"        {matrix[0][0]:7.4f}  " +
+                    f"{matrix[0][1]:7.4f}  " +
+                    f"{matrix[0][2]:7.4f}\n" +
+                    f"        {matrix[1][0]:7.4f}  " +
+                    f"{matrix[1][1]:7.4f}  " +
+                    f"{matrix[1][2]:7.4f}\n" +
+                    f"        {matrix[2][0]:7.4f}  " +
+                    f"{matrix[2][1]:7.4f}  " +
+                    f"{matrix[2][2]:7.4f}\n\n")
 
             output_python_iso += "    },\n"
             output_python_aniso += "    },\n"
@@ -119,19 +119,19 @@ def main(filename, out_dir, out_name, template, dmi=False, verbose=False):
             DMI /= len(template.names[name])
             abs_DMI /= len(template.names[name])
             output_line += (
-                f"    Isotropic: {round(J_iso, 4)}\n" +
+                f"    Isotropic: {J_iso:.4f}\n" +
                 f"    Anisotropic:\n" +
-                f"        {spaces_around(round(J_aniso[0][0], 4), nchars=7)}  " +
-                f"{spaces_around(round(J_aniso[0][1], 4), nchars=7)}  " +
-                f"{spaces_around(round(J_aniso[0][2], 4), nchars=7)}\n" +
-                f"        {spaces_around(round(J_aniso[1][0], 4), nchars=7)}  " +
-                f"{spaces_around(round(J_aniso[1][1], 4), nchars=7)}  " +
-                f"{spaces_around(round(J_aniso[1][2], 4), nchars=7)}\n" +
-                f"        {spaces_around(round(J_aniso[2][0], 4), nchars=7)}  " +
-                f"{spaces_around(round(J_aniso[2][1], 4), nchars=7)}  " +
-                f"{spaces_around(round(J_aniso[2][2], 4), nchars=7)}\n" +
-                f"    |DMI|: {round(abs_DMI, 4)}\n" +
-                f"    |DMI/J| {round(abs(abs_DMI/J_iso), 4)}\n")
+                f"        {J_aniso[0][0]:7.4f}  " +
+                f"{J_aniso[0][1]:7.4f}  " +
+                f"{J_aniso[0][2]:7.4f}\n" +
+                f"        {J_aniso[1][0]:7.4f}  " +
+                f"{J_aniso[1][1]:7.4f}  " +
+                f"{J_aniso[1][2]:7.4f}\n" +
+                f"        {J_aniso[2][0]:7.4f}  " +
+                f"{J_aniso[2][1]:7.4f}  " +
+                f"{J_aniso[2][2]:7.4f}\n" +
+                f"    |DMI|: {abs_DMI:.4f}\n" +
+                f"    |DMI/J| {abs(abs_DMI/J_iso):.4f}\n")
 
             if dmi:
                 for bond in template.names[name]:
@@ -141,16 +141,16 @@ def main(filename, out_dir, out_name, template, dmi=False, verbose=False):
                     DMI = model.bonds[atom1][atom2][R].dmi
                     output_line += (
                         f"    DMI: " +
-                        f"{spaces_around(round(DMI[0], 4), nchars=7)} " +
-                        f"{spaces_around(round(DMI[1], 4), nchars=7)} " +
-                        f"{spaces_around(round(DMI[2], 4), nchars=7)} {R}\n")
+                        f"{DMI[0]:7.4f} " +
+                        f"{DMI[1]:7.4f} " +
+                        f"{DMI[2]:7.4f} ({R[0]:2.0f}, {R[1]:2.0f}, {R[2]:2.0f})\n")
                 output_line += "\n"
             else:
                 output_line += (
                     f"    DMI: " +
-                    f"{round(DMI[0], 4)} " +
-                    f"{round(DMI[1], 4)} " +
-                    f"{round(DMI[2], 4)}\n")
+                    f"{DMI[0]:.4f} " +
+                    f"{DMI[1]:.4f} " +
+                    f"{DMI[2]:.4f}\n")
         output_line += "\n"
 
     if out_name is not None:
@@ -173,7 +173,7 @@ def main(filename, out_dir, out_name, template, dmi=False, verbose=False):
                   f"{abspath(join(out_dir, out_name + '.py'))}{RESET}")
 
     else:
-        print(f"{OK}{output_line}{RESET}")
+        print(f"{output_line}")
 
 
 if __name__ == '__main__':
