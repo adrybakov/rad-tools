@@ -45,9 +45,9 @@ def test_get_256_colours():
         get_256_colours(-45)
     with pytest.raises(ValueError):
         get_256_colours('sadfasd')
-    assert get_256_colours(0) == '\033[38:5:0m'
-    assert get_256_colours(255) == '\033[38:5:255m'
-    assert get_256_colours(34) == '\033[38:5:34m'
+    for i in range(0, 256):
+        assert get_256_colours(i) == f'\033[38:5:{i}m'
+
 
 @pytest.mark.parametrize("iso, aniso, dmi, matrix", [
     (1,

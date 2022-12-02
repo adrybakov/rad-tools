@@ -5,6 +5,11 @@ Version 0.3
 ***********
 Add script :ref:`identify-wannier-centres.py<identify-wannier-centres>`
 
+0.3.4
+-----
+Move as much as possible of 
+:ref:`tb2j-extractor.py <tb2j-extractor>` script to the library.
+
 0.3.3
 -----
 Moved from output_name and output_dir parameter to one 

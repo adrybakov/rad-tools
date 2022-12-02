@@ -1,8 +1,10 @@
 from copy import deepcopy
+from math import sqrt
 
 import numpy as np
 
 from rad_tools.routines import exchange_from_matrix, exchange_to_matrix
+from rad_tools.exchange.template import ExchangeTemplate
 
 
 class Bond:
@@ -235,6 +237,7 @@ class ExchangeModel:
         R : tuple of ints
             Radius vector of the unit cell for atom2.
         """
+
         if atom1 not in self.bonds:
             self.bonds[atom1] = {}
         if atom2 not in self.bonds[atom1]:
@@ -532,6 +535,200 @@ class ExchangeModel:
         for atom1, atom2, R in bonds_for_removal:
             filtered_model.remove_bond(atom1, atom2, R)
         return filtered_model
+
+    def summary_as_txt(self, template: ExchangeTemplate,
+                       dmi_verbose=False, verbose=False):
+        """
+        Return exchange model based on the template file in .txt format.
+
+        Parameters
+        ----------
+        template : :py:class:`.ExchangeTemplate`
+            Template of the desired exchange model. 
+            (see :ref:`rad-make-template`)
+        dmi_verbose : bool, default False
+            Whenever to write each individual DMI vector for 
+            each average exchange. Ignored if ``verbose`` = True.
+        verbose : bool, default False
+            Whenever to write everything in a verbose manner.
+            (see :ref:`tb2j-extractor_verbose-ref`)
+
+        Returns
+        -------
+        summary : str
+            Exchange information as a string.
+        """
+
+        summary = ""
+        for name in template.names:
+            summary += f"{name}\n"
+            if verbose:
+                for atom1, atom2, R in template.names[name]:
+
+                    # Get values from the model
+                    J_iso = self.bonds[atom1][atom2][R].iso
+                    J_aniso = self.bonds[atom1][atom2][R].aniso
+                    dmi = self.bonds[atom1][atom2][R].dmi
+                    abs_dmi = sqrt(self.bonds[atom1][atom2][R].dmi[0]**2 +
+                                   self.bonds[atom1][atom2][R].dmi[1]**2 +
+                                   self.bonds[atom1][atom2][R].dmi[2]**2)
+                    matrix = self.bonds[atom1][atom2][R].matrix
+
+                    # Write the values
+                    summary += (
+                        f"  {atom1:3} {atom2:3} " +
+                        f"({R[0]:2.0f}, {R[1]:2.0f}, {R[2]:2.0f})\n" +
+                        f"    Isotropic: {J_iso:.4f}\n" +
+                        f"    Anisotropic:\n" +
+                        f"        {J_aniso[0][0]:7.4f}  " +
+                        f"{J_aniso[0][1]:7.4f}  " +
+                        f"{J_aniso[0][2]:7.4f}\n" +
+                        f"        {J_aniso[1][0]:7.4f}  " +
+                        f"{J_aniso[1][1]:7.4f}  " +
+                        f"{J_aniso[1][2]:7.4f}\n" +
+                        f"        {J_aniso[2][0]:7.4f}  " +
+                        f"{J_aniso[2][1]:7.4f}  " +
+                        f"{J_aniso[2][2]:7.4f}\n" +
+                        f"    DMI: {dmi[0]:.4f} " +
+                        f"{dmi[1]:.4f} " +
+                        f"{dmi[2]:.4f}\n"
+                        f"    |DMI|: {abs_dmi:.4f}\n" +
+                        f"    |DMI/J| {abs_dmi/J_iso:.4f}\n" +
+                        f"    Matrix:\n" +
+                        f"        {matrix[0][0]:7.4f}  " +
+                        f"{matrix[0][1]:7.4f}  " +
+                        f"{matrix[0][2]:7.4f}\n" +
+                        f"        {matrix[1][0]:7.4f}  " +
+                        f"{matrix[1][1]:7.4f}  " +
+                        f"{matrix[1][2]:7.4f}\n" +
+                        f"        {matrix[2][0]:7.4f}  " +
+                        f"{matrix[2][1]:7.4f}  " +
+                        f"{matrix[2][2]:7.4f}\n\n")
+            else:
+                # Compute mean values
+                J_iso = 0
+                J_aniso = np.zeros((3, 3), dtype=float)
+                dmi = np.zeros(3, dtype=float)
+                abs_dmi = 0
+                for atom1, atom2, R in template.names[name]:
+                    J_iso += self.bonds[atom1][atom2][R].iso
+                    J_aniso += self.bonds[atom1][atom2][R].aniso
+                    dmi += self.bonds[atom1][atom2][R].dmi
+                    abs_dmi += sqrt(self.bonds[atom1][atom2][R].dmi[0]**2 +
+                                    self.bonds[atom1][atom2][R].dmi[1]**2 +
+                                    self.bonds[atom1][atom2][R].dmi[2]**2)
+                J_iso /= len(template.names[name])
+                J_aniso /= len(template.names[name])
+                dmi /= len(template.names[name])
+                abs_dmi /= len(template.names[name])
+
+                # Write mean values
+                summary += (
+                    f"    Isotropic: {J_iso:.4f}\n" +
+                    f"    Anisotropic:\n" +
+                    f"        {J_aniso[0][0]:7.4f}  " +
+                    f"{J_aniso[0][1]:7.4f}  " +
+                    f"{J_aniso[0][2]:7.4f}\n" +
+                    f"        {J_aniso[1][0]:7.4f}  " +
+                    f"{J_aniso[1][1]:7.4f}  " +
+                    f"{J_aniso[1][2]:7.4f}\n" +
+                    f"        {J_aniso[2][0]:7.4f}  " +
+                    f"{J_aniso[2][1]:7.4f}  " +
+                    f"{J_aniso[2][2]:7.4f}\n" +
+                    f"    |DMI|: {abs_dmi:.4f}\n" +
+                    f"    |DMI/J| {abs(abs_dmi/J_iso):.4f}\n")
+
+                # Write additional info on DMI
+                if dmi_verbose:
+                    for bond in template.names[name]:
+                        dmi = self.bonds[atom1][atom2][R].dmi
+                        summary += (
+                            f"    DMI: " +
+                            f"{dmi[0]:7.4f} " +
+                            f"{dmi[1]:7.4f} " +
+                            f"{dmi[2]:7.4f} " +
+                            f"({R[0]:2.0f}, {R[1]:2.0f}, {R[2]:2.0f})\n")
+                    summary += "\n"
+                # Write only mean value of DMI
+                else:
+                    summary += (
+                        f"    DMI: " +
+                        f"{dmi[0]:.4f} " +
+                        f"{dmi[1]:.4f} " +
+                        f"{dmi[2]:.4f}\n")
+            summary += "\n"
+        return summary
+
+    def summary_as_py(self, template: ExchangeTemplate):
+        """
+        Return exchange model based on the template file in .py format.
+
+        For the format see :ref:`tb2j-extractor_verbose-ref`.
+
+        Parameters
+        ----------
+        template : :py:class:`.ExchangeTemplate`
+            Template of the desired exchange model. 
+            (see :ref:`rad-make-template`)
+
+        Returns
+        -------
+        summary : str
+            Exchange information as a python script.
+        """
+
+        output_python_iso = "iso = {\n"
+        output_python_aniso = "aniso = {\n"
+        output_python_dmi = "dmi = {\n"
+        output_python_matrix = "matrix = {\n"
+        for name in template.names:
+            output_python_iso += f"    '{name}':\n" + "    {\n"
+            output_python_aniso += f"    '{name}':\n" + "    {\n"
+            output_python_dmi += f"    '{name}':\n" + "    {\n"
+            output_python_matrix += f"    '{name}':\n" + "    {\n"
+
+            for atom1, atom2, R in template.names[name]:
+                J_iso = self.bonds[atom1][atom2][R].iso
+                J_aniso = self.bonds[atom1][atom2][R].aniso
+                dmi = self.bonds[atom1][atom2][R].dmi
+                abs_dmi = sqrt(self.bonds[atom1][atom2][R].dmi[0]**2 +
+                               self.bonds[atom1][atom2][R].dmi[1]**2 +
+                               self.bonds[atom1][atom2][R].dmi[2]**2)
+                matrix = self.bonds[atom1][atom2][R].matrix
+                output_python_iso += (
+                    8 * " " +
+                    f"({R[0]}, {R[1]}, {R[2]}): {J_iso},\n")
+                output_python_aniso += (
+                    8 * " " +
+                    f"({R[0]}, {R[1]}, {R[2]}): np.array([" +
+                    f"[{J_aniso[0][0]}, {J_aniso[0][1]}, {J_aniso[0][2]}], " +
+                    f"[{J_aniso[1][0]}, {J_aniso[1][1]}, {J_aniso[1][2]}], " +
+                    f"[{J_aniso[2][0]}, {J_aniso[2][1]}, {J_aniso[2][2]}]]),\n")
+                output_python_dmi += (
+                    8 * " " +
+                    f"({R[0]}, {R[1]}, {R[2]}):" +
+                    f" np.array([{dmi[0]}, {dmi[1]}, {dmi[2]}]),\n")
+                output_python_matrix += (
+                    8 * " " +
+                    f"({R[0]}, {R[1]}, {R[2]}): np.array([" +
+                    f"[{matrix[0][0]}, {matrix[0][1]}, {matrix[0][2]}], " +
+                    f"[{matrix[1][0]}, {matrix[1][1]}, {matrix[1][2]}], " +
+                    f"[{matrix[2][0]}, {matrix[2][1]}, {matrix[2][2]}]]),\n")
+
+            output_python_iso += "    },\n"
+            output_python_aniso += "    },\n"
+            output_python_dmi += "    },\n"
+            output_python_matrix += "    },\n"
+        output_python_iso += "}\n\n"
+        output_python_aniso += "}\n\n"
+        output_python_dmi += "}\n\n"
+        output_python_matrix += "}\n\n"
+        summary = ("import numpy as np\n" +
+                   output_python_iso +
+                   output_python_aniso +
+                   output_python_dmi +
+                   output_python_matrix)
+        return summary
 
 
 class ExchangeModelTB2J(ExchangeModel):
