@@ -3,38 +3,31 @@ from math import sqrt
 
 import numpy as np
 
-from rad_tools.routines import exchange_from_matrix, exchange_to_matrix
 from rad_tools.exchange.template import ExchangeTemplate
 
 
 class Bond:
     r"""
-    Class with implemented logic for one bond.
+    Exchange bond.
 
     Parameters
     ----------
-
     iso : int or float, default None
         Value of isotropic exchange parameter in meV. 
-
-    aniso : 3 x 3 np.ndarray, None
+    aniso : 3 x 3 array, None
         3 x 3 matrix of symmetric anisotropic exchange in meV. 
-
-    dmi : 3 x 1 np.ndarray, None
+    dmi : 3 x 1 array, None
         Dzyaroshinsky-Moria interaction vector :math:`(D_x, D_y, D_z)` in meV. 
-
-    matrix : 3 x 3 np.ndarray, None
+    matrix : 3 x 3 array, None
         Exchange matrix in meV. If ``matrix`` is specified then ``iso`` ,
         ``aniso`` and ``dmi`` will be ignored and derived from ``matrix`` .
         If ``matrix`` is not specified then it will be derived from
         ``iso`` , ``aniso`` and ``dmi`` .
-
     distance : float, default 0
         Length of the bond.
 
     Attributes
     ----------
-
     iso : float
         Value of isotropic exchange parameter in meV. If ``iso`` is
         not specified then it will be 0.
@@ -44,8 +37,7 @@ class Bond:
             [[J, 0, 0],
              [0, J, 0],
              [0, 0, J]]
-
-    aniso : 3 x 3 np.ndarray of floats
+    aniso : 3 x 3 array of floats
         3 x 3 matrix of symmetric anisotropic exchange in meV. If ``aniso``
         is not specified then it will be filled with zeros.
 
@@ -54,8 +46,7 @@ class Bond:
             [[J_xx, J_xy, J_xz],
              [J_xy, J_yy, J_yz],
              [J_xz, J_yz, J_zz]]
-
-    dmi : 3 x 1 np.ndarray of floats
+    dmi : 3 x 1 array of floats
         Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz) in meV. If ``dmi``
         is not specified then it will be filled with zeros.
 
@@ -68,8 +59,7 @@ class Bond:
             [[0, D_z, -D_y],
              [-D_z, 0, D_x],
              [D_y, -D_x, 0]]
-
-    matrix : 3 x 3 np.ndarray of floats
+    matrix : 3 x 3 array of floats
         Exchange matrix in meV. If ``matrix`` is specified then ``iso`` ,
         ``aniso`` and ``dmi`` will be ignored and derived from ``matrix`` .
         If ``matrix`` is not specified then it will be derived from
@@ -80,10 +70,12 @@ class Bond:
             [[J_xx, J_xy, J_xz],
              [J_yx, J_yy, J_yz],
              [J_zx, J_zy, J_zz]]
-
     dis : float
         Length of the bond.
-
+    symm_matrix : 3 x 3 array of floats
+        Symmetric part of exchange matrix.
+    asymm_matrix : 3 x 3 array of floats
+        Asymmetric part of exchange matrix.
     """
 
     distance_tolerance = 1E-10
@@ -94,49 +86,108 @@ class Bond:
                  dmi=None,
                  matrix=None,
                  distance=None) -> None:
-        self.iso = 0.
-        self.aniso = np.zeros((3, 3), dtype=float)
-        self.dmi = np.zeros(3, dtype=float)
-        self.matrix = np.zeros((3, 3), dtype=float)
+        self._matrix = np.zeros((3, 3), dtype=float)
         self.dis = 0.
 
-        if matrix is not None:
-            self.matrix = np.array(matrix, dtype=float)
-        if (self.matrix == np.zeros((3, 3))).all():
-            if iso is not None:
-                self.iso = float(iso)
-            if aniso is not None:
-                self.aniso = np.array(aniso, dtype=float)
-            if dmi is not None:
-                self.dmi = np.array(dmi, dtype=float)
-            self.matrix = exchange_to_matrix(self.iso, self.aniso, self.dmi)
-            if distance is not None:
-                self.dis = float(distance)
-        # To ensure the correct decomposition
-        self.iso, self.aniso, self.dmi = exchange_from_matrix(self.matrix)
+        if matrix is None:
+            self.iso = iso
+            self.dmi = dmi
+            self.aniso = aniso
+        else:
+            self.matrix = matrix
+
+        if distance is not None:
+            self.dis = float(distance)
+
+    @property
+    def matrix(self):
+        return self._matrix
+
+    @matrix.setter
+    def matrix(self, new_matrix):
+        if new_matrix is None:
+            new_matrix = np.zeros((3, 3), dtype=float)
+        new_matrix = np.array(new_matrix)
+        if new_matrix.shape != (3, 3):
+            raise ValueError("Matrix shape have to be equal to (3, 3)")
+        self._matrix = new_matrix
+
+    @property
+    def symm_matrix(self):
+        return (self.matrix + self.matrix.T) / 2
+
+    @property
+    def asymm_matrix(self):
+        return (self.matrix - self.matrix.T) / 2
+
+    @property
+    def iso(self):
+        return np.trace(self.symm_matrix) / 3
+
+    @iso.setter
+    def iso(self, new_iso):
+        if new_iso is not None:
+            self.matrix = (self.matrix +
+                           (new_iso - self.iso) *
+                           np.identity(3, dtype=float))
+
+    @property
+    def aniso(self):
+        return self.symm_matrix - self.iso * np.identity(3, dtype=float)
+
+    @aniso.setter
+    def aniso(self, new_aniso):
+        if new_aniso is not None:
+            new_aniso = np.array(new_aniso, dtype=float)
+            if new_aniso.shape != (3, 3):
+                raise ValueError("Aniso matrix shape have " +
+                                 "to be equal to (3, 3)")
+            self.matrix = (self.matrix + new_aniso - self.aniso)
+
+    @property
+    def dmi(self):
+        return np.array([self.asymm_matrix[1][2],
+                         self.asymm_matrix[2][0],
+                         self.asymm_matrix[0][1]],
+                        dtype=float)
+
+    @dmi.setter
+    def dmi(self, new_dmi):
+        new_dmi = np.array(new_dmi, dtype=float) - self.dmi
+        dmi_matrix = np.array([[0, new_dmi[2], -new_dmi[1]],
+                              [-new_dmi[2], 0, new_dmi[0]],
+                               [new_dmi[1], -new_dmi[0], 0]],
+                              dtype=float)
+        self.matrix = self.matrix + dmi_matrix
 
     def __add__(self, other):
-        iso = (self.iso + other.iso)
-        aniso = (self.aniso + other.aniso)
-        dmi = (self.dmi + other.dmi)
-        if self.dis - other.dis < self.distance_tolerance:
-            dis = self.dis
+        if isinstance(other, Bond):
+            iso = (self.iso + other.iso)
+            aniso = (self.aniso + other.aniso)
+            dmi = (self.dmi + other.dmi)
+            if self.dis - other.dis < self.distance_tolerance:
+                dis = self.dis
+            else:
+                raise ValueError('Two bonds have different distance, could hot add. '
+                                 f'(Tolerance: {self.distance_tolerance})')
+            return Bond(iso=iso, aniso=aniso, dmi=dmi, distance=dis)
         else:
-            raise ValueError('Two bonds have different distance, could hot add. '
-                             f'(Tolerance: {self.distance_tolerance})')
-        return Bond(iso=iso, aniso=aniso, dmi=dmi, distance=dis)
+            raise TypeError
 
     def __sub__(self, other):
-        iso = (self.iso - other.iso)
-        aniso = (self.aniso - other.aniso)
-        dmi = (self.dmi - other.dmi)
-        if self.dis - other.dis < self.distance_tolerance:
-            dis = self.dis
+        if isinstance(other, Bond):
+            iso = (self.iso - other.iso)
+            aniso = (self.aniso - other.aniso)
+            dmi = (self.dmi - other.dmi)
+            if self.dis - other.dis < self.distance_tolerance:
+                dis = self.dis
+            else:
+                raise ValueError('Two bonds have different distance, '
+                                 'could hot subtraction. '
+                                 f'(Tolerance: {self.distance_tolerance})')
+            return Bond(iso=iso, aniso=aniso, dmi=dmi, distance=dis)
         else:
-            raise ValueError('Two bonds have different distance, '
-                             'could hot subtraction. '
-                             f'(Tolerance: {self.distance_tolerance})')
-        return Bond(iso=iso, aniso=aniso, dmi=dmi, distance=dis)
+            raise TypeError
 
     def __mul__(self, number):
         iso = self.iso * number
