@@ -86,7 +86,7 @@ class Bond:
 
     """
 
-    distance_tolerance = 1E-05
+    distance_tolerance = 1E-10
 
     def __init__(self,
                  iso=None,

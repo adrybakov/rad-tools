@@ -219,38 +219,6 @@ def rot_angle(x, y, dummy=False):
             return 180 + asin(sin) / pi * 180
 
 
-def spaces_around(line, nchars, align="left"):
-    r"""
-    Space surrounder.
-
-    Parameters
-    ----------
-    line : str
-    nchars : int
-    align : str, default "left"
-        "left", "center" or "right"
-
-    Returns
-    -------
-    out_line : str
-        line in a form that len(out_line) = max(nchars, len(line)).
-    """
-    line = str(line)
-
-    nchars = max(0, nchars - len(line))
-
-    if align == "left":
-        return line + " " * nchars
-
-    if align == "right":
-        return " " * nchars + line
-
-    if align == "center":
-        return (" " * (nchars // 2) +
-                line +
-                " " * (nchars // 2 + nchars % 2))
-
-
 def strip_digits(line: str):
     r"""
     Remove all digits from the string
