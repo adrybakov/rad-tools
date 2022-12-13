@@ -81,7 +81,7 @@ class Bond:
              [J_yx, J_yy, J_yz],
              [J_zx, J_zy, J_zz]]
 
-    distance : float
+    dis : float
         Length of the bond.
 
     """
