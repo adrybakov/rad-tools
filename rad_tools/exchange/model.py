@@ -273,15 +273,18 @@ class ExchangeModel:
 
     Attributes
     ----------
-    magnetic_atoms : dict
-       Dictionary with keys : str - marks of atoms and value : 1 x 3 np.ndarray
-       - coordinate of the atom in Angstroms.
     bonds : dict
         Dictionary of bonds.
 
         .. code-block:: python
 
             {Atom_1: {Atom_2: {R: bond, ...}, ...}, ...}
+    magnetic_atoms : dict
+        Dictionary with keys : str - marks of atoms and value : 1 x 3 np.ndarray
+        - coordinate of the atom in Angstroms.
+    noomagnetic_atoms : dist
+        Dictionary with keys : str - marks of atoms and value : 1 x 3 np.ndarray
+        - coordinate of the atom in Angstroms. Only non-magnetic atoms.
     cell : 3 x 3 array of floats
     a : array
     b : array
@@ -298,6 +301,8 @@ class ExchangeModel:
     def __init__(self) -> None:
         self._cell = np.identity(3, dtype=float)
         self.magnetic_atoms = {}
+        self.nonmagnetic_atoms = {}
+        self._bond_list = []
         self.bonds = {}
 
     @property
@@ -418,10 +423,11 @@ class ExchangeModel:
                 [(atom1, atom2, R), ...]
         """
         bond_list = []
-        for atom1 in self.bonds:
-            for atom2 in self.bonds[atom1]:
-                for R in self.bonds[atom1][atom2]:
-                    bond_list.append((atom1, atom2, R))
+        for atom1, atom2, R in self._bond_list:
+            if (atom1 in self.bonds
+                and atom2 in self.bonds[atom1]
+                    and R in self.bonds[atom1][atom2]):
+                bond_list.append((atom1, atom2, R))
         return bond_list
 
     @property
@@ -447,6 +453,9 @@ class ExchangeModel:
         r"""
         Add one bond to the model.
 
+        It is important to update ``bond_list`` here, 
+        since it alows to track the order of the bonds.
+
         Parameters
         ----------
         bond : :py:class:`Bond`
@@ -465,6 +474,7 @@ class ExchangeModel:
         if atom2 not in self.bonds[atom1]:
             self.bonds[atom1][atom2] = {}
         self.bonds[atom1][atom2][R] = bond
+        self._bond_list.append((atom1, atom2, R))
 
     def remove_bond(self, atom1, atom2, R):
         r"""
@@ -629,7 +639,8 @@ class ExchangeModel:
         r"""
         Remove double bonds.
 
-        If for atom pair atom1, atom2 exist bond 1-2 and 2-1 they will be merged.
+        If for atom pair atom1, atom2 exist bond 1-2 and 2-1 they 
+        will be merged.
         All values will be calcuated as (1-2 + 2-1) / 2.
 
         .. note::
@@ -687,13 +698,14 @@ class ExchangeModel:
         r"""
         Remove double bonds and create a new model.
 
-        If for atom pair atom1, atom2 exist bond 1-2 and 2-1 they will be merged.
+        If for atom pair atom1, atom2 exist bond 1-2 and 2-1 they 
+        will be merged.
         All values will be calcuated as (1-2 + 2-1) / 2.
 
         .. note::
             This method is not modifying the instance at which it is called.
-            It will create a new instance with merged ``bonds`` and all the other
-            attributes will be copied (through deepcopy).
+            It will create a new instance with merged ``bonds`` and all the 
+            other attributes will be copied (through deepcopy).
 
         Returns
         -------
@@ -716,20 +728,84 @@ class ExchangeModel:
         The result will be defined by logical conjugate of the conditions.
         Saying so the filtering will be performed for each given condition
         one by one.
+
+        .. note::
+            This method is modifying the instance at which it is called.
+
+        Parameters
+        ----------
+        max_distance : float or int, optional
+            Distance for sorting, the condition is <<less or equal>>.
+        min_distance : float or int, optional
+            Distance for sorting, the condition is <<more or equal>>.
+        template : list or :py:class:`.ExchangeTemplate`
+            List of pairs, which will remain in the model. ::
+
+                [(atom1, atom2, R), ...]
+
+        R_vector : tuple of ints or list of tuples of ints
+            Tuple of 3 integers or list of tuples, specifying the R vectors,
+            which will be kept after filtering.
+        """
+        if isinstance(template, ExchangeTemplate):
+            template = template.get_list()
+        if template is not None:
+            template = set(template)
+
+        bonds_for_removal = set()
+        if R_vector is not None:
+            if type(R_vector) == tuple:
+                R_vector = {R_vector}
+            elif type(R_vector) == list:
+                R_vector = set(R_vector)
+
+        for atom1 in self.bonds:
+            for atom2 in self.bonds[atom1]:
+                for R in self.bonds[atom1][atom2]:
+
+                    dis = self.bonds[atom1][atom2][R].dis
+
+                    if max_distance is not None and dis > max_distance:
+                        bonds_for_removal.add((atom1, atom2, R))
+
+                    if min_distance is not None and dis < min_distance:
+                        bonds_for_removal.add((atom1, atom2, R))
+
+                    if R_vector is not None and R not in R_vector:
+                        bonds_for_removal.add((atom1, atom2, R))
+                    if template is not None and (atom1, atom2, R) not in template:
+                        bonds_for_removal.add((atom1, atom2, R))
+
+        for atom1, atom2, R in bonds_for_removal:
+            self.remove_bond(atom1, atom2, R)
+
+    def filtered(self,
+                 max_distance=None,
+                 min_distance=None,
+                 template=None,
+                 R_vector=None):
+        r"""
+        Create filtered exchange model based on the given conditions.
+
+        The result will be defined by logical conjugate of the conditions.
+        Saying so the filtering will be performed for each given condition
+        one by one.
         Note: this method is not modifying the instance at which it is called.
         It will create a new instance with sorted :py:attr:`bonds` and all the other
         attributes will be copied (through :py:func:`deepcopy`).
 
+        .. note::
+            This method is not modifying the instance at which it is called.
+            It will create a new instance with merged ``bonds`` and all the 
+            other attributes will be copied (through deepcopy).
+
         Parameters
         ----------
-
         max_distance : float or int, optional
             Distance for sorting, the condition is <<less or equal>>.
-
         min_distance : float or int, optional
             Distance for sorting, the condition is <<more or equal>>.
-
-        template : list
+        template : list or :py:class:`.ExchangeTemplate`
             List of pairs, which will remain in the model. ::
 
                 [(atom1, atom2, R), ...]
@@ -740,43 +816,14 @@ class ExchangeModel:
 
         Returns
         -------
-
-        filtered_model : ExchangeModel
+        filtered_model : :py:class:`.ExchangeModel`
             Exchange model after filtering.
         """
         filtered_model = deepcopy(self)
-
-        if template is not None:
-            filtered_model.bonds = {}
-            for atom1, atom2, R in template:
-                filtered_model.add_bond(self.bonds[atom1][atom2][R],
-                                        atom1, atom2, R)
-        bonds_for_removal = set()
-        if R_vector is not None:
-            if type(R_vector) == tuple:
-                R_vector = {R_vector}
-            elif type(R_vector) == list:
-                R_vector = set(R_vector)
-        if min_distance is not None or\
-           max_distance is not None or\
-           R_vector is not None:
-            for atom1 in filtered_model.bonds:
-                for atom2 in filtered_model.bonds[atom1]:
-                    for R in filtered_model.bonds[atom1][atom2]:
-
-                        dis = filtered_model.bonds[atom1][atom2][R].dis
-
-                        if max_distance is not None and dis > max_distance:
-                            bonds_for_removal.add((atom1, atom2, R))
-
-                        if min_distance is not None and dis < min_distance:
-                            bonds_for_removal.add((atom1, atom2, R))
-
-                        if R_vector is not None and not R in R_vector:
-                            bonds_for_removal.add((atom1, atom2, R))
-
-        for atom1, atom2, R in bonds_for_removal:
-            filtered_model.remove_bond(atom1, atom2, R)
+        filtered_model.filter(max_distance=max_distance,
+                              min_distance=min_distance,
+                              template=template,
+                              R_vector=R_vector)
         return filtered_model
 
     def summary_as_txt(self, template: ExchangeTemplate,
@@ -812,9 +859,7 @@ class ExchangeModel:
                     J_iso = self.bonds[atom1][atom2][R].iso
                     J_aniso = self.bonds[atom1][atom2][R].aniso
                     dmi = self.bonds[atom1][atom2][R].dmi
-                    abs_dmi = sqrt(self.bonds[atom1][atom2][R].dmi[0]**2 +
-                                   self.bonds[atom1][atom2][R].dmi[1]**2 +
-                                   self.bonds[atom1][atom2][R].dmi[2]**2)
+                    abs_dmi = self.bonds[atom1][atom2][R].dmi_module
                     matrix = self.bonds[atom1][atom2][R].matrix
 
                     # Write the values
@@ -857,9 +902,7 @@ class ExchangeModel:
                     J_iso += self.bonds[atom1][atom2][R].iso
                     J_aniso += self.bonds[atom1][atom2][R].aniso
                     dmi += self.bonds[atom1][atom2][R].dmi
-                    abs_dmi += sqrt(self.bonds[atom1][atom2][R].dmi[0]**2 +
-                                    self.bonds[atom1][atom2][R].dmi[1]**2 +
-                                    self.bonds[atom1][atom2][R].dmi[2]**2)
+                    abs_dmi += self.bonds[atom1][atom2][R].dmi_module
                 J_iso /= len(template.names[name])
                 J_aniso /= len(template.names[name])
                 dmi /= len(template.names[name])
@@ -883,7 +926,7 @@ class ExchangeModel:
 
                 # Write additional info on DMI
                 if dmi_verbose:
-                    for bond in template.names[name]:
+                    for atom1, atom2, R in template.names[name]:
                         dmi = self.bonds[atom1][atom2][R].dmi
                         summary += (
                             f"    DMI: " +
@@ -934,9 +977,6 @@ class ExchangeModel:
                 J_iso = self.bonds[atom1][atom2][R].iso
                 J_aniso = self.bonds[atom1][atom2][R].aniso
                 dmi = self.bonds[atom1][atom2][R].dmi
-                abs_dmi = sqrt(self.bonds[atom1][atom2][R].dmi[0]**2 +
-                               self.bonds[atom1][atom2][R].dmi[1]**2 +
-                               self.bonds[atom1][atom2][R].dmi[2]**2)
                 matrix = self.bonds[atom1][atom2][R].matrix
                 output_python_iso += (
                     8 * " " +
@@ -974,6 +1014,7 @@ class ExchangeModel:
         return summary
 
 
+# TODO move to input-output in the form of a function
 class ExchangeModelTB2J(ExchangeModel):
     r"""
     Class containing the exchange model extracted from TB2J output file.
@@ -1080,27 +1121,3 @@ class ExchangeModelTB2J(ExchangeModel):
                 self.add_atom(atom2, *self._atoms[atom2])
             bond = Bond(iso=iso, aniso=aniso, dmi=dmi, distance=distance)
             self.add_bond(bond, atom1, atom2, R)
-
-    # TODO Think about the class type problem
-    def filter(self,
-               max_distance=None,
-               min_distance=None,
-               template=None,
-               R_vector=None):
-        r"""
-        Filter the exchange entries based on the given conditions.
-
-        Call :py:meth:`ExchangeModel.filter` method from parent class and
-        update :py:attr:`file_order`.
-        """
-        filtered_model = deepcopy(self)
-        result = super().filter(max_distance, min_distance, template, R_vector)
-        filtered_model.file_order = []
-        filtered_model.bonds = result.bonds
-        filtered_model.cell = result.cell
-        filtered_model.magnetic_atoms = result.magnetic_atoms
-        bond_list = set(filtered_model.bond_list)
-        for key in self.file_order:
-            if key in bond_list:
-                filtered_model.file_order.append(key)
-        return filtered_model

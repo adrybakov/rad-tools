@@ -33,10 +33,10 @@ def plot_2d(filename, out_dir='.',
                 "dmi": "dmi"}
 
     model = ExchangeModelTB2J(filename)
-    model = model.filter(min_distance=min_distance,
-                         max_distance=max_distance,
-                         R_vector=R_vector,
-                         template=template)
+    model.filter(min_distance=min_distance,
+                 max_distance=max_distance,
+                 R_vector=R_vector,
+                 template=template)
     if atoms is None:
         atoms = model.magnetic_atoms
 
@@ -232,10 +232,10 @@ def plot_molecule(filename, out_dir='.',
                 "distance": "distances"}
 
     model = ExchangeModelTB2J(filename)
-    model = model.filter(min_distance=min_distance,
-                         max_distance=max_distance,
-                         R_vector=R_vector,
-                         template=template)
+    model.filter(min_distance=min_distance,
+                 max_distance=max_distance,
+                 R_vector=R_vector,
+                 template=template)
 
     if atoms is None:
         atoms = model.magnetic_atoms

@@ -625,7 +625,7 @@ class TestFilter(TestExchangeModelTB2J):
         return i
 
     def test_instance_data_type(self):
-        filtered_model = self.model.filter(max_distance=5)
+        filtered_model = self.model.filtered(max_distance=5)
         assert type(self.model) == type(filtered_model)
 
     @ pytest.mark.parametrize("max_distance, elements_number", [
@@ -637,7 +637,7 @@ class TestFilter(TestExchangeModelTB2J):
         (1000, 72)
     ])
     def test_filter_by_max_distance(self, max_distance, elements_number):
-        filtered_model = self.model.filter(max_distance=max_distance)
+        filtered_model = self.model.filtered(max_distance=max_distance)
         assert self.count_entries(filtered_model.bonds) == elements_number
 
     @ pytest.mark.parametrize("min_distance, elements_number", [
@@ -647,7 +647,7 @@ class TestFilter(TestExchangeModelTB2J):
         (10, 0)
     ])
     def test_filter_by_min_distance(self, min_distance, elements_number):
-        filtered_model = self.model.filter(min_distance=min_distance)
+        filtered_model = self.model.filtered(min_distance=min_distance)
         assert self.count_entries(filtered_model.bonds) == elements_number
 
     @ pytest.mark.parametrize("R_vector, elements_number", [
@@ -658,11 +658,11 @@ class TestFilter(TestExchangeModelTB2J):
         ([(0, 0, 0), (1, 0, 0), (1, 0, 0)], 6)
     ])
     def test_filter_by_R_vector(self, R_vector, elements_number):
-        filtered_model = self.model.filter(R_vector=R_vector)
+        filtered_model = self.model.filtered(R_vector=R_vector)
         assert self.count_entries(filtered_model.bonds) == elements_number
 
     def test_filter_by_template(self):
-        filtered_model = self.model.filter(
+        filtered_model = self.model.filtered(
             template=self.template)
         assert self.count_entries(filtered_model.bonds) == 16
 
@@ -677,8 +677,8 @@ class TestFilter(TestExchangeModelTB2J):
                                                      min_distance,
                                                      max_distance,
                                                      elements_number):
-        filtered_model = self.model.filter(max_distance=max_distance,
-                                           min_distance=min_distance)
+        filtered_model = self.model.filtered(max_distance=max_distance,
+                                             min_distance=min_distance)
         assert self.count_entries(filtered_model.bonds) == elements_number
 
     @ pytest.mark.parametrize("max_distance, elements_number", [
@@ -693,8 +693,8 @@ class TestFilter(TestExchangeModelTB2J):
     def test_filter_by_max_distance_and_template(self,
                                                  max_distance,
                                                  elements_number):
-        filtered_model = self.model.filter(max_distance=max_distance,
-                                           template=self.template)
+        filtered_model = self.model.filtered(max_distance=max_distance,
+                                             template=self.template)
         assert self.count_entries(filtered_model.bonds) == elements_number
 
     @ pytest.mark.parametrize("min_distance, elements_number", [
@@ -707,8 +707,8 @@ class TestFilter(TestExchangeModelTB2J):
     def test_filter_by_min_distance_and_template(self,
                                                  min_distance,
                                                  elements_number):
-        filtered_model = self.model.filter(min_distance=min_distance,
-                                           template=self.template)
+        filtered_model = self.model.filtered(min_distance=min_distance,
+                                             template=self.template)
         assert self.count_entries(filtered_model.bonds) == elements_number
 
     @ pytest.mark.parametrize("R_vector, elements_number", [
@@ -719,7 +719,7 @@ class TestFilter(TestExchangeModelTB2J):
         ([(0, 0, 0), (1, 0, 0), (1, 0, 0)], 5)
     ])
     def test_filter_by_R_vector_and_template(self, R_vector, elements_number):
-        filtered_model = self.model.filter(
+        filtered_model = self.model.filtered(
             R_vector=R_vector, template=self.template)
         assert self.count_entries(filtered_model.bonds) == elements_number
 
@@ -732,6 +732,6 @@ class TestFilter(TestExchangeModelTB2J):
         (100, [], 0)
     ])
     def test_filter_by_everything(self, max_distance, R_vector, elements_number):
-        filtered_model = self.model.filter(
+        filtered_model = self.model.filtered(
             R_vector=R_vector, max_distance=max_distance)
         assert self.count_entries(filtered_model.bonds) == elements_number
