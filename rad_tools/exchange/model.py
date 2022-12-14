@@ -87,6 +87,9 @@ class Bond:
                  matrix=None,
                  distance=None) -> None:
         self._matrix = np.zeros((3, 3), dtype=float)
+        self._iso = 0.
+        self._aniso = np.zeros((3, 3), dtype=float)
+        self._dmi = np.zeros(3, dtype=float)
         self.dis = 0.
 
         if matrix is None:
@@ -127,9 +130,12 @@ class Bond:
     @iso.setter
     def iso(self, new_iso):
         if new_iso is not None:
-            self.matrix = (self.matrix +
-                           (new_iso - self.iso) *
-                           np.identity(3, dtype=float))
+            new_iso = new_iso - self.iso
+        else:
+            new_iso = -self.iso
+        self.matrix = (self.matrix +
+                       (new_iso) *
+                       np.identity(3, dtype=float))
 
     @property
     def aniso(self):
@@ -142,7 +148,10 @@ class Bond:
             if new_aniso.shape != (3, 3):
                 raise ValueError("Aniso matrix shape have " +
                                  "to be equal to (3, 3)")
-            self.matrix = (self.matrix + new_aniso - self.aniso)
+            new_aniso = new_aniso - self.aniso
+        else:
+            new_aniso = -self.aniso
+        self.matrix = self.matrix + new_aniso
 
     @property
     def dmi(self):
@@ -153,53 +162,54 @@ class Bond:
 
     @dmi.setter
     def dmi(self, new_dmi):
-        new_dmi = np.array(new_dmi, dtype=float) - self.dmi
+        if new_dmi is not None:
+            new_dmi = np.array(new_dmi, dtype=float)
+            if new_dmi.shape != (3,):
+                raise ValueError(
+                    f"DMI have to be a 3 component vector. {new_dmi}")
+            new_dmi = new_dmi - self.dmi
+        else:
+            new_dmi = -self.dmi
         dmi_matrix = np.array([[0, new_dmi[2], -new_dmi[1]],
-                              [-new_dmi[2], 0, new_dmi[0]],
+                               [-new_dmi[2], 0, new_dmi[0]],
                                [new_dmi[1], -new_dmi[0], 0]],
                               dtype=float)
         self.matrix = self.matrix + dmi_matrix
 
     def __add__(self, other):
         if isinstance(other, Bond):
-            iso = (self.iso + other.iso)
-            aniso = (self.aniso + other.aniso)
-            dmi = (self.dmi + other.dmi)
-            if self.dis - other.dis < self.distance_tolerance:
+            if abs(self.dis - other.dis) < self.distance_tolerance:
                 dis = self.dis
             else:
                 raise ValueError('Two bonds have different distance, could hot add. '
                                  f'(Tolerance: {self.distance_tolerance})')
-            return Bond(iso=iso, aniso=aniso, dmi=dmi, distance=dis)
+            matrix = self.matrix + other.matrix
+            return Bond(matrix=matrix, distance=dis)
         else:
             raise TypeError
 
     def __sub__(self, other):
         if isinstance(other, Bond):
-            iso = (self.iso - other.iso)
-            aniso = (self.aniso - other.aniso)
-            dmi = (self.dmi - other.dmi)
-            if self.dis - other.dis < self.distance_tolerance:
+            if abs(self.dis - other.dis) < self.distance_tolerance:
                 dis = self.dis
             else:
-                raise ValueError('Two bonds have different distance, '
-                                 'could hot subtraction. '
+                raise ValueError('Two bonds have different distance, could hot add. '
                                  f'(Tolerance: {self.distance_tolerance})')
-            return Bond(iso=iso, aniso=aniso, dmi=dmi, distance=dis)
+            matrix = self.matrix - other.matrix
+            return Bond(matrix=matrix, distance=dis)
         else:
             raise TypeError
 
     def __mul__(self, number):
-        iso = self.iso * number
-        aniso = self.aniso * number
-        dmi = self.dmi * number
-        return Bond(iso=iso, aniso=aniso, dmi=dmi, distance=self.dis)
+        matrix = self.matrix * number
+        return Bond(matrix=matrix, distance=self.dis)
 
     def __rmul__(self, number):
-        iso = number * self.iso
-        aniso = number * self.aniso
-        dmi = number * self.dmi
-        return Bond(iso=iso, aniso=aniso, dmi=dmi, distance=self.dis)
+        return self.__mul__(number)
+
+    def __truediv__(self, number):
+        matrix = self.matrix / number
+        return Bond(matrix=matrix, distance=self.dis)
 
 
 class ExchangeModel:
@@ -208,71 +218,173 @@ class ExchangeModel:
 
     Attributes
     ----------
+    magnetic_atoms : dict
+       Dictionary with keys : str - marks of atoms and value : 1 x 3 np.ndarray
+       - coordinate of the atom in Angstroms.
+    bonds : dict
+        Dictionary of bonds. 
 
-    cell : 3 x 3 np.ndarray of floats
-        3 x 3 matrix of lattice vectors in Angstrom. ::
+        .. code-block:: python
+
+            {Atom_1: {Atom_2: {R: bond, ...}, ...}, ...}
+    cell : 3 x 3 array of floats
+    a : array
+    b : array
+    c : array
+    len_a : float
+    len_b : float
+    len_c : float
+    unit_cell_volume : float
+    bond_list : list
+    cell_list : list
+    space_dimensions : tuple
+    """
+
+    def __init__(self) -> None:
+        self._cell = np.zeros((3, 3), dtype=float)
+        self.magnetic_atoms = {}
+        self.bonds = {}
+
+    @property
+    def cell(self):
+        r"""
+        3 x 3 matrix of lattice vectors in Angstrom. 
+
+        .. code-block:: python
 
             [[a_x  a_y  a_z],
              [b_x  b_y  b_z],
              [c_x  x_y  c_z]]
-
-    magnetic_atoms : dict
-       Dictionary with keys : str - marks of atoms and value : 1 x 3 np.ndarray
-       - coordinate of the atom in Angstroms.
-
-    bonds : dict
-        Dictionary of bonds. ::
-
-            {Atom_1: {Atom_2: {R: bond, ...}, ...}, ...}
-    """
-
-    def __init__(self) -> None:
-        self.cell = np.zeros((3, 3), dtype=float)
-        self.magnetic_atoms = {}
-        self.bonds = {}
-
-    def add_atom(self, name, x, y, z):
-        r"""
-        Add magnetic atom to the model.
-
-        Parameters
-        ----------
-        name : str
-            Mark for the atom. Note: if an atom with the same mark already
-            exists in ``magnetic_atoms`` then it will be rewritten.
-
-        x : int or float
-            x coordinate of the atom, in Angstroms.
-
-        y : int or float
-            y coordinate of the atom, in Angstroms.
-
-        z : int or float
-            z coordinate of the atom, in Angstroms.
         """
-        self.magnetic_atoms[name] = (float(x), float(y), float(z))
+        return self._cell
 
-    def remove_atom(self, name):
+    @cell.setter
+    def cell(self, new_cell):
+        new_cell = np.array(new_cell)
+        if new_cell.shape != (3, 3):
+            raise ValueError("Cell matrix shape have to be equal (3, 3)")
+        self._cell = new_cell
+
+    @property
+    def a(self):
         r"""
-        Remove magnetic atom from the model
-
-        Note: this method will remove atom from ``magnetic_atoms`` and all the
-        bonds, which starts or ends in this atom.
-
-        Parameters
-        ----------
-        name : str
-            Mark for the atom.
+        First lattice vector :math:`\vec{a} = (a_x, a_y, a_z)`.
         """
-        if name in self.magnetic_atoms:
-            del self.magnetic_atoms[name]
-        if name in self.bonds:
-            del self.bonds[name]
+
+        return self.cell[0]
+
+    @a.setter
+    def a(self, new_a):
+        new_a = np.array(new_a)
+        if new_a.shape != (3,):
+            raise ValueError("new_a is not a 3 component vector")
+        self._cell[0] = new_a
+
+    @property
+    def b(self):
+        r"""
+        Second lattice vector :math:`\vec{b} = (b_x, b_y, b_z)`.
+        """
+
+        return self.cell[1]
+
+    @b.setter
+    def b(self, new_b):
+        new_b = np.array(new_b)
+        if new_b.shape != (3,):
+            raise ValueError("new_b is not a 3 component vector")
+        self._cell[1] = new_b
+
+    @property
+    def c(self):
+        r"""
+        Third lattice vector :math:`\vec{b} = (b_x, b_y, b_z)`.
+        """
+
+        return self.cell[2]
+
+    @c.setter
+    def c(self, new_c):
+        new_c = np.array(new_c)
+        if new_c.shape != (3,):
+            raise ValueError("new_c is not a 3 component vector")
+        self._cell[2] = new_c
+
+    @property
+    def len_a(self):
+        r"""
+        Length of lattice vector :math:`\vec{a}`.
+        """
+        return sqrt(np.sum(self.cell[0]**2))
+
+    @property
+    def len_b(self):
+        r"""
+        Length of lattice vector :math:`\vec{b}`.
+        """
+        return sqrt(np.sum(self.cell[1]**2))
+
+    @property
+    def len_c(self):
+        r"""
+        Length of lattice vector :math:`\vec{c}`.
+        """
+        return sqrt(np.sum(self.cell[2]**2))
+
+    @property
+    def unit_cell_volume(self):
+        r"""
+        Volume of the unit cell.
+
+        .. math::
+
+            V = \delta_{\vec{A}}\cdot(\delta_{\vec{B}}\times 
+            \delta_{\vec{C}})
+        """
+
+        return np.dot(self.a, np.cross(self.b, self.c))
+
+    @property
+    def bond_list(self):
+        r"""
+        List of bonds from the model.
+
+        Returns
+        -------
+        bond_list : list
+            List with all the bonds from the model.
+
+            .. code-block:: python
+
+                [(atom1, atom2, R), ...]
+        """
+        bond_list = []
         for atom1 in self.bonds:
-            if name in self.bonds[atom1]:
-                del self.bonds[atom1][name]
+            for atom2 in self.bonds[atom1]:
+                for R in self.bonds[atom1][atom2]:
+                    bond_list.append((atom1, atom2, R))
+        return bond_list
 
-    def add_bond(self, bond, atom1, atom2, R):
+    @property
+    def cell_list(self):
+        r"""
+        List of cells from the model.
+
+        Return the list of R, specifying all cell that are present in the model.
+
+        Returns
+        -------
+        cells : list of tuples of ints
+            List of R.
+        """
+        cells = set()
+        for atom1 in self.bonds:
+            for atom2 in self.bonds[atom1]:
+                for R in self.bonds[atom1][atom2]:
+                    cells.add(R)
+        return list(cells)
+
+    def add_bond(self, bond: Bond, atom1, atom2, R):
         r"""
         Add one bond to the model.
 
@@ -319,74 +431,76 @@ class ExchangeModel:
             if not self.bonds[atom1]:
                 del self.bonds[atom1]
 
-    def get_lattice_vectors_length(self):
+    def add_atom(self, name, x, y, z):
         r"""
-        Getter for the lattice vectors length.
+        Add magnetic atom to the model.
 
-        Returns
-        -------
-        a : float
-            Length of lattice vector a.
-
-        b : float
-            Length of lattice vector b.
-
-        c : float
-            Length of lattice vector c.
+        Parameters
+        ----------
+        name : str
+            Mark for the atom. Note: if an atom with the same mark already
+            exists in ``magnetic_atoms`` then it will be rewritten.
+        x : int or float
+            x coordinate of the atom, in real space (Angstroms).
+        y : int or float
+            y coordinate of the atom, in real space (Angstroms).
+        z : int or float
+            z coordinate of the atom, in real space (Angstroms).
         """
-        a = np.sqrt(np.sum(self.cell[0]**2))
-        b = np.sqrt(np.sum(self.cell[1]**2))
-        c = np.sqrt(np.sum(self.cell[2]**2))
-        return a, b, c
+        self.magnetic_atoms[name] = np.array([x, y, z])
 
-    def get_atom_coordinates(self, atom1, atom2, R):
+    def remove_atom(self, name):
+        r"""
+        Remove magnetic atom from the model
+
+        Note: this method will remove atom from ``magnetic_atoms`` and all the
+        bonds, which starts or ends in this atom.
+
+        Parameters
+        ----------
+        name : str
+            Mark for the atom.
+        """
+        atoms_to_clear = []
+        if name in self.magnetic_atoms:
+            del self.magnetic_atoms[name]
+        if name in self.bonds:
+            del self.bonds[name]
+        for atom1 in self.bonds:
+            if name in self.bonds[atom1]:
+                del self.bonds[atom1][name]
+            if len(self.bonds[atom1]) == 0:
+                atoms_to_clear.append(atom1)
+        for atom in atoms_to_clear:
+            del self.bonds[atom]
+
+    def get_atom_coordinates(self, atom, R=(0, 0, 0)):
         r"""
         Getter for the pair of atom coordinates.
 
         Parameters
         ----------
-        atom1 : str
-            Name of atom1 in (0, 0, 0) unit cell.
-
-        atom2 : str
-            Name of atom2 in R unit cell.
-
-        R : tuple of ints
+        atom : str
+            Name of atom1 in R unit cell.
+        R : tuple of ints, default (0, 0, 0)
             Radius vector of the unit cell for atom2.
 
         Returns
         -------
-        x1 : float
-            x coordinate of atom1 in the cell (0 0 0).
-
-        y1 : float
-            y coordinate of atom1 in the cell (0 0 0).
-
-        z1 : float
-            z coordinate of atom1 in the cell (0 0 0).
-
-        x2 : float
-            x coordinate of atom2 in the cell R.
-
-        y2 : float
-            y coordinate of atom2 in the cell R.
-
-        z2 : float
-            z coordinate of atom2 in the cell R.
+        x : float
+            x coordinate of atom in the cell R.
+        y : float
+            y coordinate of atom in the cell R.
+        z : float
+            z coordinate of atom in the cell R.
         """
-        x1 = self.magnetic_atoms[atom1][0]
-        y1 = self.magnetic_atoms[atom1][1]
-        z1 = self.magnetic_atoms[atom1][2]
+        R_vector = np.sum((R * self.cell.T).T, axis=0)
+        x = R_vector[0] + self.magnetic_atoms[atom][0]
+        y = R_vector[1] + self.magnetic_atoms[atom][1]
+        z = R_vector[2] + self.magnetic_atoms[atom][2]
+        return x, y, z
 
-        x2 = np.sum((R * self.cell.T).T, axis=0)[0] +\
-            self.magnetic_atoms[atom2][0]
-        y2 = np.sum((R * self.cell.T).T, axis=0)[1] +\
-            self.magnetic_atoms[atom2][1]
-        z2 = np.sum((R * self.cell.T).T, axis=0)[2] +\
-            self.magnetic_atoms[atom2][2]
-        return x1, y1, z1, x2, y2, z2
-
-    def get_bond_coordinate(self, atom1, atom2, R):
+    def get_bond_coordinate(self, atom1, atom2, R=(0, 0, 0)):
         r"""
         Getter for the middle point of the bond.
 
@@ -394,94 +508,63 @@ class ExchangeModel:
         ----------
         atom1 : str
             Name of atom1 in (0, 0, 0) unit cell.
-
         atom2 : str
             Name of atom2 in R unit cell.
-
-        R : tuple of ints
+        R : tuple of ints, default (0, 0, 0)
             Radius vector of the unit cell for atom2.
 
         Returns
         -------
         x : float
             x coordinate of the point in the middle of bond.
-
         y : float
             y coordinate of the point in the middle of bond.
-
         z : float
             z coordinate of the point in the middle of bond.
-
         """
-        x1, y1, z1, x2, y2, z2 = self.get_atom_coordinates(atom1, atom2, R)
+
+        x1, y1, z1 = self.get_atom_coordinates(atom1)
+        x2, y2, z2 = self.get_atom_coordinates(atom2, R)
 
         return (x1 + x2) / 2, (y1 + y2) / 2, (z1 + z2) / 2
 
-    def get_space_dimensions(self):
+    @property
+    def space_dimensions(self):
         r"""
-        Getter for the sample size.
+        Model minimum and maximum coordiantes.
 
-        Return the maximum coordinate for all 3 axes.
-        Maximumm is taken for all directions.
+        Return the maximum and minimum coordinates for all 3 axes.
+        Takes into account only the atoms which have at least one bond.
 
         Returns
         -------
-        X : float
+        x_min : float
+            Minimum x coordinate.
+        y_min : float
+            Minimum y coordinate.
+        z_min : float
+            Minimum z coordinate.
+        x_max : float
             Maximum x coordinate.
-
-        Y : float
+        y_max : float
             Maximum y coordinate.
-
-        Z : float
+        z_max : float
             Maximum z coordinate.
         """
-        X, Y, Z = 0, 0, 0
+        x_max, y_max, z_max = -10E10, -10E10, -10E10
+        x_min, y_min, z_min = 10E10, 10E10, 10E10
         for atom1 in self.bonds:
             for atom2 in self.bonds[atom1]:
                 for R in self.bonds[atom1][atom2]:
-                    x1, y1, z1, x2, y2, z2 = self.get_atom_coordinates(atom1,
-                                                                       atom2,
-                                                                       R)
-                    X = max(abs(x1), abs(x2), X)
-                    Y = max(abs(y1), abs(y2), Y)
-                    Z = max(abs(z1), abs(z2), Z)
-        return X, Y, Z
-
-    def get_cells(self):
-        r"""
-        Getter for the list of cells.
-
-        Return the list of R, specifying all cell that are present in the model.
-
-        Returns
-        -------
-        cells : list of tuples of ints
-            List of R.
-        """
-        cells = set()
-        for atom1 in self.bonds:
-            for atom2 in self.bonds[atom1]:
-                for R in self.bonds[atom1][atom2]:
-                    cells.add(R)
-        return list(cells)
-
-    def get_bond_list(self):
-        r"""
-        Getter for the list of bonds from the model.
-
-        Returns
-        -------
-        bond_list : list
-            List with all the bonds from the model.::
-
-                [(atom1, atom2, R), ...]
-        """
-        bond_list = []
-        for atom1 in self.bonds:
-            for atom2 in self.bonds[atom1]:
-                for R in self.bonds[atom1][atom2]:
-                    bond_list.append((atom1, atom2, R))
-        return bond_list
+                    x1, y1, z1 = self.get_atom_coordinates(atom1)
+                    x2, y2, z2 = self.get_atom_coordinates(atom2, R)
+                    x_max = max(x1, x2, x_max)
+                    y_max = max(y1, y2, y_max)
+                    z_max = max(z1, z2, z_max)
+                    x_min = min(x1, x2, x_min)
+                    y_min = min(y1, y2, y_min)
+                    z_min = min(z1, z2, z_min)
+        return x_min, y_min, z_min, x_max, y_max, z_max
 
     # TODO It is ugly, redo in a beautifull way.
     def remove_double_bonds(self):
@@ -490,9 +573,11 @@ class ExchangeModel:
 
         If for atom pair atom1, atom2 exist bond 1-2 and 2-1 they will be merged.
         All values will be calcuated as (1-2 + 2-1) / 2.
-        Note: this method is not modifying the instance at which it is called.
-        It will create a new instance with sorted ``bonds`` and all the other
-        attributes will be copied (through deepcopy).
+
+        .. note::
+            This method is not modifying the instance at which it is called.
+            It will create a new instance with merged ``bonds`` and all the other
+            attributes will be copied (through deepcopy).
 
         Returns
         -------
@@ -907,7 +992,7 @@ class ExchangeModelTB2J(ExchangeModel):
         filtered_model.bonds = result.bonds
         filtered_model.cell = result.cell
         filtered_model.magnetic_atoms = result.magnetic_atoms
-        bond_list = set(filtered_model.get_bond_list())
+        bond_list = set(filtered_model.bond_list)
         for key in self.file_order:
             if key in bond_list:
                 filtered_model.file_order.append(key)

@@ -46,7 +46,9 @@ def plot_2d(filename, out_dir='.',
         model = model.remove_double_bonds()
         dummy = False
         ha = 'center'
-    X, Y, Z = model.get_space_dimensions()
+    x_min, y_min, z_min, x_max, y_max, z_max = model.space_dimensions
+    X = max(abs(x_min), abs(x_max))
+    Y = max(abs(y_min), abs(y_max))
     if X == 0 and Y == 0:
         X = Y = 1
     linewidth = 1
@@ -74,9 +76,8 @@ def plot_2d(filename, out_dir='.',
         for atom2 in model.bonds[atom1]:
             for R in model.bonds[atom1][atom2]:
                 bond = model.bonds[atom1][atom2][R]
-                x1, y1, z1, x2, y2, z2 = model.get_atom_coordinates(atom1,
-                                                                    atom2,
-                                                                    R)
+                x1, y1, z1 = model.get_atom_coordinates(atom1)
+                x2, y2, z2 = model.get_atom_coordinates(atom2, R)
                 xm = (x1 + x2) / 2
                 ym = (y1 + y2) / 2
                 zm = (z1 + z2) / 2
@@ -113,7 +114,7 @@ def plot_2d(filename, out_dir='.',
     ylims = (ax.get_ylim()[0] - 0.5, ax.get_ylim()[1] + 0.5)
 
     if draw_cells:
-        cells = model.get_cells()
+        cells = model.cell_list
         a_x, a_y, a_z = tuple(model.cell[0])
         b_x, b_y, b_z = tuple(model.cell[1])
         Rx_min = 0

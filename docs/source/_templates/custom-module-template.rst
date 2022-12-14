@@ -1,4 +1,4 @@
-{{ fullname | escape | underline}}
+{{ name | escape | underline}}
 
 .. automodule:: {{ fullname }}
    :show-inheritance: 
@@ -21,6 +21,7 @@
 
    .. autosummary::
       :toctree:
+      :template: custom-function-template.rst
    {% for item in functions %}
       {{ item }}
    {%- endfor %}
