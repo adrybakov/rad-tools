@@ -10,14 +10,18 @@ class Bond:
     r"""
     Exchange bond.
 
+    If ``matrix`` is specified then ``iso``, ``aniso`` and ``dmi`` will 
+    be ignored and derived from ``matrix``. If ``matrix`` is not specified 
+    then it will be derived from ``iso``, ``aniso`` and ``dmi``.
+
     Parameters
     ----------
     iso : int or float, default None
-        Value of isotropic exchange parameter in meV. 
+        Value of isotropic exchange parameter in meV.
     aniso : 3 x 3 array, None
-        3 x 3 matrix of symmetric anisotropic exchange in meV. 
+        3 x 3 matrix of symmetric anisotropic exchange in meV.
     dmi : 3 x 1 array, None
-        Dzyaroshinsky-Moria interaction vector :math:`(D_x, D_y, D_z)` in meV. 
+        Dzyaroshinsky-Moria interaction vector :math:`(D_x, D_y, D_z)` in meV.
     matrix : 3 x 3 array, None
         Exchange matrix in meV. If ``matrix`` is specified then ``iso`` ,
         ``aniso`` and ``dmi`` will be ignored and derived from ``matrix`` .
@@ -28,54 +32,26 @@ class Bond:
 
     Attributes
     ----------
-    iso : float
-        Value of isotropic exchange parameter in meV. If ``iso`` is
-        not specified then it will be 0.
-
-        Matrix form: ::
-
-            [[J, 0, 0],
-             [0, J, 0],
-             [0, 0, J]]
-    aniso : 3 x 3 array of floats
-        3 x 3 matrix of symmetric anisotropic exchange in meV. If ``aniso``
-        is not specified then it will be filled with zeros.
-
-        Matrix form: ::
-
-            [[J_xx, J_xy, J_xz],
-             [J_xy, J_yy, J_yz],
-             [J_xz, J_yz, J_zz]]
-    dmi : 3 x 1 array of floats
-        Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz) in meV. If ``dmi``
-        is not specified then it will be filled with zeros.
-
-        Vector form: ::
-
-            [D_x, D_y, D_z]
-
-        Matrix form: ::
-
-            [[0, D_z, -D_y],
-             [-D_z, 0, D_x],
-             [D_y, -D_x, 0]]
     matrix : 3 x 3 array of floats
-        Exchange matrix in meV. If ``matrix`` is specified then ``iso`` ,
-        ``aniso`` and ``dmi`` will be ignored and derived from ``matrix`` .
-        If ``matrix`` is not specified then it will be derived from
-        ``iso`` , ``aniso`` and ``dmi`` .
+        Exchange matrix in meV. 
 
-        Matrix form ::
+        Matrix form 
+
+        .. code-block:: python
 
             [[J_xx, J_xy, J_xz],
              [J_yx, J_yy, J_yz],
              [J_zx, J_zy, J_zz]]
+
+    iso : float
+    aniso : 3 x 3 array of floats
+    dmi : 3 x 1 array of floats
     dis : float
         Length of the bond.
     symm_matrix : 3 x 3 array of floats
-        Symmetric part of exchange matrix.
     asymm_matrix : 3 x 3 array of floats
-        Asymmetric part of exchange matrix.
+    dmi_module : float
+    dmi_vs_iso : float
     """
 
     distance_tolerance = 1E-10
@@ -117,14 +93,39 @@ class Bond:
 
     @property
     def symm_matrix(self):
+        r"""
+        Symmetric part of exchange matrix.
+        """
+
         return (self.matrix + self.matrix.T) / 2
 
     @property
     def asymm_matrix(self):
+        """
+        Asymmetric part of exchange matrix.
+        """
+
         return (self.matrix - self.matrix.T) / 2
 
     @property
     def iso(self):
+        r"""
+        Value of isotropic exchange parameter in meV. 
+        If ``iso`` is not specified then it will be 0.
+
+        Matrix form: 
+
+        .. code-block:: python
+
+            [[J, 0, 0],
+             [0, J, 0],
+             [0, 0, J]]
+
+        Derived from the exchange matrix (:math:`\mathbf{J}`) as 
+
+        .. math::
+            J_{iso} = \dfrac{1}{3}Tr(\mathbf{J})
+        """
         return np.trace(self.symm_matrix) / 3
 
     @iso.setter
@@ -139,6 +140,22 @@ class Bond:
 
     @property
     def aniso(self):
+        r"""
+        3 x 3 matrix of symmetric anisotropic exchange in meV. 
+
+        Matrix form: 
+
+        .. code-block:: python
+
+            [[J_xx, J_xy, J_xz],
+             [J_xy, J_yy, J_yz],
+             [J_xz, J_yz, J_zz]]
+
+        Derived from the exchange matrix (:math:`\mathbf{J}`) as 
+
+        .. math::
+            J_{aniso} = \mathbf{J}_{symm} - \dfrac{1}{3}Tr(\mathbf{J})
+        """
         return self.symm_matrix - self.iso * np.identity(3, dtype=float)
 
     @aniso.setter
@@ -155,6 +172,25 @@ class Bond:
 
     @property
     def dmi(self):
+        r"""
+        Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz) in meV. 
+
+        Vector form: 
+
+        .. code-block:: python
+
+            [D_x, D_y, D_z]
+
+        Matrix form: 
+
+        .. code-block:: python
+
+            [[0, D_z, -D_y],
+             [-D_z, 0, D_x],
+             [D_y, -D_x, 0]]
+
+        Derived from antisymmetric part of exchange matrix (:math:`\mathbf{J}`).
+        """
         return np.array([self.asymm_matrix[1][2],
                          self.asymm_matrix[2][0],
                          self.asymm_matrix[0][1]],
@@ -176,6 +212,26 @@ class Bond:
                               dtype=float)
         self.matrix = self.matrix + dmi_matrix
 
+    @property
+    def dmi_module(self):
+        r"""
+        Length of the DMI vector in th e units of exchange interaction.
+        """
+
+        return sqrt(np.sum(self.dmi**2))
+
+    @property
+    def dmi_vs_iso(self):
+        r"""
+        Relative strength of DMI.
+
+        .. math::
+
+            \dfrac{\vert\vec{D}\vert}{\vert J_{iso}\vert}
+        """
+        return abs(self.dmi_module/self.iso)
+
+    @property
     def __add__(self, other):
         if isinstance(other, Bond):
             if abs(self.dis - other.dis) < self.distance_tolerance:
@@ -222,7 +278,7 @@ class ExchangeModel:
        Dictionary with keys : str - marks of atoms and value : 1 x 3 np.ndarray
        - coordinate of the atom in Angstroms.
     bonds : dict
-        Dictionary of bonds. 
+        Dictionary of bonds.
 
         .. code-block:: python
 
@@ -248,7 +304,7 @@ class ExchangeModel:
     @property
     def cell(self):
         r"""
-        3 x 3 matrix of lattice vectors in Angstrom. 
+        3 x 3 matrix of lattice vectors in Angstrom.
 
         .. code-block:: python
 
@@ -338,7 +394,7 @@ class ExchangeModel:
 
         .. math::
 
-            V = \delta_{\vec{A}}\cdot(\delta_{\vec{B}}\times 
+            V = \delta_{\vec{A}}\cdot(\delta_{\vec{B}}\times
             \delta_{\vec{C}})
         """
 
@@ -584,19 +640,24 @@ class ExchangeModel:
         undoubled_model : ExchangeModel
             Exchange model after reoving double bonds.
         """
-        unbounded_model = deepcopy(self)
+
+        pairs = []
+
         for atom1 in self.bonds:
             for atom2 in self.bonds[atom1]:
-                if atom1 in unbounded_model.bonds and\
-                   atom2 in unbounded_model.bonds[atom1] and\
-                   (0, 0, 0) in unbounded_model.bonds[atom1][atom2] and\
-                   atom2 in unbounded_model.bonds and\
-                   atom1 in unbounded_model.bonds[atom2] and\
-                   (0, 0, 0) in unbounded_model.bonds[atom2][atom1]:
-                    unbounded_model.bonds[atom1][atom2][(0, 0, 0)] = (unbounded_model.bonds[atom1][atom2][(0, 0, 0)] +
-                                                                      unbounded_model.bonds[atom2][atom1][(0, 0, 0)]) * 0.5
-                    unbounded_model.remove_bond(atom2, atom1, (0, 0, 0))
-        return unbounded_model
+                for R in self.bonds[atom1][atom2]:
+                    R_mirror = (-R[0], -R[1], -R[2])
+                    if (atom2 in self.bonds
+                        and atom1 in self.bonds[atom2]
+                            and R_mirror in self.bonds[atom2][atom1]):
+                        pairs.append((atom1, atom2, R),
+                                     (atom2, atom1, R_mirror))
+
+        for bond1, bond2 in pairs:
+            atom1, atom2, R = bond1
+            bond1 = self.bonds[atom1][atom2][R]
+            atom2, atom1, R_mirror = bond2
+            bond2 = self.bonds[atom2][atom1][R_mirror]
 
     def filter(self,
                max_distance=None,
