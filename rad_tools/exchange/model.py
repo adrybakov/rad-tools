@@ -231,7 +231,6 @@ class Bond:
         """
         return abs(self.dmi_module/self.iso)
 
-    @property
     def __add__(self, other):
         if isinstance(other, Bond):
             if abs(self.dis - other.dis) < self.distance_tolerance:
@@ -297,7 +296,7 @@ class ExchangeModel:
     """
 
     def __init__(self) -> None:
-        self._cell = np.zeros((3, 3), dtype=float)
+        self._cell = np.identity(3, dtype=float)
         self.magnetic_atoms = {}
         self.bonds = {}
 
@@ -311,6 +310,8 @@ class ExchangeModel:
             [[a_x  a_y  a_z],
              [b_x  b_y  b_z],
              [c_x  x_y  c_z]]
+
+        Default cell is orthonormal.
         """
         return self._cell
 
@@ -319,6 +320,8 @@ class ExchangeModel:
         new_cell = np.array(new_cell)
         if new_cell.shape != (3, 3):
             raise ValueError("Cell matrix shape have to be equal (3, 3)")
+        if np.linalg.det(new_cell) == 0:
+            raise ValueError("Lattice vectors are complanar.")
         self._cell = new_cell
 
     @property
@@ -556,7 +559,7 @@ class ExchangeModel:
         z = R_vector[2] + self.magnetic_atoms[atom][2]
         return x, y, z
 
-    def get_bond_coordinate(self, atom1, atom2, R=(0, 0, 0)):
+    def get_bond_coordinates(self, atom1, atom2, R=(0, 0, 0)):
         r"""
         Getter for the middle point of the bond.
 
@@ -622,10 +625,67 @@ class ExchangeModel:
                     z_min = min(z1, z2, z_min)
         return x_min, y_min, z_min, x_max, y_max, z_max
 
-    # TODO It is ugly, redo in a beautifull way.
     def remove_double_bonds(self):
         r"""
         Remove double bonds.
+
+        If for atom pair atom1, atom2 exist bond 1-2 and 2-1 they will be merged.
+        All values will be calcuated as (1-2 + 2-1) / 2.
+
+        .. note::
+            This method is modifying the instance at which it is called.
+        """
+
+        pairs = set()
+
+        for atom1 in self.bonds:
+            for atom2 in self.bonds[atom1]:
+                for R in self.bonds[atom1][atom2]:
+                    R_mirror = (-R[0], -R[1], -R[2])
+                    if (atom2 in self.bonds
+                        and atom1 in self.bonds[atom2]
+                            and R_mirror in self.bonds[atom2][atom1]):
+                        if ((atom2, atom1, R_mirror),
+                                (atom1, atom2, R)) not in pairs:
+                            pairs.add(((atom1, atom2, R),
+                                       (atom2, atom1, R_mirror)))
+        pairs = list(pairs)
+        for bond1, bond2 in pairs:
+            atom1, atom2, R = bond1
+            bond1 = self.bonds[atom1][atom2][R]
+            atom2, atom1, R_mirror = bond2
+            bond2 = self.bonds[atom2][atom1][R_mirror]
+
+            flip = False
+            index = 0
+            if R[0] == 0:
+                if R[1] == 0:
+                    if R[2] == 0:
+                        x1, y1, z1 = self.get_atom_coordinates(atom1)
+                        x2, y2, z2 = self.get_atom_coordinates(atom2)
+                        x = x2 - x1
+                        y = y2 - y1
+                        z = z2 - z1
+                        if x < 0:
+                            flip = True
+                        elif x == 0 and y < 0:
+                            flip = True
+                        elif x == 0 and y == 0 and z < 0:
+                            flip = True
+                    else:
+                        index = 2
+                else:
+                    index = 1
+            if R[index] < R_mirror[index] or flip:
+                R, R_mirror = R_mirror, R
+                atom1, atom2 = atom2, atom1
+            bond = (bond1 + bond2) / 2
+            self.remove_bond(atom2, atom1, R_mirror)
+            self.bonds[atom1][atom2][R] = bond
+
+    def removed_double_bonds(self):
+        r"""
+        Remove double bonds and create a new model.
 
         If for atom pair atom1, atom2 exist bond 1-2 and 2-1 they will be merged.
         All values will be calcuated as (1-2 + 2-1) / 2.
@@ -641,23 +701,9 @@ class ExchangeModel:
             Exchange model after reoving double bonds.
         """
 
-        pairs = []
-
-        for atom1 in self.bonds:
-            for atom2 in self.bonds[atom1]:
-                for R in self.bonds[atom1][atom2]:
-                    R_mirror = (-R[0], -R[1], -R[2])
-                    if (atom2 in self.bonds
-                        and atom1 in self.bonds[atom2]
-                            and R_mirror in self.bonds[atom2][atom1]):
-                        pairs.append((atom1, atom2, R),
-                                     (atom2, atom1, R_mirror))
-
-        for bond1, bond2 in pairs:
-            atom1, atom2, R = bond1
-            bond1 = self.bonds[atom1][atom2][R]
-            atom2, atom1, R_mirror = bond2
-            bond2 = self.bonds[atom2][atom1][R_mirror]
+        unbounded_model = deepcopy(self)
+        unbounded_model.remove_double_bonds()
+        return unbounded_model
 
     def filter(self,
                max_distance=None,

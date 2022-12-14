@@ -258,7 +258,7 @@ def plot_molecule(filename, out_dir='.',
     for atom1 in model.bonds:
         for atom2 in model.bonds[atom1]:
             for R in model.bonds[atom1][atom2]:
-                xa, ya, za = model.get_bond_coordinate(atom1, atom2, R)
+                xa, ya, za = model.get_bond_coordinates(atom1, atom2, R)
                 d = get_distance(x, y, z, xa, ya, za)
                 bond = model.bonds[atom1][atom2][R]
                 data[0].append(d)
