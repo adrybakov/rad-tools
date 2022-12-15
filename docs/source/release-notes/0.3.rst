@@ -3,6 +3,9 @@
 ***********
 Version 0.3
 ***********
+
+Whats new?
+----------
 Add script :ref:`identify-wannier-centres.py<identify-wannier-centres>`
 
 0.3.4

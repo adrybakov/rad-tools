@@ -1,3 +1,7 @@
+r"""
+Exchange model.
+"""
+
 from copy import deepcopy
 from math import sqrt
 
@@ -828,7 +832,7 @@ class ExchangeModel:
 
     def summary_as_txt(self, template: ExchangeTemplate,
                        dmi_verbose=False, verbose=False):
-        """
+        r"""
         Return exchange model based on the template file in .txt format.
 
         Parameters
@@ -946,7 +950,7 @@ class ExchangeModel:
         return summary
 
     def summary_as_py(self, template: ExchangeTemplate):
-        """
+        r"""
         Return exchange model based on the template file in .py format.
 
         For the format see :ref:`tb2j-extractor_verbose-ref`.
@@ -1012,112 +1016,3 @@ class ExchangeModel:
                    output_python_dmi +
                    output_python_matrix)
         return summary
-
-
-# TODO move to input-output in the form of a function
-class ExchangeModelTB2J(ExchangeModel):
-    r"""
-    Class containing the exchange model extracted from TB2J output file.
-
-    Parameters
-    ----------
-
-    filename : str
-        Path to the TB2J output file.
-    """
-
-    # Flags for reading from TB2J file
-    _major_sep = '=' * 90
-    _minor_sep = '-' * 88
-    _garbage = str.maketrans({'(': None,
-                              ')': None,
-                             '[': None,
-                              ']': None,
-                              ',': None,
-                              '\'': None})
-    _cell_flag = 'Cell (Angstrom):'
-    _atoms_flag = 'Atoms:'
-    _atom_end_flag = 'Total'
-    _exchange_flag = 'Exchange:'
-    _iso_flag = 'J_iso:'
-    _aniso_flag = 'J_ani:'
-    _dmi_flag = 'DMI:'
-
-    # Store info about all atoms, not only magnetic ones
-    # {mark: (x, y, z), ...}
-    _atoms = {}
-
-    def __init__(self, filename) -> None:
-        super().__init__()
-        file = open(filename, 'r')
-        line = True
-        self.file_order = []
-
-        # Read everything before exchange
-        while line:
-            line = file.readline()
-
-            # Read cell
-            if line and self._cell_flag in line:
-                self.cell = np.array([
-                    list(map(float, file.readline().split())),
-                    list(map(float, file.readline().split())),
-                    list(map(float, file.readline().split()))
-                ])
-
-            # Read atoms
-            if line and self._atoms_flag in line:
-                line = file.readline()
-                line = file.readline()
-                line = file.readline().split()
-                while line and self._atom_end_flag not in line:
-                    self._atoms[line[0]] = tuple(map(float, line[1:4]))
-                    line = file.readline().split()
-
-            # Check if the exchange section is reached
-            if line and self._exchange_flag in line:
-                break
-
-        # Read exchange
-        while line:
-            while line and self._minor_sep not in line:
-                line = file.readline()
-            line = file.readline().translate(self._garbage).split()
-            atom1 = line[0]
-            atom2 = line[1]
-            R = tuple(map(int, line[2:5]))
-            self.file_order.append((atom1, atom2, R))
-            distance = float(line[-1])
-            iso = None,
-            aniso = None
-            dmi = None
-            while line and self._minor_sep not in line:
-                line = file.readline()
-
-                # Read isotropic exchange
-                if line and self._iso_flag in line:
-                    iso = float(line.split()[-1])
-
-                # Read anisotropic exchange
-                if line and self._aniso_flag in line:
-                    aniso = np.array([
-                        list(map(float, file.readline().translate(
-                            self._garbage).split())),
-                        list(map(float, file.readline().translate(
-                            self._garbage).split())),
-                        list(map(float, file.readline().translate(
-                            self._garbage).split()))
-                    ])
-
-                # Read DMI
-                if line and self._dmi_flag in line:
-                    dmi = tuple(map(float, line.translate(
-                        self._garbage).split()[-3:]))
-
-            # Adding info from the exchange block to the ExchangeModel structure
-            if atom1 not in self.magnetic_atoms:
-                self.add_atom(atom1, *self._atoms[atom1])
-            if atom2 not in self.magnetic_atoms:
-                self.add_atom(atom2, *self._atoms[atom2])
-            bond = Bond(iso=iso, aniso=aniso, dmi=dmi, distance=distance)
-            self.add_bond(bond, atom1, atom2, R)

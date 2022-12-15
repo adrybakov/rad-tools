@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 import matplotlib as mpl
 import numpy as np
 
-from rad_tools.exchange.model import ExchangeModelTB2J
+from rad_tools.io.tb2j import read_exchange_model
 from rad_tools.routines import atom_mark_to_latex, rot_angle, OK, RESET
 
 
@@ -24,7 +24,6 @@ def plot_2d(filename, out_dir='.',
             double_bonds=False,
             scale_atoms=1,
             scale_data=1,
-            atoms=None,
             title=None):
 
     mode_name = "2d"
@@ -32,13 +31,11 @@ def plot_2d(filename, out_dir='.',
                 "distance": "distances",
                 "dmi": "dmi"}
 
-    model = ExchangeModelTB2J(filename)
+    model = read_exchange_model(filename)
     model.filter(min_distance=min_distance,
                  max_distance=max_distance,
                  R_vector=R_vector,
                  template=template)
-    if atoms is None:
-        atoms = model.magnetic_atoms
 
     dummy = True
     ha = 'right'
@@ -164,123 +161,6 @@ def plot_2d(filename, out_dir='.',
     print(f'{OK}{mode_name} plot with {wtp} is in {abspath(png_path)}{RESET}')
 
 
-def get_molecule_center(atoms, exclude_atoms):
-    filtered_atoms = {}
-    for atom in atoms:
-        keep = True
-        for exclude_atom in exclude_atoms:
-            if exclude_atom in atom:
-                keep = False
-                break
-        if keep:
-            filtered_atoms[atom] = atoms[atom]
-    atoms = filtered_atoms
-    x_min, y_min, z_min = None, None, None
-    x_max, y_max, z_max = None, None, None
-    for atom in atoms:
-        x, y, z = atoms[atom]
-
-        if x_min is None:
-            x_min = x
-        else:
-            x_min = min(x, x_min)
-        if y_min is None:
-            y_min = y
-        else:
-            y_min = min(y, y_min)
-        if z_min is None:
-            z_min = z
-        else:
-            z_min = min(z, z_min)
-
-        if x_max is None:
-            x_max = x
-        else:
-            x_max = max(x, x_max)
-        if y_max is None:
-            y_max = y
-        else:
-            y_max = max(y, y_max)
-        if z_max is None:
-            z_max = z
-        else:
-            z_max = max(z, z_max)
-            return (x_min + x_max) / 2, (y_min + y_max) / 2, (z_min + z_max) / 2
-
-
-def get_distance(x1, y1, z1, x2, y2, z2):
-    return sqrt((x2 - x1)**2 + (y2-y1)**2 + (z2-z1)**2)
-
-
-def plot_molecule(filename, out_dir='.',
-                  out_name='exchange',
-                  wtp='iso',
-                  draw_cells=False,
-                  min_distance=None,
-                  max_distance=None,
-                  template=None,
-                  R_vector=None,
-                  double_bonds=False,
-                  scale_atoms=1,
-                  scale_data=1,
-                  atoms=None,
-                  title=None):
-
-    mpl.rcParams.update(mpl.rcParamsDefault)
-    mode_name = "molecule"
-    messages = {'iso': "isotropic exchange",
-                "distance": "distances"}
-
-    model = ExchangeModelTB2J(filename)
-    model.filter(min_distance=min_distance,
-                 max_distance=max_distance,
-                 R_vector=R_vector,
-                 template=template)
-
-    if atoms is None:
-        atoms = model.magnetic_atoms
-
-    fig, ax = plt.subplots()
-
-    ax.set_xlabel('Distance to the molecule center, Angstroms')
-    if wtp == 'iso':
-        ax.set_ylabel('Isotropic exchange parameter, meV')
-    elif wtp == 'distance':
-        ax.set_ylabel('Bond length, Angstroms')
-    elif wtp == 'dmi':
-        ax.set_ylabel('|DMI|, meV')
-
-    data = [[], []]
-    x, y, z = get_molecule_center(model._atoms, atoms)
-    print(f"{OK}Molecule center is detected at "
-          f"({round(x, 4)}, {round(y, 4)}, {round(z, 4)}){RESET}")
-
-    for atom1 in model.bonds:
-        for atom2 in model.bonds[atom1]:
-            for R in model.bonds[atom1][atom2]:
-                xa, ya, za = model.get_bond_coordinates(atom1, atom2, R)
-                d = get_distance(x, y, z, xa, ya, za)
-                bond = model.bonds[atom1][atom2][R]
-                data[0].append(d)
-                if wtp == 'iso':
-                    data[1].append(bond.iso)
-                elif wtp == 'distance':
-                    data[1].append(bond.dis)
-                elif wtp == 'dmi':
-                    data[1].append(sqrt(np.sum(bond.dmi**2)))
-    data = np.array(data).T.tolist()
-
-    data.sort(key=lambda x: x[0])
-    data = np.array(data).T.tolist()
-    ax.plot(data[0], data[1], "o-", color="black")
-    if title is not None:
-        ax.set_title(title, fontsize=15)
-
-    png_path = join(out_dir, f'{out_name}.{mode_name}.{wtp}.png')
-    plt.savefig(png_path, dpi=400)
-    print(f'{OK}{mode_name} plot with {wtp} is in {abspath(png_path)}{RESET}')
-
-
 if __name__ == '__main__':
     parser = ArgumentParser(
         description="Script for visualisation of TB2J results",
@@ -290,7 +170,6 @@ if __name__ == '__main__':
                """)
 
     plot_data_type = ['iso', 'distance', 'dmi']
-    plot_mode = {"2d": plot_2d, "molecule": plot_molecule}
 
     parser.add_argument("-f", "--filename",
                         type=str,
@@ -298,22 +177,6 @@ if __name__ == '__main__':
                         help="""
                         Relative or absulute path to the *exchange.out* file,
                         including the name and extention of the file itself.
-                        """
-                        )
-    parser.add_argument("-m", "--mode",
-                        type=str,
-                        default="2d",
-                        choices=["all", "2d", "molecule"],
-                        help="""
-                        Mode of plotting.
-                        """
-                        )
-    parser.add_argument("-a", "--atoms",
-                        type=str,
-                        default=None,
-                        nargs="*",
-                        help="""
-                        Atoms from the substrate.
                         """
                         )
     parser.add_argument("-op", "--output-dir",
@@ -423,24 +286,18 @@ if __name__ == '__main__':
 
     if args.what_to_plot != 'all':
         plot_data_type = [args.what_to_plot]
-    if args.mode != 'all':
-        plot_mode = [plot_mode[key] for key in [args.mode]]
-    else:
-        plot_mode = [plot_mode[key] for key in plot_mode]
 
-    for mode in plot_mode:
-        for data_type in plot_data_type:
-            mode(filename=args.filename,
-                 out_dir=args.output_dir,
-                 out_name=args.output_name,
-                 wtp=data_type,
-                 draw_cells=args.draw_cells,
-                 min_distance=args.min_distance,
-                 max_distance=args.max_distance,
-                 template=args.template,
-                 R_vector=args.R_vector,
-                 double_bonds=args.double_bonds,
-                 scale_atoms=args.scale_atoms,
-                 scale_data=args.scale_data,
-                 atoms=args.atoms,
-                 title=args.title)
+    for data_type in plot_data_type:
+        plot_2d(filename=args.filename,
+                out_dir=args.output_dir,
+                out_name=args.output_name,
+                wtp=data_type,
+                draw_cells=args.draw_cells,
+                min_distance=args.min_distance,
+                max_distance=args.max_distance,
+                template=args.template,
+                R_vector=args.R_vector,
+                double_bonds=args.double_bonds,
+                scale_atoms=args.scale_atoms,
+                scale_data=args.scale_data,
+                title=args.title)

@@ -2,33 +2,24 @@ import os
 
 import pytest
 
-from rad_tools.exchange.template import ExchangeTemplate
+from rad_tools.io.internal import *
 
 
-class TestInputFilename():
+class ReadTemplate():
+
+    template = read_template(os.path.join('utest',
+                                          'test_io',
+                                          'resourses',
+                                          'exchange.out'))
 
     def test_empty_filename(self):
         with pytest.raises(TypeError):
-            tmp_model = ExchangeTemplate(None)
+            template = read_template(None)
 
     def test_wrong_filename(self):
         with pytest.raises(FileNotFoundError):
-            tmp_model = ExchangeTemplate(
-                "Ah, music. A magic beyond all we do here!")
-
-    def test_correct_filename(self):
-        tmp_model = ExchangeTemplate(os.path.join(
-            'utest', 'exchange', 'resourses', 'exchange.out'))
-
-
-class TestExchangeTemplate:
-
-    tmp_model = ExchangeTemplate(os.path.join(
-        'utest', 'exchange', 'resourses', 'template.txt'
-    ))
-
-
-class TestReadFunctions(TestExchangeTemplate):
+            template = read_template("Ah, music. " +
+                                     "A magic beyond all we do here!")
 
     def count_entries(self, dictionary):
         i = 0
@@ -37,17 +28,17 @@ class TestReadFunctions(TestExchangeTemplate):
         return i
 
     def test_read_neighbors(self):
-        assert self.count_entries(self.tmp_model.names) == 28
-        assert self.tmp_model.latex_names == {'J1': '$J_1$',
-                                              'J1(1)': '$J_1(1)$',
-                                              'J1(2)': '$J_1(2)$',
-                                              'J2': 'J2',
-                                              'J2(1)': '$J_2(1)$',
-                                              'J2(2)': '$J_2(2)$',
-                                              'J3': '$J_3$'}
+        assert self.count_entries(self.template.names) == 28
+        assert self.template.latex_names == {'J1': '$J_1$',
+                                             'J1(1)': '$J_1(1)$',
+                                             'J1(2)': '$J_1(2)$',
+                                             'J2': 'J2',
+                                             'J2(1)': '$J_2(1)$',
+                                             'J2(2)': '$J_2(2)$',
+                                             'J3': '$J_3$'}
 
     def test_template(self):
-        assert self.tmp_model.names == {'J1': [
+        assert self.template.names == {'J1': [
             ('Cr1', 'Cr1', (1, 0, 0)),
             ('Cr1', 'Cr1', (-1, 0, 0)),
             ('Cr2', 'Cr2', (1, 0, 0)),
@@ -92,4 +83,4 @@ class TestReadFunctions(TestExchangeTemplate):
             ('Cr2', 'Cr2', (0, -1, 0))
         ]
         }
-        assert len(self.tmp_model.get_list()) == 28
+        assert len(self.template.get_list()) == 28

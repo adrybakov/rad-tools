@@ -1,0 +1,35 @@
+.. _release-notes_0.4:
+
+***********
+Version 0.4
+***********
+
+Whats new?
+----------
+Refractor most of the code. 
+Move input in the separate submodule.
+Remove molecule plot type from :ref:`tb2j-plotter.py <tb2j-plotter>` script.
+
+Major change in the logic of reading exchang files and templates. 
+Instead of using the class to load the file as before:
+
+.. code-block:: python
+
+    from rad_tools.exchange.model import ExchangeModelTB2J
+    from rad_tools.exchange.template import ExchangeTemplate
+
+    model = ExchangeModelTB2J(filename)
+    template = ExchangeTemplate(template_filename)
+
+Now one need to use read functions from input-output module:
+
+.. code-block:: python
+
+    from rad_tools.io.tb2j import read_exchange_model
+    from rad_tools.io.internal import read_template
+
+    model = read_exchange_model(filename)
+    template = read_template(template_filename)
+
+
+

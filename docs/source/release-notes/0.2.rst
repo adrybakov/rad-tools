@@ -3,6 +3,9 @@
 ***********
 Version 0.2
 ***********
+
+Whats new?
+----------
 Add script :ref:`rad-dos-plotter.py <rad-dos-plotter>`
 
 0.2.12

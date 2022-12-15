@@ -7,17 +7,8 @@
 Script for visualisation of 
 `TB2J <https://tb2j.readthedocs.io/en/latest/>`_ results.
 
-In the main :ref:`mode <tb2j-plotter_mode>` (2d) script displays isotropic exchange, 
-distances and DMI (one output file for each). In the most user cases this mode 
-of plotting is used (and it is set by default), so if you want to plot the 
-graph of exchange interaction in 2d material with the view from above it is 
-safe to completely ignore :ref:`--mode <tb2j-plotter_mode>` and 
-:ref:`--atoms <tb2j-plotter_atoms>` arguments.
-
-In the molecule :ref:`mode <tb2j-plotter_mode>` script plots isotropic exchange, 
-distances and DMI vs the distance from the middle of the bond 
-to the center of the molecule. Used to analyse TB2J calculations 
-with the molecules at the surface of 2d material.
+The script displays isotropic exchange, distances and DMI 
+(one output file for each). 
 
 Supports filtering by 
 R vectors (see :ref:`--R-vector <tb2j-plotter_R-vector>`), 
@@ -32,8 +23,6 @@ The result is defined by logical conjugate of the specified conditions.
 
 Output files will have the following name structure: 
 *output-name.display-data-type.png* 
-(or *output-name.molecule.display-data-type.png* in molecule 
-:ref:`mode <tb2j-plotter_mode>`)
 
 .. _tb2j-plotter_example:
 
@@ -135,44 +124,6 @@ including the name and extention of the file.
     *required* : True
 
     *type* : str
-
-
-.. _tb2j-plotter_mode:
-
--m, --mode
-----------
-Mode of plotting.
-
-Two modes are supported: structure with the view from above 
-and the plots with *value* over distance between bond and 
-the center of the molecule.
-
-    *default* : 2d
-
-    *type* : str
-
-    *choices* : all, 2d, molecule
-    
-.. hint::
-    If you are plotting in molecule mode it is recommended to specify 
-    ``--atoms`` argument.
-
-
-.. _tb2j-plotter_atoms:
-
--a, --atoms
------------
-Atoms from the substrate.
-
-Marks of atoms from the substracte (Same as in TB2J). 
-You can specify only names. For example instead of "Cr12" one can provide 
-"Cr" and then all Cr atoms will be considered as a substrate ones. 
-
-    *default* : None
-
-    *type* : str
-
-    *nargs* : *
 
 
 .. _tb2j-plotter_output-dir:

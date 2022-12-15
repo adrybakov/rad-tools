@@ -3,6 +3,8 @@
 ***********
 Version 0.1
 ***********
+Whats new?
+----------
 The big renaming passed.
 
 Scripts were renamed:

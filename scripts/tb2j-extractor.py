@@ -7,19 +7,19 @@ from math import sqrt
 
 import numpy as np
 
-from rad_tools.exchange.model import ExchangeModelTB2J
-from rad_tools.exchange.template import ExchangeTemplate
+from rad_tools.io.internal import read_template
+from rad_tools.io.tb2j import read_exchange_model
 from rad_tools.routines import OK, RESET
 
 
-def extract(filename, out_dir, out_name, template, dmi=False, verbose=False):
-    if verbose and dmi:
-        dmi = False
+def extract(filename, out_dir, out_name, template, dmi_verbose=False, verbose=False):
+    if verbose and dmi_verbose:
+        dmi_verbose = False
 
-    model = ExchangeModelTB2J(filename)
-    template = ExchangeTemplate(template)
+    model = read_exchange_model(filename)
+    template = read_template(template)
     summary_txt = model.summary_as_txt(template=template,
-                                       dmi_verbose=dmi, verbose=verbose)
+                                       dmi_verbose=dmi_verbose, verbose=verbose)
     if verbose:
         summary_py = model.summary_as_py(template=template)
 

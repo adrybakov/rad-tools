@@ -6,7 +6,7 @@ from os import makedirs
 
 import numpy as np
 
-from rad_tools.exchange.model import ExchangeModelTB2J
+from rad_tools.io.tb2j import read_exchange_model
 from rad_tools.routines import OK, RESET, YELLOW
 
 
@@ -34,7 +34,7 @@ def provide_template(out_name="template.txt",
         if tb2j_filename is None:
             file.write(template)
         else:
-            model = ExchangeModelTB2J(tb2j_filename)
+            model = read_exchange_model(tb2j_filename)
             model.filter(min_distance=min_distance,
                          max_distance=max_distance,
                          R_vector=R_vector)

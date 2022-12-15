@@ -6,23 +6,21 @@ import pytest
 from rad_tools.routines import *
 
 
-class TestTerminalColours:
-
-    def test_for_human(self):
-        print("\n Please check that the following colours "
-              "are displayed correctly:\n")
-        print(f'{BLACK}BLACK{RESET}',
-              f'{RED}RED{RESET}',
-              f'{GREEN}GREEN{RESET}',
-              f'{YELLOW}YELLOW{RESET}',
-              f'{BLUE}BLUE{RESET}',
-              f'{MAGENTA}MAGENTA{RESET}',
-              f'{CYAN}CYAN{RESET}',
-              f'{WHITE}WHITE{RESET}',
-              sep='\n')
-        assert WARNING == YELLOW
-        assert OK == GREEN
-        assert ERROR == RED
+def test_terminal_colours():
+    print("\n Please check that the following colours "
+          "are displayed correctly:\n")
+    print(f'{BLACK}BLACK{RESET}',
+          f'{RED}RED{RESET}',
+          f'{GREEN}GREEN{RESET}',
+          f'{YELLOW}YELLOW{RESET}',
+          f'{BLUE}BLUE{RESET}',
+          f'{MAGENTA}MAGENTA{RESET}',
+          f'{CYAN}CYAN{RESET}',
+          f'{WHITE}WHITE{RESET}',
+          sep='\n')
+    assert WARNING == YELLOW
+    assert OK == GREEN
+    assert ERROR == RED
 
 
 def test_get_256_colours():
@@ -194,34 +192,44 @@ def test_atom_mark_to_latex(mark, new_mark):
     assert atom_mark_to_latex(mark) == new_mark
 
 
-@pytest.mark.parametrize("x, y, angle", [
-    (1, 0, 0),
-    (1, 1, 45),
-    (0, 1, 90),
-    (-1, 1, 135),
-    (-1, 0, 180),
-    (-1, -1, 225),
-    (0, -1, 270),
-    (1, -1, 315),
+class TestRotAngle:
+    @pytest.mark.parametrize("x, y, angle", [
+        (1, 0, 0),
+        (1, 1, 45),
+        (0, 1, 90),
+        (-1, 1, 135),
+        (-1, 0, 180),
+        (-1, -1, 225),
+        (0, -1, 270),
+        (1, -1, 315),
+    ])
+    def test_dummy(self, x, y, angle):
+        assert round(rot_angle(x, y, dummy=True), 4) == round(angle, 4)
+
+    @pytest.mark.parametrize("x, y, angle", [
+        (1, 0, 0),
+        (1, 1, 45),
+        (0, 1, 90),
+        (-1, 1, -45),
+        (-1, 0, 0),
+        (-1, -1, 45),
+        (0, -1, 90),
+        (1, -1, -45),
+    ])
+    def test_not_dummy(self, x, y, angle):
+        assert round(rot_angle(x, y), 4) == round(angle, 4)
+
+    def test_ill_case(self):
+        with pytest.raises(ValueError):
+            rot_angle(0, 0)
+
+
+@pytest.mark.parametrize("point1, point2, distance", [
+    ((0, 0, 0), (0, 0, 0), 0),
+    ([0, 3, 4], [0, 0, 0], 5),
+    ([0, 3, 4], (0, 0, 0), 5),
+    ((0, 3, 4), [0, 0, 0], 5),
+    ((0, 3, 4), [0, 3, 0], 4),
 ])
-def test_rot_angle_dummy(x, y, angle):
-    assert round(rot_angle(x, y, dummy=True), 4) == round(angle, 4)
-
-
-@pytest.mark.parametrize("x, y, angle", [
-    (1, 0, 0),
-    (1, 1, 45),
-    (0, 1, 90),
-    (-1, 1, -45),
-    (-1, 0, 0),
-    (-1, -1, 45),
-    (0, -1, 90),
-    (1, -1, -45),
-])
-def test_rot_angle_not_dummy(x, y, angle):
-    assert round(rot_angle(x, y), 4) == round(angle, 4)
-
-
-def test_rot_angle_ill_case():
-    with pytest.raises(ValueError):
-        rot_angle(0, 0)
+def test_two_points_distance(point1, point2, distance):
+    assert distance == two_points_distance(point1, point2)

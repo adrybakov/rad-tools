@@ -243,24 +243,31 @@ def strip_digits(line: str):
 
 
 def two_points_distance(point1, point2):
-    """
+    r"""
     Compute distance between two points.
 
     Parameters
     ----------
     point1 : array
-        Coordinates of the first point. [x1, y1, z1]
+        Coordinates of the first point. 
+
+        .. code-block:: python
+
+            [x1, y1, z1]
+
     point2 : array
-        Coordinates of the second point. [x2, y2, z2]
+        Coordinates of the second point. 
+
+        .. code-block:: python
+
+            [x2, y2, z2]
+
     Returns
     -------
     distance : float
         Distance between two points.
     """
-    x1 = point1[0]
-    y1 = point1[1]
-    z1 = point1[2]
-    x2 = point2[0]
-    y2 = point2[1]
-    z2 = point2[2]
-    return (sqrt((x1-x2)**2 + (y1-y2)**2 + (z1-z2)**2))
+
+    point1 = np.array(point1)
+    point2 = np.array(point2)
+    return sqrt(np.sum((point1 - point2)**2))
