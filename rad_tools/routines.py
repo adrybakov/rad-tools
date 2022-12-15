@@ -271,3 +271,63 @@ def two_points_distance(point1, point2):
     point1 = np.array(point1)
     point2 = np.array(point2)
     return sqrt(np.sum((point1 - point2)**2))
+
+
+def search_on_atoms(centre, atoms):
+    r"""
+    Search the closest atom to the given centre position.
+
+    Parameters
+    ----------
+    centre : array
+        xyz coordinates of the centre.
+    atoms : list
+        List of atom names and coordinates of the form: ::
+
+            [(name, [x, y, z]), ...]
+
+    Returns
+    -------
+    min_span : float
+        Distance from the centre to the closest atom.
+    name : str
+        Name of the closest atom.
+    """
+
+    min_span = 10000
+    name = "None"
+    for atom, a_coord in atoms:
+        if sqrt(np.sum((centre[1] - a_coord)**2)) < min_span:
+            min_span = sqrt(np.sum((centre[1] - a_coord)**2))
+            name = atom
+    return min_span, name
+
+
+def search_between_atoms(centre, atoms):
+    r"""
+    Search the closest bond centre to the given centre position.
+
+    Parameters
+    ----------
+    centre : array
+        xyz coordinates of the centre.
+    atoms : list
+        List of atom names and coordinates of the form: ::
+
+            [(name, [x, y, z]), ...]
+
+    Returns
+    -------
+    min_span : float
+        Distance from the centre to the bond`s centre.
+    name : str
+        Name of the closest bond`s centre (atom1-atom2).
+    """
+
+    pairs = []
+    for i, atom in enumerate(atoms):
+        for j in range(i+1, len(atoms)):
+            pair = f"{atom[0]}-{atoms[j][0]}"
+            p_coord = (atom[1]+atoms[j][1])/2
+            pairs.append([pair, p_coord])
+    return search_on_atoms(centre, pairs)

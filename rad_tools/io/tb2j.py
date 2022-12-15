@@ -9,7 +9,7 @@ from rad_tools.exchange.model import ExchangeModel, Bond
 
 def read_exchange_model(filename):
     r"""
-    Read exchange model from TB2J code.
+    Read exchange model from TB2J output file.
 
     Parameters
     ----------

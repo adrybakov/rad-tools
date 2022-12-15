@@ -6,67 +6,8 @@ from os.path import split, join
 
 import numpy as np
 
-from rad_tools.routines import strip_digits, WARNING, RESET
-
-
-def search_on_atoms(centre, atoms):
-    r"""
-    Search the closest atom to the given centre position.
-
-    Parameters
-    ----------
-    centre : array
-        xyz coordinates of the centre.
-    atoms : list
-        List of atom names and coordinates of the form: ::
-
-            [(name, [x, y, z]), ...]
-
-    Returns
-    -------
-    min_span : float
-        Distance from the centre to the closest atom.
-    name : str
-        Name of the closest atom.
-    """
-
-    min_span = 10000
-    name = "None"
-    for atom, a_coord in atoms:
-        if sqrt(np.sum((centre[1] - a_coord)**2)) < min_span:
-            min_span = sqrt(np.sum((centre[1] - a_coord)**2))
-            name = atom
-    return min_span, name
-
-
-def search_between_atoms(centre, atoms):
-    r"""
-    Search the closest bond centre to the given centre position.
-
-    Parameters
-    ----------
-    centre : array
-        xyz coordinates of the centre.
-    atoms : list
-        List of atom names and coordinates of the form: ::
-
-            [(name, [x, y, z]), ...]
-
-    Returns
-    -------
-    min_span : float
-        Distance from the centre to the bond`s centre.
-    name : str
-        Name of the closest bond`s centre (atom1-atom2).
-    """
-
-    pairs = []
-    for i, atom in enumerate(atoms):
-        for j in range(i+1, len(atoms)):
-            pair = f"{atom[0]}-{atoms[j][0]}"
-            p_coord = (atom[1]+atoms[j][1])/2
-            pairs.append([pair, p_coord])
-    return search_on_atoms(centre, pairs)
+from rad_tools.routines import strip_digits, WARNING, RESET, \
+    search_on_atoms, search_between_atoms
 
 
 def identify(filename, span, out_dir, out_name, nocolor=False):
@@ -79,7 +20,7 @@ def identify(filename, span, out_dir, out_name, nocolor=False):
         file_stats = file.readline()
         centres = []
         atoms = []
-        for i in range(0, n):
+        for _ in range(0, n):
             line = file.readline().split()
             if line[0] == "X":
                 centres.append([f"X",
@@ -185,6 +126,7 @@ if __name__ == "__main__":
         args.output_dir = head
     if args.output_name is None:
         args.output_name = tail + "_identified"
+
     identify(args.filename, args.span,
              out_dir=args.output_dir, out_name=args.output_name,
              nocolor=args.no_colour)

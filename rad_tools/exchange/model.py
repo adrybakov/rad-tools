@@ -755,14 +755,13 @@ class ExchangeModel:
             template = template.get_list()
         if template is not None:
             template = set(template)
-
-        bonds_for_removal = set()
         if R_vector is not None:
             if type(R_vector) == tuple:
                 R_vector = {R_vector}
             elif type(R_vector) == list:
                 R_vector = set(R_vector)
 
+        bonds_for_removal = set()
         for atom1 in self.bonds:
             for atom2 in self.bonds[atom1]:
                 for R in self.bonds[atom1][atom2]:
@@ -860,32 +859,36 @@ class ExchangeModel:
                 for atom1, atom2, R in template.names[name]:
 
                     # Get values from the model
-                    J_iso = self.bonds[atom1][atom2][R].iso
-                    J_aniso = self.bonds[atom1][atom2][R].aniso
-                    dmi = self.bonds[atom1][atom2][R].dmi
-                    abs_dmi = self.bonds[atom1][atom2][R].dmi_module
-                    matrix = self.bonds[atom1][atom2][R].matrix
+                    bond = self.bonds[atom1][atom2][R]
+                    if not isinstance(bond, Bond):
+                        raise TypeError
+                    iso = bond.iso
+                    aniso = bond.aniso
+                    dmi = bond.dmi
+                    abs_dmi = bond.dmi_module
+                    rel_dmi = bond.dmi_vs_iso
+                    matrix = bond.matrix
 
                     # Write the values
                     summary += (
                         f"  {atom1:3} {atom2:3} " +
                         f"({R[0]:2.0f}, {R[1]:2.0f}, {R[2]:2.0f})\n" +
-                        f"    Isotropic: {J_iso:.4f}\n" +
+                        f"    Isotropic: {iso:.4f}\n" +
                         f"    Anisotropic:\n" +
-                        f"        {J_aniso[0][0]:7.4f}  " +
-                        f"{J_aniso[0][1]:7.4f}  " +
-                        f"{J_aniso[0][2]:7.4f}\n" +
-                        f"        {J_aniso[1][0]:7.4f}  " +
-                        f"{J_aniso[1][1]:7.4f}  " +
-                        f"{J_aniso[1][2]:7.4f}\n" +
-                        f"        {J_aniso[2][0]:7.4f}  " +
-                        f"{J_aniso[2][1]:7.4f}  " +
-                        f"{J_aniso[2][2]:7.4f}\n" +
+                        f"        {aniso[0][0]:7.4f}  " +
+                        f"{aniso[0][1]:7.4f}  " +
+                        f"{aniso[0][2]:7.4f}\n" +
+                        f"        {aniso[1][0]:7.4f}  " +
+                        f"{aniso[1][1]:7.4f}  " +
+                        f"{aniso[1][2]:7.4f}\n" +
+                        f"        {aniso[2][0]:7.4f}  " +
+                        f"{aniso[2][1]:7.4f}  " +
+                        f"{aniso[2][2]:7.4f}\n" +
                         f"    DMI: {dmi[0]:.4f} " +
                         f"{dmi[1]:.4f} " +
                         f"{dmi[2]:.4f}\n"
                         f"    |DMI|: {abs_dmi:.4f}\n" +
-                        f"    |DMI/J| {abs_dmi/J_iso:.4f}\n" +
+                        f"    |DMI/J| {rel_dmi:.4f}\n" +
                         f"    Matrix:\n" +
                         f"        {matrix[0][0]:7.4f}  " +
                         f"{matrix[0][1]:7.4f}  " +
@@ -898,40 +901,49 @@ class ExchangeModel:
                         f"{matrix[2][2]:7.4f}\n\n")
             else:
                 # Compute mean values
-                J_iso = 0
-                J_aniso = np.zeros((3, 3), dtype=float)
+                iso = 0
+                aniso = np.zeros((3, 3), dtype=float)
                 dmi = np.zeros(3, dtype=float)
                 abs_dmi = 0
+                rel_dmi = 0
                 for atom1, atom2, R in template.names[name]:
-                    J_iso += self.bonds[atom1][atom2][R].iso
-                    J_aniso += self.bonds[atom1][atom2][R].aniso
-                    dmi += self.bonds[atom1][atom2][R].dmi
-                    abs_dmi += self.bonds[atom1][atom2][R].dmi_module
-                J_iso /= len(template.names[name])
-                J_aniso /= len(template.names[name])
+                    bond = self.bonds[atom1][atom2][R]
+                    if not isinstance(bond, Bond):
+                        raise TypeError
+                    iso += bond.iso
+                    aniso += bond.aniso
+                    dmi += bond.dmi
+                    abs_dmi += bond.dmi_module
+                    rel_dmi += bond.dmi_vs_iso
+                iso /= len(template.names[name])
+                aniso /= len(template.names[name])
                 dmi /= len(template.names[name])
                 abs_dmi /= len(template.names[name])
+                rel_dmi /= len(template.names[name])
 
                 # Write mean values
                 summary += (
-                    f"    Isotropic: {J_iso:.4f}\n" +
+                    f"    Isotropic: {iso:.4f}\n" +
                     f"    Anisotropic:\n" +
-                    f"        {J_aniso[0][0]:7.4f}  " +
-                    f"{J_aniso[0][1]:7.4f}  " +
-                    f"{J_aniso[0][2]:7.4f}\n" +
-                    f"        {J_aniso[1][0]:7.4f}  " +
-                    f"{J_aniso[1][1]:7.4f}  " +
-                    f"{J_aniso[1][2]:7.4f}\n" +
-                    f"        {J_aniso[2][0]:7.4f}  " +
-                    f"{J_aniso[2][1]:7.4f}  " +
-                    f"{J_aniso[2][2]:7.4f}\n" +
+                    f"        {aniso[0][0]:7.4f}  " +
+                    f"{aniso[0][1]:7.4f}  " +
+                    f"{aniso[0][2]:7.4f}\n" +
+                    f"        {aniso[1][0]:7.4f}  " +
+                    f"{aniso[1][1]:7.4f}  " +
+                    f"{aniso[1][2]:7.4f}\n" +
+                    f"        {aniso[2][0]:7.4f}  " +
+                    f"{aniso[2][1]:7.4f}  " +
+                    f"{aniso[2][2]:7.4f}\n" +
                     f"    |DMI|: {abs_dmi:.4f}\n" +
-                    f"    |DMI/J| {abs(abs_dmi/J_iso):.4f}\n")
+                    f"    |DMI/J| {abs(rel_dmi):.4f}\n")
 
                 # Write additional info on DMI
                 if dmi_verbose:
                     for atom1, atom2, R in template.names[name]:
-                        dmi = self.bonds[atom1][atom2][R].dmi
+                        bond = self.bonds[atom1][atom2][R]
+                        if not isinstance(bond, Bond):
+                            raise TypeError
+                        dmi = bond.dmi
                         summary += (
                             f"    DMI: " +
                             f"{dmi[0]:7.4f} " +
@@ -978,19 +990,22 @@ class ExchangeModel:
             output_python_matrix += f"    '{name}':\n" + "    {\n"
 
             for atom1, atom2, R in template.names[name]:
-                J_iso = self.bonds[atom1][atom2][R].iso
-                J_aniso = self.bonds[atom1][atom2][R].aniso
-                dmi = self.bonds[atom1][atom2][R].dmi
-                matrix = self.bonds[atom1][atom2][R].matrix
+                bond = self.bonds[atom1][atom2][R]
+                if not isinstance(bond, Bond):
+                    raise TypeError
+                iso = bond.iso
+                aniso = bond.aniso
+                dmi = bond.dmi
+                matrix = bond.matrix
                 output_python_iso += (
                     8 * " " +
-                    f"({R[0]}, {R[1]}, {R[2]}): {J_iso},\n")
+                    f"({R[0]}, {R[1]}, {R[2]}): {iso},\n")
                 output_python_aniso += (
                     8 * " " +
                     f"({R[0]}, {R[1]}, {R[2]}): np.array([" +
-                    f"[{J_aniso[0][0]}, {J_aniso[0][1]}, {J_aniso[0][2]}], " +
-                    f"[{J_aniso[1][0]}, {J_aniso[1][1]}, {J_aniso[1][2]}], " +
-                    f"[{J_aniso[2][0]}, {J_aniso[2][1]}, {J_aniso[2][2]}]]),\n")
+                    f"[{aniso[0][0]}, {aniso[0][1]}, {aniso[0][2]}], " +
+                    f"[{aniso[1][0]}, {aniso[1][1]}, {aniso[1][2]}], " +
+                    f"[{aniso[2][0]}, {aniso[2][1]}, {aniso[2][2]}]]),\n")
                 output_python_dmi += (
                     8 * " " +
                     f"({R[0]}, {R[1]}, {R[2]}):" +

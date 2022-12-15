@@ -10,6 +10,7 @@ import matplotlib as mpl
 import numpy as np
 
 from rad_tools.io.tb2j import read_exchange_model
+from rad_tools.io.internal import read_template
 from rad_tools.routines import atom_mark_to_latex, rot_angle, OK, RESET
 
 
@@ -32,6 +33,7 @@ def plot_2d(filename, out_dir='.',
                 "dmi": "dmi"}
 
     model = read_exchange_model(filename)
+    template = read_template(template)
     model.filter(min_distance=min_distance,
                  max_distance=max_distance,
                  R_vector=R_vector,
@@ -50,15 +52,6 @@ def plot_2d(filename, out_dir='.',
         X = Y = 1
     linewidth = 1
     fontsize = 11
-    # plt.rcParams.update({'font.size': fontsize})
-    # mpl.rcParams.update({'axes.linewidth': 1.1 * Y / 5})
-    # mpl.rcParams.update({'xtick.major.width': 1.1 * Y / 5})
-    # mpl.rcParams.update({'ytick.major.width': 1.1 * Y / 5})
-    # mpl.rcParams.update({'xtick.major.size': 5 * 1.1 * Y / 5})
-    # mpl.rcParams.update({'ytick.major.size': 5 * 1.1 * Y / 5})
-    # mpl.rcParams.update({'xtick.major.pad': 5 * 1.1 * Y / 5})
-    # mpl.rcParams.update({'ytick.major.pad': 5 * 1.1 * Y / 5})
-    # mpl.rcParams.update({'axes.labelpad': 1.1 * Y / 5})
 
     if X < Y:
         fig = plt.figure(figsize=(6.4*X/Y, 4.8))
@@ -141,11 +134,6 @@ def plot_2d(filename, out_dir='.',
                             [i * a_y + Ry_min * b_y,
                             i * a_y + (Ry_max + 1) * b_y],
                             linewidth=linewidth, color="#DFDFDF")
-                    # X_shift = i * a_x + j * b_x
-                    # Y_shift = i * a_y + j * b_y
-                    # ax.plot(np.array([0, a_x, a_x + b_x, b_x, 0]) + X_shift,
-                    #         np.array([0, a_y, a_y + b_y, b_y, 0]) + Y_shift,
-                    #         linewidth=linewidth, color="#BCBF5A", alpha=0.7)
         ax.plot(np.array([0, a_x, a_x + b_x, b_x, 0]),
                 np.array([0, a_y, a_y + b_y, b_y, 0]),
                 linewidth=linewidth, color="#CA7371")

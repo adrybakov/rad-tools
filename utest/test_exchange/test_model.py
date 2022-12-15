@@ -444,3 +444,36 @@ class TestExchangeModel:
         model.remove_double_bonds()
         assert len(model.bond_list) == 1
         assert model.bond_list[0] == ("Cr2", "Cr1", (0, 0, 0))
+
+    def test_filter(self):
+        model = ExchangeModel()
+        model.add_atom("Cr1", 0.25, 0.25, 0)
+        model.add_atom("Cr2", 0.75, 0.75, 0)
+        model.add_bond(Bond(iso=12, distance=3), "Cr1", "Cr2", (0, 0, 0))
+        model.add_bond(Bond(iso=12, distance=3), "Cr2", "Cr1", (0, 0, 0))
+        model.add_bond(Bond(iso=12, distance=4), "Cr1", "Cr1", (1, 0, 0))
+        model.add_bond(Bond(iso=12, distance=4), "Cr1", "Cr1", (-1, 0, 0))
+        model.add_bond(Bond(iso=12, distance=4), "Cr2", "Cr2", (1, 0, 0))
+        model.add_bond(Bond(iso=12, distance=4), "Cr2", "Cr2", (-1, 0, 0))
+        model.add_bond(Bond(iso=12, distance=5), "Cr1", "Cr1", (0, 1, 0))
+        model.add_bond(Bond(iso=12, distance=5), "Cr1", "Cr1", (0, -1, 0))
+        model.add_bond(Bond(iso=12, distance=5), "Cr2", "Cr2", (0, 1, 0))
+        model.add_bond(Bond(iso=12, distance=5), "Cr2", "Cr2", (0, -1, 0))
+        model.add_bond(Bond(iso=12, distance=6), "Cr2", "Cr1", (1, 1, 0))
+        model.add_bond(Bond(iso=12, distance=6), "Cr1", "Cr2", (-1, -1, 0))
+        assert len(model.bond_list) == 12
+        filtered_model = model.filtered(max_distance=4)
+        assert len(filtered_model.bond_list) == 6
+        filtered_model = model.filtered(min_distance=4)
+        assert len(filtered_model.bond_list) == 10
+        filtered_model = model.filtered(min_distance=4, max_distance=5)
+        assert len(filtered_model.bond_list) == 8
+        filtered_model = model.filtered(R_vector=(0, 0, 0))
+        assert len(filtered_model.bond_list) == 2
+        filtered_model = model.filtered(R_vector=[(0, 0, 0), (1, 0, 0)])
+        assert len(filtered_model.bond_list) == 4
+        filtered_model = model.filtered(template=[("Cr1", "Cr2", (0, 0, 0))])
+        assert len(filtered_model.bond_list) == 1
+        filtered_model = model.filtered(template=[("Cr1", "Cr2", (0, 0, 0))],
+                                        R_vector=[(0, 0, 0), (1, 0, 0)])
+        assert len(filtered_model.bond_list) == 1
