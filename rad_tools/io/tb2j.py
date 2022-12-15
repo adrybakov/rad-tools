@@ -15,6 +15,11 @@ def read_exchange_model(filename):
     ----------
     filename : str
         Path to the TB2J output file.
+
+    Returns 
+    -------
+    model : :py:class:`.ExchangeModel`
+        Exchange model buid from TB2J file.
     """
 
     major_sep = '=' * 90
