@@ -23,20 +23,33 @@ clean:
 	-@rm -r build
 	-@rm -r dist
 
+
 test:
 	@pip3 install . --upgrade
 	@pip3 install pytest
 	@pytest -s
 
+.ONESHELL:
 pip:
-#   @echo "\x1b[33m"
+#	@echo "\x1b[33m"
 #	@echo "pip is disabled for your own safety"
 #	@echo "\x1b[0m"
+	@echo "\x1b[33m"
+	@echo "Have you done this?"
+	@echo "  * Version in __init__.py"
+	@echo "  * Release note"
+	@echo "  * Commit all the changes"
+	@echo "\x1b[0m"
+	git status
+	@echo "\x1b[31m"
+	@read -p "Press Enter if yes:"
+	@echo "\x1b[0m"
 	-@rm -r dist
 	-@rm -r build
 	-@rm -r rad_tools.egg-info
 	@python3 setup.py sdist bdist_wheel 
 	@python3 -m twine upload --repository pypi dist/* --verbose
+
 
 help:
 	@echo "\x1b[31m"
