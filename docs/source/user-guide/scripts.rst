@@ -31,8 +31,10 @@ Other scripts.
    rad-dos-plotter
    identify-wannier-centres
 
-Note on the output
-------------------
+.. _scripts_output-notes:
+
+Notes on the output
+-------------------
 
 For all scripts there is a common logic for the ``--output_dir`` and 
 ``--output_name`` arguments. In some scripts only ``--output_name`` 

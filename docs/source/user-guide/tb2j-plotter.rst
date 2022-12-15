@@ -170,6 +170,8 @@ until the existing folder is reached.
         
     *type* : str
 
+See also: :ref:`example <scripts_output-notes>`.
+
 
 .. _tb2j-plotter_output-name:
 
@@ -184,7 +186,7 @@ Output files will have the following name structure:
         
     *type* : str
 
-See also: :ref:`example <tb2j-plotter_example>`
+See also: :ref:`example <scripts_output-notes>`.
 
 
 .. _tb2j-plotter_what-to-plot:

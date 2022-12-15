@@ -103,6 +103,8 @@ Relative or absolute path to the folder for saving outputs.
         
     *type* : str
 
+See also: :ref:`example <scripts_output-notes>`.
+
 .. _identify-wannier-centres_output-name:
 
 -on, --output-name
@@ -112,6 +114,8 @@ Seedname for the output files.
     *default* : Name of the input file + "_identified"
 
     *type* : str
+
+See also: :ref:`example <scripts_output-notes>`.
 
 .. _identify-wannier-centres_no-colour:
 

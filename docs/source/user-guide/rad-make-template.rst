@@ -138,6 +138,7 @@ Relative or absolute path to the template output file.
 
     *type* : str
 
+See also: :ref:`example <scripts_output-notes>`.
 
 .. _rad-make-template_filename:
 

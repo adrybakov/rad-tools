@@ -37,6 +37,8 @@ Relative or absolute path to the folder for saving outputs.
 
     *type* : str
 
+See also: :ref:`example <scripts_output-notes>`.
+
 
 .. _rad-dos-plotter_output-name:
 
@@ -47,6 +49,8 @@ Seedname for the output files.
     *default* : pdos
 
     *type* : str
+
+See also: :ref:`example <scripts_output-notes>`.
 
 
 .. _rad-dos-plotter_window:

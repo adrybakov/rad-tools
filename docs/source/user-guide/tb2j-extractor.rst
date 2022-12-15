@@ -138,6 +138,8 @@ until the existing folder is reached.
         
     *type* : str
 
+See also: :ref:`example <scripts_output-notes>`.
+
 
 .. _tb2j-extractor_output-name:
 
@@ -152,6 +154,8 @@ standart output stream.
     *default* : None
 
     *type* : str
+
+See also: :ref:`example <scripts_output-notes>`.
 
 
 .. _tb2j-extractor_dmi:
