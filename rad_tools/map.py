@@ -36,7 +36,7 @@ class CalculationMap:
         range : tuple 
             Three numbers: start, stop, step. 
             If ``values`` are not specified the ``range`` will be used to 
-            create them. If :math:`\vert stop - start\vert != n \cdot step`, 
+            create them. If :math:`\vert stop - start\vert \ne n \cdot step`, 
             where n - int, then the last point will be < `stop`.
         """
         if values is None:
