@@ -32,12 +32,12 @@ class CalculationMap:
         name : str 
             The main identificator of the parameter.
         values : array-like
-            exact values of the parameter to be considered.
+            Exact values of the parameter to be considered.
         range : tuple 
             Three numbers: start, stop, step. 
-            If `values` are not specified the range will be used to 
-            create them. If (`stop` - `start`) != n * `step`, where n - int
-            then the last point will be < `stop`.
+            If ``values`` are not specified the ``range`` will be used to 
+            create them. If :math:`\vert stop - start\vert != n \cdot step`, 
+            where n - int, then the last point will be < `stop`.
         """
         if values is None:
             if range is None:
