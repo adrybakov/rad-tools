@@ -33,18 +33,18 @@ def plot_2d(filename, out_dir='.',
                 "dmi": "dmi"}
 
     model = read_exchange_model(filename)
-    template = read_template(template)
+    if template is not None:
+        template = read_template(template)
     model.filter(min_distance=min_distance,
                  max_distance=max_distance,
                  R_vector=R_vector,
                  template=template)
 
     dummy = True
-    ha = 'right'
+    ha = 'center'
     if not double_bonds:
-        model = model.remove_double_bonds()
+        model.remove_double_bonds()
         dummy = False
-        ha = 'center'
     x_min, y_min, z_min, x_max, y_max, z_max = model.space_dimensions
     X = max(abs(x_min), abs(x_max))
     Y = max(abs(y_min), abs(y_max))

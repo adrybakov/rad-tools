@@ -29,87 +29,117 @@ Output files will have the following name structure:
 Usage example
 =============
 
-Imagine you are executing the ``tb2j-plotter.py`` script from the 
-folder *example* and your file structure looks like the following
+Example is based on the exchange.out file from 
+:examples:`examples folder <tb2j-plotter>`. 
 
-.. code-block:: text
-
-    example/
-    ├── exchange.out
-    └── output/
-        
-Now lets run the script
+There is one required argument in the script 
+(:ref:`--filename <tb2j-plotter_filename>`), so there is a minimum input 
+for the script to run:
 
 .. code-block:: bash
 
-    tb2j-plotter.py -f exchange.out 
+    tb2j-plotter.py -f exchange.out
 
-After the execution your *example* folder will look similar to this
-    
-.. code-block:: text
+which will produce three pictures *exchange.iso.png*, 
+*exchange.distance.png*, *exchange.distance.png*. each file name have a common 
+default seedname (*exchange*, use 
+:ref:`--output-name <tb2j-plotter_output-name>` to change it), data type 
+(*iso*, *dmi*, *distance*, see 
+:ref:`--what-to-plot <tb2j-plotter_what-to-plot>`) and file extention.
 
-    example/
-    ├── exchange.out
-    ├── exchange.iso.png
-    ├── exchange.distance.png
-    └── output/
+.. dropdown:: Output images
 
-Script produced two output files *exchange.iso.png*
-and *exchange.distance.png*. Common seedname *exchange* comes by default 
-(see :ref:`--output-name <tb2j-plotter_output-name>`). *iso* and *distance* 
-indicate the plotted data 
-(see :ref:`--what-to-plot <tb2j-plotter_what-to-plot>`). 
+    .. figure:: /../examples/tb2j-plotter/exchange.iso.png
+        :align: center
 
-.. important::
-    That output files are not located in *output* folder since the 
-    current folder is used for output by default
-    (see :ref:`--output-dir <tb2j-plotter_output-dir>`). 
-    
-Lets save the output in the *output* folder:
+        exchange.iso.png
 
-.. code-block:: bash
+    .. figure:: /../examples/tb2j-plotter/exchange.dmi.png
+        :align: center
 
-    tb2j-plotter.py -f exchange.out -op output
+        exchange.dmi.png
 
-Now *example* folder should look like this
+    .. figure:: /../examples/tb2j-plotter/exchange.distance.png
+        :align: center
 
-.. code-block:: text
+        exchange.distance.png
 
-    example/
-    ├── exchange.out
-    ├── exchange.iso.png
-    ├── exchange.distance.png
-    └── output/
-        ├── exchange.iso.png
-        └── exchange.distance.png
+.. note::
 
-Output files have the same names, but they are saved in the *output* 
-folder as your specifyed by :ref:`-op (--output-dir) <tb2j-plotter_output-dir>` argument.
+    In the following only exchange.iso.png file will be produced with the help 
+    of  :ref:`--what-to-plot <tb2j-plotter_what-to-plot>` argument.
 
-It is not necessary to specify a path to the existing folder, 
-for example try to execute
+Since the exchange.out file contains a lot of exchange bonds the pictures with 
+all of them are not really usefull. Lets plot the isotropic exchange picture 
+with some adjustments:
+
+    * Filter the model by maximum distance (:ref:`-md <tb2j-plotter_max-distance>`).
+    * Draw unit cell borders (:ref:`-dc <tb2j-plotter_draw-cells>`)
+    * Scale the marks of atoms (:ref:`-sa <tb2j-plotter_scale-atoms>`)
+    * Scale the data (:ref:`-sd <tb2j-plotter_scale-data>`)
+    * Add the title to the plot (:ref:`-t <tb2j-plotter_title>`)
 
 .. code-block:: bash
 
-    tb2j-plotter.py -f exchange.out -op output/bar/foo
+    tb2j-plotter.py -f exchange.out -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.3 -t "First neighbor exchange" -on exchange_filtered
 
-The script will create folder *bar* inside of the folder *output* and folder 
-*foo* inside of the folder *bar*. The structure of the *example* folder now 
-should look like that:
+.. figure:: /../examples/tb2j-plotter/exchange_filtered.iso.png
+    :align: center
 
-.. code-block:: text
+    exchange_filtered.iso.png
 
-    example/
-    ├── exchange.out
-    ├── exchange.iso.png
-    ├── exchange.distance.png
-    └── output/
-        ├── exchange.iso.png
-        |── exchange.distance.png
-        └── bar/
-            └── foo/
-                ├── exchange.iso.png
-                └── exchange.distance.png
+For filtering the exchange model there is a few options available:
+
+    * :ref:`--max_distance <tb2j-plotter_max-distance>`
+    * :ref:`--min_distance <tb2j-plotter_min-distance>`
+    * :ref:`--distance <tb2j-plotter_distance>`
+    * :ref:`--R-vector <tb2j-plotter_R-vector>`
+    * :ref:`--template <tb2j-plotter_template-file>`
+
+By default ``tb2j-plotter.py`` does not display symmetrically equivalent
+(with respect to the translation symmetry) bonds. It could raise the problems 
+with analysis of DMI or anisotropic echange, in order to display all bonds 
+one can use :ref:`-db <tb2j-plotter_double-bonds>` argument:
+
+.. code-block:: bash
+
+    tb2j-plotter.py -f exchange.out -wtp iso -maxd 5 -dc -sa 1.2  -t "First neighbor exchange" -db -on exchange_double_bonds
+
+.. figure:: /../examples/tb2j-plotter/exchange_double_bonds.iso.png
+    :align: center
+
+    exchange_double_bonds.iso.png
+
+At the end there is an example of how to filter exchange model in order to show 
+frist exchange neighbor, but using 
+:ref:`--R-vector <tb2j-plotter_R-vector>` or
+:ref:`--template <tb2j-plotter_template-file>` arguments:
+
+.. code-block:: bash
+
+    tb2j-plotter.py -f exchange.out -wtp iso -tf template.txt -dc -sa 1.2  -t "First neighbor exchange" -db -on exchange_template
+    tb2j-plotter.py -f exchange.out -wtp iso -R 1 0 0 1 1 0  0 1 0 -1 1 0 -1 0 0 -1 -1 0 0 -1 0 1 -1 0 -dc -sa 1.2  -t "First neighbor exchange" -db -on exchange_R
+
+where template file is the following:
+
+.. literalinclude:: /../examples/tb2j-plotter/template.txt
+    :language: text
+
+The images should be the same:
+
+.. dropdown:: Output images
+
+    .. figure:: /../examples/tb2j-plotter/exchange_R.iso.png
+        :align: center
+
+        exchange_R.iso.png
+
+    .. figure:: /../examples/tb2j-plotter/exchange_template.iso.png
+        :align: center
+
+        exchange_template.iso.png
+
+
 
 Arguments
 =========
@@ -174,12 +204,14 @@ Currently available for display: Isotropic exchange parameter, distance, \|DMI\|
     *choices* : all, iso, distance, dmi
 
 
+.. _tb2j-plotter_draw-cells:
+
 -dc, --draw-cells
 -----------------
 Whenever to draw the cells.
 
 If specified then the shape of all cells 
-presented in the model (after filtering) is drawn.
+presented in the model (after filtering) is drawn. (0, 0, 0) will be in red.
 
     *default* : False
 

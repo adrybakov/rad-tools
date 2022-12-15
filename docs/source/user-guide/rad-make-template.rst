@@ -22,15 +22,16 @@ Several filtering options are supported for the case of TB2J-based template file
 
 Usage example
 =============
-The simpliest example of usage is the creation of template draft 
-(see :ref:`template specification <template-draft>`). The following command will produce it:
+The simpliest case consist of template draft`s creation 
+(see :ref:`template specification <template-draft>`). 
+The following command will produce it:
 
 .. code-block:: bash
 
     rad-make-template.py
 
 For more advance user-case the file exchange.out from 
-:examples:`examples folder <rad-make-template>` is be used. 
+:examples:`examples folder <rad-make-template>` is used. 
 
 Run the code:
 
