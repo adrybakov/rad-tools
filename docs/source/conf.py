@@ -66,7 +66,7 @@ html_css_files = ["rad-tools.css"]
 
 # Logo
 # html_logo = 'img/logo-black.png'
-html_title = '<project> v<revision>'
+html_title = f'{project} {release}'
 html_favicon = 'img/favicon.png'
 html_theme_options = {
     "github_url": "https://github.com/adrybakov/rad-tools",
