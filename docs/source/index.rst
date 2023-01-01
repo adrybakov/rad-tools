@@ -1,6 +1,6 @@
-***********************
-RAD-tools documentation
-***********************
+*********
+RAD-tools
+*********
 
 Latest version: |release|
 
