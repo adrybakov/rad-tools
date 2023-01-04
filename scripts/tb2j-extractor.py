@@ -12,14 +12,16 @@ from rad_tools.io.tb2j import read_exchange_model
 from rad_tools.routines import OK, RESET
 
 
-def extract(filename, out_dir, out_name, template, dmi_verbose=False, verbose=False):
+def extract(filename, out_dir, out_name, template,
+            dmi_verbose=False, verbose=False, accuracy=4):
     if verbose and dmi_verbose:
         dmi_verbose = False
 
     model = read_exchange_model(filename)
     template = read_template(template)
     summary_txt = model.summary_as_txt(template=template,
-                                       dmi_verbose=dmi_verbose, verbose=verbose)
+                                       dmi_verbose=dmi_verbose,
+                                       verbose=verbose, accuracy=accuracy)
     if verbose:
         summary_py = model.summary_as_py(template=template)
 
@@ -91,6 +93,13 @@ if __name__ == '__main__':
                         in a verbose way.
                         """
                         )
+    parser.add_argument("-acc", "--accuracy",
+                        type=int,
+                        default=4,
+                        help="""
+                        Accuracy for the exchange values.
+                        """
+                        )
 
     args = parser.parse_args()
 
@@ -103,5 +112,6 @@ if __name__ == '__main__':
             out_dir=args.output_dir,
             out_name=args.output_name,
             template=args.template,
-            dmi=args.dmi,
-            verbose=args.verbose)
+            dmi_verbose=args.dmi,
+            verbose=args.verbose,
+            accuracy=args.accuracy)

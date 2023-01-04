@@ -179,3 +179,13 @@ Whenever to print each neighbor from a
     *action* : store_true
     
     *default* : False
+
+.. _tb2j-extractor_accuracy:
+
+-acc, --accuracy
+----------------
+Accuracy for the exchange values.
+
+    *default* 4
+
+    *type* int

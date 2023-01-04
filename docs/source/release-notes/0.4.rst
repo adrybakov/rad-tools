@@ -31,5 +31,11 @@ Now one need to use read functions from input-output module:
     model = read_exchange_model(filename)
     template = read_template(template_filename)
 
+0.4.1
+-----
+
+Add :ref:`--accuracy <tb2j-extractor_accuracy>` argument to the 
+:ref:`tb2j-extractor <tb2j-extractor_accuracy>` script.
+
 
 

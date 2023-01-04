@@ -832,7 +832,7 @@ class ExchangeModel:
         return filtered_model
 
     def summary_as_txt(self, template: ExchangeTemplate,
-                       dmi_verbose=False, verbose=False):
+                       dmi_verbose=False, verbose=False, accuracy=4):
         r"""
         Return exchange model based on the template file in .txt format.
 
@@ -847,6 +847,8 @@ class ExchangeModel:
         verbose : bool, default False
             Whenever to write everything in a verbose manner.
             (see :ref:`tb2j-extractor_verbose-ref`)
+        accuracy : int, default 4
+            Accuracy for the exchange values
 
         Returns
         -------
@@ -875,32 +877,32 @@ class ExchangeModel:
                     summary += (
                         f"  {atom1:3} {atom2:3} " +
                         f"({R[0]:2.0f}, {R[1]:2.0f}, {R[2]:2.0f})\n" +
-                        f"    Isotropic: {iso:.4f}\n" +
+                        f"    Isotropic: {iso:.{accuracy}f}\n" +
                         f"    Anisotropic:\n" +
-                        f"        {aniso[0][0]:7.4f}  " +
-                        f"{aniso[0][1]:7.4f}  " +
-                        f"{aniso[0][2]:7.4f}\n" +
-                        f"        {aniso[1][0]:7.4f}  " +
-                        f"{aniso[1][1]:7.4f}  " +
-                        f"{aniso[1][2]:7.4f}\n" +
-                        f"        {aniso[2][0]:7.4f}  " +
-                        f"{aniso[2][1]:7.4f}  " +
-                        f"{aniso[2][2]:7.4f}\n" +
-                        f"    DMI: {dmi[0]:.4f} " +
-                        f"{dmi[1]:.4f} " +
-                        f"{dmi[2]:.4f}\n"
-                        f"    |DMI|: {abs_dmi:.4f}\n" +
-                        f"    |DMI/J| {rel_dmi:.4f}\n" +
+                        f"        {aniso[0][0]:{accuracy+3}.{accuracy}f}  " +
+                        f"{aniso[0][1]:{accuracy+3}.{accuracy}f}  " +
+                        f"{aniso[0][2]:{accuracy+3}.{accuracy}f}\n" +
+                        f"        {aniso[1][0]:{accuracy+3}.{accuracy}f}  " +
+                        f"{aniso[1][1]:{accuracy+3}.{accuracy}f}  " +
+                        f"{aniso[1][2]:{accuracy+3}.{accuracy}f}\n" +
+                        f"        {aniso[2][0]:{accuracy+3}.{accuracy}f}  " +
+                        f"{aniso[2][1]:{accuracy+3}.{accuracy}f}  " +
+                        f"{aniso[2][2]:{accuracy+3}.{accuracy}f}\n" +
+                        f"    DMI: {dmi[0]:.{accuracy}f} " +
+                        f"{dmi[1]:.{accuracy}f} " +
+                        f"{dmi[2]:.{accuracy}f}\n"
+                        f"    |DMI|: {abs_dmi:.{accuracy}f}\n" +
+                        f"    |DMI/J| {rel_dmi:.{accuracy}f}\n" +
                         f"    Matrix:\n" +
-                        f"        {matrix[0][0]:7.4f}  " +
-                        f"{matrix[0][1]:7.4f}  " +
-                        f"{matrix[0][2]:7.4f}\n" +
-                        f"        {matrix[1][0]:7.4f}  " +
-                        f"{matrix[1][1]:7.4f}  " +
-                        f"{matrix[1][2]:7.4f}\n" +
-                        f"        {matrix[2][0]:7.4f}  " +
-                        f"{matrix[2][1]:7.4f}  " +
-                        f"{matrix[2][2]:7.4f}\n\n")
+                        f"        {matrix[0][0]:{accuracy+3}.{accuracy}f}  " +
+                        f"{matrix[0][1]:{accuracy+3}.{accuracy}f}  " +
+                        f"{matrix[0][2]:{accuracy+3}.{accuracy}f}\n" +
+                        f"        {matrix[1][0]:{accuracy+3}.{accuracy}f}  " +
+                        f"{matrix[1][1]:{accuracy+3}.{accuracy}f}  " +
+                        f"{matrix[1][2]:{accuracy+3}.{accuracy}f}\n" +
+                        f"        {matrix[2][0]:{accuracy+3}.{accuracy}f}  " +
+                        f"{matrix[2][1]:{accuracy+3}.{accuracy}f}  " +
+                        f"{matrix[2][2]:{accuracy+3}.{accuracy}f}\n\n")
             else:
                 # Compute mean values
                 iso = 0
@@ -925,19 +927,19 @@ class ExchangeModel:
 
                 # Write mean values
                 summary += (
-                    f"    Isotropic: {iso:.4f}\n" +
+                    f"    Isotropic: {iso:.{accuracy}f}\n" +
                     f"    Anisotropic:\n" +
-                    f"        {aniso[0][0]:7.4f}  " +
-                    f"{aniso[0][1]:7.4f}  " +
-                    f"{aniso[0][2]:7.4f}\n" +
-                    f"        {aniso[1][0]:7.4f}  " +
-                    f"{aniso[1][1]:7.4f}  " +
-                    f"{aniso[1][2]:7.4f}\n" +
-                    f"        {aniso[2][0]:7.4f}  " +
-                    f"{aniso[2][1]:7.4f}  " +
-                    f"{aniso[2][2]:7.4f}\n" +
-                    f"    |DMI|: {abs_dmi:.4f}\n" +
-                    f"    |DMI/J| {abs(rel_dmi):.4f}\n")
+                    f"        {aniso[0][0]:{accuracy+3}.{accuracy}f}  " +
+                    f"{aniso[0][1]:{accuracy+3}.{accuracy}f}  " +
+                    f"{aniso[0][2]:{accuracy+3}.{accuracy}f}\n" +
+                    f"        {aniso[1][0]:{accuracy+3}.{accuracy}f}  " +
+                    f"{aniso[1][1]:{accuracy+3}.{accuracy}f}  " +
+                    f"{aniso[1][2]:{accuracy+3}.{accuracy}f}\n" +
+                    f"        {aniso[2][0]:{accuracy+3}.{accuracy}f}  " +
+                    f"{aniso[2][1]:{accuracy+3}.{accuracy}f}  " +
+                    f"{aniso[2][2]:{accuracy+3}.{accuracy}f}\n" +
+                    f"    |DMI|: {abs_dmi:.{accuracy}f}\n" +
+                    f"    |DMI/J| {abs(rel_dmi):.{accuracy}f}\n")
 
                 # Write additional info on DMI
                 if dmi_verbose:
@@ -948,18 +950,18 @@ class ExchangeModel:
                         dmi = bond.dmi
                         summary += (
                             f"    DMI: " +
-                            f"{dmi[0]:7.4f} " +
-                            f"{dmi[1]:7.4f} " +
-                            f"{dmi[2]:7.4f} " +
+                            f"{dmi[0]:{accuracy+3}.{accuracy}f} " +
+                            f"{dmi[1]:{accuracy+3}.{accuracy}f} " +
+                            f"{dmi[2]:{accuracy+3}.{accuracy}f} " +
                             f"({R[0]:2.0f}, {R[1]:2.0f}, {R[2]:2.0f})\n")
                     summary += "\n"
                 # Write only mean value of DMI
                 else:
                     summary += (
                         f"    DMI: " +
-                        f"{dmi[0]:.4f} " +
-                        f"{dmi[1]:.4f} " +
-                        f"{dmi[2]:.4f}\n")
+                        f"{dmi[0]:.{accuracy}f} " +
+                        f"{dmi[1]:.{accuracy}f} " +
+                        f"{dmi[2]:.{accuracy}f}\n")
             summary += "\n"
         return summary
 
