@@ -42,5 +42,10 @@ Add :ref:`--accuracy <tb2j-extractor_accuracy>` argument to the
 
 Add ``get_bond_vector`` to the ExchangeModel.
 
+0.4.3
+-----
+
+Add reciprocal vectors to the ExchangeModel.
+
 
 
