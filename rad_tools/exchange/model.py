@@ -3,7 +3,7 @@ Exchange model.
 """
 
 from copy import deepcopy
-from math import sqrt
+from math import sqrt, pi
 
 import numpy as np
 
@@ -295,6 +295,9 @@ class ExchangeModel:
     a : array
     b : array
     c : array
+    b1 : array
+    b2 : array
+    b3 : array
     len_a : float
     len_b : float
     len_c : float
@@ -400,6 +403,48 @@ class ExchangeModel:
         Length of lattice vector :math:`\vec{c}`.
         """
         return sqrt(np.sum(self.cell[2]**2))
+
+    @property
+    def b1(self):
+        r"""
+        First reciprocal lattice vector 
+
+        .. math::
+
+            \vec{b}_1 = \frac{2\pi}{V}\vec{b}\times\vec{c}
+
+        where :math:`V = \vec{a}\cdot\vec{b}\times\vec{c}`
+        """
+
+        return 2 * pi / self.unit_cell_volume * np.cross(self.b, self.c)
+
+    @property
+    def b2(self):
+        r"""
+        Second reciprocal lattice vector 
+
+        .. math::
+
+            \vec{b}_2 = \frac{2\pi}{V}\vec{c}\times\vec{a}
+
+        where :math:`V = \vec{a}\cdot\vec{b}\times\vec{c}`
+        """
+
+        return 2 * pi / self.unit_cell_volume * np.cross(self.c, self.a)
+
+    @property
+    def b3(self):
+        r"""
+        Third reciprocal lattice vector 
+
+        .. math::
+
+            \vec{b}_3 = \frac{2\pi}{V}\vec{a}\times\vec{b}
+
+        where :math:`V = \vec{a}\cdot\vec{b}\times\vec{c}`
+        """
+
+        return 2 * pi / self.unit_cell_volume * np.cross(self.a, self.b)
 
     @property
     def unit_cell_volume(self):
