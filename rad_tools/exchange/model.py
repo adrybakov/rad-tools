@@ -159,7 +159,7 @@ class Bond:
 
         .. math::
             \mathbf{J}_{aniso} = \mathbf{J}_{symm} - \dfrac{1}{3}Tr(\mathbf{J}) \cdot \mathbf{I}
-            
+
         where :math:`\mathbf{I}` is an :math:`3\times3` identity matrix.
         """
         return self.symm_matrix - self.iso * np.identity(3, dtype=float)
@@ -602,6 +602,34 @@ class ExchangeModel:
         x2, y2, z2 = self.get_atom_coordinates(atom2, R)
 
         return (x1 + x2) / 2, (y1 + y2) / 2, (z1 + z2) / 2
+
+    def get_bond_vector(self, atom1, atom2, R=(0, 0, 0)):
+        r"""
+        Getter for vector between the atom1 and atom2.
+
+        Parameters
+        ----------
+        atom1 : str
+            Name of atom1 in (0, 0, 0) unit cell.
+        atom2 : str
+            Name of atom2 in R unit cell.
+        R : tuple of ints, default (0, 0, 0)
+            Radius vector of the unit cell for atom2.
+
+        Returns
+        -------
+        x : float
+            x component of the bond vector.
+        y : float
+            y component of the bond vector.
+        z : float
+            z component of the bond vector.
+        """
+
+        x1, y1, z1 = self.get_atom_coordinates(atom1)
+        x2, y2, z2 = self.get_atom_coordinates(atom2, R)
+
+        return x2 - x1, y2 - y1, z2 - z1
 
     @property
     def space_dimensions(self):
