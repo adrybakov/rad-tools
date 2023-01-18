@@ -47,5 +47,22 @@ Add ``get_bond_vector`` to the ExchangeModel.
 
 Add reciprocal vectors to the ExchangeModel.
 
+0.4.4
+-----
+
+Add io interface.
+
+There is two ways to import read functions:
+
+.. code-block:: python
+
+    from rad_tools.io.tb2j import read_exchange_model
+    from rad_tools.io import read_tb2j_model
+
+.. code-block:: python
+
+    from rad_tools.io.internal import 
+    from rad_tools.io import read_template
+
 
 
