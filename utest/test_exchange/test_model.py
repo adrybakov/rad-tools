@@ -477,3 +477,21 @@ class TestExchangeModel:
         filtered_model = model.filtered(template=[("Cr1", "Cr2", (0, 0, 0))],
                                         R_vector=[(0, 0, 0), (1, 0, 0)])
         assert len(filtered_model.bond_list) == 1
+
+    def test_number_spins_in_unit_cell(self):
+        model = ExchangeModel()
+        model.add_atom("Cr1", 0.1, 0.6, 0.2)
+        model.add_atom("Cr2", 0.1, 0.3, 0.5)
+        assert model.number_spins_in_unit_cell == 2
+        bond12 = Bond(iso=12)
+        bond13 = Bond(iso=13)
+        bond23 = Bond(iso=23)
+        bond31 = Bond(iso=31)
+        model.add_bond(bond12, "Cr1", "Cr2", (0, 0, 0))
+        model.add_bond(bond23, "Cr2", "Cr3", (0, 0, 0))
+        model.add_bond(bond31, "Cr3", "Cr1", (0, 0, 0))
+        assert model.number_spins_in_unit_cell == 2
+        model.add_atom("Cr2", 0.1, 0.1, 0.55)
+        assert model.number_spins_in_unit_cell == 2
+        model.add_atom("Cr3", 0.1, 0.1, 0.55)
+        assert model.number_spins_in_unit_cell == 3

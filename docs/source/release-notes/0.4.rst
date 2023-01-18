@@ -64,5 +64,7 @@ There is two ways to import read functions:
     from rad_tools.io.internal import 
     from rad_tools.io import read_template
 
+Add ``number_spins_in_unit_cell`` property to the ``ExchangeModel`` class
+
 
 

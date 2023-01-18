@@ -3,7 +3,7 @@ Exchange model.
 """
 
 from copy import deepcopy
-from math import sqrt, pi
+from math import sqrt, pi, sin, cos
 
 import numpy as np
 
@@ -499,6 +499,10 @@ class ExchangeModel:
                 for R in self.bonds[atom1][atom2]:
                     cells.add(R)
         return list(cells)
+
+    @property
+    def number_spins_in_unit_cell(self):
+        return len(self.magnetic_atoms)
 
     def add_bond(self, bond: Bond, atom1, atom2, R):
         r"""
