@@ -13,9 +13,10 @@ build
 dist
 *.egg-info
 
-# Folder for debugging
+# Debugging
 debug
 logodesign
+tmp.py
 
 # Docs
 docs/make.bat
