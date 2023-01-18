@@ -37,6 +37,9 @@ pip:
 	@echo "\x1b[33m"
 	@echo "Have you done this?"
 	@echo "  * Change version in __init__.py?"
+	@echo "\x1b[0m"
+	@grep "__version__" rad_tools/__init__.py
+	@echo "\x1b[33m"
 	@echo "  * Release note?"
 	@echo "  * Commit all the changes?"
 	@echo "\x1b[0m"
