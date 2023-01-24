@@ -66,5 +66,11 @@ There is two ways to import read functions:
 
 Add ``number_spins_in_unit_cell`` property to the ``ExchangeModel`` class
 
+0.4.5
+-----
+
+Add ``reduced_parameters`` to the ``ExchangeModel`` class.
+
+
 
 

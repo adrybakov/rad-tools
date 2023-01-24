@@ -1112,3 +1112,35 @@ class ExchangeModel:
                    output_python_dmi +
                    output_python_matrix)
         return summary
+
+    def reduced_parameters(self, template: ExchangeTemplate):
+        r"""
+        Return dict of artifitial bonds with exchange parameters
+        based on the template file.
+
+        Parameters
+        ----------
+        template : :py:class:`.ExchangeTemplate`
+            Template of the desired exchange model. 
+            (see :ref:`rad-make-template`)
+        accuracy : int, default 4
+            Accuracy for the exchange values
+
+        Returns
+        -------
+        parameters : list
+            Exchange parameters as a list of bonds.
+        """
+
+        parameters = {}
+        for name in template.names:
+            # Compute mean values
+            matrix = np.zeros((3, 3), dtype=float)
+            for atom1, atom2, R in template.names[name]:
+                bond = self.bonds[atom1][atom2][R]
+                if not isinstance(bond, Bond):
+                    raise TypeError
+                matrix += bond.matrix
+            matrix /= len(template.names[name])
+            parameters[name] = Bond(matrix=matrix)
+        return parameters
