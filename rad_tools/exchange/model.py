@@ -1123,8 +1123,6 @@ class ExchangeModel:
         template : :py:class:`.ExchangeTemplate`
             Template of the desired exchange model. 
             (see :ref:`rad-make-template`)
-        accuracy : int, default 4
-            Accuracy for the exchange values
 
         Returns
         -------
