@@ -66,5 +66,24 @@ There is two ways to import read functions:
 
 Add ``number_spins_in_unit_cell`` property to the ``ExchangeModel`` class
 
+0.4.5
+-----
 
+Add ``reduced_parameters`` to the ``ExchangeModel`` class.
 
+0.4.6
+-----
+
+Add iexchange interface.
+
+There is two ways to import read functions:
+
+.. code-block:: python
+
+    from rad_tools.exchange.model import ExchangeModel
+    from rad_tools.exchange import ExchangeModel
+
+.. code-block:: python
+
+    from rad_tools.exchange.template import ExchangeTemplate
+    from rad_tools.exchange import ExchangeTemplate
