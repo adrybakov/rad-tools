@@ -237,6 +237,16 @@ class Bond:
         """
         return abs(self.dmi_module/self.iso)
 
+    def round(self, accuracy=4):
+        r"""Round exchange values.
+
+        Parameters
+        ----------
+        accuracy : int, default 4
+            number of decimals after the point.
+        """
+        self.matrix = np.round(self.matrix, decimals=accuracy)
+
     def __add__(self, other):
         if isinstance(other, Bond):
             if abs(self.dis - other.dis) < self.distance_tolerance:
@@ -503,6 +513,17 @@ class ExchangeModel:
     @property
     def number_spins_in_unit_cell(self):
         return len(self.magnetic_atoms)
+
+    def round(self, accuracy=4):
+        r"""Round exchange parameters.
+
+        Parameters
+        ----------
+        accuracy : int, default 4
+            number of decimals after the point.
+        """
+        for atom1, atom2, R in self.bond_list:
+            self.bonds[atom1][atom2][R].round(accuracy)
 
     def add_bond(self, bond: Bond, atom1, atom2, R):
         r"""
