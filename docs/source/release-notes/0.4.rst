@@ -87,3 +87,10 @@ There is two ways to import read functions:
 
     from rad_tools.exchange.template import ExchangeTemplate
     from rad_tools.exchange import ExchangeTemplate
+
+0.4.7
+-----
+
+Add High symmetry k-points. 
+
+Add methods to round up the exchange model.
