@@ -94,3 +94,8 @@ There is two ways to import read functions:
 Add High symmetry k-points. 
 
 Add methods to round up the exchange model.
+
+0.4.8
+-----
+
+Add script for energy exctractor.
