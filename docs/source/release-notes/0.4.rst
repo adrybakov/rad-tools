@@ -99,3 +99,8 @@ Add methods to round up the exchange model.
 -----
 
 Add script for energy exctractor.
+
+0.4.9
+-----
+Add :ref:`--legend_location <rad-dos-plotter_legend-location>` option
+to the :ref:`rad-dos-plotter.py <rad-dos-plotter>` script.

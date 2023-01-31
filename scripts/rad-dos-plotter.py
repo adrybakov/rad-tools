@@ -14,7 +14,7 @@ LABELS = {
     "p": ["$p_z$ (up)", "$p_z$ (down)",
           "$p_y$ (up)", "$p_y$ (down)",
           "$p_x$ (up)", "$p_x$ (down)"],
-    "d": ["$d_{z^2}$ (up)", "$d_{z^2}$",
+    "d": ["$d_{z^2}$ (up)", "$d_{z^2}$ (down)",
           "$d_{zx}$ (up)", "$d_{zx}$ (down)",
           "$d_{zy}$ (up)", "$d_{zy}$ (down)",
           "$d_{x^2 - y^2}$ (up)", "$d_{x^2 - y^2}$ (down)",
@@ -53,7 +53,8 @@ def decompose_filename(filename):
     return atom_type, orbital_type, atom_number, orbital_number
 
 
-def manager(filename, out_dir, out_name, window=None, interactive=False):
+def manager(filename, out_dir, out_name, window=None, interactive=False,
+            legend_location="best"):
     atom_type, orbital_type, atom_number, orbital_number = decompose_filename(
         basename(filename))
     dos = read_dos(filename)
@@ -84,7 +85,7 @@ def manager(filename, out_dir, out_name, window=None, interactive=False):
                 label=LABELS[orbital_type][2 * i + 1],
                 linewidth=0.7)
 
-    ax.legend(loc='best', ncol=2)
+    ax.legend(loc=legend_location, ncol=2)
 
     if window is not None:
         ax.set_xlim(*tuple(window))
@@ -140,6 +141,23 @@ if __name__ == "__main__":
                         help="""
                         Interactive mode flag.
                         """)
+    parser.add_argument("-ll", "--legend-locations",
+                        type=str,
+                        default="best",
+                        choices=['best', 0,
+                                 'upper right', 1,
+                                 'upper left', 2,
+                                 'lower left', 3,
+                                 'lower right', 4,
+                                 'right', 5,
+                                 'center left', 6,
+                                 'center right', 7,
+                                 'lower center', 8,
+                                 'upper center', 9,
+                                 'center', 10],
+                        help="""
+                        Legend location, will be passed to the plt.legend().
+                        """)
 
     args = parser.parse_args()
 
@@ -152,4 +170,5 @@ if __name__ == "__main__":
                 out_dir=args.output_dir,
                 out_name=args.output_name,
                 window=args.window,
-                interactive=args.interactive)
+                interactive=args.interactive,
+                legend_location=args.legend_location)
