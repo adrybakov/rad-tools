@@ -141,20 +141,20 @@ if __name__ == "__main__":
                         help="""
                         Interactive mode flag.
                         """)
-    parser.add_argument("-ll", "--legend-locations",
+    parser.add_argument("-ll", "--legend-location",
                         type=str,
                         default="best",
-                        choices=['best', 0,
-                                 'upper right', 1,
-                                 'upper left', 2,
-                                 'lower left', 3,
-                                 'lower right', 4,
-                                 'right', 5,
-                                 'center left', 6,
-                                 'center right', 7,
-                                 'lower center', 8,
-                                 'upper center', 9,
-                                 'center', 10],
+                        choices=['best', '0',
+                                 'upper right', '1',
+                                 'upper left', '2',
+                                 'lower left', '3',
+                                 'lower right', '4',
+                                 'right', '5',
+                                 'center left', '6',
+                                 'center right', '7',
+                                 'lower center', '8',
+                                 'upper center', '9',
+                                 'center', '10'],
                         help="""
                         Legend location, will be passed to the plt.legend().
                         """)

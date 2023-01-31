@@ -104,3 +104,7 @@ Add script for energy exctractor.
 -----
 Add :ref:`--legend_location <rad-dos-plotter_legend-location>` option
 to the :ref:`rad-dos-plotter.py <rad-dos-plotter>` script.
+
+0.4.10
+------
+Bugfix in :ref:`rad-dos-plotter.py <rad-dos-plotter>` script
