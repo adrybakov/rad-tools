@@ -66,5 +66,45 @@ There is two ways to import read functions:
 
 Add ``number_spins_in_unit_cell`` property to the ``ExchangeModel`` class
 
+0.4.5
+-----
 
+Add ``reduced_parameters`` to the ``ExchangeModel`` class.
 
+0.4.6
+-----
+
+Add iexchange interface.
+
+There is two ways to import read functions:
+
+.. code-block:: python
+
+    from rad_tools.exchange.model import ExchangeModel
+    from rad_tools.exchange import ExchangeModel
+
+.. code-block:: python
+
+    from rad_tools.exchange.template import ExchangeTemplate
+    from rad_tools.exchange import ExchangeTemplate
+
+0.4.7
+-----
+
+Add High symmetry k-points. 
+
+Add methods to round up the exchange model.
+
+0.4.8
+-----
+
+Add script for energy exctractor.
+
+0.4.9
+-----
+Add :ref:`--legend_location <rad-dos-plotter_legend-location>` option
+to the :ref:`rad-dos-plotter.py <rad-dos-plotter>` script.
+
+0.4.10
+------
+Bugfix in :ref:`rad-dos-plotter.py <rad-dos-plotter>` script
