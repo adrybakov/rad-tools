@@ -465,7 +465,7 @@ class ExchangeModel:
         one by one.
 
         .. note::
-            This method is modifying the instance at which it is called.
+            This method modifies the instance at which it is called.
 
         Parameters
         ----------
