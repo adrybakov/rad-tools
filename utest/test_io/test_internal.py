@@ -9,7 +9,7 @@ class ReadTemplate():
 
     template = read_template(os.path.join('utest',
                                           'test_io',
-                                          'resourses',
+                                          'resources',
                                           'exchange.out'))
 
     def test_empty_filename(self):
