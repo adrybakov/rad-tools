@@ -154,6 +154,13 @@ class TestBond:
         bond.dmi = None
         assert bond.dmi_module == 0
         assert self.bond.dmi_module == 1
+
+    def test_round(self):
+        bond = self.bond / 13
+        bond.round(5)
+        assert bond.iso == 0.30769
+        bond.round(1)
+        assert bond.iso == 0.3
         
 
     def test_addition_substruction(self):
