@@ -5,6 +5,7 @@ Input-output from TB2J.
 import numpy as np
 
 from rad_tools.exchange.model import ExchangeModel, Bond
+from rad_tools.routines import absolute_to_relative
 
 
 def read_exchange_model(filename):
@@ -61,7 +62,7 @@ def read_exchange_model(filename):
             line = file.readline()
             line = file.readline().split()
             while line and atom_end_flag not in line:
-                atoms[line[0]] = tuple(map(float, line[1:4]))
+                atoms[line[0]] = absolute_to_relative(model.cell, *tuple(map(float, line[1:4])))
                 line = file.readline().split()
 
         # Check if the exchange section is reached
@@ -104,8 +105,11 @@ def read_exchange_model(filename):
             model.add_atom(atom1, *atoms[atom1])
         if atom2 not in model.magnetic_atoms:
             model.add_atom(atom2, *atoms[atom2])
-        bond = Bond(iso=iso, aniso=aniso, dmi=dmi, distance=distance)
+        bond = Bond(iso=iso, aniso=aniso, dmi=dmi)
         model.add_bond(bond, atom1, atom2, R)
+        computed_distance = model.get_distance(atom1, atom2, R)
+        if abs(computed_distance - distance) > 0.001:
+            print(f"\nComputed distance is a different from the read one:\n  Computed: {computed_distance:.4f}\n  Read: {distance:.4f}\n")
 
     # Fill non-magnetic atoms
     for atom in atoms:
