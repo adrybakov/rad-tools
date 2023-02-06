@@ -1,0 +1,14 @@
+.. _release-notes_0.5:
+
+***********
+Version 0.5
+***********
+
+Whats new?
+----------
+Rewrite the internals of the ``ExchangeModel``.
+
+The idea is to allow one to modify the model with respect to the expected symmetry, desired accuracy of the parameters.
+The distances of the bonds are not directly read from the TB2J exchange file, but computed based on the atoms's positions.
+``Bond`` class is independent of the distance. 
+When exchange model is read from the TB2J exchange file the order of bonds is kept as the insert order of the python's dicts.
