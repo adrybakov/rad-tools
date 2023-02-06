@@ -1,3 +1,5 @@
+from math import sqrt
+
 import numpy as np
 
 class Bond:
@@ -44,10 +46,10 @@ class Bond:
     """
 
     def __init__(self,
+                 matrix=None,
                  iso=None,
                  aniso=None,
-                 dmi=None,
-                 matrix=None) -> None:
+                 dmi=None) -> None:
         self._matrix = np.zeros((3, 3), dtype=float)
         self._iso = 0.
         self._aniso = np.zeros((3, 3), dtype=float)
