@@ -362,7 +362,6 @@ class ExchangeModel:
         for bond in bonds_for_removal:
             del self.bonds[bond]
         
-
     def get_atom_coordinates(self, atom, R=(0, 0, 0)):
         r"""
         Getter for the atom coordinates.
@@ -381,8 +380,10 @@ class ExchangeModel:
         """
 
         R = np.array(R)
-        return np.matmul(R + self.magnetic_atoms[atom], self.cell)
-
+        try:
+            return np.matmul(R + self.magnetic_atoms[atom], self.cell)
+        except KeyError:
+            return np.matmul(R + self.nonmagnetic_atoms[atom], self.cell)
     def get_bond_centre_coordinates(self, atom1, atom2, R=(0, 0, 0)):
         r"""
         Getter for the middle point of the bond.
