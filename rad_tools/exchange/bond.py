@@ -17,7 +17,7 @@ class Bond:
         Value of isotropic exchange parameter.
     aniso : 3 x 3 array, None
         3 x 3 matrix of symmetric anisotropic exchange.
-    dmi : 3 x 1 array, None
+    dmi : 1 x 3 array, None
         Dzyaroshinsky-Moria interaction vector :math:`(D_x, D_y, D_z)`.
     matrix : 3 x 3 array, None
         Exchange matrix. 
@@ -38,9 +38,9 @@ class Bond:
     iso : float
     iso_matrix : 3 x 3 array of floats
     aniso : 3 x 3 array of floats
-    aniso_diagonal : 3 x 1 array of floats 
+    aniso_diagonal : 1 x 3 array of floats 
     aniso_diagonal_matrix : 3 x 3 array of floats 
-    dmi : 3 x 1 array of floats
+    dmi : 1 x 3 array of floats
     dmi_matrix : 3 x 3 array of floats
     dmi_module : float
     """
@@ -110,6 +110,7 @@ class Bond:
         .. math::
             J_{iso} = \dfrac{1}{3}Tr(\mathbf{J})
         """
+
         return np.trace(self.symm_matrix) / 3
 
     @iso.setter
@@ -134,6 +135,7 @@ class Bond:
              [0, J, 0],
              [0, 0, J]]
         """
+
         return self.iso * np.identity(3, dtype=float)
 
     @property
@@ -154,6 +156,7 @@ class Bond:
 
         where :math:`\mathbf{I}` is a :math:`3\times3` identity matrix.
         """
+
         return self.symm_matrix - self.iso * np.identity(3, dtype=float)
 
     @aniso.setter
@@ -178,6 +181,7 @@ class Bond:
 
             [J_xx, J_yy, J_zz]
         """
+
         return np.diag(self.aniso)
 
     @property
@@ -191,6 +195,7 @@ class Bond:
              [0, J_yy, 0],
              [0, 0, J_zz]]
         """
+
         return np.diag(np.diag(self.aniso))
 
     @property
@@ -202,6 +207,7 @@ class Bond:
 
             [D_x, D_y, D_z]
         """
+
         return np.array([self.asymm_matrix[1][2],
                          self.asymm_matrix[2][0],
                          self.asymm_matrix[0][1]],
@@ -234,6 +240,7 @@ class Bond:
              [-D_z, 0, D_x],
              [D_y, -D_x, 0]]
         """
+
         return self.asymm_matrix
 
     @property
@@ -252,6 +259,7 @@ class Bond:
         accuracy : int, default 4
             number of decimals after the point.
         """
+        
         self.matrix = np.round(self.matrix, decimals=accuracy)
 
     def __add__(self, other):
