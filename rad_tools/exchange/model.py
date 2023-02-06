@@ -33,13 +33,13 @@ class ExchangeModel:
     a : 3 x 1 array
     b : 3 x 1 array
     c : 3 x 1 array
-    b1 : 3 x 1 array
-    b2 : 3 x 1 array
-    b3 : 3 x 1 array
     len_a : float
     len_b : float
     len_c : float
     unit_cell_volume : float
+    b1 : 3 x 1 array
+    b2 : 3 x 1 array
+    b3 : 3 x 1 array
     cell_list : list
     number_spins_in_unit_cell : int
 
@@ -131,21 +131,36 @@ class ExchangeModel:
         r"""
         Length of lattice vector :math:`\vec{a}`.
         """
-        return sqrt(np.sum(self.cell[0]**2))
+
+        return sqrt(np.sum(self.a**2))
 
     @property
     def len_b(self):
         r"""
         Length of lattice vector :math:`\vec{b}`.
         """
-        return sqrt(np.sum(self.cell[1]**2))
+
+        return sqrt(np.sum(self.b**2))
 
     @property
     def len_c(self):
         r"""
         Length of lattice vector :math:`\vec{c}`.
         """
-        return sqrt(np.sum(self.cell[2]**2))
+
+        return sqrt(np.sum(self.c**2))
+
+    @property
+    def unit_cell_volume(self):
+        r"""
+        Volume of the unit cell.
+
+        .. math::
+
+            V = \delta_{\vec{A}}\cdot(\delta_{\vec{B}}\times\delta_{\vec{C}})
+        """ 
+
+        return np.dot(self.a, np.cross(self.b, self.c))
 
     @property
     def b1(self):
@@ -188,18 +203,6 @@ class ExchangeModel:
         """
 
         return 2 * pi / self.unit_cell_volume * np.cross(self.a, self.b)
-
-    @property
-    def unit_cell_volume(self):
-        r"""
-        Volume of the unit cell.
-
-        .. math::
-
-            V = \delta_{\vec{A}}\cdot(\delta_{\vec{B}}\times\delta_{\vec{C}})
-        """ 
-
-        return np.dot(self.a, np.cross(self.b, self.c))
 
     @property
     def cell_list(self):
@@ -317,7 +320,6 @@ class ExchangeModel:
         except KeyError:
             pass
         
-
     def add_atom(self, name, a, b, c):
         r"""
         Add magnetic atom to the model.
@@ -350,11 +352,15 @@ class ExchangeModel:
             Mark for the atom.
         """
         
+        bonds_for_removal = []
         if name in self.magnetic_atoms:
             del self.magnetic_atoms[name]
         for atom1, atom2, R in self.bonds:
             if atom1 == name or atom2 == name:
-                del self.bonds[(atom1, atom2, R)]
+                bonds_for_removal.append((atom1, atom2, R))
+        
+        for bond in bonds_for_removal:
+            del self.bonds[bond]
         
 
     def get_atom_coordinates(self, atom, R=(0, 0, 0)):
@@ -373,10 +379,11 @@ class ExchangeModel:
         coordinates : 1 x 3 array
             Coordinates of atom in the cell R in real space.
         """
+
         R = np.array(R)
         return np.matmul(R + self.magnetic_atoms[atom], self.cell)
 
-    def get_bond_coordinates(self, atom1, atom2, R=(0, 0, 0)):
+    def get_bond_centre_coordinates(self, atom1, atom2, R=(0, 0, 0)):
         r"""
         Getter for the middle point of the bond.
 
@@ -443,7 +450,7 @@ class ExchangeModel:
             Distance between atom1 and atom2.
         """
 
-        return np.sum(self.get_bond_vector(atom1, atom2, R)**2)
+        return sqrt(np.sum(self.get_bond_vector(atom1, atom2, R)**2))
 
     def filter(self,
                max_distance=None,
