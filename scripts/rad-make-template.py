@@ -42,7 +42,7 @@ def provide_template(out_name="template.txt",
                        "Neighbors template:\n" +
                        "i j R_a R_b R_c\n" +
                        '-' * 20 + "\n")
-            for atom1, atom2, R in model.bond_list:
+            for atom1, atom2, R in model.bonds:
                 file.write(f"{atom1:4} {atom2:4} " +
                            f"{R[0]:3.0f} {R[1]:3.0f} {R[2]:3.0f}\n")
             file.write('=' * 20 + "\n")
