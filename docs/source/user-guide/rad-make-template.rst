@@ -116,7 +116,7 @@ Line 9: Neighbor separator.
 Line 10: Name of the second neighbor.
 
 .. note::
-    There is no LaTeX name specifies for the second neighbor.
+    There is no LaTeX name specified for the second neighbor.
 
 Lines 11-13: Specifications of the first, second and third bond, which are 
 associated with the second neighbor.
