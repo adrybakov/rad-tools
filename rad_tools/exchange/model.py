@@ -384,6 +384,7 @@ class ExchangeModel:
             return np.matmul(R + self.magnetic_atoms[atom], self.cell)
         except KeyError:
             return np.matmul(R + self.nonmagnetic_atoms[atom], self.cell)
+
     def get_bond_centre_coordinates(self, atom1, atom2, R=(0, 0, 0)):
         r"""
         Getter for the middle point of the bond.
@@ -562,6 +563,18 @@ class ExchangeModel:
                               template=template,
                               R_vector=R_vector)
         return filtered_model
+
+    def optimize_symmetry(self, tolerance=0.0001):
+        r"""
+        Optimize symmetry of the model with fixed tolerance to the exchange parameter§s value.
+
+        Parameters
+        ----------
+        tolerance : float
+            Tolerance for the optimization.
+        """
+        
+        pass
 
     def summary_as_txt(self, template: ExchangeTemplate,
                        dmi_verbose=False, verbose=False, accuracy=4):
