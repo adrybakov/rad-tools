@@ -158,7 +158,7 @@ class ExchangeModel:
         .. math::
 
             V = \delta_{\vec{A}}\cdot(\delta_{\vec{B}}\times\delta_{\vec{C}})
-        """ 
+        """
 
         return np.dot(self.a, np.cross(self.b, self.c))
 
@@ -319,7 +319,7 @@ class ExchangeModel:
             del self.bonds[(atom1, atom2, R)]
         except KeyError:
             pass
-        
+
     def add_atom(self, name, a, b, c):
         r"""
         Add magnetic atom to the model.
@@ -351,17 +351,17 @@ class ExchangeModel:
         name : str
             Mark for the atom.
         """
-        
+
         bonds_for_removal = []
         if name in self.magnetic_atoms:
             del self.magnetic_atoms[name]
         for atom1, atom2, R in self.bonds:
             if atom1 == name or atom2 == name:
                 bonds_for_removal.append((atom1, atom2, R))
-        
+
         for bond in bonds_for_removal:
             del self.bonds[bond]
-        
+
     def get_atom_coordinates(self, atom, R=(0, 0, 0)):
         r"""
         Getter for the atom coordinates.
@@ -503,15 +503,15 @@ class ExchangeModel:
             dis = self.get_distance(atom1, atom2, R)
 
             if max_distance is not None and dis > max_distance:
-                        bonds_for_removal.add((atom1, atom2, R))
+                bonds_for_removal.add((atom1, atom2, R))
 
             if min_distance is not None and dis < min_distance:
-                        bonds_for_removal.add((atom1, atom2, R))
+                bonds_for_removal.add((atom1, atom2, R))
 
             if R_vector is not None and R not in R_vector:
-                        bonds_for_removal.add((atom1, atom2, R))
+                bonds_for_removal.add((atom1, atom2, R))
             if template is not None and (atom1, atom2, R) not in template:
-                        bonds_for_removal.add((atom1, atom2, R))
+                bonds_for_removal.add((atom1, atom2, R))
 
         for atom1, atom2, R in bonds_for_removal:
             self.remove_bond(atom1, atom2, R)
@@ -564,17 +564,67 @@ class ExchangeModel:
                               R_vector=R_vector)
         return filtered_model
 
-    def optimize_symmetry(self, tolerance=0.0001):
+    def force_symmetry(self, template):
         r"""
-        Optimize symmetry of the model with fixed tolerance to the exchange parameter§s value.
+        Force the model to have the symmetries of the template.
+
+        Takes mean values of the parameters. 
+        For DMI interaction directions are kept the same, 
+        but the length of the DMI vector is scaled.
+
+        This method modifies an instance on which it was called.
 
         Parameters
         ----------
-        tolerance : float
-            Tolerance for the optimization.
+        template : :py:class:`.ExchangeTemplate`
+            Template.
         """
-        
-        pass
+
+        if not isinstance(template, ExchangeTemplate):
+            raise TypeError
+
+        self.filter(template=template)
+
+        for name in template.names:
+            bonds = template.names[name]
+            symm_matrix = np.zeros((3, 3), dtype=float)
+            dmi_module = 0
+            for bond in bonds:
+                symm_matrix = (symm_matrix +
+                               self.bonds[bond].symm_matrix)
+                dmi_module = dmi_module + self.bonds[bond].dmi_module
+
+            symm_matrix = symm_matrix / len(bonds)
+            dmi_module = dmi_module / len(bonds)
+
+            for bond in bonds:
+                asymm_factor = dmi_module / self.bonds[bond].dmi_module
+                self.bonds[bond].matrix = (symm_matrix +
+                                           self.bonds[bond].asymm_matrix * asymm_factor)
+
+    def forced_symmetry(self, template):
+        r"""
+        Force the model to have the symmetries of the template.
+
+        Takes mean values of the parameters. 
+        Respect the direction of the DMI vectors.
+
+        This method return a new instance.
+
+        Parameters
+        ----------
+        template : :py:class:`.ExchangeTemplate`
+            Template.
+
+        Returns
+        -------
+        new_model : :py:class:`.ExchangeModel`
+            Exchange model with forced symmetry.
+        """
+
+        new_model = deepcopy(self)
+        new_model.force_symmetry(template=template)
+        return new_model
 
     def summary_as_txt(self, template: ExchangeTemplate,
                        dmi_verbose=False, verbose=False, accuracy=4):
