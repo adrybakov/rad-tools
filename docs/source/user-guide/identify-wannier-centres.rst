@@ -27,6 +27,8 @@ distance span for the search.
 
 Usage example
 =============
+Example is based on the files from 
+:examples:`examples folder <identify-wannier-centres>`. 
 
 The example_centres.xyz file looks like this:
 

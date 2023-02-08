@@ -22,6 +22,9 @@ Several filtering options are supported for the case of TB2J-based template file
 
 Usage example
 =============
+Example is based on the exchange.out file from 
+:examples:`examples folder <rad-make-template>`. 
+
 The simpliest case consist of template draft`s creation 
 (see :ref:`template specification <template-draft>`). 
 The following command will produce it:
