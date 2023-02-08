@@ -1,5 +1,7 @@
 r"""
 Exchange model.
+
+Write a tutorial with docstrings here.
 """
 
 from copy import deepcopy
@@ -54,6 +56,12 @@ class ExchangeModel:
 
     def __iter__(self):
         return ExchangeModelIterator(self)
+
+    def __contains__(self, item):
+        return item in self.bonds
+
+    def __getitem__(self, key) -> Bond:
+        return self.bonds[key]
 
     @property
     def cell(self):
