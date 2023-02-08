@@ -19,13 +19,15 @@ html-examples:
 	@make examples
 	@$(SPHINXBUILD) -M html "docs/$(SOURCEDIR)" "docs/$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
+doctest: 
+	@$(SPHINXBUILD) -b doctest "docs/$(SOURCEDIR)" "docs/$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
 clean:
 	-@rm -r docs/build
 	-@rm -r docs/source/api/_autosummary
 	-@rm -r rad_tools.egg-info
 	-@rm -r build
 	-@rm -r dist
-
 
 test:
 	@pip3 install . --upgrade
