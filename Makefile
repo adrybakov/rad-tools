@@ -87,10 +87,10 @@ examples:
 	@rad-make-template.py -f docs/examples/rad-make-template/exchange.out -on docs/examples/rad-make-template/full_template.txt
 	@rad-make-template.py -f docs/examples/rad-make-template/exchange.out -on docs/examples/rad-make-template/filtered_template.txt -maxd 8
 	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/
-	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_filtered -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.3 -t "First neighbor exchange"
-	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_double_bonds -wtp iso -maxd 5 -dc -sa 1.2 -t "First neighbor exchange"
-	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_template -wtp iso -tf docs/examples/tb2j-plotter/template.txt -dc -sa 1.2  -t "First neighbor exchange"
-	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_R -wtp iso -R 1 0 0 1 1 0 0 1 0 -1 0 0 -1 -1 0 0 -1 0 -dc -sa 1.2  -t "First neighbor exchange"
+	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_filtered -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange"
+	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_template -wtp iso -tf docs/examples/tb2j-plotter/template.txt -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange"
+	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_forced_symmetry -tf docs/examples/tb2j-plotter/template.txt -fs -dc -sa 1.2 -sd 1.2 -t "Forced symmetry exchange"
+	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_R -wtp iso -R 1 0 0 1 1 0 0 1 0 -1 0 0 -1 -1 0 0 -1 0 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange"
 
 push: examples
 	@git push
