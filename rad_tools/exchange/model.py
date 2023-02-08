@@ -52,6 +52,9 @@ class ExchangeModel:
         self.nonmagnetic_atoms = {}
         self.bonds = {}
 
+    def __iter__(self):
+        return ExchangeModelIterator(self)
+
     @property
     def cell(self):
         r"""
@@ -830,3 +833,20 @@ class ExchangeModel:
                    output_python_dmi +
                    output_python_matrix)
         return summary
+
+
+class ExchangeModelIterator:
+
+    def __init__(self, exchange_model: ExchangeModel) -> None:
+        self._bonds = list(exchange_model.bonds)
+        self._index = 0
+
+    def __next__(self):
+        if self._index < len(self._bonds):
+            result = self._bonds[self._index]
+            self._index += 1
+            return result
+        raise StopIteration
+
+    def __iter__(self):
+        return self
