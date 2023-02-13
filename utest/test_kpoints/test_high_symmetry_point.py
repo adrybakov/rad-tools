@@ -1,7 +1,4 @@
-from math import sqrt, pi
-
 import pytest
-import numpy as np
 
 from rad_tools.kpoints import HighSymmetryPoints
 

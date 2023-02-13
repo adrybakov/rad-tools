@@ -1,5 +1,7 @@
 from math import tan, cos, sin
 
+import numpy as np
+
 
 class HighSymmetryPoints:
     r"""
@@ -186,14 +188,17 @@ class HighSymmetryPoints:
         r"""Cubic (CUB, cP)"""
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "M": [1/2, 1/2, 0],
-            "R": [1/2, 1/2, 1/2],
-            "X": [0, 1/2, 0]}
+            "Gamma": np.array([0, 0, 0]),
+            "M": np.array([1/2, 1/2, 0]),
+            "R": np.array([1/2, 1/2, 1/2]),
+            "X": np.array([0, 1/2, 0])}
 
         path = [
             ["Gamma", "X", "M", "Gamma", "R", "X"],
             ["M", "R"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -201,16 +206,19 @@ class HighSymmetryPoints:
         r"""Face-centered cubic (FCC, cF)"""
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "K": [3/8, 3/8, 3/4],
-            "L": [1/2, 1/2, 1/2],
-            "U": [5/8, 1/4, 5/8],
-            "W": [1/2, 1/4, 3/4],
-            "X": [1/2, 0, 1/2]}
+            "Gamma": np.array([0, 0, 0]),
+            "K": np.array([3/8, 3/8, 3/4]),
+            "L": np.array([1/2, 1/2, 1/2]),
+            "U": np.array([5/8, 1/4, 5/8]),
+            "W": np.array([1/2, 1/4, 3/4]),
+            "X": np.array([1/2, 0, 1/2])}
 
         path = [
             ["Gamma", "X", "W", "K", "Gamma", "L", "U", "W", "L", "K"],
             ["U", "X"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -218,13 +226,16 @@ class HighSymmetryPoints:
         r"""Body-centered cubic (BCC, cl)"""
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "H": [1/2, -1/2, 1/2],
-            "P": [1/4, 1/4, 1/4],
-            "N": [0, 0, 1/2]}
+            "Gamma": np.array([0, 0, 0]),
+            "H": np.array([1/2, -1/2, 1/2]),
+            "P": np.array([1/4, 1/4, 1/4]),
+            "N": np.array([0, 0, 1/2])}
 
         path = [["Gamma", "H", "N", "Gamma", "P", "H"],
                 ["P", "N"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -232,17 +243,20 @@ class HighSymmetryPoints:
         r"""Tetragonal (TET, tP)"""
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "A": [1/2, 1/2, 1/2],
-            "M": [1/2, 1/2, 0],
-            "R": [0, 1/2, 1/2],
-            "X": [0, 1/2, 0],
-            "Z": [0, 0, 1/2]}
+            "Gamma": np.array([0, 0, 0]),
+            "A": np.array([1/2, 1/2, 1/2]),
+            "M": np.array([1/2, 1/2, 0]),
+            "R": np.array([0, 1/2, 1/2]),
+            "X": np.array([0, 1/2, 0]),
+            "Z": np.array([0, 0, 1/2])}
 
         path = [
             ["Gamma", "X", "M", "Gamma", "Z", "R", "A", "Z"],
             ["X", "R"],
             ["M", "A"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -254,17 +268,20 @@ class HighSymmetryPoints:
         eta = (1 + c**2 / a**2) / 4
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "M": [-1/2, 1/2, 1/2],
-            "N": [0, 1/2, 0],
-            "P": [1/4, 1/4, 1/4],
-            "X": [0, 0, 1/2],
-            "Z": [eta, eta, -eta],
-            "Z1": [-eta, 1 - eta, eta]}
+            "Gamma": np.array([0, 0, 0]),
+            "M": np.array([-1/2, 1/2, 1/2]),
+            "N": np.array([0, 1/2, 0]),
+            "P": np.array([1/4, 1/4, 1/4]),
+            "X": np.array([0, 0, 1/2]),
+            "Z": np.array([eta, eta, -eta]),
+            "Z1": np.array([-eta, 1 - eta, eta])}
 
         path = [
             ["Gamma", "X", "M", "Gamma", "Z", "P", "N", "Z1", "M"],
             ["X", "P"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -276,20 +293,23 @@ class HighSymmetryPoints:
         eta = (1 + c**2 / a**2) / 4
         zeta = a**2 / (2 * c**2)
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "N": [0, 1/2, 0],
-            "P": [1/4, 1/4, 1/4],
-            "Sigma": [-eta, eta, eta],
-            "Sigma1": [eta, 1 - eta, -eta],
-            "X": [0, 0, 1/2],
-            "Y": [-zeta, zeta, 1/2],
-            "Y1": [1/2, 1/2, -zeta],
-            "Z": [1/2, 1/2, -1/2]}
+            "Gamma": np.array([0, 0, 0]),
+            "N": np.array([0, 1/2, 0]),
+            "P": np.array([1/4, 1/4, 1/4]),
+            "Sigma": np.array([-eta, eta, eta]),
+            "Sigma1": np.array([eta, 1 - eta, -eta]),
+            "X": np.array([0, 0, 1/2]),
+            "Y": np.array([-zeta, zeta, 1/2]),
+            "Y1": np.array([1/2, 1/2, -zeta]),
+            "Z": np.array([1/2, 1/2, -1/2])}
 
         path = [
             ["gamma", "X", "Y", "Sigma", "Gamma",
                 "Z", "Sigma1", "N", "P", "Y1", "Z"],
             ["X", "P"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -297,20 +317,23 @@ class HighSymmetryPoints:
         r"""Orthorhombic (ORC, oP)"""
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "R": [1/2, 1/2, 1/2],
-            "S": [1/2, 1/2, 0],
-            "T": [0, 1/2, 1/2],
-            "U": [1/2, 0, 1/2],
-            "X": [1/2, 0, 0],
-            "Y": [0, 1/2, 0],
-            "Z": [0, 0, 1/2]}
+            "Gamma": np.array([0, 0, 0]),
+            "R": np.array([1/2, 1/2, 1/2]),
+            "S": np.array([1/2, 1/2, 0]),
+            "T": np.array([0, 1/2, 1/2]),
+            "U": np.array([1/2, 0, 1/2]),
+            "X": np.array([1/2, 0, 0]),
+            "Y": np.array([0, 1/2, 0]),
+            "Z": np.array([0, 0, 1/2])}
 
         path = [
             ["Gamma", "X", "S", "Y", "Gamma", "Z", "U", "R", "T", "Z"],
             ["Y", "T"],
             ["U", "X"],
             ["S", "R"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -323,20 +346,23 @@ class HighSymmetryPoints:
         zeta = (1 + a**2 / b**2 - a**2 / c**2) / 4
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "A": [1/2, 1/2 + zeta, zeta],
-            "A1": [1/2, 1/2 - zeta, 1 - zeta],
-            "L": [1/2, 1/2, 1/2],
-            "T": [1, 1/2, 1/2],
-            "X": [0, eta, eta],
-            "X1": [1, 1 - eta, 1 - eta],
-            "Y": [1/2, 0, 1/2],
-            "Z": [1/2, 1/2, 0]}
+            "Gamma": np.array([0, 0, 0]),
+            "A": np.array([1/2, 1/2 + zeta, zeta]),
+            "A1": np.array([1/2, 1/2 - zeta, 1 - zeta]),
+            "L": np.array([1/2, 1/2, 1/2]),
+            "T": np.array([1, 1/2, 1/2]),
+            "X": np.array([0, eta, eta]),
+            "X1": np.array([1, 1 - eta, 1 - eta]),
+            "Y": np.array([1/2, 0, 1/2]),
+            "Z": np.array([1/2, 1/2, 0])}
 
         path = [["Gamma", "Y", "T", "Z", "Gamma", "X", "A1", "Y"],
                 ["T", "X1"],
                 ["X", "A", "Z"],
                 ["L", "Gamma"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -350,23 +376,26 @@ class HighSymmetryPoints:
         phi = (1 + c**2 / b**2 - c**2 / a**2) / 4
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "C": [1/2, 1/2 - eta, 1 - eta],
-            "C1": [1/2, 1/2 + eta, 1 - eta],
-            "D": [1/2 - delta, 1/2, 1 - delta],
-            "D1": [1/2 + delta, 1/2, delta],
-            "L": [1/2, 1/2, 1/2],
-            "H": [1 - phi, 1/2 - phi, 1/2],
-            "H1": [phi, 1/2 + phi, 1/2],
-            "X": [0, 1/2, 1/2],
-            "Y": [1/2, 0, 1/2],
-            "Z": [1/2, 1/2, 0]}
+            "Gamma": np.array([0, 0, 0]),
+            "C": np.array([1/2, 1/2 - eta, 1 - eta]),
+            "C1": np.array([1/2, 1/2 + eta, 1 - eta]),
+            "D": np.array([1/2 - delta, 1/2, 1 - delta]),
+            "D1": np.array([1/2 + delta, 1/2, delta]),
+            "L": np.array([1/2, 1/2, 1/2]),
+            "H": np.array([1 - phi, 1/2 - phi, 1/2]),
+            "H1": np.array([phi, 1/2 + phi, 1/2]),
+            "X": np.array([0, 1/2, 1/2]),
+            "Y": np.array([1/2, 0, 1/2]),
+            "Z": np.array([1/2, 1/2, 0])}
 
         path = [["Gamma", "Y", "C", "D", "X", "Gamma", "Z", "D1", "H", "C"],
                 ["C1", "Z"],
                 ["X", "H1"],
                 ["H", "Y"],
                 ["L", "Gamma"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -379,19 +408,22 @@ class HighSymmetryPoints:
         zeta = (1 + a**2 / b**2 - a**2 / c**2) / 4
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "A": [1/2, 1/2 + zeta, zeta],
-            "A1": [1/2, 1/2 - zeta, 1 - zeta],
-            "L": [1/2, 1/2, 1/2],
-            "T": [1, 1/2, 1/2],
-            "X": [0, eta, eta],
-            "X1": [1, 1 - eta, 1 - eta],
-            "Y": [1/2, 0, 1/2],
-            "Z": [1/2, 1/2, 0]}
+            "Gamma": np.array([0, 0, 0]),
+            "A": np.array([1/2, 1/2 + zeta, zeta]),
+            "A1": np.array([1/2, 1/2 - zeta, 1 - zeta]),
+            "L": np.array([1/2, 1/2, 1/2]),
+            "T": np.array([1, 1/2, 1/2]),
+            "X": np.array([0, eta, eta]),
+            "X1": np.array([1, 1 - eta, 1 - eta]),
+            "Y": np.array([1/2, 0, 1/2]),
+            "Z": np.array([1/2, 1/2, 0])}
 
         path = [["Gamma", "Y", "T", "Z", "Gamma", "X", "A1", "Y"],
                 ["X", "A", "Z"],
                 ["L", "Gamma"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -404,23 +436,26 @@ class HighSymmetryPoints:
         mu = (a**2 + b**2) / (4 * c**2)
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "L": [-mu, mu, 1/2 - delta],
-            "L1": [mu, -mu, 1/2 + delta],
-            "L2": [1/2 - delta, 1/2 + delta, -mu],
-            "R": [0, 1/2, 0],
-            "S": [1/2, 0, 0],
-            "T": [0, 0, 1/2],
-            "W": [1/4, 1/4, 1/4],
-            "X": [-zeta, zeta, zeta],
-            "X1": [zeta, 1 - zeta, -zeta],
-            "Y": [eta, -eta, eta],
-            "Y1": [1 - eta, eta, -eta],
-            "Z": [1/2, 1/2, -1/2]}
+            "Gamma": np.array([0, 0, 0]),
+            "L": np.array([-mu, mu, 1/2 - delta]),
+            "L1": np.array([mu, -mu, 1/2 + delta]),
+            "L2": np.array([1/2 - delta, 1/2 + delta, -mu]),
+            "R": np.array([0, 1/2, 0]),
+            "S": np.array([1/2, 0, 0]),
+            "T": np.array([0, 0, 1/2]),
+            "W": np.array([1/4, 1/4, 1/4]),
+            "X": np.array([-zeta, zeta, zeta]),
+            "X1": np.array([zeta, 1 - zeta, -zeta]),
+            "Y": np.array([eta, -eta, eta]),
+            "Y1": np.array([1 - eta, eta, -eta]),
+            "Z": np.array([1/2, 1/2, -1/2])}
 
         path = [["Gamma", "X", "L", "T", "W", "R", "X1", "Z", "Gamma", "Y", "S", "W"],
                 ["L1", "Y"],
                 ["Y1", "Z"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -430,19 +465,22 @@ class HighSymmetryPoints:
         zeta = (1 + a**2 / b**2) / 4
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "A": [zeta, zeta, 1/2],
-            "A1": [-zeta, 1 - zeta, 1/2],
-            "R": [0, 1/2, 1/2],
-            "S": [0, 1/2, 0],
-            "T": [-1/2, 1/2, 1/2],
-            "X": [zeta, zeta, 0],
-            "X1": [-zeta, 1 - zeta, 0],
-            "Y": [-1/2, 1/2, 0],
-            "Z": [0, 0, 1/2]}
+            "Gamma": np.array([0, 0, 0]),
+            "A": np.array([zeta, zeta, 1/2]),
+            "A1": np.array([-zeta, 1 - zeta, 1/2]),
+            "R": np.array([0, 1/2, 1/2]),
+            "S": np.array([0, 1/2, 0]),
+            "T": np.array([-1/2, 1/2, 1/2]),
+            "X": np.array([zeta, zeta, 0]),
+            "X1": np.array([-zeta, 1 - zeta, 0]),
+            "Y": np.array([-1/2, 1/2, 0]),
+            "Z": np.array([0, 0, 1/2])}
 
         path = [["Gamma", "X", "S", "R", "A", "Z", "Gamma", "Y", "X1", "A1", "T", "Y"],
                 ["Z", "T"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -450,16 +488,19 @@ class HighSymmetryPoints:
         r"""Hexagonal (HEX, hP)"""
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "A": [0, 0, 1/2],
-            "H": [1/3, 1/3, 1/2],
-            "K": [1/3, 1/3, 0],
-            "L": [1/2, 0, 1/2],
-            "M": [1/2, 0, 0]}
+            "Gamma": np.array([0, 0, 0]),
+            "A": np.array([0, 0, 1/2]),
+            "H": np.array([1/3, 1/3, 1/2]),
+            "K": np.array([1/3, 1/3, 0]),
+            "L": np.array([1/2, 0, 1/2]),
+            "M": np.array([1/2, 0, 0])}
 
         path = [["Gamma", "M", "K", "Gamma", "A", "L", "H", "A"],
                 ["L", "M"],
                 ["K", "H"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -472,23 +513,26 @@ class HighSymmetryPoints:
         nu = 3 / 4 - eta / 2
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "B": [eta, 1/2, 1 - eta],
-            "B1": [1/2, 1 - eta, eta - 1],
-            "F": [1/2, 1/2, 0],
-            "L": [1/2, 0, 0],
-            "L1": [0, 0, -1/2],
-            "P": [eta, nu, nu],
-            "P1": [1 - nu, 1 - nu, 1 - eta],
-            "P2": [nu, nu, eta - 1],
-            "Q": [1 - nu, nu, 0],
-            "X": [nu, 0, -nu],
-            "Z": [1/2, 1/2, 1/2]}
+            "Gamma": np.array([0, 0, 0]),
+            "B": np.array([eta, 1/2, 1 - eta]),
+            "B1": np.array([1/2, 1 - eta, eta - 1]),
+            "F": np.array([1/2, 1/2, 0]),
+            "L": np.array([1/2, 0, 0]),
+            "L1": np.array([0, 0, -1/2]),
+            "P": np.array([eta, nu, nu]),
+            "P1": np.array([1 - nu, 1 - nu, 1 - eta]),
+            "P2": np.array([nu, nu, eta - 1]),
+            "Q": np.array([1 - nu, nu, 0]),
+            "X": np.array([nu, 0, -nu]),
+            "Z": np.array([1/2, 1/2, 1/2])}
 
         path = [["Gamma", "L", "B1"],
                 ["B", "Z", "Gamma", "X"],
                 ["Q", "F", "P1", "Z"],
                 ["L", "P"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -501,16 +545,19 @@ class HighSymmetryPoints:
         nu = 3 / 4 - eta / 2
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "F": [1/2, -1/2, 0],
-            "L": [1/2, 0, 0],
-            "P": [1 - nu, -nu, 1 - nu],
-            "P1": [nu, nu - 1, nu - 1],
-            "Q": [eta, eta, eta],
-            "Q1": [1 - eta, -eta, -eta],
-            "Z": [1/2, -1/2, 1/2]}
+            "Gamma": np.array([0, 0, 0]),
+            "F": np.array([1/2, -1/2, 0]),
+            "L": np.array([1/2, 0, 0]),
+            "P": np.array([1 - nu, -nu, 1 - nu]),
+            "P1": np.array([nu, nu - 1, nu - 1]),
+            "Q": np.array([eta, eta, eta]),
+            "Q1": np.array([1 - eta, -eta, -eta]),
+            "Z": np.array([1/2, -1/2, 1/2])}
 
         path = [["Gamma", "P", "Z", "Q", "Gamma", "F", "P1", "Q1", "L", "Z"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -521,26 +568,29 @@ class HighSymmetryPoints:
         nu = 1 / 2 - eta * c * cos(alpha) / b
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "A": [1/2, 1/2, 0],
-            "C": [0, 1/2, 1/2],
-            "D": [1/2, 0, 1/2],
-            "D1": [1/2, 0, -1/2],
-            "E": [1/2, 1/2, 1/2],
-            "H": [0, eta, 1 - nu],
-            "H1": [0, 1 - eta, nu],
-            "H2": [0, eta, -nu],
-            "M": [1/2, eta, 1 - nu],
-            "M1": [1/2, 1 - eta, nu],
-            "M2": [1/2, eta, -nu],
-            "X": [0, 1/2, 0],
-            "Y": [0, 0, 1/2],
-            "Y1": [0, 0, -1/2],
-            "Z": [1/2, 0, 0]}
+            "Gamma": np.array([0, 0, 0]),
+            "A": np.array([1/2, 1/2, 0]),
+            "C": np.array([0, 1/2, 1/2]),
+            "D": np.array([1/2, 0, 1/2]),
+            "D1": np.array([1/2, 0, -1/2]),
+            "E": np.array([1/2, 1/2, 1/2]),
+            "H": np.array([0, eta, 1 - nu]),
+            "H1": np.array([0, 1 - eta, nu]),
+            "H2": np.array([0, eta, -nu]),
+            "M": np.array([1/2, eta, 1 - nu]),
+            "M1": np.array([1/2, 1 - eta, nu]),
+            "M2": np.array([1/2, eta, -nu]),
+            "X": np.array([0, 1/2, 0]),
+            "Y": np.array([0, 0, 1/2]),
+            "Y1": np.array([0, 0, -1/2]),
+            "Z": np.array([1/2, 0, 0])}
 
         path = [["Gamma", "Y", "H", "C", "E", "M1", "A", "X", "H1"],
                 ["M", "D", "Z"],
                 ["Y", "D"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -555,29 +605,32 @@ class HighSymmetryPoints:
         phi = psi + (3 / 4 - psi) * b * cos(alpha) / c
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "N": [1/2, 0, 0],
-            "N1": [0, -1/2, 0],
-            "F": [1 - zeta, 1 - zeta, 1 - eta],
-            "F1": [zeta, zeta, eta],
-            "F2": [-zeta, -zeta, 1 - eta],
-            "F3": [1 - zeta, -zeta, 1 - eta],
-            "I": [phi, 1 - phi, 1/2],
-            "I1": [1 - phi, phi - 1, 1/2],
-            "L": [1/2, 1/2, 1/2],
-            "M": [1/2, 0, 1/2],
-            "X": [1 - psi, psi - 1, 0],
-            "X1": [psi, 1 - psi, 0],
-            "X2": [psi - 1, -psi, 0],
-            "Y": [1/2, 1/2, 0],
-            "Y1": [-1/2, -1/2, 0],
-            "Z": [0, 0, 1/2]}
+            "Gamma": np.array([0, 0, 0]),
+            "N": np.array([1/2, 0, 0]),
+            "N1": np.array([0, -1/2, 0]),
+            "F": np.array([1 - zeta, 1 - zeta, 1 - eta]),
+            "F1": np.array([zeta, zeta, eta]),
+            "F2": np.array([-zeta, -zeta, 1 - eta]),
+            "F3": np.array([1 - zeta, -zeta, 1 - eta]),
+            "I": np.array([phi, 1 - phi, 1/2]),
+            "I1": np.array([1 - phi, phi - 1, 1/2]),
+            "L": np.array([1/2, 1/2, 1/2]),
+            "M": np.array([1/2, 0, 1/2]),
+            "X": np.array([1 - psi, psi - 1, 0]),
+            "X1": np.array([psi, 1 - psi, 0]),
+            "X2": np.array([psi - 1, -psi, 0]),
+            "Y": np.array([1/2, 1/2, 0]),
+            "Y1": np.array([-1/2, -1/2, 0]),
+            "Z": np.array([0, 0, 1/2])}
 
         path = [["Gamma", "Y", "F", "L", "I"],
                 ["I1", "Z", "F1"],
                 ["Y", "X1"],
                 ["X", "Gamma", "N"],
                 ["M", "Gamma"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -592,27 +645,30 @@ class HighSymmetryPoints:
         phi = psi + (3 / 4 - psi) * b * cos(alpha) / c
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "N": [1/2, 0, 0],
-            "N1": [0, -1/2, 0],
-            "F": [1 - zeta, 1 - zeta, 1 - eta],
-            "F1": [zeta, zeta, eta],
-            "F2": [-zeta, -zeta, 1 - eta],
-            "F3": [1 - zeta, -zeta, 1 - eta],
-            "I": [phi, 1 - phi, 1/2],
-            "I1": [1 - phi, phi - 1, 1/2],
-            "L": [1/2, 1/2, 1/2],
-            "M": [1/2, 0, 1/2],
-            "X": [1 - psi, psi - 1, 0],
-            "X1": [psi, 1 - psi, 0],
-            "X2": [psi - 1, -psi, 0],
-            "Y": [1/2, 1/2, 0],
-            "Y1": [-1/2, -1/2, 0],
-            "Z": [0, 0, 1/2]}
+            "Gamma": np.array([0, 0, 0]),
+            "N": np.array([1/2, 0, 0]),
+            "N1": np.array([0, -1/2, 0]),
+            "F": np.array([1 - zeta, 1 - zeta, 1 - eta]),
+            "F1": np.array([zeta, zeta, eta]),
+            "F2": np.array([-zeta, -zeta, 1 - eta]),
+            "F3": np.array([1 - zeta, -zeta, 1 - eta]),
+            "I": np.array([phi, 1 - phi, 1/2]),
+            "I1": np.array([1 - phi, phi - 1, 1/2]),
+            "L": np.array([1/2, 1/2, 1/2]),
+            "M": np.array([1/2, 0, 1/2]),
+            "X": np.array([1 - psi, psi - 1, 0]),
+            "X1": np.array([psi, 1 - psi, 0]),
+            "X2": np.array([psi - 1, -psi, 0]),
+            "Y": np.array([1/2, 1/2, 0]),
+            "Y1": np.array([-1/2, -1/2, 0]),
+            "Z": np.array([0, 0, 1/2])}
 
         path = [["Gamma", "Y", "F", "L", "I"],
                 ["I1", "Z", "F1"],
                 ["N", "Gamma", "M"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -630,27 +686,30 @@ class HighSymmetryPoints:
         psi = eta - 2 * delta
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "F": [1 - phi, 1 - phi, 1 - psi],
-            "F1": [phi, phi - 1, psi],
-            "F2": [1 - phi, -phi, 1 - psi],
-            "H": [zeta, zeta, eta],
-            "H1": [1 - zeta, -zeta, 1 - eta],
-            "H2": [-zeta, -zeta, 1 - eta],
-            "I": [1/2, -1/2, 1/2],
-            "M": [1/2, 0, 1/2],
-            "N": [1/2, 0, 0],
-            "N1": [0, -1/2, 0],
-            "X": [1/2, -1/2, 0],
-            "Y": [mu, mu, delta],
-            "Y1": [1 - mu, -mu, -delta],
-            "Y2": [-mu, -mu, -delta],
-            "Y3": [mu, mu - 1, delta],
-            "Z": [0, 0, 1/2]}
+            "Gamma": np.array([0, 0, 0]),
+            "F": np.array([1 - phi, 1 - phi, 1 - psi]),
+            "F1": np.array([phi, phi - 1, psi]),
+            "F2": np.array([1 - phi, -phi, 1 - psi]),
+            "H": np.array([zeta, zeta, eta]),
+            "H1": np.array([1 - zeta, -zeta, 1 - eta]),
+            "H2": np.array([-zeta, -zeta, 1 - eta]),
+            "I": np.array([1/2, -1/2, 1/2]),
+            "M": np.array([1/2, 0, 1/2]),
+            "N": np.array([1/2, 0, 0]),
+            "N1": np.array([0, -1/2, 0]),
+            "X": np.array([1/2, -1/2, 0]),
+            "Y": np.array([mu, mu, delta]),
+            "Y1": np.array([1 - mu, -mu, -delta]),
+            "Y2": np.array([-mu, -mu, -delta]),
+            "Y3": np.array([mu, mu - 1, delta]),
+            "Z": np.array([0, 0, 1/2])}
 
         path = [["Gamma", "Y", "F", "H", "Z", "I", "F1"],
                 ["H1", "Y1", "X", "Gamma", "N"],
                 ["M", "Gamma"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -668,27 +727,30 @@ class HighSymmetryPoints:
         psi = eta - 2 * delta
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "F": [1 - phi, 1 - phi, 1 - psi],
-            "F1": [phi, phi - 1, psi],
-            "F2": [1 - phi, -phi, 1 - psi],
-            "H": [zeta, zeta, eta],
-            "H1": [1 - zeta, -zeta, 1 - eta],
-            "H2": [-zeta, -zeta, 1 - eta],
-            "I": [1/2, -1/2, 1/2],
-            "M": [1/2, 0, 1/2],
-            "N": [1/2, 0, 0],
-            "N1": [0, -1/2, 0],
-            "X": [1/2, -1/2, 0],
-            "Y": [mu, mu, delta],
-            "Y1": [1 - mu, -mu, -delta],
-            "Y2": [-mu, -mu, -delta],
-            "Y3": [mu, mu - 1, delta],
-            "Z": [0, 0, 1/2]}
+            "Gamma": np.array([0, 0, 0]),
+            "F": np.array([1 - phi, 1 - phi, 1 - psi]),
+            "F1": np.array([phi, phi - 1, psi]),
+            "F2": np.array([1 - phi, -phi, 1 - psi]),
+            "H": np.array([zeta, zeta, eta]),
+            "H1": np.array([1 - zeta, -zeta, 1 - eta]),
+            "H2": np.array([-zeta, -zeta, 1 - eta]),
+            "I": np.array([1/2, -1/2, 1/2]),
+            "M": np.array([1/2, 0, 1/2]),
+            "N": np.array([1/2, 0, 0]),
+            "N1": np.array([0, -1/2, 0]),
+            "X": np.array([1/2, -1/2, 0]),
+            "Y": np.array([mu, mu, delta]),
+            "Y1": np.array([1 - mu, -mu, -delta]),
+            "Y2": np.array([-mu, -mu, -delta]),
+            "Y3": np.array([mu, mu - 1, delta]),
+            "Z": np.array([0, 0, 1/2])}
 
         path = [["Gamma", "Y", "F", "H", "Z", "I"],
                 ["H1", "Y1", "X", "Gamma", "N"],
                 ["M", "Gamma"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -708,30 +770,33 @@ class HighSymmetryPoints:
         delta = zeta * c * cos(alpha) / b + omega / 2 - 1 / 4
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "F": [nu, nu, omega],
-            "F1": [1 - nu, 1 - nu, 1 - omega],
-            "F2": [nu, nu - 1, omega],
-            "H": [zeta, zeta, eta],
-            "H1": [1 - zeta, -zeta, 1 - eta],
-            "H2": [-zeta, -zeta, 1 - eta],
-            "I": [rho, 1 - rho, 1/2],
-            "I1": [1 - rho, rho - 1, 1/2],
-            "L": [1/2, 1/2, 1/2],
-            "M": [1/2, 0, 1/2],
-            "N": [1/2, 0, 0],
-            "N1": [0, -1/2, 0],
-            "X": [1/2, -1/2, 0],
-            "Y": [mu, mu, delta],
-            "Y1": [1 - mu, -mu, -delta],
-            "Y2": [-mu, -mu, -delta],
-            "Y3": [mu, mu - 1, delta],
-            "Z": [0, 0, 1/2]}
+            "Gamma": np.array([0, 0, 0]),
+            "F": np.array([nu, nu, omega]),
+            "F1": np.array([1 - nu, 1 - nu, 1 - omega]),
+            "F2": np.array([nu, nu - 1, omega]),
+            "H": np.array([zeta, zeta, eta]),
+            "H1": np.array([1 - zeta, -zeta, 1 - eta]),
+            "H2": np.array([-zeta, -zeta, 1 - eta]),
+            "I": np.array([rho, 1 - rho, 1/2]),
+            "I1": np.array([1 - rho, rho - 1, 1/2]),
+            "L": np.array([1/2, 1/2, 1/2]),
+            "M": np.array([1/2, 0, 1/2]),
+            "N": np.array([1/2, 0, 0]),
+            "N1": np.array([0, -1/2, 0]),
+            "X": np.array([1/2, -1/2, 0]),
+            "Y": np.array([mu, mu, delta]),
+            "Y1": np.array([1 - mu, -mu, -delta]),
+            "Y2": np.array([-mu, -mu, -delta]),
+            "Y3": np.array([mu, mu - 1, delta]),
+            "Z": np.array([0, 0, 1/2])}
 
         path = [["Gamma", "Y", "F", "L", "I"],
                 ["I1", "Z", "H", "F1"],
                 ["H1", "Y1", "X", "Gamma", "N"],
                 ["M", "Gamma"]]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -742,19 +807,22 @@ class HighSymmetryPoints:
         k_{gamma} = min(k_{\alpha}, k_{\beta}, k_{\gamma))"""
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "L": [1/2, 1/2, 0],
-            "M": [0, 1/2, 1/2],
-            "N": [1/2, 0, 1/2],
-            "R": [1/2, 1/2, 1/2],
-            "X": [1/2, 0, 0],
-            "Y": [0, 1/2, 0],
-            "Z": [0, 0, 1/2]}
+            "Gamma": np.array([0, 0, 0]),
+            "L": np.array([1/2, 1/2, 0]),
+            "M": np.array([0, 1/2, 1/2]),
+            "N": np.array([1/2, 0, 1/2]),
+            "R": np.array([1/2, 1/2, 1/2]),
+            "X": np.array([1/2, 0, 0]),
+            "Y": np.array([0, 1/2, 0]),
+            "Z": np.array([0, 0, 1/2])}
 
         path = [["X", "Gamma", "Y"],
                 ["L", "Gamma", "Z"],
                 ["N", "Gamma", "M"],
                 "R", "Gamma"]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -765,19 +833,22 @@ class HighSymmetryPoints:
         k_{gamma} = max(k_{\alpha}, k_{\beta}, k_{\gamma))"""
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "L": [1/2, -1/2, 0],
-            "M": [0, 0, 1/2],
-            "N": [-1/2, -1/2, 1/2],
-            "R": [0, -1/2, 1/2],
-            "X": [0, -1/2, 0],
-            "Y": [1/2, 0, 0],
-            "Z": [-1/2, 0, 1/2]}
+            "Gamma": np.array([0, 0, 0]),
+            "L": np.array([1/2, -1/2, 0]),
+            "M": np.array([0, 0, 1/2]),
+            "N": np.array([-1/2, -1/2, 1/2]),
+            "R": np.array([0, -1/2, 1/2]),
+            "X": np.array([0, -1/2, 0]),
+            "Y": np.array([1/2, 0, 0]),
+            "Z": np.array([-1/2, 0, 1/2])}
 
         path = [["X", "Gamma", "Y"],
                 ["L", "Gamma", "Z"],
                 ["N", "Gamma", "M"],
                 "R", "Gamma"]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -787,19 +858,22 @@ class HighSymmetryPoints:
         k_{'alpha} > 90^{\circ}, k_{\beta} > 90^{\circ}, k_{\gamma} = 90^{circ}"""
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "L": [1/2, 1/2, 0],
-            "M": [0, 1/2, 1/2],
-            "N": [1/2, 0, 1/2],
-            "R": [1/2, 1/2, 1/2],
-            "X": [1/2, 0, 0],
-            "Y": [0, 1/2, 0],
-            "Z": [0, 0, 1/2]}
+            "Gamma": np.array([0, 0, 0]),
+            "L": np.array([1/2, 1/2, 0]),
+            "M": np.array([0, 1/2, 1/2]),
+            "N": np.array([1/2, 0, 1/2]),
+            "R": np.array([1/2, 1/2, 1/2]),
+            "X": np.array([1/2, 0, 0]),
+            "Y": np.array([0, 1/2, 0]),
+            "Z": np.array([0, 0, 1/2])}
 
         path = [["X", "Gamma", "Y"],
                 ["L", "Gamma", "Z"],
                 ["N", "Gamma", "M"],
                 "R", "Gamma"]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
 
@@ -809,18 +883,21 @@ class HighSymmetryPoints:
         k_{'alpha} < 90^{\circ}, k_{\beta} < 90^{\circ}, k_{\gamma} = 90^{circ}"""
 
         kpoints = {
-            "Gamma": [0, 0, 0],
-            "L": [1/2, -1/2, 0],
-            "M": [0, 0, 1/2],
-            "N": [-1/2, -1/2, 1/2],
-            "R": [0, -1/2, 1/2],
-            "X": [0, -1/2, 0],
-            "Y": [1/2, 0, 0],
-            "Z": [-1/2, 0, 1/2]}
+            "Gamma": np.array([0, 0, 0]),
+            "L": np.array([1/2, -1/2, 0]),
+            "M": np.array([0, 0, 1/2]),
+            "N": np.array([-1/2, -1/2, 1/2]),
+            "R": np.array([0, -1/2, 1/2]),
+            "X": np.array([0, -1/2, 0]),
+            "Y": np.array([1/2, 0, 0]),
+            "Z": np.array([-1/2, 0, 1/2])}
 
         path = [["X", "Gamma", "Y"],
                 ["L", "Gamma", "Z"],
                 ["N", "Gamma", "M"],
                 "R", "Gamma"]
+
+        self._kpoints = kpoints
+        self.path = path
 
         return HighSymmetryPoints(kpoints, path)
