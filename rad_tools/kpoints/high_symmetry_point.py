@@ -22,6 +22,166 @@ class HighSymmetryPoints:
         self._kpoints = kpoints
         self._path = path
 
+        self._PLOT_LITERALS = {
+            "Gamma": "$\\Gamma$",
+            "M": "$M$",
+            "R": "$R$",
+            "X": "$X$",
+            "K": "$K$",
+            "L": "$L$",
+            "U": "$U$",
+            "W": "$W$",
+            "H": "$H$",
+            "P": "$P$",
+            "N": "$N$",
+            "A": "$A$",
+            "Z": "$Z$",
+            "Z1": "$Z_1$",
+            "Sigma": "$\\Sigma$",
+            "Sigma1": "$\\Sigma_1$",
+            "Y": "$Y$",
+            "Y1": "$Y_1$",
+            "S": "$S$",
+            "T": "$T$",
+            "A1": "$A_1$",
+            "X1": "$X_1$",
+            "C": "$C$",
+            "C1": "$C_1$",
+            "D": "$D$",
+            "D1": "$D_1$",
+            "H1": "$H_1$",
+            "L1": "$L_1$",
+            "L2": "$L_2$",
+            "B": "$B$",
+            "B1": "$B_1$",
+            "F": "$F$",
+            "P1": "$P_1$",
+            "P2": "$P_2$",
+            "Q": "$Q$",
+            "Q1": "$Q_1$",
+            "E": "$E$",
+            "H2": "$H_2$",
+            "M1": "$M_1$",
+            "M2": "$M_2$",
+            "N1": "$N_1$",
+            "F1": "$F_1$",
+            "F2": "$F_2$",
+            "F3": "$F_3$",
+            "I": "$I$",
+            "I1": "$I_1$",
+            "X2": "$X_2$",
+            "Y2": "$Y_2$",
+            "Y3": "$Y_3$",
+        }
+
+    @property
+    def kpoints(self):
+        r"""
+        Dictionary of K-points.
+
+        .. code-block:: python
+
+            kpoints = {Point1 : [k1, k2, k3], ...}
+
+        where ``k1``, ``k2``, ``k3`` are 
+        the relative coordinates of the ``Point1``.
+        """
+
+        if self._kpoints is None:
+            return {}
+        else:
+            return self._kpoints
+
+    def add_kpoint(self, name, coordinates, plot_name=None):
+        r"""
+        Add one kpoint to the set of High symmetry kpoints.
+
+        Parameters
+        ----------
+        name : str
+            Name of the kpoints, which is used by the code as a key.
+        coordinates : 1x3 array
+            Relative coordinates of the kpoint.
+        plot_name : str
+            name of the kpoints to be display on the plot. 
+            Equal to the ``name`` by default.
+        """
+        if self._kpoints is None:
+            self._kpoints = {}
+        self._kpoints[name] = list(coordinates)
+
+        if plot_name is None and name not in self._PLOT_LITERALS:
+            self._PLOT_LITERALS[name] = name
+        elif plot_name is not None:
+            self._PLOT_LITERALS[name] = plot_name
+
+    @property
+    def path(self):
+        r"""
+        Path of K-points.
+
+        Always is a list of lists.
+
+        .. code-block:: python
+
+            path = [subpath1, subpath2, ...]
+            subpath1 = [hs_kpoint1, hs_kpoint2, ...]
+        """
+
+        if self._path is None:
+            return []
+        else:
+            return self._path
+
+    @path.setter
+    def path(self, new_path):
+        if new_path is None:
+            self._path = []
+
+        if isinstance(new_path, str):
+            if "|-" in new_path or "-|" in new_path:
+                raise ValueError("Check the foratting of the new path")
+            subpaths = new_path.split("|")
+            if subpaths[-1] == '':
+                subpaths = subpaths[0:-1]
+            if subpaths[0] == '':
+                subpaths = subpaths[1:]
+
+            for i in range(0, len(subpaths)):
+                subpaths[i] = subpaths[i].split("-")
+                for j in range(0, len(subpaths[i])):
+                    if subpaths[i][j] not in self.kpoints:
+                        raise ValueError(
+                            f"Provided  high symmetry " +
+                            f"k-point {subpaths[i][j]} is not known.")
+            self._path = subpaths
+
+        if isinstance(new_path, list):
+            if len(new_path) == 0:
+                self._path = []
+            elif isinstance(new_path[0], list):
+                for i in range(0, len(new_path)):
+                    for j in range(0, len(new_path[i])):
+                        if new_path[i][j] not in self.kpoints:
+                            raise ValueError(
+                                f"Provided  high symmetry " +
+                                f"k-point {new_path[i][j]} is not known.")
+                if len(new_path) == 1 and len(new_path[0]) == 0:
+                    self._path = []
+                else:
+                    self._path = new_path
+            elif isinstance(new_path[0], str):
+                for i in range(0, len(new_path)):
+                    for j in range(0, len(new_path[i])):
+                        if new_path[i][j] not in self.kpoints:
+                            raise ValueError(
+                                f"Provided  high symmetry " +
+                                f"k-point {new_path[i][j]} is not known.")
+                self._path = [new_path]
+
+            else:
+                raise ValueError(f"Path format is not supported: {new_path}")
+
     def cub(self):
         r"""Cubic (CUB, cP)"""
 
