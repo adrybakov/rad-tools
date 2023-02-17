@@ -24,3 +24,9 @@ kept as the insert order of the python's dicts.
 Remove double-bonds argument from :ref:`tb2j-plotter.py <tb2j-plotter>` 
 script and add :ref:`--force-symmetry <tb2j-plotter_force-symmetry>` argument, 
 which force the symmetry of the template to the plotted model.
+
+
+0.5.1
+-----
+
+Bugfix in ``force_symmetry``.

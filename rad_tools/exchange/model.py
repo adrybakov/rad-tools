@@ -609,7 +609,10 @@ class ExchangeModel:
             dmi_module = dmi_module / len(bonds)
 
             for bond in bonds:
-                asymm_factor = dmi_module / self.bonds[bond].dmi_module
+                if self.bonds[bond].dmi_module != 0:
+                    asymm_factor = dmi_module / self.bonds[bond].dmi_module
+                else:
+                    asymm_factor = 0
                 self.bonds[bond].matrix = (symm_matrix +
                                            self.bonds[bond].asymm_matrix * asymm_factor)
 
