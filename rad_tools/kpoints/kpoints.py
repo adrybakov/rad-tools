@@ -46,27 +46,19 @@ class KPoints(HighSymmetryPoints):
             if ``b1``, ``b2``, ``b3`` are specified, in relative otherwise.
         """
 
-        coordinate_list = []
-        for i in range(0, len(self.path)):
-            if len(coordinate_list) == 0:
-                coordinate_list.append(0)
-            for j in range(1, len(self.path[i])):
-                diff = (self.kpoints[self.path[i][j]] -
-                        self.kpoints[self.path[i][j-1]])
-                if b1 is not None and b2 is not None and b3 is not None:
-                    diff = (diff[0]*b1 +
-                            diff[1]*b2 +
-                            diff[2]*b3)
-                diff_distance = sqrt(np.sum(diff**2))
-                coordinate_list.append(coordinate_list[-1] + diff_distance)
-        return coordinate_list
+        coordinates_list = self.coordinates(
+            n=1, b1=b1, b2=b2, b3=b3, linear=True)
+        return np.concatenate(([coordinates_list[0]],
+                               coordinates_list[1:-1:2],
+                               [coordinates_list[-1]]))
 
     def coordinates(self, n=100, b1=None, b2=None, b3=None, linear=False):
         r"""
         Coordinates of all k points in the path.
 
-        In reciprocal space units if ``b1``, ``b2``, ``b3`` are specified, 
-        in relative otherwise. 
+        Return coordinates in reciprocal space units if ``b1``, ``b2``, ``b3`` 
+        are specified, otherwise return in relative to the reciprocal 
+        lattice vectors coordinates. 
 
         Parameters
         ----------
@@ -96,6 +88,8 @@ class KPoints(HighSymmetryPoints):
                 first_point = self.kpoints[self.path[i][j-1]]
                 diff = (self.kpoints[self.path[i][j]] -
                         self.kpoints[self.path[i][j-1]])
+
+                # Move from relative to absolute coordinates
                 if b1 is not None and b2 is not None and b3 is not None:
                     first_point = (first_point[0]*b1 +
                                    first_point[1]*b2 +
@@ -103,12 +97,14 @@ class KPoints(HighSymmetryPoints):
                     diff = (diff[0]*b1 +
                             diff[1]*b2 +
                             diff[2]*b3)
+                # Move from (kx, ky, kz) to |k|
                 if linear:
                     diff = sqrt(np.sum(np.array(diff)**2))
-                    if i == 0 and j == 0:
+                    if i == 0 and j == 1:
                         first_point = 0
                     else:
                         first_point = point_list[-1]
+
                 for step in range(0, n+1):
                     point_list.append(first_point + step/n * diff)
 
