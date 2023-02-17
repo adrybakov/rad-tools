@@ -6,41 +6,21 @@ Version 0.5
 
 Whats new?
 ----------
-Rewrite the internals of the ``ExchangeModel``.
+Rewrite the internals of the 
+:doc:`ExchangeModel <../api/_autosummary/rad_tools.exchange.model.ExchangeModel>`.
 
-The idea is to allow one to modify the model with respect to the expected symmetry, desired accuracy of the parameters.
+The idea is to allow one to modify the model with respect to the expected 
+symmetry and desired accuracy of the parameters. Futhermore, ``ExchangeModel``
+is iterable, support index access and ``in`` function.
+
 The distances of the bonds are not directly read from the TB2J exchange file, but computed based on the atoms's positions.
-``Bond`` class is independent of the distance. 
-When exchange model is read from the TB2J exchange file the order of bonds is kept as the insert order of the python's dicts.
-Remove double-bonds argument from tb2j-plotter
 
-ExchangeModel is iterable now
-The following code
+:doc:`Bond <../api/_autosummary/rad_tools.exchange.bond.Bond>` class does 
+not contain information about the distance. 
 
-.. testcode::
+When exchange model is read from the TB2J exchange file the order of bonds is 
+kept as the insert order of the python's dicts.
 
-    from rad_tools.exchange import ExchangeModel, Bond
-
-    model = ExchangeModel()
-    model.add_atom("Atom1", 0, 0, 0)
-    model.add_atom("Atom2", 0.5, 0.5, 0.5)
-    model.add_bond(Bond(iso=1), "Atom1", "Atom2", (0, 0, 0))
-    model.add_bond(Bond(iso=1), "Atom2", "Atom1", (0, 0, 0))
-    model.add_bond(Bond(iso=2), "Atom1", "Atom2", (1, 0, 0))
-    model.add_bond(Bond(iso=2), "Atom1", "Atom2", (-1, 0, 0))
-    for atom1, atom2, R in model:
-        print(atom1, atom2, R)
-
-
-Will produce the output:
-
-.. testoutput::
-
-    Atom1 Atom2 (0, 0, 0)
-    Atom2 Atom1 (0, 0, 0)
-    Atom1 Atom2 (1, 0, 0)
-    Atom1 Atom2 (-1, 0, 0)
-
-Add [] and in to the ExchangeModel
-
-Add force-symmetry option to the tb2j-plotter instead of double-bonds option.
+Remove double-bonds argument from :ref:`tb2j-plotter.py <tb2j-plotter>` 
+script and add :ref:`--force-symmetry <tb2j-plotter_force-symmetry>` argument, 
+which force the symmetry of the template to the plotted model.
