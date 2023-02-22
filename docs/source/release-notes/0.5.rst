@@ -30,3 +30,8 @@ which force the symmetry of the template to the plotted model.
 -----
 
 Bugfix in ``force_symmetry``.
+
+0.5.2
+-----
+
+Bugfix in ``add_kpoint`` in kpoints module.

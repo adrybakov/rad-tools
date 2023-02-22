@@ -108,9 +108,13 @@ class HighSymmetryPoints:
             name of the kpoints to be display on the plot. 
             Equal to the ``name`` by default.
         """
+
+        coordinates = np.array(coordinates)
+        if coordinates.shape != (3,):
+            raise ValueError
         if self._kpoints is None:
             self._kpoints = {}
-        self._kpoints[name] = list(coordinates)
+        self._kpoints[name] = coordinates
 
         if plot_name is None and name not in self._PLOT_LITERALS:
             self._PLOT_LITERALS[name] = name
