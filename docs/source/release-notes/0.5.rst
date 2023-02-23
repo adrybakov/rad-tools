@@ -36,6 +36,6 @@ Bugfix in ``force_symmetry``.
 
 Bugfix in ``add_kpoint`` in kpoints module.
 
-0.5.3/0.5.4
------------
+0.5.3/0.5.4/0.5.5
+-----------------
 Bugfix in :ref:`tb2j-extractor.py <tb2j-extractor>`

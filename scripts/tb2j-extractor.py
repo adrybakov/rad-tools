@@ -40,8 +40,6 @@ def extract(filename, out_dir, out_name, template,
               f"{abspath(join(out_dir, out_name + '.txt'))}{RESET}")
         if verbose:
             with open(join(out_dir, out_name + ".py"), "w") as out_python:
-                out_file.write(
-                    f"Exchange values are extracted from: {filename}\n\n")
                 out_python.write(summary_py)
             print(f"{OK}Verbose info in .py format is in " +
                   f"{abspath(join(out_dir, out_name + '.py'))}{RESET}")
