@@ -22,6 +22,9 @@ Several filtering options are supported for the case of TB2J-based template file
 
 Usage example
 =============
+Example is based on the exchange.out file from 
+:examples:`examples folder <rad-make-template>`. 
+
 The simpliest case consist of template draft`s creation 
 (see :ref:`template specification <template-draft>`). 
 The following command will produce it:
@@ -116,7 +119,7 @@ Line 9: Neighbor separator.
 Line 10: Name of the second neighbor.
 
 .. note::
-    There is no LaTeX name specifies for the second neighbor.
+    There is no LaTeX name specified for the second neighbor.
 
 Lines 11-13: Specifications of the first, second and third bond, which are 
 associated with the second neighbor.
@@ -134,9 +137,9 @@ Arguments
 ------------------
 Relative or absolute path to the template output file.
 
-    *default* : template.txt
+.. code-block:: text
 
-    *type* : str
+    default : template
 
 See also: :ref:`example <scripts_output-notes>`.
 
@@ -147,10 +150,9 @@ See also: :ref:`example <scripts_output-notes>`.
 Relative or absulute path to the TB2J exchange output file, 
 including the name and extention of the file.
 
-    *default* : None 
+.. code-block:: text
 
-    *type* : str
-
+    default : None 
 
 .. _rad-make-template_R-vector:
 
@@ -167,12 +169,9 @@ by spaces. They are grouped by three starting from the left to form a set
 of R vectors. If the last group will contain 1 or 2 integers they will be 
 ignored.
 
-    *default* : None
+.. code-block:: text
 
-    *type* : int
-
-    *nargs* : *
-
+    default : None
 
 .. _rad-make-template_max-distance:
 
@@ -183,10 +182,9 @@ ignored.
 All the bonds with the distance beetwen atom 1 and atom 2 
 greater than maximum distance are excluded from the model.
 
-    *default* : None
+.. code-block:: text
 
-    *type* : float
-
+    default : None
 
 .. _rad-make-template_min-distance:
 
@@ -197,10 +195,9 @@ greater than maximum distance are excluded from the model.
 All the bonds with the distance beetwen atom 1 and atom 2 
 lower than minimum distance are excluded from the model.
 
-    *default* : None
+.. code-block:: text
 
-    *type* : float
-
+    default : None
 
 .. _rad-make-template_distance:
 
@@ -210,9 +207,9 @@ lower than minimum distance are excluded from the model.
 
 Only the bonds with the exact distance remains in the model.
 
-    *default* : None
+.. code-block:: text
 
-    *type* : float
+    default : None
 
 .. hint::
     There is no point in specifying maximum or minimum distance when 

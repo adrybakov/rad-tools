@@ -2,6 +2,7 @@
 Neighbors template:
 i j R_a R_b R_c
 --------------------
+Name placeholder
 Ni1  Ni1   -1   0   0
 Ni1  Ni1    1   0   0
 Ni1  Ni1   -1  -1   0

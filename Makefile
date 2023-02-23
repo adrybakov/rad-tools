@@ -13,8 +13,14 @@ BUILDDIR      = build
 
 # $(O) is meant as a shortcut for $(SPHINXOPTS).
 html: 
+	@$(SPHINXBUILD) -M html "docs/$(SOURCEDIR)" "docs/$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+html-examples: 
 	@make examples
 	@$(SPHINXBUILD) -M html "docs/$(SOURCEDIR)" "docs/$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+doctest: 
+	@$(SPHINXBUILD) -b doctest "docs/$(SOURCEDIR)" "docs/$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 clean:
 	-@rm -r docs/build
@@ -22,7 +28,6 @@ clean:
 	-@rm -r rad_tools.egg-info
 	-@rm -r build
 	-@rm -r dist
-
 
 test:
 	@pip3 install . --upgrade
@@ -52,6 +57,10 @@ pip:
 	@git log --oneline --all --graph --decorate -20
 	@echo "\x1b[33m"
 	@echo "\x1b[31m"
+	@echo "\x1b[33m"
+	@echo Are all script arguments ok?
+	@echo "\x1b[0m"
+	@make check-user-guide
 	@read -p "Press Enter if yes:"
 	@echo "\x1b[0m"
 	-@rm -r dist
@@ -82,10 +91,13 @@ examples:
 	@rad-make-template.py -f docs/examples/rad-make-template/exchange.out -on docs/examples/rad-make-template/full_template.txt
 	@rad-make-template.py -f docs/examples/rad-make-template/exchange.out -on docs/examples/rad-make-template/filtered_template.txt -maxd 8
 	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/
-	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_filtered -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.3 -t "First neighbor exchange"
-	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_double_bonds -wtp iso -maxd 5 -dc -sa 1.2 -t "First neighbor exchange" -db
-	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_template -wtp iso -tf docs/examples/tb2j-plotter/template.txt -dc -sa 1.2  -t "First neighbor exchange" -db
-	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_R -wtp iso -R 1 0 0 1 1 0 0 1 0 -1 0 0 -1 -1 0 0 -1 0 -dc -sa 1.2  -t "First neighbor exchange" -db
+	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_filtered -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange"
+	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_template -wtp iso -tf docs/examples/tb2j-plotter/template.txt -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange"
+	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_forced_symmetry -tf docs/examples/tb2j-plotter/template.txt -fs -dc -sa 1.2 -sd 1.2 -t "Forced symmetry exchange"
+	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_R -wtp iso -R 1 0 0 1 1 0 0 1 0 -1 0 0 -1 -1 0 0 -1 0 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange"
 
 push: examples
 	@git push
+
+check-user-guide:
+	@python3 check-user-guide.py

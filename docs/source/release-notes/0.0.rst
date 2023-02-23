@@ -35,7 +35,7 @@ Better help messages in :ref:`tb2j-plotter.py <tb2j-plotter>` script.
 -------
 Add possibility to plot parameters vs distance from the center of the molecule
 to the center of the bond (see 
---mode and --atoms.
+--mode and --atoms).
 
 Add argument to :ref:`tb2j-plotter.py <tb2j-plotter>` for title for the pictures 
 (see :ref:`--title <tb2j-plotter_title>`).

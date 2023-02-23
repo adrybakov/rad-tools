@@ -4,13 +4,14 @@ import pytest
 import numpy as np
 
 from rad_tools.io.tb2j import *
+from rad_tools.io import read_template
 
 
 class TestReadExchangeModel:
 
     model = read_exchange_model(os.path.join('utest',
                                              'test_io',
-                                             'resourses',
+                                             'resources',
                                              'exchange.out'))
 
     def test_empty_filename(self):
@@ -30,25 +31,16 @@ class TestReadExchangeModel:
 
     def test_nonmagnetic_atoms(self):
         assert len(self.model.nonmagnetic_atoms) == 4
-        assert (self.model.nonmagnetic_atoms['Br1'] == (0.8970,
-                                                        1.2018,
-                                                        -0.0668)).all()
-        assert (self.model.nonmagnetic_atoms['Br2'] == (2.6910,
-                                                        3.6054,
-                                                        5.6376)).all()
-        assert (self.model.nonmagnetic_atoms['S1'] == (2.6910,
-                                                       3.6054,
-                                                       2.2030)).all()
-        assert (self.model.nonmagnetic_atoms['S2'] == (0.8970,
-                                                       1.2018,
-                                                       3.3678)).all()
+        assert (np.around(self.model.nonmagnetic_atoms['Br1'] - np.array([0.25, 0.2500104, -0.00283399]), 4) == np.zeros(3)).all()
+        assert (np.around(self.model.nonmagnetic_atoms['Br2'] - np.array([0.75, 0.7500312, 0.23917526]), 4) == np.zeros(3)).all()
+        assert (np.around(self.model.nonmagnetic_atoms['S1'] - np.array([0.75, 0.7500312, 0.09346231]), 4) == np.zeros(3)).all()
+        assert (np.around(self.model.nonmagnetic_atoms['S2'] - np.array([0.25, 0.2500104, 0.14287896]), 4) == np.zeros(3)).all()
 
     def test_magnetic_atoms(self):
         assert len(self.model.magnetic_atoms) == 2
-        assert (self.model.magnetic_atoms['Cr1'] == (
-            2.6910, 1.2018,  1.7371)).all()
-        assert (self.model.magnetic_atoms['Cr2'] == (
-            0.8970, 3.6054,  3.8336)).all()
+        assert (np.around(self.model.magnetic_atoms['Cr1'] - np.array([0.75, 0.2500104, 0.07369649]), 4) == np.zeros(3)).all()
+        assert (np.around(self.model.magnetic_atoms['Cr2'] - np.array([0.25, 0.7500312, 0.16264053]), 4) == np.zeros(3)).all()
+        
 
     @ pytest.mark.parametrize("atom1, atom2, R, iso, aniso, dmi, distance",
                               [
@@ -134,13 +126,13 @@ class TestReadExchangeModel:
                                       3.659),
                               ])
     def test_read_exchange_examples(self, atom1, atom2, R, iso, aniso, dmi, distance):
-        assert round(self.model.bonds[atom1][atom2][R].iso, 4) == iso
-        assert round(self.model.bonds[atom1][atom2][R].dis, 4) == distance
+        assert round(self.model.bonds[(atom1, atom2, R)].iso, 4) == iso
+        assert round(self.model.get_distance(atom1, atom2, R), 2) == round(distance, 2)
         for i in range(0, 3):
-            assert round(self.model.bonds[atom1][atom2][R].dmi[i], 4) == dmi[i]
+            assert round(self.model.bonds[(atom1, atom2, R)].dmi[i], 4) == dmi[i]
             for j in range(0, 3):
                 assert round(
-                    self.model.bonds[atom1][atom2][R].aniso[i][j], 4) == aniso[i][j]
+                    self.model.bonds[(atom1, atom2, R)].aniso[i][j], 4) == aniso[i][j]
 
     template = [('Cr1', 'Cr1', (1, 0, 0)), ('Cr1', 'Cr1', (-1, 0, 0)),
                 ('Cr2', 'Cr2', (1, 0, 0)), ('Cr2', 'Cr2', (-1, 0, 0)),
@@ -157,15 +149,6 @@ class TestReadExchangeModel:
                 ('Cr1', 'Cr1', (0, 1, 0)), ('Cr1', 'Cr1', (0, -1, 0)),
                 ('Cr2', 'Cr2', (0, 1, 0)), ('Cr2', 'Cr2', (0, -1, 0))]
 
-    def count_entries(self, dictionary):
-        i = 0
-        if dictionary is not None:
-            for atom1 in dictionary:
-                for atom2 in dictionary[atom1]:
-                    for R in dictionary[atom1][atom2]:
-                        i += 1
-        return i
-
     def test_instance_data_type(self):
         filtered_model = self.model.filtered(max_distance=5)
         assert type(self.model) == type(filtered_model)
@@ -180,7 +163,7 @@ class TestReadExchangeModel:
     ])
     def test_filter_by_max_distance(self, max_distance, elements_number):
         filtered_model = self.model.filtered(max_distance=max_distance)
-        assert self.count_entries(filtered_model.bonds) == elements_number
+        assert len(filtered_model.bonds) == elements_number
 
     @ pytest.mark.parametrize("min_distance, elements_number", [
         (0, 72),
@@ -190,7 +173,7 @@ class TestReadExchangeModel:
     ])
     def test_filter_by_min_distance(self, min_distance, elements_number):
         filtered_model = self.model.filtered(min_distance=min_distance)
-        assert self.count_entries(filtered_model.bonds) == elements_number
+        assert len(filtered_model.bonds) == elements_number
 
     @ pytest.mark.parametrize("R_vector, elements_number", [
         ((0, 0, 0), 2),
@@ -201,12 +184,19 @@ class TestReadExchangeModel:
     ])
     def test_filter_by_R_vector(self, R_vector, elements_number):
         filtered_model = self.model.filtered(R_vector=R_vector)
-        assert self.count_entries(filtered_model.bonds) == elements_number
+        assert len(filtered_model.bonds) == elements_number
 
     def test_filter_by_template(self):
         filtered_model = self.model.filtered(
             template=self.template)
-        assert self.count_entries(filtered_model.bonds) == 16
+        assert len(filtered_model.bonds) == 16
+        template = read_template(os.path.join('utest',
+                                             'test_io',
+                                             'resources',
+                                             'template.txt'))
+        filtered_model = self.model.filtered(
+            template=template)
+        assert len(filtered_model.bonds) == 16
 
     @ pytest.mark.parametrize("min_distance, max_distance, elements_number", [
         (4.807, 4.807, 4),
@@ -221,7 +211,7 @@ class TestReadExchangeModel:
                                                      elements_number):
         filtered_model = self.model.filtered(max_distance=max_distance,
                                              min_distance=min_distance)
-        assert self.count_entries(filtered_model.bonds) == elements_number
+        assert len(filtered_model.bonds) == elements_number
 
     @ pytest.mark.parametrize("max_distance, elements_number", [
         (4.807, 16),
@@ -237,7 +227,7 @@ class TestReadExchangeModel:
                                                  elements_number):
         filtered_model = self.model.filtered(max_distance=max_distance,
                                              template=self.template)
-        assert self.count_entries(filtered_model.bonds) == elements_number
+        assert len(filtered_model.bonds) == elements_number
 
     @ pytest.mark.parametrize("min_distance, elements_number", [
         (0, 16),
@@ -251,7 +241,7 @@ class TestReadExchangeModel:
                                                  elements_number):
         filtered_model = self.model.filtered(min_distance=min_distance,
                                              template=self.template)
-        assert self.count_entries(filtered_model.bonds) == elements_number
+        assert len(filtered_model.bonds) == elements_number
 
     @ pytest.mark.parametrize("R_vector, elements_number", [
         ((0, 0, 0), 2),
@@ -263,7 +253,7 @@ class TestReadExchangeModel:
     def test_filter_by_R_vector_and_template(self, R_vector, elements_number):
         filtered_model = self.model.filtered(
             R_vector=R_vector, template=self.template)
-        assert self.count_entries(filtered_model.bonds) == elements_number
+        assert len(filtered_model.bonds) == elements_number
 
     @ pytest.mark.parametrize("max_distance, R_vector, elements_number", [
         (0, (0, 0, 0), 0),
@@ -276,4 +266,4 @@ class TestReadExchangeModel:
     def test_filter_by_everything(self, max_distance, R_vector, elements_number):
         filtered_model = self.model.filtered(
             R_vector=R_vector, max_distance=max_distance)
-        assert self.count_entries(filtered_model.bonds) == elements_number
+        assert len(filtered_model.bonds) == elements_number

@@ -30,7 +30,7 @@ def provide_template(out_name="template.txt",
                 "atom2 atom2  1  0  2\n" +
                 '=' * 20 + "\n")
 
-    with open(out_name, "w") as file:
+    with open(f"{out_name}.txt", "w") as file:
         if tb2j_filename is None:
             file.write(template)
         else:
@@ -41,8 +41,8 @@ def provide_template(out_name="template.txt",
             file.write('=' * 20 + "\n" +
                        "Neighbors template:\n" +
                        "i j R_a R_b R_c\n" +
-                       '-' * 20 + "\n")
-            for atom1, atom2, R in model.bond_list:
+                       '-' * 20 + "\n" + "Name placeholder" + "\n")
+            for atom1, atom2, R in model.bonds:
                 file.write(f"{atom1:4} {atom2:4} " +
                            f"{R[0]:3.0f} {R[1]:3.0f} {R[2]:3.0f}\n")
             file.write('=' * 20 + "\n")
@@ -62,7 +62,7 @@ if __name__ == "__main__":
 
     parser.add_argument("-on", "--output-name",
                         type=str,
-                        default='template.txt',
+                        default='template',
                         help="""
                         Relative or absolute path to the template output file.
                         """

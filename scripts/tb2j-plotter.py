@@ -22,15 +22,10 @@ def plot_2d(filename, out_dir='.',
             max_distance=None,
             template=None,
             R_vector=None,
-            double_bonds=False,
             scale_atoms=1,
             scale_data=1,
-            title=None):
-
-    mode_name = "2d"
-    messages = {'iso': "isotropic exchange",
-                "distance": "distances",
-                "dmi": "dmi"}
+            title=None,
+            force_symmetry=False):
 
     model = read_exchange_model(filename)
     if template is not None:
@@ -39,12 +34,11 @@ def plot_2d(filename, out_dir='.',
                  max_distance=max_distance,
                  R_vector=R_vector,
                  template=template)
+    if force_symmetry:
+        model.force_symmetry(template=template)
 
     dummy = True
     ha = 'center'
-    if not double_bonds:
-        model.remove_double_bonds()
-        dummy = False
     x_min, y_min, z_min, x_max, y_max, z_max = model.space_dimensions
     X = max(abs(x_min), abs(x_max))
     Y = max(abs(y_min), abs(y_max))
@@ -62,43 +56,42 @@ def plot_2d(filename, out_dir='.',
     ax.set_xlabel('x, Angstroms')
     ax.set_ylabel('y, Angstroms')
 
-    for atom1 in model.bonds:
-        for atom2 in model.bonds[atom1]:
-            for R in model.bonds[atom1][atom2]:
-                bond = model.bonds[atom1][atom2][R]
-                x1, y1, z1 = model.get_atom_coordinates(atom1)
-                x2, y2, z2 = model.get_atom_coordinates(atom2, R)
-                xm = (x1 + x2) / 2
-                ym = (y1 + y2) / 2
-                zm = (z1 + z2) / 2
+    for atom1, atom2, R in model:
+        bond = model[(atom1, atom2, R)]
+        dis = model.get_distance(atom1, atom2, R)
+        x1, y1, z1 = model.get_atom_coordinates(atom1)
+        x2, y2, z2 = model.get_atom_coordinates(atom2, R)
+        xm = (x1 + x2) / 2
+        ym = (y1 + y2) / 2
+        zm = (z1 + z2) / 2
 
-                ax.scatter(x1, y1, s=100 * fig.dpi/72., c='white')
-                ax.scatter(x2, y2, s=100 * fig.dpi/72., c='white')
+        ax.scatter(x1, y1, s=100 * fig.dpi/72., c='white')
+        ax.scatter(x2, y2, s=100 * fig.dpi/72., c='white')
 
-                ax.text(x1, y1, atom_mark_to_latex(atom1),
-                        va='center', ha='center',
-                        fontsize=1.5 * fontsize * scale_atoms)
-                ax.text(x2, y2, atom_mark_to_latex(atom2),
-                        va='center', ha='center',
-                        fontsize=1.5 * fontsize * scale_atoms)
-                if wtp == 'iso':
-                    ax.text(xm, ym, str(round(bond.iso, 4)),
-                            va='bottom', ha=ha,
-                            rotation_mode='anchor',
-                            rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
-                            fontsize=fontsize * scale_data)
-                elif wtp == 'distance':
-                    ax.text(xm, ym, str(round(bond.dis, 4)),
-                            va='bottom', ha=ha,
-                            rotation_mode='anchor',
-                            rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
-                            fontsize=fontsize * scale_data)
-                elif wtp == 'dmi':
-                    ax.text(xm, ym, str(round(sqrt(np.sum(bond.dmi**2)), 4)),
-                            va='bottom', ha=ha,
-                            rotation_mode='anchor',
-                            rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
-                            fontsize=fontsize * scale_data)
+        ax.text(x1, y1, atom_mark_to_latex(atom1),
+                va='center', ha='center',
+                fontsize=1.5 * fontsize * scale_atoms)
+        ax.text(x2, y2, atom_mark_to_latex(atom2),
+                va='center', ha='center',
+                fontsize=1.5 * fontsize * scale_atoms)
+        if wtp == 'iso':
+            ax.text(xm, ym, str(round(bond.iso, 4)),
+                    va='bottom', ha=ha,
+                    rotation_mode='anchor',
+                    rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
+                    fontsize=fontsize * scale_data)
+        elif wtp == 'distance':
+            ax.text(xm, ym, str(round(dis, 4)),
+                    va='bottom', ha=ha,
+                    rotation_mode='anchor',
+                    rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
+                    fontsize=fontsize * scale_data)
+        elif wtp == 'dmi':
+            ax.text(xm, ym, str(round(sqrt(np.sum(bond.dmi**2)), 4)),
+                    va='bottom', ha=ha,
+                    rotation_mode='anchor',
+                    rotation=rot_angle(x2 - x1, y2 - y1, dummy=dummy),
+                    fontsize=fontsize * scale_data)
 
     xlims = (ax.get_xlim()[0] - 0.5, ax.get_xlim()[1] + 0.5)
     ylims = (ax.get_ylim()[0] - 0.5, ax.get_ylim()[1] + 0.5)
@@ -146,7 +139,7 @@ def plot_2d(filename, out_dir='.',
 
     png_path = join(out_dir, f'{out_name}.{wtp}.png')
     plt.savefig(png_path, dpi=400, bbox_inches="tight")
-    print(f'{OK}{mode_name} plot with {wtp} is in {abspath(png_path)}{RESET}')
+    print(f'{OK}2D plot with {wtp} is in {abspath(png_path)}{RESET}')
 
 
 if __name__ == '__main__':
@@ -225,18 +218,12 @@ if __name__ == '__main__':
                         (=) Exact distance.
                         """
                         )
-    parser.add_argument("-tf", "--template",
+    parser.add_argument("-tf", "--template-file",
                         type=str,
                         default=None,
                         help="""
                         Relative or absolute path to the template file,
                         including the name and extention of the file.
-                        """)
-    parser.add_argument("-db", "--double-bonds",
-                        default=False,
-                        action="store_true",
-                        help="""
-                        Whenever to keep both bonds.
                         """)
     parser.add_argument("-sa", "--scale-atoms",
                         default=1,
@@ -255,6 +242,13 @@ if __name__ == '__main__':
                         type=str,
                         help="""
                         Title for the plots.
+                        """)
+    parser.add_argument("-fs", "--force-symmetry",
+                        default=False,
+                        action="store_true",
+                        help="""
+                        Force the Exchange model to have the symmetry 
+                        of the template.
                         """)
 
     args = parser.parse_args()
@@ -275,6 +269,9 @@ if __name__ == '__main__':
     if args.what_to_plot != 'all':
         plot_data_type = [args.what_to_plot]
 
+    if args.force_symmetry and args.template_file is None:
+        raise ValueError("--force-symmetry option requires a template file.")
+
     for data_type in plot_data_type:
         plot_2d(filename=args.filename,
                 out_dir=args.output_dir,
@@ -283,9 +280,9 @@ if __name__ == '__main__':
                 draw_cells=args.draw_cells,
                 min_distance=args.min_distance,
                 max_distance=args.max_distance,
-                template=args.template,
+                template=args.template_file,
                 R_vector=args.R_vector,
-                double_bonds=args.double_bonds,
                 scale_atoms=args.scale_atoms,
                 scale_data=args.scale_data,
-                title=args.title)
+                title=args.title,
+                force_symmetry=args.force_symmetry)

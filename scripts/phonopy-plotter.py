@@ -66,15 +66,23 @@ def plot(file, kp=None, constant=1, on="output"):
 if __name__ == '__main__':
     parser = ArgumentParser(description='Fit Exchange parameters map')
 
-    parser.add_argument("-file", type=str, default='band.yaml',
+    parser.add_argument("-file",
+                        type=str,
+                        default='band.yaml',
                         help="Path to the band.yaml file")
-    parser.add_argument("-kp",  type=str, default=None,
+    parser.add_argument("-kp",
+                        type=str,
+                        default=None,
                         nargs='*',
                         help="K-path, example: -kp G X R Y G")
-    parser.add_argument('-constant', type=float, default=1,
+    parser.add_argument("-constant",
+                        type=float,
+                        default=1,
                         help="Constant for conversion. "
                         "The values will be multiplied by it")
-    parser.add_argument('-on', type=str, default="output",
+    parser.add_argument("-on",
+                        type=str,
+                        default="output",
                         help="output name file")
     args = parser.parse_args()
     if args.file:

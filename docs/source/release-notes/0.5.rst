@@ -1,0 +1,41 @@
+.. _release-notes_0.5:
+
+***********
+Version 0.5
+***********
+
+Whats new?
+----------
+Rewrite the internals of the 
+:doc:`ExchangeModel <../api/_autosummary/rad_tools.exchange.model.ExchangeModel>`.
+
+The idea is to allow one to modify the model with respect to the expected 
+symmetry and desired accuracy of the parameters. Futhermore, ``ExchangeModel``
+is iterable, support index access and ``in`` function.
+
+The distances of the bonds are not directly read from the TB2J exchange file, but computed based on the atoms's positions.
+
+:doc:`Bond <../api/_autosummary/rad_tools.exchange.bond.Bond>` class does 
+not contain information about the distance. 
+
+When exchange model is read from the TB2J exchange file the order of bonds is 
+kept as the insert order of the python's dicts.
+
+Remove double-bonds argument from :ref:`tb2j-plotter.py <tb2j-plotter>` 
+script and add :ref:`--force-symmetry <tb2j-plotter_force-symmetry>` argument, 
+which force the symmetry of the template to the plotted model.
+
+
+0.5.1
+-----
+
+Bugfix in ``force_symmetry``.
+
+0.5.2
+-----
+
+Bugfix in ``add_kpoint`` in kpoints module.
+
+0.5.3/0.5.4/0.5.5
+-----------------
+Bugfix in :ref:`tb2j-extractor.py <tb2j-extractor>`

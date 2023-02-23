@@ -25,7 +25,8 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.mathjax',
-    'sphinx_design'
+    'sphinx_design',
+    'sphinx.ext.doctest',
 ]
 
 autosummary_generate = True

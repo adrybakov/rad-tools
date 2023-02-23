@@ -21,3 +21,4 @@ References
 """
 
 from rad_tools.kpoints.high_symmetry_point import HighSymmetryPoints
+from rad_tools.kpoints.kpoints import KPoints

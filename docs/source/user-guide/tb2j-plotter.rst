@@ -66,8 +66,11 @@ default seedname (*exchange*, use
 
 .. note::
 
-    In the following only exchange.iso.png file will be produced with the help 
+    In the following text only exchange.iso.png file will be produced with the help 
     of  :ref:`--what-to-plot <tb2j-plotter_what-to-plot>` argument.
+
+Basic adjustments
+-----------------
 
 Since the exchange.out file contains a lot of exchange bonds the pictures with 
 all of them are not really usefull. Lets plot the isotropic exchange picture 
@@ -81,14 +84,17 @@ with some adjustments:
 
 .. code-block:: bash
 
-    tb2j-plotter.py -f exchange.out -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.3 -t "First neighbor exchange" -on exchange_filtered
+    tb2j-plotter.py -f exchange.out -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange" -on exchange_filtered
 
 .. figure:: /../examples/tb2j-plotter/exchange_filtered.iso.png
     :align: center
 
     exchange_filtered.iso.png
 
-For filtering the exchange model there is a few options available:
+Filtering
+---------
+
+For filtering the exchange model there are a few options available:
 
     * :ref:`--max_distance <tb2j-plotter_max-distance>`
     * :ref:`--min_distance <tb2j-plotter_min-distance>`
@@ -96,38 +102,31 @@ For filtering the exchange model there is a few options available:
     * :ref:`--R-vector <tb2j-plotter_R-vector>`
     * :ref:`--template <tb2j-plotter_template-file>`
 
-By default ``tb2j-plotter.py`` does not display symmetrically equivalent
-(with respect to the translation symmetry) bonds. It could raise the problems 
-with analysis of DMI or anisotropic echange, in order to display all bonds 
-one can use :ref:`-db <tb2j-plotter_double-bonds>` argument:
-
-.. code-block:: bash
-
-    tb2j-plotter.py -f exchange.out -wtp iso -maxd 5 -dc -sa 1.2  -t "First neighbor exchange" -db -on exchange_double_bonds
-
-.. figure:: /../examples/tb2j-plotter/exchange_double_bonds.iso.png
-    :align: center
-
-    exchange_double_bonds.iso.png
-
-At the end there is an example of how to filter exchange model in order to show 
-frist exchange neighbor, but using 
+Here is an example of how to filter exchange model in order to show 
+frist exchange neighbor, using different options:
+:ref:`--max_distance <tb2j-plotter_max-distance>`
 :ref:`--R-vector <tb2j-plotter_R-vector>` or
 :ref:`--template <tb2j-plotter_template-file>` arguments:
 
 .. code-block:: bash
 
-    tb2j-plotter.py -f exchange.out -wtp iso -tf template.txt -dc -sa 1.2  -t "First neighbor exchange" -db -on exchange_template
-    tb2j-plotter.py -f exchange.out -wtp iso -R 1 0 0 1 1 0  0 1 0 -1 1 0 -1 0 0 -1 -1 0 0 -1 0 1 -1 0 -dc -sa 1.2  -t "First neighbor exchange" -db -on exchange_R
+    tb2j-plotter.py -f exchange.out -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange" -on exchange_filtered
+    tb2j-plotter.py -f exchange.out -wtp iso -tf template.txt -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange" -on exchange_template
+    tb2j-plotter.py -f exchange.out -wtp iso -R 1 0 0 1 1 0  0 1 0 -1 1 0 -1 0 0 -1 -1 0 0 -1 0 1 -1 0 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange" -on exchange_R
 
 where template file is the following:
 
 .. literalinclude:: /../examples/tb2j-plotter/template.txt
     :language: text
 
-The images should be the same:
+The images are the same:
 
 .. dropdown:: Output images
+
+    .. figure:: /../examples/tb2j-plotter/exchange_filtered.iso.png
+        :align: center
+
+        exchange_filtered.iso.png
 
     .. figure:: /../examples/tb2j-plotter/exchange_R.iso.png
         :align: center
@@ -138,6 +137,45 @@ The images should be the same:
         :align: center
 
         exchange_template.iso.png
+
+Modifying the model
+-------------------
+
+By default ``tb2j-plotter.py`` display the bonds as it is in the model.
+One could use :ref:`-fs <tb2j-plotter_force-symmetry>` argument in order 
+to reproduce particular exchange model:
+
+.. code-block:: bash
+
+    tb2j-plotter.py -f exchange.out -tf template.txt -fs -dc -sa 1.2 -sd 1.2 -t "Forced symmetry exchange" -on exchange_forced_symmetry
+
+.. figure:: /../examples/tb2j-plotter/exchange_forced_symmetry.iso.png
+    :align: center
+
+    exchange_forced_symmetry.iso.png
+
+.. dropdown:: DMI and distances
+
+    .. figure:: /../examples/tb2j-plotter/exchange_forced_symmetry.dmi.png
+        :align: center
+
+        exchange_forced_symmetry.dmi.png
+
+    .. figure:: /../examples/tb2j-plotter/exchange_forced_symmetry.distance.png
+        :align: center
+
+        exchange_forced_symmetry.distance.png
+
+Only one exchage parameter present in the template file, therefore the model 
+is filtered with respect to the template and then the value of the exchange 
+for each bond is set to the medium value of all bonds from the same exchage group.
+DMI interaction is modified as well in a way that direction of the DMI vector is 
+kept, but the magnitude of the DMI vector is scaled to the medium value.
+
+.. note::
+
+    When :ref:`--force-symmetry <tb2j-plotter_force-symmetry>` argument is provided
+    :ref:`--template-file <tb2j-plotter_template-file>` is required.
 
 
 
@@ -151,9 +189,9 @@ Arguments
 Relative or absulute path to the TB2J exchange output file, 
 including the name and extention of the file.
 
-    *required* : True
+.. code-block:: text
 
-    *type* : str
+    required
 
 
 .. _tb2j-plotter_output-dir:
@@ -166,9 +204,9 @@ If the folder does not exist then it is created from the specified path.
 The creation is applied recursevly to the path, starting from the right
 until the existing folder is reached.
 
-    *default* : current directory
-        
-    *type* : str
+.. code-block:: text
+
+    default : current directory
 
 See also: :ref:`example <scripts_output-notes>`.
 
@@ -182,9 +220,9 @@ Seedname for the output files.
 Output files will have the following name structure:
 *output-name.display-data-type.png*
 
-    *default* : exchange
-        
-    *type* : str
+.. code-block:: text
+
+    default : exchange
 
 See also: :ref:`example <scripts_output-notes>`.
 
@@ -199,11 +237,9 @@ Specifying the data which will be displayed in the graphs.
 Everything is displayed by default, each value in a separate picture. 
 Currently available for display: Isotropic exchange parameter, distance, \|DMI\|.
 
-    *default* : all
+.. code-block:: text
 
-    *type* : str
-
-    *choices* : all, iso, distance, dmi
+    default : all
 
 
 .. _tb2j-plotter_draw-cells:
@@ -215,9 +251,9 @@ Whenever to draw the cells.
 If specified then the shape of all cells 
 presented in the model (after filtering) is drawn. (0, 0, 0) will be in red.
 
-    *default* : False
+.. code-block:: text
 
-    *action* : store_true
+    default : False
 
 
 .. _tb2j-plotter_R-vector:
@@ -235,11 +271,9 @@ by spaces. They are grouped by three starting from the left to form a set
 of R vectors. If the last group will contain 1 or 2 integers they will be 
 ignored.
 
-    *default* : None
+.. code-block:: text
 
-    *type* : int
-
-    *nargs* : *
+    default : None
 
 
 .. _tb2j-plotter_max-distance:
@@ -251,9 +285,9 @@ ignored.
 All the bonds with the distance beetwen atom 1 and atom 2 
 greater than maximum distance are excluded from the model.
 
-    *default* : None
+.. code-block:: text
 
-    *type* : float
+    default : None
 
 
 .. _tb2j-plotter_min-distance:
@@ -265,9 +299,9 @@ greater than maximum distance are excluded from the model.
 All the bonds with the distance beetwen atom 1 and atom 2 
 lower than minimum distance are excluded from the model.
 
-    *default* : None
+.. code-block:: text
 
-    *type* : float
+    default : None
 
 
 .. _tb2j-plotter_distance:
@@ -278,9 +312,9 @@ lower than minimum distance are excluded from the model.
 
 Only the bonds with the exact distance remains in the model.
 
-    *default* : None
+.. code-block:: text
 
-    *type* : float
+    default : None
 
 .. hint::
     There is no point in specifying maximum or minimum distance when 
@@ -294,35 +328,11 @@ Only the bonds with the exact distance remains in the model.
 Relative or absolute path to the template file, 
 including the name and extention of the file.
 
-    *default* : None
+.. code-block:: text
 
-    *type* : str
+    default : None
 
 See also: :ref:`template <rad-make-template>`
-
-
-.. _tb2j-plotter_double-bonds:
-
--db, --double-bonds
--------------------
-Whenever to keep both bonds.
-
-In TB2J file there are two bonds for the pair of atom 1 and atom 2: 
-from 1 to 2 and from 2 to 1 (when R = (0, 0, 0)). Isotropic and 
-anisotropic exchange and distance usially are exactly the same. 
-DMI vector have the same module and opposite directions. 
-If this parameter is specifyied then both bonds are displayed. 
-Otherwise bonds are combined in one by taking the average beetween
-exchange parameters. 
-
-    *default* : False
-
-    *action* : store_true
-
-.. caution::
-    If this parameter is not specified then it is highly probable that
-    DMI will be equal to zero even if it is not zero in TB2J file. 
-    Moreover, it is necessary to check anisotropy matrices as well.
 
 
 .. _tb2j-plotter_scale-atoms:
@@ -334,9 +344,9 @@ Scale for the size of atom marks.
 Use it if you want to display atom marks bigger or smaller. 
 Have to be positive.
 
-    *default* : 1
+.. code-block:: text
 
-    *type* : float
+    default : 1
 
 
 .. _tb2j-plotter_scale-data:
@@ -348,9 +358,9 @@ Scale for the size of data text.
 Use it if you want to display data text marks bigger or smaller. 
 Have to be positive.
 
-    *default* : 1
+.. code-block:: text
 
-    *type* : float
+    default : 1
 
 
 .. _tb2j-plotter_title:
@@ -361,7 +371,19 @@ Title for the plots
 
 Title will be displayed in the picture.
 
-    *default* : None
+.. code-block:: text
 
-    *type* : str
+    default : None
+
+
+.. _tb2j-plotter_force-symmetry:
+
+-fs, --force-symmetry
+---------------------
+Force the exchange model to have the symmetry of the template.
+
+.. code-block:: text
+
+    default : False
+    
  

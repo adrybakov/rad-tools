@@ -79,65 +79,6 @@ def get_256_colours(n):
     return f'\033[38:5:{n}m'
 
 
-def exchange_to_matrix(iso=None, aniso=None, dmi=None):
-    r"""
-    Combine isotropic, anisotropic and dmi exchange into exchange matrix.
-
-    Parameters
-    ----------
-    iso : float
-        Value of isotropic exchange parameter in meV.
-    aniso : 3 x 3 array_like
-        Matrix of symmetric anisotropic exchange in meV.
-    dmi : 1 x 3 array_like
-        Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz) in meV.
-
-    Returns
-    -------
-    matrix : 3 x 3 np.ndarray of floats
-        Exchange matrix in meV.
-    """
-    matrix = np.zeros((3, 3), dtype=float)
-    if aniso is not None:
-        matrix += np.array(aniso, dtype=float)
-    if iso is not None:
-        matrix += iso * np.identity(3, dtype=float)
-    if dmi is not None:
-        matrix += np.array([[0, dmi[2], -dmi[1]],
-                            [-dmi[2], 0, dmi[0]],
-                            [dmi[1], -dmi[0], 0]],
-                           dtype=float)
-    return matrix
-
-
-def exchange_from_matrix(matrix):
-    r"""
-    Decompose matrix into isotropic, anisotropic and dmi exchange.
-
-    Parameters
-    ----------
-    matrix : 3 x 3 array_like
-        Exchange matrix in meV.
-
-    Returns
-    -------
-    iso : float
-        Value of isotropic exchange parameter in meV.
-    aniso : 3 x 3 np.ndarray of floats
-        Matrix of symmetric anisotropic exchange in meV.
-    dmi : 1 x 3 np.ndarray of floats
-        Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz) in meV.
-    """
-    matrix = np.array(matrix, dtype=float)
-    symm = (matrix + matrix.T) / 2
-    assym = (matrix - matrix.T) / 2
-    dmi = np.array([assym[1][2], assym[2][0], assym[0][1]],
-                   dtype=float)
-    iso = np.trace(symm) / 3
-    aniso = symm - iso * np.identity(3, dtype=float)
-    return iso, aniso, dmi
-
-
 def atom_mark_to_latex(mark):
     r"""
     Latexifier for atom marks. 
@@ -331,3 +272,38 @@ def search_between_atoms(centre, atoms):
             p_coord = (atom[1]+atoms[j][1])/2
             pairs.append([pair, p_coord])
     return search_on_atoms(centre, pairs)
+
+
+def absolute_to_relative(cell, x, y, z):
+    r"""
+    Compute relative coordinates with respect to the unit cell.
+
+    Parameters
+    ----------
+    cell : 3 x 3 array
+        Lattice vectors.
+    x : float
+        x coordinate.
+    y : float
+        y coordinate.
+    z : float
+        z coordinate.
+
+    Returns
+    -------
+    relative : 1 x 3 array
+        Relative coordinate.
+    """
+
+    a = np.array(cell[0], dtype=float)
+    b = np.array(cell[1], dtype=float)
+    c = np.array(cell[2], dtype=float)
+    v = np.array([x, y, z], dtype=float)
+    if (v == np.zeros(3)).all():
+        return np.zeros(3)
+    B = np.array([np.dot(a,v), np.dot(b,v), np.dot(c,v)])
+    A = np.array([[np.dot(a,a), np.dot(a,b), np.dot(a,c)],
+         [np.dot(b,a), np.dot(b,b), np.dot(b,c)],
+         [np.dot(c,a), np.dot(c,b), np.dot(c,c)]])
+    relative = np.linalg.solve(A, B)     
+    return relative    
