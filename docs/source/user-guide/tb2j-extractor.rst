@@ -105,9 +105,7 @@ Arguments
 Relative or absulute path to the *exchange.out* file,
 including the name and extention of the file itself.
 
-    *required* : True
-
-    *type* : str
+    * required 
 
 
 .. _tb2j-extractor_template-file:
@@ -117,9 +115,7 @@ including the name and extention of the file itself.
 Relative or absolute path to the template file, 
 including the name and extention of the file.
 
-    *required* : True
-
-    *type* : str
+    * required 
 
 See also: :ref:`template <rad-make-template>`
 
@@ -134,9 +130,7 @@ If the folder does not exist then it is created from the specified path.
 The creation is applied recursevly to the path, starting from the right
 until the existing folder is reached.
 
-    *default* : current directory
-        
-    *type* : str
+    * default : current directory
 
 See also: :ref:`example <scripts_output-notes>`.
 
@@ -151,9 +145,7 @@ Output files will have the following name structure: *output-name*
 If this parameter is not specified then result will be printed in 
 standart output stream.
 
-    *default* : None
-
-    *type* : str
+    * default : None
 
 See also: :ref:`example <scripts_output-notes>`.
 
@@ -164,8 +156,6 @@ See also: :ref:`example <scripts_output-notes>`.
 ----
 Whenever to print each dmi vector for each exchange group separately.
                         
-    *action* : store_true
-    
     *default* : False
 
 
@@ -175,8 +165,6 @@ Whenever to print each dmi vector for each exchange group separately.
 -------------
 Whenever to print each neighbor from a 
 :ref:`template file <tb2j-extractor_template-file>` in a verbose way.
-    
-    *action* : store_true
     
     *default* : False
 
@@ -188,4 +176,12 @@ Accuracy for the exchange values.
 
     *default* 4
 
-    *type* int
+.. _tb2j-extractor_force-symmetry:
+
+-fs, --force_symmetry
+---------------------
+Whenever to force the symmetry of the template on the model.
+
+    *default* True
+
+
