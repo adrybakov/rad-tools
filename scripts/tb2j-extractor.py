@@ -3,9 +3,8 @@
 from argparse import ArgumentParser
 from os.path import join, abspath
 from os import makedirs
-from math import sqrt
+from datetime import datetime
 
-import numpy as np
 
 from rad_tools.io.internal import read_template
 from rad_tools.io.tb2j import read_exchange_model
@@ -13,12 +12,17 @@ from rad_tools.routines import OK, RESET
 
 
 def extract(filename, out_dir, out_name, template,
-            dmi_verbose=False, verbose=False, accuracy=4):
+            dmi_verbose=False, verbose=False, accuracy=4,
+            force_symmetry=False):
+    cd = datetime.now()
     if verbose and dmi_verbose:
         dmi_verbose = False
 
     model = read_exchange_model(filename)
     template = read_template(template)
+    if force_symmetry:
+        model.force_symmetry(template)
+        model.round(accuracy)
     summary_txt = model.summary_as_txt(template=template,
                                        dmi_verbose=dmi_verbose,
                                        verbose=verbose, accuracy=accuracy)
@@ -27,11 +31,17 @@ def extract(filename, out_dir, out_name, template,
 
     if out_name is not None:
         with open(join(out_dir, out_name + ".txt"), "w") as out_file:
+            out_file.write(
+                f"Exchange values are extracted from: {filename}"+f" on " +
+                f"{cd.day}/{cd.month}/{cd.year}" +
+                f" at {cd.hour}:{cd.minute}:{cd.second} \n\n")
             out_file.write(summary_txt)
         print(f"{OK}Extracted exchange info is in " +
               f"{abspath(join(out_dir, out_name + '.txt'))}{RESET}")
         if verbose:
             with open(join(out_dir, out_name + ".py"), "w") as out_python:
+                out_file.write(
+                    f"Exchange values are extracted from: {filename}\n\n")
                 out_python.write(summary_py)
             print(f"{OK}Verbose info in .py format is in " +
                   f"{abspath(join(out_dir, out_name + '.py'))}{RESET}")
@@ -55,7 +65,7 @@ if __name__ == '__main__':
                         including the name and extention of the file itself.
                         """
                         )
-    parser.add_argument("-tf", "--template",
+    parser.add_argument("-tf", "--template-file",
                         type=str,
                         required=True,
                         help="""
@@ -100,6 +110,13 @@ if __name__ == '__main__':
                         Accuracy for the exchange values.
                         """
                         )
+    parser.add_argument("-fs", "--force-symmetry",
+                        action="store_true",
+                        default=False,
+                        help="""
+                        Whenever to force the symmetry of the 
+                        template on the model.
+                        """)
 
     args = parser.parse_args()
 
@@ -114,4 +131,5 @@ if __name__ == '__main__':
             template=args.template,
             dmi_verbose=args.dmi,
             verbose=args.verbose,
-            accuracy=args.accuracy)
+            accuracy=args.accuracy,
+            force_symmetry=args.force_symmetry)
