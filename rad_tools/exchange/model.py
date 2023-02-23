@@ -672,7 +672,7 @@ class ExchangeModel:
                 for atom1, atom2, R in template.names[name]:
 
                     # Get values from the model
-                    bond = self.bonds[atom1][atom2][R]
+                    bond = self.bonds[(atom1, atom2, R)]
                     if not isinstance(bond, Bond):
                         raise TypeError
                     iso = bond.iso
@@ -720,7 +720,7 @@ class ExchangeModel:
                 abs_dmi = 0
                 rel_dmi = 0
                 for atom1, atom2, R in template.names[name]:
-                    bond = self.bonds[atom1][atom2][R]
+                    bond = self.bonds[(atom1, atom2, R)]
                     if not isinstance(bond, Bond):
                         raise TypeError
                     iso += bond.iso
@@ -753,7 +753,7 @@ class ExchangeModel:
                 # Write additional info on DMI
                 if dmi_verbose:
                     for atom1, atom2, R in template.names[name]:
-                        bond = self.bonds[atom1][atom2][R]
+                        bond = self.bonds[(atom1, atom2, R)]
                         if not isinstance(bond, Bond):
                             raise TypeError
                         dmi = bond.dmi
@@ -803,7 +803,7 @@ class ExchangeModel:
             output_python_matrix += f"    '{name}':\n" + "    {\n"
 
             for atom1, atom2, R in template.names[name]:
-                bond = self.bonds[atom1][atom2][R]
+                bond = self.bonds[(atom1, atom2, R)]
                 if not isinstance(bond, Bond):
                     raise TypeError
                 iso = bond.iso
