@@ -7,93 +7,59 @@
 Script for extracting of template-based model from 
 `TB2J <https://tb2j.readthedocs.io/en/latest/>`_ results.
 
+If :ref:`--output_name <tb2j-extractor_output-name>` is not provided the result is 
+passed to the console, otherwise it is written to the file with first 3 lines 
+giving information about the source of exchange and datetime.
 
-.. _tb2j-extractor_verbose-ref:
-
-Verbose output
+Exchange types
 ==============
-If :ref:`--verbose <tb2j-extractor_verbose>` and 
-:ref:`--output-name <tb2j-extractor_output-name>` arguments are provided to 
-the script then output will be written in .txt and .py files.
-Content of the .py file is organised in a following manner:
 
-.. code-block:: python
+There are several options to control which exchange types are included in 
+the summary:
 
-    import numpy as np 
-    iso = {
-        name:
-        {
-            (i, j, k): J_iso,
-            ...
-        },
-        ...
-    }
+    * :ref:`--isotropic <tb2j-extractor_isotropic>`
+    * :ref:`--anisotropic <tb2j-extractor_anisotropic>`
+    * :ref:`--dmi <tb2j-extractor_dmi>`
+    * :ref:`--matrix <tb2j-extractor_matrix>`
+    * :ref:`--all <tb2j-extractor_all>`
 
-    aniso = {
-        name:
-        {
-            (i, j, k): J_aniso,
-            ...
-        },
-        ...
-    }
+They work for both modes with the correspondent blocks having the following form
+Format of the output block for each exchange type is provided in the 
+arguments section.
 
-    dmi = {
-        name:
-        {
-            (i, j, k): DMI,
-            ...
-        },
-        ...
-    }
+Usage example
+=============
 
-    matrix = {
-        name:
-        {
-            (i, j, k): J_matrix,
-            ...
-        },
-        ...
-    }
+Example is based on the files from 
+:examples:`examples folder <tb2j-extractor>`. 
 
-where 
+There are two modes in which exchange summary can be printed: 
+with the symmetry of the template and 
+with the model filtered based on the template.
 
-.. code-block:: python
+In the first case the symmetry of the template is forced on the model and 
+exchange output is grouped based on the names provided in the template:
 
-    type(J_iso) = float
+.. code-block:: bash
 
-    J_aniso = np.array(
-        [[J_aniso_xx, J_aniso_xy, J_aniso_xz],
-         [J_aniso_xy, J_aniso_yy, J_aniso_yz],
-         [J_aniso_xz, J_aniso_yz, J_aniso_zz]])
+    tb2j-extractor.py -all -fs -f exchange.out -tf template.txt -on summary_forced_symmetry
 
-    DMI = np.array([D_x, D_y, D_z])
+.. dropdown:: summary with forced symmetry
 
-    J_matrix = np.array(
-        [[J_xx, J_xy, J_xz],
-         [J_yx, J_yy, J_yz],
-         [J_zx, J_zy, J_zz]])
+   .. literalinclude:: /../examples/tb2j-extractor/summary_forced_symmetry.txt
+    :language: text
 
-Content of .txt file is organised as: ::
+In the second case exchange summary is printed for every bond in the 
+template file and no additional symmetry constrains are assumed on the model:
 
-    name
-      atom1 atom2 (i, j, k)
-        Isotropic: J_iso
-        Anisotropic:
-            J_aniso_xx J_aniso_xy J_aniso_xz
-            J_aniso_xy J_aniso_yy J_aniso_yz
-            J_aniso_xz J_aniso_yz J_aniso_zz
-        DMI: D_x D_y D_z
-        |DMI|: |DMI|
-        |DMI/J|: |DMI|/|J|
-        Matrix:
-            J_xx J_xy J_xz
-            J_yx J_yy J_yz
-            J_zx J_zy J_zz
-      
-      ...
-    
-    ...
+.. code-block:: bash
+
+    tb2j-extractor.py -all -f exchange.out -tf template.txt -on summary
+
+.. dropdown:: summary without forced symmetry
+
+   .. literalinclude:: /../examples/tb2j-extractor/summary.txt
+    :language: text
 
 Arguments
 =========
@@ -108,6 +74,7 @@ including the name and extention of the file itself.
 .. code-block:: text
 
     required
+    type : str
 
 .. _tb2j-extractor_template-file:
 
@@ -119,6 +86,7 @@ including the name and extention of the file.
 .. code-block:: text
 
     required
+    type : str
 
 
 See also: :ref:`template <rad-make-template>`
@@ -136,7 +104,8 @@ until the existing folder is reached.
 
 .. code-block:: text
 
-    default : current directory
+    default : current directory (".")
+    type : str
 
 See also: :ref:`example <scripts_output-notes>`.
 
@@ -149,36 +118,15 @@ Seedname for the output files.
 
 Output files will have the following name structure: *output-name*
 If this parameter is not specified then result will be printed in 
-standart output stream.
+standart output stream. If none is specify, output is passed to the console.
 
 .. code-block:: text
 
     default : None
+    type : str
 
 See also: :ref:`example <scripts_output-notes>`.
 
-
-.. _tb2j-extractor_dmi:
-
--dmi
-----
-Whenever to print each dmi vector for each exchange group separately.
-
-.. code-block:: text
-
-    default : False
-
-
-.. _tb2j-extractor_verbose:
-
--v, --verbose
--------------
-Whenever to print each neighbor from a 
-:ref:`template file <tb2j-extractor_template-file>` in a verbose way.
-
-.. code-block:: text
-
-    default : False
 
 .. _tb2j-extractor_accuracy:
 
@@ -189,6 +137,7 @@ Accuracy for the exchange values.
 .. code-block:: text
 
     default : 4
+    type : int
 
 .. _tb2j-extractor_force-symmetry:
 
@@ -198,6 +147,106 @@ Whenever to force the symmetry of the template on the model.
 
 .. code-block:: text
 
-    default : True
+    default : False
+    type : bool
 
 
+.. _tb2j-extractor_isotropic:
+
+-i, --isotropic
+---------------
+Whenever to output isotropic exchange.
+
+.. code-block:: text
+
+    default : False
+    type : bool
+
+Section format:
+
+.. code-block:: text
+
+        Isotropic: J
+
+
+.. _tb2j-extractor_anisotropic:
+
+-a, --anisotropic
+-----------------
+Whenever to output anisotropic exchange.
+
+.. code-block:: text
+
+    default : False
+    type : bool
+
+Section format:
+
+.. code-block:: text
+
+        Anisotropic: 
+            Jxx Jxy Jxz
+            Jxy Jyy Jyz
+            Jxz Jyz Jzz
+
+
+.. _tb2j-extractor_matrix:
+
+-m, --matrix
+------------
+Whenever to output whole matrix exchange.
+
+.. code-block:: text
+
+    default : False
+    type : bool
+
+Section format:
+
+.. code-block:: text
+
+        Matrix: 
+            Jxx Jxy Jxz
+            Jyx Jyy Jyz
+            Jzx Jzy Jzz
+
+
+.. _tb2j-extractor_dmi:
+
+-dmi
+----
+Whenever to output DMI exchange.
+
+.. code-block:: text
+
+    default : False
+    type : bool
+
+Section format in the case of forced symmetry:
+
+.. code-block:: text
+
+        |DMI|: |DMI|
+        |DMI/J|: |DMI/J|
+        DMI: DMI_x DMI_y DMI_z (Atom1 Atom2 Ra Rb Rc)
+        ...
+
+Otherwise:
+
+.. code-block:: text
+
+        |DMI|: |DMI|
+        |DMI/J|: |DMI/J|
+        DMI: DMI_x DMI_y DMI_z
+
+
+.. _tb2j-extractor_all:
+
+-all
+----
+Whenever to all types of exchange.
+
+.. code-block:: text
+
+    default : False
+    type : bool

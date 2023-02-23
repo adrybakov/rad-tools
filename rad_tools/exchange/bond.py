@@ -6,6 +6,7 @@ from math import sqrt
 
 import numpy as np
 
+
 class Bond:
     r"""
     Exchange bond.
@@ -255,7 +256,7 @@ class Bond:
 
         return sqrt(np.sum(self.dmi**2))
 
-    def round(self, accuracy=4):
+    def round(self, decimals=4):
         r"""Round exchange values.
 
         Parameters
@@ -263,8 +264,8 @@ class Bond:
         accuracy : int, default 4
             number of decimals after the point.
         """
-        
-        self.matrix = np.round(self.matrix, decimals=accuracy)
+
+        self.matrix = np.round(self.matrix, decimals=decimals)
 
     def __add__(self, other):
         if isinstance(other, Bond):
@@ -290,4 +291,3 @@ class Bond:
     def __truediv__(self, number):
         matrix = self.matrix / number
         return Bond(matrix=matrix)
-

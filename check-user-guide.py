@@ -6,9 +6,8 @@ YELLOW = "\u001b[33m"
 RED = "\u001b[31m"
 RESET = "\u001b[0m"
 
-
 f_scripts = []
-for (dirpath, dirnames, filenames) in walk("scripts"):
+for (dirpath, dirnames, filenames) in walk(join("rad_tools", "score")):
     f_scripts.extend(filenames)
     break
 
@@ -20,7 +19,8 @@ for (dirpath, dirnames, filenames) in walk(join("docs", "source", "user-guide"))
 f_compare = []
 for i, filename in enumerate(f_scripts):
     if ".py" in filename:
-        filename = filename.split(".py")[0]
+        filename = filename.split("_core.py")[0]
+        filename = filename.replace("_", "-")
         if f"{filename}.rst" in f_docs:
             f_compare.append(filename)
 
@@ -28,7 +28,8 @@ for filename in f_compare:
 
     # Parse scripts
     script_arguments = []
-    script_file = open(join("scripts", f"{filename}.py"))
+    script_file = open(join("rad_tools", "score",
+                       f"{filename.replace('-', '_')}_core.py"))
     for line in script_file:
         if "parser.add_argument" in line:
             names = line.split("(")[1].split(",")

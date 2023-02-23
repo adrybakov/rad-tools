@@ -176,7 +176,7 @@ class ExchangeModel:
     @property
     def b1(self):
         r"""
-        First reciprocal lattice vector 
+        First reciprocal lattice vector
 
         .. math::
 
@@ -190,7 +190,7 @@ class ExchangeModel:
     @property
     def b2(self):
         r"""
-        Second reciprocal lattice vector 
+        Second reciprocal lattice vector
 
         .. math::
 
@@ -204,7 +204,7 @@ class ExchangeModel:
     @property
     def b3(self):
         r"""
-        Third reciprocal lattice vector 
+        Third reciprocal lattice vector
 
         .. math::
 
@@ -220,7 +220,7 @@ class ExchangeModel:
         r"""
         List of cells from the model.
 
-        Return the list of R for all cell that are present in the model. 
+        Return the list of R for all cell that are present in the model.
         Not ordered.
 
         Returns
@@ -281,17 +281,17 @@ class ExchangeModel:
             z_min = min(z1, z2, z_min)
         return x_min, y_min, z_min, x_max, y_max, z_max
 
-    def round(self, accuracy=4):
+    def round(self, decimals=4):
         r"""Round exchange parameters.
 
         Parameters
         ----------
-        accuracy : int, default 4
+        decimals : int, default 4
             Number of decimals after the comma.
         """
 
         for atom1, atom2, R in self.bonds:
-            self.bonds[(atom1, atom2, R)].round(accuracy)
+            self.bonds[(atom1, atom2, R)].round(decimals)
 
     def add_bond(self, bond: Bond, atom1, atom2, R):
         r"""
@@ -544,7 +544,7 @@ class ExchangeModel:
 
         .. note::
             This method is not modifying the instance at which it is called.
-            It will create a new instance with merged ``bonds`` and all the 
+            It will create a new instance with merged ``bonds`` and all the
             other attributes will be copied (through deepcopy).
 
         Parameters
@@ -579,8 +579,8 @@ class ExchangeModel:
         r"""
         Force the model to have the symmetries of the template.
 
-        Takes mean values of the parameters. 
-        For DMI interaction directions are kept the same, 
+        Takes mean values of the parameters.
+        For DMI interaction directions are kept the same,
         but the length of the DMI vector is scaled.
 
         This method modifies an instance on which it was called.
@@ -620,7 +620,7 @@ class ExchangeModel:
         r"""
         Force the model to have the symmetries of the template.
 
-        Takes mean values of the parameters. 
+        Takes mean values of the parameters.
         Respect the direction of the DMI vectors.
 
         This method return a new instance.
@@ -640,24 +640,36 @@ class ExchangeModel:
         new_model.force_symmetry(template=template)
         return new_model
 
-    def summary_as_txt(self, template: ExchangeTemplate,
-                       dmi_verbose=False, verbose=False, accuracy=4):
+    def summary_as_txt(self,
+                       template: ExchangeTemplate,
+                       decimals=4,
+                       force_symmetry=False,
+                       isotropic=False,
+                       anisotropic=False,
+                       out_matrix=False,
+                       out_dmi=False):
         r"""
         Return exchange model based on the template file in .txt format.
 
         Parameters
         ----------
         template : :py:class:`.ExchangeTemplate`
-            Template of the desired exchange model. 
+            Template of the desired exchange model.
             (see :ref:`rad-make-template`)
-        dmi_verbose : bool, default False
-            Whenever to write each individual DMI vector for 
-            each average exchange. Ignored if ``verbose`` = True.
-        verbose : bool, default False
-            Whenever to write everything in a verbose manner.
-            (see :ref:`tb2j-extractor_verbose-ref`)
         accuracy : int, default 4
             Accuracy for the exchange values
+        force_symmetry: bool, default False
+            Whenever to force the symmetry of the template exchange model.
+            If ``False`` then each individual bond is written, otherwise
+            exchange parameters of the template model are written.
+        isotropic : bool, default False
+            Whenever to output isotropic exchange.
+        anisotropic : bool, default False
+            Whenever to output anisotropic exchange.
+        out_matrix : bool, default False
+            Whenever to output whole matrix exchange.
+        out_dmi : bool, default False
+            Whenever to output DMI exchange.
 
         Returns
         -------
@@ -665,184 +677,110 @@ class ExchangeModel:
             Exchange information as a string.
         """
 
+        if force_symmetry:
+            self.force_symmetry(template=template)
+        else:
+            self.filter(template=template)
+        self.round(decimals=decimals)
         summary = ""
         for name in template.names:
-            summary += f"{name}\n"
-            if verbose:
-                for atom1, atom2, R in template.names[name]:
-
-                    # Get values from the model
-                    bond = self.bonds[(atom1, atom2, R)]
-                    if not isinstance(bond, Bond):
-                        raise TypeError
-                    iso = bond.iso
-                    aniso = bond.aniso
-                    dmi = bond.dmi
-                    abs_dmi = bond.dmi_module
-                    rel_dmi = abs_dmi/iso
-                    matrix = bond.matrix
-
-                    # Write the values
-                    summary += (
-                        f"  {atom1:3} {atom2:3} " +
-                        f"({R[0]:2.0f}, {R[1]:2.0f}, {R[2]:2.0f})\n" +
-                        f"    Isotropic: {iso:.{accuracy}f}\n" +
-                        f"    Anisotropic:\n" +
-                        f"        {aniso[0][0]:{accuracy+3}.{accuracy}f}  " +
-                        f"{aniso[0][1]:{accuracy+3}.{accuracy}f}  " +
-                        f"{aniso[0][2]:{accuracy+3}.{accuracy}f}\n" +
-                        f"        {aniso[1][0]:{accuracy+3}.{accuracy}f}  " +
-                        f"{aniso[1][1]:{accuracy+3}.{accuracy}f}  " +
-                        f"{aniso[1][2]:{accuracy+3}.{accuracy}f}\n" +
-                        f"        {aniso[2][0]:{accuracy+3}.{accuracy}f}  " +
-                        f"{aniso[2][1]:{accuracy+3}.{accuracy}f}  " +
-                        f"{aniso[2][2]:{accuracy+3}.{accuracy}f}\n" +
-                        f"    DMI: {dmi[0]:.{accuracy}f} " +
-                        f"{dmi[1]:.{accuracy}f} " +
-                        f"{dmi[2]:.{accuracy}f}\n"
-                        f"    |DMI|: {abs_dmi:.{accuracy}f}\n" +
-                        f"    |DMI/J| {rel_dmi:.{accuracy}f}\n" +
-                        f"    Matrix:\n" +
-                        f"        {matrix[0][0]:{accuracy+3}.{accuracy}f}  " +
-                        f"{matrix[0][1]:{accuracy+3}.{accuracy}f}  " +
-                        f"{matrix[0][2]:{accuracy+3}.{accuracy}f}\n" +
-                        f"        {matrix[1][0]:{accuracy+3}.{accuracy}f}  " +
-                        f"{matrix[1][1]:{accuracy+3}.{accuracy}f}  " +
-                        f"{matrix[1][2]:{accuracy+3}.{accuracy}f}\n" +
-                        f"        {matrix[2][0]:{accuracy+3}.{accuracy}f}  " +
-                        f"{matrix[2][1]:{accuracy+3}.{accuracy}f}  " +
-                        f"{matrix[2][2]:{accuracy+3}.{accuracy}f}\n\n")
-            else:
-                # Compute mean values
-                iso = 0
-                aniso = np.zeros((3, 3), dtype=float)
-                dmi = np.zeros(3, dtype=float)
-                abs_dmi = 0
-                rel_dmi = 0
-                for atom1, atom2, R in template.names[name]:
-                    bond = self.bonds[(atom1, atom2, R)]
-                    if not isinstance(bond, Bond):
-                        raise TypeError
-                    iso += bond.iso
-                    aniso += bond.aniso
-                    dmi += bond.dmi
-                    abs_dmi += bond.dmi_module
-                    rel_dmi += abs_dmi/iso
-                iso /= len(template.names[name])
-                aniso /= len(template.names[name])
-                dmi /= len(template.names[name])
-                abs_dmi /= len(template.names[name])
-                rel_dmi /= len(template.names[name])
-
-                # Write mean values
-                summary += (
-                    f"    Isotropic: {iso:.{accuracy}f}\n" +
-                    f"    Anisotropic:\n" +
-                    f"        {aniso[0][0]:{accuracy+3}.{accuracy}f}  " +
-                    f"{aniso[0][1]:{accuracy+3}.{accuracy}f}  " +
-                    f"{aniso[0][2]:{accuracy+3}.{accuracy}f}\n" +
-                    f"        {aniso[1][0]:{accuracy+3}.{accuracy}f}  " +
-                    f"{aniso[1][1]:{accuracy+3}.{accuracy}f}  " +
-                    f"{aniso[1][2]:{accuracy+3}.{accuracy}f}\n" +
-                    f"        {aniso[2][0]:{accuracy+3}.{accuracy}f}  " +
-                    f"{aniso[2][1]:{accuracy+3}.{accuracy}f}  " +
-                    f"{aniso[2][2]:{accuracy+3}.{accuracy}f}\n" +
-                    f"    |DMI|: {abs_dmi:.{accuracy}f}\n" +
-                    f"    |DMI/J| {abs(rel_dmi):.{accuracy}f}\n")
-
-                # Write additional info on DMI
-                if dmi_verbose:
-                    for atom1, atom2, R in template.names[name]:
-                        bond = self.bonds[(atom1, atom2, R)]
-                        if not isinstance(bond, Bond):
-                            raise TypeError
-                        dmi = bond.dmi
-                        summary += (
-                            f"    DMI: " +
-                            f"{dmi[0]:{accuracy+3}.{accuracy}f} " +
-                            f"{dmi[1]:{accuracy+3}.{accuracy}f} " +
-                            f"{dmi[2]:{accuracy+3}.{accuracy}f} " +
-                            f"({R[0]:2.0f}, {R[1]:2.0f}, {R[2]:2.0f})\n")
-                    summary += "\n"
-                # Write only mean value of DMI
-                else:
-                    summary += (
-                        f"    DMI: " +
-                        f"{dmi[0]:.{accuracy}f} " +
-                        f"{dmi[1]:.{accuracy}f} " +
-                        f"{dmi[2]:.{accuracy}f}\n")
-            summary += "\n"
-        return summary
-
-    def summary_as_py(self, template: ExchangeTemplate):
-        r"""
-        Return exchange model based on the template file in .py format.
-
-        For the format see :ref:`tb2j-extractor_verbose-ref`.
-
-        Parameters
-        ----------
-        template : :py:class:`.ExchangeTemplate`
-            Template of the desired exchange model. 
-            (see :ref:`rad-make-template`)
-
-        Returns
-        -------
-        summary : str
-            Exchange information as a python script.
-        """
-
-        output_python_iso = "iso = {\n"
-        output_python_aniso = "aniso = {\n"
-        output_python_dmi = "dmi = {\n"
-        output_python_matrix = "matrix = {\n"
-        for name in template.names:
-            output_python_iso += f"    '{name}':\n" + "    {\n"
-            output_python_aniso += f"    '{name}':\n" + "    {\n"
-            output_python_dmi += f"    '{name}':\n" + "    {\n"
-            output_python_matrix += f"    '{name}':\n" + "    {\n"
-
+            scalar_written = False
             for atom1, atom2, R in template.names[name]:
+                # Get values from the model
                 bond = self.bonds[(atom1, atom2, R)]
                 if not isinstance(bond, Bond):
                     raise TypeError
                 iso = bond.iso
                 aniso = bond.aniso
                 dmi = bond.dmi
+                abs_dmi = bond.dmi_module
+                rel_dmi = abs_dmi/iso
                 matrix = bond.matrix
-                output_python_iso += (
-                    8 * " " +
-                    f"({R[0]}, {R[1]}, {R[2]}): {iso},\n")
-                output_python_aniso += (
-                    8 * " " +
-                    f"({R[0]}, {R[1]}, {R[2]}): np.array([" +
-                    f"[{aniso[0][0]}, {aniso[0][1]}, {aniso[0][2]}], " +
-                    f"[{aniso[1][0]}, {aniso[1][1]}, {aniso[1][2]}], " +
-                    f"[{aniso[2][0]}, {aniso[2][1]}, {aniso[2][2]}]]),\n")
-                output_python_dmi += (
-                    8 * " " +
-                    f"({R[0]}, {R[1]}, {R[2]}):" +
-                    f" np.array([{dmi[0]}, {dmi[1]}, {dmi[2]}]),\n")
-                output_python_matrix += (
-                    8 * " " +
-                    f"({R[0]}, {R[1]}, {R[2]}): np.array([" +
-                    f"[{matrix[0][0]}, {matrix[0][1]}, {matrix[0][2]}], " +
-                    f"[{matrix[1][0]}, {matrix[1][1]}, {matrix[1][2]}], " +
-                    f"[{matrix[2][0]}, {matrix[2][1]}, {matrix[2][2]}]]),\n")
 
-            output_python_iso += "    },\n"
-            output_python_aniso += "    },\n"
-            output_python_dmi += "    },\n"
-            output_python_matrix += "    },\n"
-        output_python_iso += "}\n\n"
-        output_python_aniso += "}\n\n"
-        output_python_dmi += "}\n\n"
-        output_python_matrix += "}\n\n"
-        summary = ("import numpy as np\n" +
-                   output_python_iso +
-                   output_python_aniso +
-                   output_python_dmi +
-                   output_python_matrix)
+                if not force_symmetry:
+
+                    # Write the values
+                    summary += (
+                        f"{atom1:3} {atom2:3} " +
+                        f"({R[0]:2.0f}, {R[1]:2.0f}, {R[2]:2.0f})\n")
+                    if isotropic:
+                        summary += f"    Isotropic: {iso:.{decimals}f}\n"
+                    if anisotropic:
+                        summary += (
+                            f"    Anisotropic:\n" +
+                            f"        {aniso[0][0]:{decimals+3}.{decimals}f}  " +
+                            f"{aniso[0][1]:{decimals+3}.{decimals}f}  " +
+                            f"{aniso[0][2]:{decimals+3}.{decimals}f}\n" +
+                            f"        {aniso[1][0]:{decimals+3}.{decimals}f}  " +
+                            f"{aniso[1][1]:{decimals+3}.{decimals}f}  " +
+                            f"{aniso[1][2]:{decimals+3}.{decimals}f}\n" +
+                            f"        {aniso[2][0]:{decimals+3}.{decimals}f}  " +
+                            f"{aniso[2][1]:{decimals+3}.{decimals}f}  " +
+                            f"{aniso[2][2]:{decimals+3}.{decimals}f}\n")
+                    if out_matrix:
+                        summary += (
+                            f"    Matrix:\n" +
+                            f"        {matrix[0][0]:{decimals+3}.{decimals}f}  " +
+                            f"{matrix[0][1]:{decimals+3}.{decimals}f}  " +
+                            f"{matrix[0][2]:{decimals+3}.{decimals}f}\n" +
+                            f"        {matrix[1][0]:{decimals+3}.{decimals}f}  " +
+                            f"{matrix[1][1]:{decimals+3}.{decimals}f}  " +
+                            f"{matrix[1][2]:{decimals+3}.{decimals}f}\n" +
+                            f"        {matrix[2][0]:{decimals+3}.{decimals}f}  " +
+                            f"{matrix[2][1]:{decimals+3}.{decimals}f}  " +
+                            f"{matrix[2][2]:{decimals+3}.{decimals}f}\n")
+                    if out_dmi:
+                        summary += (
+                            f"    |DMI|: {abs_dmi:.{decimals}f}\n" +
+                            f"    |DMI/J|: {rel_dmi:.{decimals}f}\n" +
+                            f"    DMI: {dmi[0]:.{decimals}f} " +
+                            f"{dmi[1]:.{decimals}f} " +
+                            f"{dmi[2]:.{decimals}f}\n")
+                    summary += "\n"
+                else:
+                    if not scalar_written:
+                        scalar_written = True
+                        summary += f"{name}\n"
+                        if isotropic:
+                            summary += f"    Isotropic: {iso:.{decimals}f}\n"
+                        if anisotropic:
+                            summary += (
+                                f"    Anisotropic:\n" +
+                                f"        {aniso[0][0]:{decimals+3}.{decimals}f}  " +
+                                f"{aniso[0][1]:{decimals+3}.{decimals}f}  " +
+                                f"{aniso[0][2]:{decimals+3}.{decimals}f}\n" +
+                                f"        {aniso[1][0]:{decimals+3}.{decimals}f}  " +
+                                f"{aniso[1][1]:{decimals+3}.{decimals}f}  " +
+                                f"{aniso[1][2]:{decimals+3}.{decimals}f}\n" +
+                                f"        {aniso[2][0]:{decimals+3}.{decimals}f}  " +
+                                f"{aniso[2][1]:{decimals+3}.{decimals}f}  " +
+                                f"{aniso[2][2]:{decimals+3}.{decimals}f}\n")
+                        if out_matrix:
+                            summary += (
+                                f"    Matrix:\n" +
+                                f"        {matrix[0][0]:{decimals+3}.{decimals}f}  " +
+                                f"{matrix[0][1]:{decimals+3}.{decimals}f}  " +
+                                f"{matrix[0][2]:{decimals+3}.{decimals}f}\n" +
+                                f"        {matrix[1][0]:{decimals+3}.{decimals}f}  " +
+                                f"{matrix[1][1]:{decimals+3}.{decimals}f}  " +
+                                f"{matrix[1][2]:{decimals+3}.{decimals}f}\n" +
+                                f"        {matrix[2][0]:{decimals+3}.{decimals}f}  " +
+                                f"{matrix[2][1]:{decimals+3}.{decimals}f}  " +
+                                f"{matrix[2][2]:{decimals+3}.{decimals}f}\n")
+                        if out_dmi:
+                            summary += (
+                                f"    |DMI|: {abs_dmi:.{decimals}f}\n" +
+                                f"    |DMI/J|: {rel_dmi:.{decimals}f}\n")
+                    if out_dmi:
+                        summary += (
+                            f"    DMI: {dmi[0]:{decimals+3}.{decimals}f} " +
+                            f"{dmi[1]:{decimals+3}.{decimals}f} " +
+                            f"{dmi[2]:{decimals+3}.{decimals}f} " +
+                            f"({atom1:3} {atom2:3} " +
+                            f"{R[0]:2.0f} {R[1]:2.0f} {R[2]:2.0f})\n")
+            if force_symmetry:
+                summary += "\n"
+
         return summary
 
 
