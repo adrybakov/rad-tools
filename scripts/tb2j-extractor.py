@@ -128,7 +128,7 @@ if __name__ == '__main__':
     extract(filename=args.filename,
             out_dir=args.output_dir,
             out_name=args.output_name,
-            template=args.template,
+            template=args.template_file,
             dmi_verbose=args.dmi,
             verbose=args.verbose,
             accuracy=args.accuracy,
