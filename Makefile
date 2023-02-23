@@ -57,6 +57,10 @@ pip:
 	@git log --oneline --all --graph --decorate -20
 	@echo "\x1b[33m"
 	@echo "\x1b[31m"
+	@echo "\x1b[33m"
+	@echo Are all script arguments ok?
+	@echo "\x1b[0m"
+	@make check-user-guide
 	@read -p "Press Enter if yes:"
 	@echo "\x1b[0m"
 	-@rm -r dist
