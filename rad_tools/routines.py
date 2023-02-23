@@ -301,9 +301,9 @@ def absolute_to_relative(cell, x, y, z):
     v = np.array([x, y, z], dtype=float)
     if (v == np.zeros(3)).all():
         return np.zeros(3)
-    B = np.array([np.dot(a,v), np.dot(b,v), np.dot(c,v)])
-    A = np.array([[np.dot(a,a), np.dot(a,b), np.dot(a,c)],
-         [np.dot(b,a), np.dot(b,b), np.dot(b,c)],
-         [np.dot(c,a), np.dot(c,b), np.dot(c,c)]])
-    relative = np.linalg.solve(A, B)     
-    return relative    
+    B = np.array([np.dot(a, v), np.dot(b, v), np.dot(c, v)])
+    A = np.array([[np.dot(a, a), np.dot(a, b), np.dot(a, c)],
+                  [np.dot(b, a), np.dot(b, b), np.dot(b, c)],
+                  [np.dot(c, a), np.dot(c, b), np.dot(c, c)]])
+    relative = np.linalg.solve(A, B)
+    return relative
