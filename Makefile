@@ -94,3 +94,6 @@ examples:
 
 push: examples
 	@git push
+
+check-user-guide:
+	@python3 check-user-guide.py
