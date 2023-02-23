@@ -30,7 +30,7 @@ def provide_template(out_name="template.txt",
                 "atom2 atom2  1  0  2\n" +
                 '=' * 20 + "\n")
 
-    with open(out_name, "w") as file:
+    with open(f"{out_name}.txt", "w") as file:
         if tb2j_filename is None:
             file.write(template)
         else:
@@ -62,7 +62,7 @@ if __name__ == "__main__":
 
     parser.add_argument("-on", "--output-name",
                         type=str,
-                        default='template.txt',
+                        default='template',
                         help="""
                         Relative or absolute path to the template output file.
                         """

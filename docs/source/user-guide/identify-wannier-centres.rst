@@ -81,7 +81,9 @@ Rellative or absolute path to the _centres.xyz file
 
 Identified Wannier centres will be store in the "filename_identified" file.
 
-    *type : str*
+.. code-block:: text
+
+    required
 
 .. _identify-wannier-centres_span:
 
@@ -91,9 +93,9 @@ Distance tolerance between centre and atom. (in Angstrom)
 
 If some atoms remains unidentified try to increase the span
 
-    *default* : 0.1
+.. code-block:: text
 
-    *type* : float
+    default : 0.1
 
 .. _identify-wannier-centres_output-dir:
 
@@ -101,9 +103,9 @@ If some atoms remains unidentified try to increase the span
 -----------------
 Relative or absolute path to the folder for saving outputs.
 
-    *default* : the directory of the input file
-        
-    *type* : str
+.. code-block:: text
+
+    default : the directory of the input file
 
 See also: :ref:`example <scripts_output-notes>`.
 
@@ -113,9 +115,9 @@ See also: :ref:`example <scripts_output-notes>`.
 ------------------
 Seedname for the output files.
 
-    *default* : Name of the input file + "_identified"
+.. code-block:: text
 
-    *type* : str
+    default : Name of the input file + "_identified"
 
 See also: :ref:`example <scripts_output-notes>`.
 
@@ -125,4 +127,6 @@ See also: :ref:`example <scripts_output-notes>`.
 ----------------
 Turn off coloured output.
 
-    *default* : False
+.. code-block:: text
+
+    default : False

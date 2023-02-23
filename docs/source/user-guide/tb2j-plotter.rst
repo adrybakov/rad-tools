@@ -189,9 +189,9 @@ Arguments
 Relative or absulute path to the TB2J exchange output file, 
 including the name and extention of the file.
 
-    *required* : True
+.. code-block:: text
 
-    *type* : str
+    required
 
 
 .. _tb2j-plotter_output-dir:
@@ -204,9 +204,9 @@ If the folder does not exist then it is created from the specified path.
 The creation is applied recursevly to the path, starting from the right
 until the existing folder is reached.
 
-    *default* : current directory
-        
-    *type* : str
+.. code-block:: text
+
+    default : current directory
 
 See also: :ref:`example <scripts_output-notes>`.
 
@@ -220,9 +220,9 @@ Seedname for the output files.
 Output files will have the following name structure:
 *output-name.display-data-type.png*
 
-    *default* : exchange
-        
-    *type* : str
+.. code-block:: text
+
+    default : exchange
 
 See also: :ref:`example <scripts_output-notes>`.
 
@@ -237,11 +237,9 @@ Specifying the data which will be displayed in the graphs.
 Everything is displayed by default, each value in a separate picture. 
 Currently available for display: Isotropic exchange parameter, distance, \|DMI\|.
 
-    *default* : all
+.. code-block:: text
 
-    *type* : str
-
-    *choices* : all, iso, distance, dmi
+    default : all
 
 
 .. _tb2j-plotter_draw-cells:
@@ -253,9 +251,9 @@ Whenever to draw the cells.
 If specified then the shape of all cells 
 presented in the model (after filtering) is drawn. (0, 0, 0) will be in red.
 
-    *default* : False
+.. code-block:: text
 
-    *action* : store_true
+    default : False
 
 
 .. _tb2j-plotter_R-vector:
@@ -273,11 +271,9 @@ by spaces. They are grouped by three starting from the left to form a set
 of R vectors. If the last group will contain 1 or 2 integers they will be 
 ignored.
 
-    *default* : None
+.. code-block:: text
 
-    *type* : int
-
-    *nargs* : *
+    default : None
 
 
 .. _tb2j-plotter_max-distance:
@@ -289,9 +285,9 @@ ignored.
 All the bonds with the distance beetwen atom 1 and atom 2 
 greater than maximum distance are excluded from the model.
 
-    *default* : None
+.. code-block:: text
 
-    *type* : float
+    default : None
 
 
 .. _tb2j-plotter_min-distance:
@@ -303,9 +299,9 @@ greater than maximum distance are excluded from the model.
 All the bonds with the distance beetwen atom 1 and atom 2 
 lower than minimum distance are excluded from the model.
 
-    *default* : None
+.. code-block:: text
 
-    *type* : float
+    default : None
 
 
 .. _tb2j-plotter_distance:
@@ -316,9 +312,9 @@ lower than minimum distance are excluded from the model.
 
 Only the bonds with the exact distance remains in the model.
 
-    *default* : None
+.. code-block:: text
 
-    *type* : float
+    default : None
 
 .. hint::
     There is no point in specifying maximum or minimum distance when 
@@ -332,9 +328,9 @@ Only the bonds with the exact distance remains in the model.
 Relative or absolute path to the template file, 
 including the name and extention of the file.
 
-    *default* : None
+.. code-block:: text
 
-    *type* : str
+    default : None
 
 See also: :ref:`template <rad-make-template>`
 
@@ -348,9 +344,9 @@ Scale for the size of atom marks.
 Use it if you want to display atom marks bigger or smaller. 
 Have to be positive.
 
-    *default* : 1
+.. code-block:: text
 
-    *type* : float
+    default : 1
 
 
 .. _tb2j-plotter_scale-data:
@@ -362,9 +358,9 @@ Scale for the size of data text.
 Use it if you want to display data text marks bigger or smaller. 
 Have to be positive.
 
-    *default* : 1
+.. code-block:: text
 
-    *type* : float
+    default : 1
 
 
 .. _tb2j-plotter_title:
@@ -375,9 +371,9 @@ Title for the plots
 
 Title will be displayed in the picture.
 
-    *default* : None
+.. code-block:: text
 
-    *type* : str
+    default : None
 
 
 .. _tb2j-plotter_force-symmetry:
@@ -386,7 +382,8 @@ Title will be displayed in the picture.
 ---------------------
 Force the exchange model to have the symmetry of the template.
 
-    *default* : False
-    *action* : "store_true"
+.. code-block:: text
+
+    default : False
     
  

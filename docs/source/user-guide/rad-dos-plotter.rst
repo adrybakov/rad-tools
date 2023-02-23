@@ -22,10 +22,9 @@ Arguments
 Relative or absolute path to the dos file,
 including the name and extention of the file itself.
 
-    *required* : True
+.. code-block:: text
 
-    *type* : str
-
+    required
 
 .. _rad-dos-plotter_output-dir:
 
@@ -33,9 +32,9 @@ including the name and extention of the file itself.
 -----------------
 Relative or absolute path to the folder for saving outputs.
 
-    *default* : current directory
+.. code-block:: text
 
-    *type* : str
+    default : current directory
 
 See also: :ref:`example <scripts_output-notes>`.
 
@@ -46,9 +45,9 @@ See also: :ref:`example <scripts_output-notes>`.
 ------------------
 Seedname for the output files.
 
-    *default* : pdos
+.. code-block:: text
 
-    *type* : str
+    default : pdos
 
 See also: :ref:`example <scripts_output-notes>`.
 
@@ -61,12 +60,9 @@ Energy window.
 
 DOS will be plotted in the energy limits ``window[0]< E < window[1]``
 
-    *default* : None
+.. code-block:: text
 
-    *type* : float
-
-    *nargs* : 2
-
+    default : None
 
 .. _rad-dos-plotter_interactive:
 
@@ -78,9 +74,9 @@ If specified then :py:func:`plt.show()` function will be called
 instead of saving graph to the file, which will open standart 
 pyplot interactive window.
 
-    *default* : False
+.. code-block:: text
 
-    *action* : store_true
+    default : False
 
 .. _rad-dos-plotter_legend-location:
 
@@ -88,7 +84,6 @@ pyplot interactive window.
 ----------------------
 Legend location, will be passed to the plt.legend().
 
-    *default* "best",
+.. code-block:: text
 
-    *choices* 'best', 0, 'upper right', 1, 'upper left', 2, 'lower left', 3, 'lower right', 4, 'right', 5, 'center left', 6, 'center right', 7, 'lower center', 8, 'upper center', 9, 'center', 10],
-
+    default "best"
