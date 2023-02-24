@@ -84,10 +84,6 @@ class TestExchangeModel:
         model = ExchangeModel()
         with pytest.raises(ValueError):
             model.cell = [3, 4, 5]
-        # with pytest.raises(ValueError):
-        #     model.cell = [[3, 4, 5],
-        #                   [9, 8, 10],
-        #                   [1, 2, 3]]
 
     def test_abc(self):
         model = ExchangeModel()
@@ -586,3 +582,25 @@ class TestExchangeModel:
 
         assert ("Cr2", "Cr2", (11, 0, 0)) not in model
         assert ("Cr2", "Cr2", (-1, 0, 0)) not in model
+
+    def test_ferromagnetic_energy(self):
+        model = ExchangeModel()
+        model.a = [1, 0, 0]
+        model.b = [0, 1, 0]
+        model.c = [0, 0, 1]
+        model.add_atom("Cr1", 1, 1, 1)
+        model.add_atom("Cr2", 1, 1, 1)
+        model.add_atom("Cr3", 1, 1, 1)
+        model.add_bond(Bond(iso=1), "Cr1", "Cr2", (0, 0, 0))
+        model.add_bond(Bond(iso=2), "Cr1", "Cr3", (0, -1, 0))
+        model.add_bond(Bond(iso=3), "Cr2", "Cr1", (0, 0, -3))
+        assert model.ferromagnetic_energy() == -6
+        assert model.ferromagnetic_energy(theta=23, phi=234) == -6
+        model.add_bond(Bond(iso=3, aniso=[[1, 0, 0],
+                                          [0, 2, 0],
+                                          [0, 0, -3]]),
+                       "Cr2", "Cr1", (0, 0, -1))
+        assert model.ferromagnetic_energy() == -6
+        assert model.ferromagnetic_energy(theta=90) == -10
+        assert model.ferromagnetic_energy(theta=90, phi=90) == -11
+        assert model.ferromagnetic_energy(theta=90, phi=45) == -10.5

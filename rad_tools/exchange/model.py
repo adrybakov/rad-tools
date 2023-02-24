@@ -5,7 +5,7 @@ Write a tutorial with docstrings here.
 """
 
 from copy import deepcopy
-from math import sqrt, pi
+from math import sqrt, pi, cos, sin
 
 import numpy as np
 
@@ -782,6 +782,47 @@ class ExchangeModel:
                 summary += "\n"
 
         return summary
+
+    def ferromagnetic_energy(self, theta=0, phi=0):
+        r"""
+        Compute energy of the model assuming ferromagnetic state.
+
+        With Hamiltonian of the form:
+
+        .. math::
+
+            \hat{H} = - \sum_{i,j} \vec{S}_i J_{ij} \vec{S}_j
+
+        where spin vectors are normaized to 1 and :math:`J_{ij}` is the 
+        exchange matrix.
+
+        Parameters
+        ----------
+        theta : float, default 0
+            Angle between z axis an direction of the magnetization.
+            :math:`0 < \theta < 180`
+        phi : float, default 0
+            angle between x axis an projection of direction of the 
+            magnetization on xy plane.
+            :math:`0 < \phi < 360`
+
+        Returns
+        -------
+        energy : float
+            Energy of ferromagnetic model with magnetisation direction defined 
+            by ``theta`` and ``phi``. In the units of J values.
+        """
+
+        theta = theta / 180 * pi
+        phi = phi / 180 * pi
+        energy = np.zeros((3, 3), dtype=float)
+        for bond in self:
+            energy -= self.bonds[bond].matrix
+        spin_vector = np.array([cos(phi) * sin(theta),
+                                sin(phi) * sin(theta),
+                                cos(theta)])
+        energy = np.matmul(np.matmul(spin_vector, energy), spin_vector)
+        return energy
 
 
 class ExchangeModelIterator:
