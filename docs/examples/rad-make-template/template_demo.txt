@@ -1,3 +1,5 @@
+Template is created on 24 February 2023 at 17:10:11 by rad-tools
+
 ====================
 Neighbors template:
 i j R_a R_b R_c

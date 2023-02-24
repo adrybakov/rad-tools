@@ -87,9 +87,9 @@ examples:
 	@pip3 install . --upgrade
 	@identify-wannier-centres.py docs/examples/identify-wannier-centres/example_centres.xyz -nc > docs/examples/identify-wannier-centres/console_output.txt
 	@identify-wannier-centres.py docs/examples/identify-wannier-centres/example_centres.xyz --span 0.11 --output-name example_centres.xyz_bigger_span
-	@rad-make-template.py -on docs/examples/rad-make-template/template_demo.txt
-	@rad-make-template.py -tf docs/examples/rad-make-template/exchange.out -on docs/examples/rad-make-template/full_template.txt
-	@rad-make-template.py -tf docs/examples/rad-make-template/exchange.out -on docs/examples/rad-make-template/filtered_template.txt -maxd 8
+	@rad-make-template.py -on docs/examples/rad-make-template/template_demo
+	@rad-make-template.py -tf docs/examples/rad-make-template/exchange.out -on docs/examples/rad-make-template/full_template
+	@rad-make-template.py -tf docs/examples/rad-make-template/exchange.out -on docs/examples/rad-make-template/filtered_template -maxd 8
 	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/
 	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_filtered -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange"
 	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_template -wtp iso -tf docs/examples/tb2j-plotter/template.txt -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange"

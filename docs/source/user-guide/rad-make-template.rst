@@ -7,7 +7,7 @@
 Script for the creation of template`s draft.
 
 This script can provide blank template file or template file based on the TB2J
-*exchange.out* file (see :ref:`--filename <rad-make-template_filename>`). 
+*exchange.out* file (see :ref:`--tb2j-filename <rad-make-template_tb2j-filename>`). 
 Several filtering options are supported for the case of TB2J-based template file 
 (:ref:`--R-vector <rad-make-template_R-vector>`, 
 :ref:`--max-distance <rad-make-template_max-distance>`,
@@ -40,7 +40,7 @@ Run the code:
 
 .. code-block:: bash
 
-    rad-make-template.py -f exchange.out -on full_template.txt
+    rad-make-template.py -tf exchange.out -on full_template.txt
 
 It will produce the following file with the full template from the file:
 
@@ -55,7 +55,7 @@ with the distance <= 8 Angstrom.
 
 .. code-block:: bash
 
-    rad-make-template.py -f exchange.out -on filtered_template.txt -maxd 8
+    rad-make-template.py -tf exchange.out -on filtered_template.txt -maxd 8
 
 .. dropdown:: filtered_template.txt
 
@@ -143,10 +143,10 @@ Relative or absolute path to the template output file.
 
 See also: :ref:`example <scripts_output-notes>`.
 
-.. _rad-make-template_filename:
+.. _rad-make-template_tb2j-filename:
 
--f, --filename
---------------
+-tf, --tb2j-filename
+--------------------
 Relative or absulute path to the TB2J exchange output file, 
 including the name and extention of the file.
 
