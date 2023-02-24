@@ -60,7 +60,7 @@ pip:
 	@echo "\x1b[33m"
 	@echo Are all script arguments ok?
 	@echo "\x1b[0m"
-	@make check-user-guide
+	@make check-script-names
 	@read -p "Press Enter if yes:"
 	@echo "\x1b[0m"
 	-@rm -r dist
