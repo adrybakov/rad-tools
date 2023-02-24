@@ -39,3 +39,13 @@ Bugfix in ``add_kpoint`` in kpoints module.
 0.5.3/0.5.4/0.5.5
 -----------------
 Bugfix in :ref:`tb2j-extractor.py <tb2j-extractor>`
+
+0.5.6
+-----
+Move the scripts 
+:ref:`tb2j-extractor.py <tb2j-extractor>`,
+:ref:`tb2j-plotter.py <tb2j-plotter>` and
+:ref:`rad-make-template.py <rad-make-template>` to the package.
+
+Remake :ref:`tb2j-extractor.py <tb2j-extractor>` script, remove python file output, 
+create only two modes of outputs.
