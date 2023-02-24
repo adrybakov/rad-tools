@@ -49,3 +49,7 @@ Move the scripts
 
 Remake :ref:`tb2j-extractor.py <tb2j-extractor>` script, remove python file output, 
 create only two modes of outputs.
+
+0.5.7
+-----
+Add ``ferromagnetic_energy`` method to the ``ExchangeModel``
