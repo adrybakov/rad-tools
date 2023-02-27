@@ -80,16 +80,11 @@ for f_i, filename in enumerate(f_compare_scripts):
     isok = True
     for i, argument in enumerate(script_arguments):
         try:
-            if argument != docs_arguments[i]:
+            if (argument != docs_arguments[i] or
+                not (f"--{docs_links[i]}" in argument
+                     or f"-{docs_links[i]}" in argument
+                     or f"{docs_links[i]}" in argument)):
                 isok = False
-                print(f"{YELLOW}Problem:\n" +
-                      f"    Index: {i+1}\n" +
-                      f"    Docs: {docs_arguments[i]}\n" +
-                      f"    Script: {argument}{RESET}")
-            if not (f"--{docs_links[i]}" in argument
-                    or f"-{docs_links[i]}" in argument
-                    or f"{docs_links[i]}" in argument):
-                isok = filenames
                 print(f"{YELLOW}Problem:\n" +
                       f"    Index: {i+1}\n" +
                       f"    Docs: {docs_arguments[i]}\n" +
