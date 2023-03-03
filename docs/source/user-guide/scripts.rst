@@ -27,7 +27,6 @@ Other scripts.
 .. toctree::
    :maxdepth: 1
 
-   phonopy-plotter
    rad-dos-plotter
    identify-wannier-centres
 
