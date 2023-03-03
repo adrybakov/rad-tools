@@ -120,12 +120,12 @@ if __name__ == "__main__":
                         )
     args = parser.parse_args()
 
-    head, tail = split(args.filename)
-    if args.output_dir is None:
-        args.output_dir = head
+    head, tail = split(args.input_filename)
+    if args.output_path is None:
+        args.output_path = head
     if args.output_name is None:
         args.output_name = tail + "_identified"
 
     identify(args.input_filename, args.span,
-             out_dir=args.output_path, out_name=args.output_name,
+             output_path=args.output_path, out_name=args.output_name,
              nocolor=args.no_colour)
