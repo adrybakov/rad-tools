@@ -24,13 +24,13 @@ Rename tb2j-refractor.py to :ref:`tb2j-extractor.py <tb2j-extractor>`
 
 0.2.9
 -----
-Add pythonic :ref:`--verbose <tb2j-extractor_verbose-ref>` output
-to the :ref:`tb2j-refractor.py <tb2j-extractor>` script.
+Add pythonic --verbose output
+to the :ref:`tb2j-extractor.py <tb2j-extractor>` script.
 
 0.2.8
 -----
-Add :ref:`--verbose <tb2j-extractor_verbose>` flag
-to the :ref:`tb2j-refractor.py <tb2j-extractor>` script.
+Add --verbose flag
+to the :ref:`tb2j-extractor.py <tb2j-extractor>` script.
 
 0.2.7
 -----
