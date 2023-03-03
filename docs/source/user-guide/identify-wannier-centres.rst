@@ -97,10 +97,10 @@ If some atoms remains unidentified try to increase the span
 
     default : 0.1
 
-.. _identify-wannier-centres_output-dir:
+.. _identify-wannier-centres_output-path:
 
--op, --output-dir
------------------
+-op, --output-path
+------------------
 Relative or absolute path to the folder for saving outputs.
 
 .. code-block:: text

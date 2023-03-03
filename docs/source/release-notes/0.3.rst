@@ -25,6 +25,6 @@ Bugfix in :ref:`identify-wannier-centres.py <identify-wannier-centres>` script.
 
 0.3.1
 -----
-Add :ref:`--output-dir <identify-wannier-centres_output-dir>`
+Add :ref:`--output-dir <identify-wannier-centres_output-path>` (renamed in 0.5.8)
 and :ref:`--output-name <identify-wannier-centres_output-name>` options
 to the :ref:`identify-wannier-centres.py <identify-wannier-centres>` script.

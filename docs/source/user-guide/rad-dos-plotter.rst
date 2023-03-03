@@ -5,85 +5,104 @@
 **********************
 
 Script for visualisation of projected density of states from 
-`Quantum-ESPRESSO <https://www.quantum-espresso.org/>`_.
+`Quantum-ESPRESSO <https://www.quantum-espresso.org/>`_ 
+(`QE input description <https://www.quantum-espresso.org/Doc/INPUT_PROJWFC.html>`_).
 
-Detect the labels based on the name of the file and print its content.
-Pdos for *up* states is plotted with positive sign, 
-Pdos for *down* states is plotted with negative sign. 
-Summed Pdos from the file (2 and 3 column) is plotted in grey background.
+The script rely on the QE output format and may not work if the QE  output files 
+are modified or renamed. Minimum input for the script is the folder 
+with QE output files inside:
 
 Arguments
 =========
 
-.. _rad-dos-plotter_filename:
+.. _rad-dos-plotter_input-path:
 
--f, --filename
---------------
-Relative or absolute path to the dos file,
-including the name and extention of the file itself.
+-ip, --input-path
+-----------------
+Relative or absulute path to the folder with dos files.
 
 .. code-block:: text
 
     required
 
-.. _rad-dos-plotter_output-dir:
 
--op, --output-dir
------------------
+.. _rad-dos-plotter_filpdos:
+
+-f, --filpdos
+-------------
+Prefix for output files containing PDOS(E). 
+As specified in the QE projwfc.x input file.
+
+If it is not provided the script will try to 
+detect it automatically in the "input-path" folder.
+
+.. code-block:: text
+
+    default : None
+
+
+.. _rad-dos-plotter_output-path:
+
+-op, --output-path
+------------------
 Relative or absolute path to the folder for saving outputs.
 
 .. code-block:: text
 
-    default : current directory
-
-See also: :ref:`example <scripts_output-notes>`.
-
-
-.. _rad-dos-plotter_output-name:
-
--on, --output-name
-------------------
-Seedname for the output files.
-
-.. code-block:: text
-
-    default : pdos
-
-See also: :ref:`example <scripts_output-notes>`.
+    default : current directory (".")
 
 
 .. _rad-dos-plotter_window:
 
 -w, --window
 ------------
-Energy window.
-
-DOS will be plotted in the energy limits ``window[0]< E < window[1]``
+Energy window for the plots.  
+By default whole range present in the files is plotted.
 
 .. code-block:: text
 
     default : None
 
-.. _rad-dos-plotter_interactive:
 
--i, --interactive
-------------------
-Interactive mode flag.
+.. _rad-dos-plotter_efermi:
 
-If specified then :py:func:`plt.show()` function will be called 
-instead of saving graph to the file, which will open standart 
-pyplot interactive window.
+-ef, --efermi
+-------------
+Fermi energy. If specified zero will be shift to Fermi energy.
+
+.. code-block:: text
+
+    default : 0
+
+
+.. _rad-dos-plotter_separate:
+
+-s, --separate
+--------------
+Whenever to plot projected DOS for each atom  of the same type separately.
 
 .. code-block:: text
 
     default : False
 
-.. _rad-dos-plotter_legend-location:
 
--ll, --legend-location
-----------------------
-Legend location, will be passed to the plt.legend().
+.. _rad-dos-plotter_relative:
+
+-r, --relative
+--------------
+Whenever to use relative style.
 
 .. code-block:: text
 
-    default "best"
+    default : False
+
+
+.. _rad-dos-plotter_normalize:
+
+-n, --normalize
+---------------
+Whenever to use normalize relative style.
+
+.. code-block:: text
+
+    default : False
