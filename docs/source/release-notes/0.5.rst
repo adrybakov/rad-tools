@@ -60,8 +60,8 @@ Full remake of :ref:`rad-dos-plotter.py <rad-dos-plotter>` script.
 -----
 Rename all arguments to input/output paths, not dirs.
 
-0.5.9/0.5.10
-------------
+0.5.9/0.5.10/0.5.11
+-------------------
 Bugfix whe nseedname of pdos files contains pdos_tot
 
 
