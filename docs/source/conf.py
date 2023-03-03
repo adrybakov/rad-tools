@@ -55,9 +55,6 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
-#pydata bugfix
-icon_links = []
-
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -81,9 +78,10 @@ html_theme_options = {
     "use_edit_page_button": True,
     "navbar_end": ["theme-switcher.html", "navbar-icon-links.html"],
     "logo": {
-        "image_light": "logo_black.png",
-        "image_dark": "logo_white.png",
+        "image_light": "_static/logo_black.png",
+        "image_dark": "_static/logo_white.png",
     },
+    "icon_links": [],  # pydata bugfix
 }
 
 html_context = {
