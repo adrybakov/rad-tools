@@ -1,5 +1,5 @@
 Exchange values are extracted from: docs/examples/tb2j-extractor/exchange.out
-on 24 February 2023 at 17:10:34 by rad-tools
+on 3 March 2023 at 15:20:50 by rad-tools
 
 J1
     Isotropic: 0.1219

@@ -1,3 +1,4 @@
+Namespace(filename='docs/examples/identify-wannier-centres/example_centres.xyz', span=0.1, output_path=None, output_name=None, no_colour=True)
 Centre ['X', array([0.90034182, 1.20456455, 0.02140611])] unindentified, try to increase span
     span limit = 0.1
     minimum distance to the atom = 0.10018733 (Br1)
