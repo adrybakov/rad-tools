@@ -1,7 +1,6 @@
 #! /usr/local/bin/python3
 
 from argparse import ArgumentParser
-from math import sqrt
 from os.path import split, join
 
 import numpy as np
@@ -10,12 +9,12 @@ from rad_tools.routines import strip_digits, WARNING, RESET, \
     search_on_atoms, search_between_atoms
 
 
-def identify(filename, span, out_dir, out_name, nocolor=False):
+def identify(input_filename, span, output_path, out_name, nocolor=False):
     separation_tolerance = 10E-5
 
     # Read atoms and centres
     atom_counter = {}
-    with open(filename, "r") as file:
+    with open(input_filename, "r") as file:
         n = int(file.readline())
         file_stats = file.readline()
         centres = []
@@ -65,7 +64,7 @@ def identify(filename, span, out_dir, out_name, nocolor=False):
             centre[0] = pair
 
     # Write the output
-    with open(join(out_dir, out_name), "w") as file:
+    with open(join(output_path, out_name), "w") as file:
         file.write(f"{len(atoms) + len(centres):6.0f}\n")
         file.write(f"{file_stats}")
         for centre, coordinate in centres:
@@ -86,7 +85,7 @@ if __name__ == "__main__":
     parser = ArgumentParser(
         description=("Identify wannier centres with respect to the atom " +
                      "or to the point between the atom`s pair"))
-    parser.add_argument("filename",
+    parser.add_argument("input-filename",
                         type=str,
                         help="""
                         Rellative or absolute path to the _centres.xyz file
@@ -97,7 +96,7 @@ if __name__ == "__main__":
                         help="""
                         Distance tolerance between centre and atom. (in Angstrom)
                         """)
-    parser.add_argument("-op", "--output-dir",
+    parser.add_argument("-op", "--output-path",
                         type=str,
                         default=None,
                         help="""
@@ -127,6 +126,6 @@ if __name__ == "__main__":
     if args.output_name is None:
         args.output_name = tail + "_identified"
 
-    identify(args.filename, args.span,
-             out_dir=args.output_dir, out_name=args.output_name,
+    identify(args.input_filename, args.span,
+             out_dir=args.output_path, out_name=args.output_name,
              nocolor=args.no_colour)

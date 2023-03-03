@@ -42,7 +42,7 @@ exchange output is grouped based on the names provided in the template:
 
 .. code-block:: bash
 
-    tb2j-extractor.py -all -fs -f exchange.out -tf template.txt -on summary_forced_symmetry
+    tb2j-extractor.py -all -fs -if exchange.out -tf template.txt -on summary_forced_symmetry
 
 .. dropdown:: summary with forced symmetry
 
@@ -54,7 +54,7 @@ template file and no additional symmetry constrains are assumed on the model:
 
 .. code-block:: bash
 
-    tb2j-extractor.py -all -f exchange.out -tf template.txt -on summary
+    tb2j-extractor.py -all -if exchange.out -tf template.txt -on summary
 
 .. dropdown:: summary without forced symmetry
 
@@ -64,10 +64,10 @@ template file and no additional symmetry constrains are assumed on the model:
 Arguments
 =========
 
-.. _tb2j-extractor_filename:
+.. _tb2j-extractor_input-filename:
 
--f, --filename
---------------
+-if, --input-filename
+---------------------
 Relative or absulute path to the *exchange.out* file,
 including the name and extention of the file itself.
 
@@ -92,10 +92,10 @@ including the name and extention of the file.
 See also: :ref:`template <rad-make-template>`
 
 
-.. _tb2j-extractor_output-dir:
+.. _tb2j-extractor_output-path:
 
--op, --output-dir
------------------
+-op, --output-path
+------------------
 Relative or absolute path to the folder for saving outputs.
 
 If the folder does not exist then it is created from the specified path.

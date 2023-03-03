@@ -11,8 +11,8 @@ from rad_tools.io.internal import read_template
 from rad_tools.routines import atom_mark_to_latex, rot_angle, OK, RESET
 
 
-def manager(filename,
-            output_dir='.',
+def manager(input_filename,
+            output_path='.',
             output_name='exchange',
             what_to_plot='iso',
             draw_cells=False,
@@ -34,7 +34,7 @@ def manager(filename,
         max_distance = distance
 
     try:
-        makedirs(output_dir)
+        makedirs(output_path)
     except FileExistsError:
         pass
 
@@ -43,7 +43,7 @@ def manager(filename,
                             dtype=int).reshape((len(R_vector)//3, 3))
         R_vector = list(map(tuple, R_vector.tolist()))
 
-    model = read_exchange_model(filename)
+    model = read_exchange_model(input_filename)
     if template_file is not None:
         template = read_template(template_file)
     else:
@@ -160,7 +160,7 @@ def manager(filename,
         if title is not None:
             ax.set_title(title, fontsize=1.5 * fontsize)
 
-        png_path = join(output_dir, f'{output_name}.{wtp}.png')
+        png_path = join(output_path, f'{output_name}.{wtp}.png')
         plt.savefig(png_path, dpi=400, bbox_inches="tight")
         print(f'{OK}2D plot with {wtp} is in {abspath(png_path)}{RESET}')
 
@@ -169,7 +169,7 @@ def get_parser():
     parser = ArgumentParser(
         description="Script for visualisation of TB2J results")
 
-    parser.add_argument("-f", "--filename",
+    parser.add_argument("-if", "--input-filename",
                         type=str,
                         required=True,
                         help="""
@@ -177,7 +177,7 @@ def get_parser():
                         including the name and extention of the file itself.
                         """
                         )
-    parser.add_argument("-op", "--output-dir",
+    parser.add_argument("-op", "--output-path",
                         type=str,
                         default='.',
                         help="""

@@ -73,13 +73,13 @@ where all the centres are correctly Identified.
 Arguments
 =========
 
-.. _identify-wannier-centres_filename:
+.. _identify-wannier-centres_input-filename:
 
-filename
---------
+input-filename
+--------------
 Rellative or absolute path to the _centres.xyz file
 
-Identified Wannier centres will be store in the "filename_identified" file.
+Identified Wannier centres will be store in the "input-filename"_identified file.
 
 .. code-block:: text
 

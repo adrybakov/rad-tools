@@ -10,9 +10,9 @@ from rad_tools.io import read_tb2j_model
 from rad_tools.routines import OK, RESET
 
 
-def manager(filename,
+def manager(input_filename,
             template_file,
-            output_dir=".",
+            output_path=".",
             output_name=None,
             accuracy=4,
             force_symmetry=False,
@@ -33,7 +33,7 @@ def manager(filename,
     """
 
     try:
-        makedirs(output_dir)
+        makedirs(output_path)
     except FileExistsError:
         pass
 
@@ -45,7 +45,7 @@ def manager(filename,
         matrix = True
         dmi = True
 
-    model = read_tb2j_model(filename, quiet=True)
+    model = read_tb2j_model(input_filename, quiet=True)
     template = read_template(template_file)
     summary_txt = model.summary_as_txt(template=template,
                                        decimals=accuracy,
@@ -56,14 +56,14 @@ def manager(filename,
                                        out_dmi=dmi)
 
     if output_name is not None:
-        with open(join(output_dir, output_name + ".txt"), "w") as out_file:
+        with open(join(output_path, output_name + ".txt"), "w") as out_file:
             out_file.write(
-                f"Exchange values are extracted from: {filename}\n" +
+                f"Exchange values are extracted from: {input_filename}\n" +
                 f"on {cd.day} {month_name[cd.month]} {cd.year}" +
                 f" at {cd.hour}:{cd.minute}:{cd.second} by rad-tools\n\n")
             out_file.write(summary_txt)
         print(f"{OK}Extracted exchange info is in " +
-              f"{abspath(join(output_dir, output_name + '.txt'))}{RESET}")
+              f"{abspath(join(output_path, output_name + '.txt'))}{RESET}")
     else:
         print(f"{summary_txt}")
 
@@ -72,7 +72,7 @@ def get_parser():
     parser = ArgumentParser(
         description="Script for extracting of template-based model from TB2J results.")
 
-    parser.add_argument("-f", "--filename",
+    parser.add_argument("-if", "--input-filename",
                         type=str,
                         required=True,
                         help="""
@@ -86,7 +86,7 @@ def get_parser():
                         Relative or absolute path to the template file,
                         including the name and extention of the file.
                         """)
-    parser.add_argument("-op", "--output-dir",
+    parser.add_argument("-op", "--output-path",
                         type=str,
                         default=".",
                         help="""

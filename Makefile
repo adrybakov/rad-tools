@@ -90,13 +90,13 @@ examples:
 	@rad-make-template.py -on docs/examples/rad-make-template/template_demo
 	@rad-make-template.py -tf docs/examples/rad-make-template/exchange.out -on docs/examples/rad-make-template/full_template
 	@rad-make-template.py -tf docs/examples/rad-make-template/exchange.out -on docs/examples/rad-make-template/filtered_template -maxd 8
-	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/
-	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_filtered -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange"
-	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_template -wtp iso -tf docs/examples/tb2j-plotter/template.txt -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange"
-	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_forced_symmetry -tf docs/examples/tb2j-plotter/template.txt -fs -dc -sa 1.2 -sd 1.2 -t "Forced symmetry exchange"
-	@tb2j-plotter.py -f docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_R -wtp iso -R 1 0 0 1 1 0 0 1 0 -1 0 0 -1 -1 0 0 -1 0 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange"
-	@tb2j-extractor.py -f docs/examples/tb2j-extractor/exchange.out -tf docs/examples/tb2j-extractor/template.txt -op docs/examples/tb2j-extractor/ -on summary_forced_symmetry -all -fs
-	@tb2j-extractor.py -f docs/examples/tb2j-extractor/exchange.out -tf docs/examples/tb2j-extractor/template.txt -op docs/examples/tb2j-extractor/ -on summary -all
+	@tb2j-plotter.py -if docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/
+	@tb2j-plotter.py -if docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_filtered -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange"
+	@tb2j-plotter.py -if docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_template -wtp iso -tf docs/examples/tb2j-plotter/template.txt -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange"
+	@tb2j-plotter.py -if docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_forced_symmetry -tf docs/examples/tb2j-plotter/template.txt -fs -dc -sa 1.2 -sd 1.2 -t "Forced symmetry exchange"
+	@tb2j-plotter.py -if docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_R -wtp iso -R 1 0 0 1 1 0 0 1 0 -1 0 0 -1 -1 0 0 -1 0 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange"
+	@tb2j-extractor.py -if docs/examples/tb2j-extractor/exchange.out -tf docs/examples/tb2j-extractor/template.txt -op docs/examples/tb2j-extractor/ -on summary_forced_symmetry -all -fs
+	@tb2j-extractor.py -if docs/examples/tb2j-extractor/exchange.out -tf docs/examples/tb2j-extractor/template.txt -op docs/examples/tb2j-extractor/ -on summary -all
 
 push: examples
 	@git push

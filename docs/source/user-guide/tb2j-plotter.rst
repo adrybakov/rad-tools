@@ -18,7 +18,7 @@ distances (see :ref:`--max-distance <tb2j-plotter_max-distance>`,
 and template file (see :ref:`--template-file <tb2j-plotter_template-file>`). 
 The result is defined by logical conjugate of the specified conditions.
 
-``--filename`` (or ``-f``) argument is required, the rest of them are optional.
+``--input-filename`` (or ``-if``) argument is required, the rest of them are optional.
 
 
 Output files will have the following name structure: 
@@ -33,12 +33,12 @@ Example is based on the exchange.out file from
 :examples:`examples folder <tb2j-plotter>`. 
 
 There is one required argument in the script 
-(:ref:`--filename <tb2j-plotter_filename>`), so there is a minimum input 
+(:ref:`--input-filename <tb2j-plotter_input-filename>`), so there is a minimum input 
 for the script to run:
 
 .. code-block:: bash
 
-    tb2j-plotter.py -f exchange.out
+    tb2j-plotter.py -if exchange.out
 
 which will produce three pictures *exchange.iso.png*, 
 *exchange.distance.png*, *exchange.distance.png*. each file name have a common 
@@ -84,7 +84,7 @@ with some adjustments:
 
 .. code-block:: bash
 
-    tb2j-plotter.py -f exchange.out -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange" -on exchange_filtered
+    tb2j-plotter.py -if exchange.out -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange" -on exchange_filtered
 
 .. figure:: /../examples/tb2j-plotter/exchange_filtered.iso.png
     :align: center
@@ -110,9 +110,9 @@ frist exchange neighbor, using different options:
 
 .. code-block:: bash
 
-    tb2j-plotter.py -f exchange.out -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange" -on exchange_filtered
-    tb2j-plotter.py -f exchange.out -wtp iso -tf template.txt -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange" -on exchange_template
-    tb2j-plotter.py -f exchange.out -wtp iso -R 1 0 0 1 1 0  0 1 0 -1 1 0 -1 0 0 -1 -1 0 0 -1 0 1 -1 0 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange" -on exchange_R
+    tb2j-plotter.py -if exchange.out -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange" -on exchange_filtered
+    tb2j-plotter.py -if exchange.out -wtp iso -tf template.txt -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange" -on exchange_template
+    tb2j-plotter.py -if exchange.out -wtp iso -R 1 0 0 1 1 0  0 1 0 -1 1 0 -1 0 0 -1 -1 0 0 -1 0 1 -1 0 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange" -on exchange_R
 
 where template file is the following:
 
@@ -147,7 +147,7 @@ to reproduce particular exchange model:
 
 .. code-block:: bash
 
-    tb2j-plotter.py -f exchange.out -tf template.txt -fs -dc -sa 1.2 -sd 1.2 -t "Forced symmetry exchange" -on exchange_forced_symmetry
+    tb2j-plotter.py -if exchange.out -tf template.txt -fs -dc -sa 1.2 -sd 1.2 -t "Forced symmetry exchange" -on exchange_forced_symmetry
 
 .. figure:: /../examples/tb2j-plotter/exchange_forced_symmetry.iso.png
     :align: center
@@ -182,10 +182,10 @@ kept, but the magnitude of the DMI vector is scaled to the medium value.
 Arguments
 =========
 
-.. _tb2j-plotter_filename:
+.. _tb2j-plotter_input-filename:
 
--f, --filename
---------------
+-if, --input-filename
+---------------------
 Relative or absulute path to the TB2J exchange output file, 
 including the name and extention of the file.
 
@@ -194,10 +194,10 @@ including the name and extention of the file.
     required
 
 
-.. _tb2j-plotter_output-dir:
+.. _tb2j-plotter_output-path:
 
--op, --output-dir
------------------
+-op, --output-path
+------------------
 Relative or absolute path to the folder for saving outputs.
 
 If the folder does not exist then it is created from the specified path.
