@@ -86,23 +86,27 @@ Here is the draft of the template file which is provided by the script:
     :language: text
     :linenos:   
 
-Line 1: Header of the file. 20 or more "=" symbols.
+Line 1: Date and time of file creation.
 
-Line 2: Flag of the neighbors section, have to be in the file.
+Line 2: Blank line.
 
-Line 3: Format of the bond specification line.
+Line 3: Header of the file. 20 or more "=" symbols.
 
-Line 4: Neighbor separator. Separates different neighbors
+Line 4: Flag of the neighbors section, have to be in the file.
+
+Line 5: Format of the bond specification line.
+
+Line 6: Neighbor separator. Separates different neighbors
 (:math:`J_1`, :math:`J_2`, ...) in the neighbors template file. 
 20 or more "-" symbols.
 
-Line 5: Name of the neighbor and the 
+Line 7: Name of the neighbor and the 
 `LaTeX <https://www.latex-project.org/>`_ version of that name. 
 Name have to be specified. Latex name is optional. 
 Name and LaTeX name are separated by one or more spaces, 
 as a consequence no spaces are allowed for both of them.
 
-Line 6: First bond, which corresponds to the first neighbor (:math:`J_1`).
+Line 8: First bond, which corresponds to the first neighbor (:math:`J_1`).
 Format of the bond specification: 
 
 .. code-block:: text
@@ -112,19 +116,19 @@ Format of the bond specification:
 Where R is a real-space vector of the unit cell in which the second atom is 
 located (atom1 always located in R = (0, 0, 0)).
 
-Line 7, 8: Specification of the second and third bond from the first neighbor.
+Line 9, 10: Specification of the second and third bond from the first neighbor.
 
-Line 9: Neighbor separator.
+Line 11: Neighbor separator.
 
-Line 10: Name of the second neighbor.
+Line 12: Name of the second neighbor.
 
 .. note::
     There is no LaTeX name specified for the second neighbor.
 
-Lines 11-13: Specifications of the first, second and third bond, which are 
+Lines 14-15: Specifications of the first, second and third bond, which are 
 associated with the second neighbor.
 
-Lines 14: Footer of the file. 20 or more "=" symbols.
+Lines 16: Footer of the file. 20 or more "=" symbols.
 
 .. _rad-make-template_arguments:
 
