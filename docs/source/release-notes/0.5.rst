@@ -53,3 +53,5 @@ create only two modes of outputs.
 0.5.7
 -----
 Add ``ferromagnetic_energy`` method to the ``ExchangeModel``
+
+Full remake of :ref:`rad-dos-plotter.py <rad-dos-plotter>` script.

@@ -8,6 +8,7 @@ from copy import deepcopy
 from rad_tools.routines import OK, RESET, YELLOW
 
 import matplotlib.pyplot as plt
+from matplotlib import __version__ as matplotlib_version
 import numpy as np
 
 CASES = ["collinear, spin-unpolarized",
@@ -305,25 +306,32 @@ def plot_pdos_tot(dos, output_name, case, window=None, efermi=0.):
 
 
 def plot_projected(l, dos, output_name, title, case,
-                   window=None, efermi=0.):
-    labels = {"s": ["s"],
-              "p": ["$p_z$", "$p_y$", "$p_x$"],
-              "d": ["$d_{z^2}$", "$d_{zx}$",
-                    "$d_{zy}$", "$d_{x^2 - y^2}$", "$d_{xy}$"]}
-    factor = {"s": 1,
-              "p": 3,
-              "d": 5}
+                   window=None, efermi=0.,
+                   labels=None, factor=None):
+    if l in ["s", "p", "d"]:
+        labels = {"s": ["s"],
+                  "p": ["$p_z$", "$p_y$", "$p_x$"],
+                  "d": ["$d_{z^2}$", "$d_{zx}$",
+                        "$d_{zy}$", "$d_{x^2 - y^2}$", "$d_{xy}$"]}
+        labels = labels[l]
+
+        factor = {"s": 1,
+                  "p": 3,
+                  "d": 5}
+        factor = factor[l]
+    elif labels is None or factor is None:
+        raise ValueError
     dos = filter_window(dos, window=window, efermi=efermi)
     if window is None:
         window = (np.amin(dos[0]), np.amax(dos[0]))
-    fig, axs = plt.subplots(factor[l], 1, figsize=(9, factor[l]*2))
-    if l == "s":
+    fig, axs = plt.subplots(factor, 1, figsize=(9, factor*2))
+    if len(labels) == 1:
         axs = [axs]
     fig.subplots_adjust(hspace=0)
-    for i in range(0, factor[l]):
+    for i in range(0, factor):
         ax = axs[i]
         ax.set_ylabel('DOS, states/eV', fontsize=12)
-        if i == factor[l] - 1:
+        if i == factor - 1:
             ax.set_xlabel('E, ev', fontsize=15)
         else:
             ax.axes.get_xaxis().set_visible(False)
@@ -342,7 +350,7 @@ def plot_projected(l, dos, output_name, title, case,
                     lw=0.5,
                     color="black",
                     alpha=0.8,
-                    label=labels[l][i])
+                    label=labels[i])
         elif case in [1, 2]:
             ax.fill_between(dos[0], 0, dos[1],
                             lw=0, color='blue',
@@ -352,7 +360,7 @@ def plot_projected(l, dos, output_name, title, case,
                     lw=0.5,
                     color="blue",
                     alpha=0.8,
-                    label=f"{labels[l][i]} (up)")
+                    label=f"{labels[i]} (up)")
             ax.fill_between(dos[0], 0, -dos[2],
                             lw=0, color='red',
                             alpha=0.3, label=f"{l} (down)")
@@ -361,53 +369,69 @@ def plot_projected(l, dos, output_name, title, case,
                     lw=0.5,
                     color="red",
                     alpha=0.8,
-                    label=f"{labels[l][i]} (down)")
+                    label=f"{labels[i]} (down)")
         ax.legend(loc=(1.025, 0.2),
                   bbox_transform=ax.transAxes)
 
     plt.savefig(f"{output_name}.png", dpi=400, bbox_inches="tight")
+    plt.close()
 
 
 def plot_projected_relative(l, dos, output_name, title, case,
                             window=None, efermi=0.,
-                            normalize=False):
-    labels = {"s": ["s"],
-              "p": ["$p_z$", "$p_y$", "$p_x$"],
-              "d": ["$d_{z^2}$", "$d_{zx}$",
-                    "$d_{zy}$", "$d_{x^2 - y^2}$", "$d_{xy}$"]}
-    factor = {"s": 1,
-              "p": 3,
-              "d": 5}
-    colors = ["#3C6FD8", "#55A822", "#8F30CE", "#B67E23", "#C22661"]
+                            normalize=False,
+                            labels=None, factor=None):
+    if l in ["s", "p", "d"]:
+        labels = {"s": ["s"],
+                  "p": ["$p_z$", "$p_y$", "$p_x$"],
+                  "d": ["$d_{z^2}$", "$d_{zx}$",
+                        "$d_{zy}$", "$d_{x^2 - y^2}$", "$d_{xy}$"]}
+        labels = labels[l]
+
+        factor = {"s": 1,
+                  "p": 3,
+                  "d": 5}
+        factor = factor[l]
+    elif labels is None or factor is None:
+        raise ValueError
+    colors = ["#AC92EB", "#ED5564", "#A0D568", "#FFCE54", "#4FC1E8"]
     dos = filter_window(dos, window=window, efermi=efermi)
     if window is None:
         window = (np.amin(dos[0]), np.amax(dos[0]))
-    fig, axs = plt.subplots(2, 1, figsize=(9, 4))
-    ax1 = axs[0]
-    ax2 = axs[1]
+    if case == 0:
+        fig, axs = plt.subplots(figsize=(9, 4))
+        ax1 = axs
+    elif case in [1, 2]:
+        fig, axs = plt.subplots(2, 1, figsize=(9, 4))
+        ax1 = axs[0]
+        ax2 = axs[1]
     fig.subplots_adjust(hspace=0)
     if normalize:
         ax1.set_ylabel('PDOS / LDOS', fontsize=12)
-        ax2.set_ylabel('PDOS / LDOS', fontsize=12)
+        if case in [1, 2]:
+            ax2.set_ylabel('PDOS / LDOS', fontsize=12)
     else:
         ax1.set_ylabel('DOS, states/eV', fontsize=12)
-        ax2.set_ylabel('DOS, states/eV', fontsize=12)
-    ax1.axes.get_xaxis().set_visible(False)
-    ax2.set_xlabel('E, ev', fontsize=15)
+        if case in [1, 2]:
+            ax2.set_ylabel('DOS, states/eV', fontsize=12)
+
     ax1.set_xlim(*tuple(window))
-    ax2.set_xlim(*tuple(window))
     ax1.vlines(0, 0, 1, transform=ax1.get_xaxis_transform(),
                color='grey', linewidths=0.5, linestyles='dashed')
-    ax2.vlines(0, 0, 1, transform=ax2.get_xaxis_transform(),
-               color='grey', linewidths=0.5, linestyles='dashed')
+
+    if case in [1, 2]:
+        ax2.set_xlabel('E, ev', fontsize=15)
+        ax2.set_xlim(*tuple(window))
+        ax2.vlines(0, 0, 1, transform=ax2.get_xaxis_transform(),
+                   color='grey', linewidths=0.5, linestyles='dashed')
+        ax1.axes.get_xaxis().set_visible(False)
+    else:
+        ax1.set_xlabel('E, ev', fontsize=15)
+
     if title is not None:
         ax1.set_title(title)
 
-    y_up = np.zeros(dos[0].shape)
-    y_prev_up = np.zeros(dos[0].shape)
-    y_down = np.zeros(dos[0].shape)
-    y_prev_down = np.zeros(dos[0].shape)
-    if case == 0:
+    if case in [1, 2]:
         y_up = np.zeros(dos[0].shape)
         y_prev_up = np.zeros(dos[0].shape)
         y_down = np.zeros(dos[0].shape)
@@ -416,17 +440,17 @@ def plot_projected_relative(l, dos, output_name, title, case,
         y = np.zeros(dos[0].shape)
         y_prev = np.zeros(dos[0].shape)
 
-    for i in range(0, factor[l]):
+    for i in range(0, factor):
         if case == 0:
             y += dos[2+i]
             if normalize:
                 ax1.fill_between(dos[0], y_prev/dos[1], y/dos[1],
                                  lw=0, color=colors[i],
-                                 label=f"{labels[l][i]}")
+                                 label=f"{labels[i]}")
             else:
                 ax1.fill_between(dos[0], y_prev, y,
                                  lw=0, color=colors[i],
-                                 label=f"{labels[l][i]}")
+                                 label=f"{labels[i]}")
             y_prev = deepcopy(y)
         elif case in [1, 2]:
             y_up += dos[3+2*i]
@@ -434,17 +458,17 @@ def plot_projected_relative(l, dos, output_name, title, case,
             if normalize:
                 ax1.fill_between(dos[0], y_prev_up/dos[1], y_up/dos[1],
                                  lw=0, color=colors[i],
-                                 label=f"{labels[l][i]}")
+                                 label=f"{labels[i]}")
                 ax2.fill_between(dos[0], y_prev_down/dos[2], y_down/dos[2],
                                  lw=0, color=colors[i],
-                                 label=f"{labels[l][i]}")
+                                 label=f"{labels[i]}")
             else:
                 ax1.fill_between(dos[0], y_prev_up, y_up,
                                  lw=0, color=colors[i],
-                                 label=f"{labels[l][i]}")
+                                 label=f"{labels[i]}")
                 ax2.fill_between(dos[0], y_prev_down, y_down,
                                  lw=0, color=colors[i],
-                                 label=f"{labels[l][i]}")
+                                 label=f"{labels[i]}")
             y_prev_up = deepcopy(y_up)
             y_prev_down = deepcopy(y_down)
 
@@ -455,12 +479,18 @@ def plot_projected_relative(l, dos, output_name, title, case,
         ax1.set_ylim(0, None)
         ax2.set_ylim(0, None)
         ax2.invert_yaxis()
-    ax1.legend(loc=(1.025, 0.2),
-               bbox_transform=ax1.transAxes, title="up", reverse=True)
+    if matplotlib_version >= "3.7.0":
+        ax1.legend(loc=(1.025, 0.2),
+                   bbox_transform=ax1.transAxes, title="up", reverse=True)
+    else:
+
+        ax1.legend(loc=(1.025, 0.2),
+                   bbox_transform=ax1.transAxes, title="up")
     ax2.legend(loc=(1.025, 0.2),
                bbox_transform=ax2.transAxes, title="down")
 
     plt.savefig(f"{output_name}.png", dpi=400, bbox_inches="tight")
+    plt.close()
 
 
 def manager(input_dir,
@@ -496,9 +526,19 @@ def manager(input_dir,
             makedirs(join(output_dir, seedname, "summed-by-atom"))
         except FileExistsError:
             pass
+        try:
+            makedirs(join(output_dir, seedname,
+                          "summed-by-atom", "wfc-in-atoms"))
+        except FileExistsError:
+            pass
         if separate:
             try:
                 makedirs(join(output_dir, seedname, "individual-plots"))
+            except FileExistsError:
+                pass
+            try:
+                makedirs(join(output_dir, seedname,
+                              "individual-plots", "wfc-in-atoms"))
             except FileExistsError:
                 pass
 
@@ -551,6 +591,7 @@ def manager(input_dir,
                                    case,
                                    window=window,
                                    efermi=efermi)
+
         # Plot all individual plots
         if separate:
             for atom in atoms:
@@ -563,15 +604,280 @@ def manager(input_dir,
                             title = f"PDOS for {atom} #{a_number} ({wfc_symbol}) (0 is 0)"
                         else:
                             title = f"PDOS for {atom} #{a_number} ({wfc_symbol}) (0 is Fermi energy)"
-                        plot_projected(wfc_symbol,
-                                       dos,
+                        if relative:
+                            plot_projected_relative(wfc_symbol,
+                                                    dos,
+                                                    join(output_dir, seedname,
+                                                         "individual-plots",
+                                                         f"pdos_atm#{a_number}({atom})_wfc#{wfc_number}({wfc_symbol})"),
+                                                    title,
+                                                    case,
+                                                    window=window,
+                                                    efermi=efermi,
+                                                    normalize=normalize)
+                        else:
+                            plot_projected(wfc_symbol,
+                                           dos,
+                                           join(output_dir, seedname,
+                                                "individual-plots",
+                                                f"pdos_atm#{a_number}({atom})_wfc#{wfc_number}({wfc_symbol})"),
+                                           title,
+                                           case,
+                                           window=window,
+                                           efermi=efermi)
+
+        # Plot orbital contribution in the whole atom
+        for atom in atoms:
+            custom_dos = [np.loadtxt(join(input_dir,
+                                          f"{seedname}.pdos_tot"),
+                                     skiprows=1).T[0]]
+            wfc_symbols = []
+            for wfc_symbol, wfc_number in wfcs[(atom, atoms[atom][0])]:
+                wfc_symbols.append(f"#{wfc_number}, {wfc_symbol}")
+                wfs_dos = np.loadtxt(join(input_dir,
+                                          seedname,
+                                          "summed-by-atom",
+                                          f"{atom}_wfc#{wfc_number}({wfc_symbol})"),
+                                     skiprows=1).T
+                if case == 0:
+                    if len(custom_dos) == 1:
+                        custom_dos.append(deepcopy(wfs_dos[1]))
+                    else:
+                        custom_dos[1] += wfs_dos[1]
+                    custom_dos.append(wfs_dos[1])
+                elif case in [1, 2]:
+                    if len(custom_dos) == 1:
+                        custom_dos.append(deepcopy(wfs_dos[1]))
+                        custom_dos.append(deepcopy(wfs_dos[2]))
+                    else:
+                        custom_dos[1] += wfs_dos[1]
+                        custom_dos[2] += wfs_dos[2]
+                    custom_dos.append(wfs_dos[1])
+                    custom_dos.append(wfs_dos[2])
+            if efermi == 0:
+                title = f"wfc contribution to {atom} (0 is 0)"
+            else:
+                title = f"wfc contribution to {atom} (0 is Fermi energy)"
+
+            if relative:
+                plot_projected_relative(atom,
+                                        np.array(custom_dos),
+                                        join(output_dir, seedname,
+                                             "summed-by-atom",
+                                             "wfc-in-atoms", atom),
+                                        title,
+                                        case,
+                                        window=window,
+                                        efermi=efermi,
+                                        normalize=normalize,
+                                        labels=wfc_symbols,
+                                        factor=len(wfc_symbols))
+            else:
+                plot_projected(atom,
+                               np.array(custom_dos),
+                               join(output_dir, seedname,
+                                    "summed-by-atom",
+                                    "wfc-in-atoms", atom),
+                               title,
+                               case,
+                               window=window,
+                               efermi=efermi,
+                               labels=wfc_symbols,
+                               factor=len(wfc_symbols))
+
+        # Plot orbital contribution in the whole atom (individual atoms)
+        if separate:
+            for atom in atoms:
+                for a_number in atoms[atom]:
+                    custom_dos = [np.loadtxt(join(input_dir,
+                                                  f"{seedname}.pdos_tot"),
+                                             skiprows=1).T[0]]
+                    wfc_symbols = []
+                    for wfc_symbol, wfc_number in wfcs[(atom, atoms[atom][0])]:
+                        wfc_symbols.append(f"#{wfc_number}, {wfc_symbol}")
+                        wfs_dos = np.loadtxt(join(input_dir,
+                                                  f"{seedname}.pdos_atm#{a_number}({atom})_wfc#{wfc_number}({wfc_symbol})"),
+                                             skiprows=1).T
+                        if case == 0:
+                            if len(custom_dos) == 1:
+                                custom_dos.append(deepcopy(wfs_dos[1]))
+                            else:
+                                custom_dos[1] += wfs_dos[1]
+                            custom_dos.append(wfs_dos[1])
+                        elif case in [1, 2]:
+                            if len(custom_dos) == 1:
+                                custom_dos.append(deepcopy(wfs_dos[1]))
+                                custom_dos.append(deepcopy(wfs_dos[2]))
+                            else:
+                                custom_dos[1] += wfs_dos[1]
+                                custom_dos[2] += wfs_dos[2]
+                            custom_dos.append(wfs_dos[1])
+                            custom_dos.append(wfs_dos[2])
+                    if efermi == 0:
+                        title = f"wfc contribution to #{a_number} {atom} (0 is 0)"
+                    else:
+                        title = f"wfc contribution to #{a_number} {atom} (0 is Fermi energy)"
+
+                    if relative:
+                        plot_projected_relative(f"#{a_number} {atom}",
+                                                np.array(custom_dos),
+                                                join(output_dir, seedname,
+                                                     "individual-plots",
+                                                     "wfc-in-atoms",
+                                                     f"#{a_number}_{atom}"),
+                                                title,
+                                                case,
+                                                window=window,
+                                                efermi=efermi,
+                                                normalize=normalize,
+                                                labels=wfc_symbols,
+                                                factor=len(wfc_symbols))
+                    else:
+                        plot_projected(f"#{a_number} {atom}",
+                                       np.array(custom_dos),
                                        join(output_dir, seedname,
                                             "individual-plots",
-                                            f"pdos_atm#{a_number}({atom})_wfc#{wfc_number}({wfc_symbol})"),
+                                            "wfc-in-atoms", atom),
                                        title,
                                        case,
                                        window=window,
-                                       efermi=efermi)
+                                       efermi=efermi,
+                                       labels=wfc_symbols,
+                                       factor=len(wfc_symbols))
+
+        # Plot atom contribution to total
+        custom_dos = np.loadtxt(join(input_dir,
+                                     f"{seedname}.pdos_tot"),
+                                skiprows=1).T
+        if case == 0:
+            custom_dos = [custom_dos[0], custom_dos[2]]
+        elif case == 1:
+            custom_dos = [custom_dos[0], custom_dos[3], custom_dos[4]]
+        elif case == 2:
+            custom_dos = [custom_dos[0], custom_dos[2], custom_dos[3]]
+        labels = []
+        for atom in atoms:
+            labels.append(atom)
+            if case == 0:
+                custom_dos.append(None)
+            elif case in [1, 2]:
+                custom_dos.append(None)
+                custom_dos.append(None)
+            for wfc_symbol, wfc_number in wfcs[(atom, atoms[atom][0])]:
+                wfs_dos = np.loadtxt(join(input_dir,
+                                          seedname,
+                                          "summed-by-atom",
+                                          f"{atom}_wfc#{wfc_number}({wfc_symbol})"),
+                                     skiprows=1).T
+                if case == 0:
+                    if custom_dos[-1] is None:
+                        custom_dos[-1] = deepcopy(wfs_dos[1])
+                    else:
+                        custom_dos[-1] += wfs_dos[1]
+                elif case in [1, 2]:
+                    if custom_dos[-1] is None:
+                        custom_dos[-2] = deepcopy(wfs_dos[1])
+                        custom_dos[-1] = deepcopy(wfs_dos[2])
+                    else:
+                        custom_dos[-2] += wfs_dos[1]
+                        custom_dos[-1] += wfs_dos[2]
+            if efermi == 0:
+                title = f"Atom contribution to total PDOS (0 is 0)"
+            else:
+                title = f"Atom contribution to total PDOS (0 is Fermi energy)"
+
+            if relative:
+                plot_projected_relative("Total PDOS",
+                                        np.array(custom_dos),
+                                        join(output_dir, seedname,
+                                             "summed-by-atom",
+                                             "Atom-contributions"),
+                                        title,
+                                        case,
+                                        window=window,
+                                        efermi=efermi,
+                                        normalize=normalize,
+                                        labels=labels,
+                                        factor=len(labels))
+            else:
+                plot_projected("Total PDOS",
+                               np.array(custom_dos),
+                               join(output_dir, seedname,
+                                    "summed-by-atom",
+                                    "Atom-contributions"),
+                               title,
+                               case,
+                               window=window,
+                               efermi=efermi,
+                               labels=labels,
+                               factor=len(labels))
+
+        # Plot atom contribution to total (individual atoms)
+        if separate:
+            custom_dos = np.loadtxt(join(input_dir,
+                                         f"{seedname}.pdos_tot"),
+                                    skiprows=1).T
+            if case == 0:
+                custom_dos = [custom_dos[0], custom_dos[2]]
+            elif case == 1:
+                custom_dos = [custom_dos[0], custom_dos[3], custom_dos[4]]
+            elif case == 2:
+                custom_dos = [custom_dos[0], custom_dos[2], custom_dos[3]]
+            labels = []
+            for atom in atoms:
+                for a_number in atoms[atom]:
+                    labels.append(f"#{a_number} {atom}")
+                    if case == 0:
+                        custom_dos.append(None)
+                    elif case in [1, 2]:
+                        custom_dos.append(None)
+                        custom_dos.append(None)
+                    for wfc_symbol, wfc_number in wfcs[(atom, atoms[atom][0])]:
+                        wfs_dos = np.loadtxt(join(input_dir,
+                                                  f"{seedname}.pdos_atm#{a_number}({atom})_wfc#{wfc_number}({wfc_symbol})"),
+                                             skiprows=1).T
+                        if case == 0:
+                            if custom_dos[-1] is None:
+                                custom_dos[-1] = deepcopy(wfs_dos[1])
+                            else:
+                                custom_dos[-1] += wfs_dos[1]
+                        elif case in [1, 2]:
+                            if custom_dos[-1] is None:
+                                custom_dos[-2] = deepcopy(wfs_dos[1])
+                                custom_dos[-1] = deepcopy(wfs_dos[2])
+                            else:
+                                custom_dos[-2] += wfs_dos[1]
+                                custom_dos[-1] += wfs_dos[2]
+                    if efermi == 0:
+                        title = f"Atom contribution to total PDOS (0 is 0)"
+                    else:
+                        title = f"Atom contribution to total PDOS (0 is Fermi energy)"
+
+                    if relative:
+                        plot_projected_relative("Total PDOS",
+                                                np.array(custom_dos),
+                                                join(output_dir, seedname,
+                                                     "individual-plots",
+                                                     "Atom-contributions"),
+                                                title,
+                                                case,
+                                                window=window,
+                                                efermi=efermi,
+                                                normalize=normalize,
+                                                labels=labels,
+                                                factor=len(labels))
+                    else:
+                        plot_projected("Total PDOS",
+                                       np.array(custom_dos),
+                                       join(output_dir, seedname,
+                                            "individual-plots",
+                                            "Atom-contributions"),
+                                       title,
+                                       case,
+                                       window=window,
+                                       efermi=efermi,
+                                       labels=labels,
+                                       factor=len(labels))
 
         print(f"{OK}" +
               f"Finish to work with {seedname} seedname, results are in " +
