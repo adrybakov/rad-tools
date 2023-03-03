@@ -52,8 +52,8 @@ def analyse_input_folder(input_path, filpdos=None):
     else:
         filpdos = set()
         for filename in files:
-            if ".pdos_tot" in filename:
-                filpdos.add(filename.split(".pdos_tot")[0])
+            if ".pdos_tot" in filename and ".pdos_tot" == filename[-9:]:
+                filpdos.add(filename[:-9])
                 filenames.append(filename)
             elif ".pdos_atm#" in filename:
                 filpdos.add(filename.split(".pdos_atm#")[0])
@@ -140,6 +140,7 @@ def decompose_filenames(filenames):
 
     atoms = {}
     wfcs = {}
+    print(filenames)
     for filename in filenames:
 
         # Detect names and numbers
@@ -543,7 +544,7 @@ def manager(input_path,
                 pass
 
         atoms, wfcs = decompose_filenames(
-            [file for file in files[s_i] if ".pdos_tot" not in file])
+            [file for file in files[s_i] if ".pdos_tot" != file[-9:]])
 
         # Plot PDOS vs DOS
         total_dos = np.loadtxt(join(input_path, f"{seedname}.pdos_tot"),
@@ -650,6 +651,10 @@ def manager(input_path,
                         custom_dos.append(deepcopy(wfs_dos[1]))
                         custom_dos.append(deepcopy(wfs_dos[2]))
                     else:
+                        print(np.array(custom_dos).shape, wfs_dos.shape, join(input_path,
+                                                                              seedname,
+                                                                              "summed-by-atom",
+                                                                              f"{atom}_wfc#{wfc_number}({wfc_symbol})"))
                         custom_dos[1] += wfs_dos[1]
                         custom_dos[2] += wfs_dos[2]
                     custom_dos.append(wfs_dos[1])
