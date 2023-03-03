@@ -140,7 +140,6 @@ def decompose_filenames(filenames):
 
     atoms = {}
     wfcs = {}
-    print(filenames)
     for filename in filenames:
 
         # Detect names and numbers
@@ -651,10 +650,6 @@ def manager(input_path,
                         custom_dos.append(deepcopy(wfs_dos[1]))
                         custom_dos.append(deepcopy(wfs_dos[2]))
                     else:
-                        print(np.array(custom_dos).shape, wfs_dos.shape, join(input_path,
-                                                                              seedname,
-                                                                              "summed-by-atom",
-                                                                              f"{atom}_wfc#{wfc_number}({wfc_symbol})"))
                         custom_dos[1] += wfs_dos[1]
                         custom_dos[2] += wfs_dos[2]
                     custom_dos.append(wfs_dos[1])
