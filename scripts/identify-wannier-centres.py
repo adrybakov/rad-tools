@@ -9,12 +9,12 @@ from rad_tools.routines import strip_digits, WARNING, RESET, \
     search_on_atoms, search_between_atoms
 
 
-def identify(input_filename, span, output_path, out_name, nocolor=False):
+def identify(filename, span, output_path, out_name, nocolor=False):
     separation_tolerance = 10E-5
 
     # Read atoms and centres
     atom_counter = {}
-    with open(input_filename, "r") as file:
+    with open(filename, "r") as file:
         n = int(file.readline())
         file_stats = file.readline()
         centres = []
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     parser = ArgumentParser(
         description=("Identify wannier centres with respect to the atom " +
                      "or to the point between the atom`s pair"))
-    parser.add_argument("input-filename",
+    parser.add_argument("filename",
                         type=str,
                         help="""
                         Rellative or absolute path to the _centres.xyz file
@@ -119,13 +119,14 @@ if __name__ == "__main__":
                         """
                         )
     args = parser.parse_args()
+    print(args)
 
-    head, tail = split(args.input_filename)
+    head, tail = split(args.filename)
     if args.output_path is None:
         args.output_path = head
     if args.output_name is None:
         args.output_name = tail + "_identified"
 
-    identify(args.input_filename, args.span,
+    identify(args.filename, args.span,
              output_path=args.output_path, out_name=args.output_name,
              nocolor=args.no_colour)
