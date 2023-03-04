@@ -382,10 +382,14 @@ def plot_projected_relative(l, dos, output_name, title, case,
                             normalize=False,
                             labels=None, factor=None):
     if l in ["s", "p", "d"]:
+        colors = {"s": ["#9737FF"],
+                  "p": ["#0000FF", "#00FF00", "#FF0000"],
+                  "d": ["#00FF00", "#FF00FF", "#00FFFF", "#3E3847", "#FFD600"]}
         labels = {"s": ["s"],
                   "p": ["$p_z$", "$p_y$", "$p_x$"],
                   "d": ["$d_{z^2}$", "$d_{zx}$",
                         "$d_{zy}$", "$d_{x^2 - y^2}$", "$d_{xy}$"]}
+        colors = colors[l]
         labels = labels[l]
 
         factor = {"s": 1,
@@ -394,7 +398,11 @@ def plot_projected_relative(l, dos, output_name, title, case,
         factor = factor[l]
     elif labels is None or factor is None:
         raise ValueError
-    colors = ["#AC92EB", "#ED5564", "#A0D568", "#FFCE54", "#4FC1E8"]
+    else:
+        colors = ["#0000FF", "#FF0000", "#00FF00",
+                  "#FF00FF", "#00FFFF", "#3E3847",
+                  "#FFD600", "#366B35", "#FF6F00"]
+
     dos = filter_window(dos, window=window, efermi=efermi)
     if window is None:
         window = (np.amin(dos[0]), np.amax(dos[0]))
@@ -445,11 +453,11 @@ def plot_projected_relative(l, dos, output_name, title, case,
             y += dos[2+i]
             if normalize:
                 ax1.fill_between(dos[0], y_prev/dos[1], y/dos[1],
-                                 lw=0, color=colors[i],
+                                 lw=0, color=colors[i % factor],
                                  label=f"{labels[i]}")
             else:
                 ax1.fill_between(dos[0], y_prev, y,
-                                 lw=0, color=colors[i],
+                                 lw=0, color=colors[i % factor],
                                  label=f"{labels[i]}")
             y_prev = deepcopy(y)
         elif case in [1, 2]:
@@ -457,17 +465,17 @@ def plot_projected_relative(l, dos, output_name, title, case,
             y_down += dos[4+2*i]
             if normalize:
                 ax1.fill_between(dos[0], y_prev_up/dos[1], y_up/dos[1],
-                                 lw=0, color=colors[i],
+                                 lw=0, color=colors[i % factor],
                                  label=f"{labels[i]}")
                 ax2.fill_between(dos[0], y_prev_down/dos[2], y_down/dos[2],
-                                 lw=0, color=colors[i],
+                                 lw=0, color=colors[i % factor],
                                  label=f"{labels[i]}")
             else:
                 ax1.fill_between(dos[0], y_prev_up, y_up,
-                                 lw=0, color=colors[i],
+                                 lw=0, color=colors[i % factor],
                                  label=f"{labels[i]}")
                 ax2.fill_between(dos[0], y_prev_down, y_down,
-                                 lw=0, color=colors[i],
+                                 lw=0, color=colors[i % factor],
                                  label=f"{labels[i]}")
             y_prev_up = deepcopy(y_up)
             y_prev_down = deepcopy(y_down)

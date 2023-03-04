@@ -64,4 +64,7 @@ Rename all arguments to input/output paths, not dirs.
 -------------------
 Bugfix whe nseedname of pdos files contains pdos_tot
 
+0.5.12
+------
+Cahnge the colors in :ref:`rad-dos-plotter.py <rad-dos-plotter>` script.
 
