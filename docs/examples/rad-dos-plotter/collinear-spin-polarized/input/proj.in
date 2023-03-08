@@ -1,0 +1,9 @@
+&PROJWFC
+    prefix = 'csp'
+    outdir = './tmp'
+  degauss=0.001
+  DeltaE=0.01,
+  filpdos='csp'
+  filproj='csp'
+/
+    

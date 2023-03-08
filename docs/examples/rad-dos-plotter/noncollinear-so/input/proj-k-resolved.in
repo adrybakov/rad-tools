@@ -1,0 +1,10 @@
+&PROJWFC
+    prefix = 'nso'
+    outdir = './tmp'
+  degauss=0.001
+  DeltaE=0.01,
+  filpdos='nso-k-resolved'
+  filproj='nso-k-resolved'
+  kresolveddos=.true.
+/
+    
