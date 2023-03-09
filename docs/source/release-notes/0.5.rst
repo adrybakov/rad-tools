@@ -73,4 +73,9 @@ naming style.
 
 Remove ``phonopy-plotter.py`` script.
 
+0.5.13
+------
+Plot atoms in 0 0 0 unit cell in color for 
+:ref:`tb2j-plotter.py <tb2j-plotter>` script.
+
 

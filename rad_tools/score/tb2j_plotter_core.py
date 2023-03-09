@@ -91,12 +91,12 @@ def manager(input_filename,
             ax.scatter(x1, y1, s=100 * fig.dpi/72., c='white')
             ax.scatter(x2, y2, s=100 * fig.dpi/72., c='white')
 
-            ax.text(x1, y1, atom_mark_to_latex(atom1),
-                    va='center', ha='center',
-                    fontsize=1.5 * fontsize * scale_atoms)
             ax.text(x2, y2, atom_mark_to_latex(atom2),
                     va='center', ha='center',
                     fontsize=1.5 * fontsize * scale_atoms)
+            ax.text(x1, y1, atom_mark_to_latex(atom1),
+                    va='center', ha='center',
+                    fontsize=1.5 * fontsize * scale_atoms, color="#A04F4D")
             if wtp == 'iso':
                 ax.text(xm, ym, str(round(bond.iso, 4)),
                         va='bottom', ha=ha,
