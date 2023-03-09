@@ -48,12 +48,14 @@ def manager(input_filename,
         template = read_template(template_file)
     else:
         template = None
+
+    if force_symmetry:
+        model.force_symmetry(template=template)
+
     model.filter(min_distance=min_distance,
                  max_distance=max_distance,
                  R_vector=R_vector,
                  template=template)
-    if force_symmetry:
-        model.force_symmetry(template=template)
 
     dummy = True
     ha = 'center'
