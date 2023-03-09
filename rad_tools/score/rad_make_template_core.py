@@ -11,7 +11,7 @@ from rad_tools.routines import OK, RESET, YELLOW
 
 
 def manager(output_name="template",
-            tb2j_filename=None,
+            input_filename=None,
             R_vector=None,
             max_distance=None,
             min_distance=None,
@@ -59,7 +59,7 @@ def manager(output_name="template",
                 '=' * 20 + "\n")
     cd = datetime.now()
     with open(f"{output_name}.txt", "w") as file:
-        if tb2j_filename is None:
+        if input_filename is None:
             file.write(
                 f"Template is created " +
                 f"on {cd.day} {month_name[cd.month]} {cd.year}" +
@@ -68,11 +68,11 @@ def manager(output_name="template",
             file.write(template)
         else:
             file.write(
-                f"Template is created based on the file: {tb2j_filename}\n" +
+                f"Template is created based on the file: {input_filename}\n" +
                 f"on {cd.day} {month_name[cd.month]} {cd.year}" +
                 f" at {cd.hour}:{cd.minute}:{cd.second} by rad-tools\n\n")
 
-            model = read_exchange_model(tb2j_filename)
+            model = read_exchange_model(input_filename)
             model.filter(min_distance=min_distance,
                          max_distance=max_distance,
                          R_vector=R_vector)
@@ -101,7 +101,7 @@ def get_parser():
                         Relative or absolute path to the template output file.
                         """
                         )
-    parser.add_argument("-tf", "--tb2j-filename",
+    parser.add_argument("-if", "--input-filename",
                         type=str,
                         default=None,
                         help="""

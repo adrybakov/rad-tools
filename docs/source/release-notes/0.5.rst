@@ -64,4 +64,13 @@ Rename all arguments to input/output paths, not dirs.
 -------------------
 Bugfix whe nseedname of pdos files contains pdos_tot
 
+0.5.12
+------
+Renamed ``--tb2j-filename`` argument 
+to the :ref:`--input-filename.py <rad-make-template_input-filename>`
+in the :ref:`rad-make-template.py <rad-make-template>` script in order to match 
+naming style.
+
+Remove ``phonopy-plotter.py`` script.
+
 

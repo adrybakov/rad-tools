@@ -7,7 +7,7 @@
 Script for the creation of template`s draft.
 
 This script can provide blank template file or template file based on the TB2J
-*exchange.out* file (see :ref:`--tb2j-filename <rad-make-template_tb2j-filename>`). 
+*exchange.out* file (see :ref:`--input-filename <rad-make-template_input-filename>`). 
 Several filtering options are supported for the case of TB2J-based template file 
 (:ref:`--R-vector <rad-make-template_R-vector>`, 
 :ref:`--max-distance <rad-make-template_max-distance>`,
@@ -147,10 +147,10 @@ Relative or absolute path to the template output file.
 
 See also: :ref:`example <scripts_output-notes>`.
 
-.. _rad-make-template_tb2j-filename:
+.. _rad-make-template_input-filename:
 
--tf, --tb2j-filename
---------------------
+-if, --input-filename
+---------------------
 Relative or absulute path to the TB2J exchange output file, 
 including the name and extention of the file.
 
