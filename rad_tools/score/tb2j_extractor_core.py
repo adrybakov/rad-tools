@@ -8,6 +8,7 @@ from calendar import month_name
 from rad_tools.io.internal import read_template
 from rad_tools.io import read_tb2j_model
 from rad_tools.routines import OK, RESET
+from rad_tools import __version__ as version
 
 
 def manager(input_filename,
@@ -60,7 +61,7 @@ def manager(input_filename,
             out_file.write(
                 f"Exchange values are extracted from: {input_filename}\n" +
                 f"on {cd.day} {month_name[cd.month]} {cd.year}" +
-                f" at {cd.hour}:{cd.minute}:{cd.second} by rad-tools\n\n")
+                f" at {cd.hour}:{cd.minute}:{cd.second} by rad-tools {version}\n\n")
             out_file.write(summary_txt)
         print(f"{OK}Extracted exchange info is in " +
               f"{abspath(join(output_path, output_name + '.txt'))}{RESET}")

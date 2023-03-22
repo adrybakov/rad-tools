@@ -8,6 +8,7 @@ import numpy as np
 
 from rad_tools.io.tb2j import read_exchange_model
 from rad_tools.routines import OK, RESET, YELLOW
+from rad_tools import __version__ as version
 
 
 def manager(output_name="template",
@@ -63,14 +64,14 @@ def manager(output_name="template",
             file.write(
                 f"Template is created " +
                 f"on {cd.day} {month_name[cd.month]} {cd.year}" +
-                f" at {cd.hour}:{cd.minute}:{cd.second} by rad-tools\n\n")
+                f" at {cd.hour}:{cd.minute}:{cd.second} by rad-tools {version}\n\n")
 
             file.write(template)
         else:
             file.write(
                 f"Template is created based on the file: {input_filename}\n" +
                 f"on {cd.day} {month_name[cd.month]} {cd.year}" +
-                f" at {cd.hour}:{cd.minute}:{cd.second} by rad-tools\n\n")
+                f" at {cd.hour}:{cd.minute}:{cd.second} by rad-tools {version}\n\n")
 
             model = read_exchange_model(input_filename)
             model.filter(min_distance=min_distance,

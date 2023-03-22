@@ -83,4 +83,6 @@ Plot atoms in 0 0 0 unit cell in color for
 Bugfix in :ref:`tb2j-plotter.py <tb2j-plotter>` script.
 Problem with --force-symmetry if there is filtering by non-template parameters.
 
-
+0.5.15
+------
+Add version of the package to the information header of the output files. 
