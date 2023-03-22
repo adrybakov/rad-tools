@@ -54,7 +54,7 @@ pip:
 	@echo "  * Push to GitHub?"
 	@echo "  * Create a tag?"
 	@echo "\x1b[0m"
-	@git log --oneline --all --graph --decorate -20
+	@git log --oneline --all --graph --decorate -10
 	@echo "\x1b[33m"
 	@echo "\x1b[31m"
 	@echo "\x1b[33m"
