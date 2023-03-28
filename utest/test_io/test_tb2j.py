@@ -31,16 +31,21 @@ class TestReadExchangeModel:
 
     def test_nonmagnetic_atoms(self):
         assert len(self.model.nonmagnetic_atoms) == 4
-        assert (np.around(self.model.nonmagnetic_atoms['Br1'] - np.array([0.25, 0.2500104, -0.00283399]), 4) == np.zeros(3)).all()
-        assert (np.around(self.model.nonmagnetic_atoms['Br2'] - np.array([0.75, 0.7500312, 0.23917526]), 4) == np.zeros(3)).all()
-        assert (np.around(self.model.nonmagnetic_atoms['S1'] - np.array([0.75, 0.7500312, 0.09346231]), 4) == np.zeros(3)).all()
-        assert (np.around(self.model.nonmagnetic_atoms['S2'] - np.array([0.25, 0.2500104, 0.14287896]), 4) == np.zeros(3)).all()
+        assert (np.around(self.model.nonmagnetic_atoms['Br1'] - np.array(
+            [0.25, 0.2500104, -0.00283399]), 4) == np.zeros(3)).all()
+        assert (np.around(self.model.nonmagnetic_atoms['Br2'] - np.array(
+            [0.75, 0.7500312, 0.23917526]), 4) == np.zeros(3)).all()
+        assert (np.around(self.model.nonmagnetic_atoms['S1'] - np.array(
+            [0.75, 0.7500312, 0.09346231]), 4) == np.zeros(3)).all()
+        assert (np.around(self.model.nonmagnetic_atoms['S2'] - np.array(
+            [0.25, 0.2500104, 0.14287896]), 4) == np.zeros(3)).all()
 
     def test_magnetic_atoms(self):
         assert len(self.model.magnetic_atoms) == 2
-        assert (np.around(self.model.magnetic_atoms['Cr1'] - np.array([0.75, 0.2500104, 0.07369649]), 4) == np.zeros(3)).all()
-        assert (np.around(self.model.magnetic_atoms['Cr2'] - np.array([0.25, 0.7500312, 0.16264053]), 4) == np.zeros(3)).all()
-        
+        assert (np.around(self.model.magnetic_atoms['Cr1'] - np.array(
+            [0.75, 0.2500104, 0.07369649]), 4) == np.zeros(3)).all()
+        assert (np.around(self.model.magnetic_atoms['Cr2'] - np.array(
+            [0.25, 0.7500312, 0.16264053]), 4) == np.zeros(3)).all()
 
     @ pytest.mark.parametrize("atom1, atom2, R, iso, aniso, dmi, distance",
                               [
@@ -126,13 +131,15 @@ class TestReadExchangeModel:
                                       3.659),
                               ])
     def test_read_exchange_examples(self, atom1, atom2, R, iso, aniso, dmi, distance):
-        assert round(self.model.bonds[(atom1, atom2, R)].iso, 4) == iso
-        assert round(self.model.get_distance(atom1, atom2, R), 2) == round(distance, 2)
+        assert round(self.model[(atom1, atom2, R)].iso, 4) == iso
+        assert round(self.model.get_distance(
+            atom1, atom2, R), 2) == round(distance, 2)
         for i in range(0, 3):
-            assert round(self.model.bonds[(atom1, atom2, R)].dmi[i], 4) == dmi[i]
+            assert round(
+                self.model[(atom1, atom2, R)].dmi[i], 4) == dmi[i]
             for j in range(0, 3):
                 assert round(
-                    self.model.bonds[(atom1, atom2, R)].aniso[i][j], 4) == aniso[i][j]
+                    self.model[(atom1, atom2, R)].aniso[i][j], 4) == aniso[i][j]
 
     template = [('Cr1', 'Cr1', (1, 0, 0)), ('Cr1', 'Cr1', (-1, 0, 0)),
                 ('Cr2', 'Cr2', (1, 0, 0)), ('Cr2', 'Cr2', (-1, 0, 0)),
@@ -191,9 +198,9 @@ class TestReadExchangeModel:
             template=self.template)
         assert len(filtered_model.bonds) == 16
         template = read_template(os.path.join('utest',
-                                             'test_io',
-                                             'resources',
-                                             'template.txt'))
+                                              'test_io',
+                                              'resources',
+                                              'template.txt'))
         filtered_model = self.model.filtered(
             template=template)
         assert len(filtered_model.bonds) == 16

@@ -21,7 +21,8 @@ def manager(input_filename,
             anisotropic=False,
             matrix=False,
             dmi=False,
-            all=False):
+            all=False,
+            verbose=False):
     r"""
     Main function call of the tb2j-extractor.py script.
 
@@ -30,7 +31,7 @@ def manager(input_filename,
     corresponds to the arguments of the script.
 
     If you want to have the behaviour of the tb2j-extractor.py script 
-    but in a format of a fuction call use this function.
+    but in a format of a function call use this function.
     """
 
     try:
@@ -46,7 +47,7 @@ def manager(input_filename,
         matrix = True
         dmi = True
 
-    model = read_tb2j_model(input_filename, quiet=True)
+    model = read_tb2j_model(input_filename, quiet=not verbose)
     template = read_template(template_file)
     summary_txt = model.summary_as_txt(template=template,
                                        decimals=accuracy,
@@ -77,15 +78,15 @@ def get_parser():
                         type=str,
                         required=True,
                         help="""
-                        Relative or absulute path to the exchange.out file,
-                        including the name and extention of the file itself.
+                        Relative or absolute path to the exchange.out file,
+                        including the name and extension of the file itself.
                         """)
     parser.add_argument("-tf", "--template-file",
                         type=str,
                         required=True,
                         help="""
                         Relative or absolute path to the template file,
-                        including the name and extention of the file.
+                        including the name and extension of the file.
                         """)
     parser.add_argument("-op", "--output-path",
                         type=str,
@@ -146,5 +147,12 @@ def get_parser():
                         help="""
                         Whenever to all types of exchange.
                         """)
+    parser.add_argument("-v", "--verbose",
+                        action="store_true",
+                        default=False,
+                        help="""
+                        Verbose output, propagates to the called methods.
+                        """
+                        )
 
     return parser

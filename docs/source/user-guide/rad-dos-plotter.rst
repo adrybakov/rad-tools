@@ -19,7 +19,7 @@ Arguments
 
 -ip, --input-path
 -----------------
-Relative or absulute path to the folder with dos files.
+Relative or absolute path to the folder with dos files.
 
 .. code-block:: text
 
@@ -102,6 +102,17 @@ Whenever to use relative style.
 -n, --normalize
 ---------------
 Whenever to use normalize relative style.
+
+.. code-block:: text
+
+    default : False
+
+
+.. _rad-dos-plotter_verbose:
+
+-v, -verbose
+------------
+Verbose output, propagates to the called methods.
 
 .. code-block:: text
 

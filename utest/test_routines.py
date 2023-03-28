@@ -25,7 +25,7 @@ def test_terminal_colours():
 
 def test_get_256_colours():
     print("\n Please check that the following colour's table "
-          "looks beautifull:\n")
+          "looks beautiful:\n")
     for i in range(0, 16):
         for j in range(0, 16):
             print(f'{get_256_colours(16 * i + j)}'
@@ -45,6 +45,7 @@ def test_get_256_colours():
         get_256_colours('sadfasd')
     for i in range(0, 256):
         assert get_256_colours(i) == f'\033[38:5:{i}m'
+
 
 @pytest.mark.parametrize("mark, new_mark", [
     ('Cr1', '$Cr_{1}$'),
@@ -96,41 +97,42 @@ class TestRotAngle:
 def test_two_points_distance(point1, point2, distance):
     assert distance == two_points_distance(point1, point2)
 
+
 @pytest.mark.parametrize("cell, absolute, relative", [
     ([[1, 0, 0],
       [0, 1, 0],
-      [0, 0, 1]], 
-      [0, 0, 0], [0, 0, 0]),
+      [0, 0, 1]],
+     [0, 0, 0], [0, 0, 0]),
 
     ([[1, 0, 0],
       [0, 1, 0],
-      [0, 0, 1]], 
-      [0, 0, 1], [0, 0, 1]),
-      
+      [0, 0, 1]],
+     [0, 0, 1], [0, 0, 1]),
+
     ([[1, 0, 0],
       [0, 1, 0],
-      [0, 0, 1]], 
-      [0, 1, 0], [0, 1, 0]),
-      
+      [0, 0, 1]],
+     [0, 1, 0], [0, 1, 0]),
+
     ([[1, 0, 0],
       [0, 1, 0],
-      [0, 0, 1]], 
-      [1, 0, 0], [1, 0, 0]),
-      
+      [0, 0, 1]],
+     [1, 0, 0], [1, 0, 0]),
+
     ([[1, 0, 0],
       [0, 1, 0],
-      [0, 0, 1]], 
-      [0.5, 0.5, 0], [0.5, 0.5, 0]),
-      
+      [0, 0, 1]],
+     [0.5, 0.5, 0], [0.5, 0.5, 0]),
+
     ([[1, 1, 0],
       [0, 1, 0],
-      [0, 0, 1]], 
-      [0.5, 1, 0], [0.5, 0.5, 0]),
-      
+      [0, 0, 1]],
+     [0.5, 1, 0], [0.5, 0.5, 0]),
+
     ([[2, 1, 0],
       [1, 1, 0],
-      [0, 0, 1]], 
-      [0.9, 0.7, 0.4], [0.2, 0.5, 0.4]),
+      [0, 0, 1]],
+     [0.9, 0.7, 0.4], [0.2, 0.5, 0.4]),
 ])
 def test_absolute_to_relative(cell, absolute, relative):
     new_relative = absolute_to_relative(cell, *tuple(absolute))

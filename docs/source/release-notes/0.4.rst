@@ -10,7 +10,7 @@ Refractor most of the code.
 Move input in the separate submodule.
 Remove molecule plot type from :ref:`tb2j-plotter.py <tb2j-plotter>` script.
 
-Major change in the logic of reading exchang files and templates. 
+Major change in the logic of reading exchange files and templates. 
 Instead of using the class to load the file as before:
 
 .. code-block:: python
@@ -74,7 +74,7 @@ Add ``reduced_parameters`` to the ``ExchangeModel`` class.
 0.4.6
 -----
 
-Add iexchange interface.
+Add exchange interface.
 
 There is two ways to import read functions:
 
@@ -98,7 +98,7 @@ Add methods to round up the exchange model.
 0.4.8
 -----
 
-Add script for energy exctractor.
+Add script for energy extractor.
 
 0.4.9
 -----

@@ -4,12 +4,13 @@ import pytest
 
 from rad_tools.exchange.bond import *
 
+
 class TestBond:
 
     bond = Bond([
-                    [1, 5, 2],
-                      [5, 8, 4],
-                      [2, 6, 3]])
+        [1, 5, 2],
+        [5, 8, 4],
+        [2, 6, 3]])
 
     def test_init(self):
         bond = Bond(iso=23)
@@ -42,7 +43,6 @@ class TestBond:
         assert (self.bond.matrix == np.array([[1, 5, 2],
                                               [5, 8, 4],
                                               [2, 6, 3]])).all()
-                                
 
     def test_symm_assym_matrix(self):
         bond = Bond(matrix=[[1, 2, 0], [1, 1, 0], [0, 0, 1]])
@@ -55,8 +55,8 @@ class TestBond:
                                                [0, 0, 0]])).all()
 
         assert (self.bond.symm_matrix == np.array([[1, 5, 2],
-                                                    [5, 8, 5],
-                                                    [2, 5, 3]])).all()
+                                                   [5, 8, 5],
+                                                   [2, 5, 3]])).all()
 
         assert (self.bond.asymm_matrix == np.array([[0, 0, 0],
                                                     [0, 0, -1],
@@ -98,19 +98,18 @@ class TestBond:
         assert (bond.aniso == np.zeros((3, 3))).all()
         with pytest.raises(ValueError):
             bond.aniso = 1
-        
+
         assert (self.bond.aniso == np.array([[-3, 5, 2],
-                                                    [5, 4, 5],
-                                                    [2, 5, -1]])).all()
+                                             [5, 4, 5],
+                                             [2, 5, -1]])).all()
 
     def test_aniso_diagonal(self):
         assert (self.bond.aniso_diagonal == np.array([-3, 4, -1])).all()
 
     def test_aniso_diagonal_matrix(self):
         assert (self.bond.aniso_diagonal_matrix == np.array([[-3, 0, 0],
-                                                    [0, 4, 0],
-                                                    [0, 0, -1]])).all()
-
+                                                             [0, 4, 0],
+                                                             [0, 0, -1]])).all()
 
     def test_dmi(self):
         bond = Bond()
@@ -147,10 +146,10 @@ class TestBond:
     def test_dmi_module(self):
         bond = Bond()
         bond.dmi = (1, 2, 3)
-        assert bond.dmi_module == sqrt(14) 
+        assert bond.dmi_module == sqrt(14)
         bond.iso = 23
         bond.aniso = [[1, 1, 0], [1, -0.5, 0], [0, 0, -0.5]]
-        assert bond.dmi_module == sqrt(14) 
+        assert bond.dmi_module == sqrt(14)
         bond.dmi = None
         assert bond.dmi_module == 0
         assert self.bond.dmi_module == 1
@@ -161,9 +160,8 @@ class TestBond:
         assert bond.iso == 0.30769
         bond.round(1)
         assert bond.iso == 0.3
-        
 
-    def test_addition_substruction(self):
+    def test_addition_subtraction(self):
         bond1 = Bond(iso=1)
         bond2 = Bond(iso=2)
         bond3 = Bond(iso=3)

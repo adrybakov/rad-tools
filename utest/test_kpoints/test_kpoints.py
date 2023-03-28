@@ -25,7 +25,7 @@ class TestKPoints:
                                                      3.6881650340819934,
                                                      4.188165034081994]) == 0).all()
 
-    def test_coordinatets(self):
+    def test_coordinates(self):
         tmp = KPoints()
         tmp.hex()
         assert tmp.coordinates(n=1).shape == (18, 3)

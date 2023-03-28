@@ -25,7 +25,7 @@ Usage example
 Example is based on the exchange.out file from 
 :examples:`examples folder <rad-make-template>`. 
 
-The simpliest case consist of template draft`s creation 
+The simplest case consist of template draft`s creation 
 (see :ref:`template specification <template-draft>`). 
 The following command will produce it:
 
@@ -51,7 +51,7 @@ It will produce the following file with the full template from the file:
 
 This template is very long since original TB2J file includes a lot of 
 interaction pairs, lets filter some of them and keep only the interactions 
-with the distance <= 8 Angstrom.
+with the distance <= 8 Angstroms.
 
 .. code-block:: bash
 
@@ -62,7 +62,7 @@ with the distance <= 8 Angstrom.
    .. literalinclude:: /../examples/rad-make-template/filtered_template.txt
     :language: text
 
-Now for futher usage one only have to introduce grouping with respect to 
+Now for further usage one only have to introduce grouping with respect to 
 some exchange model to produce the final template file:
 
 .. dropdown:: filtered_template_grouped.txt
@@ -96,17 +96,17 @@ Line 4: Flag of the neighbors section, have to be in the file.
 
 Line 5: Format of the bond specification line.
 
-Line 6: Neighbor separator. Separates different neighbors
+Line 6: Neighbour separator. Separates different neighbors
 (:math:`J_1`, :math:`J_2`, ...) in the neighbors template file. 
 20 or more "-" symbols.
 
-Line 7: Name of the neighbor and the 
+Line 7: Name of the neighbour and the 
 `LaTeX <https://www.latex-project.org/>`_ version of that name. 
 Name have to be specified. Latex name is optional. 
 Name and LaTeX name are separated by one or more spaces, 
 as a consequence no spaces are allowed for both of them.
 
-Line 8: First bond, which corresponds to the first neighbor (:math:`J_1`).
+Line 8: First bond, which corresponds to the first neighbour (:math:`J_1`).
 Format of the bond specification: 
 
 .. code-block:: text
@@ -116,17 +116,17 @@ Format of the bond specification:
 Where R is a real-space vector of the unit cell in which the second atom is 
 located (atom1 always located in R = (0, 0, 0)).
 
-Line 9, 10: Specification of the second and third bond from the first neighbor.
+Line 9, 10: Specification of the second and third bond from the first neighbour.
 
-Line 11: Neighbor separator.
+Line 11: Neighbour separator.
 
-Line 12: Name of the second neighbor.
+Line 12: Name of the second neighbour.
 
 .. note::
-    There is no LaTeX name specified for the second neighbor.
+    There is no LaTeX name specified for the second neighbour.
 
 Lines 14-15: Specifications of the first, second and third bond, which are 
-associated with the second neighbor.
+associated with the second neighbour.
 
 Lines 16: Footer of the file. 20 or more "=" symbols.
 
@@ -151,8 +151,8 @@ See also: :ref:`example <scripts_output-notes>`.
 
 -if, --input-filename
 ---------------------
-Relative or absulute path to the TB2J exchange output file, 
-including the name and extention of the file.
+Relative or absolute path to the TB2J exchange output file, 
+including the name and extension of the file.
 
 .. code-block:: text
 
@@ -183,7 +183,7 @@ ignored.
 ---------------------
 (<=) Maximum distance.
 
-All the bonds with the distance beetwen atom 1 and atom 2 
+All the bonds with the distance between atom 1 and atom 2 
 greater than maximum distance are excluded from the model.
 
 .. code-block:: text
@@ -196,7 +196,7 @@ greater than maximum distance are excluded from the model.
 ---------------------
 (>=) Minimum distance.
 
-All the bonds with the distance beetwen atom 1 and atom 2 
+All the bonds with the distance between atom 1 and atom 2 
 lower than minimum distance are excluded from the model.
 
 .. code-block:: text
@@ -218,3 +218,14 @@ Only the bonds with the exact distance remains in the model.
 .. hint::
     There is no point in specifying maximum or minimum distance when 
     this parameter is provided.
+
+
+.. _rad-make-template_verbose:
+
+-v, -verbose
+------------
+Verbose output, propagates to the called methods.
+
+.. code-block:: text
+
+    default : False

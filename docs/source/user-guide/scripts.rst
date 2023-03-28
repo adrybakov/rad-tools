@@ -37,7 +37,7 @@ Notes on the output
 
 For all scripts there is a common logic for the ``--output_dir`` and 
 ``--output_name`` arguments. In some scripts only ``--output_name`` 
-is available and then the logic is straightforfard: there is only one 
+is available and then the logic is straightforward: there is only one 
 output file and it will be saved as specified in ``--output_name`` argument.
 
 Meanwhile, in some scripts several output files are expected and additional 
@@ -82,7 +82,7 @@ Lets save the output in the *output* folder:
 
 .. code-block:: bash
 
-    scrpt.py -f input_file -op output
+    script.py -f input_file -op output
 
 Now *example* folder should look like this
 
@@ -97,14 +97,14 @@ Now *example* folder should look like this
         └── output_name_2
 
 Output files have the same names, but they are saved in the *output* 
-folder as your specifyed by ``--output-dir`` argument.
+folder as your specified by ``--output-dir`` argument.
 
 It is not necessary to specify a path to the existing folder, 
 for example try to execute
 
 .. code-block:: bash
 
-    scrpt.py -f input_file -op output/bar/foo
+    script.py -f input_file -op output/bar/foo
 
 The script will create folder *bar* inside of the folder *output* and folder 
 *foo* inside of the folder *bar*. The structure of the *example* folder now 
@@ -128,9 +128,9 @@ In order to change the common output name run the following:
 
 .. code-block:: bash
 
-    scrpt.py -f input_file -op output -on custom_output_name
+    script.py -f input_file -op output -on custom_output_name
 
-The sctructure of the *example* folder now should look like that: 
+The structure of the *example* folder now should look like that: 
 
 .. code-block:: text
     

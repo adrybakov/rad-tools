@@ -18,14 +18,14 @@ CASES = ["collinear, spin-unpolarized",
 
 def analyse_input_folder(input_path, filpdos=None):
     r"""
-    Analyse input folder, detects seednames for the dos output files.
+    Analyze input folder, detects seednames for the dos output files.
 
     Parameters
     ----------
     input_path : str
         Directory with DOS files.
     filpdos : str, default None
-        Seddname for the DOS file. If not provided then all seednames
+        Seedname for the DOS file. If not provided then all seednames
         from the folder are detected and processed.
 
     Returns
@@ -108,7 +108,7 @@ def detect_case(filename):
             and "pdosdw" in header):
         case = 1
     if case is None:
-        raise RuntimeError("Unable to detect case, analized header:\n" +
+        raise RuntimeError("Unable to detect case, analysed header:\n" +
                            f"{header}")
     return case
 
@@ -125,7 +125,7 @@ def decompose_filenames(filenames):
     Returns
     -------
     atoms : dist
-        Distionary with the atom labels and their numbers.
+        Dictionary with the atom labels and their numbers.
 
         .. code-block:: python
 
@@ -394,7 +394,7 @@ def plot_projected_relative(l, dos, output_name, title, case,
         factor = factor[l]
     elif labels is None or factor is None:
         raise ValueError
-    colors = ["#AC92EB", "#ED5564", "#A0D568", "#FFCE54", "#4FC1E8"]
+    colours = ["#AC92EB", "#ED5564", "#A0D568", "#FFCE54", "#4FC1E8"]
     dos = filter_window(dos, window=window, efermi=efermi)
     if window is None:
         window = (np.amin(dos[0]), np.amax(dos[0]))
@@ -445,11 +445,11 @@ def plot_projected_relative(l, dos, output_name, title, case,
             y += dos[2+i]
             if normalize:
                 ax1.fill_between(dos[0], y_prev/dos[1], y/dos[1],
-                                 lw=0, color=colors[i],
+                                 lw=0, color=colours[i],
                                  label=f"{labels[i]}")
             else:
                 ax1.fill_between(dos[0], y_prev, y,
-                                 lw=0, color=colors[i],
+                                 lw=0, color=colours[i],
                                  label=f"{labels[i]}")
             y_prev = deepcopy(y)
         elif case in [1, 2]:
@@ -457,17 +457,17 @@ def plot_projected_relative(l, dos, output_name, title, case,
             y_down += dos[4+2*i]
             if normalize:
                 ax1.fill_between(dos[0], y_prev_up/dos[1], y_up/dos[1],
-                                 lw=0, color=colors[i],
+                                 lw=0, color=colours[i],
                                  label=f"{labels[i]}")
                 ax2.fill_between(dos[0], y_prev_down/dos[2], y_down/dos[2],
-                                 lw=0, color=colors[i],
+                                 lw=0, color=colours[i],
                                  label=f"{labels[i]}")
             else:
                 ax1.fill_between(dos[0], y_prev_up, y_up,
-                                 lw=0, color=colors[i],
+                                 lw=0, color=colours[i],
                                  label=f"{labels[i]}")
                 ax2.fill_between(dos[0], y_prev_down, y_down,
-                                 lw=0, color=colors[i],
+                                 lw=0, color=colours[i],
                                  label=f"{labels[i]}")
             y_prev_up = deepcopy(y_up)
             y_prev_down = deepcopy(y_down)
@@ -500,7 +500,8 @@ def manager(input_path,
             efermi=0.,
             separate=False,
             relative=False,
-            normalize=False):
+            normalize=False,
+            verbose=False):
 
     try:
         makedirs(output_path)
@@ -944,5 +945,12 @@ def get_parser():
                         help="""
                         Whenever to use normalize relative style.
                         """)
+    parser.add_argument("-v", "--verbose",
+                        action="store_true",
+                        default=False,
+                        help="""
+                        Verbose output, propagates to the called methods.
+                        """
+                        )
 
     return parser

@@ -41,7 +41,7 @@ def identify(filename, span, output_path, out_name, nocolor=False):
         if min_span_atom > span and min_span_pair > span:
             if not nocolor:
                 print(f"{WARNING}", end="")
-            print(f"Centre {centre} unindentified, " +
+            print(f"Centre {centre} unidentified, " +
                   "try to increase span")
             if not nocolor:
                 print(f"{RESET}", end="")
@@ -88,13 +88,14 @@ if __name__ == "__main__":
     parser.add_argument("filename",
                         type=str,
                         help="""
-                        Rellative or absolute path to the _centres.xyz file
+                        Relative or absolute path to the _centres.xyz file
                         """)
     parser.add_argument("-s", "--span",
                         type=float,
                         default=0.1,
                         help="""
-                        Distance tolerance between centre and atom. (in Angstrom)
+                        Distance tolerance between centre and atom. 
+                        (in Angstroms)
                         """)
     parser.add_argument("-op", "--output-path",
                         type=str,

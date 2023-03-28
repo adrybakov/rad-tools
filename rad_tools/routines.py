@@ -6,7 +6,7 @@ which may be used across the whole package.
 import numpy as np
 from math import asin, sqrt, pi
 
-# Teminal colors
+# Terminal colours
 BLACK = "\u001b[30m"
 """
 ANSI escape code for black color of the text.
@@ -109,7 +109,7 @@ def atom_mark_to_latex(mark):
 
 def rot_angle(x, y, dummy=False):
     r"""
-    Rotational ange from 2D vector.
+    Rotational angle from 2D vector.
 
     Mathematically positive => counterclockwise.
     From [0 to 360)

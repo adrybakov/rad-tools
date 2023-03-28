@@ -49,7 +49,7 @@ pip:
 	@echo "  * Release note?"
 	@echo "  * Commit all the changes?"
 	@echo "\x1b[0m"
-	git status
+	@git status
 	@echo "\x1b[33m"
 	@echo "  * Merge to the stable?"
 	@echo "  * Push to GitHub?"
@@ -77,12 +77,15 @@ help:
 	@echo "Please specify what do you want to do!"
 	@echo "\x1b[32m"
 	@echo "Available options are:"
-	@echo "    test - for executing the testing suite"
-	@echo "    html - for building the html docs"
-	@echo "    pip - for publishing the package to PyPi index"
-	@echo "    clean - for cleaning all files from docs and pip routines"
-	@echo "    examples - for updating all examples"
-	@echo "    push - for git push with updated examples"
+	@echo "    html - build the html docs"
+	@echo "    html-examples - update examples and build html docs"
+	@echo "    doctest - run doctests"
+	@echo "    clean - clean all files from docs and pip routines"
+	@echo "    test - execute testing suite"
+	@echo "    pip - publish the package to the PyPi index"
+	@echo "    examples - update all examples"
+	@echo "    push - update examples and git push"
+	@echo "    check-script-names - check consistency of argument names in scripts"
 	@echo "\x1b[0m"
 
 examples:
@@ -93,10 +96,10 @@ examples:
 	@rad-make-template.py -if docs/examples/rad-make-template/exchange.out -on docs/examples/rad-make-template/full_template
 	@rad-make-template.py -if docs/examples/rad-make-template/exchange.out -on docs/examples/rad-make-template/filtered_template -maxd 8
 	@tb2j-plotter.py -if docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/
-	@tb2j-plotter.py -if docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_filtered -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange"
-	@tb2j-plotter.py -if docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_template -wtp iso -tf docs/examples/tb2j-plotter/template.txt -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange"
+	@tb2j-plotter.py -if docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_filtered -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange"
+	@tb2j-plotter.py -if docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_template -wtp iso -tf docs/examples/tb2j-plotter/template.txt -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange"
 	@tb2j-plotter.py -if docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_forced_symmetry -tf docs/examples/tb2j-plotter/template.txt -fs -dc -sa 1.2 -sd 1.2 -t "Forced symmetry exchange"
-	@tb2j-plotter.py -if docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_R -wtp iso -R 1 0 0 1 1 0 0 1 0 -1 0 0 -1 -1 0 0 -1 0 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange"
+	@tb2j-plotter.py -if docs/examples/tb2j-plotter/exchange.out -op docs/examples/tb2j-plotter/  -on exchange_R -wtp iso -R 1 0 0 1 1 0 0 1 0 -1 0 0 -1 -1 0 0 -1 0 -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange"
 	@tb2j-extractor.py -if docs/examples/tb2j-extractor/exchange.out -tf docs/examples/tb2j-extractor/template.txt -op docs/examples/tb2j-extractor/ -on summary_forced_symmetry -all -fs
 	@tb2j-extractor.py -if docs/examples/tb2j-extractor/exchange.out -tf docs/examples/tb2j-extractor/template.txt -op docs/examples/tb2j-extractor/ -on summary -all
 

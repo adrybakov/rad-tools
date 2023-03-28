@@ -16,7 +16,8 @@ def manager(output_name="template",
             R_vector=None,
             max_distance=None,
             min_distance=None,
-            distance=None):
+            distance=None,
+            verbose=False):
     r"""
     Main function call of the rad-make-template.py script.
 
@@ -25,7 +26,7 @@ def manager(output_name="template",
     corresponds to the arguments of the script.
 
     If you want to have the behaviour of the rad-make-template.py script
-    but in a format of a fuction call use this function.
+    but in a format of a function call use this function.
     """
 
     if distance is not None:
@@ -73,7 +74,7 @@ def manager(output_name="template",
                 f"on {cd.day} {month_name[cd.month]} {cd.year}" +
                 f" at {cd.hour}:{cd.minute}:{cd.second} by rad-tools {version}\n\n")
 
-            model = read_exchange_model(input_filename)
+            model = read_exchange_model(input_filename, quiet=not verbose)
             model.filter(min_distance=min_distance,
                          max_distance=max_distance,
                          R_vector=R_vector)
@@ -106,8 +107,8 @@ def get_parser():
                         type=str,
                         default=None,
                         help="""
-                        Relative or absulute path to the *exchange.out* file,
-                        including the name and extention of the file itself.
+                        Relative or absolute path to the *exchange.out* file,
+                        including the name and extension of the file itself.
                         """
                         )
     parser.add_argument("-R", "--R-vector",
@@ -137,6 +138,13 @@ def get_parser():
                         default=None,
                         help="""
                         (=) Exact distance.
+                        """
+                        )
+    parser.add_argument("-v", "--verbose",
+                        action="store_true",
+                        default=False,
+                        help="""
+                        Verbose output, propagates to the called methods.
                         """
                         )
 

@@ -237,7 +237,7 @@ class Bond:
     @property
     def dmi_matrix(self):
         r"""
-        Assymetric part of the exchange matrix.
+        Asymmetric part of the exchange matrix.
 
         .. code-block:: python
 

@@ -17,12 +17,12 @@ def read_exchange_model(filename, quiet=False) -> ExchangeModel:
     filename : str
         Path to the TB2J output file.
     quiet : bool, default True
-        Whenever to supress output.
+        Whenever to suppress output.
 
     Returns 
     -------
     model : :py:class:`.ExchangeModel`
-        Exchange model buid from TB2J file.
+        Exchange model build from TB2J file.
     """
 
     major_sep = '=' * 90
@@ -33,6 +33,7 @@ def read_exchange_model(filename, quiet=False) -> ExchangeModel:
                              ']': None,
                              ',': None,
                              '\'': None})
+    # Do not correct spelling, it is taken from TB2J.
     cell_flag = 'Cell (Angstrom):'
     atoms_flag = 'Atoms:'
     atom_end_flag = 'Total'
@@ -112,8 +113,9 @@ def read_exchange_model(filename, quiet=False) -> ExchangeModel:
         model.add_bond(bond, atom1, atom2, R)
         computed_distance = model.get_distance(atom1, atom2, R)
         if abs(computed_distance - distance) > 0.001 and not quiet:
-            print(
-                f"\nComputed distance is a different from the read one:\n  Computed: {computed_distance:.4f}\n  Read: {distance:.4f}\n")
+            print(f"\nComputed distance is a different from the read one:\n" +
+                  f"  Computed: {computed_distance:.4f}\n  " +
+                  f"Read: {distance:.4f}\n")
 
     # Fill non-magnetic atoms
     for atom in atoms:

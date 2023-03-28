@@ -10,7 +10,7 @@ class HighSymmetryPoints:
     Parameters
     ----------
     kpoints : dict
-        Distionary of the high symmetry k-points and coordinate
+        Dictionary of the high symmetry k-points and coordinate
         (fractions of the reciprocal vectors).
 
         .. code-block:: python
@@ -146,7 +146,7 @@ class HighSymmetryPoints:
 
         if isinstance(new_path, str):
             if "|-" in new_path or "-|" in new_path:
-                raise ValueError("Check the foratting of the new path")
+                raise ValueError("Check the format of the new path")
             subpaths = new_path.split("|")
             if subpaths[-1] == '':
                 subpaths = subpaths[0:-1]
@@ -207,7 +207,7 @@ class HighSymmetryPoints:
         return HighSymmetryPoints(kpoints, path)
 
     def fcc(self):
-        r"""Face-centered cubic (FCC, cF)"""
+        r"""Face-centred cubic (FCC, cF)"""
 
         kpoints = {
             "Gamma": np.array([0, 0, 0]),
@@ -265,7 +265,7 @@ class HighSymmetryPoints:
         return HighSymmetryPoints(kpoints, path)
 
     def bct1(self, a, c):
-        r"""Body-centered tetragonal (BCT, tI),
+        r"""Body-centred tetragonal (BCT, tI),
 
         c < a"""
 
@@ -290,7 +290,7 @@ class HighSymmetryPoints:
         return HighSymmetryPoints(kpoints, path)
 
     def bct2(self, a, c):
-        r"""Body-centered tetragonal (BCT, tI),
+        r"""Body-centred tetragonal (BCT, tI),
 
         c > a"""
 
@@ -342,7 +342,7 @@ class HighSymmetryPoints:
         return HighSymmetryPoints(kpoints, path)
 
     def orcf1(self, a, b, c):
-        r"""Face-centered orthorhombic (ORCF, oF),
+        r"""Face-centred orthorhombic (ORCF, oF),
 
         \dfrac{1}{a^2} > \dfrac{1}{b^2} + \dfrac{1}{c^2}"""
 
@@ -371,7 +371,7 @@ class HighSymmetryPoints:
         return HighSymmetryPoints(kpoints, path)
 
     def orcf2(self, a, b, c):
-        r"""Face-centered orthorhombic (ORCF, oF),
+        r"""Face-centred orthorhombic (ORCF, oF),
 
         \dfrac{1}{a^2} < \dfrac{1}{b^2} + \dfrac{1}{c^2}"""
 
@@ -404,7 +404,7 @@ class HighSymmetryPoints:
         return HighSymmetryPoints(kpoints, path)
 
     def orcf3(self, a, b, c):
-        r"""Face-centered orthorhombic (ORCF, oF),
+        r"""Face-centred orthorhombic (ORCF, oF),
 
         \dfrac{1}{a^2} = \dfrac{1}{b^2} + \dfrac{1}{c^2}"""
 
@@ -432,7 +432,7 @@ class HighSymmetryPoints:
         return HighSymmetryPoints(kpoints, path)
 
     def orci(self, a, b, c):
-        r"""Body-centered orthorhombic (ORCI, oI)"""
+        r"""Body-centred orthorhombic (ORCI, oI)"""
 
         eta = (1 + a**2 / c**2) / 4
         zeta = (1 + b**2 / c**2) / 4
@@ -464,7 +464,7 @@ class HighSymmetryPoints:
         return HighSymmetryPoints(kpoints, path)
 
     def orcc(self, a, b):
-        r"""C-centered orthorombic (ORCC, oS)"""
+        r"""C-centred orthorhombic (ORCC, oS)"""
 
         zeta = (1 + a**2 / b**2) / 4
 
@@ -599,7 +599,7 @@ class HighSymmetryPoints:
         return HighSymmetryPoints(kpoints, path)
 
     def mclc1(self, a, b, c, alpha):
-        r"""C-centered monoclinic (MCLC, mS),
+        r"""C-centred monoclinic (MCLC, mS),
 
         k_{\gamma} > 90^{\circ}"""
 
@@ -639,7 +639,7 @@ class HighSymmetryPoints:
         return HighSymmetryPoints(kpoints, path)
 
     def mclc2(self, a, b, c, alpha):
-        r"""C-centered monoclinic (MCLC, mS),
+        r"""C-centred monoclinic (MCLC, mS),
 
         k_{\gamma} = 90^{\circ}"""
 
@@ -677,7 +677,7 @@ class HighSymmetryPoints:
         return HighSymmetryPoints(kpoints, path)
 
     def mclc3(self, a, b, c, alpha):
-        r"""C-centered monoclinic (MCLC, mS),
+        r"""C-centred monoclinic (MCLC, mS),
 
         k_{\gamma} < 90^{\circ}, 
         \dfrac{b\cos(\alpha)}{c} + \dfrac{b^2\sin(\alpha)^2}{a^2} < 1"""
@@ -718,7 +718,7 @@ class HighSymmetryPoints:
         return HighSymmetryPoints(kpoints, path)
 
     def mclc4(self, a, b, c, alpha):
-        r"""C-centered monoclinic (MCLC, mS),
+        r"""C-centred monoclinic (MCLC, mS),
 
         k_{\gamma} < 90^{\circ}, 
         \dfrac{b\cos(\alpha)}{c} + \dfrac{b^2\sin(\alpha)^2}{a^2} = 1"""
@@ -759,7 +759,7 @@ class HighSymmetryPoints:
         return HighSymmetryPoints(kpoints, path)
 
     def mclc5(self, a, b, c, alpha):
-        r"""C-centered monoclinic (MCLC, mS),
+        r"""C-centred monoclinic (MCLC, mS),
 
         k_{\gamma} < 90^{\circ}, 
         \dfrac{b\cos(\alpha)}{c} + \dfrac{b^2\sin(\alpha)^2}{a^2} > 1"""

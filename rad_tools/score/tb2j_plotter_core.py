@@ -24,7 +24,18 @@ def manager(input_filename,
             scale_atoms=1,
             scale_data=1,
             title=None,
-            force_symmetry=False):
+            force_symmetry=False,
+            verbose=False):
+    r"""
+    Main function call of the tb2j-plotter.py script.
+
+    Full documentation on the behaviour is available 
+    :ref:`here <tb2j-plotter>`. Parameters of the function directly 
+    corresponds to the arguments of the script.
+
+    If you want to have the behaviour of the tb2j-plotter.py script 
+    but in a format of a function call use this function.
+    """
 
     if force_symmetry and template_file is None:
         raise ValueError("--force-symmetry option requires a template file.")
@@ -43,7 +54,7 @@ def manager(input_filename,
                             dtype=int).reshape((len(R_vector)//3, 3))
         R_vector = list(map(tuple, R_vector.tolist()))
 
-    model = read_exchange_model(input_filename)
+    model = read_exchange_model(input_filename, quiet=not verbose)
     if template_file is not None:
         template = read_template(template_file)
     else:
@@ -169,14 +180,14 @@ def manager(input_filename,
 
 def get_parser():
     parser = ArgumentParser(
-        description="Script for visualisation of TB2J results")
+        description="Script for visualization of TB2J results")
 
     parser.add_argument("-if", "--input-filename",
                         type=str,
                         required=True,
                         help="""
-                        Relative or absulute path to the *exchange.out* file,
-                        including the name and extention of the file itself.
+                        Relative or absolute path to the *exchange.out* file,
+                        including the name and extension of the file itself.
                         """
                         )
     parser.add_argument("-op", "--output-path",
@@ -242,7 +253,7 @@ def get_parser():
                         default=None,
                         help="""
                         Relative or absolute path to the template file,
-                        including the name and extention of the file.
+                        including the name and extension of the file.
                         """)
     parser.add_argument("-sa", "--scale-atoms",
                         default=1,
@@ -269,5 +280,12 @@ def get_parser():
                         Force the Exchange model to have the symmetry 
                         of the template.
                         """)
+    parser.add_argument("-v", "--verbose",
+                        action="store_true",
+                        default=False,
+                        help="""
+                        Verbose output, propagates to the called methods.
+                        """
+                        )
 
     return parser

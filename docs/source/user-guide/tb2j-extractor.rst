@@ -68,8 +68,8 @@ Arguments
 
 -if, --input-filename
 ---------------------
-Relative or absulute path to the *exchange.out* file,
-including the name and extention of the file itself.
+Relative or absolute path to the *exchange.out* file,
+including the name and extension of the file itself.
 
 .. code-block:: text
 
@@ -81,7 +81,7 @@ including the name and extention of the file itself.
 -tf, --template-file
 --------------------
 Relative or absolute path to the template file, 
-including the name and extention of the file.
+including the name and extension of the file.
 
 .. code-block:: text
 
@@ -99,7 +99,7 @@ See also: :ref:`template <rad-make-template>`
 Relative or absolute path to the folder for saving outputs.
 
 If the folder does not exist then it is created from the specified path.
-The creation is applied recursevly to the path, starting from the right
+The creation is applied recursively to the path, starting from the right
 until the existing folder is reached.
 
 .. code-block:: text
@@ -118,7 +118,7 @@ Seedname for the output files.
 
 Output files will have the following name structure: *output-name*
 If this parameter is not specified then result will be printed in 
-standart output stream. If none is specify, output is passed to the console.
+standard output stream. If none is specify, output is passed to the console.
 
 .. code-block:: text
 
@@ -250,3 +250,14 @@ Whenever to all types of exchange.
 
     default : False
     type : bool
+
+
+.. _tb2j-extractor_verbose:
+
+-v, -verbose
+------------
+Verbose output, propagates to the called methods.
+
+.. code-block:: text
+
+    default : False

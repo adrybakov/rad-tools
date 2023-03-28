@@ -1,5 +1,5 @@
 r"""
-Module for constracting the k-points paths and high-symmetry k-points [1]_. 
+Module for constructing the k-points paths and high-symmetry k-points [1]_. 
 
 Examples
 --------
