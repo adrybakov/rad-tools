@@ -34,6 +34,7 @@ test:
 	@pip3 install pytest
 	@pytest -s
 
+VERSION := $(shell grep __version__ rad_tools/__init__.py | tr -d 'a-zA-Z =_":')
 .ONESHELL:
 pip:
 #	@echo "\x1b[33m"
@@ -68,6 +69,7 @@ pip:
 	-@rm -r rad_tools.egg-info
 	@python3 setup.py sdist bdist_wheel 
 	@python3 -m twine upload --repository pypi dist/* --verbose
+	@git tag -a "$(VERSION)" -m "Version $(VERSION)"
 
 
 help:
