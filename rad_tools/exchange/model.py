@@ -532,7 +532,7 @@ class ExchangeModel:
     def remove(self,
                template):
         r"""
-        REmove bonds from the exchange model, based on the template.
+        Remove bonds from the exchange model, based on the template.
 
 
         .. note::
