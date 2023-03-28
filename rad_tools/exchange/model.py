@@ -527,6 +527,30 @@ class ExchangeModel:
         for atom1, atom2, R in bonds_for_removal:
             self.remove_bond(atom1, atom2, R)
 
+    def remove(self,
+               template):
+        r"""
+        REmove bonds from the exchange model, based on the template.
+
+
+        .. note::
+            This method modifies the instance at which it is called.
+
+        Parameters
+        ----------
+        template : list or :py:class:`.ExchangeTemplate`.
+            List of pairs, which will remain in the model. ::
+
+                [(atom1, atom2, R), ...]
+        """
+
+        if isinstance(template, ExchangeTemplate):
+            template = template.get_list()
+        template = set(template)
+
+        for atom1, atom2, R in template:
+            self.remove_bond(atom1, atom2, R)
+
     def filtered(self,
                  max_distance=None,
                  min_distance=None,

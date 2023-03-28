@@ -86,3 +86,8 @@ Problem with --force-symmetry if there is filtering by non-template parameters.
 0.5.15
 ------
 Add version of the package to the information header of the output files. 
+
+0.5.16
+------
+Add ``remove`` method to the 
+:doc:`ExchangeModel <../api/_autosummary/rad_tools.exchange.model.ExchangeModel>`.
