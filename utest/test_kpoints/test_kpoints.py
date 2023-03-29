@@ -1,7 +1,7 @@
-from math import sqrt, pi
+from math import pi, sqrt
 
-import pytest
 import numpy as np
+import pytest
 
 from rad_tools.kpoints.kpoints import KPoints
 

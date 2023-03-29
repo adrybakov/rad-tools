@@ -1,10 +1,10 @@
-from math import sqrt, pi
+from math import pi, sqrt
 
-import pytest
 import numpy as np
+import pytest
 
-from rad_tools.exchange.model import ExchangeModel
 from rad_tools.exchange.bond import Bond
+from rad_tools.exchange.model import ExchangeModel
 from rad_tools.exchange.template import ExchangeTemplate
 
 

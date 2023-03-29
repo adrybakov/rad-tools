@@ -5,12 +5,12 @@ Write a tutorial with docstrings here.
 """
 
 from copy import deepcopy
-from math import sqrt, pi, cos, sin
+from math import cos, pi, sin, sqrt
 
 import numpy as np
 
-from rad_tools.exchange.template import ExchangeTemplate
 from rad_tools.exchange.bond import Bond
+from rad_tools.exchange.template import ExchangeTemplate
 
 
 class ExchangeModel:
@@ -565,8 +565,8 @@ class ExchangeModel:
         Saying so the filtering will be performed for each given condition
         one by one.
         Note: this method is not modifying the instance at which it is called.
-        It will create a new instance with sorted :py:attr:`bonds` and all the other
-        attributes will be copied (through :py:func:`deepcopy`).
+        It will create a new instance with sorted :py:attr:`bonds` and all 
+        the other attributes will be copied (through :py:func:`deepcopy`).
 
         .. note::
             This method is not modifying the instance at which it is called.
@@ -639,9 +639,8 @@ class ExchangeModel:
                     asymm_factor = dmi_module / self[bond].dmi_module
                 else:
                     asymm_factor = 0
-                self[bond].matrix = (symm_matrix +
-                                     self[bond].asymm_matrix *
-                                     asymm_factor)
+                self[bond].matrix = symm_matrix + \
+                    self[bond].asymm_matrix * asymm_factor
 
     def forced_symmetry(self, template):
         r"""

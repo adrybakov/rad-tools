@@ -4,7 +4,7 @@ Input-output from TB2J.
 
 import numpy as np
 
-from rad_tools.exchange.model import ExchangeModel, Bond
+from rad_tools.exchange.model import Bond, ExchangeModel
 from rad_tools.routines import absolute_to_relative
 
 

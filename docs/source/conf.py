@@ -1,6 +1,8 @@
-from os.path import abspath
 import sys
+from os.path import abspath
+
 from rad_tools import __version__
+
 sys.path.insert(0, abspath('..'))
 
 

@@ -1,10 +1,10 @@
 import os
 
-import pytest
 import numpy as np
+import pytest
 
-from rad_tools.io.tb2j import *
 from rad_tools.io import read_template
+from rad_tools.io.tb2j import *
 
 
 class TestReadExchangeModel:

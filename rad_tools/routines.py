@@ -3,8 +3,9 @@ Collection of small routines and constants,
 which may be used across the whole package.
 """
 
+from math import asin, pi, sqrt
+
 import numpy as np
-from math import asin, sqrt, pi
 
 # Terminal colours
 BLACK = "\u001b[30m"

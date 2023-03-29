@@ -1,4 +1,4 @@
-from math import tan, cos, sin
+from math import cos, sin, tan
 
 import numpy as np
 
@@ -267,7 +267,9 @@ class HighSymmetryPoints:
     def bct1(self, a, c):
         r"""Body-centred tetragonal (BCT, tI),
 
-        c < a"""
+        .. math::
+            c < a
+        """
 
         eta = (1 + c**2 / a**2) / 4
 
@@ -292,7 +294,9 @@ class HighSymmetryPoints:
     def bct2(self, a, c):
         r"""Body-centred tetragonal (BCT, tI),
 
-        c > a"""
+        .. math::
+            c > a
+        """
 
         eta = (1 + c**2 / a**2) / 4
         zeta = a**2 / (2 * c**2)
@@ -344,7 +348,9 @@ class HighSymmetryPoints:
     def orcf1(self, a, b, c):
         r"""Face-centred orthorhombic (ORCF, oF),
 
-        \dfrac{1}{a^2} > \dfrac{1}{b^2} + \dfrac{1}{c^2}"""
+        .. math::
+            \dfrac{1}{a^2} > \dfrac{1}{b^2} + \dfrac{1}{c^2}
+        """
 
         eta = (1 + a**2 / b**2 + a**2 / c**2) / 4
         zeta = (1 + a**2 / b**2 - a**2 / c**2) / 4
@@ -373,7 +379,9 @@ class HighSymmetryPoints:
     def orcf2(self, a, b, c):
         r"""Face-centred orthorhombic (ORCF, oF),
 
-        \dfrac{1}{a^2} < \dfrac{1}{b^2} + \dfrac{1}{c^2}"""
+        .. math::
+            \dfrac{1}{a^2} < \dfrac{1}{b^2} + \dfrac{1}{c^2}
+        """
 
         eta = (1 + a**2 / b**2 + a**2 / c**2) / 4
         delta = (1 + b**2 / a**2 - b**2 / c**2) / 4
@@ -406,7 +414,9 @@ class HighSymmetryPoints:
     def orcf3(self, a, b, c):
         r"""Face-centred orthorhombic (ORCF, oF),
 
-        \dfrac{1}{a^2} = \dfrac{1}{b^2} + \dfrac{1}{c^2}"""
+        .. math::
+            \dfrac{1}{a^2} = \dfrac{1}{b^2} + \dfrac{1}{c^2}
+        """
 
         eta = (1 + a**2 / b**2 + a**2 / c**2) / 4
         zeta = (1 + a**2 / b**2 - a**2 / c**2) / 4
@@ -454,7 +464,8 @@ class HighSymmetryPoints:
             "Y1": np.array([1 - eta, eta, -eta]),
             "Z": np.array([1/2, 1/2, -1/2])}
 
-        path = [["Gamma", "X", "L", "T", "W", "R", "X1", "Z", "Gamma", "Y", "S", "W"],
+        path = [["Gamma", "X", "L", "T", "W", "R", "X1",
+                 "Z", "Gamma", "Y", "S", "W"],
                 ["L1", "Y"],
                 ["Y1", "Z"]]
 
@@ -480,7 +491,8 @@ class HighSymmetryPoints:
             "Y": np.array([-1/2, 1/2, 0]),
             "Z": np.array([0, 0, 1/2])}
 
-        path = [["Gamma", "X", "S", "R", "A", "Z", "Gamma", "Y", "X1", "A1", "T", "Y"],
+        path = [["Gamma", "X", "S", "R", "A", "Z", "Gamma",
+                 "Y", "X1", "A1", "T", "Y"],
                 ["Z", "T"]]
 
         self._kpoints = kpoints
@@ -511,7 +523,9 @@ class HighSymmetryPoints:
     def rhl1(self, alpha):
         r"""Rhombohedral (RHL, hR),
 
-        \alpha < 90^{\circ}"""
+        .. math::
+            \alpha < 90^{\circ}
+        """
 
         eta = (1 + 4 * cos(alpha)) / (2 + 4 * cos(alpha))
         nu = 3 / 4 - eta / 2
@@ -543,7 +557,9 @@ class HighSymmetryPoints:
     def rhl2(self, alpha):
         r"""Rhombohedral (RHL, hR),
 
-        \alpha > 90^{\circ}"""
+        .. math::
+            \alpha > 90^{\circ}
+        """
 
         eta = 1 / (2 * tan(alpha / 2)**2)
         nu = 3 / 4 - eta / 2
@@ -601,7 +617,9 @@ class HighSymmetryPoints:
     def mclc1(self, a, b, c, alpha):
         r"""C-centred monoclinic (MCLC, mS),
 
-        k_{\gamma} > 90^{\circ}"""
+        .. math::
+            k_{\gamma} > 90^{\circ}
+        """
 
         zeta = (2 - b * cos(alpha) / c) / (4 * sin(alpha)**2)
         eta = 1 / 2 + 2 * eta * c * cos(alpha) / b
@@ -641,7 +659,9 @@ class HighSymmetryPoints:
     def mclc2(self, a, b, c, alpha):
         r"""C-centred monoclinic (MCLC, mS),
 
-        k_{\gamma} = 90^{\circ}"""
+        .. math::
+            k_{\gamma} = 90^{\circ}
+        """
 
         zeta = (2 - b * cos(alpha) / c) / (4 * sin(alpha)**2)
         eta = 1 / 2 + 2 * eta * c * cos(alpha) / b
@@ -679,8 +699,10 @@ class HighSymmetryPoints:
     def mclc3(self, a, b, c, alpha):
         r"""C-centred monoclinic (MCLC, mS),
 
-        k_{\gamma} < 90^{\circ}, 
-        \dfrac{b\cos(\alpha)}{c} + \dfrac{b^2\sin(\alpha)^2}{a^2} < 1"""
+        .. math::
+            k_{\gamma} < 90^{\circ}, 
+            \dfrac{b\cos(\alpha)}{c} + \dfrac{b^2\sin(\alpha)^2}{a^2} < 1
+        """
 
         mu = (1 + b**2 / a**2) / 4
         delta = b * c * cos(alpha) / (2 * a**2)
@@ -720,8 +742,10 @@ class HighSymmetryPoints:
     def mclc4(self, a, b, c, alpha):
         r"""C-centred monoclinic (MCLC, mS),
 
-        k_{\gamma} < 90^{\circ}, 
-        \dfrac{b\cos(\alpha)}{c} + \dfrac{b^2\sin(\alpha)^2}{a^2} = 1"""
+        .. math::
+            k_{\gamma} < 90^{\circ}, 
+            \dfrac{b\cos(\alpha)}{c} + \dfrac{b^2\sin(\alpha)^2}{a^2} = 1
+        """
 
         mu = (1 + b**2 / a**2) / 4
         delta = b * c * cos(alpha) / (2 * a**2)
@@ -761,8 +785,10 @@ class HighSymmetryPoints:
     def mclc5(self, a, b, c, alpha):
         r"""C-centred monoclinic (MCLC, mS),
 
-        k_{\gamma} < 90^{\circ}, 
-        \dfrac{b\cos(\alpha)}{c} + \dfrac{b^2\sin(\alpha)^2}{a^2} > 1"""
+        .. math::
+            k_{\gamma} < 90^{\circ}, 
+            \dfrac{b\cos(\alpha)}{c} + \dfrac{b^2\sin(\alpha)^2}{a^2} > 1
+        """
 
         zeta = (b**2 / a**2 + (1 - b * cos(alpha) / c) / sin(alpha)**2) / 4
         mu = zeta / 2 + b**2 / (4 * a**2) - b * c * cos(alpha) / (2 * a**2)
@@ -807,8 +833,13 @@ class HighSymmetryPoints:
     def tri1a(self, a):
         r"""Triclinic (TRI, aP),
 
-        k_{'alpha} > 90^{\circ}, k_{\beta} > 90^{\circ}, k_{\gamma} > 90^{circ},
-        k_{gamma} = min(k_{\alpha}, k_{\beta}, k_{\gamma))"""
+        .. math::
+            k_{\alpha} > 90^{\circ}, 
+            k_{\beta} > 90^{\circ}, 
+            k_{\gamma} > 90^{\circ}
+        .. math::
+            k_{\gamma} = \min(k_{\alpha}, k_{\beta}, k_{\gamma})
+        """
 
         kpoints = {
             "Gamma": np.array([0, 0, 0]),
@@ -833,8 +864,13 @@ class HighSymmetryPoints:
     def tri1b(self, a):
         r"""Triclinic (TRI, aP),
 
-        k_{'alpha} < 90^{\circ}, k_{\beta} < 90^{\circ}, k_{\gamma} < 90^{circ},
-        k_{gamma} = max(k_{\alpha}, k_{\beta}, k_{\gamma))"""
+        .. math::
+            k_{\alpha} < 90^{\circ}, 
+            k_{\beta} < 90^{\circ}, 
+            k_{\gamma} < 90^{\circ}
+        .. math::
+            k_{\gamma} = \max(k_{\alpha}, k_{\beta}, k_{\gamma})
+        """
 
         kpoints = {
             "Gamma": np.array([0, 0, 0]),
@@ -859,7 +895,11 @@ class HighSymmetryPoints:
     def tri2a(self, a):
         r"""Triclinic (TRI, aP),
 
-        k_{'alpha} > 90^{\circ}, k_{\beta} > 90^{\circ}, k_{\gamma} = 90^{circ}"""
+        .. math::
+            k_{\alpha} > 90^{\circ}, 
+            k_{\beta} > 90^{\circ}, 
+            k_{\gamma} = 90^{\circ}
+        """
 
         kpoints = {
             "Gamma": np.array([0, 0, 0]),
@@ -884,7 +924,11 @@ class HighSymmetryPoints:
     def tri2b(self, a):
         r"""Triclinic (TRI, aP),
 
-        k_{'alpha} < 90^{\circ}, k_{\beta} < 90^{\circ}, k_{\gamma} = 90^{circ}"""
+        .. math::
+            k_{\alpha} < 90^{\circ}, 
+            k_{\beta} < 90^{\circ}, 
+            k_{\gamma} = 90^{\circ}
+        """
 
         kpoints = {
             "Gamma": np.array([0, 0, 0]),

@@ -1,5 +1,4 @@
 import numpy as np
-
 import pytest
 
 from rad_tools.kpoints import HighSymmetryPoints

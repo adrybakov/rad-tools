@@ -1,12 +1,12 @@
 #! /usr/local/bin/python3
 
 from argparse import ArgumentParser
-from os.path import split, join
+from os.path import join, split
 
 import numpy as np
 
-from rad_tools.routines import strip_digits, WARNING, RESET, \
-    search_on_atoms, search_between_atoms
+from rad_tools.routines import (RESET, WARNING, search_between_atoms,
+                                search_on_atoms, strip_digits)
 
 
 def identify(filename, span, output_path, out_name, nocolor=False):

@@ -157,7 +157,8 @@ class Bond:
         Derived from the exchange matrix (:math:`\mathbf{J}`) as 
 
         .. math::
-            \mathbf{J}_{aniso} = \mathbf{J}_{symm} - \dfrac{1}{3}Tr(\mathbf{J}) \cdot \mathbf{I}
+            \mathbf{J}_{aniso} = \mathbf{J}_{symm} - \dfrac{1}{3}Tr(\mathbf{J}) 
+            \cdot \mathbf{I}
 
         where :math:`\mathbf{I}` is a :math:`3\times3` identity matrix.
         """

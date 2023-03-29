@@ -1,14 +1,14 @@
 from argparse import ArgumentParser
-from os.path import join, abspath
-from os import makedirs
 from math import sqrt
+from os import makedirs
+from os.path import abspath, join
 
-from matplotlib import pyplot as plt
 import numpy as np
+from matplotlib import pyplot as plt
 
-from rad_tools.io.tb2j import read_exchange_model
 from rad_tools.io.internal import read_template
-from rad_tools.routines import atom_mark_to_latex, rot_angle, OK, RESET
+from rad_tools.io.tb2j import read_exchange_model
+from rad_tools.routines import OK, RESET, atom_mark_to_latex, rot_angle
 
 
 def manager(input_filename,

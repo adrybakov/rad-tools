@@ -1,14 +1,13 @@
 from argparse import ArgumentParser
-from os.path import join, abspath
-from os import makedirs
-from datetime import datetime
 from calendar import month_name
+from datetime import datetime
+from os import makedirs
+from os.path import abspath, join
 
-
-from rad_tools.io.internal import read_template
-from rad_tools.io import read_tb2j_model
-from rad_tools.routines import OK, RESET
 from rad_tools import __version__ as version
+from rad_tools.io import read_tb2j_model
+from rad_tools.io.internal import read_template
+from rad_tools.routines import OK, RESET
 
 
 def manager(input_filename,

@@ -1,5 +1,5 @@
+from os import getcwd, rmdir
 from os.path import isdir, join
-from os import rmdir, getcwd
 
 import pytest
 

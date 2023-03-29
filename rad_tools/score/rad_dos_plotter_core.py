@@ -1,15 +1,15 @@
 #! /usr/local/bin/python3
 
 from argparse import ArgumentParser
+from copy import deepcopy
 from os import makedirs, walk
 from os.path import abspath, join
-from copy import deepcopy
-
-from rad_tools.routines import OK, RESET, YELLOW
 
 import matplotlib.pyplot as plt
-from matplotlib import __version__ as matplotlib_version
 import numpy as np
+from matplotlib import __version__ as matplotlib_version
+
+from rad_tools.routines import OK, RESET, YELLOW
 
 CASES = ["collinear, spin-unpolarized",
          "collinear, spin-polarized",

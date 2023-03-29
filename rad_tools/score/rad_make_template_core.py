@@ -1,14 +1,14 @@
 from argparse import ArgumentParser
-from os.path import abspath, split
-from os import makedirs
-from datetime import datetime
 from calendar import month_name
+from datetime import datetime
+from os import makedirs
+from os.path import abspath, split
 
 import numpy as np
 
+from rad_tools import __version__ as version
 from rad_tools.io.tb2j import read_exchange_model
 from rad_tools.routines import OK, RESET, YELLOW
-from rad_tools import __version__ as version
 
 
 def manager(output_name="template",
