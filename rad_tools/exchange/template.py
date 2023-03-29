@@ -1,5 +1,7 @@
 r"""
 Exchange template.
+
+Write a tutorial with docstrings here.
 """
 
 
@@ -7,20 +9,20 @@ class ExchangeTemplate:
     r"""
     Store a template for sorting the exchange from TB2J file.
 
-    In addition stores the technical details for plotting, 
-    orbital decompozition, etc.
+    In addition stores the technical details for plotting,
+    orbital decomposition, etc.
 
     Attributes
     ----------
     names : dict
-        Dictionary of neighbours from the template file.
+        Dictionary of neighbors from the template file.
 
         .. code-block:: python
 
             {name : [(atom1, atom2, R), ...], ...}
 
     latex_names : dict
-        The dictionary of Letex version of names from `names`.
+        The dictionary of Latex version of names from `names`.
 
         .. code-block:: python
 
@@ -28,7 +30,6 @@ class ExchangeTemplate:
     """
 
     def __init__(self) -> None:
-
         self.names = {}
         self.latex_names = {}
 
@@ -38,15 +39,15 @@ class ExchangeTemplate:
 
         Returns
         -------
-        plained_template : list
+        template_list : list
             List with the bond specifications:
 
             .. code-block:: python
 
                 [(atom_1, atom_2, R), ...]
         """
-        plained_template = []
+        template_list = []
         for name in self.names:
             for atom1, atom2, R in self.names[name]:
-                plained_template.append((atom1, atom2, R))
-        return plained_template
+                template_list.append((atom1, atom2, R))
+        return template_list

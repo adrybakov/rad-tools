@@ -13,7 +13,7 @@ tb2j_plotter.py to :ref:`tb2j-plotter.py <tb2j-plotter>`
 
 tb2j_refractor.py to :ref:`tb2j-refractor.py <tb2j-extractor>`
 
-phonopy_plotter.py to :ref:`phonopy-plotter.py <phonopy-plotter>`
+phonopy_plotter.py to ``phonopy-plotter.py``  (Removed in 0.5.12)
 
 Modules were renamed:
 

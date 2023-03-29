@@ -54,7 +54,7 @@ which means that two centres are not identified.
 The script provides in the console the distance to the closest atom 
 and to the closest centre of the bond between some pair of the atoms
 for each unidentified centre. In the output file some information about 
-inedentified centres are provided as well.
+unidentified centres are provided as well.
 
 As one can see first unidentified centre is quite close to the Br1 and 
 the second one to the Br2, let us extend the span a little bit in order to 
@@ -77,7 +77,7 @@ Arguments
 
 filename
 --------------
-Rellative or absolute path to the _centres.xyz file
+Relative or absolute path to the _centres.xyz file
 
 Identified Wannier centres will be store in the "filename"_identified file.
 
@@ -89,7 +89,7 @@ Identified Wannier centres will be store in the "filename"_identified file.
 
 -s, --span
 ----------
-Distance tolerance between centre and atom. (in Angstrom)
+Distance tolerance between centre and atom. (in Angstroms)
 
 If some atoms remains unidentified try to increase the span
 

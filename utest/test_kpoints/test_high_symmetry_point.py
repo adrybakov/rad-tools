@@ -1,15 +1,14 @@
 import numpy as np
-
 import pytest
 
 from rad_tools.kpoints import HighSymmetryPoints
 
 
 class TestHighSymmetryPoints:
-
     def test_init(self):
         tmp = HighSymmetryPoints(
-            kpoints={"R": [0, 0, 0], "G": [1, 2, 3]}, path=[["R", "G"]])
+            kpoints={"R": [0, 0, 0], "G": [1, 2, 3]}, path=[["R", "G"]]
+        )
         assert tmp.path == [["R", "G"]]
         assert tmp._kpoints == {"R": [0, 0, 0], "G": [1, 2, 3]}
 
@@ -33,9 +32,11 @@ class TestHighSymmetryPoints:
             tmp.path = "A|-K-M|"
 
         tmp = HighSymmetryPoints().hex()
-        assert tmp.path == [["Gamma", "M", "K", "Gamma", "A", "L", "H", "A"],
-                            ["L", "M"],
-                            ["K", "H"]]
+        assert tmp.path == [
+            ["Gamma", "M", "K", "Gamma", "A", "L", "H", "A"],
+            ["L", "M"],
+            ["K", "H"],
+        ]
         tmp.path = "A-K-M|H-L"
         assert tmp.path == [["A", "K", "M"], ["H", "L"]]
 
@@ -88,5 +89,4 @@ class TestHighSymmetryPoints:
         assert tmp.kpoints["R1"].tolist() == [4, 7, 6]
         assert tmp._PLOT_LITERALS["R2"] == "Rabbit2"
         assert tmp.kpoints["R2"].tolist() == [3, 7, 1]
-        assert (tmp.kpoints["R1"] - tmp.kpoints["R2"]
-                == np.array([1, 0, 5])).all()
+        assert (tmp.kpoints["R1"] - tmp.kpoints["R2"] == np.array([1, 0, 5])).all()

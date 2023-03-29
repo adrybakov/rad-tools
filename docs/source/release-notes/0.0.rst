@@ -42,7 +42,7 @@ Add argument to :ref:`tb2j-plotter.py <tb2j-plotter>` for title for the pictures
 
 0.0.0.7
 -------
-Add the :ref:`phonopy-plotter.py <phonopy-plotter>` script.
+Add the ``phonopy-plotter.py`` script. (Removed in 0.5.12)
 
 0.0.0.6
 -------

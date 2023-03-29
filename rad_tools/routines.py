@@ -3,10 +3,11 @@ Collection of small routines and constants,
 which may be used across the whole package.
 """
 
-import numpy as np
-from math import asin, sqrt, pi
+from math import asin, pi, sqrt
 
-# Teminal colors
+import numpy as np
+
+# Terminal colours
 BLACK = "\u001b[30m"
 """
 ANSI escape code for black color of the text.
@@ -74,14 +75,16 @@ def get_256_colours(n):
     """
 
     if type(n) != int or not 0 <= n <= 255:
-        raise ValueError(f'Integer n have to be in range 0 <= n <= 255. '
-                         f'You provided n = {n}, type<n> = {type(n)}')
-    return f'\033[38:5:{n}m'
+        raise ValueError(
+            f"Integer n have to be in range 0 <= n <= 255. "
+            f"You provided n = {n}, type<n> = {type(n)}"
+        )
+    return f"\033[38:5:{n}m"
 
 
 def atom_mark_to_latex(mark):
     r"""
-    Latexifier for atom marks. 
+    Latexifier for atom marks.
 
     Cr12 -> Cr\ :sub:`12`\.
 
@@ -95,21 +98,21 @@ def atom_mark_to_latex(mark):
     new_mark : str
         Latex version of the mark.
     """
-    numbers = '0123456789'
-    new_mark = '$'
+    numbers = "0123456789"
+    new_mark = "$"
     insert_underline = False
     for symbol in mark:
         if symbol in numbers and not insert_underline:
             insert_underline = True
-            new_mark += '_{'
+            new_mark += "_{"
         new_mark += symbol
-    new_mark += '}$'
+    new_mark += "}$"
     return new_mark
 
 
 def rot_angle(x, y, dummy=False):
     r"""
-    Rotational ange from 2D vector.
+    Rotational angle from 2D vector.
 
     Mathematically positive => counterclockwise.
     From [0 to 360)
@@ -126,7 +129,7 @@ def rot_angle(x, y, dummy=False):
     try:
         sin = abs(y) / sqrt(x**2 + y**2)
     except ZeroDivisionError:
-        raise ValueError('Angle is ill defined (x = y = 0).')
+        raise ValueError("Angle is ill defined (x = y = 0).")
     if x > 0:
         if y > 0:
             return asin(sin) / pi * 180
@@ -140,7 +143,7 @@ def rot_angle(x, y, dummy=False):
         if y > 0:
             return 90
         elif y == 0:
-            raise ValueError('Angle is ill defined (x = y = 0).')
+            raise ValueError("Angle is ill defined (x = y = 0).")
         elif y < 0:
             if not dummy:
                 return 90
@@ -190,14 +193,14 @@ def two_points_distance(point1, point2):
     Parameters
     ----------
     point1 : array
-        Coordinates of the first point. 
+        Coordinates of the first point.
 
         .. code-block:: python
 
             [x1, y1, z1]
 
     point2 : array
-        Coordinates of the second point. 
+        Coordinates of the second point.
 
         .. code-block:: python
 
@@ -211,7 +214,7 @@ def two_points_distance(point1, point2):
 
     point1 = np.array(point1)
     point2 = np.array(point2)
-    return sqrt(np.sum((point1 - point2)**2))
+    return sqrt(np.sum((point1 - point2) ** 2))
 
 
 def search_on_atoms(centre, atoms):
@@ -238,8 +241,8 @@ def search_on_atoms(centre, atoms):
     min_span = 10000
     name = "None"
     for atom, a_coord in atoms:
-        if sqrt(np.sum((centre[1] - a_coord)**2)) < min_span:
-            min_span = sqrt(np.sum((centre[1] - a_coord)**2))
+        if sqrt(np.sum((centre[1] - a_coord) ** 2)) < min_span:
+            min_span = sqrt(np.sum((centre[1] - a_coord) ** 2))
             name = atom
     return min_span, name
 
@@ -267,9 +270,9 @@ def search_between_atoms(centre, atoms):
 
     pairs = []
     for i, atom in enumerate(atoms):
-        for j in range(i+1, len(atoms)):
+        for j in range(i + 1, len(atoms)):
             pair = f"{atom[0]}-{atoms[j][0]}"
-            p_coord = (atom[1]+atoms[j][1])/2
+            p_coord = (atom[1] + atoms[j][1]) / 2
             pairs.append([pair, p_coord])
     return search_on_atoms(centre, pairs)
 
@@ -302,8 +305,12 @@ def absolute_to_relative(cell, x, y, z):
     if (v == np.zeros(3)).all():
         return np.zeros(3)
     B = np.array([np.dot(a, v), np.dot(b, v), np.dot(c, v)])
-    A = np.array([[np.dot(a, a), np.dot(a, b), np.dot(a, c)],
-                  [np.dot(b, a), np.dot(b, b), np.dot(b, c)],
-                  [np.dot(c, a), np.dot(c, b), np.dot(c, c)]])
+    A = np.array(
+        [
+            [np.dot(a, a), np.dot(a, b), np.dot(a, c)],
+            [np.dot(b, a), np.dot(b, b), np.dot(b, c)],
+            [np.dot(c, a), np.dot(c, b), np.dot(c, c)],
+        ]
+    )
     relative = np.linalg.solve(A, B)
     return relative

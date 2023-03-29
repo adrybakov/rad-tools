@@ -10,7 +10,7 @@ Rewrite the internals of the
 :doc:`ExchangeModel <../api/_autosummary/rad_tools.exchange.model.ExchangeModel>`.
 
 The idea is to allow one to modify the model with respect to the expected 
-symmetry and desired accuracy of the parameters. Futhermore, ``ExchangeModel``
+symmetry and desired accuracy of the parameters. Furthermore, ``ExchangeModel``
 is iterable, support index access and ``in`` function.
 
 The distances of the bonds are not directly read from the TB2J exchange file, but computed based on the atoms's positions.
@@ -62,9 +62,36 @@ Rename all arguments to input/output paths, not dirs.
 
 0.5.9/0.5.10/0.5.11
 -------------------
-Bugfix whe nseedname of pdos files contains pdos_tot
+Bugfix when seedname of pdos files contains pdos_tot
 
 0.5.12
 ------
-Cahnge the colors in :ref:`rad-dos-plotter.py <rad-dos-plotter>` script.
+Renamed ``--tb2j-filename`` argument 
+to the :ref:`--input-filename.py <rad-make-template_input-filename>`
+in the :ref:`rad-make-template.py <rad-make-template>` script in order to match 
+naming style.
 
+Remove ``phonopy-plotter.py`` script.
+
+0.5.13
+------
+Plot atoms in 0 0 0 unit cell in colour for 
+:ref:`tb2j-plotter.py <tb2j-plotter>` script.
+
+0.5.14
+------
+Bugfix in :ref:`tb2j-plotter.py <tb2j-plotter>` script.
+Problem with --force-symmetry if there is filtering by non-template parameters.
+
+0.5.15
+------
+Add version of the package to the information header of the output files. 
+
+0.5.16
+------
+Add ``remove`` method to the 
+:doc:`ExchangeModel <../api/_autosummary/rad_tools.exchange.model.ExchangeModel>`.
+
+0.5.?
+-----
+Change the colours in :ref:`rad-dos-plotter.py <rad-dos-plotter>` script.

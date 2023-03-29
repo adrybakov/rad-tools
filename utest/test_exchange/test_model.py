@@ -1,31 +1,32 @@
-from math import sqrt, pi
+from math import pi, sqrt
 
-import pytest
 import numpy as np
+import pytest
 
-from rad_tools.exchange.model import ExchangeModel
 from rad_tools.exchange.bond import Bond
+from rad_tools.exchange.model import ExchangeModel
 from rad_tools.exchange.template import ExchangeTemplate
 
 
 class TestExchangeModel:
-
     def test_iteration(self):
         model = ExchangeModel()
         model.add_atom("Cr1", 0.25, 0.25, 0)
         model.add_atom("Cr2", 0.75, 0.75, 0)
-        bonds = [(12, "Cr1", "Cr2", (0, 0, 0)),
-                 (12, "Cr2", "Cr1", (0, 0, 0)),
-                 (12, "Cr1", "Cr1", (1, 0, 0)),
-                 (12, "Cr1", "Cr1", (-1, 0, 0)),
-                 (12, "Cr2", "Cr2", (1, 0, 0)),
-                 (12, "Cr2", "Cr2", (-1, 0, 0)),
-                 (12, "Cr1", "Cr1", (0, 2, 0)),
-                 (12, "Cr1", "Cr1", (0, -2, 0)),
-                 (12, "Cr2", "Cr2", (0, 2, 0)),
-                 (12, "Cr2", "Cr2", (0, -2, 0)),
-                 (12, "Cr2", "Cr1", (2, 2, 0)),
-                 (12, "Cr1", "Cr2", (-2, -2, 0))]
+        bonds = [
+            (12, "Cr1", "Cr2", (0, 0, 0)),
+            (12, "Cr2", "Cr1", (0, 0, 0)),
+            (12, "Cr1", "Cr1", (1, 0, 0)),
+            (12, "Cr1", "Cr1", (-1, 0, 0)),
+            (12, "Cr2", "Cr2", (1, 0, 0)),
+            (12, "Cr2", "Cr2", (-1, 0, 0)),
+            (12, "Cr1", "Cr1", (0, 2, 0)),
+            (12, "Cr1", "Cr1", (0, -2, 0)),
+            (12, "Cr2", "Cr2", (0, 2, 0)),
+            (12, "Cr2", "Cr2", (0, -2, 0)),
+            (12, "Cr2", "Cr1", (2, 2, 0)),
+            (12, "Cr1", "Cr2", (-2, -2, 0)),
+        ]
         for iso, atom1, atom2, R in bonds:
             model.add_bond(Bond(iso=iso), atom1, atom2, R)
         for atom1, atom2, R in model:
@@ -37,18 +38,20 @@ class TestExchangeModel:
         model = ExchangeModel()
         model.add_atom("Cr1", 0.25, 0.25, 0)
         model.add_atom("Cr2", 0.75, 0.75, 0)
-        bonds = [(12, "Cr1", "Cr2", (0, 0, 0)),
-                 (12, "Cr2", "Cr1", (0, 0, 0)),
-                 (12, "Cr1", "Cr1", (1, 0, 0)),
-                 (12, "Cr1", "Cr1", (-1, 0, 0)),
-                 (12, "Cr2", "Cr2", (1, 0, 0)),
-                 (12, "Cr2", "Cr2", (-1, 0, 0)),
-                 (12, "Cr1", "Cr1", (0, 2, 0)),
-                 (12, "Cr1", "Cr1", (0, -2, 0)),
-                 (12, "Cr2", "Cr2", (0, 2, 0)),
-                 (12, "Cr2", "Cr2", (0, -2, 0)),
-                 (12, "Cr2", "Cr1", (2, 2, 0)),
-                 (12, "Cr1", "Cr2", (-2, -2, 0))]
+        bonds = [
+            (12, "Cr1", "Cr2", (0, 0, 0)),
+            (12, "Cr2", "Cr1", (0, 0, 0)),
+            (12, "Cr1", "Cr1", (1, 0, 0)),
+            (12, "Cr1", "Cr1", (-1, 0, 0)),
+            (12, "Cr2", "Cr2", (1, 0, 0)),
+            (12, "Cr2", "Cr2", (-1, 0, 0)),
+            (12, "Cr1", "Cr1", (0, 2, 0)),
+            (12, "Cr1", "Cr1", (0, -2, 0)),
+            (12, "Cr2", "Cr2", (0, 2, 0)),
+            (12, "Cr2", "Cr2", (0, -2, 0)),
+            (12, "Cr2", "Cr1", (2, 2, 0)),
+            (12, "Cr1", "Cr2", (-2, -2, 0)),
+        ]
         for iso, atom1, atom2, R in bonds:
             model.add_bond(Bond(iso=iso), atom1, atom2, R)
         assert ("Cr1", "Cr2", (0, 0, 0)) in model
@@ -60,18 +63,20 @@ class TestExchangeModel:
         model = ExchangeModel()
         model.add_atom("Cr1", 0.25, 0.25, 0)
         model.add_atom("Cr2", 0.75, 0.75, 0)
-        bonds = [(12, "Cr1", "Cr2", (0, 0, 0)),
-                 (12, "Cr2", "Cr1", (0, 0, 0)),
-                 (12, "Cr1", "Cr1", (1, 0, 0)),
-                 (12, "Cr1", "Cr1", (-1, 0, 0)),
-                 (12, "Cr2", "Cr2", (1, 0, 0)),
-                 (12, "Cr2", "Cr2", (-1, 0, 0)),
-                 (12, "Cr1", "Cr1", (0, 2, 0)),
-                 (12, "Cr1", "Cr1", (0, -2, 0)),
-                 (12, "Cr2", "Cr2", (0, 2, 0)),
-                 (12, "Cr2", "Cr2", (0, -2, 0)),
-                 (12, "Cr2", "Cr1", (2, 2, 0)),
-                 (12, "Cr1", "Cr2", (-2, -2, 0))]
+        bonds = [
+            (12, "Cr1", "Cr2", (0, 0, 0)),
+            (12, "Cr2", "Cr1", (0, 0, 0)),
+            (12, "Cr1", "Cr1", (1, 0, 0)),
+            (12, "Cr1", "Cr1", (-1, 0, 0)),
+            (12, "Cr2", "Cr2", (1, 0, 0)),
+            (12, "Cr2", "Cr2", (-1, 0, 0)),
+            (12, "Cr1", "Cr1", (0, 2, 0)),
+            (12, "Cr1", "Cr1", (0, -2, 0)),
+            (12, "Cr2", "Cr2", (0, 2, 0)),
+            (12, "Cr2", "Cr2", (0, -2, 0)),
+            (12, "Cr2", "Cr1", (2, 2, 0)),
+            (12, "Cr1", "Cr2", (-2, -2, 0)),
+        ]
         for iso, atom1, atom2, R in bonds:
             model.add_bond(Bond(iso=iso), atom1, atom2, R)
         assert model[("Cr1", "Cr2", (0, 0, 0))].iso == 12
@@ -91,29 +96,19 @@ class TestExchangeModel:
         assert (model.a == np.array([1, 2, 3])).all()
         assert (model.b == np.array([0, 1, 0])).all()
         assert (model.c == np.array([0, 0, 1])).all()
-        assert (model.cell == np.array([[1, 2, 3],
-                                        [0, 1, 0],
-                                        [0, 0, 1]])).all()
+        assert (model.cell == np.array([[1, 2, 3], [0, 1, 0], [0, 0, 1]])).all()
         model.b = [4, 5, 6]
         assert (model.a == np.array([1, 2, 3])).all()
         assert (model.b == np.array([4, 5, 6])).all()
         assert (model.c == np.array([0, 0, 1])).all()
-        assert (model.cell == np.array([[1, 2, 3],
-                                        [4, 5, 6],
-                                        [0, 0, 1]])).all()
+        assert (model.cell == np.array([[1, 2, 3], [4, 5, 6], [0, 0, 1]])).all()
         model.c = [7, 8, 9]
         assert (model.a == np.array([1, 2, 3])).all()
         assert (model.b == np.array([4, 5, 6])).all()
         assert (model.c == np.array([7, 8, 9])).all()
-        assert (model.cell == np.array([[1, 2, 3],
-                                        [4, 5, 6],
-                                        [7, 8, 9]])).all()
-        model.cell = [[2, 5, 3],
-                      [7, 3, 1],
-                      [8, 4, 9]]
-        assert (model.cell == np.array([[2, 5, 3],
-                                        [7, 3, 1],
-                                        [8, 4, 9]])).all()
+        assert (model.cell == np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])).all()
+        model.cell = [[2, 5, 3], [7, 3, 1], [8, 4, 9]]
+        assert (model.cell == np.array([[2, 5, 3], [7, 3, 1], [8, 4, 9]])).all()
 
     def test_len_abc(self):
         model = ExchangeModel()
@@ -130,16 +125,27 @@ class TestExchangeModel:
         model.b = [4, 5, 6]
         model.c = [7, 8, 8]
         assert model.unit_cell_volume == np.dot(
-            np.array([1, 2, 3]), np.cross(np.array([4, 5, 6]), np.array([7, 8, 8])))
+            np.array([1, 2, 3]), np.cross(np.array([4, 5, 6]), np.array([7, 8, 8]))
+        )
 
-    @ pytest.mark.parametrize("a, b, c, A, B, C, volume", [
-        ((1, 0, 0), (0, 1, 0), (0, 0, 1), 1, 1, 1, 1),
-        ((3.588, 0, 0), (0, 4.807, 0), (0, 0, 23.571),
-         3.588, 4.807, 23.571, 406.5412),
-        ((4, 3, 0), (0, 1, 0), (0, 0, 1), 5, 1, 1, 4),
-        ((1, 0, 0), (4, 3, 0), (0, 0, 1), 1, 5, 1, 3),
-        ((1, 0, 0), (0, 1, 0), (0, 4, 3), 1, 1, 5, 3),
-    ])
+    @pytest.mark.parametrize(
+        "a, b, c, A, B, C, volume",
+        [
+            ((1, 0, 0), (0, 1, 0), (0, 0, 1), 1, 1, 1, 1),
+            (
+                (3.588, 0, 0),
+                (0, 4.807, 0),
+                (0, 0, 23.571),
+                3.588,
+                4.807,
+                23.571,
+                406.5412,
+            ),
+            ((4, 3, 0), (0, 1, 0), (0, 0, 1), 5, 1, 1, 4),
+            ((1, 0, 0), (4, 3, 0), (0, 0, 1), 1, 5, 1, 3),
+            ((1, 0, 0), (0, 1, 0), (0, 4, 3), 1, 1, 5, 3),
+        ],
+    )
     def test_len_abc_and_volume(self, a, b, c, A, B, C, volume):
         model = ExchangeModel()
         model.cell = np.array([a, b, c], dtype=float)
@@ -222,9 +228,9 @@ class TestExchangeModel:
         model.add_atom("Cr1", 0.1, 0.6, 0.2)
         model.add_atom("Cr2", 0.1, 0.3, 0.5)
         model.add_atom("Cr3", 0.1, 0.3, 0.3)
-        model.add_bond(Bond(iso=1/3), "Cr1", "Cr2", (0, 0, 0))
-        model.add_bond(Bond(iso=2/7), "Cr1", "Cr3", (0, -1, 0))
-        model.add_bond(Bond(iso=3/11), "Cr2", "Cr1", (0, 0, -3))
+        model.add_bond(Bond(iso=1 / 3), "Cr1", "Cr2", (0, 0, 0))
+        model.add_bond(Bond(iso=2 / 7), "Cr1", "Cr3", (0, -1, 0))
+        model.add_bond(Bond(iso=3 / 11), "Cr2", "Cr1", (0, 0, -3))
         model.round(4)
         assert model[("Cr1", "Cr2", (0, 0, 0))].iso == 0.3333
         assert model[("Cr1", "Cr3", (0, -1, 0))].iso == 0.2857
@@ -435,18 +441,20 @@ class TestExchangeModel:
         model = ExchangeModel()
         model.add_atom("Cr1", 0.25, 0.25, 0)
         model.add_atom("Cr2", 0.75, 0.75, 0)
-        bonds = [(12, "Cr1", "Cr2", (0, 0, 0)),
-                 (12, "Cr2", "Cr1", (0, 0, 0)),
-                 (12, "Cr1", "Cr1", (1, 0, 0)),
-                 (12, "Cr1", "Cr1", (-1, 0, 0)),
-                 (12, "Cr2", "Cr2", (1, 0, 0)),
-                 (12, "Cr2", "Cr2", (-1, 0, 0)),
-                 (12, "Cr1", "Cr1", (0, 2, 0)),
-                 (12, "Cr1", "Cr1", (0, -2, 0)),
-                 (12, "Cr2", "Cr2", (0, 2, 0)),
-                 (12, "Cr2", "Cr2", (0, -2, 0)),
-                 (12, "Cr2", "Cr1", (2, 2, 0)),
-                 (12, "Cr1", "Cr2", (-2, -2, 0))]
+        bonds = [
+            (12, "Cr1", "Cr2", (0, 0, 0)),
+            (12, "Cr2", "Cr1", (0, 0, 0)),
+            (12, "Cr1", "Cr1", (1, 0, 0)),
+            (12, "Cr1", "Cr1", (-1, 0, 0)),
+            (12, "Cr2", "Cr2", (1, 0, 0)),
+            (12, "Cr2", "Cr2", (-1, 0, 0)),
+            (12, "Cr1", "Cr1", (0, 2, 0)),
+            (12, "Cr1", "Cr1", (0, -2, 0)),
+            (12, "Cr2", "Cr2", (0, 2, 0)),
+            (12, "Cr2", "Cr2", (0, -2, 0)),
+            (12, "Cr2", "Cr1", (2, 2, 0)),
+            (12, "Cr1", "Cr2", (-2, -2, 0)),
+        ]
         for iso, atom1, atom2, R in bonds:
             model.add_bond(Bond(iso=iso), atom1, atom2, R)
 
@@ -463,9 +471,39 @@ class TestExchangeModel:
         assert len(filtered_model.bonds) == 4
         filtered_model = model.filtered(template=[("Cr1", "Cr2", (0, 0, 0))])
         assert len(filtered_model.bonds) == 1
-        filtered_model = model.filtered(template=[("Cr1", "Cr2", (0, 0, 0))],
-                                        R_vector=[(0, 0, 0), (1, 0, 0)])
+        filtered_model = model.filtered(
+            template=[("Cr1", "Cr2", (0, 0, 0))], R_vector=[(0, 0, 0), (1, 0, 0)]
+        )
         assert len(filtered_model.bonds) == 1
+
+    def test_remove(self):
+        model = ExchangeModel()
+        model.add_atom("Cr1", 0.25, 0.25, 0)
+        model.add_atom("Cr2", 0.75, 0.75, 0)
+        bonds = [
+            (12, "Cr1", "Cr2", (0, 0, 0)),
+            (12, "Cr2", "Cr1", (0, 0, 0)),
+            (12, "Cr1", "Cr1", (1, 0, 0)),
+            (12, "Cr1", "Cr1", (-1, 0, 0)),
+            (12, "Cr2", "Cr2", (1, 0, 0)),
+            (12, "Cr2", "Cr2", (-1, 0, 0)),
+            (12, "Cr1", "Cr1", (0, 2, 0)),
+            (12, "Cr1", "Cr1", (0, -2, 0)),
+            (12, "Cr2", "Cr2", (0, 2, 0)),
+            (12, "Cr2", "Cr2", (0, -2, 0)),
+            (12, "Cr2", "Cr1", (2, 2, 0)),
+            (12, "Cr1", "Cr2", (-2, -2, 0)),
+        ]
+        for iso, atom1, atom2, R in bonds:
+            model.add_bond(Bond(iso=iso), atom1, atom2, R)
+
+        assert len(model.bonds) == 12
+        model.remove(template=[("Cr1", "Cr2", (0, 0, 0)), ("Cr2", "Cr2", (-1, 0, 0))])
+        assert len(model.bonds) == 10
+        model.remove(template=[("Cr1", "Cr2", (-2, -2, 0)), ("Cr2", "Cr2", (0, 2, 0))])
+        assert len(model.bonds) == 8
+        model.remove(template=[("Cr1", "Cr2", (-20, -2, 0)), ("Cr2", "Cr2", (3, 2, 0))])
+        assert len(model.bonds) == 8
 
     def test_force_symmetry(self):
         template1 = ExchangeTemplate()
@@ -474,111 +512,114 @@ class TestExchangeModel:
         model = ExchangeModel()
         model.add_atom("Cr1", 0.25, 0.25, 0)
         model.add_atom("Cr2", 0.75, 0.75, 0)
-        bonds = [([[4, 2, 3],
-                   [4, 8, 6],
-                   [7, 8, 12]], "Cr1", "Cr2", (0, 0, 0)),
-                 ([[1, 4, 7],
-                   [2, 5, 8],
-                   [3, 6, 9]], "Cr2", "Cr1", (0, 0, 0)),
-
-                 ([[1, 4, 0],
-                   [4, 1, -1],
-                   [0, 1, 0]], "Cr1", "Cr1", (1, 0, 0)),
-                 ([[1, 4, 0],
-                   [4, 1, 1],
-                   [0, -1, 0]], "Cr1", "Cr1", (-1, 0, 0)),
-                 ([[1, 2, 0],
-                   [2, 1, -2],
-                   [0, 2, 0]], "Cr2", "Cr2", (1, 0, 0)),
-                 ([[1, 2, 0],
-                   [2, 1, 2],
-                   [0, -2, 0]], "Cr2", "Cr2", (-1, 0, 0))]
+        bonds = [
+            ([[4, 2, 3], [4, 8, 6], [7, 8, 12]], "Cr1", "Cr2", (0, 0, 0)),
+            ([[1, 4, 7], [2, 5, 8], [3, 6, 9]], "Cr2", "Cr1", (0, 0, 0)),
+            ([[1, 4, 0], [4, 1, -1], [0, 1, 0]], "Cr1", "Cr1", (1, 0, 0)),
+            ([[1, 4, 0], [4, 1, 1], [0, -1, 0]], "Cr1", "Cr1", (-1, 0, 0)),
+            ([[1, 2, 0], [2, 1, -2], [0, 2, 0]], "Cr2", "Cr2", (1, 0, 0)),
+            ([[1, 2, 0], [2, 1, 2], [0, -2, 0]], "Cr2", "Cr2", (-1, 0, 0)),
+        ]
         for matrix, atom1, atom2, R in bonds:
             model.add_bond(Bond(matrix=matrix), atom1, atom2, R)
 
-        template1.names = {"J1": [("Cr1", "Cr2", (0, 0, 0)),
-                                  ("Cr2", "Cr1", (0, 0, 0))],
-                           "J2": [("Cr1", "Cr1", (1, 0, 0)),
-                                  ("Cr1", "Cr1", (-1, 0, 0)),
-                                  ("Cr2", "Cr2", (1, 0, 0)),
-                                  ("Cr2", "Cr2", (-1, 0, 0))]}
-        template2.names = {"J1": [("Cr1", "Cr2", (0, 0, 0)),
-                                  ("Cr2", "Cr1", (0, 0, 0))],
-                           "J2": [("Cr1", "Cr1", (1, 0, 0)),
-                                  ("Cr1", "Cr1", (-1, 0, 0)),
-                                  ("Cr2", "Cr2", (1, 0, 0))]}
-        template3.names = {"J1": [("Cr1", "Cr2", (0, 0, 0)),
-                                  ("Cr2", "Cr1", (0, 0, 0))],
-                           "J2": [("Cr1", "Cr1", (1, 0, 0)),
-                                  ("Cr1", "Cr1", (-1, 0, 0))]}
+        template1.names = {
+            "J1": [("Cr1", "Cr2", (0, 0, 0)), ("Cr2", "Cr1", (0, 0, 0))],
+            "J2": [
+                ("Cr1", "Cr1", (1, 0, 0)),
+                ("Cr1", "Cr1", (-1, 0, 0)),
+                ("Cr2", "Cr2", (1, 0, 0)),
+                ("Cr2", "Cr2", (-1, 0, 0)),
+            ],
+        }
+        template2.names = {
+            "J1": [("Cr1", "Cr2", (0, 0, 0)), ("Cr2", "Cr1", (0, 0, 0))],
+            "J2": [
+                ("Cr1", "Cr1", (1, 0, 0)),
+                ("Cr1", "Cr1", (-1, 0, 0)),
+                ("Cr2", "Cr2", (1, 0, 0)),
+            ],
+        }
+        template3.names = {
+            "J1": [("Cr1", "Cr2", (0, 0, 0)), ("Cr2", "Cr1", (0, 0, 0))],
+            "J2": [("Cr1", "Cr1", (1, 0, 0)), ("Cr1", "Cr1", (-1, 0, 0))],
+        }
 
         model.force_symmetry(template=template1)
         assert len(model.bonds) == 6
-        assert (model[("Cr1", "Cr2", (0, 0, 0))].matrix == np.array([[2.5, 2, 3],
-                                                                     [4, 6.5, 6],
-                                                                     [7, 8, 10.5]])).all()
-        assert (model[("Cr2", "Cr1", (0, 0, 0))].matrix == np.array([[2.5, 4, 7],
-                                                                     [2, 6.5, 8],
-                                                                     [3, 6, 10.5]])).all()
+        assert (
+            model[("Cr1", "Cr2", (0, 0, 0))].matrix
+            == np.array([[2.5, 2, 3], [4, 6.5, 6], [7, 8, 10.5]])
+        ).all()
+        assert (
+            model[("Cr2", "Cr1", (0, 0, 0))].matrix
+            == np.array([[2.5, 4, 7], [2, 6.5, 8], [3, 6, 10.5]])
+        ).all()
 
-        assert (model[("Cr1", "Cr1", (1, 0, 0))].matrix == np.array([[1, 3, 0],
-                                                                     [3, 1, -1.5],
-                                                                     [0, 1.5, 0]])).all()
-        assert (model[("Cr1", "Cr1", (-1, 0, 0))].matrix == np.array([[1, 3, 0],
-                                                                      [3, 1,
-                                                                       1.5],
-                                                                      [0, -1.5, 0]])).all()
-        assert (model[("Cr2", "Cr2", (1, 0, 0))].matrix == np.array([[1, 3, 0],
-                                                                     [3, 1, -1.5],
-                                                                     [0, 1.5, 0]])).all()
-        assert (model[("Cr2", "Cr2", (-1, 0, 0))].matrix == np.array([[1, 3, 0],
-                                                                      [3, 1,
-                                                                       1.5],
-                                                                      [0, -1.5, 0]])).all()
+        assert (
+            model[("Cr1", "Cr1", (1, 0, 0))].matrix
+            == np.array([[1, 3, 0], [3, 1, -1.5], [0, 1.5, 0]])
+        ).all()
+        assert (
+            model[("Cr1", "Cr1", (-1, 0, 0))].matrix
+            == np.array([[1, 3, 0], [3, 1, 1.5], [0, -1.5, 0]])
+        ).all()
+        assert (
+            model[("Cr2", "Cr2", (1, 0, 0))].matrix
+            == np.array([[1, 3, 0], [3, 1, -1.5], [0, 1.5, 0]])
+        ).all()
+        assert (
+            model[("Cr2", "Cr2", (-1, 0, 0))].matrix
+            == np.array([[1, 3, 0], [3, 1, 1.5], [0, -1.5, 0]])
+        ).all()
         for matrix, atom1, atom2, R in bonds:
             model.add_bond(Bond(matrix=matrix), atom1, atom2, R)
         model.force_symmetry(template=template2)
         assert len(model.bonds) == 5
-        assert (model[("Cr1", "Cr2", (0, 0, 0))].matrix == np.array([[2.5, 2, 3],
-                                                                     [4, 6.5, 6],
-                                                                     [7, 8, 10.5]])).all()
-        assert (model[("Cr2", "Cr1", (0, 0, 0))].matrix == np.array([[2.5, 4, 7],
-                                                                     [2, 6.5, 8],
-                                                                     [3, 6, 10.5]])).all()
+        assert (
+            model[("Cr1", "Cr2", (0, 0, 0))].matrix
+            == np.array([[2.5, 2, 3], [4, 6.5, 6], [7, 8, 10.5]])
+        ).all()
+        assert (
+            model[("Cr2", "Cr1", (0, 0, 0))].matrix
+            == np.array([[2.5, 4, 7], [2, 6.5, 8], [3, 6, 10.5]])
+        ).all()
 
-        assert (model[("Cr1", "Cr1", (1, 0, 0))].matrix == np.array([[1, 10/3, 0],
-                                                                     [10/3,
-                                                                      1, -4/3],
-                                                                     [0, 4/3, 0]])).all()
-        assert (model[("Cr1", "Cr1", (-1, 0, 0))].matrix == np.array([[1, 10/3, 0],
-                                                                      [10/3, 1,
-                                                                       4/3],
-                                                                      [0, -4/3, 0]])).all()
-        assert (model[("Cr2", "Cr2", (1, 0, 0))].matrix == np.array([[1, 10/3, 0],
-                                                                     [10/3,
-                                                                      1, -4/3],
-                                                                     [0, 4/3, 0]])).all()
+        assert (
+            model[("Cr1", "Cr1", (1, 0, 0))].matrix
+            == np.array([[1, 10 / 3, 0], [10 / 3, 1, -4 / 3], [0, 4 / 3, 0]])
+        ).all()
+        assert (
+            model[("Cr1", "Cr1", (-1, 0, 0))].matrix
+            == np.array([[1, 10 / 3, 0], [10 / 3, 1, 4 / 3], [0, -4 / 3, 0]])
+        ).all()
+        assert (
+            model[("Cr2", "Cr2", (1, 0, 0))].matrix
+            == np.array([[1, 10 / 3, 0], [10 / 3, 1, -4 / 3], [0, 4 / 3, 0]])
+        ).all()
         assert ("Cr2", "Cr2", (-1, 0, 0)) not in model
 
         for matrix, atom1, atom2, R in bonds:
             model.add_bond(Bond(matrix=matrix), atom1, atom2, R)
         model.force_symmetry(template=template3)
         assert len(model.bonds) == 4
-        assert (model[("Cr1", "Cr2", (0, 0, 0))].matrix == np.array([[2.5, 2, 3],
-                                                                     [4, 6.5, 6],
-                                                                     [7, 8, 10.5]])).all()
-        assert (model[("Cr2", "Cr1", (0, 0, 0))].matrix == np.array([[2.5, 4, 7],
-                                                                     [2, 6.5, 8],
-                                                                     [3, 6, 10.5]])).all()
+        assert (
+            model[("Cr1", "Cr2", (0, 0, 0))].matrix
+            == np.array([[2.5, 2, 3], [4, 6.5, 6], [7, 8, 10.5]])
+        ).all()
+        assert (
+            model[("Cr2", "Cr1", (0, 0, 0))].matrix
+            == np.array([[2.5, 4, 7], [2, 6.5, 8], [3, 6, 10.5]])
+        ).all()
 
-        assert (model[("Cr1", "Cr1", (1, 0, 0))].matrix == np.array([[1, 4, 0],
-                                                                     [4,
-                                                                      1, -1],
-                                                                     [0, 1, 0]])).all()
-        assert (model[("Cr1", "Cr1", (-1, 0, 0))].matrix == np.array([[1, 4, 0],
-                                                                      [4, 1,
-                                                                       1],
-                                                                      [0, -1, 0]])).all()
+        assert (
+            model[("Cr1", "Cr1", (1, 0, 0))].matrix
+            == np.array([[1, 4, 0], [4, 1, -1], [0, 1, 0]])
+        ).all()
+        assert (
+            model[("Cr1", "Cr1", (-1, 0, 0))].matrix
+            == np.array([[1, 4, 0], [4, 1, 1], [0, -1, 0]])
+        ).all()
 
         assert ("Cr2", "Cr2", (11, 0, 0)) not in model
         assert ("Cr2", "Cr2", (-1, 0, 0)) not in model
@@ -596,10 +637,12 @@ class TestExchangeModel:
         model.add_bond(Bond(iso=3), "Cr2", "Cr1", (0, 0, -3))
         assert model.ferromagnetic_energy() == -6
         assert model.ferromagnetic_energy(theta=23, phi=234) == -6
-        model.add_bond(Bond(iso=3, aniso=[[1, 0, 0],
-                                          [0, 2, 0],
-                                          [0, 0, -3]]),
-                       "Cr2", "Cr1", (0, 0, -1))
+        model.add_bond(
+            Bond(iso=3, aniso=[[1, 0, 0], [0, 2, 0], [0, 0, -3]]),
+            "Cr2",
+            "Cr1",
+            (0, 0, -1),
+        )
         assert model.ferromagnetic_energy() == -6
         assert model.ferromagnetic_energy(theta=90) == -10
         assert model.ferromagnetic_energy(theta=90, phi=90) == -11

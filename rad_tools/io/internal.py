@@ -7,7 +7,7 @@ from rad_tools.exchange.template import ExchangeTemplate
 
 def read_template(filename):
     r"""
-    Read template from the template file.    
+    Read template from the template file.
 
     Parameters
     ----------
@@ -21,9 +21,9 @@ def read_template(filename):
     """
 
     # Constants
-    major_sep = '=' * 20
-    minor_sep = '-' * 20
-    neighbors_flag = 'Neighbors template:'
+    major_sep = "=" * 20
+    minor_sep = "-" * 20
+    neighbors_flag = "Neighbors template:"
 
     template = ExchangeTemplate()
 
@@ -45,9 +45,7 @@ def read_template(filename):
                         template.names[name] = []
                         template.latex_names[name] = latex_name
                         line = file.readline()
-                        while line and\
-                                minor_sep not in line and\
-                                major_sep not in line:
+                        while line and minor_sep not in line and major_sep not in line:
                             atom1 = line.split()[0]
                             atom2 = line.split()[1]
 

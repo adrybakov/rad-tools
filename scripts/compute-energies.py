@@ -5,10 +5,9 @@ from subprocess import run
 
 
 def J_values(FM, AFM1, AFM2, AFM3):
-
-    J2 = -(FM - AFM1)*13605/8/8
-    J3 = -(FM - AFM2)*13605/2/2/8 - J2
-    J1 = -(AFM2 - AFM3)*13605/8/2/8 + J3
+    J2 = -(FM - AFM1) * 13605 / 8 / 8
+    J3 = -(FM - AFM2) * 13605 / 2 / 2 / 8 - J2
+    J1 = -(AFM2 - AFM3) * 13605 / 8 / 2 / 8 + J3
 
     return J1, J2, J3
 
@@ -66,26 +65,28 @@ def compute(filename):
             try:
                 fm = FM[mode][dis]
             except KeyError:
-                print(
-                    f"mode {mode}, displacement {dis/100:.2f} FM : problem with scf")
+                print(f"mode {mode}, displacement {dis/100:.2f} FM : problem with scf")
                 ISOK = False
             try:
                 afm1 = AFM1[mode][dis]
             except KeyError:
                 print(
-                    f"mode {mode}, displacement {dis/100:.2f} AFM1 : problem with scf")
+                    f"mode {mode}, displacement {dis/100:.2f} AFM1 : problem with scf"
+                )
                 ISOK = False
             try:
                 afm2 = AFM2[mode][dis]
             except KeyError:
                 print(
-                    f"mode {mode}, displacement {dis/100:.2f} AFM2 : problem with scf")
+                    f"mode {mode}, displacement {dis/100:.2f} AFM2 : problem with scf"
+                )
                 ISOK = False
             try:
                 afm3 = AFM3[mode][dis]
             except KeyError:
                 print(
-                    f"mode {mode}, displacement {dis/100:.2f} AFM3 : problem with scf")
+                    f"mode {mode}, displacement {dis/100:.2f} AFM3 : problem with scf"
+                )
                 ISOK = False
             if ISOK:
                 J1, J2, J3 = J_values(fm, afm1, afm2, afm3)
@@ -95,12 +96,15 @@ def compute(filename):
 
 if __name__ == "__main__":
     parser = ArgumentParser(formatter_class=RawTextHelpFormatter)
-    parser.add_argument("filename", type=str,
-                        help="""File with grepped lines.
+    parser.add_argument(
+        "filename",
+        type=str,
+        help="""File with grepped lines.
 Example grep:
 
 grep "!" *mode/*F*/{neg,pos}/crsbr.scf*out > summary.txt
-    """)
+    """,
+    )
     args = parser.parse_args()
 
     compute(args.filename)

@@ -45,7 +45,7 @@ which will produce three pictures *exchange.iso.png*,
 default seedname (*exchange*, use 
 :ref:`--output-name <tb2j-plotter_output-name>` to change it), data type 
 (*iso*, *dmi*, *distance*, see 
-:ref:`--what-to-plot <tb2j-plotter_what-to-plot>`) and file extention.
+:ref:`--what-to-plot <tb2j-plotter_what-to-plot>`) and file extension.
 
 .. dropdown:: Output images
 
@@ -73,7 +73,7 @@ Basic adjustments
 -----------------
 
 Since the exchange.out file contains a lot of exchange bonds the pictures with 
-all of them are not really usefull. Lets plot the isotropic exchange picture 
+all of them are not really useful. Lets plot the isotropic exchange picture 
 with some adjustments:
 
     * Filter the model by maximum distance (:ref:`-md <tb2j-plotter_max-distance>`).
@@ -84,7 +84,7 @@ with some adjustments:
 
 .. code-block:: bash
 
-    tb2j-plotter.py -if exchange.out -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange" -on exchange_filtered
+    tb2j-plotter.py -if exchange.out -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange" -on exchange_filtered
 
 .. figure:: /../examples/tb2j-plotter/exchange_filtered.iso.png
     :align: center
@@ -103,16 +103,16 @@ For filtering the exchange model there are a few options available:
     * :ref:`--template <tb2j-plotter_template-file>`
 
 Here is an example of how to filter exchange model in order to show 
-frist exchange neighbor, using different options:
+first exchange neighbour, using different options:
 :ref:`--max_distance <tb2j-plotter_max-distance>`
 :ref:`--R-vector <tb2j-plotter_R-vector>` or
 :ref:`--template <tb2j-plotter_template-file>` arguments:
 
 .. code-block:: bash
 
-    tb2j-plotter.py -if exchange.out -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange" -on exchange_filtered
-    tb2j-plotter.py -if exchange.out -wtp iso -tf template.txt -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange" -on exchange_template
-    tb2j-plotter.py -if exchange.out -wtp iso -R 1 0 0 1 1 0  0 1 0 -1 1 0 -1 0 0 -1 -1 0 0 -1 0 1 -1 0 -dc -sa 1.2 -sd 1.2 -t "First neighbor exchange" -on exchange_R
+    tb2j-plotter.py -if exchange.out -wtp iso -maxd 5 -dc -sa 1.2 u-sd 1.2 -t "First neighbour exchange" -on exchange_filtered
+    tb2j-plotter.py -if exchange.out -wtp iso -tf template.txt -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange" -on exchange_template
+    tb2j-plotter.py -if exchange.out -wtp iso -R 1 0 0 1 1 0  0 1 0 -1 1 0 -1 0 0 -1 -1 0 0 -1 0 1 -1 0 -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange" -on exchange_R
 
 where template file is the following:
 
@@ -166,9 +166,9 @@ to reproduce particular exchange model:
 
         exchange_forced_symmetry.distance.png
 
-Only one exchage parameter present in the template file, therefore the model 
+Only one exchange parameter present in the template file, therefore the model 
 is filtered with respect to the template and then the value of the exchange 
-for each bond is set to the medium value of all bonds from the same exchage group.
+for each bond is set to the medium value of all bonds from the same exchange group.
 DMI interaction is modified as well in a way that direction of the DMI vector is 
 kept, but the magnitude of the DMI vector is scaled to the medium value.
 
@@ -186,8 +186,8 @@ Arguments
 
 -if, --input-filename
 ---------------------
-Relative or absulute path to the TB2J exchange output file, 
-including the name and extention of the file.
+Relative or absolute path to the TB2J exchange output file, 
+including the name and extension of the file.
 
 .. code-block:: text
 
@@ -201,7 +201,7 @@ including the name and extention of the file.
 Relative or absolute path to the folder for saving outputs.
 
 If the folder does not exist then it is created from the specified path.
-The creation is applied recursevly to the path, starting from the right
+The creation is applied recursively to the path, starting from the right
 until the existing folder is reached.
 
 .. code-block:: text
@@ -282,7 +282,7 @@ ignored.
 ---------------------
 (<=) Maximum distance.
 
-All the bonds with the distance beetwen atom 1 and atom 2 
+All the bonds with the distance between atom 1 and atom 2 
 greater than maximum distance are excluded from the model.
 
 .. code-block:: text
@@ -296,7 +296,7 @@ greater than maximum distance are excluded from the model.
 ---------------------
 (>=) Minimum distance.
 
-All the bonds with the distance beetwen atom 1 and atom 2 
+All the bonds with the distance between atom 1 and atom 2 
 lower than minimum distance are excluded from the model.
 
 .. code-block:: text
@@ -326,7 +326,7 @@ Only the bonds with the exact distance remains in the model.
 -tf, --template-file
 --------------------
 Relative or absolute path to the template file, 
-including the name and extention of the file.
+including the name and extension of the file.
 
 .. code-block:: text
 
@@ -385,5 +385,15 @@ Force the exchange model to have the symmetry of the template.
 .. code-block:: text
 
     default : False
-    
+
+
+.. _tb2j-plotter_verbose:
+
+-v, -verbose
+------------
+Verbose output, propagates to the called methods.
+
+.. code-block:: text
+
+    default : False
  
