@@ -11,9 +11,9 @@ class Bond:
     r"""
     Exchange bond.
 
-    If ``matrix`` is specified then ``iso``, ``aniso`` and ``dmi`` are 
-    ignored and derived from ``matrix``. If ``matrix`` is not specified 
-    then it is derived from ``iso``, ``aniso`` and ``dmi``. 
+    If ``matrix`` is specified then ``iso``, ``aniso`` and ``dmi`` are
+    ignored and derived from ``matrix``. If ``matrix`` is not specified
+    then it is derived from ``iso``, ``aniso`` and ``dmi``.
     If nothing is provided exchange matrix is set to zero matrix.
 
     Parameters
@@ -25,12 +25,12 @@ class Bond:
     dmi : 1 x 3 array, None
         Dzyaroshinsky-Moria interaction vector :math:`(D_x, D_y, D_z)`.
     matrix : 3 x 3 array, None
-        Exchange matrix. 
+        Exchange matrix.
 
     Attributes
     ----------
     matrix : 3 x 3 array of floats
-        Exchange matrix. 
+        Exchange matrix.
 
         .. code-block:: python
 
@@ -43,20 +43,16 @@ class Bond:
     iso : float
     iso_matrix : 3 x 3 array of floats
     aniso : 3 x 3 array of floats
-    aniso_diagonal : 1 x 3 array of floats 
-    aniso_diagonal_matrix : 3 x 3 array of floats 
+    aniso_diagonal : 1 x 3 array of floats
+    aniso_diagonal_matrix : 3 x 3 array of floats
     dmi : 1 x 3 array of floats
     dmi_matrix : 3 x 3 array of floats
     dmi_module : float
     """
 
-    def __init__(self,
-                 matrix=None,
-                 iso=None,
-                 aniso=None,
-                 dmi=None) -> None:
+    def __init__(self, matrix=None, iso=None, aniso=None, dmi=None) -> None:
         self._matrix = np.zeros((3, 3), dtype=float)
-        self._iso = 0.
+        self._iso = 0.0
         self._aniso = np.zeros((3, 3), dtype=float)
         self._dmi = np.zeros(3, dtype=float)
 
@@ -86,7 +82,7 @@ class Bond:
         r"""
         Symmetric part of exchange matrix.
 
-        .. math:: 
+        .. math::
 
             J_symm = \dfrac{J + J^T}{2}
         """
@@ -98,7 +94,7 @@ class Bond:
         """
         Asymmetric part of exchange matrix.
 
-        .. math:: 
+        .. math::
 
             J_asymm = \dfrac{J - J^T}{2}
         """
@@ -110,7 +106,7 @@ class Bond:
         r"""
         Value of isotropic exchange parameter.
 
-        Derived from the exchange matrix (:math:`\mathbf{J}`) as 
+        Derived from the exchange matrix (:math:`\mathbf{J}`) as
 
         .. math::
             J_{iso} = \dfrac{1}{3}Tr(\mathbf{J})
@@ -125,14 +121,14 @@ class Bond:
             new_iso = new_iso - self.iso
         else:
             new_iso = -self.iso
-        self.matrix = (self.matrix + (new_iso) * np.identity(3, dtype=float))
+        self.matrix = self.matrix + (new_iso) * np.identity(3, dtype=float)
 
     @property
     def iso_matrix(self):
         r"""
         Isotropic part of the exchange matrix.
 
-        Matrix form: 
+        Matrix form:
 
         .. code-block:: python
 
@@ -146,7 +142,7 @@ class Bond:
     @property
     def aniso(self):
         r"""
-        3 x 3 matrix of symmetric anisotropic exchange. 
+        3 x 3 matrix of symmetric anisotropic exchange.
 
         .. code-block:: python
 
@@ -154,10 +150,10 @@ class Bond:
              [J_xy, J_yy, J_yz],
              [J_xz, J_yz, J_zz]]
 
-        Derived from the exchange matrix (:math:`\mathbf{J}`) as 
+        Derived from the exchange matrix (:math:`\mathbf{J}`) as
 
         .. math::
-            \mathbf{J}_{aniso} = \mathbf{J}_{symm} - \dfrac{1}{3}Tr(\mathbf{J}) 
+            \mathbf{J}_{aniso} = \mathbf{J}_{symm} - \dfrac{1}{3}Tr(\mathbf{J})
             \cdot \mathbf{I}
 
         where :math:`\mathbf{I}` is a :math:`3\times3` identity matrix.
@@ -170,12 +166,11 @@ class Bond:
         if new_aniso is not None:
             new_aniso = np.array(new_aniso, dtype=float)
             if new_aniso.shape != (3, 3):
-                raise ValueError("Aniso matrix shape have " +
-                                 "to be equal to (3, 3)")
+                raise ValueError("Aniso matrix shape have " + "to be equal to (3, 3)")
             # correction is correct (see matrix update)
             new_aniso = new_aniso - self.aniso
         else:
-            new_aniso = - self.aniso
+            new_aniso = -self.aniso
         self.matrix = self.matrix + new_aniso
 
     @property
@@ -207,32 +202,35 @@ class Bond:
     @property
     def dmi(self):
         r"""
-        Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz). 
+        Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz).
 
         .. code-block:: python
 
             [D_x, D_y, D_z]
         """
 
-        return np.array([self.asymm_matrix[1][2],
-                         self.asymm_matrix[2][0],
-                         self.asymm_matrix[0][1]],
-                        dtype=float)
+        return np.array(
+            [self.asymm_matrix[1][2], self.asymm_matrix[2][0], self.asymm_matrix[0][1]],
+            dtype=float,
+        )
 
     @dmi.setter
     def dmi(self, new_dmi):
         if new_dmi is not None:
             new_dmi = np.array(new_dmi, dtype=float)
             if new_dmi.shape != (3,):
-                raise ValueError(
-                    f"DMI have to be a 3 component vector. {new_dmi}")
+                raise ValueError(f"DMI have to be a 3 component vector. {new_dmi}")
             new_dmi = new_dmi - self.dmi
         else:
             new_dmi = -self.dmi
-        dmi_matrix = np.array([[0, new_dmi[2], -new_dmi[1]],
-                               [-new_dmi[2], 0, new_dmi[0]],
-                               [new_dmi[1], -new_dmi[0], 0]],
-                              dtype=float)
+        dmi_matrix = np.array(
+            [
+                [0, new_dmi[2], -new_dmi[1]],
+                [-new_dmi[2], 0, new_dmi[0]],
+                [new_dmi[1], -new_dmi[0], 0],
+            ],
+            dtype=float,
+        )
         self.matrix = self.matrix + dmi_matrix
 
     @property

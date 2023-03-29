@@ -7,17 +7,17 @@ RED = "\u001b[31m"
 RESET = "\u001b[0m"
 
 f_scripts = []
-for (dirpath, dirnames, filenames) in walk("scripts"):
+for dirpath, dirnames, filenames in walk("scripts"):
     f_scripts.extend(filenames)
     break
 
 f_scripts_core = []
-for (dirpath, dirnames, filenames) in walk(join("rad_tools", "score")):
+for dirpath, dirnames, filenames in walk(join("rad_tools", "score")):
     f_scripts_core.extend(filenames)
     break
 
 f_docs = []
-for (dirpath, dirnames, filenames) in walk(join("docs", "source", "user-guide")):
+for dirpath, dirnames, filenames in walk(join("docs", "source", "user-guide")):
     f_docs.extend(filenames)
     break
 
@@ -28,18 +28,19 @@ for i, filename in enumerate(f_scripts):
     if ".py" in filename:
         filename = filename.split(".py")[0]
         if f"{filename}.rst" in f_docs:
-            f_compare_docs.append(join("docs", "source",
-                                       "user-guide", f"{filename}.rst"))
+            f_compare_docs.append(
+                join("docs", "source", "user-guide", f"{filename}.rst")
+            )
             if f"{filename.replace('-','_')}_core.py" in f_scripts_core:
-                f_compare_scripts.append(join("rad_tools",
-                                              "score", f"{filename.replace('-','_')}_core.py"))
+                f_compare_scripts.append(
+                    join("rad_tools", "score", f"{filename.replace('-','_')}_core.py")
+                )
             else:
                 f_compare_scripts.append(join("scripts", f"{filename}.py"))
-            parse_names.append(split(filename)[1].split('.')[0])
+            parse_names.append(split(filename)[1].split(".")[0])
 
 
 for f_i, filename in enumerate(f_compare_scripts):
-
     # Parse scripts
     script_arguments = []
     script_file = open(filename)
@@ -49,8 +50,7 @@ for f_i, filename in enumerate(f_compare_scripts):
             script_arguments.append(set())
             for name in names:
                 if name != "\n":
-                    script_arguments[-1].add(name.replace('"',
-                                                          "").replace(" ", ""))
+                    script_arguments[-1].add(name.replace('"', "").replace(" ", ""))
     script_file.close()
 
     # Parse docs
@@ -66,37 +66,43 @@ for f_i, filename in enumerate(f_compare_scripts):
         if look_for_arguments:
             if f".. _{parse_names[f_i]}_" in line:
                 docs_links.append(line.split("_")[2].split(":")[0])
-                names = lines[i+2].split(",")
+                names = lines[i + 2].split(",")
                 docs_arguments.append(set())
                 for name in names:
                     if name != "\n":
                         name = name.split("\n")[0]
-                        docs_arguments[-1].add(name.replace('"',
-                                                            "").replace(" ", ""))
+                        docs_arguments[-1].add(name.replace('"', "").replace(" ", ""))
 
     # Compare
-    print(f"Comparing arguments for script {split(filename)[1]} " +
-          f"({len(docs_arguments)} in docs, {len(script_arguments)} in scripts)")
+    print(
+        f"Comparing arguments for script {split(filename)[1]} "
+        + f"({len(docs_arguments)} in docs, {len(script_arguments)} in scripts)"
+    )
     isok = True
     for i, argument in enumerate(script_arguments):
         try:
-            if (argument != docs_arguments[i] or
-                not (f"--{docs_links[i]}" in argument
-                     or f"-{docs_links[i]}" in argument
-                     or f"{docs_links[i]}" in argument)):
+            if argument != docs_arguments[i] or not (
+                f"--{docs_links[i]}" in argument
+                or f"-{docs_links[i]}" in argument
+                or f"{docs_links[i]}" in argument
+            ):
                 isok = False
-                print(f"{YELLOW}Problem:\n" +
-                      f"    Index: {i+1}\n" +
-                      f"    Docs: {docs_arguments[i]}\n" +
-                      f"    Docs link: {docs_links[i]}\n" +
-                      f"    Script: {argument}{RESET}")
+                print(
+                    f"{YELLOW}Problem:\n"
+                    + f"    Index: {i+1}\n"
+                    + f"    Docs: {docs_arguments[i]}\n"
+                    + f"    Docs link: {docs_links[i]}\n"
+                    + f"    Script: {argument}{RESET}"
+                )
 
         except IndexError:
             isok = False
-            print(f"{RED}Problem:\n" +
-                  f"    Index: {i+1}\n" +
-                  f"    Docs: Index error\n" +
-                  f"    Script: {argument}{RESET}")
+            print(
+                f"{RED}Problem:\n"
+                + f"    Index: {i+1}\n"
+                + f"    Docs: Index error\n"
+                + f"    Script: {argument}{RESET}"
+            )
     if isok:
         print(f"{GREEN}All arguments are fine{RESET}")
     print()

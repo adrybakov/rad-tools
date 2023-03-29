@@ -247,7 +247,7 @@ class ExchangeModel:
         r"""
         Model minimum and maximum coordinates in real space.
 
-        Takes into account only an atom which has at least 
+        Takes into account only an atom which has at least
         one bond associated with it.
 
         Returns
@@ -308,7 +308,7 @@ class ExchangeModel:
         atom2 : str
             Name of atom2 in R unit cell.
         R : tuple of ints
-            Vector of the unit cell for atom2. 
+            Vector of the unit cell for atom2.
             In the relative coordinates in real space.
         """
 
@@ -465,13 +465,11 @@ class ExchangeModel:
             Distance between atom1 and atom2.
         """
 
-        return sqrt(np.sum(self.get_bond_vector(atom1, atom2, R)**2))
+        return sqrt(np.sum(self.get_bond_vector(atom1, atom2, R) ** 2))
 
-    def filter(self,
-               max_distance=None,
-               min_distance=None,
-               template=None,
-               R_vector=None):
+    def filter(
+        self, max_distance=None, min_distance=None, template=None, R_vector=None
+    ):
         r"""
         Filter the exchange entries based on the given conditions.
 
@@ -512,7 +510,6 @@ class ExchangeModel:
 
         bonds_for_removal = set()
         for atom1, atom2, R in self:
-
             dis = self.get_distance(atom1, atom2, R)
 
             if max_distance is not None and dis > max_distance:
@@ -529,8 +526,7 @@ class ExchangeModel:
         for atom1, atom2, R in bonds_for_removal:
             self.remove_bond(atom1, atom2, R)
 
-    def remove(self,
-               template):
+    def remove(self, template):
         r"""
         Remove bonds from the exchange model, based on the template.
 
@@ -553,11 +549,9 @@ class ExchangeModel:
         for atom1, atom2, R in template:
             self.remove_bond(atom1, atom2, R)
 
-    def filtered(self,
-                 max_distance=None,
-                 min_distance=None,
-                 template=None,
-                 R_vector=None):
+    def filtered(
+        self, max_distance=None, min_distance=None, template=None, R_vector=None
+    ):
         r"""
         Create filtered exchange model based on the given conditions.
 
@@ -565,7 +559,7 @@ class ExchangeModel:
         Saying so the filtering will be performed for each given condition
         one by one.
         Note: this method is not modifying the instance at which it is called.
-        It will create a new instance with sorted :py:attr:`bonds` and all 
+        It will create a new instance with sorted :py:attr:`bonds` and all
         the other attributes will be copied (through :py:func:`deepcopy`).
 
         .. note::
@@ -595,10 +589,12 @@ class ExchangeModel:
         """
 
         filtered_model = deepcopy(self)
-        filtered_model.filter(max_distance=max_distance,
-                              min_distance=min_distance,
-                              template=template,
-                              R_vector=R_vector)
+        filtered_model.filter(
+            max_distance=max_distance,
+            min_distance=min_distance,
+            template=template,
+            R_vector=R_vector,
+        )
         return filtered_model
 
     def force_symmetry(self, template):
@@ -627,8 +623,7 @@ class ExchangeModel:
             symm_matrix = np.zeros((3, 3), dtype=float)
             dmi_module = 0
             for bond in bonds:
-                symm_matrix = (symm_matrix +
-                               self[bond].symm_matrix)
+                symm_matrix = symm_matrix + self[bond].symm_matrix
                 dmi_module = dmi_module + self[bond].dmi_module
 
             symm_matrix = symm_matrix / len(bonds)
@@ -639,8 +634,7 @@ class ExchangeModel:
                     asymm_factor = dmi_module / self[bond].dmi_module
                 else:
                     asymm_factor = 0
-                self[bond].matrix = symm_matrix + \
-                    self[bond].asymm_matrix * asymm_factor
+                self[bond].matrix = symm_matrix + self[bond].asymm_matrix * asymm_factor
 
     def forced_symmetry(self, template):
         r"""
@@ -666,14 +660,16 @@ class ExchangeModel:
         new_model.force_symmetry(template=template)
         return new_model
 
-    def summary_as_txt(self,
-                       template: ExchangeTemplate,
-                       decimals=4,
-                       force_symmetry=False,
-                       isotropic=False,
-                       anisotropic=False,
-                       out_matrix=False,
-                       out_dmi=False):
+    def summary_as_txt(
+        self,
+        template: ExchangeTemplate,
+        decimals=4,
+        force_symmetry=False,
+        isotropic=False,
+        anisotropic=False,
+        out_matrix=False,
+        out_dmi=False,
+    ):
         r"""
         Return exchange model based on the template file in .txt format.
 
@@ -718,48 +714,51 @@ class ExchangeModel:
                 aniso = bond.aniso
                 dmi = bond.dmi
                 abs_dmi = bond.dmi_module
-                rel_dmi = abs_dmi/iso
+                rel_dmi = abs_dmi / iso
                 matrix = bond.matrix
 
                 if not force_symmetry:
-
                     # Write the values
                     summary += (
-                        f"{atom1:3} {atom2:3} " +
-                        f"({R[0]:2.0f}, {R[1]:2.0f}, {R[2]:2.0f})\n")
+                        f"{atom1:3} {atom2:3} "
+                        + f"({R[0]:2.0f}, {R[1]:2.0f}, {R[2]:2.0f})\n"
+                    )
                     if isotropic:
                         summary += f"    Isotropic: {iso:.{decimals}f}\n"
                     if anisotropic:
                         summary += (
-                            f"    Anisotropic:\n" +
-                            f"        {aniso[0][0]:{decimals+3}.{decimals}f}  " +
-                            f"{aniso[0][1]:{decimals+3}.{decimals}f}  " +
-                            f"{aniso[0][2]:{decimals+3}.{decimals}f}\n" +
-                            f"        {aniso[1][0]:{decimals+3}.{decimals}f}  " +
-                            f"{aniso[1][1]:{decimals+3}.{decimals}f}  " +
-                            f"{aniso[1][2]:{decimals+3}.{decimals}f}\n" +
-                            f"        {aniso[2][0]:{decimals+3}.{decimals}f}  " +
-                            f"{aniso[2][1]:{decimals+3}.{decimals}f}  " +
-                            f"{aniso[2][2]:{decimals+3}.{decimals}f}\n")
+                            f"    Anisotropic:\n"
+                            + f"        {aniso[0][0]:{decimals+3}.{decimals}f}  "
+                            + f"{aniso[0][1]:{decimals+3}.{decimals}f}  "
+                            + f"{aniso[0][2]:{decimals+3}.{decimals}f}\n"
+                            + f"        {aniso[1][0]:{decimals+3}.{decimals}f}  "
+                            + f"{aniso[1][1]:{decimals+3}.{decimals}f}  "
+                            + f"{aniso[1][2]:{decimals+3}.{decimals}f}\n"
+                            + f"        {aniso[2][0]:{decimals+3}.{decimals}f}  "
+                            + f"{aniso[2][1]:{decimals+3}.{decimals}f}  "
+                            + f"{aniso[2][2]:{decimals+3}.{decimals}f}\n"
+                        )
                     if out_matrix:
                         summary += (
-                            f"    Matrix:\n" +
-                            f"        {matrix[0][0]:{decimals+3}.{decimals}f}  " +
-                            f"{matrix[0][1]:{decimals+3}.{decimals}f}  " +
-                            f"{matrix[0][2]:{decimals+3}.{decimals}f}\n" +
-                            f"        {matrix[1][0]:{decimals+3}.{decimals}f}  " +
-                            f"{matrix[1][1]:{decimals+3}.{decimals}f}  " +
-                            f"{matrix[1][2]:{decimals+3}.{decimals}f}\n" +
-                            f"        {matrix[2][0]:{decimals+3}.{decimals}f}  " +
-                            f"{matrix[2][1]:{decimals+3}.{decimals}f}  " +
-                            f"{matrix[2][2]:{decimals+3}.{decimals}f}\n")
+                            f"    Matrix:\n"
+                            + f"        {matrix[0][0]:{decimals+3}.{decimals}f}  "
+                            + f"{matrix[0][1]:{decimals+3}.{decimals}f}  "
+                            + f"{matrix[0][2]:{decimals+3}.{decimals}f}\n"
+                            + f"        {matrix[1][0]:{decimals+3}.{decimals}f}  "
+                            + f"{matrix[1][1]:{decimals+3}.{decimals}f}  "
+                            + f"{matrix[1][2]:{decimals+3}.{decimals}f}\n"
+                            + f"        {matrix[2][0]:{decimals+3}.{decimals}f}  "
+                            + f"{matrix[2][1]:{decimals+3}.{decimals}f}  "
+                            + f"{matrix[2][2]:{decimals+3}.{decimals}f}\n"
+                        )
                     if out_dmi:
                         summary += (
-                            f"    |DMI|: {abs_dmi:.{decimals}f}\n" +
-                            f"    |DMI/J|: {rel_dmi:.{decimals}f}\n" +
-                            f"    DMI: {dmi[0]:.{decimals}f} " +
-                            f"{dmi[1]:.{decimals}f} " +
-                            f"{dmi[2]:.{decimals}f}\n")
+                            f"    |DMI|: {abs_dmi:.{decimals}f}\n"
+                            + f"    |DMI/J|: {rel_dmi:.{decimals}f}\n"
+                            + f"    DMI: {dmi[0]:.{decimals}f} "
+                            + f"{dmi[1]:.{decimals}f} "
+                            + f"{dmi[2]:.{decimals}f}\n"
+                        )
                     summary += "\n"
                 else:
                     if not scalar_written:
@@ -769,39 +768,43 @@ class ExchangeModel:
                             summary += f"    Isotropic: {iso:.{decimals}f}\n"
                         if anisotropic:
                             summary += (
-                                f"    Anisotropic:\n" +
-                                f"        {aniso[0][0]:{decimals+3}.{decimals}f}  " +
-                                f"{aniso[0][1]:{decimals+3}.{decimals}f}  " +
-                                f"{aniso[0][2]:{decimals+3}.{decimals}f}\n" +
-                                f"        {aniso[1][0]:{decimals+3}.{decimals}f}  " +
-                                f"{aniso[1][1]:{decimals+3}.{decimals}f}  " +
-                                f"{aniso[1][2]:{decimals+3}.{decimals}f}\n" +
-                                f"        {aniso[2][0]:{decimals+3}.{decimals}f}  " +
-                                f"{aniso[2][1]:{decimals+3}.{decimals}f}  " +
-                                f"{aniso[2][2]:{decimals+3}.{decimals}f}\n")
+                                f"    Anisotropic:\n"
+                                + f"        {aniso[0][0]:{decimals+3}.{decimals}f}  "
+                                + f"{aniso[0][1]:{decimals+3}.{decimals}f}  "
+                                + f"{aniso[0][2]:{decimals+3}.{decimals}f}\n"
+                                + f"        {aniso[1][0]:{decimals+3}.{decimals}f}  "
+                                + f"{aniso[1][1]:{decimals+3}.{decimals}f}  "
+                                + f"{aniso[1][2]:{decimals+3}.{decimals}f}\n"
+                                + f"        {aniso[2][0]:{decimals+3}.{decimals}f}  "
+                                + f"{aniso[2][1]:{decimals+3}.{decimals}f}  "
+                                + f"{aniso[2][2]:{decimals+3}.{decimals}f}\n"
+                            )
                         if out_matrix:
                             summary += (
-                                f"    Matrix:\n" +
-                                f"        {matrix[0][0]:{decimals+3}.{decimals}f}  " +
-                                f"{matrix[0][1]:{decimals+3}.{decimals}f}  " +
-                                f"{matrix[0][2]:{decimals+3}.{decimals}f}\n" +
-                                f"        {matrix[1][0]:{decimals+3}.{decimals}f}  " +
-                                f"{matrix[1][1]:{decimals+3}.{decimals}f}  " +
-                                f"{matrix[1][2]:{decimals+3}.{decimals}f}\n" +
-                                f"        {matrix[2][0]:{decimals+3}.{decimals}f}  " +
-                                f"{matrix[2][1]:{decimals+3}.{decimals}f}  " +
-                                f"{matrix[2][2]:{decimals+3}.{decimals}f}\n")
+                                f"    Matrix:\n"
+                                + f"        {matrix[0][0]:{decimals+3}.{decimals}f}  "
+                                + f"{matrix[0][1]:{decimals+3}.{decimals}f}  "
+                                + f"{matrix[0][2]:{decimals+3}.{decimals}f}\n"
+                                + f"        {matrix[1][0]:{decimals+3}.{decimals}f}  "
+                                + f"{matrix[1][1]:{decimals+3}.{decimals}f}  "
+                                + f"{matrix[1][2]:{decimals+3}.{decimals}f}\n"
+                                + f"        {matrix[2][0]:{decimals+3}.{decimals}f}  "
+                                + f"{matrix[2][1]:{decimals+3}.{decimals}f}  "
+                                + f"{matrix[2][2]:{decimals+3}.{decimals}f}\n"
+                            )
                         if out_dmi:
                             summary += (
-                                f"    |DMI|: {abs_dmi:.{decimals}f}\n" +
-                                f"    |DMI/J|: {rel_dmi:.{decimals}f}\n")
+                                f"    |DMI|: {abs_dmi:.{decimals}f}\n"
+                                + f"    |DMI/J|: {rel_dmi:.{decimals}f}\n"
+                            )
                     if out_dmi:
                         summary += (
-                            f"    DMI: {dmi[0]:{decimals+3}.{decimals}f} " +
-                            f"{dmi[1]:{decimals+3}.{decimals}f} " +
-                            f"{dmi[2]:{decimals+3}.{decimals}f} " +
-                            f"({atom1:3} {atom2:3} " +
-                            f"{R[0]:2.0f} {R[1]:2.0f} {R[2]:2.0f})\n")
+                            f"    DMI: {dmi[0]:{decimals+3}.{decimals}f} "
+                            + f"{dmi[1]:{decimals+3}.{decimals}f} "
+                            + f"{dmi[2]:{decimals+3}.{decimals}f} "
+                            + f"({atom1:3} {atom2:3} "
+                            + f"{R[0]:2.0f} {R[1]:2.0f} {R[2]:2.0f})\n"
+                        )
             if force_symmetry:
                 summary += "\n"
 
@@ -817,7 +820,7 @@ class ExchangeModel:
 
             \hat{H} = - \sum_{i,j} \vec{S}_i J_{ij} \vec{S}_j
 
-        where spin vectors are normalized to 1 and :math:`J_{ij}` is the 
+        where spin vectors are normalized to 1 and :math:`J_{ij}` is the
         exchange matrix.
 
         Parameters
@@ -826,14 +829,14 @@ class ExchangeModel:
             Angle between z axis an direction of the magnetization.
             :math:`0 < \theta < 180`
         phi : float, default 0
-            angle between x axis an projection of direction of the 
+            angle between x axis an projection of direction of the
             magnetization on xy plane.
             :math:`0 < \phi < 360`
 
         Returns
         -------
         energy : float
-            Energy of ferromagnetic model with magnetization direction defined 
+            Energy of ferromagnetic model with magnetization direction defined
             by ``theta`` and ``phi``. In the units of J values.
         """
 
@@ -842,15 +845,14 @@ class ExchangeModel:
         energy = np.zeros((3, 3), dtype=float)
         for bond in self:
             energy -= self[bond].matrix
-        spin_vector = np.array([cos(phi) * sin(theta),
-                                sin(phi) * sin(theta),
-                                cos(theta)])
+        spin_vector = np.array(
+            [cos(phi) * sin(theta), sin(phi) * sin(theta), cos(theta)]
+        )
         energy = np.matmul(np.matmul(spin_vector, energy), spin_vector)
         return energy
 
 
 class ExchangeModelIterator:
-
     def __init__(self, exchange_model: ExchangeModel) -> None:
         self._bonds = list(exchange_model.bonds)
         self._index = 0

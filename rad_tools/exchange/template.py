@@ -9,7 +9,7 @@ class ExchangeTemplate:
     r"""
     Store a template for sorting the exchange from TB2J file.
 
-    In addition stores the technical details for plotting, 
+    In addition stores the technical details for plotting,
     orbital decomposition, etc.
 
     Attributes
@@ -30,7 +30,6 @@ class ExchangeTemplate:
     """
 
     def __init__(self) -> None:
-
         self.names = {}
         self.latex_names = {}
 

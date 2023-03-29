@@ -19,28 +19,25 @@ def read_exchange_model(filename, quiet=False) -> ExchangeModel:
     quiet : bool, default True
         Whenever to suppress output.
 
-    Returns 
+    Returns
     -------
     model : :py:class:`.ExchangeModel`
         Exchange model build from TB2J file.
     """
 
-    major_sep = '=' * 90
-    minor_sep = '-' * 88
-    garbage = str.maketrans({'(': None,
-                             ')': None,
-                             '[': None,
-                             ']': None,
-                             ',': None,
-                             '\'': None})
+    major_sep = "=" * 90
+    minor_sep = "-" * 88
+    garbage = str.maketrans(
+        {"(": None, ")": None, "[": None, "]": None, ",": None, "'": None}
+    )
     # Do not correct spelling, it is taken from TB2J.
-    cell_flag = 'Cell (Angstrom):'
-    atoms_flag = 'Atoms:'
-    atom_end_flag = 'Total'
-    exchange_flag = 'Exchange:'
-    iso_flag = 'J_iso:'
-    aniso_flag = 'J_ani:'
-    dmi_flag = 'DMI:'
+    cell_flag = "Cell (Angstrom):"
+    atoms_flag = "Atoms:"
+    atom_end_flag = "Total"
+    exchange_flag = "Exchange:"
+    iso_flag = "J_iso:"
+    aniso_flag = "J_ani:"
+    dmi_flag = "DMI:"
 
     file = open(filename, "r")
     model = ExchangeModel()
@@ -53,11 +50,13 @@ def read_exchange_model(filename, quiet=False) -> ExchangeModel:
 
         # Read cell
         if line and cell_flag in line:
-            model.cell = np.array([
-                list(map(float, file.readline().split())),
-                list(map(float, file.readline().split())),
-                list(map(float, file.readline().split()))
-            ])
+            model.cell = np.array(
+                [
+                    list(map(float, file.readline().split())),
+                    list(map(float, file.readline().split())),
+                    list(map(float, file.readline().split())),
+                ]
+            )
 
         # Read atoms
         if line and atoms_flag in line:
@@ -66,7 +65,8 @@ def read_exchange_model(filename, quiet=False) -> ExchangeModel:
             line = file.readline().split()
             while line and atom_end_flag not in line:
                 atoms[line[0]] = absolute_to_relative(
-                    model.cell, *tuple(map(float, line[1:4])))
+                    model.cell, *tuple(map(float, line[1:4]))
+                )
                 line = file.readline().split()
 
         # Check if the exchange section is reached
@@ -94,11 +94,13 @@ def read_exchange_model(filename, quiet=False) -> ExchangeModel:
 
             # Read anisotropic exchange
             if line and aniso_flag in line:
-                aniso = np.array([
-                    list(map(float, file.readline().translate(garbage).split())),
-                    list(map(float, file.readline().translate(garbage).split())),
-                    list(map(float, file.readline().translate(garbage).split()))
-                ])
+                aniso = np.array(
+                    [
+                        list(map(float, file.readline().translate(garbage).split())),
+                        list(map(float, file.readline().translate(garbage).split())),
+                        list(map(float, file.readline().translate(garbage).split())),
+                    ]
+                )
 
             # Read DMI
             if line and dmi_flag in line:
@@ -113,9 +115,11 @@ def read_exchange_model(filename, quiet=False) -> ExchangeModel:
         model.add_bond(bond, atom1, atom2, R)
         computed_distance = model.get_distance(atom1, atom2, R)
         if abs(computed_distance - distance) > 0.001 and not quiet:
-            print(f"\nComputed distance is a different from the read one:\n" +
-                  f"  Computed: {computed_distance:.4f}\n  " +
-                  f"Read: {distance:.4f}\n")
+            print(
+                f"\nComputed distance is a different from the read one:\n"
+                + f"  Computed: {computed_distance:.4f}\n  "
+                + f"Read: {distance:.4f}\n"
+            )
 
     # Fill non-magnetic atoms
     for atom in atoms:

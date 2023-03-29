@@ -1,5 +1,3 @@
-
-
 from tracemalloc import start
 
 
@@ -20,23 +18,20 @@ class CalculationMap:
     def __init__(self) -> None:
         self.parameters = {}
 
-    def add_parameter(self,
-                      name,
-                      values=None,
-                      range=None):
+    def add_parameter(self, name, values=None, range=None):
         r"""
         Add parameter to the class.
 
         Parameters
         ----------
-        name : str 
+        name : str
             The main identificator of the parameter.
         values : array-like
             Exact values of the parameter to be considered.
-        range : tuple 
-            Three numbers: start, stop, step. 
-            If ``values`` are not specified the ``range`` will be used to 
-            create them. If :math:`\vert stop - start\vert \ne n \cdot step`, 
+        range : tuple
+            Three numbers: start, stop, step.
+            If ``values`` are not specified the ``range`` will be used to
+            create them. If :math:`\vert stop - start\vert \ne n \cdot step`,
             where n - int, then the last point will be < `stop`.
         """
         if values is None:
