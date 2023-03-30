@@ -1000,95 +1000,80 @@ def manager(
         )
 
 
-def get_parser():
+def create_parser():
     parser = ArgumentParser(
         description="Script for visualisation of density of states."
     )
     parser.add_argument(
         "-ip",
         "--input-path",
+        metavar="path",
         type=str,
         required=True,
-        help="""
-                        Relative or absulute path to the folder with dos files.
-                        """,
+        help="Relative or absulute path to the folder with dos files.",
     )
     parser.add_argument(
         "-f",
         "--filpdos",
+        metavar="filpdos",
         type=str,
         default=None,
-        help="""
-                        Prefix for output files containing PDOS(E). 
-                        As specified in the QE projwfc.x input file.
-                        """,
+        help="Prefix for output files containing PDOS(E). "
+        + "As specified in the QE projwfc.x input file.",
     )
     parser.add_argument(
         "-op",
         "--output-path",
+        metavar="path",
         type=str,
         default=".",
-        help="""
-                        Relative or absolute path to the folder
-                        for saving outputs.
-                        """,
+        help="Relative or absolute path to the folder for saving outputs.",
     )
     parser.add_argument(
         "-w",
         "--window",
+        metavar=("min", "max"),
         type=float,
         nargs=2,
         default=None,
-        help="""
-                        Energy window for the plots.  
-                        By default whole range present in the files is plotted
-                        """,
+        help="Energy window for the plots. "
+        + "By default whole range present in the files is plotted.",
     )
     parser.add_argument(
         "-ef",
         "--efermi",
+        metavar="energy",
         type=float,
         default=0.0,
-        help="""
-                        Fermi energy, zero by default.
-                        """,
+        help="Fermi energy, zero by default.",
     )
     parser.add_argument(
         "-s",
         "--separate",
         action="store_true",
         default=False,
-        help="""
-                        Whenever to plot projected DOS for each atom 
-                        of the same type separately.
-                        """,
+        help="Whenever to plot projected DOS for each atom of the same type separately.",
     )
     parser.add_argument(
         "-r",
         "--relative",
         action="store_true",
         default=False,
-        help="""
-                        Whenever to use relative style.
-                        """,
+        help="Whenever to use relative style.",
     )
     parser.add_argument(
         "-n",
         "--normalize",
         action="store_true",
         default=False,
-        help="""
-                        Whenever to use normalize relative style.
-                        """,
+        help="Whenever to use normalize relative style.",
     )
     parser.add_argument(
         "-v",
         "--verbose",
         action="store_true",
         default=False,
-        help="""
-                        Verbose output, propagates to the called methods.
-                        """,
+        help="Verbose output, propagates to the called methods.",
     )
 
     return parser

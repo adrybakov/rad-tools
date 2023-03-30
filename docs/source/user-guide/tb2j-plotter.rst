@@ -186,7 +186,7 @@ Arguments
 
 -if, --input-filename
 ---------------------
-Relative or absolute path to the TB2J exchange output file, 
+Relative or absolute path to the 'exchange.out' file, 
 including the name and extension of the file.
 
 .. code-block:: text
