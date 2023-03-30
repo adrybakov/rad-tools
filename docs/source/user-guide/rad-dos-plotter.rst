@@ -110,8 +110,8 @@ Whenever to use normalize relative style.
 
 .. _rad-dos-plotter_verbose:
 
--v, -verbose
-------------
+-v, --verbose
+-------------
 Verbose output, propagates to the called methods.
 
 .. code-block:: text

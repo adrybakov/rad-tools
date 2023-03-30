@@ -213,148 +213,129 @@ def manager(
         print(f"{OK}2D plot with {wtp} is in {abspath(png_path)}{RESET}")
 
 
-def get_parser():
+def create_parser():
     parser = ArgumentParser(description="Script for visualization of TB2J results")
 
     parser.add_argument(
         "-if",
         "--input-filename",
+        metavar="filename",
         type=str,
         required=True,
-        help="""
-                        Relative or absolute path to the *exchange.out* file,
-                        including the name and extension of the file itself.
-                        """,
+        help="Relative or absolute path to the 'exchange.out' file,"
+        + "including the name and extension of the file itself.",
     )
     parser.add_argument(
         "-op",
         "--output-path",
+        metavar="path",
         type=str,
         default=".",
-        help="""
-                        Relative or absolute path to the folder for saving outputs.
-                        """,
+        help="Relative or absolute path to the folder for saving outputs.",
     )
     parser.add_argument(
         "-on",
         "--output-name",
+        metavar="filename",
         type=str,
         default="exchange",
-        help="""
-                        Seedname for the output files.
-                        """,
+        help="Seedname for the output files.",
     )
     parser.add_argument(
         "-wtp",
         "--what-to-plot",
+        metavar="value",
         type=str,
         choices=["all", "iso", "distance", "dmi"],
         default="all",
-        help="""
-                        Type of data for display.
-                        """,
+        help="Type of data for display.",
     )
     parser.add_argument(
         "-dc",
         "--draw-cells",
         action="store_true",
         default=False,
-        help="""
-                        Whenever to draw the cells.
-                        """,
+        help="Whenever to draw the cells.",
     )
     parser.add_argument(
         "-R",
         "--R-vector",
+        metavar="R1a R1b R1c",
         type=int,
         nargs="*",
         default=None,
-        help="""
-                        R vectors for filtering the model.
-                        """,
+        help="R vectors for filtering the model.",
     )
     parser.add_argument(
         "-maxd",
         "--max-distance",
+        metavar="distance",
         type=float,
         default=None,
-        help="""
-                        (<=) Maximum distance.
-                        """,
+        help="(<=) Maximum distance.",
     )
     parser.add_argument(
         "-mind",
         "--min-distance",
+        metavar="distance",
         type=float,
         default=None,
-        help="""
-                        (>=) Minimum distance.
-                        """,
+        help="(>=) Minimum distance.",
     )
     parser.add_argument(
         "-d",
         "--distance",
+        metavar="distance",
         type=float,
         default=None,
-        help="""
-                        (=) Exact distance.
-                        """,
+        help="(=) Exact distance.",
     )
     parser.add_argument(
         "-tf",
         "--template-file",
+        metavar="filename",
         type=str,
         default=None,
-        help="""
-                        Relative or absolute path to the template file,
-                        including the name and extension of the file.
-                        """,
+        help="Relative or absolute path to the template file, "
+        + "including the name and extension of the file.",
     )
     parser.add_argument(
         "-sa",
         "--scale-atoms",
+        metavar="factor",
         default=1,
         type=float,
-        help="""
-                        Scale for the size of atom marks.
-                        """,
+        help="Scale for the size of atom marks.",
     )
     parser.add_argument(
         "-sd",
         "--scale-data",
+        metavar="factor",
         default=1,
         type=float,
-        help="""
-                        Scale for the size of data text.
-                        """,
+        help="Scale for the size of data text.",
     )
     parser.add_argument(
         "-t",
         "--title",
+        metavar="title",
         default=None,
         type=str,
-        help="""
-                        Title for the plots.
-                        """,
+        help="Title for the plots.",
     )
     parser.add_argument(
         "-fs",
         "--force-symmetry",
         default=False,
         action="store_true",
-        help="""
-                        Force the Exchange model to have the symmetry 
-                        of the template.
-                        """,
+        help="Force the Exchange model to have the symmetry of the template.",
     )
     parser.add_argument(
         "-v",
         "--verbose",
         action="store_true",
         default=False,
-        help="""
-                        Verbose output, propagates to the called methods.
-                        """,
+        help="Verbose output, propagates to the called methods.",
     )
 
     return parser

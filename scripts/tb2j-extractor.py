@@ -1,8 +1,8 @@
 #! /usr/local/bin/python3
 
-from rad_tools.score.tb2j_extractor_core import get_parser, manager
+from rad_tools.score.tb2j_extractor_core import create_parser, manager
 
 if __name__ == "__main__":
-    parser = get_parser()
+    parser = create_parser()
     args = parser.parse_args()
     manager(**vars(args))

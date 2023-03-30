@@ -139,7 +139,7 @@ Arguments
 
 -on, --output-name
 ------------------
-Relative or absolute path to the template output file.
+Name for the template output file.
 
 .. code-block:: text
 
@@ -151,7 +151,7 @@ See also: :ref:`example <scripts_output-notes>`.
 
 -if, --input-filename
 ---------------------
-Relative or absolute path to the TB2J exchange output file, 
+Relative or absolute path to the 'exchange.out' file, 
 including the name and extension of the file.
 
 .. code-block:: text
@@ -222,8 +222,8 @@ Only the bonds with the exact distance remains in the model.
 
 .. _rad-make-template_verbose:
 
--v, -verbose
-------------
+-v, --verbose
+-------------
 Verbose output, propagates to the called methods.
 
 .. code-block:: text

@@ -53,7 +53,6 @@ pip:
 	@echo "\x1b[33m"
 	@echo "  * Merge to the stable?"
 	@echo "  * Push to GitHub?"
-	@echo "  * Create a tag?"
 	@echo "\x1b[0m"
 	@git log --oneline --all --graph --decorate -10
 	@echo "\x1b[33m"

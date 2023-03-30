@@ -128,16 +128,19 @@ standard output stream. If none is specify, output is passed to the console.
 See also: :ref:`example <scripts_output-notes>`.
 
 
-.. _tb2j-extractor_accuracy:
+.. _tb2j-extractor_decimals:
 
--acc, --accuracy
-----------------
-Accuracy for the exchange values.
+-d, --decimals
+--------------
+Decimals after the comma for the exchange values.
 
 .. code-block:: text
 
     default : 4
     type : int
+
+.. note::
+    Changed in the version 0.5.17 from "-acc"/"--accuracy".
 
 .. _tb2j-extractor_force-symmetry:
 
@@ -254,8 +257,8 @@ Whenever to all types of exchange.
 
 .. _tb2j-extractor_verbose:
 
--v, -verbose
-------------
+-v, --verbose
+-------------
 Verbose output, propagates to the called methods.
 
 .. code-block:: text

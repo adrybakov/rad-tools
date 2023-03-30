@@ -15,7 +15,7 @@ def manager(
     template_file,
     output_path=".",
     output_name=None,
-    accuracy=4,
+    decimals=4,
     force_symmetry=False,
     isotropic=False,
     anisotropic=False,
@@ -52,7 +52,7 @@ def manager(
     template = read_template(template_file)
     summary_txt = model.summary_as_txt(
         template=template,
-        decimals=accuracy,
+        decimals=decimals,
         force_symmetry=force_symmetry,
         isotropic=isotropic,
         anisotropic=anisotropic,
@@ -76,7 +76,7 @@ def manager(
         print(f"{summary_txt}")
 
 
-def get_parser():
+def create_parser():
     parser = ArgumentParser(
         description="Script for extracting of template-based model from TB2J results."
     )
@@ -84,112 +84,91 @@ def get_parser():
     parser.add_argument(
         "-if",
         "--input-filename",
+        metavar="filename",
         type=str,
         required=True,
-        help="""
-                        Relative or absolute path to the exchange.out file,
-                        including the name and extension of the file itself.
-                        """,
+        help="Relative or absolute path to the 'exchange.out' file, "
+        + "including the name and extension of the file itself.",
     )
     parser.add_argument(
         "-tf",
         "--template-file",
+        metavar="filename",
         type=str,
         required=True,
-        help="""
-                        Relative or absolute path to the template file,
-                        including the name and extension of the file.
-                        """,
+        help="Relative or absolute path to the template file, "
+        + "including the name and extension of the file.",
     )
     parser.add_argument(
         "-op",
         "--output-path",
+        metavar="path",
         type=str,
         default=".",
-        help="""
-                        Relative or absolute path to the folder
-                        for saving outputs.
-                        """,
+        help="Relative or absolute path to the folder for saving outputs.",
     )
     parser.add_argument(
         "-on",
         "--output-name",
+        metavar="filename",
         type=str,
         default=None,
-        help="""
-                        Seedname for the output files.
-                        """,
+        help="Seedname for the output files.",
     )
     parser.add_argument(
-        "-acc",
-        "--accuracy",
+        "-d",
+        "--decimals",
+        metavar="n",
         type=int,
         default=4,
-        help="""
-                        Accuracy for the exchange values.
-                        """,
+        help="Decimals after the comma for the exchange values.",
     )
     parser.add_argument(
         "-fs",
         "--force-symmetry",
         action="store_true",
         default=False,
-        help="""
-                        Whenever to force the symmetry of the
-                        template on the model.
-                        """,
+        help="Whenever to force the symmetry of the template on the model.",
     )
     parser.add_argument(
         "-i",
         "--isotropic",
         action="store_true",
         default=False,
-        help="""
-                        Whenever to output isotropic exchange.
-                        """,
+        help="Whenever to output isotropic exchange.",
     )
     parser.add_argument(
         "-a",
         "--anisotropic",
         action="store_true",
         default=False,
-        help="""
-                        Whenever to output anisotropic exchange.
-                        """,
+        help="Whenever to output anisotropic exchange.",
     )
     parser.add_argument(
         "-m",
         "--matrix",
         action="store_true",
         default=False,
-        help="""
-                        Whenever to output whole matrix exchange.
-                        """,
+        help="Whenever to output whole matrix exchange.",
     )
     parser.add_argument(
         "-dmi",
         action="store_true",
         default=False,
-        help="""
-                        Whenever to output DMI exchange.
-                        """,
+        help="Whenever to output DMI exchange.",
     )
     parser.add_argument(
         "-all",
         action="store_true",
         default=False,
-        help="""
-                        Whenever to all types of exchange.
-                        """,
+        help="Whenever to all types of exchange.",
     )
     parser.add_argument(
         "-v",
         "--verbose",
         action="store_true",
         default=False,
-        help="""
-                        Verbose output, propagates to the called methods.
-                        """,
+        help="Verbose output, propagates to the called methods.",
     )
 
     return parser

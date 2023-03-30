@@ -111,7 +111,7 @@ def manager(
     )
 
 
-def get_parser():
+def create_parser():
     parser = ArgumentParser(
         description="Script for the creation of template`s template"
     )
@@ -119,58 +119,52 @@ def get_parser():
     parser.add_argument(
         "-on",
         "--output-name",
+        metavar="filename",
         type=str,
         default="template",
-        help="""
-                        Relative or absolute path to the template output file.
-                        """,
+        help="Name for the template output file.",
     )
     parser.add_argument(
         "-if",
         "--input-filename",
+        metavar="filename",
         type=str,
         default=None,
-        help="""
-                        Relative or absolute path to the *exchange.out* file,
-                        including the name and extension of the file itself.
-                        """,
+        help="Relative or absolute path to the 'exchange.out' file, "
+        + "including the name and extension of the file itself.",
     )
     parser.add_argument(
         "-R",
         "--R-vector",
+        metavar="R1a R1b R1c",
         type=int,
         nargs="*",
         default=None,
-        help="""
-                        R vectors for filtering the model.
-                        """,
+        help="R vectors for filtering the model.",
     )
     parser.add_argument(
         "-maxd",
         "--max-distance",
+        metavar="distance",
         type=float,
         default=None,
-        help="""
-                        (<=) Maximum distance.
-                        """,
+        help="(<=) Maximum distance.",
     )
     parser.add_argument(
         "-mind",
         "--min-distance",
+        metavar="distance",
         type=float,
         default=None,
-        help="""
-                        (>=) Minimum distance.
-                        """,
+        help="(>=) Minimum distance.",
     )
     parser.add_argument(
         "-d",
         "--distance",
+        metavar="distance",
         type=float,
         default=None,
-        help="""
-                        (=) Exact distance.
-                        """,
+        help="(=) Exact distance.",
     )
     parser.add_argument(
         "-v",

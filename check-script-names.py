@@ -46,7 +46,11 @@ for f_i, filename in enumerate(f_compare_scripts):
     script_file = open(filename)
     for line in script_file:
         if "parser.add_argument" in line:
-            names = line.split("(")[1].split(",")
+            names = script_file.readline().split(",")
+            second_name = script_file.readline()
+            if "=" not in second_name:
+                second_name = second_name.split(",")
+                names.extend(second_name)
             script_arguments.append(set())
             for name in names:
                 if name != "\n":
@@ -75,7 +79,7 @@ for f_i, filename in enumerate(f_compare_scripts):
 
     # Compare
     print(
-        f"Comparing arguments for script {split(filename)[1]} "
+        f"Comparing arguments for script {split(filename)[1]} \n"
         + f"({len(docs_arguments)} in docs, {len(script_arguments)} in scripts)"
     )
     isok = True
