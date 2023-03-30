@@ -8,9 +8,30 @@ Script for visualisation of projected density of states from
 `Quantum-ESPRESSO <https://www.quantum-espresso.org/>`_ 
 (`QE input description <https://www.quantum-espresso.org/Doc/INPUT_PROJWFC.html>`_).
 
-The script rely on the QE output format and may not work if the QE  output files 
+The script relies on the QE output format and may not work if the QE  output files 
 are modified or renamed. Minimum input for the script is the folder 
 with QE output files inside:
+
+.. note::
+    Currently script only supports collinear cases and non-collinear non-spinorbit case.
+
+Usage example
+=============
+Minimal input looks like the following:
+
+.. code-block:: bash
+
+    rad-dos-plotter.py -if collinear
+
+where "collinear" is a path to the folder with output files from QE PDOS calculations.
+
+If you want to choose particular energy window use an 
+option :ref:`--window <rad-dos-plotter_window>`:
+
+.. code-block:: bash
+
+    rad-dos-plotter.py -if collinear -w -10 5
+
 
 Arguments
 =========
