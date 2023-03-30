@@ -97,6 +97,7 @@ Add ``remove`` method to the
 Rewrite parsers of the scripts and 
 add `black <https://black.readthedocs.io/>`_ code formatter.
 
-0.5.?
------
-Change the colours in :ref:`rad-dos-plotter.py <rad-dos-plotter>` script.
+0.5.18
+------
+Change the colours in :ref:`rad-dos-plotter.py <rad-dos-plotter>` script. 
+Add support for the k-resolved DOS.

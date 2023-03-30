@@ -1,5 +1,6 @@
 #! /usr/local/bin/python3
 
+import re
 from argparse import ArgumentParser
 from copy import deepcopy
 from os import makedirs, walk
@@ -16,6 +17,32 @@ CASES = [
     "collinear, spin-polarized",
     "non-collinear, non spin-orbit",
 ]
+
+
+class DOS:
+    def __init__(self, filename=None) -> None:
+        self.filename = filename
+        self.dos = None
+        self.case = None
+
+    @property
+    def energy(self):
+        if self.dos is not None:
+            return self.dos[0]
+        return None
+
+    @property
+    def dos(self):
+        if self.dos is not None:
+            return self.dos[1:]
+        return None
+
+    def __add__(self, other):
+        if not isinstance(other, DOS):
+            raise TypeError
+
+    def read_dos(self):
+        self.dos = np.loadtxt(self.filename, skiprows=1).T
 
 
 def analyse_input_folder(input_path, filpdos=None):
@@ -38,27 +65,35 @@ def analyse_input_folder(input_path, filpdos=None):
         List of lists of filenames for each seedname in ``filpdos``.
     """
 
+    pattern = ".pdos_atm#[0-9]*\\([a-zA-Z]*\\)_wfc#[0-9]*\\([spdf_0-9j.]*\\)"
+
+    # Get list of files in the folder
     files = []
     for dirpath, dirnames, filenames in walk(input_path):
         files.extend(filenames)
         break
 
     filenames = []
+    # Search for provided filpdos
     if filpdos is not None:
         for filename in files:
-            if filpdos in filename:
+            if re.fullmatch(f"{re.escape(filpdos)}.pdos_tot", filename) or re.fullmatch(
+                f"{re.escape(filpdos)}{pattern}",
+                filename,
+            ):
                 filenames.append(filename)
         files = filenames
         filpdos = [filpdos]
         filenames = [filenames]
+    # Try to detect all filpdos
     else:
         filpdos = set()
         for filename in files:
             if ".pdos_tot" in filename and ".pdos_tot" == filename[-9:]:
                 filpdos.add(filename[:-9])
                 filenames.append(filename)
-            elif ".pdos_atm#" in filename:
-                filpdos.add(filename.split(".pdos_atm#")[0])
+            elif re.match(f".*{pattern}$", filename):
+                filpdos.add(re.split(f"{pattern}$", filename)[0])
                 filenames.append(filename)
         filpdos = list(filpdos)
 
@@ -67,16 +102,35 @@ def analyse_input_folder(input_path, filpdos=None):
             print(f"   * {item}")
         print(RESET)
 
+        # Group filpdos with corresponding filenames
         if len(filpdos) != 1:
             tmp = [[] for _ in range(0, len(filpdos))]
             for filename in filenames:
                 for i, seedname in enumerate(filpdos):
-                    if seedname in filename:
+                    if re.fullmatch(
+                        f"{re.escape(seedname)}.pdos_tot", filename
+                    ) or re.fullmatch(
+                        f"{re.escape(seedname)}{pattern}",
+                        filename,
+                    ):
                         tmp[i].append(filename)
             filenames = tmp
         else:
             filenames = [filenames]
     return filpdos, filenames
+
+
+def load_dos(filename):
+    dos = np.loadtxt(filename, skiprows=1).T
+    with open(filename, "r") as file:
+        header = file.readline()
+    if "ik" in header:
+        nkpoints = int(dos[0][-1])
+        ndpoints = len(dos[0])
+        dos = dos[1:].reshape((len(dos) - 1, nkpoints, ndpoints // nkpoints))
+        dos = np.sum(dos, axis=(1))
+        dos /= nkpoints
+    return dos
 
 
 def detect_case(filename):
@@ -95,17 +149,17 @@ def detect_case(filename):
     """
 
     with open(filename) as file:
-        header = file.readline().lower()
+        header = file.readline().lower().split()
     case = None
-    if "dos" in header and "pdos" in header:
+    if "dos(e)" in header and "pdos(e)" in header:
         case = 0
-    if "dos" in header and "pdosup" in header and "pdosdw" in header:
+    if "dos(e)" in header and "pdosup(e)" in header and "pdosdw(e)" in header:
         case = 2
     if (
-        "dosup" in header
-        and "dosdw" in header
-        and "pdosup" in header
-        and "pdosdw" in header
+        "dosup(e)" in header
+        and "dosdw(e)" in header
+        and "pdosup(e)" in header
+        and "pdosdw(e)" in header
     ):
         case = 1
     if case is None:
@@ -165,7 +219,7 @@ def decompose_filenames(filenames):
     return atoms, wfcs
 
 
-def combine_by_atoms(input_path, seedname, output_path, atoms, wfcs, case):
+def combine_by_atoms(input_path, seedname, output_path, atoms, wfcs, case, suffix):
     r"""
     Combine PDOS by atom type.
 
@@ -190,23 +244,23 @@ def combine_by_atoms(input_path, seedname, output_path, atoms, wfcs, case):
                 )
             ) as file:
                 header = file.readline().replace("\n", "")
+                if "ik" in header:
+                    header = header.replace("ik", "")
             for i in atoms[atom]:
                 if i == atoms[atom][0]:
-                    dos = np.loadtxt(
+                    dos = load_dos(
                         join(
                             input_path,
                             f"{seedname}.pdos_atm#{i}({atom})_wfc#{wfc_number}({wfc_symbol})",
-                        ),
-                        skiprows=1,
-                    ).T
+                        )
+                    )
                 else:
-                    dos += np.loadtxt(
+                    dos += load_dos(
                         join(
                             input_path,
                             f"{seedname}.pdos_atm#{i}({atom})_wfc#{wfc_number}({wfc_symbol})",
-                        ),
-                        skiprows=1,
-                    ).T
+                        )
+                    )
             dos[0] = dos[0] / len(atoms[atom])
             energy = dos[0]
             if case == 0:
@@ -217,7 +271,7 @@ def combine_by_atoms(input_path, seedname, output_path, atoms, wfcs, case):
             np.savetxt(
                 join(
                     output_path,
-                    seedname,
+                    f"{seedname}{suffix}",
                     "summed-by-atom",
                     f"{atom}_wfc#{wfc_number}({wfc_symbol})",
                 ),
@@ -228,7 +282,7 @@ def combine_by_atoms(input_path, seedname, output_path, atoms, wfcs, case):
             )
     print(
         f"Files with PDOS combined by atom are in "
-        + f"{abspath(join(output_path, seedname, 'summed-by-atom'))}"
+        + f"{abspath(join(output_path, f'{seedname}{suffix}', 'summed-by-atom'))}"
     )
 
 
@@ -260,6 +314,8 @@ def filter_window(dos, window, efermi=0.0):
 
 def plot_pdos_tot(dos, output_name, case, window=None, efermi=0.0):
     dos = filter_window(dos, window=window, efermi=efermi)
+    if window is None:
+        window = (np.amin(dos[0]), np.amax(dos[0]))
 
     ax = plt.subplots(figsize=(8, 4))[1]
 
@@ -281,7 +337,7 @@ def plot_pdos_tot(dos, output_name, case, window=None, efermi=0.0):
 
     if case == 0:
         ax.fill_between(dos[0], 0, dos[1], lw=0, color="grey", alpha=0.3, label="DOS")
-        ax.plot(dos[0], dos[2], "-", lw=1, color="orange", alpha=0.7, label="PDOS")
+        ax.plot(dos[0], dos[2], "-", lw=1, color="black", alpha=0.7, label="PDOS")
         ncol = 1
     if case == 1:
         ax.fill_between(
@@ -295,10 +351,12 @@ def plot_pdos_tot(dos, output_name, case, window=None, efermi=0.0):
         ncol = 2
     if case == 2:
         ax.fill_between(dos[0], 0, dos[1], lw=0, color="grey", alpha=0.3, label="DOS")
+        ax.fill_between(dos[0], -dos[1], 0, lw=0, color="grey", alpha=0.3, label="-DOS")
         ax.plot(dos[0], dos[2], "-", lw=1, color="blue", alpha=0.7, label="PDOS (up)")
         ax.plot(dos[0], -dos[3], "-", lw=1, color="red", alpha=0.7, label="PDOS (down)")
         ncol = 1
 
+    ax.set_xlim(*tuple(window))
     ax.legend(loc="best", ncol=ncol)
 
     png_path = f"{output_name}.png"
@@ -575,6 +633,37 @@ def plot_projected_relative(
     plt.close()
 
 
+def prepare_directories(output_path, seedname, separate):
+    try:
+        makedirs(join(output_path, seedname))
+    except FileExistsError:
+        pass
+    try:
+        makedirs(join(output_path, seedname, "summed-by-atom"))
+    except FileExistsError:
+        pass
+    try:
+        makedirs(join(output_path, seedname, "summed-by-atom", "wfc-in-atoms"))
+    except FileExistsError:
+        pass
+    if separate:
+        try:
+            makedirs(join(output_path, seedname, "individual-plots"))
+        except FileExistsError:
+            pass
+        try:
+            makedirs(
+                join(
+                    output_path,
+                    f"{seedname}{suffix}",
+                    "individual-plots",
+                    "wfc-in-atoms",
+                )
+            )
+        except FileExistsError:
+            pass
+
+
 def manager(
     input_path,
     filpdos=None,
@@ -586,6 +675,14 @@ def manager(
     normalize=False,
     verbose=False,
 ):
+    suffix = ""
+    if relative or normalize:
+        suffix += "-"
+    if relative:
+        suffix += "r"
+    if normalize:
+        suffix += "n"
+
     try:
         makedirs(output_path)
     except FileExistsError:
@@ -603,57 +700,35 @@ def manager(
         case = detect_case(join(input_path, f"{seedname}.pdos_tot"))
         print(f"{CASES[case]} case detected.")
 
-        try:
-            makedirs(join(output_path, seedname))
-        except FileExistsError:
-            pass
-        try:
-            makedirs(join(output_path, seedname, "summed-by-atom"))
-        except FileExistsError:
-            pass
-        try:
-            makedirs(join(output_path, seedname, "summed-by-atom", "wfc-in-atoms"))
-        except FileExistsError:
-            pass
-        if separate:
-            try:
-                makedirs(join(output_path, seedname, "individual-plots"))
-            except FileExistsError:
-                pass
-            try:
-                makedirs(
-                    join(output_path, seedname, "individual-plots", "wfc-in-atoms")
-                )
-            except FileExistsError:
-                pass
+        prepare_directories(output_path, f"{seedname}{suffix}", separate)
 
         atoms, wfcs = decompose_filenames(
             [file for file in files[s_i] if ".pdos_tot" != file[-9:]]
         )
 
         # Plot PDOS vs DOS
-        total_dos = np.loadtxt(join(input_path, f"{seedname}.pdos_tot"), skiprows=1).T
+        total_dos = load_dos(join(input_path, f"{seedname}.pdos_tot"))
         plot_pdos_tot(
             total_dos,
-            join(output_path, seedname, "pdos-vs-dos"),
+            join(output_path, f"{seedname}{suffix}", "pdos-vs-dos"),
             case,
             window=window,
             efermi=efermi,
         )
 
         # Summ PDOS for the same atom types
-        combine_by_atoms(input_path, seedname, output_path, atoms, wfcs, case)
+        combine_by_atoms(input_path, seedname, output_path, atoms, wfcs, case, suffix)
 
         # Plot summed PDOS
         for atom in atoms:
             for wfc_symbol, wfc_number in wfcs[(atom, atoms[atom][0])]:
                 path = join(
                     input_path,
-                    seedname,
+                    f"{seedname}{suffix}",
                     "summed-by-atom",
                     f"{atom}_wfc#{wfc_number}({wfc_symbol})",
                 )
-                dos = np.loadtxt(path, skiprows=1).T
+                dos = load_dos(path)
                 if efermi == 0:
                     title = f"PDOS for {atom} ({wfc_symbol}) (0 is 0)"
                 else:
@@ -679,13 +754,12 @@ def manager(
             for atom in atoms:
                 for a_number in atoms[atom]:
                     for wfc_symbol, wfc_number in wfcs[(atom, a_number)]:
-                        dos = np.loadtxt(
+                        dos = load_dos(
                             join(
                                 input_path,
                                 f"{seedname}.pdos_atm#{a_number}({atom})_wfc#{wfc_number}({wfc_symbol})",
-                            ),
-                            skiprows=1,
-                        ).T
+                            )
+                        )
                         if efermi == 0:
                             title = (
                                 f"PDOS for {atom} #{a_number} ({wfc_symbol}) (0 is 0)"
@@ -698,7 +772,7 @@ def manager(
                                 dos,
                                 join(
                                     output_path,
-                                    seedname,
+                                    f"{seedname}{suffix}",
                                     "individual-plots",
                                     f"pdos_atm#{a_number}({atom})_wfc#{wfc_number}({wfc_symbol})",
                                 ),
@@ -714,7 +788,7 @@ def manager(
                                 dos,
                                 join(
                                     output_path,
-                                    seedname,
+                                    f"{seedname}{suffix}",
                                     "individual-plots",
                                     f"pdos_atm#{a_number}({atom})_wfc#{wfc_number}({wfc_symbol})",
                                 ),
@@ -726,21 +800,18 @@ def manager(
 
         # Plot orbital contribution in the whole atom
         for atom in atoms:
-            custom_dos = [
-                np.loadtxt(join(input_path, f"{seedname}.pdos_tot"), skiprows=1).T[0]
-            ]
+            custom_dos = [load_dos(join(input_path, f"{seedname}.pdos_tot"))[0]]
             wfc_symbols = []
             for wfc_symbol, wfc_number in wfcs[(atom, atoms[atom][0])]:
                 wfc_symbols.append(f"#{wfc_number}, {wfc_symbol}")
-                wfs_dos = np.loadtxt(
+                wfs_dos = load_dos(
                     join(
                         input_path,
-                        seedname,
+                        f"{seedname}{suffix}",
                         "summed-by-atom",
                         f"{atom}_wfc#{wfc_number}({wfc_symbol})",
-                    ),
-                    skiprows=1,
-                ).T
+                    )
+                )
                 if case == 0:
                     if len(custom_dos) == 1:
                         custom_dos.append(deepcopy(wfs_dos[1]))
@@ -765,7 +836,13 @@ def manager(
                 plot_projected_relative(
                     atom,
                     np.array(custom_dos),
-                    join(output_path, seedname, "summed-by-atom", "wfc-in-atoms", atom),
+                    join(
+                        output_path,
+                        f"{seedname}{suffix}",
+                        "summed-by-atom",
+                        "wfc-in-atoms",
+                        atom,
+                    ),
                     title,
                     case,
                     window=window,
@@ -778,7 +855,13 @@ def manager(
                 plot_projected(
                     atom,
                     np.array(custom_dos),
-                    join(output_path, seedname, "summed-by-atom", "wfc-in-atoms", atom),
+                    join(
+                        output_path,
+                        f"{seedname}{suffix}",
+                        "summed-by-atom",
+                        "wfc-in-atoms",
+                        atom,
+                    ),
                     title,
                     case,
                     window=window,
@@ -791,21 +874,16 @@ def manager(
         if separate:
             for atom in atoms:
                 for a_number in atoms[atom]:
-                    custom_dos = [
-                        np.loadtxt(
-                            join(input_path, f"{seedname}.pdos_tot"), skiprows=1
-                        ).T[0]
-                    ]
+                    custom_dos = [load_dos(join(input_path, f"{seedname}.pdos_tot"))[0]]
                     wfc_symbols = []
                     for wfc_symbol, wfc_number in wfcs[(atom, atoms[atom][0])]:
                         wfc_symbols.append(f"#{wfc_number}, {wfc_symbol}")
-                        wfs_dos = np.loadtxt(
+                        wfs_dos = load_dos(
                             join(
                                 input_path,
                                 f"{seedname}.pdos_atm#{a_number}({atom})_wfc#{wfc_number}({wfc_symbol})",
-                            ),
-                            skiprows=1,
-                        ).T
+                            )
+                        )
                         if case == 0:
                             if len(custom_dos) == 1:
                                 custom_dos.append(deepcopy(wfs_dos[1]))
@@ -832,7 +910,7 @@ def manager(
                             np.array(custom_dos),
                             join(
                                 output_path,
-                                seedname,
+                                f"{seedname}{suffix}",
                                 "individual-plots",
                                 "wfc-in-atoms",
                                 f"#{a_number}_{atom}",
@@ -851,7 +929,7 @@ def manager(
                             np.array(custom_dos),
                             join(
                                 output_path,
-                                seedname,
+                                f"{seedname}{suffix}",
                                 "individual-plots",
                                 "wfc-in-atoms",
                                 f"#{a_number} {atom}",
@@ -865,7 +943,7 @@ def manager(
                         )
 
         # Plot atom contribution to total
-        custom_dos = np.loadtxt(join(input_path, f"{seedname}.pdos_tot"), skiprows=1).T
+        custom_dos = load_dos(join(input_path, f"{seedname}.pdos_tot"))
         if case == 0:
             custom_dos = [custom_dos[0], custom_dos[2]]
         elif case == 1:
@@ -881,15 +959,14 @@ def manager(
                 custom_dos.append(None)
                 custom_dos.append(None)
             for wfc_symbol, wfc_number in wfcs[(atom, atoms[atom][0])]:
-                wfs_dos = np.loadtxt(
+                wfs_dos = load_dos(
                     join(
                         input_path,
-                        seedname,
+                        f"{seedname}{suffix}",
                         "summed-by-atom",
                         f"{atom}_wfc#{wfc_number}({wfc_symbol})",
-                    ),
-                    skiprows=1,
-                ).T
+                    )
+                )
                 if case == 0:
                     if custom_dos[-1] is None:
                         custom_dos[-1] = deepcopy(wfs_dos[1])
@@ -911,7 +988,12 @@ def manager(
                 plot_projected_relative(
                     "Total PDOS",
                     np.array(custom_dos),
-                    join(output_path, seedname, "summed-by-atom", "Atom-contributions"),
+                    join(
+                        output_path,
+                        f"{seedname}{suffix}",
+                        "summed-by-atom",
+                        "Atom-contributions",
+                    ),
                     title,
                     case,
                     window=window,
@@ -924,7 +1006,12 @@ def manager(
                 plot_projected(
                     "Total PDOS",
                     np.array(custom_dos),
-                    join(output_path, seedname, "summed-by-atom", "Atom-contributions"),
+                    join(
+                        output_path,
+                        f"{seedname}{suffix}",
+                        "summed-by-atom",
+                        "Atom-contributions",
+                    ),
                     title,
                     case,
                     window=window,
@@ -935,9 +1022,7 @@ def manager(
 
         # Plot atom contribution to total (individual atoms)
         if separate:
-            custom_dos = np.loadtxt(
-                join(input_path, f"{seedname}.pdos_tot"), skiprows=1
-            ).T
+            custom_dos = load_dos(join(input_path, f"{seedname}.pdos_tot"))
             if case == 0:
                 custom_dos = [custom_dos[0], custom_dos[2]]
             elif case == 1:
@@ -954,13 +1039,12 @@ def manager(
                         custom_dos.append(None)
                         custom_dos.append(None)
                     for wfc_symbol, wfc_number in wfcs[(atom, atoms[atom][0])]:
-                        wfs_dos = np.loadtxt(
+                        wfs_dos = load_dos(
                             join(
                                 input_path,
                                 f"{seedname}.pdos_atm#{a_number}({atom})_wfc#{wfc_number}({wfc_symbol})",
-                            ),
-                            skiprows=1,
-                        ).T
+                            )
+                        )
                         if case == 0:
                             if custom_dos[-1] is None:
                                 custom_dos[-1] = deepcopy(wfs_dos[1])
@@ -984,7 +1068,7 @@ def manager(
                             np.array(custom_dos),
                             join(
                                 output_path,
-                                seedname,
+                                f"{seedname}{suffix}",
                                 "individual-plots",
                                 "Atom-contributions",
                             ),
@@ -1002,7 +1086,7 @@ def manager(
                             np.array(custom_dos),
                             join(
                                 output_path,
-                                seedname,
+                                f"{seedname}{suffix}",
                                 "individual-plots",
                                 "Atom-contributions",
                             ),
@@ -1017,7 +1101,7 @@ def manager(
         print(
             f"{OK}"
             + f"Finish to work with {seedname} seedname, results are in "
-            + f"  {abspath(join(output_path, seedname))}"
+            + f"  {abspath(join(output_path, f'{seedname}{suffix}'))}"
             + f"{RESET}"
         )
 
