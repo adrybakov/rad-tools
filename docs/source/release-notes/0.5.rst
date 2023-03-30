@@ -94,5 +94,5 @@ Add ``remove`` method to the
 
 0.5.17
 ------
-Add ``remove`` method to the 
-:doc:`ExchangeModel <../api/_autosummary/rad_tools.exchange.model.ExchangeModel>`.
+Rewrite parsers of the scripts and 
+add `black <https://black.readthedocs.io/>`_ code formatter.

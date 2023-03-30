@@ -257,8 +257,8 @@ Whenever to all types of exchange.
 
 .. _tb2j-extractor_verbose:
 
--v, -verbose
-------------
+-v, --verbose
+-------------
 Verbose output, propagates to the called methods.
 
 .. code-block:: text

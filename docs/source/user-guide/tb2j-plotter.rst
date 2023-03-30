@@ -389,8 +389,8 @@ Force the exchange model to have the symmetry of the template.
 
 .. _tb2j-plotter_verbose:
 
--v, -verbose
-------------
+-v, --verbose
+-------------
 Verbose output, propagates to the called methods.
 
 .. code-block:: text

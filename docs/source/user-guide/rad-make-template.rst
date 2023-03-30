@@ -222,8 +222,8 @@ Only the bonds with the exact distance remains in the model.
 
 .. _rad-make-template_verbose:
 
--v, -verbose
-------------
+-v, --verbose
+-------------
 Verbose output, propagates to the called methods.
 
 .. code-block:: text
