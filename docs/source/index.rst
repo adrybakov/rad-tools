@@ -23,5 +23,3 @@ please give a credit to the developers by citing the package:
 .. code-block::
         
     rad-tools package, https://rad-tools.adrybakov.com/
-
-

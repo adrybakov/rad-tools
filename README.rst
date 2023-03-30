@@ -6,6 +6,9 @@ Various scripts which were useful during my PhD.
     :target: https://rad-tools.adrybakov.com/en/stable/?badge=stable
     :alt: Documentation Status
 
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+   :target: https://github.com/psf/black
+
 Installation
 ------------
 
