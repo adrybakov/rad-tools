@@ -5,13 +5,8 @@ from os.path import join, split
 
 import numpy as np
 
-from rad_tools.routines import (
-    RESET,
-    WARNING,
-    search_between_atoms,
-    search_on_atoms,
-    strip_digits,
-)
+from rad_tools.routines import (RESET, WARNING, search_between_atoms,
+                                search_on_atoms, strip_digits)
 
 
 def identify(filename, span, output_path, out_name, nocolor=False):
