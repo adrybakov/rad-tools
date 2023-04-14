@@ -38,6 +38,7 @@ smartquotes = False
 # Extlinks
 extlinks = {
     "ANSI": ("https://en.wikipedia.org/wiki/ANSI_escape_code%s", None),
+    "projwfc": ("https://www.quantum-espresso.org/Doc/INPUT_PROJWFC.html%s", None),
     "examples": (
         "https://github.com/adrybakov/rad-tools/tree/stable/docs/examples/%s",
         "%s",
