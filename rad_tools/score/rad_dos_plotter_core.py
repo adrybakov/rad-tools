@@ -633,7 +633,7 @@ def plot_projected_relative(
     plt.close()
 
 
-def prepare_directories(output_path, seedname, separate):
+def prepare_directories(output_path, seedname, separate, suffix):
     try:
         makedirs(join(output_path, seedname))
     except FileExistsError:
@@ -700,7 +700,7 @@ def manager(
         case = detect_case(join(input_path, f"{seedname}.pdos_tot"))
         print(f"{CASES[case]} case detected.")
 
-        prepare_directories(output_path, f"{seedname}{suffix}", separate)
+        prepare_directories(output_path, f"{seedname}{suffix}", separate, suffix)
 
         atoms, wfcs = decompose_filenames(
             [file for file in files[s_i] if ".pdos_tot" != file[-9:]]

@@ -101,3 +101,7 @@ add `black <https://black.readthedocs.io/>`_ code formatter.
 ------
 Change the colours in :ref:`rad-dos-plotter.py <rad-dos-plotter>` script. 
 Add support for the k-resolved DOS.
+
+0.5.19
+------
+Bugfix in :ref:`rad-dos-plotter.py <rad-dos-plotter>` script. 
