@@ -163,29 +163,6 @@ def rot_angle(x, y, dummy=False):
             return 180 + asin(sin) / pi * 180
 
 
-def strip_digits(line: str):
-    r"""
-    Remove all digits from the string
-
-    Parameters
-    ----------
-    line : str
-        Input string.
-
-    Returns
-    -------
-    new_line : str
-        ``line`` without digits
-    """
-
-    new_line = ""
-    numbers = "1234567890"
-    for char in line:
-        if char not in numbers:
-            new_line += char
-    return new_line
-
-
 def two_points_distance(point1, point2):
     r"""
     Compute distance between two points.

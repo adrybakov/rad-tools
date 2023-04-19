@@ -5,8 +5,12 @@ from os.path import join, split
 
 import numpy as np
 
-from rad_tools.routines import (RESET, WARNING, search_between_atoms,
-                                search_on_atoms, strip_digits)
+from rad_tools.routines import (
+    RESET,
+    WARNING,
+    search_between_atoms,
+    search_on_atoms,
+)
 
 
 def identify(filename, span, output_path, out_name, nocolor=False):
@@ -79,7 +83,7 @@ def identify(filename, span, output_path, out_name, nocolor=False):
             )
         for atom, coordinate in atoms:
             file.write(
-                f"{strip_digits(atom):2}     "
+                f"{atom.translate(str.maketrans('','','0123456789')):2}     "
                 + f"{coordinate[0]:14.8f}   "
                 + f"{coordinate[1]:14.8f}   "
                 + f"{coordinate[2]:14.8f}"
