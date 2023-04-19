@@ -105,3 +105,8 @@ Add support for the k-resolved DOS.
 0.5.19
 ------
 Bugfix in :ref:`rad-dos-plotter.py <rad-dos-plotter>` script. 
+
+0.5.20
+------
+Remove search for the middle of the bond 
+in :ref:`identify-wannier-centres.py <identify-wannier-centres>` script. 

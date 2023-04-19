@@ -13,17 +13,10 @@ distance span for the search.
 * If the centre is associated with some atom
     then ``-> atom`` will appear in the output file.
 
-* If the centre is associated with some centre point between two atoms
-    then ``-> atom1-atom2`` will appear in the output file.
-
 * If the centre is unidentified 
     then ``-> None`` 
     will appear in the output file and additional information 
     will be present in the console.
-
-* If the centre is equally close to the atom and to the point between two atoms 
-    then ``-> atom or atom1-atom2`` will appear in the output file 
-    (tolerance :math:`10^{-5}`).
 
 Usage example
 =============
@@ -52,7 +45,6 @@ and produce the following output in the console:
     
 which means that two centres are not identified. 
 The script provides in the console the distance to the closest atom 
-and to the closest centre of the bond between some pair of the atoms
 for each unidentified centre. In the output file some information about 
 unidentified centres are provided as well.
 

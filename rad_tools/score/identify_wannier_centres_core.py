@@ -14,7 +14,7 @@ def manager(filename, span, output_path, output_name, no_colour=False):
         output_path = head
     if output_name is None:
         output_name = tail + "_identified"
-    separation_tolerance = 10e-5
+    separation_tolerance = 10e-8
 
     # Read atoms and centres
     atom_counter = {}
@@ -47,7 +47,7 @@ def manager(filename, span, output_path, output_name, no_colour=False):
             if np.linalg.norm((centre[1] - a_coord)) < min_span:
                 min_span = np.linalg.norm((centre[1] - a_coord))
                 name = atom
-        if min_span > span:
+        if min_span - span > separation_tolerance:
             if no_colour:
                 print(f"Centre {centre} unidentified, " + "try to increase span")
             else:
@@ -59,7 +59,7 @@ def manager(filename, span, output_path, output_name, no_colour=False):
                 f"    span limit = {span}\n"
                 + f"    minimum distance to the atom ({name}) = {min_span:.8f}\n"
             )
-            centre[0] = f"None, closest: {name} ({min_span})"
+            centre[0] = f"None, closest: {name} ({min_span:.8f})"
         else:
             centre[0] = name
 
