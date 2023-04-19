@@ -67,19 +67,21 @@ class PDOS:
         ],
     }
 
-    def __init__(self, case: int, projector_family: str, dos):
+    def __init__(self, case: int, projector_family: str, dos, projectors=None):
         self.case = case
         self.projector_family = projector_family
         self.dos = dos
         if self.projector_family in self._projectors:
             self.projectors = self._projectors[self.projector_family]
-        else:
+        elif re.fullmatch("[spdf]_[0-9]*\.[0-9]*"):  # TODO check re expression
             self.projectors = [
                 f"{self.projector_family.split('_')[0]} ($m_j = {i+1}$)"
                 for i in range(
                     0, int(2 * float(self.projector_family.split("_")[1]) + 1)
                 )
             ]
+        else:
+            self.projectors = projectors
 
     def __add__(self, other):
         if isinstance(other, PDOS):
@@ -95,7 +97,7 @@ class PDOS:
         return item in self.projectors
 
     def __getitem__(self, key) -> np.ndarray:
-        if case in [1, 4]:
+        if self.case in [1, 4]:
             return self.dos[1 + self.projectors.index(key)]
         else:
             return self.dos[
@@ -111,7 +113,7 @@ class PDOS:
         -------
         ldos : array
         """
-        if case in [1, 4]:
+        if self.case in [1, 4]:
             return self.dos[0]
         else:
             return self.dos[0:2]
@@ -642,6 +644,195 @@ class DOS:
         plt.close()
 
 
+def plot_projected(
+    energy,
+    dos,
+    labels,
+    main_label,
+    output_name,
+    title,
+    ylim=None,
+    relative=False,
+    normalize=False,
+    updown=False,
+):
+    colours = [
+        "#0000FF",
+        "#FF0000",
+        "#00FF00",
+        "#FF00FF",
+        "#00FFFF",
+        "#3E3847",
+        "#FFD600",
+        "#366B35",
+        "#FF6F00",
+    ]
+    nsubplots = len(labels)
+    if relative:
+        fig, ax = plt.subplots(figsize=(9, 4))
+    else:
+        fig, axs = plt.subplots(nsubplots, 1, figsize=(9, nsubplots * 2))
+        if nsubplots == 1:
+            axs = [axs]
+    fig.subplots_adjust(hspace=0)
+
+    def set_up_axis(ax, i):
+        if normalize:
+            ax.set_ylabel("PDOS / LDOS", fontsize=12)
+        else:
+            ax.set_ylabel("DOS, states/eV", fontsize=12)
+        if i == nsubplots - 1:
+            ax.set_xlabel("E, ev", fontsize=15)
+        else:
+            ax.axes.get_xaxis().set_visible(False)
+        if ylim is not None:
+            ax.set_ylim(*tuple(ylim))
+        ax.set_xlim(np.amin(energy), np.amax(energy))
+        ax.vlines(
+            0,
+            0,
+            1,
+            transform=ax.get_xaxis_transform(),
+            color="grey",
+            linewidths=0.5,
+            linestyles="dashed",
+        )
+        if title is not None and i == 0:
+            ax.set_title(title)
+
+    if relative:
+        set_up_axis(ax, nsubplots - 1)
+        ax.hlines(
+            0,
+            0,
+            1,
+            transform=ax.get_yaxis_transform(),
+            color="black",
+            linewidths=1,
+        )
+        if normalize:
+            if updown:
+                dos[2] = np.where(dos[0] > 10e-8, dos[2] / dos[0], 0)
+                dos[3] = np.where(dos[1] > 10e-8, dos[3] / dos[1], 0)
+            else:
+                dos[1] = np.where(dos[0] > 10e-8, dos[1] / dos[0], 0)
+
+        for i in range(1, nsubplots):
+            if not updown:
+                if normalize:
+                    dos[1 + i] = np.where(dos[0] > 10e-8, dos[1 + i] / dos[0], 0)
+                dos[1 + i] += dos[i]
+            else:
+                if normalize:
+                    dos[2 + 2 * i] = np.where(
+                        dos[0] > 10e-8, dos[2 + 2 * i] / dos[0], 0
+                    )
+                    dos[3 + 2 * i] = np.where(
+                        dos[1] > 10e-8, dos[3 + 2 * i] / dos[1], 0
+                    )
+                dos[2 + 2 * i] += dos[1 + 2 * (i - 1)]
+                dos[3 + 2 * i] += dos[2 + 2 * (i - 1)]
+
+    for i in range(0, nsubplots):
+        if not relative:
+            ax = axs[i]
+            set_up_axis(ax, i)
+
+        if not updown:
+            if relative:
+                colour = colours[i // len(colours)]
+                ax.fill_between(
+                    energy,
+                    dos[i],
+                    dos[1 + i],
+                    lw=0,
+                    color=colour,
+                    alpha=0.3,
+                    label=main_label,
+                )
+            else:
+                colour = "black"
+                ax.fill_between(
+                    energy, 0, dos[0], lw=0, color=colour, alpha=0.3, label=main_label
+                )
+                ax.plot(
+                    energy,
+                    dos[1 + i],
+                    "-",
+                    lw=0.5,
+                    color=colour,
+                    alpha=0.8,
+                    label=labels[i],
+                )
+        else:
+            if relative:
+                colour_up = colours[i // len(colours)]
+                colour_down = colours[i // len(colours)]
+                ax.fill_between(
+                    energy,
+                    dos[2 + 2 * (i - 1)],
+                    dos[2 + 2 * i],
+                    lw=0,
+                    color=colour_up,
+                    alpha=0.3,
+                    label=f"{main_label} (up)",
+                )
+                ax.fill_between(
+                    energy,
+                    -dos[2 + 2 * (i - 1)],
+                    -dos[2 + 2 * i],
+                    lw=0,
+                    color=colour_down,
+                    alpha=0.3,
+                    label=f"{main_label} (down)",
+                )
+            else:
+                colour_up = "blue"
+                colour_down = "red"
+                ax.fill_between(
+                    energy,
+                    0,
+                    dos[1],
+                    lw=0,
+                    color=colour_up,
+                    alpha=0.3,
+                    label=f"{main_label} (up)",
+                )
+                ax.fill_between(
+                    energy,
+                    0,
+                    -dos[2],
+                    lw=0,
+                    color=colour_down,
+                    alpha=0.3,
+                    label=f"{main_label} (down)",
+                )
+
+                ax.plot(
+                    energy,
+                    dos[2 + 2 * i],
+                    "-",
+                    lw=0.5,
+                    color=colour_up,
+                    alpha=0.8,
+                    label=f"{labels[i]} (up)",
+                )
+                ax.plot(
+                    energy,
+                    -dos[2 + 2 * i],
+                    "-",
+                    lw=0.5,
+                    color=colour_down,
+                    alpha=0.8,
+                    label=f"{labels[i]} (down)",
+                )
+
+        ax.legend(loc=(1.025, 0.2), bbox_transform=ax.transAxes)
+
+    plt.savefig(f"{output_name}.png", dpi=400, bbox_inches="tight")
+    plt.close()
+
+
 def detect_seednames(input_path):
     r"""
     Analyze input folder, detects seednames for the dos output files.
@@ -678,7 +869,7 @@ def detect_seednames(input_path):
 
 def manager(
     input_path,
-    filpdos=None,
+    seedname=None,
     output_path=".",
     energy_window=None,
     dos_window=None,
@@ -689,37 +880,47 @@ def manager(
     verbose=False,
     interactive=False,
 ):
-    try:
-        makedirs(output_path)
-    except FileExistsError:
-        pass
+    makedirs(output_path, exist_ok=True)
+    suffix = ""
+    if relative:
+        suffix += "r"
+    if normalize:
+        suffix += "n"
 
-    seednames = detect_seednames(input_path)
-    print(f"Following DOS seednames (filpdos) are detected:")
-    for item in seednames:
-        cprint(f"   * {item}", colour="yellow")
+    if seedname is None:
+        seednames = detect_seednames(input_path)
+        print(f"Following DOS seednames (filpdos) are detected:")
+        for item in seednames:
+            cprint(f"   * {item}", colour="yellow")
+    else:
+        seednames = [seedname]
 
     for s_i, seedname in enumerate(seednames):
+        output_root = join(output_path, f"{seedname}-{suffix}")
         # Preparations
         cprint(
             f"({s_i + 1}/{len(seednames)}) Start to work with {seedname} seedname",
             colour="yellow",
         )
-        try:
-            makedirs(join(output_path, seedname))
-        except FileExistsError:
-            pass
+        makedirs(output_root, exist_ok=True)
 
         dos = DOS(seedname, input_path, efermi=efermi, window=energy_window)
-
         print(f"{dos.case_name} case detected.")
 
         # Plot PDOS vs DOS
         dos.plot_pdos_tot(
-            output_name=join(output_path, f"{seedname}", "pdos-vs-dos"),
+            output_name=join(output_root, "pdos-vs-dos"),
             interactive=interactive,
             ylim=dos_window,
         )
+
+        # Plot PDOS for each atom/wfc
+        for atom in dos.atoms:
+            for atom_number in dos.atom_numbers(atom):
+                for wfc, wfc_number in dos.wfcs(atom, atom_number):
+                    plot_projected(
+                        dos.energy, dos.pdos(atom, atom_number, wfc, wfc_number)
+                    )
 
 
 def create_parser():
@@ -735,8 +936,8 @@ def create_parser():
         help="Relative or absulute path to the folder with dos files.",
     )
     parser.add_argument(
-        "-f",
-        "--filpdos",
+        "-s",
+        "--seedname",
         metavar="filpdos",
         type=str,
         default=None,
@@ -780,7 +981,7 @@ def create_parser():
         help="Fermi energy, zero by default.",
     )
     parser.add_argument(
-        "-s",
+        "-sep",
         "--separate",
         action="store_true",
         default=False,
