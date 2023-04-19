@@ -171,9 +171,7 @@ def create_parser():
         "--verbose",
         action="store_true",
         default=False,
-        help="""
-                        Verbose output, propagates to the called methods.
-                        """,
+        help="Verbose output, propagates to the called methods.",
     )
 
     return parser
