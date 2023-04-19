@@ -58,6 +58,23 @@ ANSI escape code for errors.
 """
 
 
+def get_named_colours(colour: str):
+    colour_dict = {
+        "black": BLACK,
+        "red": RED,
+        "green": GREEN,
+        "yellow": YELLOW,
+        "blue": BLUE,
+        "magenta": MAGENTA,
+        "cyan": CYAN,
+        "white": WHITE,
+    }
+    colour = colour.lower()
+    if colour not in colour_dict:
+        return ""
+    return colour_dict[colour]
+
+
 def get_256_colours(n):
     r"""
     ANSI escape codes for terminal color with 256-colours support
@@ -80,6 +97,20 @@ def get_256_colours(n):
             f"You provided n = {n}, type<n> = {type(n)}"
         )
     return f"\033[38:5:{n}m"
+
+
+def cprint(*args, colour=None, **kwargs):
+    if isinstance(colour, int):
+        colour = get_256_colours(colour % 256)
+    elif isinstance(colour, str):
+        colour = get_named_colours(colour)
+    else:
+        raise ValueError("Colour must be a string or integer")
+    if colour is not None:
+        print(colour, end="")
+    print(*args, **kwargs)
+    if colour is not None:
+        print(RESET, end="")
 
 
 def atom_mark_to_latex(mark):
@@ -161,66 +192,6 @@ def rot_angle(x, y, dummy=False):
             if not dummy:
                 return asin(sin) / pi * 180
             return 180 + asin(sin) / pi * 180
-
-
-def search_on_atoms(centre, atoms):
-    r"""
-    Search the closest atom to the given centre position.
-
-    Parameters
-    ----------
-    centre : array
-        xyz coordinates of the centre.
-    atoms : list
-        List of atom names and coordinates of the form: ::
-
-            [(name, [x, y, z]), ...]
-
-    Returns
-    -------
-    min_span : float
-        Distance from the centre to the closest atom.
-    name : str
-        Name of the closest atom.
-    """
-
-    min_span = 10000
-    name = "None"
-    for atom, a_coord in atoms:
-        if sqrt(np.sum((centre[1] - a_coord) ** 2)) < min_span:
-            min_span = sqrt(np.sum((centre[1] - a_coord) ** 2))
-            name = atom
-    return min_span, name
-
-
-def search_between_atoms(centre, atoms):
-    r"""
-    Search the closest bond centre to the given centre position.
-
-    Parameters
-    ----------
-    centre : array
-        xyz coordinates of the centre.
-    atoms : list
-        List of atom names and coordinates of the form: ::
-
-            [(name, [x, y, z]), ...]
-
-    Returns
-    -------
-    min_span : float
-        Distance from the centre to the bond`s centre.
-    name : str
-        Name of the closest bond`s centre (atom1-atom2).
-    """
-
-    pairs = []
-    for i, atom in enumerate(atoms):
-        for j in range(i + 1, len(atoms)):
-            pair = f"{atom[0]}-{atoms[j][0]}"
-            p_coord = (atom[1] + atoms[j][1]) / 2
-            pairs.append([pair, p_coord])
-    return search_on_atoms(centre, pairs)
 
 
 def absolute_to_relative(cell, x, y, z):
