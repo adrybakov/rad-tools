@@ -138,3 +138,14 @@ Verbose output, propagates to the called methods.
 .. code-block:: text
 
     default : False
+
+
+.. _rad-dos-plotter_interactive:
+
+-i, --interactive
+-----------------
+Interactive plotting.
+
+.. code-block:: text
+
+    default : False
