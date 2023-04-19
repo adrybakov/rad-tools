@@ -37,6 +37,10 @@ class DOS:
     ----------
     seedname : str
         Seedname for the Quantum Espresso output files.
+    energy : array
+        Energy of the DOS/PDOS
+    window : tuple, default (0,-1)
+    k_points : array
     total_dos : array
     total_pdos : array
     case : int
@@ -70,7 +74,11 @@ class DOS:
         self.k_resolved = False
         self.case = None
         self._filenames = None
+        self.energy = None
+        self.nkpoints = None
+        self.window = (0, -1)
         self._detect_case()
+        self._exctract_energy()
 
     @property
     def filenames(self):
@@ -127,6 +135,13 @@ class DOS:
             return dos[2 + int(self.k_resolved) : 4 + +int(self.k_resolved)]
         return dos[2 + int(self.k_resolved) : 3 + int(self.k_resolved)]
 
+    def pdos(self, atom, atom_number, wfc, wfc_number):
+        path = f"{self.seedname}.pdos_atm#{atom_number}({atom})_wfc#{wfc_number}({wfc})"
+        dos = np.loadtxt(f"{self._input_path}/{self.seedname}.pdos_tot", skiprows=1).T
+        dos = dos[1 + int(self.k_resolved) :]
+        # TODO
+        # separate class for PDOS with all the labels?
+
     def _detect_case(self):
         r"""
         Detects case of the DOS calculations.
@@ -164,8 +179,16 @@ class DOS:
                 "Unable to detect case, analysed header:\n" + f"{header}"
             )
 
+    def _exctract_energy(self):
+        dos = np.loadtxt(f"{self._input_path}/{self.seedname}.pdos_tot", skiprows=1).T
+        if self.k_resolved:
+            self.nkpoints = int(dos[0][-1])
+            self.energy = dos[1][0 : len(dos[0]) // self.nkpoints]
+        else:
+            self.energy = dos[0]
 
-def analyse_input_folder(input_path):
+
+def detect_seednames(input_path):
     r"""
     Analyze input folder, detects seednames for the dos output files.
 
@@ -197,53 +220,6 @@ def analyse_input_folder(input_path):
     seednames = list(seednames)
 
     return seednames
-
-
-def load_dos(filename):
-    dos = np.loadtxt(filename, skiprows=1).T
-    with open(filename, "r") as file:
-        header = file.readline()
-    if "ik" in header:
-        nkpoints = int(dos[0][-1])
-        ndpoints = len(dos[0])
-        dos = dos[1:].reshape((len(dos) - 1, nkpoints, ndpoints // nkpoints))
-        dos = np.sum(dos, axis=(1))
-        dos /= nkpoints
-    return dos
-
-
-def detect_case(filename):
-    r"""
-    Detects case of the DOS calculations.
-
-    Parameters
-    ----------
-    filename: str
-        Path to the file in which the calculation case have to be detected
-
-    Returns
-    -------
-    case : int
-        Case index.
-    """
-
-    with open(filename) as file:
-        header = file.readline().lower().split()
-    case = None
-    if "dos(e)" in header and "pdos(e)" in header:
-        case = 0
-    if "dos(e)" in header and "pdosup(e)" in header and "pdosdw(e)" in header:
-        case = 2
-    if (
-        "dosup(e)" in header
-        and "dosdw(e)" in header
-        and "pdosup(e)" in header
-        and "pdosdw(e)" in header
-    ):
-        case = 1
-    if case is None:
-        raise RuntimeError("Unable to detect case, analysed header:\n" + f"{header}")
-    return case
 
 
 def decompose_filenames(filenames):
@@ -1283,3 +1259,7 @@ if __name__ == "__main__":
         print(case)
         print(f"    {dos.case} {dos.k_resolved}")
         print(f"    {dos_k.case} {dos_k.k_resolved}")
+        print(f"    {dos_k.nkpoints} {dos.nkpoints}")
+        print(f"    {len(dos_k.energy)} {len(dos.energy)}")
+        print(f"    {dos_k.energy[0]} {dos.energy[0]}")
+        print(f"    {dos_k.energy[-1]} {dos.energy[-1]}")
