@@ -163,37 +163,6 @@ def rot_angle(x, y, dummy=False):
             return 180 + asin(sin) / pi * 180
 
 
-def two_points_distance(point1, point2):
-    r"""
-    Compute distance between two points.
-
-    Parameters
-    ----------
-    point1 : array
-        Coordinates of the first point.
-
-        .. code-block:: python
-
-            [x1, y1, z1]
-
-    point2 : array
-        Coordinates of the second point.
-
-        .. code-block:: python
-
-            [x2, y2, z2]
-
-    Returns
-    -------
-    distance : float
-        Distance between two points.
-    """
-
-    point1 = np.array(point1)
-    point2 = np.array(point2)
-    return sqrt(np.sum((point1 - point2) ** 2))
-
-
 def search_on_atoms(centre, atoms):
     r"""
     Search the closest atom to the given centre position.

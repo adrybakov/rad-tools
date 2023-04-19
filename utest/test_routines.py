@@ -96,20 +96,6 @@ class TestRotAngle:
 
 
 @pytest.mark.parametrize(
-    "point1, point2, distance",
-    [
-        ((0, 0, 0), (0, 0, 0), 0),
-        ([0, 3, 4], [0, 0, 0], 5),
-        ([0, 3, 4], (0, 0, 0), 5),
-        ((0, 3, 4), [0, 0, 0], 5),
-        ((0, 3, 4), [0, 3, 0], 4),
-    ],
-)
-def test_two_points_distance(point1, point2, distance):
-    assert distance == two_points_distance(point1, point2)
-
-
-@pytest.mark.parametrize(
     "cell, absolute, relative",
     [
         ([[1, 0, 0], [0, 1, 0], [0, 0, 1]], [0, 0, 0], [0, 0, 0]),
