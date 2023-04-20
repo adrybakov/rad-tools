@@ -2,6 +2,9 @@ Script Collection
 =================
 Various scripts which were useful during my PhD.
 
+.. image:: https://badge.fury.io/py/rad-tools.svg
+    :target: https://badge.fury.io/py/rad-tools
+    
 .. image:: https://readthedocs.org/projects/rad-tools/badge/?version=stable
     :target: https://rad-tools.adrybakov.com/en/stable/?badge=stable
     :alt: Documentation Status
