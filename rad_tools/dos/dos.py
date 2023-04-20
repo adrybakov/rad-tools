@@ -3,9 +3,11 @@ DOS
 """
 import re
 from os import walk
-from os.path import join, abspath
-import numpy as np
+from os.path import abspath, join
+
 import matplotlib.pyplot as plt
+import numpy as np
+
 from rad_tools.dos.pdos import PDOS
 
 

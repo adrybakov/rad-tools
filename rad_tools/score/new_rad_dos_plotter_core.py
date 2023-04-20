@@ -10,8 +10,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import __version__ as matplotlib_version
 
-from rad_tools.routines import cprint
 from rad_tools.dos import DOS
+from rad_tools.routines import cprint
 
 
 def detect_seednames(input_path):

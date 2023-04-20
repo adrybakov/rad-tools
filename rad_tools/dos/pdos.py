@@ -3,8 +3,9 @@ PDOS
 """
 
 import re
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class PDOS:
@@ -116,20 +117,20 @@ class PDOS:
         self._pdos = np.array(pdos)
 
         self.projectors_group = projectors_group
-        if self.projectors_group in self._projectors:
+        if projectors is not None:
+            self.projectors = projectors
+        elif self.projectors_group in self._projectors:
             self.projectors = self._projectors[self.projectors_group]
         elif re.fullmatch(self._pattern, self.projectors_group):
             l, j = self.projectors_group.split("_")
             m_j = range(1, 1 + int(2 * float(j) + 1))
             self.projectors = [f"{l} ($m_j = {i}$)" for i in m_j]
-        elif projectors is None:
+        else:
             raise ValueError(
                 "Projectors can not be assigned automatically, "
                 + "you have to provide explicit list of projectors. "
                 + f"Projectors group: {self.projectors_group}."
             )
-        else:
-            self.projectors = projectors
 
         self.spin_pol = spin_pol
         self.k_resolved = k_resolved
@@ -316,6 +317,22 @@ class PDOS:
                     self._pdos[i] = np.where(
                         self.ldos > 10e-8, self._pdos[i] / self.ldos, 0
                     )
+
+
+class PDOSIterator:
+    def __init__(self, pdos: PDOS) -> None:
+        self._projectors = pdos.projectors
+        self._index = 0
+
+    def __next__(self) -> str:
+        if self._index < len(self._projectors):
+            result = self._projectors[self._index]
+            self._index += 1
+            return result
+        raise StopIteration
+
+    def __iter__(self):
+        return self
 
 
 def plot_projected(
@@ -520,19 +537,3 @@ def plot_projected(
     else:
         plt.savefig(f"{output_name}.png", dpi=400, bbox_inches="tight")
     plt.close()
-
-
-class PDOSIterator:
-    def __init__(self, pdos: PDOS) -> None:
-        self._projectors = pdos.projectors
-        self._index = 0
-
-    def __next__(self) -> str:
-        if self._index < len(self._projectors):
-            result = self._projectors[self._index]
-            self._index += 1
-            return result
-        raise StopIteration
-
-    def __iter__(self):
-        return self
