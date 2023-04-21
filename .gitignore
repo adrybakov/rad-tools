@@ -5,9 +5,6 @@
 __pycache__
 .venv
 
-# VSCode stuff
-.vscode
-
 # Build
 build
 dist
