@@ -1,0 +1,13 @@
+black
+isort
+matplotlib
+numpy
+pytest
+Sphinx
+sphinx-gallery
+numpydoc
+sphinx-copybutton
+sphinx_copybutton
+pydata-sphinx-theme
+sphinx-design
+twine
