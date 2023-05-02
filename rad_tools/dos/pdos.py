@@ -3,6 +3,7 @@ PDOS
 """
 
 import re
+from copy import deepcopy
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,10 +12,6 @@ import numpy as np
 class PDOS:
     r"""
     Partial density of states, projected on arbitrary projections.
-
-    Supports the order of projectors of :projwfc:`Quantum Espresso <>` (s,p,d,f) and
-    the case of projection in the spin-orbit calculations.
-    In the custom cases it is necessary to specify projectors manually.
 
     Supports k-resolved density of states.
     Support spin-polarised and spin-unpolarised cases.
@@ -27,22 +24,18 @@ class PDOS:
     Parameters
     ----------
     energy : array
-        Values of energy for the PDOS. Sshape :math:`n_e` is assumed.
+        Values of energy for the PDOS. Shape :math:`n_e` is assumed.
     pdos : array
-        Array with the values of PDOS.
-        For the k-resolved case shape :math:`(m, n_k, n_e)` is assumed.
-        For the non k-resolved case  shape :math:`(m, n_e)` is assumed.
-        If PDOS has :math:`n` projectors, then first index `math:`m`
-        is assumed to indicate the folowing data:
+        Array with the values of PDOS. Shape is assumed to be:
 
-        * Spin-polarized case (:math:`m = 2n + 2`):
+        * Spin-polarized, k-resolved: :math:`(n, 2, n_k, n_e)`
+        * Spin-unpolarized, k-resolved: :math:`(n, n_k, n_e)`
+        * Spin-polarized, non k-resolved: :math:`(n, 2, n_e)`
+        * Spin-unpolarized, non k-resolved: :math:`(n, n_e)`
 
-          LDOS_up LDOS_down PDOS_1_up PDOS_1_down ... PDOS_n_up PDOS_n_down
-
-        * Spin-unpolarized case (:math:`m = n + 1`):
-
-          LDOS PDOS_1 ... PDOS_n
-
+        where :math:`n` is the number of projections,
+        :math:`n_k` is the number of k-points,
+        :math:`n_e` is the number of energy points.
     projectors_group : str
         Name of the projectors group.
     projectors : list
@@ -52,10 +45,20 @@ class PDOS:
         the projectors are assigned automatically,
         otherwise it is necessary to provide :math:`n` projectors manually.
         The names of projectors are directly used in the plots.
+    ldos : array, default None
+        Local density of states. Sum of partial density of states over all projectors.
+        Computed based on ``pdos`` if not provided.
+        Shape is assumed to be:
+
+        * Spin-polarized, k-resolved: :math:`(2, n_k, n_e)`
+        * Spin-unpolarized, k-resolved: :math:`(n_k, n_e)`
+        * Spin-polarized, non k-resolved: :math:`(2, n_e)`
+        * Spin-unpolarized, non k-resolved: :math:`(n_e)`
+
+        where :math:`n_k` is the number of k-points,
+        :math:`n_e` is the number of energy points.
     spin_pol : bool, default False
         Whenever PDOS is spin-polarized or not.
-    k_resolved : bool, default False
-        Whenever PDOS is k_resolved.
 
     Attributes
     ----------
@@ -67,98 +70,57 @@ class PDOS:
         Name of the projectors group.
     projectors : list
         Names of the projectors.
-        If ``projectors_group`` has the form "l" or "l_j",
-        where l is "s", "p", "d", "f" and j is the total angular momentum,
-        the projectors are assigned automatically,
-        otherwise it is necessary to provide :math:`n` projectors manually.
-        The names of projectors are directly used in the plots.
-        If ``projectors_group`` is one of "s", "p", "d", "f", then the projectors are:
-
-        * s : :math:`s`
-        * p : :math:`p_z`, :math:`p_y`, :math:`p_x`
-        * d : :math:`d_{z^2}`, :math:`d_{zx}`, :math:`d_{zy}`, :math:`d_{x^2 - y^2}`, :math:`d_{xy}`
-        * f : :math:`f_{z^3}`, :math:`f_{yz^2}`, :math:`f_{xz^2}`, :math:`f_{z(x^2 - y^2)}`, :math:`f_{xyz}`, :math:`f_{y(3x^2 - y^2)}`, :math:`f_{x(x^2 - 3y^2)}`
-
-        If ``projectors_group`` has the form "l_j", then the projectors are :math:`(1, ..., 2j+1)`
-
     spin_pol : bool, default False
         Whenever PDOS is spin-polarized or not.
     k_resolved : bool, default False
-        Whenever PDOS is k_resolved.
     """
-
-    _projectors = {
-        "s": ["s"],
-        "p": ["$p_z$", "$p_y$", "$p_x$"],
-        "d": ["$d_{z^2}$", "$d_{zx}$", "$d_{zy}$", "$d_{x^2 - y^2}$", "$d_{xy}$"],
-        "f": [
-            "$f_{z^3}$",
-            "$f_{yz^2}$",
-            "$f_{xz^2}$",
-            "$f_{z(x^2 - y^2)}$",
-            "$f_{xyz}$",
-            "$f_{y(3x^2 - y^2)}$",
-            "$f_{x(x^2 - 3y^2)}$",
-        ],
-    }
-
-    _pattern = "[spdf]_[0-9.]*"
 
     def __init__(
         self,
         energy,
         pdos,
         projectors_group: str,
-        projectors=None,
+        projectors,
+        ldos=None,
         spin_pol=False,
-        k_resolved=False,
     ):
         self.energy = energy
-        self._pdos = np.array(pdos)
-
+        self._pdos = None
+        self._ldos = None
         self.projectors_group = projectors_group
-        if projectors is not None:
-            self.projectors = projectors
-        elif self.projectors_group in self._projectors:
-            self.projectors = self._projectors[self.projectors_group]
-        elif re.fullmatch(self._pattern, self.projectors_group):
-            l, j = self.projectors_group.split("_")
-            m_j = range(1, 1 + int(2 * float(j) + 1))
-            self.projectors = [f"{l} ($m_j = {i}$)" for i in m_j]
-        else:
-            raise ValueError(
-                "Projectors can not be assigned automatically, "
-                + "you have to provide explicit list of projectors. "
-                + f"Projectors group: {self.projectors_group}."
-            )
-
+        self.projectors = projectors
         self.spin_pol = spin_pol
-        self.k_resolved = k_resolved
+
+        self.pdos = pdos
+        self.ldos = ldos
 
     def __add__(self, other):
         if not isinstance(other, PDOS):
             raise TypeError(
-                f"Addition is not supported between " + "{type(self)} and {type(other)}"
+                f"Addition is not supported between "
+                + f"{type(self)} and {type(other)}"
             )
         if (
-            self.k_resolved == other.k_resolved
+            self._pdos.shape == other._pdos.shape
             and self.spin_pol == other.spin_pol
             and self.projectors_group == other.projectors_group
             and set(self.projectors) == set(other.projectors)
         ):
             pdos = self._pdos + other._pdos
+            ldos = self._ldos + other._ldos
+
             return PDOS(
                 energy=self.energy,
                 pdos=pdos,
                 projectors_group=self.projectors_group,
                 projectors=self.projectors,
+                ldos=ldos,
                 spin_pol=self.spin_pol,
-                k_resolved=self.k_resolved,
             )
         else:
             raise ValueError(
                 "There is a mismatch between self and other:\n"
-                + f"    k_resolved: {self.k_resolved} {other.k_resolved}\n"
+                + f"    pdos shape: {self._pdos.shape} {other._pdos.shape}\n"
                 + f"    spin_pol: {self.spin_pol} {other.spin_pol}\n"
                 + f"    projectors_group: {self.projectors_group} {other.projectors_group}\n"
                 + f"    projectors: {self.projectors} {other.projectors}\n"
@@ -168,27 +130,28 @@ class PDOS:
         if not isinstance(other, PDOS):
             raise TypeError(
                 f"Subtraction is not supported between "
-                + "{type(self)} and {type(other)}"
+                + f"{type(self)} and {type(other)}"
             )
         if (
-            self.k_resolved == other.k_resolved
+            self._pdos.shape == other._pdos.shape
             and self.spin_pol == other.spin_pol
             and self.projectors_group == other.projectors_group
             and set(self.projectors) == set(other.projectors)
         ):
             pdos = self._pdos - other._pdos
+            ldos = self._ldos - other._ldos
             return PDOS(
                 energy=self.energy,
                 pdos=pdos,
                 projectors_group=self.projectors_group,
                 projectors=self.projectors,
+                ldos=ldos,
                 spin_pol=self.spin_pol,
-                k_resolved=self.k_resolved,
             )
         else:
             raise ValueError(
                 "There is a mismatch between self and other:\n"
-                + f"    k_resolved: {self.k_resolved} {other.k_resolved}\n"
+                + f"    pdos shape: {self._pdos.shape} {other._pdos.shape}\n"
                 + f"    spin_pol: {self.spin_pol} {other.spin_pol}\n"
                 + f"    projectors_group: {self.projectors_group} {other.projectors_group}\n"
                 + f"    projectors: {self.projectors} {other.projectors}\n"
@@ -201,20 +164,27 @@ class PDOS:
         return item in self.projectors
 
     def __getitem__(self, key) -> np.ndarray:
-        if key == "zeros_placeholder":
-            return np.zeros(self.pdos[0].shape, dtype=float)
-        return self.pdos[self.projectors.index(key)]
-
-    @property
-    def ldos(self):
         r"""
-        Local density of states.
+        Return pdos by the projector name.
 
         Parameters
         ----------
-        squeeze : bool, default False
-            Affects only k-resolved case.
-            Sum LDOS among k-points and divide by the number of k-points.
+        key : str or int
+            Projector`s name or index.
+        Returns
+        -------
+        pdos : array
+            Partial density of states.
+        """
+        if isinstance(key, str):
+            key = self.projectors.index(key)
+
+        return self.pdos[key]
+
+    @property
+    def ldos(self) -> np.ndarray:
+        r"""
+        Local density of states.
 
         Returns
         -------
@@ -231,20 +201,35 @@ class PDOS:
             :math:`n_e` is the number of energy points.
         """
 
-        if self.spin_pol:
-            return self._pdos[0:2]
+        return self._ldos
+
+    @ldos.setter
+    def ldos(self, new_ldos):
+        new_ldos = np.array(new_ldos)
+        if self._pdos is not None and new_ldos.shape != self.pdos.shape[1:]:
+            raise ValueError(
+                f"New LDOS shape {new_ldos.shape} does not match "
+                + f"PDOS shape ({self.pdos.shape[1:]})"
+            )
+        if new_ldos is not None:
+            self._ldos = new_ldos
         else:
-            return self._pdos[0]
+            self._ldos = np.sum(self._pdos, axis=0)
+
+        if len(self.energy) != self.ldos.shape[-1]:
+            raise ValueError(
+                f"LDOS does not match with energy: "
+                + f"{len(self.energy)} energy points, {self.ldos.shape[-1]} LDOS points"
+            )
 
     @property
-    def pdos(self, squeeze=False):
+    def pdos(self) -> np.ndarray:
         r"""
         Partial density of states.
 
         Returns
         -------
         pdos : array
-            Summed density of states along all projectors.
             Has the following shapes:
 
             * Spin-polarized, k-resolved: :math:`(n, 2, n_k, n_e)`
@@ -257,66 +242,107 @@ class PDOS:
             :math:`n_e` is the number of energy points.
         """
 
-        if self.spin_pol:
-            shape = self._pdos.shape
-            return self._pdos[2:].reshape((shape[0] // 2, 2, shape[1:]))
-        else:
-            return self._pdos[1:]
+        return self._pdos
+
+    @pdos.setter
+    def pdos(self, new_pdos):
+        new_pdos = np.array(new_pdos)
+        if self._ldos is not None and new_pdos.shape[1:] != self.ldos.shape:
+            raise ValueError(
+                f"New PDOS shape {new_pdos.shape[1:]} does not match "
+                + f"LDOS shape ({self.ldos.shape})"
+            )
+        self._pdos = new_pdos
+
+        if len(self.energy) != self.pdos.shape[-1]:
+            raise ValueError(
+                f"PDOS does not match with energy: "
+                + f"{len(self.energy)} energy points, {self.pdos.shape[-1]} PDOS points"
+            )
+
+        if len(self.projectors) != self.pdos.shape[0]:
+            raise ValueError(
+                f"PDOS does not match with projectors: "
+                + f"{len(self.projectors)} projectors, {self.pdos.shape[0]} PDOS"
+            )
+
+    @property
+    def k_resolved(self):
+        r"""
+        Check if pdos is k-resolved based on shape of ``self.pdos``.
+        """
+
+        return (
+            self.spin_pol
+            and len(self.pdos.shape) == 4
+            or not self.spin_pol
+            and len(self.pdos.shape) == 3
+        )
 
     def squeeze(self):
         r"""
         Squeeze k-resolved PDOS.
+
+        Note
+        ----
+        It modifies the instance on which called.
+        See also :py:function:`PDOS.squeezed`
         """
 
         if self.k_resolved:
-            self._pdos = np.sum(self._pdos, axis=1)
+            self._pdos = np.sum(self._pdos, axis=1 + int(self.spin_pol))
+            self._ldos = np.sum(self._ldos, axis=int(self.spin_pol))
 
-    def make_relative(self, normalize=False):
+    def squeezed(self):
         r"""
-        Recomputes to the relative values for the custom plots.
+        Return new instance with squeezed PDOS.
 
-        If :math:`x_i(E)` is  PDOS of the projector :math:`i`,
+        Calls :py:function:`PDOS.squeeze`.
+
+        Returns
+        -------
+        pdos_squeezed : :py:class:`PDOS`
+            Squeezed PDOS.
+        """
+
+        return deepcopy(self).squeeze()
+
+    def normalize(self):
+        r"""
+        Normalize values of PDOS to 1 for each k and energy point.
+
+        If :math:`x_i(E, k)` is  PDOS of the projector :math:`i`,
         then after this function does the following:
 
         .. math::
-            x_i(E) \rightarrow \sum_{j=0}^{i} x_j(E)
-
-        With ``normalize`` = ``True`` it does the following:
-
-        .. math::
-            x_i(E) \rightarrow \dfrac{\sum_{j=0}^{i} x_j(E)}{\sum_{j=0}^{n} x_j(E)}
+            x_i(E, k) \rightarrow \dfrac{x_i(E, k)}{\sum_{j=0}^{n} x_j(E, k)}
 
         where :math:`n` is the total number of projectors.
-        Those sums are computed individually for spin-up and spin-down in the spin-polarized case.
+        Those sums are computed individually for spin-up and
+        spin-down in the spin-polarized case.
 
-        Parameters
-        ----------
-        normalize : bool, default False
-            Whenever to normalize PDOS to 1 for each energy value.
+        Note
+        ----
+        It modifies the instance on which called.
+        See also :py:function:`PDOS.normalized`
         """
-        if self.spin_pol:
-            for i in range(2, len(self._pdos) // 2):
-                self._pdos[2 + 2 * i] += self._pdos[1 + 2 * (i - 1)]
-                self._pdos[3 + 2 * i] += self._pdos[2 + 2 * (i - 1)]
-        else:
-            for i in range(2, len(self._pdos)):
-                self._pdos[i] += self._pdos[i - 1]
 
-        if normalize:
-            if self.spin_pol:
-                for i in range(2, len(self._pdos) // 2):
-                    self._pdos[2 + 2 * i] = np.where(
-                        self.ldos[0] > 10e-8, self._pdos[2 + 2 * i] / self.ldos[0], 0
-                    )
-                    self._pdos[3 + 2 * i] = np.where(
-                        self.ldos[1] > 10e-8, self._pdos[3 + 2 * i] / self.ldos[1], 0
-                    )
-            else:
-                for i in range(2, len(self._pdos)):
-                    self._pdos[i] += self._pdos[i - 1]
-                    self._pdos[i] = np.where(
-                        self.ldos > 10e-8, self._pdos[i] / self.ldos, 0
-                    )
+        for i in range(0, self.pdos.shape[0]):
+            self._pdos[i] = np.where(self.ldos > 10e-8, self._pdos[i] / self.ldos, 0)
+
+    def normalized(self):
+        r"""
+        Return new instance with normalized PDOS.
+
+        Calls :py:function:`PDOS.normalize`.
+
+        Returns
+        -------
+        pdos_norm : :py:class:`PDOS`
+            Normalized PDOS.
+        """
+
+        return deepcopy(self).normalize()
 
 
 class PDOSIterator:
@@ -333,6 +359,65 @@ class PDOSIterator:
 
     def __iter__(self):
         return self
+
+
+class PDOSQE(PDOS):
+    r"""
+    PDOS wrapper for Quantum Espresso pdos.
+
+    Supports the order of projectors of :projwfc:`Quantum Espresso <>` (s,p,d,f) and
+    the case of projection in the spin-orbit calculations.
+    In the custom cases it is necessary to specify projectors manually.
+    If ``projectors_group`` has the form "l" or "l_j",
+    where l is "s", "p", "d", "f" and j is the total angular momentum,
+    the projectors are assigned automatically,
+    otherwise it is necessary to provide :math:`n` projectors manually.
+    The names of projectors are directly used in the plots.
+    If ``projectors_group`` is one of "s", "p", "d", "f", then the projectors are:
+
+    * s : :math:`s`
+    * p : :math:`p_z`, :math:`p_y`, :math:`p_x`
+    * d : :math:`d_{z^2}`, :math:`d_{zx}`, :math:`d_{zy}`, :math:`d_{x^2 - y^2}`, :math:`d_{xy}`
+    * f : :math:`f_{z^3}`, :math:`f_{yz^2}`, :math:`f_{xz^2}`, :math:`f_{z(x^2 - y^2)}`, :math:`f_{xyz}`, :math:`f_{y(3x^2 - y^2)}`, :math:`f_{x(x^2 - 3y^2)}`
+
+    If ``projectors_group`` has the form "l_j", then the projectors are :math:`(1, ..., 2j+1)`
+
+    """
+
+    _pattern = "[spdf]_[0-9.]*"
+    _projectors = {
+        "s": ["s"],
+        "p": ["$p_z$", "$p_y$", "$p_x$"],
+        "d": ["$d_{z^2}$", "$d_{zx}$", "$d_{zy}$", "$d_{x^2 - y^2}$", "$d_{xy}$"],
+        "f": [
+            "$f_{z^3}$",
+            "$f_{yz^2}$",
+            "$f_{xz^2}$",
+            "$f_{z(x^2 - y^2)}$",
+            "$f_{xyz}$",
+            "$f_{y(3x^2 - y^2)}$",
+            "$f_{x(x^2 - 3y^2)}$",
+        ],
+    }
+
+    def __init__(
+        self, energy, pdos, projectors_group: str, projectors, ldos=None, spin_pol=False
+    ):
+        if projectors is not None:
+            pass
+        elif projectors_group in projectors:
+            projectors = self._projectors[projectors_group]
+        elif re.fullmatch(self._pattern, projectors_group):
+            l, j = projectors_group.split("_")
+            m_j = range(1, 1 + int(2 * float(j) + 1))
+            projectors = [f"{l} ($m_j = {i}$)" for i in m_j]
+        else:
+            raise ValueError(
+                "Projectors can not be assigned automatically, "
+                + "you have to provide explicit list of projectors. "
+                + f"Projectors group: {projectors_group}."
+            )
+        super().__init__(energy, pdos, projectors_group, projectors, ldos, spin_pol)
 
 
 def plot_projected(
@@ -383,8 +468,7 @@ def plot_projected(
         "#FF6F00",
     ]
     n = len(pdos.projectors)
-    if pdos.k_resolved:
-        pdos.squeeze()
+    pdos = pdos.squeezed()
 
     if relative:
         fig, ax = plt.subplots(figsize=(9, 4))
@@ -422,7 +506,7 @@ def plot_projected(
             ax.set_title(title)
 
     if relative:
-        pdos.make_relative(normalize=normalize)
+        pdos = pdos.normalized()
         set_up_axis(ax, n - 1)
         ax.hlines(
             0,
@@ -435,9 +519,9 @@ def plot_projected(
 
     for i, projector in enumerate(pdos):
         if i != 0:
-            prev_projector = pdos.projectors[i - 1]
+            i_prev = i - 1
         else:
-            prev_projector = "zeros_placeholder"
+            i_prev = 0
         if not relative:
             ax = axs[i]
             set_up_axis(ax, i)
@@ -445,8 +529,8 @@ def plot_projected(
             if relative:
                 ax.fill_between(
                     pdos.energy - efermi,
-                    pdos[prev_projector][0],
-                    pdos[projector][0],
+                    np.sum(pdos[:i_prev], axis=0)[0],
+                    np.sum(pdos[:i], axis=0)[0],
                     lw=0,
                     color=colours[i // len(colours)],
                     alpha=0.3,
@@ -454,8 +538,8 @@ def plot_projected(
                 )
                 ax.fill_between(
                     pdos.energy - efermi,
-                    pdos[prev_projector][1],
-                    pdos[projector][1],
+                    np.sum(pdos[:i_prev], axis=0)[1],
+                    np.sum(pdos[:i], axis=0)[1],
                     lw=0,
                     color=colours[i // len(colours)],
                     alpha=0.3,
@@ -503,8 +587,8 @@ def plot_projected(
             if relative:
                 ax.fill_between(
                     pdos.energy - efermi,
-                    pdos[prev_projector],
-                    pdos[projector],
+                    np.sum(pdos[:i_prev], axis=0),
+                    np.sum(pdos[:i], axis=0),
                     lw=0,
                     color=colours[i // len(colours)],
                     alpha=0.3,
