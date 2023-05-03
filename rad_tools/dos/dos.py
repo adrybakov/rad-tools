@@ -21,6 +21,8 @@ class DOSQE:
         Seedname for the Quantum Espresso output files.
     input_folder : str
         Path to the folder with Quantum Espresso output files.
+    energy_window : tuple, default None
+        Energy limits, necessary for correct plotting.
 
     Attributes
     ----------
@@ -40,12 +42,12 @@ class DOSQE:
     atoms : list
     """
 
-    def __init__(self, seedname: str, input_path: str) -> None:
+    def __init__(self, seedname: str, input_path: str, energy_window=None) -> None:
         self.seedname = seedname
         self._input_path = input_path
 
         # Case and whether DOS is k resolved
-        self._k_resolved = False
+        self._k_resolved = None
         self._case = None
 
         # Detect number of energy and k points and read energy values
@@ -59,6 +61,18 @@ class DOSQE:
         self._atoms = {}
         self._wfcs = {}
         self._decompose_filenames()
+
+        if energy_window is None:
+            self.energy_window = (0, -1)
+        else:
+            i, j = 0, 0
+            for i_e, e in enumerate(self.energy):
+                if e <= energy_window[0]:
+                    i += 1
+                if e <= energy_window[1]:
+                    j += 1
+            self.energy_window = (i, min(j + 1, i_e))
+        self.energy = self.energy[self.energy_window[0] : self.energy_window[1]]
 
     @property
     def case(self):
@@ -148,7 +162,7 @@ class DOSQE:
         if self._k_resolved is None:
             # Check for k-resolved
             with open(f"{self._input_path}/{self.seedname}.pdos_tot") as file:
-                self.k_resolved = "ik" in file.readline().lower().split()
+                self._k_resolved = "ik" in file.readline().lower().split()
 
         return self._k_resolved
 
@@ -157,11 +171,11 @@ class DOSQE:
         if self.k_resolved:
             self.nkpoints = int(dos[0][-1])
             self.nepoints = len(dos[0]) // self.nkpoints
-            self._energy = dos[1][0 : self.nepoints]
+            self.energy = dos[1][0 : self.nepoints]
         else:
             self.nkpoints = 1
             self.nepoints = len(dos[0])
-            self._energy = dos[0]
+            self.energy = dos[0]
 
     @property
     def filenames(self):
@@ -273,18 +287,22 @@ class DOSQE:
                             dos[2:4].reshape((2, self.nkpoints, self.nepoints)), axis=1
                         )
                         / self.nkpoints
-                    )
-                return dos[2:4].reshape((2, self.nkpoints, self.nepoints))
-            return dos[1:3]
+                    )[:, self.energy_window[0] : self.energy_window[1]]
+                return dos[2:4].reshape((2, self.nkpoints, self.nepoints))[
+                    :, :, self.energy_window[0] : self.energy_window[1]
+                ]
+            return dos[1:3][:, self.energy_window[0] : self.energy_window[1]]
 
         if self.k_resolved:
             if squeeze:
                 return (
                     np.sum(dos[2].reshape((self.nkpoints, self.nepoints)), axis=0)
                     / self.nkpoints
-                )
-            return dos[2].reshape((self.nkpoints, self.nepoints))
-        return dos[1]
+                )[self.energy_window[0] : self.energy_window[1]]
+            return dos[2].reshape((self.nkpoints, self.nepoints))[
+                :, self.energy_window[0] : self.energy_window[1]
+            ]
+        return dos[1][self.energy_window[0] : self.energy_window[1]]
 
     def total_pdos(self, squeeze=False):
         r"""
@@ -314,9 +332,11 @@ class DOSQE:
                             dos[4:6].reshape((2, self.nkpoints, self.nepoints)), axis=1
                         )
                         / self.nkpoints
-                    )
-                return dos[4:6].reshape((2, self.nkpoints, self.nepoints))
-            return dos[3:5]
+                    )[:, self.energy_window[0] : self.energy_window[1]]
+                return dos[4:6].reshape((2, self.nkpoints, self.nepoints))[
+                    :, :, self.energy_window[0] : self.energy_window[1]
+                ]
+            return dos[3:5][:, self.energy_window[0] : self.energy_window[1]]
 
         elif self.case == 3:
             if self.k_resolved:
@@ -326,18 +346,22 @@ class DOSQE:
                             dos[3:5].reshape((2, self.nkpoints, self.nepoints)), axis=1
                         )
                         / self.nkpoints
-                    )
-                return dos[3:5].reshape((2, self.nkpoints, self.nepoints))
-            return dos[2:4]
+                    )[:, self.energy_window[0] : self.energy_window[1]]
+                return dos[3:5].reshape((2, self.nkpoints, self.nepoints))[
+                    :, :, self.energy_window[0] : self.energy_window[1]
+                ]
+            return dos[2:4][:, self.energy_window[0] : self.energy_window[1]]
 
         if self.k_resolved:
             if squeeze:
                 return (
                     np.sum(dos[3].reshape((self.nkpoints, self.nepoints)), axis=0)
                     / self.nkpoints
-                )
-            return dos[3].reshape((self.nkpoints, self.nepoints))
-        return dos[2]
+                )[self.energy_window[0] : self.energy_window[1]]
+            return dos[3].reshape((self.nkpoints, self.nepoints))[
+                :, self.energy_window[0] : self.energy_window[1]
+            ]
+        return dos[2][self.energy_window[0] : self.energy_window[1]]
 
     @property
     def atoms(self):
@@ -376,7 +400,7 @@ class DOSQE:
 
         return self._atoms[atom]
 
-    def wfcs(self, atom: str, atom_number: int):
+    def wfcs(self, atom: str, atom_number: int = None):
         r"""
         Return list of wave function labels for particular atom.
 
@@ -384,8 +408,8 @@ class DOSQE:
         ----------
         atom : str
             Label of an atom.
-        atom_number : int
-            Number of an atom.
+        atom_number : int, default None
+            Number of an atom. If ``None`` then return wfc and wfc numbers of first atom.
 
         Returns
         -------
@@ -397,7 +421,8 @@ class DOSQE:
                 wfcs = [(wfc_label, wfc_number), ...]
 
         """
-
+        if atom_number is None:
+            atom_number = self.atom_numbers(atom)[0]
         return self._wfcs[(atom, atom_number)]
 
     def pdos(self, atom, wfc, wfc_number, atom_numbers=None) -> PDOSQE:
@@ -438,23 +463,30 @@ class DOSQE:
                 pdos = np.loadtxt(path, skiprows=1).T
             else:
                 pdos += np.loadtxt(path, skiprows=1).T
-
         if self.case in [2, 3]:
             if self.k_resolved:
-                ldos = pdos[2:4].reshape(2, self.nkpoints, self.nepoints)
+                ldos = pdos[2:4].reshape(2, self.nkpoints, self.nepoints)[
+                    :, :, self.energy_window[0] : self.energy_window[1]
+                ]
                 pdos = pdos[4:].reshape(
-                    pdos.shape[0] - 4, 2, self.nkpoints, self.nepoints
-                )
+                    (pdos.shape[0] - 4) // 2, 2, self.nkpoints, self.nepoints
+                )[:, :, :, self.energy_window[0] : self.energy_window[1]]
             else:
-                ldos = pdos[1:3]
-                pdos = pdos[3:].reshape(pdos.shape[0] - 3, 2, self.nepoints)
+                ldos = pdos[1:3][:, self.energy_window[0] : self.energy_window[1]]
+                pdos = pdos[3:].reshape((pdos.shape[0] - 3) // 2, 2, self.nepoints)[
+                    :, :, self.energy_window[0] : self.energy_window[1]
+                ]
         else:
             if self.k_resolved:
-                ldos = pdos[2].reshape(self.nkpoints, self.nepoints)
-                pdos = pdos[3:].reshape(pdos.shape[0] - 3, self.nkpoints, self.nepoints)
+                ldos = pdos[2].reshape(self.nkpoints, self.nepoints)[
+                    :, self.energy_window[0] : self.energy_window[1]
+                ]
+                pdos = pdos[3:].reshape(
+                    pdos.shape[0] - 3, self.nkpoints, self.nepoints
+                )[:, :, self.energy_window[0] : self.energy_window[1]]
             else:
-                ldos = pdos[1]
-                pdos = pdos[2:]
+                ldos = pdos[1][self.energy_window[0] : self.energy_window[1]]
+                pdos = pdos[2:][:, self.energy_window[0] : self.energy_window[1]]
 
         return PDOSQE(
             energy=self.energy,
@@ -465,7 +497,13 @@ class DOSQE:
         )
 
     def plot_pdos_tot(
-        self, output_name, interactive=False, efermi=0, xlim=None, ylim=None
+        self,
+        output_name,
+        interactive=False,
+        efermi=0,
+        xlim=None,
+        ylim=None,
+        save_pickle=False,
     ):
         r"""
         Plot total DOS vs total PDOS.
@@ -482,11 +520,19 @@ class DOSQE:
             Limits for energy scale.
         ylim : tuple, default None
             Limits for dos scale.
+        save_pickle : bool, default False
+            Whether to save figure as a .pickle file.
+            Helps for custom modification of particular figures.
         """
-        ax = plt.subplots(figsize=(8, 4))[1]
+        fig, ax = plt.subplots(figsize=(8, 4))
 
         ax.set_xlabel("Energy, eV", fontsize=18)
         ax.set_ylabel("DOS, states/eV", fontsize=18)
+        if xlim is None:
+            xlim = (np.amin(self.energy), np.amax(self.energy))
+        ax.set_xlim(*tuple(xlim))
+        if ylim is not None:
+            ax.set_ylim(*tuple(ylim))
         if efermi != 0:
             ax.set_title(f"DOS vs PDOS (0 is Fermi energy)", fontsize=18)
         else:
@@ -600,11 +646,6 @@ class DOSQE:
             )
             ncol = 1
 
-        if xlim is None:
-            xlim = (np.amin(self.energy), np.amax(self.energy))
-        ax.set_xlim(*tuple(xlim))
-        if ylim is not None:
-            ax.set_ylim(*tuple(ylim))
         ax.legend(loc="best", ncol=ncol, draggable=True)
 
         if interactive:
@@ -612,6 +653,11 @@ class DOSQE:
         else:
             png_path = f"{output_name}.png"
             plt.savefig(png_path, dpi=600, bbox_inches="tight")
+            if save_pickle:
+                import pickle
+
+                with open(f"{png_path}.pickle", "wb") as file:
+                    pickle.dump(fig, file)
             print(f"Total DOS plot is in {abspath(png_path)}")
         plt.close()
 

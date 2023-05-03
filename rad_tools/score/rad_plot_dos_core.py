@@ -8,8 +8,7 @@ from os.path import abspath, join
 import matplotlib.pyplot as plt
 import numpy as np
 
-from rad_tools.dos.dos import DOSQE
-from rad_tools.dos.pdos import plot_projected, PDOS
+from rad_tools.dos import DOSQE, plot_projected, PDOS
 from rad_tools.routines import cprint
 
 
@@ -59,6 +58,8 @@ def manager(
     normalize=False,
     verbose=False,
     interactive=False,
+    save_pickle=False,
+    save_txt=False,
 ):
     makedirs(output_path, exist_ok=True)
 
@@ -90,8 +91,8 @@ def manager(
         makedirs(output_root, exist_ok=True)
 
         # Load DOS data.
-        dos = DOSQE(seedname, input_path)
-        print(f"{dos.case_name} case detected.")
+        dos = DOSQE(seedname, input_path, energy_window=energy_window)
+        print(f"{dos.casename} case detected.")
         for atom in dos.atoms:
             print(f"    {len(dos.atom_numbers(atom))} of {atom} detected")
 
@@ -102,6 +103,7 @@ def manager(
             efermi=efermi,
             xlim=energy_window,
             ylim=dos_window,
+            save_pickle=save_pickle,
         )
 
         # Plot PDOS for each atom/wfc
@@ -133,9 +135,13 @@ def manager(
                     pdos = dos.pdos(
                         atom=atom,
                         wfc=wfc,
-                        wfc_numbers=wfc_number,
+                        wfc_number=wfc_number,
                         atom_numbers=atom_number,
                     )
+                    if save_txt:
+                        pdos.dump_txt(
+                            join(local_output, f"{atom_name}_{wfc}_{wfc_number}.txt")
+                        )
                     plot_projected(
                         pdos=pdos,
                         efermi=efermi,
@@ -145,10 +151,10 @@ def manager(
                         title=title,
                         xlim=energy_window,
                         ylim=dos_window,
-                        title=title,
                         relative=relative,
                         normalize=normalize,
                         interactive=interactive,
+                        save_pickle=save_pickle,
                     )
 
         # Plot wfc contribution into each atom
@@ -182,7 +188,8 @@ def manager(
                     title = f"PDOS for {atom_name} (0 is 0)"
                 else:
                     title = f"PDOS for {atom_name} (0 is Fermi energy)"
-
+                if save_txt:
+                    pdos.dump_txt(join(local_output, f"{atom_name}.txt"))
                 plot_projected(
                     pdos=pdos,
                     efermi=efermi,
@@ -190,10 +197,10 @@ def manager(
                     title=title,
                     xlim=energy_window,
                     ylim=dos_window,
-                    title=title,
                     relative=relative,
                     normalize=normalize,
                     interactive=interactive,
+                    save_pickle=save_pickle,
                 )
 
         # Plot atom contributions into total PDOS
@@ -205,11 +212,11 @@ def manager(
             else:
                 atom_numbers = [None]
             for atom_number in atom_numbers:
-                projectors.append(atom_name)
                 if separate:
                     atom_name = f"{atom}{atom_number}"
                 else:
                     atom_name = atom
+                projectors.append(atom_name)
                 for i, (wfc, wfc_number) in enumerate(dos.wfcs(atom, atom_number)):
                     if i == 0:
                         ldos = dos.pdos(atom, wfc, wfc_number, atom_number).ldos
@@ -228,7 +235,8 @@ def manager(
             title = f"Atom contribution in PDOS (0 is 0)"
         else:
             title = f"Atom contribution in PDOS (0 is Fermi energy)"
-
+        if save_txt:
+            pdos.dump_txt(join(output_root, "atomic-contributions.txt"))
         plot_projected(
             pdos=pdos,
             efermi=efermi,
@@ -236,10 +244,10 @@ def manager(
             title=title,
             xlim=energy_window,
             ylim=dos_window,
-            title=title,
             relative=relative,
             normalize=normalize,
             interactive=interactive,
+            save_pickle=save_pickle,
         )
 
 
@@ -334,6 +342,13 @@ def create_parser():
         action="store_true",
         default=False,
         help="Interactive plotting.",
+    )
+    parser.add_argument(
+        "-sp",
+        "--save-pickle",
+        action="store_true",
+        default=False,
+        help="Whenever to save figures as .pickle files.",
     )
 
     return parser

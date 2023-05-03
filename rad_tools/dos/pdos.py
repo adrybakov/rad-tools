@@ -205,14 +205,18 @@ class PDOS:
 
     @ldos.setter
     def ldos(self, new_ldos):
-        new_ldos = np.array(new_ldos)
-        if self._pdos is not None and new_ldos.shape != self.pdos.shape[1:]:
+        if (
+            self._pdos is not None
+            and new_ldos is not None
+            and np.array(new_ldos).shape != self.pdos.shape[1:]
+        ):
             raise ValueError(
                 f"New LDOS shape {new_ldos.shape} does not match "
                 + f"PDOS shape ({self.pdos.shape[1:]})"
             )
+
         if new_ldos is not None:
-            self._ldos = new_ldos
+            self._ldos = np.array(new_ldos)
         else:
             self._ldos = np.sum(self._pdos, axis=0)
 
@@ -305,7 +309,9 @@ class PDOS:
             Squeezed PDOS.
         """
 
-        return deepcopy(self).squeeze()
+        squeezed_pdos = deepcopy(self)
+        squeezed_pdos.squeeze()
+        return squeezed_pdos
 
     def normalize(self):
         r"""
@@ -328,7 +334,8 @@ class PDOS:
         """
 
         for i in range(0, self.pdos.shape[0]):
-            self._pdos[i] = np.where(self.ldos > 10e-8, self._pdos[i] / self.ldos, 0)
+            self._pdos[i] = np.where(self.ldos > 10e-8, self._pdos[i] / self.ldos, None)
+        self._ldos = np.where(self.ldos > 10e-8, self._ldos / self.ldos, 0)
 
     def normalized(self):
         r"""
@@ -338,11 +345,73 @@ class PDOS:
 
         Returns
         -------
-        pdos_norm : :py:class:`PDOS`
+        normalized_pdos : :py:class:`PDOS`
             Normalized PDOS.
         """
 
-        return deepcopy(self).normalize()
+        normalized_pdos = deepcopy(self)
+        normalized_pdos.normalize()
+        return normalized_pdos
+
+    def dump_txt(self, ouptut_name):
+        r"""
+        Save PDOS as .txt file.
+
+        First line is a header.
+        """
+
+        header = ""
+        fmt = ""
+        if self.k_resolved:
+            header += "# ik  "
+            fmt += "%5.0f "
+        header += "E (eV)     "
+        fmt += "%10.3f "
+
+        if self.spin_pol:
+            header += "ldosup(E) ldosdw(E) "
+            fmt += "%9.3E %9.3E "
+            for i in self.projectors:
+                n = max(9, len(i) + 2)
+                header += f"{i+'up':>{n}} {i+'dw':>{n}} "
+                fmt += f"%{n}.3E %{n}.3E "
+        else:
+            header += "ldos(E)   "
+            fmt += "%9.3E "
+            for i in self.projectors:
+                n = max(9, len(i))
+                header += f"{i:>{n}} "
+                fmt += f"%{n}.3E "
+
+        data = []
+        nepoints = self.pdos.shape[-1]
+        if self.k_resolved:
+            if self.spin_pol:
+                nkpoints = self.pdos.shape[2]
+                ldos = self.ldos.reshape(2, nkpoints * nepoints)
+                pdos = self.pdos.reshape(len(self.projectors), 2, nkpoints * nepoints)
+            else:
+                nkpoints = self.pdos.shape[1]
+                ldos = self.ldos.reshape(nkpoints * nepoints)
+                pdos = self.pdos.reshape(len(self.projectors), nkpoints * nepoints)
+            data.append(np.repeat(np.linspace(1, nkpoints, nkpoints), nepoints))
+            data.append(np.tile(self.energy, nkpoints))
+        else:
+            data.append(self.energy)
+            ldos = self.ldos
+            pdos = self.pdos
+
+        if self.spin_pol:
+            data.append(ldos[0])
+            data.append(ldos[1])
+            for i in range(pdos.shape[0]):
+                data.append(pdos[i][0])
+                data.append(pdos[i][1])
+        else:
+            data.append(ldos)
+            for i in range(pdos.shape[0]):
+                data.append(pdos[i])
+        np.savetxt(ouptut_name, np.array(data).T, fmt=fmt, header=header, comments="")
 
 
 class PDOSIterator:
@@ -411,7 +480,7 @@ class PDOSQE(PDOS):
     ):
         if projectors is not None:
             pass
-        elif projectors_group in projectors:
+        elif projectors_group in self._projectors:
             projectors = self._projectors[projectors_group]
         elif re.fullmatch(self._pattern, projectors_group):
             l, j = projectors_group.split("_")
@@ -436,6 +505,7 @@ def plot_projected(
     relative=False,
     normalize=False,
     interactive=False,
+    save_pickle=False,
 ):
     r"""
     Plot PDOS.
@@ -460,6 +530,9 @@ def plot_projected(
         Whenever to norma;ize relative plot style.
     interactive : bool, default False
         Whenever to use interactive plotting mode.
+    save_pickle : bool, default False
+        Whether to save figure as a .pickle file.
+        Helps for custom modification of particular figures.
     """
 
     colours = [
@@ -526,10 +599,6 @@ def plot_projected(
         )
 
     for i, projector in enumerate(pdos):
-        if i != 0:
-            i_prev = i - 1
-        else:
-            i_prev = 0
         if not relative:
             ax = axs[i]
             set_up_axis(ax, i)
@@ -537,19 +606,19 @@ def plot_projected(
             if relative:
                 ax.fill_between(
                     pdos.energy - efermi,
-                    np.sum(pdos[:i_prev], axis=0)[0],
                     np.sum(pdos[:i], axis=0)[0],
+                    np.sum(pdos[: i + 1], axis=0)[0],
                     lw=0,
-                    color=colours[i // len(colours)],
+                    color=colours[i % len(colours)],
                     alpha=0.3,
                     label=f"{projector} (up)",
                 )
                 ax.fill_between(
                     pdos.energy - efermi,
-                    np.sum(pdos[:i_prev], axis=0)[1],
-                    -np.sum(pdos[:i], axis=0)[1],
+                    np.sum(pdos[:i], axis=0)[1],
+                    -np.sum(pdos[: i + 1], axis=0)[1],
                     lw=0,
-                    color=colours[i // len(colours)],
+                    color=colours[i % len(colours)],
                     alpha=0.3,
                     label=f"{projector} (down)",
                 )
@@ -595,10 +664,10 @@ def plot_projected(
             if relative:
                 ax.fill_between(
                     pdos.energy - efermi,
-                    np.sum(pdos[:i_prev], axis=0),
                     np.sum(pdos[:i], axis=0),
+                    np.sum(pdos[: i + 1], axis=0),
                     lw=0,
-                    color=colours[i // len(colours)],
+                    color=colours[i % len(colours)],
                     alpha=0.3,
                     label=projector,
                 )
@@ -628,4 +697,9 @@ def plot_projected(
         plt.show()
     else:
         plt.savefig(f"{output_name}.png", dpi=400, bbox_inches="tight")
+        if save_pickle:
+            import pickle
+
+            with open(f"{png_path}.pickle", "wb") as file:
+                pickle.dump(fig, file)
     plt.close()
