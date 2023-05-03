@@ -401,7 +401,13 @@ class PDOSQE(PDOS):
     }
 
     def __init__(
-        self, energy, pdos, projectors_group: str, projectors, ldos=None, spin_pol=False
+        self,
+        energy,
+        pdos,
+        projectors_group: str,
+        projectors=None,
+        ldos=None,
+        spin_pol=False,
     ):
         if projectors is not None:
             pass
@@ -505,8 +511,10 @@ def plot_projected(
         if title is not None and (i == 0 or relative):
             ax.set_title(title)
 
-    if relative:
+    if normalize:
         pdos = pdos.normalized()
+
+    if relative:
         set_up_axis(ax, n - 1)
         ax.hlines(
             0,
@@ -539,7 +547,7 @@ def plot_projected(
                 ax.fill_between(
                     pdos.energy - efermi,
                     np.sum(pdos[:i_prev], axis=0)[1],
-                    np.sum(pdos[:i], axis=0)[1],
+                    -np.sum(pdos[:i], axis=0)[1],
                     lw=0,
                     color=colours[i // len(colours)],
                     alpha=0.3,

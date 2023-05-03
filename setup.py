@@ -26,7 +26,7 @@ setup(
         "scripts/tb2j-extractor.py",
         "scripts/rad-make-template.py",
         "scripts/rad-dos-plotter.py",
-        "scripts/new-rad-dos-plotter.py",
+        "scripts/rad-plot-dos.py",
         "scripts/identify-wannier-centres.py",
         "scripts/compute-energies.py",
     ],
