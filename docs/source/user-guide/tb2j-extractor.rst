@@ -9,7 +9,7 @@ Script for extracting of template-based model from
 
 If :ref:`--output_name <tb2j-extractor_output-name>` is not provided the result is 
 passed to the console, otherwise it is written to the file with first 3 lines 
-giving information about the source of exchange and datetime.
+giving information about the source of exchange and date, time.
 
 Exchange types
 ==============

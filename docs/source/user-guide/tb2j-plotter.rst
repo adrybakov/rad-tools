@@ -4,7 +4,7 @@
 ``tb2j-plotter.py``
 *******************
 
-Script for visualisation of 
+Script for visualizations of 
 `TB2J <https://tb2j.readthedocs.io/en/latest/>`_ results.
 
 The script displays isotropic exchange, distances and DMI 
