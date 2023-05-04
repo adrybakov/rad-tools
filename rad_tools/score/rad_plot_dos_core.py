@@ -107,7 +107,7 @@ def manager(
 
         # Plot PDOS for each atom/wfc
         cprint("Orbital-resolved PDOS:", colour="yellow")
-        local_output = join(output_root, "orbital-orbital-resolved")
+        local_output = join(output_root, "orbital-resolved")
         makedirs(local_output, exist_ok=True)
         data = {}
         for atom, atom_number, wfc, wfc_number in dos:
@@ -167,7 +167,7 @@ def manager(
 
         # Plot wfc contribution into each atom
         cprint("Orbital's contribution for each atom.", colour="yellow")
-        local_output = join(output_root, "atom-orbital-resolved")
+        local_output = join(output_root, "atom-resolved")
         makedirs(local_output, exist_ok=True)
 
         for atom in dos.atoms:
@@ -278,7 +278,7 @@ def create_parser():
     parser.add_argument(
         "-s",
         "--seedname",
-        metavar="filpdos",
+        metavar="name",
         type=str,
         default=None,
         help="Prefix for output files containing PDOS(E). "
