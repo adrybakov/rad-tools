@@ -103,8 +103,8 @@ Add script for energy extractor.
 0.4.9
 -----
 Add --legend_location option (removed in 0.5.7)
-to the :ref:`rad-dos-plotter.py <rad-dos-plotter>` script.
+to the :ref:`rad-plot-dos.py <rad-plot-dos>` script.
 
 0.4.10
 ------
-Bugfix in :ref:`rad-dos-plotter.py <rad-dos-plotter>` script
+Bugfix in :ref:`rad-plot-dos.py <rad-plot-dos>` script

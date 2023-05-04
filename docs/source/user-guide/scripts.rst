@@ -27,7 +27,7 @@ Other scripts.
 .. toctree::
    :maxdepth: 1
 
-   rad-dos-plotter
+   rad-plot-dos
    identify-wannier-centres
 
 .. _scripts_output-notes:

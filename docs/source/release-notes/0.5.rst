@@ -54,7 +54,7 @@ create only two modes of outputs.
 -----
 Add ``ferromagnetic_energy`` method to the ``ExchangeModel``
 
-Full remake of :ref:`rad-dos-plotter.py <rad-dos-plotter>` script.
+Full remake of :ref:`rad-plot-dos.py <rad-plot-dos>` script.
 
 0.5.8
 -----
@@ -99,14 +99,19 @@ add `black <https://black.readthedocs.io/>`_ code formatter.
 
 0.5.18
 ------
-Change the colours in :ref:`rad-dos-plotter.py <rad-dos-plotter>` script. 
+Change the colours in :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
 Add support for the k-resolved DOS.
 
 0.5.19
 ------
-Bugfix in :ref:`rad-dos-plotter.py <rad-dos-plotter>` script. 
+Bugfix in :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
 
 0.5.20
 ------
 Remove search for the middle of the bond 
 in :ref:`identify-wannier-centres.py <identify-wannier-centres>` script. 
+
+0.5.21
+------
+Major change of :ref:`rad-plot-dos.py <rad-plot-dos>` script. Add ``dos`` module. 
+Release for debugging. Main release will happen with the change to 0.6.* version.

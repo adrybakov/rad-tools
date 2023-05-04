@@ -6,7 +6,7 @@ Version 0.2
 
 Whats new?
 ----------
-Add script :ref:`rad-dos-plotter.py <rad-dos-plotter>`
+Add script :ref:`rad-plot-dos.py <rad-plot-dos>`
 
 0.2.12
 ------
@@ -60,9 +60,9 @@ Now by default output is passed to the standard output stream.
 
 0.2.2
 -----
-Add interactive mode to the :ref:`rad-dos-plotter.py <rad-dos-plotter>`.
+Add interactive mode to the :ref:`rad-plot-dos.py <rad-plot-dos>`.
 
 0.2.1
 -----
 
-Correct output file name in :ref:`rad-dos-plotter.py <rad-dos-plotter>`.
+Correct output file name in :ref:`rad-plot-dos.py <rad-plot-dos>`.

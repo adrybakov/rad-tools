@@ -1,8 +1,11 @@
-.. _rad-dos-plotter:
+.. _rad-plot-dos:
 
 **********************
-``rad-dos-plotter.py``
+``rad-plot-dos.py``
 **********************
+
+.. note::
+    Name changed in 0.5.21 from ``rad-dos-plotter.py`` to ``rad-plot-dos.py``
 
 Script for visualisation of projected density of states from 
 `Quantum-ESPRESSO <https://www.quantum-espresso.org/>`_ 
@@ -21,22 +24,22 @@ Minimal input looks like the following:
 
 .. code-block:: bash
 
-    rad-dos-plotter.py -if collinear
+    rad-plot-dos.py -if collinear
 
 where "collinear" is a path to the folder with output files from QE PDOS calculations.
 
 If you want to choose particular energy window use an 
-option :ref:`--window <rad-dos-plotter_window>`:
+option :ref:`--window <rad-plot-dos_energy-window>`:
 
 .. code-block:: bash
 
-    rad-dos-plotter.py -if collinear -w -10 5
+    rad-plot-dos.py -if collinear -w -10 5
 
 
 Arguments
 =========
 
-.. _rad-dos-plotter_input-path:
+.. _rad-plot-dos_input-path:
 
 -ip, --input-path
 -----------------
@@ -47,10 +50,10 @@ Relative or absolute path to the folder with dos files.
     required
 
 
-.. _rad-dos-plotter_filpdos:
+.. _rad-plot-dos_seedname:
 
--f, --filpdos
--------------
+-s, --seedname
+--------------
 Prefix for output files containing PDOS(E). 
 As specified in the QE projwfc.x input file.
 
@@ -61,8 +64,10 @@ detect it automatically in the "input-path" folder.
 
     default : None
 
+Renamed in 0.5.21: from "filpdos" to "seedname".
 
-.. _rad-dos-plotter_output-path:
+
+.. _rad-plot-dos_output-path:
 
 -op, --output-path
 ------------------
@@ -73,10 +78,10 @@ Relative or absolute path to the folder for saving outputs.
     default : current directory (".")
 
 
-.. _rad-dos-plotter_window:
+.. _rad-plot-dos_energy-window:
 
--w, --window
-------------
+-ew, --energy-window
+--------------------
 Energy window for the plots.  
 By default whole range present in the files is plotted.
 
@@ -84,8 +89,24 @@ By default whole range present in the files is plotted.
 
     default : None
 
+Renamed in 0.5.21: from "window" to "energy-window".
 
-.. _rad-dos-plotter_efermi:
+
+.. _rad-plot-dos_dos-window:
+
+-dw, --dos-window
+-----------------
+DOS window for the plots.  
+By default whole range present in the files is plotted.
+
+.. code-block:: text
+
+    default : None
+
+Added in 0.5.21.
+
+
+.. _rad-plot-dos_efermi:
 
 -ef, --efermi
 -------------
@@ -96,10 +117,10 @@ Fermi energy. If specified zero will be shift to Fermi energy.
     default : 0
 
 
-.. _rad-dos-plotter_separate:
+.. _rad-plot-dos_separate:
 
--s, --separate
---------------
+-sep, --separate
+----------------
 Whenever to plot projected DOS for each atom  of the same type separately.
 
 .. code-block:: text
@@ -107,7 +128,7 @@ Whenever to plot projected DOS for each atom  of the same type separately.
     default : False
 
 
-.. _rad-dos-plotter_relative:
+.. _rad-plot-dos_relative:
 
 -r, --relative
 --------------
@@ -118,7 +139,7 @@ Whenever to use relative style.
     default : False
 
 
-.. _rad-dos-plotter_normalize:
+.. _rad-plot-dos_normalize:
 
 -n, --normalize
 ---------------
@@ -129,7 +150,7 @@ Whenever to use normalize relative style.
     default : False
 
 
-.. _rad-dos-plotter_verbose:
+.. _rad-plot-dos_verbose:
 
 -v, --verbose
 -------------
@@ -140,7 +161,7 @@ Verbose output, propagates to the called methods.
     default : False
 
 
-.. _rad-dos-plotter_interactive:
+.. _rad-plot-dos_interactive:
 
 -i, --interactive
 -----------------
@@ -149,3 +170,29 @@ Interactive plotting.
 .. code-block:: text
 
     default : False
+
+
+.. _rad-plot-dos_save-pickle:
+
+-sp, --save-pickle
+------------------
+Whenever to save figures as .pickle files.
+
+.. code-block:: text
+
+    default : False
+
+Added in 0.5.21.
+
+
+.. _rad-plot-dos_save-txt:
+
+-st, --save-txt
+---------------
+Whenever to save some data as txt files.
+
+.. code-block:: text
+
+    default : False
+
+Added in 0.5.21.
