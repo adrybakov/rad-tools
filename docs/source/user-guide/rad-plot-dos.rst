@@ -164,7 +164,7 @@ detect it automatically in the :ref:`--input-path <rad-plot-dos_input-path>` fol
 
     default : None
 
-Renamed in 0.5.21: from "filpdos" to "seedname".
+Renamed in version 0.5.21: from "filpdos" to "seedname".
 
 
 .. _rad-plot-dos_output-path:
@@ -189,7 +189,7 @@ By default whole range present in the files is plotted.
 
     default : None
 
-Renamed in 0.5.21: from "window" to "energy-window".
+Renamed in version 0.5.21: from "window" to "energy-window".
 
 
 .. _rad-plot-dos_dos-window:
@@ -203,7 +203,7 @@ By default whole range present in the files is plotted.
 
     default : None
 
-Added in 0.5.21.
+Added in version 0.5.21.
 
 
 .. _rad-plot-dos_efermi:
@@ -282,7 +282,7 @@ Whenever to save figures as .pickle files.
 
     default : False
 
-Added in 0.5.21.
+Added in version 0.5.21.
 
 
 .. _rad-plot-dos_save-txt:
@@ -295,4 +295,4 @@ Whenever to save some data as txt files.
 
     default : False
 
-Added in 0.5.21.
+Added in version 0.5.21.
