@@ -700,6 +700,6 @@ def plot_projected(
         if save_pickle:
             import pickle
 
-            with open(f"{png_path}.pickle", "wb") as file:
+            with open(f"{output_name}.png.pickle", "wb") as file:
                 pickle.dump(fig, file)
     plt.close()
