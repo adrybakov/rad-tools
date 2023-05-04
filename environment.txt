@@ -12,3 +12,4 @@ pydata-sphinx-theme
 sphinx-design
 twine
 tqdm
+urllib3==1.26.15
