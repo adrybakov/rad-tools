@@ -15,5 +15,7 @@
     },
     "python.envFile": "${workspaceFolder}/.venv",
     "python.analysis.typeCheckingMode": "off",
-
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
 }
