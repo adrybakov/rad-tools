@@ -1,5 +1,3 @@
-#! /usr/local/bin/python3
-
 import re
 from argparse import ArgumentParser
 from os import makedirs, walk
@@ -117,6 +115,10 @@ def manager(
                 data[atom] = []
             data[atom].append((wfc, wfc_number))
 
+        # Avoid repetitions
+        for atom in data:
+            data[atom] = list(set(data[atom]))
+
         for atom in data:
             for wfc, wfc_number in data[atom]:
                 if separate:
@@ -128,7 +130,7 @@ def manager(
                     atom_numbers, desc=f"  {atom} {wfc} #{wfc_number}"
                 ):
                     if separate:
-                        atom_name = f"{atom}{atom_number}"
+                        atom_name = f"{atom}#{atom_number}"
                     else:
                         atom_name = atom
 
@@ -145,13 +147,13 @@ def manager(
                     )
                     if save_txt:
                         pdos.dump_txt(
-                            join(local_output, f"{atom_name}_{wfc}_{wfc_number}.txt")
+                            join(local_output, f"{atom_name}_{wfc}#{wfc_number}.txt")
                         )
                     plot_projected(
                         pdos=pdos,
                         efermi=efermi,
                         output_name=join(
-                            local_output, f"{atom_name}_{wfc}_{wfc_number}"
+                            local_output, f"{atom_name}_{wfc}#{wfc_number}"
                         ),
                         title=title,
                         xlim=energy_window,
@@ -175,7 +177,7 @@ def manager(
                 atom_numbers = [None]
             for atom_number in tqdm(atom_numbers, desc=f"  {atom}"):
                 if separate:
-                    atom_name = f"{atom}{atom_number}"
+                    atom_name = f"{atom}#{atom_number}"
                 else:
                     atom_name = atom
                 projectors = []
@@ -222,7 +224,7 @@ def manager(
                 atom_numbers = [None]
             for atom_number in atom_numbers:
                 if separate:
-                    atom_name = f"{atom}{atom_number}"
+                    atom_name = f"{atom}#{atom_number}"
                 else:
                     atom_name = atom
                 projectors.append(atom_name)

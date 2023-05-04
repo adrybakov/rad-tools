@@ -115,3 +115,8 @@ in :ref:`identify-wannier-centres.py <identify-wannier-centres>` script.
 ------
 Major change of :ref:`rad-plot-dos.py <rad-plot-dos>` script. Add ``dos`` module. 
 Release for debugging. Main release will happen with the change to 0.6.* version.
+
+0.5.22
+------
+Bugfix. Windows-specific bug with "/" used insted of ``join()`` in some cases.
+Bugfix for cases when atom names contain numbers.

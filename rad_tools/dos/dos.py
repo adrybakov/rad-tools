@@ -106,7 +106,7 @@ class DOSQE:
 
         if self._case is None:
             # Detect the case
-            with open(f"{self._input_path}/{self.seedname}.pdos_tot") as file:
+            with open(join(f"{self._input_path}", f"{self.seedname}.pdos_tot")) as file:
                 header = file.readline().lower().split()
 
             if "dos(e)" in header and "pdos(e)" in header:
@@ -161,13 +161,15 @@ class DOSQE:
 
         if self._k_resolved is None:
             # Check for k-resolved
-            with open(f"{self._input_path}/{self.seedname}.pdos_tot") as file:
+            with open(join(f"{self._input_path}", f"{self.seedname}.pdos_tot")) as file:
                 self._k_resolved = "ik" in file.readline().lower().split()
 
         return self._k_resolved
 
     def _extract_energy(self):
-        dos = np.loadtxt(f"{self._input_path}/{self.seedname}.pdos_tot", skiprows=1).T
+        dos = np.loadtxt(
+            join(f"{self._input_path}", f"{self.seedname}.pdos_tot"), skiprows=1
+        ).T
         if self.k_resolved:
             self.nkpoints = int(dos[0][-1])
             self.nepoints = len(dos[0]) // self.nkpoints
@@ -183,7 +185,7 @@ class DOSQE:
         List of filenames (without "seedname".pdos_tot).
         """
         if self._filenames is None:
-            pattern = ".pdos_atm#[0-9]*\\([a-zA-Z]*\\)_wfc#[0-9]*\\([spdf_0-9j.]*\\)"
+            pattern = ".pdos_atm#[0-9]*\\([a-zA-Z0-9]*\\)_wfc#[0-9]*\\([spdf_0-9j.]*\\)"
 
             # Get list of files in the folder
             all_filenames = []
@@ -322,7 +324,9 @@ class DOSQE:
             :math:`(n_e)` otherwise.
         """
 
-        dos = np.loadtxt(f"{self._input_path}/{self.seedname}.pdos_tot", skiprows=1).T
+        dos = np.loadtxt(
+            join(f"{self._input_path}", f"{self.seedname}.pdos_tot"), skiprows=1
+        ).T
 
         if self.case == 2:
             if self.k_resolved:
