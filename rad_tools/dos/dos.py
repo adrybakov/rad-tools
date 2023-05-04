@@ -658,7 +658,6 @@ class DOSQE:
 
                 with open(f"{png_path}.pickle", "wb") as file:
                     pickle.dump(fig, file)
-            print(f"Total DOS plot is in {abspath(png_path)}")
         plt.close()
 
 

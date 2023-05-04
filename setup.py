@@ -30,7 +30,7 @@ setup(
         "scripts/identify-wannier-centres.py",
         "scripts/compute-energies.py",
     ],
-    install_requires=["numpy", "matplotlib"],
+    install_requires=["numpy", "matplotlib", "tqdm"],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Programming Language :: Python :: 3",

@@ -5,8 +5,7 @@ from argparse import ArgumentParser
 from os import makedirs, walk
 from os.path import abspath, join
 
-import matplotlib.pyplot as plt
-import numpy as np
+from tqdm import tqdm
 
 from rad_tools.dos import DOSQE, plot_projected, PDOS
 from rad_tools.routines import cprint
@@ -97,6 +96,7 @@ def manager(
             print(f"    {len(dos.atom_numbers(atom))} of {atom} detected")
 
         # Plot PDOS vs DOS
+        cprint("Total DOS vs total PDOS", colour="yellow")
         dos.plot_pdos_tot(
             output_name=join(output_root, "pdos-vs-dos"),
             interactive=interactive,
@@ -105,8 +105,10 @@ def manager(
             ylim=dos_window,
             save_pickle=save_pickle,
         )
+        print(f"  Result is in {join(output_root, 'pdos-vs-dos')}")
 
         # Plot PDOS for each atom/wfc
+        cprint("Orbital-resolved PDOS:", colour="yellow")
         local_output = join(output_root, "orbital-orbital-resolved")
         makedirs(local_output, exist_ok=True)
         data = {}
@@ -114,6 +116,7 @@ def manager(
             if atom not in data:
                 data[atom] = []
             data[atom].append((wfc, wfc_number))
+
         for atom in data:
             for wfc, wfc_number in data[atom]:
                 if separate:
@@ -121,7 +124,9 @@ def manager(
                 else:
                     atom_numbers = [None]
 
-                for atom_number in atom_numbers:
+                for atom_number in tqdm(
+                    atom_numbers, desc=f"  {atom} {wfc}_{wfc_number}"
+                ):
                     if separate:
                         atom_name = f"{atom}{atom_number}"
                     else:
@@ -156,8 +161,10 @@ def manager(
                         interactive=interactive,
                         save_pickle=save_pickle,
                     )
+        print(f"  Results are in {abspath(local_output)}")
 
         # Plot wfc contribution into each atom
+        cprint("Orbital's contribution for each atom.", colour="yellow")
         local_output = join(output_root, "atom-orbital-resolved")
         makedirs(local_output, exist_ok=True)
 
@@ -166,7 +173,7 @@ def manager(
                 atom_numbers = dos.atom_numbers(atom)
             else:
                 atom_numbers = [None]
-            for atom_number in atom_numbers:
+            for atom_number in tqdm(atom_numbers, desc=f"  {atom}"):
                 if separate:
                     atom_name = f"{atom}{atom_number}"
                 else:
@@ -202,8 +209,10 @@ def manager(
                     interactive=interactive,
                     save_pickle=save_pickle,
                 )
+        print(f"  Results are in {abspath(local_output)}")
 
         # Plot atom contributions into total PDOS
+        cprint("Atom's contributions into total PDOS:", colour="yellow")
         projectors = []
         pdos = []
         for atom in dos.atoms:
@@ -249,6 +258,7 @@ def manager(
             interactive=interactive,
             save_pickle=save_pickle,
         )
+        print(f"  Result is in {abspath(local_output)}")
 
 
 def create_parser():
@@ -349,6 +359,13 @@ def create_parser():
         action="store_true",
         default=False,
         help="Whenever to save figures as .pickle files.",
+    )
+    parser.add_argument(
+        "-st",
+        "--save-txt",
+        action="store_true",
+        default=False,
+        help="Whenever to save some data as txt files.",
     )
 
     return parser
