@@ -125,7 +125,7 @@ def manager(
                     atom_numbers = [None]
 
                 for atom_number in tqdm(
-                    atom_numbers, desc=f"  {atom} {wfc}_{wfc_number}"
+                    atom_numbers, desc=f"  {atom} {wfc} #{wfc_number}"
                 ):
                     if separate:
                         atom_name = f"{atom}{atom_number}"

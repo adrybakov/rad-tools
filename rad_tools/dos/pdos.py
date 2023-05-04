@@ -290,7 +290,7 @@ class PDOS:
         Note
         ----
         It modifies the instance on which called.
-        See also :py:function:`PDOS.squeezed`
+        See also :py:func:`PDOS.squeezed`
         """
 
         if self.k_resolved:
@@ -301,7 +301,7 @@ class PDOS:
         r"""
         Return new instance with squeezed PDOS.
 
-        Calls :py:function:`PDOS.squeeze`.
+        Calls :py:func:`PDOS.squeeze`.
 
         Returns
         -------
@@ -330,7 +330,7 @@ class PDOS:
         Note
         ----
         It modifies the instance on which called.
-        See also :py:function:`PDOS.normalized`
+        See also :py:func:`PDOS.normalized`
         """
 
         for i in range(0, self.pdos.shape[0]):
@@ -341,7 +341,7 @@ class PDOS:
         r"""
         Return new instance with normalized PDOS.
 
-        Calls :py:function:`PDOS.normalize`.
+        Calls :py:func:`PDOS.normalize`.
 
         Returns
         -------
@@ -453,7 +453,7 @@ class PDOSQE(PDOS):
 
     """
 
-    _pattern = "[spdf]_[0-9.]*"
+    _pattern = "[spdf]_j[0-9.]*"
     _projectors = {
         "s": ["s"],
         "p": ["$p_z$", "$p_y$", "$p_x$"],
@@ -483,14 +483,14 @@ class PDOSQE(PDOS):
         elif projectors_group in self._projectors:
             projectors = self._projectors[projectors_group]
         elif re.fullmatch(self._pattern, projectors_group):
-            l, j = projectors_group.split("_")
+            l, j = projectors_group.split("_j")
             m_j = range(1, 1 + int(2 * float(j) + 1))
             projectors = [f"{l} ($m_j = {i}$)" for i in m_j]
         else:
             raise ValueError(
                 "Projectors can not be assigned automatically, "
                 + "you have to provide explicit list of projectors. "
-                + f"Projectors group: {projectors_group}."
+                + f"Projectors group: {projectors_group}"
             )
         super().__init__(energy, pdos, projectors_group, projectors, ldos, spin_pol)
 
