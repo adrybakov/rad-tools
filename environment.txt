@@ -11,3 +11,4 @@ sphinx_copybutton
 pydata-sphinx-theme
 sphinx-design
 twine
+tqdm
