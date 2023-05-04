@@ -287,10 +287,10 @@ class PDOS:
         r"""
         Squeeze k-resolved PDOS.
 
-        Note
-        ----
+        Notes
+        -----
         It modifies the instance on which called.
-        See also :py:func:`PDOS.squeezed`
+        See also :py:func:`.PDOS.squeezed`
         """
 
         if self.k_resolved:
@@ -327,8 +327,8 @@ class PDOS:
         Those sums are computed individually for spin-up and
         spin-down in the spin-polarized case.
 
-        Note
-        ----
+        Notes
+        -----
         It modifies the instance on which called.
         See also :py:func:`PDOS.normalized`
         """
