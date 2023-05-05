@@ -134,3 +134,8 @@ Make all legends draggable only for interactive mode.
 ------
 In :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
 Add plotting regime :ref:`--background-total <rad-plot-dos_background-total>`
+
+0.5.26
+------
+In :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
+Correct ``efermi`` bug in pdos-vs-dos plot (there was no shift).
