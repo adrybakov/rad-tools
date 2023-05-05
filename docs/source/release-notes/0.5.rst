@@ -144,3 +144,8 @@ Correct ``efermi`` bug in pdos-vs-dos plot (there was no shift).
 ------
 In :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
 Correct ``efermi`` bug in pdos-vs-dos plot (shift lead to the disappearance of the states).
+
+0.5.27
+------
+In :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
+Fix previous bugfix.

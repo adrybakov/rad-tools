@@ -565,7 +565,7 @@ class DOSQE:
 
         if self.case in [1, 4]:
             ax.fill_between(
-                self.energy - efermi,
+                self.energy,
                 0,
                 self.total_dos(squeeze=True),
                 lw=0,
@@ -574,7 +574,7 @@ class DOSQE:
                 label="DOS",
             )
             ax.plot(
-                self.energy - efermi,
+                self.energy,
                 self.total_pdos(squeeze=True),
                 "-",
                 lw=1,
@@ -585,7 +585,7 @@ class DOSQE:
             ncol = 1
         if self.case == 2:
             ax.fill_between(
-                self.energy - efermi,
+                self.energy,
                 0,
                 self.total_dos(squeeze=True)[0],
                 lw=0,
@@ -594,7 +594,7 @@ class DOSQE:
                 label="DOS (up)",
             )
             ax.fill_between(
-                self.energy - efermi,
+                self.energy,
                 0,
                 -self.total_dos(squeeze=True)[1],
                 lw=0,
@@ -604,7 +604,7 @@ class DOSQE:
             )
 
             ax.plot(
-                self.energy - efermi,
+                self.energy,
                 self.total_pdos(squeeze=True)[0],
                 "-",
                 lw=1,
@@ -613,7 +613,7 @@ class DOSQE:
                 label="PDOS (up)",
             )
             ax.plot(
-                self.energy - efermi,
+                self.energy,
                 -self.total_pdos(squeeze=True)[1],
                 "-",
                 lw=1,
@@ -624,7 +624,7 @@ class DOSQE:
             ncol = 2
         if self.case == 3:
             ax.fill_between(
-                self.energy - efermi,
+                self.energy,
                 0,
                 self.total_dos(squeeze=True),
                 lw=0,
@@ -633,7 +633,7 @@ class DOSQE:
                 label="DOS",
             )
             ax.fill_between(
-                self.energy - efermi,
+                self.energy,
                 -self.total_dos(squeeze=True),
                 0,
                 lw=0,
@@ -643,7 +643,7 @@ class DOSQE:
             )
 
             ax.plot(
-                self.energy - efermi,
+                self.energy,
                 self.total_pdos(squeeze=True)[0],
                 "-",
                 lw=1,
@@ -652,7 +652,7 @@ class DOSQE:
                 label="PDOS (up)",
             )
             ax.plot(
-                self.energy - efermi,
+                self.energy,
                 -self.total_pdos(squeeze=True)[1],
                 "-",
                 lw=1,
