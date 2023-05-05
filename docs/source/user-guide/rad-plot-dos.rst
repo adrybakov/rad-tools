@@ -203,7 +203,7 @@ By default whole range present in the files is plotted.
 
     default : None
 
-Added in version 0.5.21.
+.. versionadded:: 0.5.21
 
 
 .. _rad-plot-dos_efermi:
@@ -282,7 +282,7 @@ Whenever to save figures as .pickle files.
 
     default : False
 
-Added in version 0.5.21.
+.. versionadded:: 0.5.21
 
 
 .. _rad-plot-dos_save-txt:
@@ -295,4 +295,20 @@ Whenever to save some data as txt files.
 
     default : False
 
-Added in version 0.5.21.
+.. versionadded:: 0.5.21
+
+
+.. _rad-plot-dos_background-total:
+
+-bt, --background-total
+-----------------------
+Whenever to use total PDOS as the background for all plots.
+
+.. code-block:: text
+
+    default : False
+
+.. versionadded:: 0.5.21
+
+
+

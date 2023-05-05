@@ -129,3 +129,8 @@ Bugfix with pickle outputs.
 ------
 In :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
 Make all legends draggable only for interactive mode.
+
+0.5.25
+------
+In :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
+Add plotting regime :ref:`--background-total <rad-plot-dos_background-total>`
