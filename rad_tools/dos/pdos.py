@@ -432,9 +432,9 @@ class PDOSIterator:
 
 class PDOSQE(PDOS):
     r"""
-    PDOS wrapper for Quantum Espresso pdos.
+    PDOS wrapper for |QE|_ pdos.
 
-    Supports the order of projectors of :projwfc:`Quantum Espresso <>` (s,p,d,f) and
+    Supports the order of projectors of |projwfc|_ (s,p,d,f) and
     the case of projection in the spin-orbit calculations.
     In the custom cases it is necessary to specify projectors manually.
     If ``projectors_group`` has the form "l" or "l_j",

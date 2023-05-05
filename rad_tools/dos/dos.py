@@ -89,7 +89,7 @@ class DOSQE:
         #. Non-collinear, spin-orbit
 
         Headers of "seedname".pdos_tot with according to the
-        :projwfc:`QE <>`:
+        |projwfc|_:
 
         * Collinear:
             E DOS(E) PDOS(E)

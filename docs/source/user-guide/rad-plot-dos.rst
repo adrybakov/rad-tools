@@ -10,8 +10,7 @@
 Script for visualization of projected density of states.
 Currently implemented interfaces:
 
-* `Quantum-ESPRESSO <https://www.quantum-espresso.org/>`_ 
-    (`QE input description <https://www.quantum-espresso.org/Doc/INPUT_PROJWFC.html>`_).
+* |QE|_ (|projwfc|_).
 
 By default the script sums PDOS over the atom of the same type 
 (and divide by the amount of atoms of the same type). 
@@ -164,7 +163,7 @@ detect it automatically in the :ref:`--input-path <rad-plot-dos_input-path>` fol
 
     default : None
 
-Renamed in version 0.5.21: from "filpdos" to "seedname".
+.. versionchanged:: 0.5.21 from "filpdos" to "seedname".
 
 
 .. _rad-plot-dos_output-path:
@@ -203,7 +202,7 @@ By default whole range present in the files is plotted.
 
     default : None
 
-Added in version 0.5.21.
+.. versionadded:: 0.5.21
 
 
 .. _rad-plot-dos_efermi:
@@ -282,7 +281,7 @@ Whenever to save figures as .pickle files.
 
     default : False
 
-Added in version 0.5.21.
+.. versionadded:: 0.5.21
 
 
 .. _rad-plot-dos_save-txt:
@@ -295,4 +294,4 @@ Whenever to save some data as txt files.
 
     default : False
 
-Added in version 0.5.21.
+.. versionadded:: 0.5.21

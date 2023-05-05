@@ -6,17 +6,18 @@ html[data-theme="light"] {
 html[data-theme="dark"] {
   --pst-color-primary: #4A85BE;
   --pst-color-inline-code: #C398E3;
-  
+
 }
 
 h1 {
-    color: #272B3A; 
-  }
+  color: #272B3A;
+}
 
 h2 {
-    color: #354760; /* han blue */
-    letter-spacing: -.03em;
-  }
+  color: #354760;
+  /* han blue */
+  letter-spacing: -.03em;
+}
 
 /* h3 {
   -moz-border-radius:3px;
@@ -43,7 +44,8 @@ html[data-theme=dark] h1 {
 }
 
 html[data-theme=dark] h2 {
-  color: #FDFEFF; /* han blue */
+  color: #FDFEFF;
+  /* han blue */
   letter-spacing: -.03em;
 }
 
@@ -51,3 +53,6 @@ html[data-theme=dark] h2 {
   text-align: center;
 }
 
+.bd-sidebar-secondary {
+  width: 14rem;
+}

@@ -99,7 +99,7 @@ Relative or absolute path to the folder for saving outputs.
 
     default : the directory of the input file
 
-See also: :ref:`example <scripts_output-notes>`.
+See also: :ref:`example <output-notes>`.
 
 .. _identify-wannier-centres_output-name:
 
@@ -111,7 +111,7 @@ Seedname for the output files.
 
     default : Name of the input file + "_identified"
 
-See also: :ref:`example <scripts_output-notes>`.
+See also: :ref:`example <output-notes>`.
 
 .. _identify-wannier-centres_no-colour:
 

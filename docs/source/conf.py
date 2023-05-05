@@ -12,7 +12,7 @@ copyright = "2022, Andrey Rybakov"
 author = "Andrey Rybakov"
 
 # Project version
-release = __version__
+version = __version__
 
 
 # -- General configuration
@@ -37,8 +37,6 @@ smartquotes = False
 
 # Extlinks
 extlinks = {
-    "ANSI": ("https://en.wikipedia.org/wiki/ANSI_escape_code%s", None),
-    "projwfc": ("https://www.quantum-espresso.org/Doc/INPUT_PROJWFC.html%s", None),
     "examples": (
         "https://github.com/adrybakov/rad-tools/tree/stable/docs/examples/%s",
         "%s",
@@ -60,6 +58,9 @@ templates_path = ["_templates"]
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
+# exclude console promt sign $ from being copied
+copybutton_exclude = ".go"
+
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -74,20 +75,25 @@ html_css_files = ["rad-tools.css"]
 
 # Logo
 # html_logo = 'img/logo-black.png'
-html_title = f"{project} {release}"
+html_title = f"{project} {version}"
 html_favicon = "img/favicon.png"
 html_theme_options = {
     "github_url": "https://github.com/adrybakov/rad-tools",
     "twitter_url": "https://twitter.com/adrybakov",
-    "show_nav_level": 2,
+    "collapse_navigation": True,
     "use_edit_page_button": True,
     "navbar_end": ["theme-switcher.html", "navbar-icon-links.html"],
+    "navbar_align": "content",
     "logo": {
         "image_light": "_static/logo_black.png",
         "image_dark": "_static/logo_white.png",
     },
     "icon_links": [],  # pydata bugfix
 }
+
+html_sidebars = {"**": ["search-field.html", "sidebar-nav-bs", "sidebar-ethical-ads"]}
+
+htmlhelp_basename = "rad-tools"
 
 html_context = {
     "default_mode": "light",
@@ -96,18 +102,47 @@ html_context = {
     "github_repo": "rad-tools",  # Repo name
     "github_version": "master",  # Version
     "doc_path": "docs/source",  # Path in the checkout to the docs root
-    "docsearch_disabled": False,
+    # "docsearch_disabled": False,
 }
 
 
-# Custom variables with access from .rst files
+# Custom variables with access from .rst files and docstrings
+
 variables_to_export = [
     "project",
     "copyright",
-    "release",
+    "version",
 ]
+
 frozen_locals = dict(locals())
 rst_epilog = "\n".join(
     map(lambda x: f".. |{x}| replace:: {frozen_locals[x]}", variables_to_export)
 )
 del frozen_locals
+
+# Custom substitutions for links. Solution source:
+# https://docutils.sourceforge.io/docs/ref/rst/directives.html#directives-for-substitution-definitions
+custom_links = {
+    "ANSI": ("ANSI", "https://en.wikipedia.org/wiki/ANSI_escape_code"),
+    "projwfc": ("projwfc.x", "https://www.quantum-espresso.org/Doc/INPUT_PROJWFC.html"),
+    "QE": ("Quantum Espresso", "https://www.quantum-espresso.org"),
+    "TB2J": ("TB2J", "https://tb2j.readthedocs.io/en/latest/"),
+    "Wannier90": ("Wannier90", "http://www.wannier.org/"),
+    "Python": ("Python", "https://python.org"),
+    "NumPy": ("NumPy", "https://numpy.org/"),
+    "matplotlib": ("matplotlib", "https://matplotlib.org/"),
+    "tqdm": ("tqdm", "https://tqdm.github.io/"),
+    "Python-installation": (
+        "Python installation",
+        "https://wiki.python.org/moin/BeginnersGuide/Download",
+    ),
+    "pytest": ("pytest", "https://docs.pytest.org/en/7.3.x/"),
+}
+
+
+rst_epilog += "\n".join(
+    map(
+        lambda x: f"\n.. |{x}| replace:: {custom_links[x][0]}\n.. _{x}: {custom_links[x][1]}",
+        [i for i in custom_links],
+    )
+)

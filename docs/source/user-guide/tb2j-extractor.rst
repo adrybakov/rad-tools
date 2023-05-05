@@ -5,7 +5,7 @@
 *********************
 
 Script for extracting of template-based model from 
-`TB2J <https://tb2j.readthedocs.io/en/latest/>`_ results.
+|TB2J|_ results.
 
 If :ref:`--output_name <tb2j-extractor_output-name>` is not provided the result is 
 passed to the console, otherwise it is written to the file with first 3 lines 
@@ -107,7 +107,7 @@ until the existing folder is reached.
     default : current directory (".")
     type : str
 
-See also: :ref:`example <scripts_output-notes>`.
+See also: :ref:`example <output-notes>`.
 
 
 .. _tb2j-extractor_output-name:
@@ -125,7 +125,7 @@ standard output stream. If none is specify, output is passed to the console.
     default : None
     type : str
 
-See also: :ref:`example <scripts_output-notes>`.
+See also: :ref:`example <output-notes>`.
 
 
 .. _tb2j-extractor_decimals:

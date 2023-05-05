@@ -24,7 +24,7 @@ doctest:
 
 clean:
 	-@rm -r docs/build
-	-@rm -r docs/source/api/_autosummary
+	-@rm -r docs/source/api/generated
 	-@rm -r rad_tools.egg-info
 	-@rm -r build
 	-@rm -r dist

@@ -145,7 +145,7 @@ Name for the template output file.
 
     default : template
 
-See also: :ref:`example <scripts_output-notes>`.
+See also: :ref:`example <output-notes>`.
 
 .. _rad-make-template_input-filename:
 

@@ -7,7 +7,7 @@ Version 0.5
 Whats new?
 ----------
 Rewrite the internals of the 
-:doc:`ExchangeModel <../api/_autosummary/rad_tools.exchange.model.ExchangeModel>`.
+:doc:`ExchangeModel <../api/generated/rad_tools.exchange.model.ExchangeModel>`.
 
 The idea is to allow one to modify the model with respect to the expected 
 symmetry and desired accuracy of the parameters. Furthermore, ``ExchangeModel``
@@ -15,7 +15,7 @@ is iterable, support index access and ``in`` function.
 
 The distances of the bonds are not directly read from the TB2J exchange file, but computed based on the atoms's positions.
 
-:doc:`Bond <../api/_autosummary/rad_tools.exchange.bond.Bond>` class does 
+:doc:`Bond <../api/generated/rad_tools.exchange.bond.Bond>` class does 
 not contain information about the distance. 
 
 When exchange model is read from the TB2J exchange file the order of bonds is 
@@ -90,7 +90,7 @@ Add version of the package to the information header of the output files.
 0.5.16
 ------
 Add ``remove`` method to the 
-:doc:`ExchangeModel <../api/_autosummary/rad_tools.exchange.model.ExchangeModel>`.
+:doc:`ExchangeModel <../api/generated/rad_tools.exchange.model.ExchangeModel>`.
 
 0.5.17
 ------

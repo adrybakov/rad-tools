@@ -5,7 +5,7 @@
 *******************
 
 Script for visualizations of 
-`TB2J <https://tb2j.readthedocs.io/en/latest/>`_ results.
+|TB2J|_  results.
 
 The script displays isotropic exchange, distances and DMI 
 (one output file for each). 
@@ -208,7 +208,7 @@ until the existing folder is reached.
 
     default : current directory
 
-See also: :ref:`example <scripts_output-notes>`.
+See also: :ref:`example <output-notes>`.
 
 
 .. _tb2j-plotter_output-name:
@@ -224,7 +224,7 @@ Output files will have the following name structure:
 
     default : exchange
 
-See also: :ref:`example <scripts_output-notes>`.
+See also: :ref:`example <output-notes>`.
 
 
 .. _tb2j-plotter_what-to-plot:

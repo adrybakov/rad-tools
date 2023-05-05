@@ -78,7 +78,7 @@ def get_named_colours(colour: str):
 def get_256_colours(n):
     r"""
     ANSI escape codes for terminal color with 256-colours support
-    (see: :ANSI:`wiki <>`).
+    (see: |ANSI|_).
 
     Parameters
     ----------

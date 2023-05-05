@@ -4,8 +4,9 @@
 API documentation
 *****************
 
+
 .. autosummary::
-   :toctree: _autosummary
+   :toctree: generated/
    :template: custom-module-template.rst
    :recursive:
    
