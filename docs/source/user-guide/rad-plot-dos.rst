@@ -305,6 +305,9 @@ Whenever to save some data as txt files.
 -----------------------
 Whenever to use total PDOS as the background for all plots.
 
+If provided then all background data (and in all normalization routines as well) total
+partial density of states is used instead of corresponding local density of states.
+
 .. code-block:: text
 
     default : False
