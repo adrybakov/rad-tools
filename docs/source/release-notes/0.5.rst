@@ -124,3 +124,8 @@ Bugfix for cases when atom names contain numbers.
 0.5.23
 ------
 Bugfix with pickle outputs.
+
+0.5.24
+------
+In :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
+Make all legends draggable only for interactive mode.

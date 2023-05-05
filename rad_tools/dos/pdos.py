@@ -691,11 +691,11 @@ def plot_projected(
                     label=projector,
                 )
 
-        ax.legend(loc=(1.025, 0.2), bbox_transform=ax.transAxes)
-
     if interactive:
+        ax.legend(loc=(1.025, 0.2), bbox_transform=ax.transAxes, draggable=True)
         plt.show()
     else:
+        ax.legend(loc=(1.025, 0.2), bbox_transform=ax.transAxes)
         plt.savefig(f"{output_name}.png", dpi=400, bbox_inches="tight")
         if save_pickle:
             import pickle

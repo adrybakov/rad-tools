@@ -650,11 +650,11 @@ class DOSQE:
             )
             ncol = 1
 
-        ax.legend(loc="best", ncol=ncol, draggable=True)
-
         if interactive:
+            ax.legend(loc="best", ncol=ncol, draggable=True)
             plt.show()
         else:
+            ax.legend(loc="best", ncol=ncol)
             png_path = f"{output_name}.png"
             plt.savefig(png_path, dpi=600, bbox_inches="tight")
             if save_pickle:
