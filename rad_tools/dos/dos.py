@@ -42,7 +42,9 @@ class DOSQE:
     atoms : list
     """
 
-    def __init__(self, seedname: str, input_path: str, energy_window=None) -> None:
+    def __init__(
+        self, seedname: str, input_path: str, energy_window=None, efermi=0
+    ) -> None:
         self.seedname = seedname
         self._input_path = input_path
 
@@ -54,6 +56,7 @@ class DOSQE:
         self.nkpoints = None
         self.nepoints = None
         self.energy = None
+        self.efermi = efermi
         self._extract_energy()
 
         self._filenames = None
@@ -173,11 +176,11 @@ class DOSQE:
         if self.k_resolved:
             self.nkpoints = int(dos[0][-1])
             self.nepoints = len(dos[0]) // self.nkpoints
-            self.energy = dos[1][0 : self.nepoints]
+            self.energy = dos[1][0 : self.nepoints] - self.efermi
         else:
             self.nkpoints = 1
             self.nepoints = len(dos[0])
-            self.energy = dos[0]
+            self.energy = dos[0] - self.efermi
 
     @property
     def filenames(self):

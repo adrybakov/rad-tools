@@ -93,7 +93,7 @@ def manager(
         makedirs(output_root, exist_ok=True)
 
         # Load DOS data.
-        dos = DOSQE(seedname, input_path, energy_window=energy_window)
+        dos = DOSQE(seedname, input_path, energy_window=energy_window, efermi=efermi)
         print(f"{dos.casename} case detected.")
         for atom in dos.atoms:
             print(f"    {len(dos.atom_numbers(atom))} of {atom} detected")
