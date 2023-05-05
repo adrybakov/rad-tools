@@ -32,6 +32,7 @@ Suffix is a combination of any number of the following words:
     * "separate" - appears if :ref:`--separate <rad-plot-dos_separate>` option is used.
     * "relative" - appears if :ref:`--relative <rad-plot-dos_relative>` option is used.
     * "normalized" - appears if :ref:`--normalize <rad-plot-dos_normalize>` option is used.
+    * "vstotal" - appears if :ref:`--background-total <rad-plot-dos_background-total>` option is used.
 
 The structure of the :ref:`output folder <rad-plot-dos_output-path>` is the following:
 
