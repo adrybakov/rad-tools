@@ -91,7 +91,8 @@ html_theme_options = {
     "icon_links": [],  # pydata bugfix
 }
 
-html_sidebars = {"**": ["search-field.html", "sidebar-nav-bs", "sidebar-ethical-ads"]}
+
+# html_sidebars = {"**": ["search-field.html", "sidebar-nav-bs", "sidebar-ethical-ads"]}
 
 htmlhelp_basename = "rad-tools"
 
