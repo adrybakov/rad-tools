@@ -31,6 +31,7 @@ Suffix is a combination of any number of the following words:
     * "separate" - appears if :ref:`--separate <rad-plot-dos_separate>` option is used.
     * "relative" - appears if :ref:`--relative <rad-plot-dos_relative>` option is used.
     * "normalized" - appears if :ref:`--normalize <rad-plot-dos_normalize>` option is used.
+    * "vstotal" - appears if :ref:`--background-total <rad-plot-dos_background-total>` option is used.
 
 The structure of the :ref:`output folder <rad-plot-dos_output-path>` is the following:
 
@@ -289,6 +290,22 @@ Whenever to save figures as .pickle files.
 -st, --save-txt
 ---------------
 Whenever to save some data as txt files.
+
+.. code-block:: text
+
+    default : False
+
+.. versionadded:: 0.5.21
+
+
+.. _rad-plot-dos_background-total:
+
+-bt, --background-total
+-----------------------
+Whenever to use total PDOS as the background for all plots.
+
+If provided then all background data (and in all normalization routines as well) total
+partial density of states is used instead of corresponding local density of states.
 
 .. code-block:: text
 

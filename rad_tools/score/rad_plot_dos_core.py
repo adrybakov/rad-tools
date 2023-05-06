@@ -1,3 +1,5 @@
+# TODO Fix background total + non-colinear-nonspin-orbit
+
 import re
 from argparse import ArgumentParser
 from os import makedirs, walk
@@ -57,6 +59,7 @@ def manager(
     interactive=False,
     save_pickle=False,
     save_txt=False,
+    background_total=False,
 ):
     makedirs(output_path, exist_ok=True)
 
@@ -67,6 +70,8 @@ def manager(
         suffix += "-normalized"
     if separate:
         suffix += "-separate"
+    if background_total:
+        suffix += "-vstotal"
 
     # Detect seednames if not provided.
     if seedname is None:
@@ -88,7 +93,7 @@ def manager(
         makedirs(output_root, exist_ok=True)
 
         # Load DOS data.
-        dos = DOSQE(seedname, input_path, energy_window=energy_window)
+        dos = DOSQE(seedname, input_path, energy_window=energy_window, efermi=efermi)
         print(f"{dos.casename} case detected.")
         for atom in dos.atoms:
             print(f"    {len(dos.atom_numbers(atom))} of {atom} detected")
@@ -144,7 +149,10 @@ def manager(
                         wfc=wfc,
                         wfc_number=wfc_number,
                         atom_numbers=atom_number,
+                        background_total=background_total,
                     )
+                    if background_total:
+                        pdos.projectors_group = "Total PDOS"
                     if save_txt:
                         pdos.dump_txt(
                             join(local_output, f"{atom_name}_{wfc}#{wfc_number}.txt")
@@ -186,13 +194,24 @@ def manager(
                     projectors.append(f"{wfc} #{wfc_number}")
                     pdos.append(dos.pdos(atom, wfc, wfc_number, atom_number).ldos)
 
-                pdos = PDOS(
-                    energy=dos.energy,
-                    pdos=pdos,
-                    projectors_group=atom_name,
-                    projectors=projectors,
-                    spin_pol=dos.case in [2, 3],
-                )
+                if background_total:
+                    pdos = PDOS(
+                        energy=dos.energy,
+                        pdos=pdos,
+                        ldos=dos.total_pdos(fix_updown=True),
+                        projectors_group=atom_name,
+                        projectors=projectors,
+                        spin_pol=dos.case in [2, 3],
+                    )
+                    pdos.projectors_group = "Total PDOS"
+                else:
+                    pdos = PDOS(
+                        energy=dos.energy,
+                        pdos=pdos,
+                        projectors_group=atom_name,
+                        projectors=projectors,
+                        spin_pol=dos.case in [2, 3],
+                    )
                 if efermi == 0:
                     title = f"PDOS for {atom_name} (0 is 0)"
                 else:
@@ -234,14 +253,25 @@ def manager(
                     else:
                         ldos += dos.pdos(atom, wfc, wfc_number, atom_number).ldos
                 pdos.append(ldos)
+        if background_total:
+            pdos = PDOS(
+                energy=dos.energy,
+                pdos=pdos,
+                ldos=dos.total_pdos(fix_updown=True),
+                projectors_group="Total PDOS",
+                projectors=projectors,
+                spin_pol=dos.case in [2, 3],
+            )
+            pdos.projectors_group = "Total PDOS"
+        else:
+            pdos = PDOS(
+                energy=dos.energy,
+                pdos=pdos,
+                projectors_group="Total PDOS",
+                projectors=projectors,
+                spin_pol=dos.case in [2, 3],
+            )
 
-        pdos = PDOS(
-            energy=dos.energy,
-            pdos=pdos,
-            projectors_group="Total PDOS",
-            projectors=projectors,
-            spin_pol=dos.case in [2, 3],
-        )
         if efermi == 0:
             title = f"Atom contribution in PDOS (0 is 0)"
         else:
@@ -368,6 +398,13 @@ def create_parser():
         action="store_true",
         default=False,
         help="Whenever to save some data as txt files.",
+    )
+    parser.add_argument(
+        "-bt",
+        "--background-total",
+        action="store_true",
+        default=False,
+        help="Whenever to use total PDOS as the background for all plots.",
     )
 
     return parser

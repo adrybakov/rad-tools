@@ -42,7 +42,9 @@ class DOSQE:
     atoms : list
     """
 
-    def __init__(self, seedname: str, input_path: str, energy_window=None) -> None:
+    def __init__(
+        self, seedname: str, input_path: str, energy_window=None, efermi=0
+    ) -> None:
         self.seedname = seedname
         self._input_path = input_path
 
@@ -54,6 +56,7 @@ class DOSQE:
         self.nkpoints = None
         self.nepoints = None
         self.energy = None
+        self.efermi = efermi
         self._extract_energy()
 
         self._filenames = None
@@ -173,11 +176,11 @@ class DOSQE:
         if self.k_resolved:
             self.nkpoints = int(dos[0][-1])
             self.nepoints = len(dos[0]) // self.nkpoints
-            self.energy = dos[1][0 : self.nepoints]
+            self.energy = dos[1][0 : self.nepoints] - self.efermi
         else:
             self.nkpoints = 1
             self.nepoints = len(dos[0])
-            self.energy = dos[0]
+            self.energy = dos[0] - self.efermi
 
     @property
     def filenames(self):
@@ -306,7 +309,7 @@ class DOSQE:
             ]
         return dos[1][self.energy_window[0] : self.energy_window[1]]
 
-    def total_pdos(self, squeeze=False):
+    def total_pdos(self, squeeze=False, fix_updown=False):
         r"""
         Total partial density of states.
 
@@ -345,16 +348,21 @@ class DOSQE:
         elif self.case == 3:
             if self.k_resolved:
                 if squeeze:
-                    return (
+                    total_pdos = (
                         np.sum(
                             dos[3:5].reshape((2, self.nkpoints, self.nepoints)), axis=1
                         )
                         / self.nkpoints
                     )[:, self.energy_window[0] : self.energy_window[1]]
-                return dos[3:5].reshape((2, self.nkpoints, self.nepoints))[
+
+                total_pdos = dos[3:5].reshape((2, self.nkpoints, self.nepoints))[
                     :, :, self.energy_window[0] : self.energy_window[1]
                 ]
-            return dos[2:4][:, self.energy_window[0] : self.energy_window[1]]
+            total_pdos = dos[2:4][:, self.energy_window[0] : self.energy_window[1]]
+            if fix_updown:
+                return np.array([total_pdos, total_pdos])
+            else:
+                return total_pdos
 
         if self.k_resolved:
             if squeeze:
@@ -429,7 +437,9 @@ class DOSQE:
             atom_number = self.atom_numbers(atom)[0]
         return self._wfcs[(atom, atom_number)]
 
-    def pdos(self, atom, wfc, wfc_number, atom_numbers=None) -> PDOSQE:
+    def pdos(
+        self, atom, wfc, wfc_number, atom_numbers=None, background_total=False
+    ) -> PDOSQE:
         r"""
         Projected density of states for a particular atom.
 
@@ -492,6 +502,8 @@ class DOSQE:
                 ldos = pdos[1][self.energy_window[0] : self.energy_window[1]]
                 pdos = pdos[2:][:, self.energy_window[0] : self.energy_window[1]]
 
+        if background_total:
+            ldos = self.total_pdos(fix_updown=True)
         return PDOSQE(
             energy=self.energy,
             pdos=pdos,
@@ -650,7 +662,10 @@ class DOSQE:
             )
             ncol = 1
 
-        ax.legend(loc="best", ncol=ncol, draggable=True)
+            if interactive:
+                ax.legend(loc="best", ncol=ncol, draggable=True)
+            else:
+                ax.legend(loc="best", ncol=ncol)
 
         if interactive:
             plt.show()

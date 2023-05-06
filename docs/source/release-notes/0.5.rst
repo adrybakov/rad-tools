@@ -124,3 +124,28 @@ Bugfix for cases when atom names contain numbers.
 0.5.23
 ------
 Bugfix with pickle outputs.
+
+0.5.24
+------
+In :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
+Make all legends draggable only for interactive mode.
+
+0.5.25
+------
+In :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
+Add plotting regime :ref:`--background-total <rad-plot-dos_background-total>`
+
+0.5.26
+------
+In :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
+Correct ``efermi`` bug in pdos-vs-dos plot (there was no shift).
+
+0.5.27
+------
+In :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
+Correct ``efermi`` bug in pdos-vs-dos plot (shift lead to the disappearance of the states).
+
+0.5.27
+------
+In :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
+Fix previous bugfix.
