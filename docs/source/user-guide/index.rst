@@ -10,7 +10,9 @@ results of |QE|_, |TB2J|_ and |Wannier90|_, as well as provides some custom scri
 It is expected to be used in two ways:
 
 * :doc:`As Python library <../api/index>`
-* Via :doc:`scripts <scripts>` (i.e. usage from command line)
+* :ref:`Via scripts <scripts>` (i.e. usage from command line)
+
+.. _scripts:
 
 Scripts
 =======
