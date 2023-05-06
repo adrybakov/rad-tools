@@ -9,6 +9,7 @@ def read_template(filename):
     r"""
     Read template from the template file.
 
+
     Parameters
     ----------
     filename : str
@@ -18,7 +19,12 @@ def read_template(filename):
     -------
     template : :py:class:`.ExchangeTemplate`
         Exchange template.
+
+    Note
+    ----
+    See also :doc:`Template specification <user-guide/index.rst>`
     """
+    # TODO change the link
 
     # Constants
     major_sep = "=" * 20
