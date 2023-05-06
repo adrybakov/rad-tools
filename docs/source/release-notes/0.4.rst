@@ -8,7 +8,7 @@ Whats new?
 ----------
 Refractor most of the code. 
 Move input in the separate submodule.
-Remove molecule plot type from :ref:`tb2j-plotter.py <tb2j-plotter>` script.
+Remove molecule plot type from :ref:`rad-plot-tb2j.py <rad-plot-tb2j>` script.
 
 Major change in the logic of reading exchange files and templates. 
 Instead of using the class to load the file as before:
@@ -34,8 +34,8 @@ Now one need to use read functions from input-output module:
 0.4.1
 -----
 
-Add :ref:`--accuracy <tb2j-extractor_decimals>` argument to the 
-:ref:`tb2j-extractor <tb2j-extractor>` script.
+Add :ref:`--accuracy <rad-extract-tb2j_decimals>` argument to the 
+:ref:`rad-extract-tb2j <rad-extract-tb2j>` script.
 
 0.4.2
 -----

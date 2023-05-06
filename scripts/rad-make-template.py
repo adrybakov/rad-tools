@@ -3,7 +3,7 @@
 import sys
 from time import sleep
 from rad_tools.routines import cprint
-from rad_tools.score.rad_make_template_core import create_parser, manager
+from rad_tools.score.make_template import create_parser, manager
 
 if __name__ == "__main__":
     parser = create_parser()

@@ -39,14 +39,14 @@ All the files used in the usage examples are available :examples:`here <>`.
 
 
    rad-make-template
-   tb2j-extractor
-   tb2j-plotter
+   rad-extract-tb2j
+   rad-plot-tb2j
 
 .. toctree::
    :caption: for Wannier90:
    :maxdepth: 1
 
-   identify-wannier-centres
+   rad-identify-wannier-centres
 
 .. toctree::
 
