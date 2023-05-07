@@ -20,9 +20,9 @@ def read_template(filename):
     template : :py:class:`.ExchangeTemplate`
         Exchange template.
 
-    Note
-    ----
-    See also :doc:`Template specification <user-guide/index.rst>`
+    Notes
+    -----
+    See also :ref:`Template specification <api>`
     """
     # TODO change the link
 

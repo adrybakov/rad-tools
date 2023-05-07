@@ -12,10 +12,13 @@ from . import score
 from .score import *
 from . import io
 from .io import *
+from . import exchange
+from .exchange import *
 
 __all__ = []
 __all__.extend(score.__all__)
 __all__.extend(io.__all__)
+__all__.extend(exchange.__all__)
 
 
 if __name__ == "__main__":

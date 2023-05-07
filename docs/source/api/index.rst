@@ -18,8 +18,6 @@ The main interface to the package may be imported as
 
 In the examples across the documentation it is expected to be imported in that way.
 
-Modules
-=======
 
 .. toctree:: 
    :maxdepth: 2
