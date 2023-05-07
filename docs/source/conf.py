@@ -82,7 +82,8 @@ html_favicon = "img/favicon.png"
 if ".dev" in version:
     switcher_version = "dev"
 else:
-    switcher_version = version
+    major, minor, rest = version.split(".")[0:3]
+    switcher_version = f"{major}.{minor}"
 html_theme_options = {
     "github_url": "https://github.com/adrybakov/rad-tools",
     "twitter_url": "https://twitter.com/adrybakov",
