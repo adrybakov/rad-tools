@@ -5,3 +5,4 @@ sphinx-design
 urllib3==1.26.15
 numpy
 matplotlib
+tqdm
