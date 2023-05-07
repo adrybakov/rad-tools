@@ -29,7 +29,6 @@ All the files used in the usage examples are available :examples:`here <>`.
 .. toctree::
    :caption: for Quantum Espresso:
    :maxdepth: 1
-   :hidden:
 
    rad-plot-dos
 
