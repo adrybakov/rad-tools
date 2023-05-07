@@ -18,4 +18,4 @@ tmp.py
 # Docs
 docs/make.bat
 docs/build
-docs/source/api/_autosummary
+docs/source/api/generated
