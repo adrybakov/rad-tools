@@ -78,12 +78,21 @@ html_css_files = ["rad-tools.css"]
 # html_logo = 'img/logo-black.png'
 html_title = f"{project} {version}"
 html_favicon = "img/favicon.png"
+
+if ".dev" in version:
+    switcher_version = "dev"
+else:
+    switcher_version = version
 html_theme_options = {
     "github_url": "https://github.com/adrybakov/rad-tools",
     "twitter_url": "https://twitter.com/adrybakov",
     "collapse_navigation": True,
     "use_edit_page_button": True,
-    "navbar_end": ["theme-switcher.html", "navbar-icon-links.html"],
+    "navbar_end": ["theme-switcher.html", "version-switcher", "navbar-icon-links.html"],
+    "switcher": {
+        "version_match": switcher_version,
+        "json_url": "https://rad-tools.adrybakov.com/en/stable/_static/versions.json",
+    },
     "navbar_align": "content",
     "logo": {
         "image_light": "_static/logo_black.png",

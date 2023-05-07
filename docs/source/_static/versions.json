@@ -1,0 +1,17 @@
+[
+    {
+        "name": "v0.6 (stable)",
+        "version": "0.6",
+        "url": "https://rad-tools.adrybakov.com/en/stable/index.html"
+    },
+    {
+        "name": "dev",
+        "version": "dev",
+        "url": "https://rad-tools.adrybakov.com/en/dev/index.html"
+    },
+    {
+        "name": "0.5",
+        "version": "0.5.29",
+        "url": "https://rad-tools.adrybakov.com/en/0.5/index.html"
+    }
+]
