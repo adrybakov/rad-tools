@@ -40,7 +40,7 @@ Add :ref:`--accuracy <rad-extract-tb2j_decimals>` argument to the
 0.4.2
 -----
 
-Add ``get_bond_vector`` to the ExchangeModel.
+Add :py:meth:`.get_bond_vector` to the ExchangeModel.
 
 0.4.3
 -----
@@ -64,12 +64,12 @@ There is two ways to import read functions:
     from rad_tools.io.internal import 
     from rad_tools.io import read_template
 
-Add ``number_spins_in_unit_cell`` property to the ``ExchangeModel`` class
+Add :py:meth:`.number_spins_in_unit_cell` property to the :py:class:`.ExchangeModel`.
 
 0.4.5
 -----
 
-Add ``reduced_parameters`` to the ``ExchangeModel`` class.
+Add ``reduced_parameters`` to the :py:class:`.ExchangeModel` class.
 
 0.4.6
 -----

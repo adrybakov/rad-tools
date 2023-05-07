@@ -1,9 +1,28 @@
-.. currentmodule:: rad_tools.dos
-
-
 .. _rad-tools_dos:
 
 *******************************
 Density of state postprocessing
 *******************************
 
+.. automodule:: rad_tools.dos
+
+.. currentmodule:: rad_tools
+
+Classes
+=======
+
+.. autosummary::
+    :toctree: generated/
+    :template: class.rst
+
+    DOSQE
+    PDOSQE
+    PDOS
+
+Functions
+=========
+
+.. autosummary::
+    :toctree: generated/
+
+    plot_projected

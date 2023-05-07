@@ -10,8 +10,8 @@ class KPoints(HighSymmetryPoints):
     K-points
     """
 
-    def __init__(self, kpoints=None, path=None) -> None:
-        super().__init__(kpoints, path)
+    def __init__(self, points=None, path=None) -> None:
+        super().__init__(points, path)
 
     @property
     def labels(self):
@@ -84,8 +84,8 @@ class KPoints(HighSymmetryPoints):
         point_list = []
         for i in range(0, len(self.path)):
             for j in range(1, len(self.path[i])):
-                first_point = self.kpoints[self.path[i][j - 1]]
-                diff = self.kpoints[self.path[i][j]] - self.kpoints[self.path[i][j - 1]]
+                first_point = self.points[self.path[i][j - 1]]
+                diff = self.points[self.path[i][j]] - self.points[self.path[i][j - 1]]
 
                 # Move from relative to absolute coordinates
                 if b1 is not None and b2 is not None and b3 is not None:

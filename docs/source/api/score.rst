@@ -6,15 +6,13 @@ Script's core scenarios
 
 .. automodule:: rad_tools.score
 
+.. currentmodule:: rad_tools
 
 Scenarios
 =========
 
-.. currentmodule:: rad_tools
-
 .. autosummary:: 
     :toctree: generated/
-    :template: function.rst
 
     identify_wannier_centres
     plot_dos

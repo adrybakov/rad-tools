@@ -6,17 +6,33 @@ analogous to the command line interface.
 .. hint::
     Long names of the arguments have to be used, i.e. ``input_path``, not ``ip``.
 
-.. code-block:: python
+.. admonition:: Example
 
-    from rad_tools import identify_wannier_centers
+    Identifying Wannier centres from the file "seedname_centres.xyz"
+    with increased span of 0.2, saving the result in the file 
+    "identified_centres" of the current directory:
 
-    identify_wannier_centers("seedname_centres.xyz", 
-            span = 0.1, 
+    .. code-block:: python
+
+        from rad_tools import identify_wannier_centres
+        
+        identify_wannier_centres("seedname_centres.xyz", 
+            span = 0.2, 
             output_path = ".", 
-            output_name="identified centres", 
+            output_name="identified_centres",
             no_colour=False)
 
+    Makings template based on the "exchange.out" TB2J file, 
+    with the filter by maximum distance of 5, saving the output in 
+    the file "template.txt" of the current folder:
 
+    .. code-block:: python
+
+        from rad_tools import make_template
+        
+        make_template(output_name="template",
+            input_filename="exchange.out",
+            max_distance=5)
 """
 
 from .identify_wannier_centres import (

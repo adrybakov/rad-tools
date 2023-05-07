@@ -84,7 +84,7 @@ class Bond:
 
         .. math::
 
-            J_symm = \dfrac{J + J^T}{2}
+            J_{symm} = \dfrac{J + J^T}{2}
         """
 
         return (self.matrix + self.matrix.T) / 2
@@ -96,7 +96,7 @@ class Bond:
 
         .. math::
 
-            J_asymm = \dfrac{J - J^T}{2}
+            J_{asymm} = \dfrac{J - J^T}{2}
         """
 
         return (self.matrix - self.matrix.T) / 2
