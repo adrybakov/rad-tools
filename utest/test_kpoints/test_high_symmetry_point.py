@@ -7,10 +7,10 @@ from rad_tools.kpoints import HighSymmetryPoints
 class TestHighSymmetryPoints:
     def test_init(self):
         tmp = HighSymmetryPoints(
-            kpoints={"R": [0, 0, 0], "G": [1, 2, 3]}, path=[["R", "G"]]
+            points={"R": [0, 0, 0], "G": [1, 2, 3]}, path=[["R", "G"]]
         )
         assert tmp.path == [["R", "G"]]
-        assert tmp._kpoints == {"R": [0, 0, 0], "G": [1, 2, 3]}
+        assert tmp._points == {"R": [0, 0, 0], "G": [1, 2, 3]}
 
     def test_path(self):
         tmp = HighSymmetryPoints()
@@ -64,29 +64,29 @@ class TestHighSymmetryPoints:
     def test_add_kpoints(self):
         tmp = HighSymmetryPoints()
         tmp.add_kpoint("F", [4, 2, 1])
-        assert tmp.kpoints["F"].tolist() == [4, 2, 1]
+        assert tmp.points["F"].tolist() == [4, 2, 1]
         assert tmp._PLOT_LITERALS["F"] == "$F$"
 
         tmp.add_kpoint("R13", [4, 5, 6])
         assert tmp._PLOT_LITERALS["R13"] == "R13"
-        assert tmp.kpoints["R13"].tolist() == [4, 5, 6]
+        assert tmp.points["R13"].tolist() == [4, 5, 6]
 
         tmp = HighSymmetryPoints()
         tmp.add_kpoint("R13", [4, 7, 6], plot_name="$R_{13}$")
         assert tmp._PLOT_LITERALS["R13"] == "$R_{13}$"
-        assert tmp.kpoints["R13"].tolist() == [4, 7, 6]
+        assert tmp.points["R13"].tolist() == [4, 7, 6]
 
         tmp = HighSymmetryPoints()
         tmp.add_kpoint("R", [4, 7, 6], plot_name="Rabbit")
         assert tmp._PLOT_LITERALS["R"] == "Rabbit"
-        assert tmp.kpoints["R"].tolist() == [4, 7, 6]
+        assert tmp.points["R"].tolist() == [4, 7, 6]
 
         tmp = HighSymmetryPoints()
         tmp.add_kpoint("R1", [4, 7, 6], plot_name="Rabbit1")
         tmp.add_kpoint("R2", [3, 7, 1], plot_name="Rabbit2")
-        print(type(tmp.kpoints["R1"]))
+        print(type(tmp.points["R1"]))
         assert tmp._PLOT_LITERALS["R1"] == "Rabbit1"
-        assert tmp.kpoints["R1"].tolist() == [4, 7, 6]
+        assert tmp.points["R1"].tolist() == [4, 7, 6]
         assert tmp._PLOT_LITERALS["R2"] == "Rabbit2"
-        assert tmp.kpoints["R2"].tolist() == [3, 7, 1]
-        assert (tmp.kpoints["R1"] - tmp.kpoints["R2"] == np.array([1, 0, 5])).all()
+        assert tmp.points["R2"].tolist() == [3, 7, 1]
+        assert (tmp.points["R1"] - tmp.points["R2"] == np.array([1, 0, 5])).all()
