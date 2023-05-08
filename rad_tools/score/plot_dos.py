@@ -310,7 +310,7 @@ def create_parser():
         "--input-path",
         metavar="path",
         type=str,
-        required=True,
+        default=".",
         help="Relative or absulute path to the folder with dos files.",
     )
     parser.add_argument(
@@ -319,8 +319,7 @@ def create_parser():
         metavar="name",
         type=str,
         default=None,
-        help="Prefix for output files containing PDOS(E). "
-        + "As specified in the QE projwfc.x input file.",
+        help="Prefix for input files with PDOS(E).",
     )
     parser.add_argument(
         "-op",
@@ -377,7 +376,7 @@ def create_parser():
         "--normalize",
         action="store_true",
         default=False,
-        help="Whenever to use normalize relative style.",
+        help="Whenever to normalized PDOS values to 1.",
     )
     parser.add_argument(
         "-v",

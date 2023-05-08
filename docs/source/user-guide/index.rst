@@ -17,7 +17,7 @@ It is expected to be used in two ways:
 Scripts
 =======
 
-For any script use ``--help`` or ``-h`` option in console in order to display 
+For any script use ``--help`` or ``-h`` option in the terminal in order to display 
 help message with the short summary of the arguments.
 
 .. code-block:: console

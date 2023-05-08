@@ -18,6 +18,7 @@ from . import kpoints
 from .kpoints import *
 from . import dos
 from .dos import *
+from .routines import *
 
 __all__ = []
 __all__.extend(score.__all__)
@@ -25,6 +26,7 @@ __all__.extend(io.__all__)
 __all__.extend(exchange.__all__)
 __all__.extend(kpoints.__all__)
 __all__.extend(dos.__all__)
+__all__.extend(routines.__all__)
 
 
 if __name__ == "__main__":

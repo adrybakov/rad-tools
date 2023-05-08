@@ -66,13 +66,13 @@ Installing from source
 
    git clone git@github.com:adrybakov/rad-tools.git
 
-Change the directory:
+* Change the directory:
 
 .. code-block:: python
 
    cd rad-tools
 
-To install RAD-tools, run (you may need to use ``pip3``):
+* To install RAD-tools, run (you may need to use ``pip3``):
 
 .. code-block:: console
 

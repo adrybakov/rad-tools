@@ -4,26 +4,31 @@
 ``rad-plot-dos.py``
 **********************
 
-.. note::
-    Name changed in 0.5.21 from ``rad-dos-plotter.py`` to ``rad-plot-dos.py``
+.. versionchanged:: 0.5.21 Renamed from ``rad-dos-plotter.py``
 
 Script for visualization of projected density of states.
-Currently implemented interfaces:
+It supports the result of the calculation from:
 
 * |QE|_ (|projwfc|_).
+    All type of calculations are supported 
+    (Collinear, spin-unpolarized; 
+    collinear, spin-polarized; 
+    non-collinear, non-spin-orbit; 
+    non-collinear, spin-orbit)
 
-By default the script sums PDOS over the atom of the same type 
+By default the script sums PDOS over the atoms of the same type 
 (and divide by the amount of atoms of the same type). 
-If one want to have PDOS plot individually for each atom, 
-then the option :ref:`--separate <rad-plot-dos_separate>` has to be used.
+Option :ref:`--separate <rad-plot-dos_separate>` plots PDOS individually for each atom.
 
 K-resolved PDOS are handled by summing over kpoints (and dividing by the number of kpoints).
 
 Output data
 ===========
-If :ref:`--seedname <rad-plot-dos_seedname>` option is not provided, 
-the script tries to detect all seednames present 
-in :ref:`--input-path <rad-plot-dos_input-path>`. 
+Script tries to detect all seednames present 
+in :ref:`--input-path <rad-plot-dos_input-path>` by default. 
+
+:ref:`--seedname <rad-plot-dos_seedname>` option specifies 
+particular seedname to work with.
 
 For each seedname a separate folder "seedname-suffix" is created.
 
@@ -61,7 +66,7 @@ By default all possible graphs are plotted:
 
 * pdos-vs-dos.png
     Total partial density of states (sum over all projectors) vs 
-    total density of states ( directly from the plane-wave basis).
+    total density of states (directly from the plane-wave basis).
     Affected by :ref:`--save-pickle <rad-plot-dos_save-pickle>`.
 * atomic-contributions.png
     Contribution of each atom (summed over all projectors) 
@@ -102,7 +107,7 @@ By default only the pictures (.png) are created. Two additional formats of the o
 
         fig.savefig("filename.png", dpi=400, bbox_inches="tight")
 
-    If ``fig.show()`` or ``plt.show()`` does not work the following fix may work
+    If ``fig.show()`` or ``plt.show()`` does not work the following fix may help
     (`credit <https://stackoverflow.com/a/54579616>`_):
 
     .. code-block:: python
@@ -118,20 +123,27 @@ By default only the pictures (.png) are created. Two additional formats of the o
 
 Usage example
 =============
-Minimal input looks like the following:
+Minimal possible input is:
 
 .. code-block:: bash
 
-    rad-plot-dos.py -ip collinear
+    rad-plot-dos.py 
 
-where "collinear" is a path to the folder with output files from QE PDOS calculations.
+It will try to detect PDOS output files in the current directory and plot them.
 
-If you want to choose particular energy window use an 
+To choose energy window use an 
 option :ref:`--energy-window <rad-plot-dos_energy-window>`:
 
 .. code-block:: bash
 
-    rad-plot-dos.py -ip collinear -ew -10 5
+    rad-plot-dos.py -ew -10 5
+
+To choose :ref:`input <rad-plot-dos_input-path>` or 
+:ref:`output <rad-plot-dos_output-path>` path use:
+
+.. code-block:: bash
+
+    rad-plot-dos.py -ip "input_path" -op "output_path" -ew -10 5
 
 
 Arguments
@@ -141,24 +153,25 @@ Arguments
 
 -ip, --input-path
 -----------------
-Relative or absolute path to the folder with dos files.
+Relative or absolute path to the folder with PDOS files.
 
 .. code-block:: text
 
-    required
+    default : current directory (".")
 
 
 .. _rad-plot-dos_seedname:
 
 -s, --seedname
 --------------
-Prefix for output files containing PDOS(E). 
+Prefix for input files with PDOS(E). 
 
 In the case of Quantum Espresso-produced pdos it is the same
-as specified in the QE projwfc.x input file.
+as specified in the QE projwfc.x input file (filpdos).
 
-If it is not provided the script will try to 
-detect it automatically in the :ref:`--input-path <rad-plot-dos_input-path>` folder.
+If it is not provided the script tries to 
+detect it automatically in the 
+:ref:`--input-path <rad-plot-dos_input-path>` folder.
 
 .. code-block:: text
 
@@ -183,7 +196,8 @@ Relative or absolute path to the folder for saving outputs.
 -ew, --energy-window
 --------------------
 Energy window for the plots.  
-By default whole range present in the files is plotted.
+
+By default the whole energy range present in the files is plotted.
 
 .. code-block:: text
 
@@ -196,8 +210,10 @@ Renamed in version 0.5.21: from "window" to "energy-window".
 
 -dw, --dos-window
 -----------------
-DOS window for the plots.  
-By default whole range present in the files is plotted.
+DOS window for the plots. 
+
+By default the whole energy range present in the 
+:ref:`--energy-window <rad-plot-dos_energy-window>` is plotted.
 
 .. code-block:: text
 
@@ -210,7 +226,9 @@ By default whole range present in the files is plotted.
 
 -ef, --efermi
 -------------
-Fermi energy. If specified zero will be shift to Fermi energy.
+Fermi energy. 
+
+Zero is shifted to Fermi energy.
 
 .. code-block:: text
 
@@ -221,7 +239,7 @@ Fermi energy. If specified zero will be shift to Fermi energy.
 
 -sep, --separate
 ----------------
-Whenever to plot projected DOS for each atom  of the same type separately.
+Whenever to plot projected DOS for each atom of the same type separately.
 
 .. code-block:: text
 
@@ -243,7 +261,10 @@ Whenever to use relative style.
 
 -n, --normalize
 ---------------
-Whenever to use normalize relative style.
+Whenever to normalized PDOS values to 1.
+
+(with respect to LDOS of each plot or to total PDOS if
+:ref:`--background-total <rad-plot-dos_background-total>`).
 
 .. code-block:: text
 
@@ -289,7 +310,11 @@ Whenever to save figures as .pickle files.
 
 -st, --save-txt
 ---------------
-Whenever to save some data as txt files.
+Whenever to save the data as txt files.
+
+.. note::
+    It does not affect "pdos-vs-dos.png", 
+    because these data are accessible directly from PDOS input files.
 
 .. code-block:: text
 
@@ -304,8 +329,9 @@ Whenever to save some data as txt files.
 -----------------------
 Whenever to use total PDOS as the background for all plots.
 
-If provided then all background data (and in all normalization routines as well) total
-partial density of states is used instead of corresponding local density of states.
+Total partial density of states is used instead of corresponding 
+local density of states in all background data 
+(and in all normalization routines as well) .
 
 .. code-block:: text
 
