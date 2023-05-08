@@ -3,6 +3,8 @@ Collection of small routines and constants,
 which may be used across the whole package.
 """
 
+import sys
+
 from math import asin, pi, sqrt
 
 import numpy as np
@@ -231,3 +233,12 @@ def absolute_to_relative(cell, x, y, z):
     )
     relative = np.linalg.solve(A, B)
     return relative
+
+
+def winwait():
+    r"""
+    Add "Press Enter behaviour to Windows"
+    """
+    if sys.platform == "win32":
+        cprint("Press Enter to continue", colour="green")
+        input()
