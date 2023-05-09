@@ -30,8 +30,8 @@ It is expected to be used in two ways:
 
 * Via scripts (i.e. usage from command line)
 
-Documentations is available 
-`here. <https://rad-tools.adrybakov.com>`_
+For the detailed descriprion check
+`documentation. <https://rad-tools.adrybakov.com>`_
 
 Installation
 ============
@@ -63,13 +63,13 @@ Installing from source
 
    git clone git@github.com:adrybakov/rad-tools.git
 
-Change the directory:
+* Change the directory:
 
 .. code-block:: python
 
    cd rad-tools
 
-To install RAD-tools, run (you may need to use ``pip3``):
+* To install RAD-tools, run (you may need to use ``pip3``):
 
 .. code-block:: console
 
