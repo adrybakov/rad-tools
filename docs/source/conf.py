@@ -149,6 +149,8 @@ custom_links = {
         "https://wiki.python.org/moin/BeginnersGuide/Download",
     ),
     "pytest": ("pytest", "https://docs.pytest.org/en/7.3.x/"),
+    "latex": ("LaTeX", "https://www.latex-project.org/"),
+    "black": ("black", "https://black.readthedocs.io"),
 }
 
 

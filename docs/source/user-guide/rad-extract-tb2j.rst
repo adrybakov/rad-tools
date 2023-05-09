@@ -11,7 +11,7 @@ Script for extracting of template-based model from
 
 If :ref:`--output_name <rad-extract-tb2j_output-name>` is not provided the result is 
 passed to the console, otherwise it is written to the file with first 3 lines 
-giving information about the source of exchange and date, time.
+giving information about the source of exchange, date and time.
 
 Exchange types
 ==============
@@ -19,15 +19,14 @@ Exchange types
 There are several options to control which exchange types are included in 
 the summary:
 
-    * :ref:`--isotropic <rad-extract-tb2j_isotropic>`
-    * :ref:`--anisotropic <rad-extract-tb2j_anisotropic>`
-    * :ref:`--dmi <rad-extract-tb2j_dmi>`
-    * :ref:`--matrix <rad-extract-tb2j_matrix>`
-    * :ref:`--all <rad-extract-tb2j_all>`
+* :ref:`--isotropic <rad-extract-tb2j_isotropic>`
+* :ref:`--anisotropic <rad-extract-tb2j_anisotropic>`
+* :ref:`--dmi <rad-extract-tb2j_dmi>`
+* :ref:`--matrix <rad-extract-tb2j_matrix>`
+* :ref:`--all <rad-extract-tb2j_all>`
 
-They work for both modes with the correspondent blocks having the following form
 Format of the output block for each exchange type is provided in the 
-arguments section.
+:ref:`arguments <rad-extract-tb2j_arguments>` section.
 
 Usage example
 =============
@@ -36,8 +35,9 @@ Example is based on the files from
 :examples:`examples folder <rad-extract-tb2j>`. 
 
 There are two modes in which exchange summary can be printed: 
-with the symmetry of the template and 
-with the model filtered based on the template.
+
+* with the symmetry of the template and 
+* with the model filtered based on the template.
 
 In the first case the symmetry of the template is forced on the model and 
 exchange output is grouped based on the names provided in the template:
@@ -63,6 +63,8 @@ template file and no additional symmetry constrains are assumed on the model:
    .. literalinclude:: /../examples/rad-extract-tb2j/summary.txt
     :language: text
 
+.. _rad-extract-tb2j_arguments:
+
 Arguments
 =========
 
@@ -70,7 +72,7 @@ Arguments
 
 -if, --input-filename
 ---------------------
-Relative or absolute path to the *exchange.out* file,
+Relative or absolute path to the "exchange.out" file,
 including the name and extension of the file itself.
 
 .. code-block:: text
@@ -118,9 +120,8 @@ See also: :ref:`example <output-notes>`.
 ------------------
 Seedname for the output files.
 
-Output files will have the following name structure: *output-name*
-If this parameter is not specified then result will be printed in 
-standard output stream. If none is specify, output is passed to the console.
+If this parameter is not specified, the result are printed in 
+standard output stream. 
 
 .. code-block:: text
 
@@ -141,14 +142,13 @@ Decimals after the comma for the exchange values.
     default : 4
     type : int
 
-.. note::
-    Changed in the version 0.5.17 from "-acc"/"--accuracy".
+.. versionchanged:: 0.5.17 Renamed from "-acc"/"--accuracy".
 
 .. _rad-extract-tb2j_force-symmetry:
 
 -fs, --force-symmetry
 ---------------------
-Whenever to force the symmetry of the template on the model.
+Whether to force the symmetry of the template on the model.
 
 .. code-block:: text
 
@@ -160,7 +160,7 @@ Whenever to force the symmetry of the template on the model.
 
 -i, --isotropic
 ---------------
-Whenever to output isotropic exchange.
+Whether to output isotropic exchange.
 
 .. code-block:: text
 
@@ -178,7 +178,7 @@ Section format:
 
 -a, --anisotropic
 -----------------
-Whenever to output anisotropic exchange.
+Whether to output anisotropic exchange.
 
 .. code-block:: text
 
@@ -199,7 +199,7 @@ Section format:
 
 -m, --matrix
 ------------
-Whenever to output whole matrix exchange.
+Whether to output the whole matrix of exchange.
 
 .. code-block:: text
 
@@ -220,7 +220,7 @@ Section format:
 
 -dmi
 ----
-Whenever to output DMI exchange.
+Whether to output DMI exchange.
 
 .. code-block:: text
 
@@ -249,7 +249,7 @@ Otherwise:
 
 -all
 ----
-Whenever to all types of exchange.
+Whether to output all types of exchange.
 
 .. code-block:: text
 

@@ -81,7 +81,7 @@ Plot atoms in 0 0 0 unit cell in colour for
 0.5.14
 ------
 Bugfix in :ref:`rad-plot-tb2j.py <rad-plot-tb2j>` script.
-Problem with --force-symmetry if there is filtering by non-template parameters.
+Problem with :ref:`--force-symmetry <rad-plot-tb2j_force-symmetry>` if there is filtering by non-template parameters.
 
 0.5.15
 ------
@@ -95,7 +95,7 @@ Add :py:meth:`.remove` method to the
 0.5.17
 ------
 Rewrite parsers of the scripts and 
-add `black <https://black.readthedocs.io/>`_ code formatter.
+add |black|_ code formatter.
 
 0.5.18
 ------
@@ -119,7 +119,7 @@ Release for debugging. Main release will happen with the change to 0.6.* version
 0.5.22
 ------
 Bugfix. Windows-specific bug with "/" used instead of ``join()`` in some cases.
-Bugfix for cases when atom names contain numbers.
+Bugfix for cases when atom names contains numbers.
 
 0.5.23
 ------
@@ -133,7 +133,7 @@ Make all legends draggable only for interactive mode.
 0.5.25
 ------
 In :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
-Add plotting regime :ref:`--background-total <rad-plot-dos_background-total>`
+Add plotting regime :ref:`--background-total <rad-plot-dos_background-total>`.
 
 0.5.26
 ------
@@ -145,7 +145,7 @@ Correct ``efermi`` bug in pdos-vs-dos plot (there was no shift).
 In :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
 Correct ``efermi`` bug in pdos-vs-dos plot (shift lead to the disappearance of the states).
 
-0.5.27
-------
+0.5.28/0.5.29
+-------------
 In :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
 Fix previous bugfix.

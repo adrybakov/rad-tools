@@ -23,7 +23,7 @@ analogous to the command line interface.
             no_colour=False)
 
     Makings template based on the "exchange.out" TB2J file, 
-    with the filter by maximum distance of 5, saving the output in 
+    filtering by maximum distance of 5, saving the output in 
     the file "template.txt" of the current folder:
 
     .. code-block:: python

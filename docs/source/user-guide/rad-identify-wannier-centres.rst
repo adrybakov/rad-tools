@@ -4,7 +4,7 @@
 ``rad-identify-wannier-centres.py``
 ***********************************
 
-Identify wannier centres with respect to the atom or to 
+Identifies wannier centres with respect to the atom or to 
 the point between the atom`s pair.
 
 .. versionchanged:: 0.6 Renamed from ``identify-wannier-centres.py``
@@ -13,19 +13,19 @@ Use :ref:`--span <rad-identify-wannier-centres_span>` option to increase the
 distance span for the search.
 
 * If the centre is associated with some atom
-    then ``-> atom`` will appear in the output file.
+    then ``-> atom`` appears in the output file.
 
 * If the centre is unidentified 
     then ``-> None`` 
-    will appear in the output file and additional information 
-    will be present in the console.
+    appears in the output file and additional information 
+    is present in the console and in the output file.
 
 Usage example
 =============
 Example is based on the files from 
 :examples:`examples folder <rad-identify-wannier-centres>`. 
 
-The example_centres.xyz file looks like this:
+The "example_centres.xyz" file looks like this:
 
 .. literalinclude:: /../examples/rad-identify-wannier-centres/example_centres.xyz
 
@@ -35,24 +35,25 @@ Lets run the code:
 
     rad-identify-wannier-centres.py example_centres.xyz
 
-This command creates an output file example_centre.xyz_identified 
+This command creates an output file "example_centre.xyz_identified" 
 in the directory of the input file with the following content:
 
 .. literalinclude:: /../examples/rad-identify-wannier-centres/example_centres.xyz_identified
 
-and produce the following output in the console:
+and produces the following output in the console:
 
 .. literalinclude:: /../examples/rad-identify-wannier-centres/console_output.txt
    :language: text
     
 which means that two centres are not identified. 
-The script provides in the console the distance to the closest atom 
+The script provides the distance to the closest atom 
 for each unidentified centre. In the output file some information about 
-unidentified centres are provided as well.
+unidentified centres is provided as well.
 
-As one can see first unidentified centre is quite close to the Br1 and 
-the second one to the Br2, let us extend the span a little bit in order to 
-correctly identify all the atoms:
+As one can see first unidentified centre is quite close to the 
+:math:`\text{Br}_1` and the second one to the :math:`\text{Br}_2`, 
+let us extend the span a little bit in order to correctly identify 
+all the atoms:
 
 .. code-block:: bash
 
@@ -62,7 +63,9 @@ This command produces example_centres.xyz_bigger_span file:
 
 .. literalinclude:: /../examples/rad-identify-wannier-centres/example_centres.xyz_bigger_span
 
-where all the centres are correctly Identified.
+where all centres are correctly identified.
+
+.. _rad-identify-wannier-centres_arguments:
 
 Arguments
 =========
@@ -70,10 +73,10 @@ Arguments
 .. _rad-identify-wannier-centres_filename:
 
 filename
---------------
-Relative or absolute path to the _centres.xyz file
+--------
+Relative or absolute path to the "_centres.xyz" file
 
-Identified Wannier centres will be store in the "filename"_identified file.
+Identified Wannier centres are stored in the "filename_identified" file.
 
 .. code-block:: text
 
@@ -85,7 +88,8 @@ Identified Wannier centres will be store in the "filename"_identified file.
 ----------
 Distance tolerance between centre and atom. (in Angstroms)
 
-If some atoms remains unidentified try to increase the span
+.. hint::
+    If some centres remain unidentified try to increase the span.
 
 .. code-block:: text
 

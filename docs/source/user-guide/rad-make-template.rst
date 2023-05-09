@@ -7,7 +7,7 @@
 Script for the creation of template`s draft.
 
 This script can provide blank template file or template file based on the TB2J
-*exchange.out* file (see :ref:`--input-filename <rad-make-template_input-filename>`). 
+"exchange.out" file (see :ref:`--input-filename <rad-make-template_input-filename>`). 
 Several filtering options are supported for the case of TB2J-based template file 
 (:ref:`--R-vector <rad-make-template_R-vector>`, 
 :ref:`--max-distance <rad-make-template_max-distance>`,
@@ -17,17 +17,16 @@ Several filtering options are supported for the case of TB2J-based template file
 .. important::
 
     When template file is made on the base of TB2J file it is still necessary 
-    to group bonds into neighbors and add names by hand afterwards.
+    to group bonds into neighbors and add names manually.
 
 
 Usage example
 =============
-Example is based on the exchange.out file from 
+Example is based on the exchange.out file from the
 :examples:`examples folder <rad-make-template>`. 
 
-The simplest case consist of template draft`s creation 
-(see :ref:`template specification <template-draft>`). 
-The following command will produce it:
+Minimal usage scenario creates template draft`s with the command
+(see :ref:`template specification <template-draft>`):
 
 .. code-block:: bash
 
@@ -36,13 +35,13 @@ The following command will produce it:
 For more advance user-case the file exchange.out from 
 :examples:`examples folder <rad-make-template>` is used. 
 
-Run the code:
+The code:
 
 .. code-block:: bash
 
-    rad-make-template.py -tf exchange.out -on full_template.txt
+    rad-make-template.py -if exchange.out -on full_template.txt
 
-It will produce the following file with the full template from the file:
+produces the file with the full template:
 
 .. dropdown:: full_template.txt
 
@@ -55,15 +54,15 @@ with the distance <= 8 Angstroms.
 
 .. code-block:: bash
 
-    rad-make-template.py -tf exchange.out -on filtered_template.txt -maxd 8
+    rad-make-template.py -if exchange.out -on filtered_template.txt -maxd 8
 
 .. dropdown:: filtered_template.txt
 
    .. literalinclude:: /../examples/rad-make-template/filtered_template.txt
     :language: text
 
-Now for further usage one only have to introduce grouping with respect to 
-some exchange model to produce the final template file:
+For further usage of the template it is necessary to introduce 
+grouping with respect to some exchange model:
 
 .. dropdown:: filtered_template_grouped.txt
 
@@ -90,19 +89,18 @@ Line 1: Date and time of file creation.
 
 Line 2: Blank line.
 
-Line 3: Header of the file. 20 or more "=" symbols.
+Line 3: Header of the file (20 or more "=" symbols).
 
 Line 4: Flag of the neighbors section, have to be in the file.
 
 Line 5: Format of the bond specification line.
 
-Line 6: Neighbour separator. Separates different neighbors
-(:math:`J_1`, :math:`J_2`, ...) in the neighbors template file. 
-20 or more "-" symbols.
+Line 6: Neighbour separator (20 or more "-" symbols). 
+Separates different neighbors
+:math:`(J_1, J_2, \dots)` in the template file.
 
-Line 7: Name of the neighbour and the 
-`LaTeX <https://www.latex-project.org/>`_ version of that name. 
-Name have to be specified. Latex name is optional. 
+Line 7: Name of the neighbour and the |latex|_ version of that name. 
+Name have to be specified. LaTeX name is optional. 
 Name and LaTeX name are separated by one or more spaces, 
 as a consequence no spaces are allowed for both of them.
 
@@ -128,7 +126,7 @@ Line 12: Name of the second neighbour.
 Lines 14-15: Specifications of the first, second and third bond, which are 
 associated with the second neighbour.
 
-Lines 16: Footer of the file. 20 or more "=" symbols.
+Lines 16: Footer of the file (20 or more "=" symbols).
 
 .. _rad-make-template_arguments:
 
@@ -152,11 +150,13 @@ See also: :ref:`example <output-notes>`.
 -if, --input-filename
 ---------------------
 Relative or absolute path to the 'exchange.out' file, 
-including the name and extension of the file.
+including name and extension of the file.
 
 .. code-block:: text
 
     default : None 
+
+.. versionchanged:: 0.5.12 Renamed from "tb2j_filename"
 
 .. _rad-make-template_R-vector:
 
@@ -165,13 +165,12 @@ including the name and extension of the file.
 R vectors for filtering the model.
 
 In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to). 
-Atom 1 is always located in (0, 0, 0) supercell, while atom 2 is located in 
-R = (i, j, k) supercell. This parameter tells the script to keep only the 
+Atom 1 is always located in (0, 0, 0) unit cell, while atom 2 is located in 
+R = (i, j, k) unit cell. This parameter tells the script to keep only the 
 bonds for which atom 2 is located in one of specified R supercells. 
-In order to specify supercells provide a set of integers separated 
-by spaces. They are grouped by three starting from the left to form a set 
-of R vectors. If the last group will contain 1 or 2 integers they will be 
-ignored.
+Supercells are specified by a set of integers separated by spaces. 
+They are grouped by three starting from the left and forms a set 
+of R vectors. If the last group contains 1 or 2 integers they are ignored.
 
 .. code-block:: text
 

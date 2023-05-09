@@ -17,7 +17,7 @@ def read_exchange_model(filename, quiet=False) -> ExchangeModel:
     filename : str
         Path to the TB2J output file.
     quiet : bool, default True
-        Whenever to suppress output.
+        Whether to suppress output.
 
     Returns
     -------

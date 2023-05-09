@@ -362,21 +362,21 @@ def create_parser():
         "--separate",
         action="store_true",
         default=False,
-        help="Whenever to plot projected DOS for each atom of the same type separately.",
+        help="Whether to plot projected DOS for each atom of the same type separately.",
     )
     parser.add_argument(
         "-r",
         "--relative",
         action="store_true",
         default=False,
-        help="Whenever to use relative style.",
+        help="Whether to use relative style.",
     )
     parser.add_argument(
         "-n",
         "--normalize",
         action="store_true",
         default=False,
-        help="Whenever to normalized PDOS values to 1.",
+        help="Whether to normalized PDOS values to 1.",
     )
     parser.add_argument(
         "-v",
@@ -397,21 +397,21 @@ def create_parser():
         "--save-pickle",
         action="store_true",
         default=False,
-        help="Whenever to save figures as .pickle files.",
+        help="Whether to save figures as .pickle files.",
     )
     parser.add_argument(
         "-st",
         "--save-txt",
         action="store_true",
         default=False,
-        help="Whenever to save some data as txt files.",
+        help="Whether to save some data as txt files.",
     )
     parser.add_argument(
         "-bt",
         "--background-total",
         action="store_true",
         default=False,
-        help="Whenever to use total PDOS as the background for all plots.",
+        help="Whether to use total PDOS as the background for all plots.",
     )
 
     return parser

@@ -253,7 +253,7 @@ def create_parser():
         "--draw-cells",
         action="store_true",
         default=False,
-        help="Whenever to draw the cells.",
+        help="Whether to draw the cells.",
     )
     parser.add_argument(
         "-R",

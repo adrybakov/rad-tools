@@ -58,7 +58,7 @@ class PDOS:
         where :math:`n_k` is the number of k-points,
         :math:`n_e` is the number of energy points.
     spin_pol : bool, default False
-        Whenever PDOS is spin-polarized or not.
+        Whether PDOS is spin-polarized or not.
 
     Attributes
     ----------
@@ -71,7 +71,7 @@ class PDOS:
     projectors : list
         Names of the projectors.
     spin_pol : bool, default False
-        Whenever PDOS is spin-polarized or not.
+        Whether PDOS is spin-polarized or not.
     k_resolved : bool, default False
     """
 
@@ -527,9 +527,9 @@ def plot_projected(
     relative : bool, default False
         Relative plot style.
     normalize : bool, default False
-        Whenever to norma;ize relative plot style.
+        Whether to norma;ize relative plot style.
     interactive : bool, default False
-        Whenever to use interactive plotting mode.
+        Whether to use interactive plotting mode.
     save_pickle : bool, default False
         Whether to save figure as a .pickle file.
         Helps for custom modification of particular figures.

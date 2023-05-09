@@ -23,8 +23,8 @@ The result is defined by logical conjugate of the specified conditions.
 ``--input-filename`` (or ``-if``) argument is required, the rest of them are optional.
 
 
-Output files will have the following name structure: 
-*output-name.display-data-type.png* 
+Output files have the following name structure: 
+"output-name.display-data-type.png" 
 
 .. _rad-plot-tb2j_example:
 
@@ -35,19 +35,19 @@ Example is based on the exchange.out file from
 :examples:`examples folder <rad-plot-tb2j>`. 
 
 There is one required argument in the script 
-(:ref:`--input-filename <rad-plot-tb2j_input-filename>`), so there is a minimum input 
-for the script to run:
+(:ref:`--input-filename <rad-plot-tb2j_input-filename>`), therefore a minimum input 
+for the script to run is:
 
 .. code-block:: bash
 
     rad-plot-tb2j.py -if exchange.out
 
-which will produce three pictures *exchange.iso.png*, 
-*exchange.distance.png*, *exchange.distance.png*. each file name have a common 
-default seedname (*exchange*, use 
+which produces three pictures "exchange.iso.png", 
+"exchange.distance.png", "exchange.distance.png". each file name has a shared
+default seedname ("exchange", use 
 :ref:`--output-name <rad-plot-tb2j_output-name>` to change it), data type 
-(*iso*, *dmi*, *distance*, see 
-:ref:`--what-to-plot <rad-plot-tb2j_what-to-plot>`) and file extension.
+("iso", "dmi", "distance", see 
+:ref:`--what-to-plot <rad-plot-tb2j_what-to-plot>`) and file extension ".png".
 
 .. dropdown:: Output images
 
@@ -68,13 +68,13 @@ default seedname (*exchange*, use
 
 .. note::
 
-    In the following text only exchange.iso.png file will be produced with the help 
+    In the following text only "exchange.iso.png" file is produced with the help 
     of  :ref:`--what-to-plot <rad-plot-tb2j_what-to-plot>` argument.
 
 Basic adjustments
 -----------------
 
-Since the exchange.out file contains a lot of exchange bonds the pictures with 
+Since "the exchange.out" file contains a lot of exchange bonds the pictures with 
 all of them are not really useful. Lets plot the isotropic exchange picture 
 with some adjustments:
 
@@ -121,7 +121,7 @@ where template file is the following:
 .. literalinclude:: /../examples/rad-plot-tb2j/template.txt
     :language: text
 
-The images are the same:
+The images should be the same:
 
 .. dropdown:: Output images
 
@@ -143,8 +143,8 @@ The images are the same:
 Modifying the model
 -------------------
 
-By default ``rad-plot-tb2j.py`` display the bonds as it is in the model.
-One could use :ref:`-fs <rad-plot-tb2j_force-symmetry>` argument in order 
+By default ``rad-plot-tb2j.py`` displays the bonds as it is in the model.
+:ref:`-fs <rad-plot-tb2j_force-symmetry>` argument helps
 to reproduce particular exchange model:
 
 .. code-block:: bash
@@ -168,18 +168,19 @@ to reproduce particular exchange model:
 
         exchange_forced_symmetry.distance.png
 
-Only one exchange parameter present in the template file, therefore the model 
-is filtered with respect to the template and then the value of the exchange 
-for each bond is set to the medium value of all bonds from the same exchange group.
-DMI interaction is modified as well in a way that direction of the DMI vector is 
-kept, but the magnitude of the DMI vector is scaled to the medium value.
+Only one exchange parameter is present in the template file, 
+therefore the model is filtered with respect to the template 
+and then the value of the exchange for each bond is set to 
+the medium value of all bonds from the same exchange group.
+The direction of the DMI vectors is kept, but the magnitude 
+of the DMI vector is scaled to the medium value.
 
 .. note::
 
     When :ref:`--force-symmetry <rad-plot-tb2j_force-symmetry>` argument is provided
     :ref:`--template-file <rad-plot-tb2j_template-file>` is required.
 
-
+.. _rad-plot-tb2j_arguments:
 
 Arguments
 =========
@@ -188,8 +189,8 @@ Arguments
 
 -if, --input-filename
 ---------------------
-Relative or absolute path to the 'exchange.out' file, 
-including the name and extension of the file.
+Relative or absolute path to the "exchange.out" file, 
+including name and extension of the file.
 
 .. code-block:: text
 
@@ -219,8 +220,8 @@ See also: :ref:`example <output-notes>`.
 ------------------
 Seedname for the output files.
 
-Output files will have the following name structure:
-*output-name.display-data-type.png*
+Output files have the following name structure:
+"output-name.display-data-type.png"
 
 .. code-block:: text
 
@@ -235,7 +236,7 @@ See also: :ref:`example <output-notes>`.
 --------------------
 Type of data for display.
 
-Specifying the data which will be displayed in the graphs. 
+Specifying the data to be displayed in the graphs. 
 Everything is displayed by default, each value in a separate picture. 
 Currently available for display: Isotropic exchange parameter, distance, \|DMI\|.
 
@@ -248,10 +249,10 @@ Currently available for display: Isotropic exchange parameter, distance, \|DMI\|
 
 -dc, --draw-cells
 -----------------
-Whenever to draw the cells.
+Whether to draw the cells.
 
-If specified then the shape of all cells 
-presented in the model (after filtering) is drawn. (0, 0, 0) will be in red.
+If specified then the shapes of all cells 
+presented in the model (after filtering) are drawn. (0, 0, 0) is red.
 
 .. code-block:: text
 
@@ -265,13 +266,12 @@ presented in the model (after filtering) is drawn. (0, 0, 0) will be in red.
 R vectors for filtering the model.
 
 In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to). 
-Atom 1 is always located in (0, 0, 0) supercell, while atom 2 is located in 
-R = (i, j, k) supercell. This parameter tells the script to keep only the 
+Atom 1 is always located in (0, 0, 0) unit cell, while atom 2 is located in 
+R = (i, j, k) unit cell. This parameter tells the script to keep only the 
 bonds for which atom 2 is located in one of specified R supercells. 
-In order to specify supercells provide a set of integers separated 
-by spaces. They are grouped by three starting from the left to form a set 
-of R vectors. If the last group will contain 1 or 2 integers they will be 
-ignored.
+Supercells are specified by a set of integers separated by spaces. 
+They are grouped by three starting from the left and forms a set 
+of R vectors. If the last group contains 1 or 2 integers they are ignored.
 
 .. code-block:: text
 
@@ -343,8 +343,8 @@ See also: :ref:`template <rad-make-template>`
 ------------------
 Scale for the size of atom marks.
 
-Use it if you want to display atom marks bigger or smaller. 
-Have to be positive.
+Use it if you want to make atom marks bigger (>1) or smaller (<1). 
+Has to be positive.
 
 .. code-block:: text
 
@@ -357,8 +357,8 @@ Have to be positive.
 -----------------
 Scale for the size of data text.
 
-Use it if you want to display data text marks bigger or smaller. 
-Have to be positive.
+Use it if you want to make data text marks bigger (>1) or smaller (<1). 
+Has to be positive.
 
 .. code-block:: text
 
@@ -369,9 +369,9 @@ Have to be positive.
 
 -t, --title
 -----------
-Title for the plots
+Title for the plots.
 
-Title will be displayed in the picture.
+Title is displayed in the picture.
 
 .. code-block:: text
 

@@ -50,9 +50,9 @@ Add reciprocal vectors to the ExchangeModel.
 0.4.4
 -----
 
-Add io interface.
+Add :ref:`rad-tools_io` interface.
 
-There is two ways to import read functions:
+There are two ways to import read functions:
 
 .. code-block:: python
 
@@ -76,7 +76,7 @@ Add ``reduced_parameters`` to the :py:class:`.ExchangeModel` class.
 
 Add exchange interface.
 
-There is two ways to import read functions:
+There are two ways to import read functions:
 
 .. code-block:: python
 

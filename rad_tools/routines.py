@@ -130,8 +130,8 @@ def cprint(*args, colour=None, **kwargs):
         Name or number for a colour. Number is used with the base of 256.
         Name should comply with :py:func:`.get_named_colours`.
 
-    Examples
-    --------
+    Example
+    -------
     >>> import rad_tools as rad
     >>> rad.cprint("Hellow world!", colour="green")
     Hellow world!
@@ -276,7 +276,7 @@ def absolute_to_relative(cell, x, y, z):
 
 def winwait():
     r"""
-    Add "Press Enter behaviour to Windows"
+    Add "Press Enter to continue" behaviour to Windows.
     """
     if sys.platform == "win32":
         cprint("Press Enter to continue", colour="green")

@@ -8,7 +8,7 @@ API documentation
 
 :Release: |version|
 
-The reference manual details modules and their modules, 
+The reference manual describes modules and they objects, 
 which may be used for the postprocessing. 
 The main interface to the package may be imported as 
 

@@ -271,7 +271,7 @@ class DOSQE:
         Parameters
         ----------
         squeeze : bool, default False
-            Whenever to sum over k points. Ignored if DOS is not k resolved.
+            Whether to sum over k points. Ignored if DOS is not k resolved.
 
         Returns
         -------
@@ -318,7 +318,7 @@ class DOSQE:
         Parameters
         ----------
         squeeze : bool, default False
-            Whenever to sum over k points. Ignored if DOS is not k resolved.
+            Whether to sum over k points. Ignored if DOS is not k resolved.
 
         Returns
         -------

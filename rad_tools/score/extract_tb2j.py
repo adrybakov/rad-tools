@@ -126,40 +126,40 @@ def create_parser():
         "--force-symmetry",
         action="store_true",
         default=False,
-        help="Whenever to force the symmetry of the template on the model.",
+        help="Whether to force the symmetry of the template on the model.",
     )
     parser.add_argument(
         "-i",
         "--isotropic",
         action="store_true",
         default=False,
-        help="Whenever to output isotropic exchange.",
+        help="Whether to output isotropic exchange.",
     )
     parser.add_argument(
         "-a",
         "--anisotropic",
         action="store_true",
         default=False,
-        help="Whenever to output anisotropic exchange.",
+        help="Whether to output anisotropic exchange.",
     )
     parser.add_argument(
         "-m",
         "--matrix",
         action="store_true",
         default=False,
-        help="Whenever to output whole matrix exchange.",
+        help="Whether to output whole matrix exchange.",
     )
     parser.add_argument(
         "-dmi",
         action="store_true",
         default=False,
-        help="Whenever to output DMI exchange.",
+        help="Whether to output DMI exchange.",
     )
     parser.add_argument(
         "-all",
         action="store_true",
         default=False,
-        help="Whenever to all types of exchange.",
+        help="Whether to all types of exchange.",
     )
     parser.add_argument(
         "-v",

@@ -1,0 +1,33 @@
+.. _release-notes_0.6:
+
+***********
+Version 0.6
+***********
+
+**Date:** 09 May 2023
+
+Whats new?
+----------
+
+Refractor most of the code. Rewrite whole documentation,
+add better organisation of the :ref:`api`. 
+Add version switcher to the header of the page.
+
+Make the script's names follow unified concept:
+
+.. code-block:: console
+
+    rad-action-object.py
+
+Debugged :ref:`rad-plot-dos.py <rad-plot-dos>` on the real-world data. 
+Add several new features to it.
+
+Remade the import structure of the package. 
+The main entry point is ``rad_tools``:
+
+.. code-block:: console
+
+    import rad_tools as rad
+
+Only public methods and classes are imported into the main module.
+Absolute import for the internal usage is still possible.

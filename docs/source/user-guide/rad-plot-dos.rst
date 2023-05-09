@@ -145,6 +145,7 @@ To choose :ref:`input <rad-plot-dos_input-path>` or
 
     rad-plot-dos.py -ip "input_path" -op "output_path" -ew -10 5
 
+.. _rad-plot-dos_arguments:
 
 Arguments
 =========
@@ -239,7 +240,7 @@ Zero is shifted to Fermi energy.
 
 -sep, --separate
 ----------------
-Whenever to plot projected DOS for each atom of the same type separately.
+Whether to plot projected DOS for each atom of the same type separately.
 
 .. code-block:: text
 
@@ -250,7 +251,7 @@ Whenever to plot projected DOS for each atom of the same type separately.
 
 -r, --relative
 --------------
-Whenever to use relative style.
+Whether to use relative style.
 
 .. code-block:: text
 
@@ -261,7 +262,7 @@ Whenever to use relative style.
 
 -n, --normalize
 ---------------
-Whenever to normalized PDOS values to 1.
+Whether to normalized PDOS values to 1.
 
 (with respect to LDOS of each plot or to total PDOS if
 :ref:`--background-total <rad-plot-dos_background-total>`).
@@ -297,7 +298,7 @@ Interactive plotting.
 
 -sp, --save-pickle
 ------------------
-Whenever to save figures as .pickle files.
+Whether to save figures as .pickle files.
 
 .. code-block:: text
 
@@ -310,7 +311,7 @@ Whenever to save figures as .pickle files.
 
 -st, --save-txt
 ---------------
-Whenever to save the data as txt files.
+Whether to save the data as txt files.
 
 .. note::
     It does not affect "pdos-vs-dos.png", 
@@ -327,7 +328,7 @@ Whenever to save the data as txt files.
 
 -bt, --background-total
 -----------------------
-Whenever to use total PDOS as the background for all plots.
+Whether to use total PDOS as the background for all plots.
 
 Total partial density of states is used instead of corresponding 
 local density of states in all background data 
