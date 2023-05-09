@@ -2,7 +2,7 @@
 RAD-tools
 *********
 
-Latest version: |release|
+:Release: |version|
 
 .. warning::
     This project is under active development. 
@@ -10,10 +10,10 @@ Latest version: |release|
 
 .. toctree::
     :maxdepth: 1
-    :caption: Contents:
+    :hidden:
 
     user-guide/installation
-    user-guide/index
+    User Guide <user-guide/index>
     api/index
     release-notes/index
 

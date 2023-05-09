@@ -21,14 +21,12 @@ def manager(
     verbose=False,
 ):
     r"""
-    Main function call of the rad-make-template.py script.
+    ``rad-make-template.py`` script.
 
-    Full documentation on the behaviour is available
-    :ref:`here <rad-make-template>`. Parameters of the function directly
-    corresponds to the arguments of the script.
-
-    If you want to have the behaviour of the rad-make-template.py script
-    but in a format of a function call use this function.
+    Full documentation on the behaviour is available in the
+    :ref:`User Guide <rad-make-template>`.
+    Parameters of the function directly
+    correspond to the arguments of the script.
     """
 
     if distance is not None:

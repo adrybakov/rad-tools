@@ -3,31 +3,32 @@
 ***********
 Version 0.1
 ***********
+
 Whats new?
 ----------
 The big renaming passed.
 
 Scripts were renamed:
 
-tb2j_plotter.py to :ref:`tb2j-plotter.py <tb2j-plotter>`
+tb2j_plotter.py to :ref:`rad-plot-tb2j.py <rad-plot-tb2j>`
 
-tb2j_refractor.py to :ref:`tb2j-refractor.py <tb2j-extractor>`
+tb2j_refractor.py to :ref:`tb2j-refractor.py <rad-extract-tb2j>`
 
 phonopy_plotter.py to ``phonopy-plotter.py``  (Removed in 0.5.12)
 
 Modules were renamed:
 
-file_logic to :doc:`model <../api/_autosummary/rad_tools.exchange.model>`
+file_logic to model
 
-template_logic to :doc:`template <../api/_autosummary/rad_tools.exchange.template>`
+template_logic to template
 
-map_logic to :doc:`map <../api/_autosummary/rad_tools.map>`
+map_logic to map
 
-tb2j_tools was renamed to :doc:`exchange <../api/_autosummary/rad_tools.exchange>`
+tb2j_tools was renamed to exchange
 
-Module :doc:`map <../api/_autosummary/rad_tools.map>` was moved out of 
-:doc:`exchange <../api/_autosummary/rad_tools.exchange>`.
+Module map was moved out of 
+exchange.
 
 0.1.1
 -----
-Fix bugs in :ref:`tb2j-refractor.py <tb2j-extractor>`.
+Fix bugs in :ref:`tb2j-refractor.py <rad-extract-tb2j>`.

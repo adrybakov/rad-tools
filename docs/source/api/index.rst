@@ -1,12 +1,32 @@
+.. module:: rad_tools
+
 .. _api:
 
 *****************
 API documentation
 *****************
 
-.. autosummary::
-   :toctree: _autosummary
-   :template: custom-module-template.rst
-   :recursive:
-   
-   rad_tools
+:Release: |version|
+
+The reference manual describes modules and they objects, 
+which may be used for the postprocessing. 
+The main interface to the package may be imported as 
+
+.. code-block:: python
+
+   import rad_tools as rad
+
+In the examples across the documentation it is expected to be imported in that way.
+
+
+.. toctree:: 
+   :maxdepth: 2
+
+   dos
+   exchange
+   kpoints
+   io
+   score
+   routines
+
+

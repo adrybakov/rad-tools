@@ -3,7 +3,24 @@ from os.path import isdir, join
 
 import pytest
 
-from rad_tools.routines import *
+from rad_tools.routines import (
+    BLACK,
+    RESET,
+    RED,
+    GREEN,
+    YELLOW,
+    BLUE,
+    MAGENTA,
+    CYAN,
+    WHITE,
+    WARNING,
+    OK,
+    ERROR,
+    get_256_colours,
+    atom_mark_to_latex,
+    rot_angle,
+    absolute_to_relative,
+)
 
 
 def test_terminal_colours():

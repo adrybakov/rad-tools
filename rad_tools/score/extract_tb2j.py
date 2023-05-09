@@ -25,14 +25,12 @@ def manager(
     verbose=False,
 ):
     r"""
-    Main function call of the tb2j-extractor.py script.
+    ``rad-extract-tb2j.py`` script.
 
-    Full documentation on the behaviour is available
-    :ref:`here <tb2j-extractor>`. Parameters of the function directly
-    corresponds to the arguments of the script.
-
-    If you want to have the behaviour of the tb2j-extractor.py script
-    but in a format of a function call use this function.
+    Full documentation on the behaviour is available in the
+    :ref:`User Guide <rad-extract-tb2j>`.
+    Parameters of the function directly
+    correspond to the arguments of the script.
     """
 
     try:
@@ -128,40 +126,40 @@ def create_parser():
         "--force-symmetry",
         action="store_true",
         default=False,
-        help="Whenever to force the symmetry of the template on the model.",
+        help="Whether to force the symmetry of the template on the model.",
     )
     parser.add_argument(
         "-i",
         "--isotropic",
         action="store_true",
         default=False,
-        help="Whenever to output isotropic exchange.",
+        help="Whether to output isotropic exchange.",
     )
     parser.add_argument(
         "-a",
         "--anisotropic",
         action="store_true",
         default=False,
-        help="Whenever to output anisotropic exchange.",
+        help="Whether to output anisotropic exchange.",
     )
     parser.add_argument(
         "-m",
         "--matrix",
         action="store_true",
         default=False,
-        help="Whenever to output whole matrix exchange.",
+        help="Whether to output whole matrix exchange.",
     )
     parser.add_argument(
         "-dmi",
         action="store_true",
         default=False,
-        help="Whenever to output DMI exchange.",
+        help="Whether to output DMI exchange.",
     )
     parser.add_argument(
         "-all",
         action="store_true",
         default=False,
-        help="Whenever to all types of exchange.",
+        help="Whether to all types of exchange.",
     )
     parser.add_argument(
         "-v",

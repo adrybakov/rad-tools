@@ -10,51 +10,51 @@ Add script :ref:`rad-plot-dos.py <rad-plot-dos>`
 
 0.2.12
 ------
-Bugfix in :ref:`tb2j-plotter.py <tb2j-plotter>` script. 
+Bugfix in :ref:`rad-plot-tb2j.py <rad-plot-tb2j>` script. 
 
 0.2.11
 ------
 Rename --template option in 
-:ref:`tb2j-extractor.py <tb2j-extractor>` script into 
-:ref:`--template-file <tb2j-extractor_template-file>`. 
+:ref:`rad-extract-tb2j.py <rad-extract-tb2j>` script into 
+:ref:`--template-file <rad-extract-tb2j_template-file>`. 
 
 0.2.10
 ------
-Rename tb2j-refractor.py to :ref:`tb2j-extractor.py <tb2j-extractor>`
+Rename tb2j-refractor.py to :ref:`rad-extract-tb2j.py <rad-extract-tb2j>`
 
 0.2.9
 -----
 Add pythonic --verbose output
-to the :ref:`tb2j-extractor.py <tb2j-extractor>` script.
+to the :ref:`rad-extract-tb2j.py <rad-extract-tb2j>` script.
 
 0.2.8
 -----
 Add --verbose flag
-to the :ref:`tb2j-extractor.py <tb2j-extractor>` script.
+to the :ref:`rad-extract-tb2j.py <rad-extract-tb2j>` script.
 
 0.2.7
 -----
 Change the behaviour of the drawing in 
-:ref:`tb2j-plotter.py <tb2j-plotter>` script.
+:ref:`rad-plot-tb2j.py <rad-plot-tb2j>` script.
 
 0.2.6
 -----
-Add :ref:`-dmi <tb2j-extractor_dmi>` flag
-to :ref:`tb2j-refractor.py <tb2j-extractor>` script.
+Add :ref:`-dmi <rad-extract-tb2j_dmi>` flag
+to :ref:`tb2j-refractor.py <rad-extract-tb2j>` script.
 
 0.2.5
 -----
-Add \|DMI\| as an output data type to :ref:`tb2j-plotter.py <tb2j-plotter>` 
-(see: :ref:`--what-to-plot <tb2j-plotter_what-to-plot>`)
+Add \|DMI\| as an output data type to :ref:`rad-plot-tb2j.py <rad-plot-tb2j>` 
+(see: :ref:`--what-to-plot <rad-plot-tb2j_what-to-plot>`)
 
 0.2.4
 -----
-Bug fix in :ref:`tb2j-refractor.py <tb2j-extractor>`. 
+Bug fix in :ref:`tb2j-refractor.py <rad-extract-tb2j>`. 
 Only last exchange from template was shown, now all of them are.
 
 0.2.3
 -----
-Change output behaviour in :ref:`tb2j-refractor.py <tb2j-extractor>`.
+Change output behaviour in :ref:`tb2j-refractor.py <rad-extract-tb2j>`.
 Now by default output is passed to the standard output stream.
 
 

@@ -1,7 +1,7 @@
 *********
 RAD-TOOLS
 *********
-Various scripts for condense matter calculations and post processing.
+Various scripts for condense matter calculations and post-processing.
 
 .. image:: https://badge.fury.io/py/rad-tools.svg
     :target: https://badge.fury.io/py/rad-tools

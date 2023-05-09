@@ -58,7 +58,7 @@ class PDOS:
         where :math:`n_k` is the number of k-points,
         :math:`n_e` is the number of energy points.
     spin_pol : bool, default False
-        Whenever PDOS is spin-polarized or not.
+        Whether PDOS is spin-polarized or not.
 
     Attributes
     ----------
@@ -71,7 +71,7 @@ class PDOS:
     projectors : list
         Names of the projectors.
     spin_pol : bool, default False
-        Whenever PDOS is spin-polarized or not.
+        Whether PDOS is spin-polarized or not.
     k_resolved : bool, default False
     """
 
@@ -432,9 +432,9 @@ class PDOSIterator:
 
 class PDOSQE(PDOS):
     r"""
-    PDOS wrapper for Quantum Espresso pdos.
+    PDOS wrapper for |QE|_ pdos.
 
-    Supports the order of projectors of :projwfc:`Quantum Espresso <>` (s,p,d,f) and
+    Supports the order of projectors of |projwfc|_ (s,p,d,f) and
     the case of projection in the spin-orbit calculations.
     In the custom cases it is necessary to specify projectors manually.
     If ``projectors_group`` has the form "l" or "l_j",
@@ -527,9 +527,9 @@ def plot_projected(
     relative : bool, default False
         Relative plot style.
     normalize : bool, default False
-        Whenever to norma;ize relative plot style.
+        Whether to norma;ize relative plot style.
     interactive : bool, default False
-        Whenever to use interactive plotting mode.
+        Whether to use interactive plotting mode.
     save_pickle : bool, default False
         Whether to save figure as a .pickle file.
         Helps for custom modification of particular figures.

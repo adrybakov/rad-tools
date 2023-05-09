@@ -1,15 +1,17 @@
-.. _tb2j-extractor:
+.. _rad-extract-tb2j:
 
-*********************
-``tb2j-extractor.py``
-*********************
+***********************
+``rad-extract-tb2j.py``
+***********************
 
 Script for extracting of template-based model from 
-`TB2J <https://tb2j.readthedocs.io/en/latest/>`_ results.
+|TB2J|_ results.
 
-If :ref:`--output_name <tb2j-extractor_output-name>` is not provided the result is 
+.. versionchanged: 0.6 Renamed from ``tb2j-extractor.py``
+
+If :ref:`--output_name <rad-extract-tb2j_output-name>` is not provided the result is 
 passed to the console, otherwise it is written to the file with first 3 lines 
-giving information about the source of exchange and date, time.
+giving information about the source of exchange, date and time.
 
 Exchange types
 ==============
@@ -17,36 +19,36 @@ Exchange types
 There are several options to control which exchange types are included in 
 the summary:
 
-    * :ref:`--isotropic <tb2j-extractor_isotropic>`
-    * :ref:`--anisotropic <tb2j-extractor_anisotropic>`
-    * :ref:`--dmi <tb2j-extractor_dmi>`
-    * :ref:`--matrix <tb2j-extractor_matrix>`
-    * :ref:`--all <tb2j-extractor_all>`
+* :ref:`--isotropic <rad-extract-tb2j_isotropic>`
+* :ref:`--anisotropic <rad-extract-tb2j_anisotropic>`
+* :ref:`--dmi <rad-extract-tb2j_dmi>`
+* :ref:`--matrix <rad-extract-tb2j_matrix>`
+* :ref:`--all <rad-extract-tb2j_all>`
 
-They work for both modes with the correspondent blocks having the following form
 Format of the output block for each exchange type is provided in the 
-arguments section.
+:ref:`arguments <rad-extract-tb2j_arguments>` section.
 
 Usage example
 =============
 
 Example is based on the files from 
-:examples:`examples folder <tb2j-extractor>`. 
+:examples:`examples folder <rad-extract-tb2j>`. 
 
 There are two modes in which exchange summary can be printed: 
-with the symmetry of the template and 
-with the model filtered based on the template.
+
+* with the symmetry of the template and 
+* with the model filtered based on the template.
 
 In the first case the symmetry of the template is forced on the model and 
 exchange output is grouped based on the names provided in the template:
 
 .. code-block:: bash
 
-    tb2j-extractor.py -all -fs -if exchange.out -tf template.txt -on summary_forced_symmetry
+    rad-extract-tb2j.py -all -fs -if exchange.out -tf template.txt -on summary_forced_symmetry
 
 .. dropdown:: summary with forced symmetry
 
-   .. literalinclude:: /../examples/tb2j-extractor/summary_forced_symmetry.txt
+   .. literalinclude:: /../examples/rad-extract-tb2j/summary_forced_symmetry.txt
     :language: text
 
 In the second case exchange summary is printed for every bond in the 
@@ -54,21 +56,23 @@ template file and no additional symmetry constrains are assumed on the model:
 
 .. code-block:: bash
 
-    tb2j-extractor.py -all -if exchange.out -tf template.txt -on summary
+    rad-extract-tb2j.py -all -if exchange.out -tf template.txt -on summary
 
 .. dropdown:: summary without forced symmetry
 
-   .. literalinclude:: /../examples/tb2j-extractor/summary.txt
+   .. literalinclude:: /../examples/rad-extract-tb2j/summary.txt
     :language: text
+
+.. _rad-extract-tb2j_arguments:
 
 Arguments
 =========
 
-.. _tb2j-extractor_input-filename:
+.. _rad-extract-tb2j_input-filename:
 
 -if, --input-filename
 ---------------------
-Relative or absolute path to the *exchange.out* file,
+Relative or absolute path to the "exchange.out" file,
 including the name and extension of the file itself.
 
 .. code-block:: text
@@ -76,7 +80,7 @@ including the name and extension of the file itself.
     required
     type : str
 
-.. _tb2j-extractor_template-file:
+.. _rad-extract-tb2j_template-file:
 
 -tf, --template-file
 --------------------
@@ -92,7 +96,7 @@ including the name and extension of the file.
 See also: :ref:`template <rad-make-template>`
 
 
-.. _tb2j-extractor_output-path:
+.. _rad-extract-tb2j_output-path:
 
 -op, --output-path
 ------------------
@@ -107,28 +111,27 @@ until the existing folder is reached.
     default : current directory (".")
     type : str
 
-See also: :ref:`example <scripts_output-notes>`.
+See also: :ref:`example <output-notes>`.
 
 
-.. _tb2j-extractor_output-name:
+.. _rad-extract-tb2j_output-name:
 
 -on, --output-name
 ------------------
 Seedname for the output files.
 
-Output files will have the following name structure: *output-name*
-If this parameter is not specified then result will be printed in 
-standard output stream. If none is specify, output is passed to the console.
+If this parameter is not specified, the result are printed in 
+standard output stream. 
 
 .. code-block:: text
 
     default : None
     type : str
 
-See also: :ref:`example <scripts_output-notes>`.
+See also: :ref:`example <output-notes>`.
 
 
-.. _tb2j-extractor_decimals:
+.. _rad-extract-tb2j_decimals:
 
 -d, --decimals
 --------------
@@ -139,14 +142,13 @@ Decimals after the comma for the exchange values.
     default : 4
     type : int
 
-.. note::
-    Changed in the version 0.5.17 from "-acc"/"--accuracy".
+.. versionchanged:: 0.5.17 Renamed from "-acc"/"--accuracy".
 
-.. _tb2j-extractor_force-symmetry:
+.. _rad-extract-tb2j_force-symmetry:
 
 -fs, --force-symmetry
 ---------------------
-Whenever to force the symmetry of the template on the model.
+Whether to force the symmetry of the template on the model.
 
 .. code-block:: text
 
@@ -154,11 +156,11 @@ Whenever to force the symmetry of the template on the model.
     type : bool
 
 
-.. _tb2j-extractor_isotropic:
+.. _rad-extract-tb2j_isotropic:
 
 -i, --isotropic
 ---------------
-Whenever to output isotropic exchange.
+Whether to output isotropic exchange.
 
 .. code-block:: text
 
@@ -172,11 +174,11 @@ Section format:
         Isotropic: J
 
 
-.. _tb2j-extractor_anisotropic:
+.. _rad-extract-tb2j_anisotropic:
 
 -a, --anisotropic
 -----------------
-Whenever to output anisotropic exchange.
+Whether to output anisotropic exchange.
 
 .. code-block:: text
 
@@ -193,11 +195,11 @@ Section format:
             Jxz Jyz Jzz
 
 
-.. _tb2j-extractor_matrix:
+.. _rad-extract-tb2j_matrix:
 
 -m, --matrix
 ------------
-Whenever to output whole matrix exchange.
+Whether to output the whole matrix of exchange.
 
 .. code-block:: text
 
@@ -214,11 +216,11 @@ Section format:
             Jzx Jzy Jzz
 
 
-.. _tb2j-extractor_dmi:
+.. _rad-extract-tb2j_dmi:
 
 -dmi
 ----
-Whenever to output DMI exchange.
+Whether to output DMI exchange.
 
 .. code-block:: text
 
@@ -243,11 +245,11 @@ Otherwise:
         DMI: DMI_x DMI_y DMI_z
 
 
-.. _tb2j-extractor_all:
+.. _rad-extract-tb2j_all:
 
 -all
 ----
-Whenever to all types of exchange.
+Whether to output all types of exchange.
 
 .. code-block:: text
 
@@ -255,7 +257,7 @@ Whenever to all types of exchange.
     type : bool
 
 
-.. _tb2j-extractor_verbose:
+.. _rad-extract-tb2j_verbose:
 
 -v, --verbose
 -------------

@@ -61,6 +61,14 @@ def manager(
     save_txt=False,
     background_total=False,
 ):
+    r"""
+    ``rad-plot-dos.py`` script.
+
+    Full documentation on the behaviour is available in the
+    :ref:`User Guide <rad-plot-dos>`.
+    Parameters of the function directly
+    correspond to the arguments of the script.
+    """
     makedirs(output_path, exist_ok=True)
 
     suffix = ""
@@ -302,7 +310,7 @@ def create_parser():
         "--input-path",
         metavar="path",
         type=str,
-        required=True,
+        default=".",
         help="Relative or absulute path to the folder with dos files.",
     )
     parser.add_argument(
@@ -311,8 +319,7 @@ def create_parser():
         metavar="name",
         type=str,
         default=None,
-        help="Prefix for output files containing PDOS(E). "
-        + "As specified in the QE projwfc.x input file.",
+        help="Prefix for input files with PDOS(E).",
     )
     parser.add_argument(
         "-op",
@@ -355,21 +362,21 @@ def create_parser():
         "--separate",
         action="store_true",
         default=False,
-        help="Whenever to plot projected DOS for each atom of the same type separately.",
+        help="Whether to plot projected DOS for each atom of the same type separately.",
     )
     parser.add_argument(
         "-r",
         "--relative",
         action="store_true",
         default=False,
-        help="Whenever to use relative style.",
+        help="Whether to use relative style.",
     )
     parser.add_argument(
         "-n",
         "--normalize",
         action="store_true",
         default=False,
-        help="Whenever to use normalize relative style.",
+        help="Whether to normalized PDOS values to 1.",
     )
     parser.add_argument(
         "-v",
@@ -390,21 +397,21 @@ def create_parser():
         "--save-pickle",
         action="store_true",
         default=False,
-        help="Whenever to save figures as .pickle files.",
+        help="Whether to save figures as .pickle files.",
     )
     parser.add_argument(
         "-st",
         "--save-txt",
         action="store_true",
         default=False,
-        help="Whenever to save some data as txt files.",
+        help="Whether to save some data as txt files.",
     )
     parser.add_argument(
         "-bt",
         "--background-total",
         action="store_true",
         default=False,
-        help="Whenever to use total PDOS as the background for all plots.",
+        help="Whether to use total PDOS as the background for all plots.",
     )
 
     return parser

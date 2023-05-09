@@ -3,6 +3,8 @@ Collection of small routines and constants,
 which may be used across the whole package.
 """
 
+import sys
+
 from math import asin, pi, sqrt
 
 import numpy as np
@@ -57,8 +59,27 @@ ERROR = RED
 ANSI escape code for errors.
 """
 
+__all__ = [
+    "get_named_colours",
+    "get_256_colours",
+    "cprint",
+    "atom_mark_to_latex",
+    "rot_angle",
+    "absolute_to_relative",
+    "winwait",
+]
+
 
 def get_named_colours(colour: str):
+    r"""
+    Get the colours for the terminal based on name.
+
+    Parameters
+    ----------
+    colour : str
+        Name of the colour.
+        Choices: black, red, green, yellow, blue, magenta, cyan, white.
+    """
     colour_dict = {
         "black": BLACK,
         "red": RED,
@@ -78,7 +99,7 @@ def get_named_colours(colour: str):
 def get_256_colours(n):
     r"""
     ANSI escape codes for terminal color with 256-colours support
-    (see: :ANSI:`wiki <>`).
+    (see: |ANSI|_).
 
     Parameters
     ----------
@@ -100,6 +121,26 @@ def get_256_colours(n):
 
 
 def cprint(*args, colour=None, **kwargs):
+    r"""
+    Add colour argument to the standard ``print()``.
+
+    Parameters
+    ----------
+    colour : str or int
+        Name or number for a colour. Number is used with the base of 256.
+        Name should comply with :py:func:`.get_named_colours`.
+
+    Example
+    -------
+    >>> import rad_tools as rad
+    >>> rad.cprint("Hellow world!", colour="green")
+    Hellow world!
+    >>> rad.cprint("Hellow world!", colour = 30)
+    Hellow world!
+    >>> rad.cprint("Hellow world!", colour=1342)
+    Hellow world!
+    """
+
     if isinstance(colour, int):
         colour = get_256_colours(colour % 256)
     elif isinstance(colour, str):
@@ -231,3 +272,12 @@ def absolute_to_relative(cell, x, y, z):
     )
     relative = np.linalg.solve(A, B)
     return relative
+
+
+def winwait():
+    r"""
+    Add "Press Enter to continue" behaviour to Windows.
+    """
+    if sys.platform == "win32":
+        cprint("Press Enter to continue", colour="green")
+        input()

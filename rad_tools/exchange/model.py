@@ -681,17 +681,17 @@ class ExchangeModel:
         accuracy : int, default 4
             Accuracy for the exchange values
         force_symmetry: bool, default False
-            Whenever to force the symmetry of the template exchange model.
+            Whether to force the symmetry of the template exchange model.
             If ``False`` then each individual bond is written, otherwise
             exchange parameters of the template model are written.
         isotropic : bool, default False
-            Whenever to output isotropic exchange.
+            Whether to output isotropic exchange.
         anisotropic : bool, default False
-            Whenever to output anisotropic exchange.
+            Whether to output anisotropic exchange.
         out_matrix : bool, default False
-            Whenever to output whole matrix exchange.
+            Whether to output whole matrix exchange.
         out_dmi : bool, default False
-            Whenever to output DMI exchange.
+            Whether to output DMI exchange.
 
         Returns
         -------

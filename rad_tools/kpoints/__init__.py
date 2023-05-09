@@ -21,5 +21,7 @@ References
     :DOI:`10.1016/j.commatsci.2010.05.010`
 """
 
-from rad_tools.kpoints.high_symmetry_point import HighSymmetryPoints
-from rad_tools.kpoints.kpoints import KPoints
+from .high_symmetry_point import HighSymmetryPoints
+from .kpoints import KPoints
+
+__all__ = ["HighSymmetryPoints", "KPoints"]

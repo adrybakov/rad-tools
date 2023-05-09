@@ -29,14 +29,12 @@ def manager(
     verbose=False,
 ):
     r"""
-    Main function call of the tb2j-plotter.py script.
+    ``rad-plot-tb2j.py`` script.
 
-    Full documentation on the behaviour is available
-    :ref:`here <tb2j-plotter>`. Parameters of the function directly
-    corresponds to the arguments of the script.
-
-    If you want to have the behaviour of the tb2j-plotter.py script
-    but in a format of a function call use this function.
+    Full documentation on the behaviour is available in the
+    :ref:`User Guide <rad-plot-tb2j>`.
+    Parameters of the function directly
+    correspond to the arguments of the script.
     """
 
     if force_symmetry and template_file is None:
@@ -255,7 +253,7 @@ def create_parser():
         "--draw-cells",
         action="store_true",
         default=False,
-        help="Whenever to draw the cells.",
+        help="Whether to draw the cells.",
     )
     parser.add_argument(
         "-R",

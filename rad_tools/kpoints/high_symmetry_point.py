@@ -9,17 +9,17 @@ class HighSymmetryPoints:
 
     Parameters
     ----------
-    kpoints : dict
+    points : dict
         Dictionary of the high symmetry k-points and coordinate
         (fractions of the reciprocal vectors).
 
         .. code-block:: python
 
-            kpoints = {"name" : [xb1, xb2, xb3]}
+            points = {"name" : [xb1, xb2, xb3]}
     """
 
-    def __init__(self, kpoints=None, path=None) -> None:
-        self._kpoints = kpoints
+    def __init__(self, points=None, path=None) -> None:
+        self._points = points
         self._path = path
 
         self._PLOT_LITERALS = {
@@ -75,44 +75,44 @@ class HighSymmetryPoints:
         }
 
     @property
-    def kpoints(self):
+    def points(self):
         r"""
         Dictionary of K-points.
 
         .. code-block:: python
 
-            kpoints = {Point1 : [k1, k2, k3], ...}
+            points = {Point1 : [k1, k2, k3], ...}
 
         where ``k1``, ``k2``, ``k3`` are
         the relative coordinates of the ``Point1``.
         """
 
-        if self._kpoints is None:
+        if self._points is None:
             return {}
         else:
-            return self._kpoints
+            return self._points
 
     def add_kpoint(self, name, coordinates, plot_name=None):
         r"""
-        Add one kpoint to the set of High symmetry kpoints.
+        Add one kpoint to the set of High symmetry points.
 
         Parameters
         ----------
         name : str
-            Name of the kpoints, which is used by the code as a key.
+            Name of the points, which is used by the code as a key.
         coordinates : 1x3 array
             Relative coordinates of the kpoint.
         plot_name : str
-            name of the kpoints to be display on the plot.
+            name of the points to be display on the plot.
             Equal to the ``name`` by default.
         """
 
         coordinates = np.array(coordinates)
         if coordinates.shape != (3,):
             raise ValueError
-        if self._kpoints is None:
-            self._kpoints = {}
-        self._kpoints[name] = coordinates
+        if self._points is None:
+            self._points = {}
+        self._points[name] = coordinates
 
         if plot_name is None and name not in self._PLOT_LITERALS:
             self._PLOT_LITERALS[name] = name
@@ -154,7 +154,7 @@ class HighSymmetryPoints:
             for i in range(0, len(subpaths)):
                 subpaths[i] = subpaths[i].split("-")
                 for j in range(0, len(subpaths[i])):
-                    if subpaths[i][j] not in self.kpoints:
+                    if subpaths[i][j] not in self.points:
                         raise ValueError(
                             f"Provided  high symmetry "
                             + f"k-point {subpaths[i][j]} is not known."
@@ -167,7 +167,7 @@ class HighSymmetryPoints:
             elif isinstance(new_path[0], list):
                 for i in range(0, len(new_path)):
                     for j in range(0, len(new_path[i])):
-                        if new_path[i][j] not in self.kpoints:
+                        if new_path[i][j] not in self.points:
                             raise ValueError(
                                 f"Provided  high symmetry "
                                 + f"k-point {new_path[i][j]} is not known."
@@ -179,7 +179,7 @@ class HighSymmetryPoints:
             elif isinstance(new_path[0], str):
                 for i in range(0, len(new_path)):
                     for j in range(0, len(new_path[i])):
-                        if new_path[i][j] not in self.kpoints:
+                        if new_path[i][j] not in self.points:
                             raise ValueError(
                                 f"Provided  high symmetry "
                                 + f"k-point {new_path[i][j]} is not known."
@@ -192,7 +192,7 @@ class HighSymmetryPoints:
     def cub(self):
         r"""Cubic (CUB, cP)"""
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "M": np.array([1 / 2, 1 / 2, 0]),
             "R": np.array([1 / 2, 1 / 2, 1 / 2]),
@@ -201,15 +201,15 @@ class HighSymmetryPoints:
 
         path = [["Gamma", "X", "M", "Gamma", "R", "X"], ["M", "R"]]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def fcc(self):
         r"""Face-centred cubic (FCC, cF)"""
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "K": np.array([3 / 8, 3 / 8, 3 / 4]),
             "L": np.array([1 / 2, 1 / 2, 1 / 2]),
@@ -220,15 +220,15 @@ class HighSymmetryPoints:
 
         path = [["Gamma", "X", "W", "K", "Gamma", "L", "U", "W", "L", "K"], ["U", "X"]]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def bcc(self):
         r"""Body-centered cubic (BCC, cl)"""
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "H": np.array([1 / 2, -1 / 2, 1 / 2]),
             "P": np.array([1 / 4, 1 / 4, 1 / 4]),
@@ -237,15 +237,15 @@ class HighSymmetryPoints:
 
         path = [["Gamma", "H", "N", "Gamma", "P", "H"], ["P", "N"]]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def tet(self):
         r"""Tetragonal (TET, tP)"""
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "A": np.array([1 / 2, 1 / 2, 1 / 2]),
             "M": np.array([1 / 2, 1 / 2, 0]),
@@ -260,10 +260,10 @@ class HighSymmetryPoints:
             ["M", "A"],
         ]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def bct1(self, a, c):
         r"""Body-centred tetragonal (BCT, tI),
@@ -274,7 +274,7 @@ class HighSymmetryPoints:
 
         eta = (1 + c**2 / a**2) / 4
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "M": np.array([-1 / 2, 1 / 2, 1 / 2]),
             "N": np.array([0, 1 / 2, 0]),
@@ -286,10 +286,10 @@ class HighSymmetryPoints:
 
         path = [["Gamma", "X", "M", "Gamma", "Z", "P", "N", "Z1", "M"], ["X", "P"]]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def bct2(self, a, c):
         r"""Body-centred tetragonal (BCT, tI),
@@ -300,7 +300,7 @@ class HighSymmetryPoints:
 
         eta = (1 + c**2 / a**2) / 4
         zeta = a**2 / (2 * c**2)
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "N": np.array([0, 1 / 2, 0]),
             "P": np.array([1 / 4, 1 / 4, 1 / 4]),
@@ -317,15 +317,15 @@ class HighSymmetryPoints:
             ["X", "P"],
         ]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def orc(self):
         r"""Orthorhombic (ORC, oP)"""
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "R": np.array([1 / 2, 1 / 2, 1 / 2]),
             "S": np.array([1 / 2, 1 / 2, 0]),
@@ -343,10 +343,10 @@ class HighSymmetryPoints:
             ["S", "R"],
         ]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def orcf1(self, a, b, c):
         r"""Face-centred orthorhombic (ORCF, oF),
@@ -358,7 +358,7 @@ class HighSymmetryPoints:
         eta = (1 + a**2 / b**2 + a**2 / c**2) / 4
         zeta = (1 + a**2 / b**2 - a**2 / c**2) / 4
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "A": np.array([1 / 2, 1 / 2 + zeta, zeta]),
             "A1": np.array([1 / 2, 1 / 2 - zeta, 1 - zeta]),
@@ -377,10 +377,10 @@ class HighSymmetryPoints:
             ["L", "Gamma"],
         ]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def orcf2(self, a, b, c):
         r"""Face-centred orthorhombic (ORCF, oF),
@@ -393,7 +393,7 @@ class HighSymmetryPoints:
         delta = (1 + b**2 / a**2 - b**2 / c**2) / 4
         phi = (1 + c**2 / b**2 - c**2 / a**2) / 4
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "C": np.array([1 / 2, 1 / 2 - eta, 1 - eta]),
             "C1": np.array([1 / 2, 1 / 2 + eta, 1 - eta]),
@@ -415,10 +415,10 @@ class HighSymmetryPoints:
             ["L", "Gamma"],
         ]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def orcf3(self, a, b, c):
         r"""Face-centred orthorhombic (ORCF, oF),
@@ -430,7 +430,7 @@ class HighSymmetryPoints:
         eta = (1 + a**2 / b**2 + a**2 / c**2) / 4
         zeta = (1 + a**2 / b**2 - a**2 / c**2) / 4
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "A": np.array([1 / 2, 1 / 2 + zeta, zeta]),
             "A1": np.array([1 / 2, 1 / 2 - zeta, 1 - zeta]),
@@ -448,10 +448,10 @@ class HighSymmetryPoints:
             ["L", "Gamma"],
         ]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def orci(self, a, b, c):
         r"""Body-centred orthorhombic (ORCI, oI)"""
@@ -461,7 +461,7 @@ class HighSymmetryPoints:
         delta = (b**2 - a**2) / (4 * c**2)
         mu = (a**2 + b**2) / (4 * c**2)
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "L": np.array([-mu, mu, 1 / 2 - delta]),
             "L1": np.array([mu, -mu, 1 / 2 + delta]),
@@ -483,17 +483,17 @@ class HighSymmetryPoints:
             ["Y1", "Z"],
         ]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def orcc(self, a, b):
         r"""C-centred orthorhombic (ORCC, oS)"""
 
         zeta = (1 + a**2 / b**2) / 4
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "A": np.array([zeta, zeta, 1 / 2]),
             "A1": np.array([-zeta, 1 - zeta, 1 / 2]),
@@ -511,15 +511,15 @@ class HighSymmetryPoints:
             ["Z", "T"],
         ]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def hex(self):
         r"""Hexagonal (HEX, hP)"""
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "A": np.array([0, 0, 1 / 2]),
             "H": np.array([1 / 3, 1 / 3, 1 / 2]),
@@ -534,10 +534,10 @@ class HighSymmetryPoints:
             ["K", "H"],
         ]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def rhl1(self, alpha):
         r"""Rhombohedral (RHL, hR),
@@ -549,7 +549,7 @@ class HighSymmetryPoints:
         eta = (1 + 4 * cos(alpha)) / (2 + 4 * cos(alpha))
         nu = 3 / 4 - eta / 2
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "B": np.array([eta, 1 / 2, 1 - eta]),
             "B1": np.array([1 / 2, 1 - eta, eta - 1]),
@@ -571,10 +571,10 @@ class HighSymmetryPoints:
             ["L", "P"],
         ]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def rhl2(self, alpha):
         r"""Rhombohedral (RHL, hR),
@@ -586,7 +586,7 @@ class HighSymmetryPoints:
         eta = 1 / (2 * tan(alpha / 2) ** 2)
         nu = 3 / 4 - eta / 2
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "F": np.array([1 / 2, -1 / 2, 0]),
             "L": np.array([1 / 2, 0, 0]),
@@ -599,10 +599,10 @@ class HighSymmetryPoints:
 
         path = [["Gamma", "P", "Z", "Q", "Gamma", "F", "P1", "Q1", "L", "Z"]]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def mcl(self, b, c, alpha):
         r"""Monoclinic (MCL, mP)"""
@@ -610,7 +610,7 @@ class HighSymmetryPoints:
         eta = (1 - b * cos(alpha) / c) / (2 * sin(alpha) ** 2)
         nu = 1 / 2 - eta * c * cos(alpha) / b
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "A": np.array([1 / 2, 1 / 2, 0]),
             "C": np.array([0, 1 / 2, 1 / 2]),
@@ -635,10 +635,10 @@ class HighSymmetryPoints:
             ["Y", "D"],
         ]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def mclc1(self, a, b, c, alpha):
         r"""C-centred monoclinic (MCLC, mS),
@@ -652,7 +652,7 @@ class HighSymmetryPoints:
         psi = 3 / 4 - a**2 / (4 * b**2 * sin(alpha) ** 2)
         phi = psi + (3 / 4 - psi) * b * cos(alpha) / c
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "N": np.array([1 / 2, 0, 0]),
             "N1": np.array([0, -1 / 2, 0]),
@@ -680,10 +680,10 @@ class HighSymmetryPoints:
             ["M", "Gamma"],
         ]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def mclc2(self, a, b, c, alpha):
         r"""C-centred monoclinic (MCLC, mS),
@@ -697,7 +697,7 @@ class HighSymmetryPoints:
         psi = 3 / 4 - a**2 / (4 * b**2 * sin(alpha) ** 2)
         phi = psi + (3 / 4 - psi) * b * cos(alpha) / c
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "N": np.array([1 / 2, 0, 0]),
             "N1": np.array([0, -1 / 2, 0]),
@@ -719,10 +719,10 @@ class HighSymmetryPoints:
 
         path = [["Gamma", "Y", "F", "L", "I"], ["I1", "Z", "F1"], ["N", "Gamma", "M"]]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def mclc3(self, a, b, c, alpha):
         r"""C-centred monoclinic (MCLC, mS),
@@ -739,7 +739,7 @@ class HighSymmetryPoints:
         phi = 1 + zeta - 2 * mu
         psi = eta - 2 * delta
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "F": np.array([1 - phi, 1 - phi, 1 - psi]),
             "F1": np.array([phi, phi - 1, psi]),
@@ -765,10 +765,10 @@ class HighSymmetryPoints:
             ["M", "Gamma"],
         ]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def mclc4(self, a, b, c, alpha):
         r"""C-centred monoclinic (MCLC, mS),
@@ -785,7 +785,7 @@ class HighSymmetryPoints:
         phi = 1 + zeta - 2 * mu
         psi = eta - 2 * delta
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "F": np.array([1 - phi, 1 - phi, 1 - psi]),
             "F1": np.array([phi, phi - 1, psi]),
@@ -811,10 +811,10 @@ class HighSymmetryPoints:
             ["M", "Gamma"],
         ]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def mclc5(self, a, b, c, alpha):
         r"""C-centred monoclinic (MCLC, mS),
@@ -834,7 +834,7 @@ class HighSymmetryPoints:
         eta = 1 / 2 + 2 * zeta * c * cos(alpha) / b
         delta = zeta * c * cos(alpha) / b + omega / 2 - 1 / 4
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "F": np.array([nu, nu, omega]),
             "F1": np.array([1 - nu, 1 - nu, 1 - omega]),
@@ -863,10 +863,10 @@ class HighSymmetryPoints:
             ["M", "Gamma"],
         ]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def tri1a(self, a):
         r"""Triclinic (TRI, aP),
@@ -879,7 +879,7 @@ class HighSymmetryPoints:
             k_{\gamma} = \min(k_{\alpha}, k_{\beta}, k_{\gamma})
         """
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "L": np.array([1 / 2, 1 / 2, 0]),
             "M": np.array([0, 1 / 2, 1 / 2]),
@@ -898,10 +898,10 @@ class HighSymmetryPoints:
             "Gamma",
         ]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def tri1b(self, a):
         r"""Triclinic (TRI, aP),
@@ -914,7 +914,7 @@ class HighSymmetryPoints:
             k_{\gamma} = \max(k_{\alpha}, k_{\beta}, k_{\gamma})
         """
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "L": np.array([1 / 2, -1 / 2, 0]),
             "M": np.array([0, 0, 1 / 2]),
@@ -933,10 +933,10 @@ class HighSymmetryPoints:
             "Gamma",
         ]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def tri2a(self, a):
         r"""Triclinic (TRI, aP),
@@ -947,7 +947,7 @@ class HighSymmetryPoints:
             k_{\gamma} = 90^{\circ}
         """
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "L": np.array([1 / 2, 1 / 2, 0]),
             "M": np.array([0, 1 / 2, 1 / 2]),
@@ -966,10 +966,10 @@ class HighSymmetryPoints:
             "Gamma",
         ]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)
 
     def tri2b(self, a):
         r"""Triclinic (TRI, aP),
@@ -980,7 +980,7 @@ class HighSymmetryPoints:
             k_{\gamma} = 90^{\circ}
         """
 
-        kpoints = {
+        points = {
             "Gamma": np.array([0, 0, 0]),
             "L": np.array([1 / 2, -1 / 2, 0]),
             "M": np.array([0, 0, 1 / 2]),
@@ -999,7 +999,7 @@ class HighSymmetryPoints:
             "Gamma",
         ]
 
-        self._kpoints = kpoints
+        self._points = points
         self.path = path
 
-        return HighSymmetryPoints(kpoints, path)
+        return HighSymmetryPoints(points, path)

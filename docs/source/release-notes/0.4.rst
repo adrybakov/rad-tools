@@ -8,7 +8,7 @@ Whats new?
 ----------
 Refractor most of the code. 
 Move input in the separate submodule.
-Remove molecule plot type from :ref:`tb2j-plotter.py <tb2j-plotter>` script.
+Remove molecule plot type from :ref:`rad-plot-tb2j.py <rad-plot-tb2j>` script.
 
 Major change in the logic of reading exchange files and templates. 
 Instead of using the class to load the file as before:
@@ -34,13 +34,13 @@ Now one need to use read functions from input-output module:
 0.4.1
 -----
 
-Add :ref:`--accuracy <tb2j-extractor_decimals>` argument to the 
-:ref:`tb2j-extractor <tb2j-extractor>` script.
+Add :ref:`--accuracy <rad-extract-tb2j_decimals>` argument to the 
+:ref:`rad-extract-tb2j <rad-extract-tb2j>` script.
 
 0.4.2
 -----
 
-Add ``get_bond_vector`` to the ExchangeModel.
+Add :py:meth:`.get_bond_vector` to the ExchangeModel.
 
 0.4.3
 -----
@@ -50,9 +50,9 @@ Add reciprocal vectors to the ExchangeModel.
 0.4.4
 -----
 
-Add io interface.
+Add :ref:`rad-tools_io` interface.
 
-There is two ways to import read functions:
+There are two ways to import read functions:
 
 .. code-block:: python
 
@@ -64,19 +64,19 @@ There is two ways to import read functions:
     from rad_tools.io.internal import 
     from rad_tools.io import read_template
 
-Add ``number_spins_in_unit_cell`` property to the ``ExchangeModel`` class
+Add :py:meth:`.number_spins_in_unit_cell` property to the :py:class:`.ExchangeModel`.
 
 0.4.5
 -----
 
-Add ``reduced_parameters`` to the ``ExchangeModel`` class.
+Add ``reduced_parameters`` to the :py:class:`.ExchangeModel` class.
 
 0.4.6
 -----
 
 Add exchange interface.
 
-There is two ways to import read functions:
+There are two ways to import read functions:
 
 .. code-block:: python
 

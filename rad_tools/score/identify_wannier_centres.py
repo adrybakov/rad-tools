@@ -9,6 +9,15 @@ from rad_tools.routines import cprint
 
 
 def manager(filename, span, output_path, output_name, no_colour=False):
+    r"""
+    ``rad-identify-wannier-centres.py`` script.
+
+    Full documentation on the behaviour is available in the
+    :ref:`User Guide <rad-identify-wannier-centres>`.
+    Parameters of the function directly
+    correspond to the arguments of the script.
+    """
+
     head, tail = split(filename)
     if output_path is None:
         output_path = head
