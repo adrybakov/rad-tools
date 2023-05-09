@@ -37,7 +37,7 @@ test:
 
 VERSION := $(shell grep __version__ rad_tools/__init__.py | tr -d 'a-zA-Z =_":')
 .ONESHELL:
-pip:
+check-pip:
 #	@echo "\x1b[33m"
 #	@echo "pip is disabled for your own safety"
 #	@echo "\x1b[0m"
@@ -62,8 +62,13 @@ pip:
 	@echo Are all script arguments ok?
 	@echo "\x1b[0m"
 	@make check-script-names
+
+.ONESHELL:
+pip: check-pip
+#	@echo "\x1b[33m"
+#	@echo "pip is disabled for your own safety"
+#	@echo "\x1b[0m"
 	@read -p "Press Enter if yes:"
-	@echo "\x1b[0m"
 	-@rm -r dist
 	-@rm -r build
 	-@rm -r rad_tools.egg-info
