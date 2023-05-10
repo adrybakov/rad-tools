@@ -29,7 +29,7 @@ setup(
         "scripts/rad-identify-wannier-centres.py",
         "scripts/compute-energies.py",
     ],
-    install_requires=["numpy", "matplotlib", "tqdm"],
+    install_requires=["numpy", "matplotlib", "tqdm", "scipy"],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Programming Language :: Python :: 3",
