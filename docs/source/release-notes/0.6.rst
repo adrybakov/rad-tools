@@ -31,3 +31,8 @@ The main entry point is ``rad_tools``:
 
 Only public methods and classes are imported into the main module.
 Absolute import for the internal usage is still possible.
+
+0.6.1
+-----
+
+Add :py:func:`.print_2D_array`. 

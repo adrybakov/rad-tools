@@ -67,6 +67,7 @@ __all__ = [
     "rot_angle",
     "absolute_to_relative",
     "winwait",
+    "print_2D_array",
 ]
 
 
@@ -281,3 +282,145 @@ def winwait():
     if sys.platform == "win32":
         cprint("Press Enter to continue", colour="green")
         input()
+
+
+def print_2D_array(array, fmt="5.2f"):
+    r"""
+    Print 2D array in the terminal.
+
+    Parameters
+    ----------
+    array : array
+        Array to be printed. Passed to ``np.array()`` before any action on it.
+    fmt : str
+        Format string.
+
+    Returns
+    -------
+    string : String with the array, ready to be printed.
+
+    Examples
+    --------
+    Real-valued array:
+
+    .. doctest::
+
+        >>> import rad_tools as rad
+        >>> array = [[1, 2], [3, 4], [5, 6]]
+        >>> rad.print_2D_array(array)
+        ┌───────┬───────┐
+        │  1.00 │  2.00 │
+        ├───────┼───────┤
+        │  3.00 │  4.00 │
+        ├───────┼───────┤
+        │  5.00 │  6.00 │
+        └───────┴───────┘
+
+    Custom formatting:
+
+    .. doctest::
+
+        >>> import rad_tools as rad
+        >>> rad.print_2D_array(array, fmt="10.2f")
+        ┌────────────┬────────────┐
+        │       1.00 │       2.00 │
+        ├────────────┼────────────┤
+        │       3.00 │       4.00 │
+        ├────────────┼────────────┤
+        │       5.00 │       6.00 │
+        └────────────┴────────────┘
+
+    Scientific notation:
+
+    .. doctest::
+
+        >>> import rad_tools as rad
+        >>> array = [[1, 2], [3, 4], [52435345345, 6]]
+        >>> rad.print_2D_array(array, fmt="10.2E")
+        ┌────────────┬────────────┐
+        │   1.00E+00 │   2.00E+00 │
+        ├────────────┼────────────┤
+        │   3.00E+00 │   4.00E+00 │
+        ├────────────┼────────────┤
+        │   5.24E+10 │   6.00E+00 │
+        └────────────┴────────────┘
+
+    Complex values:
+
+    .. doctest::
+
+        >>> import rad_tools as rad
+        >>> array = [[1, 2 + 1j], [3, 4], [52, 6]]
+        >>> rad.print_2D_array(array)
+        ┌────────────────┬────────────────┐
+        │  1.00          │  2.00 + i1.00  │
+        ├────────────────┼────────────────┤
+        │  3.00          │  4.00          │
+        ├────────────────┼────────────────┤
+        │ 52.00          │  6.00          │
+        └────────────────┴────────────────┘
+        >>> rad.print_2D_array(array, fmt="4.2E")
+        ┌──────────────────────┬──────────────────────┐
+        │ 1.00E+00             │ 2.00E+00 + i1.00E+00 │
+        ├──────────────────────┼──────────────────────┤
+        │ 3.00E+00             │ 4.00E+00             │
+        ├──────────────────────┼──────────────────────┤
+        │ 5.20E+01             │ 6.00E+00             │
+        └──────────────────────┴──────────────────────┘
+    """
+
+    array = np.array(array)
+    N = len(array)
+    M = len(array[0])
+    n = max(len(f"{np.amax(array.real):{fmt}}"), len(f"{np.amin(array.real):{fmt}}"))
+    n = max(n, len(f"{np.amax(array.imag):{fmt}}"), len(f"{np.amin(array.imag):{fmt}}"))
+    if "E" in fmt or "e" in fmt:
+        n = int(fmt.split(".")[0])
+    else:
+        n = max(n, int(fmt.split(".")[0]))
+    fmt = f"{n}.{fmt.split('.')[1]}"
+    complex_values = not np.isreal(array).all()
+    if complex_values:
+        nn = 2 * n + 6
+        if "E" in fmt or "e" in fmt:
+            nn += 8
+    else:
+        nn = n + 2
+    print("┌" + (M - 1) * f"{nn*'─'}┬" + f"{nn*'─'}┐")
+    for i in range(0, N):
+        print("│", end="")
+        for j in range(0, M):
+            if complex_values:
+                if np.iscomplex(array[i][j]):
+                    print(
+                        f" {array.real[i][j]:{fmt}} + i{array.imag[i][j]:<{fmt}} │",
+                        end="",
+                    )
+                elif "E" in fmt or "e" in fmt:
+                    print(
+                        f" {array.real[i][j]:{fmt}}{(n + 8)*' '} │",
+                        end="",
+                    )
+                else:
+                    print(
+                        f" {array.real[i][j]:{fmt}}{(n + 4)*' '} │",
+                        end="",
+                    )
+            else:
+                print(f" {array.real[i][j]:{fmt}} │", end="")
+        print()
+        if i != N - 1:
+            print("├" + (M - 1) * f"{nn*'─'}┼" + f"{nn*'─'}┤")
+
+    print("└" + (M - 1) * f"{nn*'─'}┴" + f"{nn*'─'}┘")
+
+
+if __name__ == "__main__":
+    a = [[1, 2], [3, 4], [5, 6]]
+    print_2D_array(a)
+    print_2D_array(a, fmt="10.2f")
+    a = [[1, 2], [3, 4], [52435345345, 6]]
+    print_2D_array(a, fmt="10.2E")
+    a = [[1, 2 + 1j], [3, 4], [52, 6]]
+    print_2D_array(a)
+    print_2D_array(a, fmt="4.2E")
