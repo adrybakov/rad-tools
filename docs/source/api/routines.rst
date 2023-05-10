@@ -17,3 +17,4 @@ Collection of routines
     get_named_colours
     get_256_colours
     absolute_to_relative
+    print_2D_array

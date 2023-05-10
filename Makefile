@@ -30,7 +30,7 @@ clean:
 	-@rm -r build
 	-@rm -r dist
 
-test:
+test: doctest
 	@pip3 install . --upgrade
 	@pip3 install pytest
 	@pytest -s
