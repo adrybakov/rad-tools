@@ -5,6 +5,8 @@ from math import sqrt, pi
 
 import matplotlib.pyplot as plt
 
+verbose = False
+
 
 def prepare_dicts(model: ExchangeModel, Q, n, S, k):
     r"""
@@ -68,18 +70,27 @@ def prepare_dicts(model: ExchangeModel, Q, n, S, k):
         u[i] = R.T[0] + 1j * R.T[1]
 
     # All good
-    A = np.zeros((N, N), dtype=complex)
+    A_1 = np.zeros((N, N), dtype=complex)
+    A_2 = np.zeros((N, N), dtype=complex)
     B = np.zeros((N, N), dtype=complex)
     C = np.zeros((N, N), dtype=complex)
     for y, (i, j) in enumerate(ij):
-        print(20 * "=")
-        print(i, j)
-        print(np.matmul(u[i], np.matmul(J[y], np.conjugate(u[j]))))
-        print(np.matmul(k, d[y]))
-        print_2D_array([k, d[y]])
-        print(np.exp(-1j * np.matmul(k, d[y])))
-        print(20 * "=")
-        A[i][j] += (
+        if verbose:
+            print(20 * "=")
+            print(i, j)
+            print(np.matmul(u[i], np.matmul(J[y], np.conjugate(u[j]))))
+            print(np.matmul(k, d[y]))
+            print_2D_array([k, d[y]])
+            print_2D_array([[np.exp(-1j * np.matmul(k, d[y]))]])
+            print_2D_array([[np.exp(1j * np.matmul(k, d[y]))]])
+            print(20 * "=")
+        A_1[i][j] += (
+            sqrt(np.linalg.norm(S[i]) * np.linalg.norm(S[j]))  # good
+            / 2
+            * np.matmul(u[i], np.matmul(J[y], np.conjugate(u[j])))
+            * np.exp(1j * np.matmul(k, d[y]))
+        )
+        A_2[i][j] += (
             sqrt(np.linalg.norm(S[i]) * np.linalg.norm(S[j]))  # good
             / 2
             * np.matmul(u[i], np.matmul(J[y], np.conjugate(u[j])))
@@ -89,27 +100,31 @@ def prepare_dicts(model: ExchangeModel, Q, n, S, k):
             sqrt(np.linalg.norm(S[i]) * np.linalg.norm(S[j]))
             / 2
             * np.matmul(u[i], np.matmul(J[y], u[j]))
-            * np.exp(-1j * np.matmul(k, d[y]))
+            * np.exp(1j * np.matmul(k, d[y]))
         )
-        if i == j:
-            C[i, i] += np.linalg.norm(S[i]) * np.matmul(v[i], np.matmul(J[y], v[i]))
+        C[i, i] += np.linalg.norm(S[j]) * np.matmul(v[i], np.matmul(J[y], v[j]))
 
-    left = np.concatenate((2 * A - 2 * C, 2 * np.conjugate(B).T), axis=0)
-    right = np.concatenate((2 * B, 2 * A - 2 * C), axis=0)
+    left = np.concatenate((2 * A_1 - 2 * C, 2 * np.conjugate(B).T), axis=0)
+    right = np.concatenate((2 * B, 2 * np.conjugate(A_2) - 2 * C), axis=0)
     h = -np.concatenate((left, right), axis=1)
-    print("A")
-    print_2D_array(A)
-    print("B")
-    print_2D_array(B)
-    print("C")
-    print_2D_array(C)
-    print("h")
-    print_2D_array(h)
-    print(np.linalg.eigvals(h))
+    if verbose:
+        print("A_1")
+        print_2D_array(A_1)
+        print("A_2")
+        print_2D_array(A_2)
+        print("B")
+        print_2D_array(B)
+        print("C")
+        print_2D_array(C)
+        print("h")
+        print_2D_array(h)
+        print(np.linalg.eigvals(h))
+    # return A_1.flatten()
     try:
         K = np.linalg.cholesky(h)
+        print(f"{k} You are good")
     except:
-        print("Fuck you")
+        print(f"{k[0]:5.2f} {k[1]:5.2f} {k[2]:5.2f} Fuck you")
         return np.zeros(2 * N)
 
     g = np.eye(2 * N)
@@ -124,82 +139,92 @@ def prepare_dicts(model: ExchangeModel, Q, n, S, k):
 
 if __name__ == "__main__":
     model = ExchangeModel()
-    # model.add_atom("Fe", 0, 0, 0)
-    model.add_atom("Fe1", 0.75, 0.25, 0)
-    model.add_atom("Fe2", 0.25, 0.75, 0)
+    model.add_atom("Fe", 0, 0, 0)
+    # model.add_atom("Fe1", 0.75, 0.25, 0)
+    # model.add_atom("Fe2", 0.25, 0.75, 0)
     bond1 = Bond(iso=1)
+    model.add_bond(bond1, "Fe", "Fe", (1, 0, 0))
+    model.add_bond(bond1, "Fe", "Fe", (-1, 0, 0))
+    model.add_bond(bond1, "Fe", "Fe", (0, 1, 0))
+    model.add_bond(bond1, "Fe", "Fe", (0, -1, 0))
+    model.add_bond(bond1, "Fe", "Fe", (0, 0, 1))
+    model.add_bond(bond1, "Fe", "Fe", (0, 0, -1))
     bond2 = Bond(iso=1)
-    bond3 = Bond(iso=1, aniso=[[0, 0, 0], [0, 0, 0], [0, 0, 0]])
-    model.add_bond(bond1, "Fe1", "Fe1", (1, 0, 0))
-    model.add_bond(bond1, "Fe1", "Fe1", (-1, 0, 0))
-    model.add_bond(bond1, "Fe2", "Fe2", (1, 0, 0))
-    model.add_bond(bond1, "Fe2", "Fe2", (-1, 0, 0))
+    bond3 = Bond(iso=1, aniso=np.diag([0, 0.1, 0.5]))
+    # model.add_bond(bond1, "Fe1", "Fe1", (1, 0, 0))
+    # model.add_bond(bond1, "Fe1", "Fe1", (-1, 0, 0))
+    # model.add_bond(bond1, "Fe2", "Fe2", (1, 0, 0))
+    # model.add_bond(bond1, "Fe2", "Fe2", (-1, 0, 0))
 
-    model.add_bond(bond2, "Fe1", "Fe2", (0, 0, 0))
-    model.add_bond(bond2, "Fe1", "Fe2", (1, 0, 0))
-    model.add_bond(bond2, "Fe1", "Fe2", (1, -1, 0))
-    model.add_bond(bond2, "Fe1", "Fe2", (0, -1, 0))
+    # model.add_bond(bond2, "Fe1", "Fe2", (0, 0, 0))
+    # model.add_bond(bond2, "Fe1", "Fe2", (1, 0, 0))
+    # model.add_bond(bond2, "Fe1", "Fe2", (1, -1, 0))
+    # model.add_bond(bond2, "Fe1", "Fe2", (0, -1, 0))
 
-    model.add_bond(bond2, "Fe2", "Fe1", (0, 0, 0))
-    model.add_bond(bond2, "Fe2", "Fe1", (0, 1, 0))
-    model.add_bond(bond2, "Fe2", "Fe1", (-1, 0, 0))
-    model.add_bond(bond2, "Fe2", "Fe1", (-1, 1, 0))
+    # model.add_bond(bond2, "Fe2", "Fe1", (0, 0, 0))
+    # model.add_bond(bond2, "Fe2", "Fe1", (0, 1, 0))
+    # model.add_bond(bond2, "Fe2", "Fe1", (-1, 0, 0))
+    # model.add_bond(bond2, "Fe2", "Fe1", (-1, 1, 0))
 
-    model.add_bond(bond3, "Fe1", "Fe1", (0, 1, 0))
-    model.add_bond(bond3, "Fe1", "Fe1", (0, -1, 0))
-    model.add_bond(bond3, "Fe2", "Fe2", (0, 1, 0))
-    model.add_bond(bond3, "Fe2", "Fe2", (0, -1, 0))
-    # model = read_exchange_model(
-    #     "/Volumes/work-backup/projects (closed)/2022 Nanoletters CrSBr/Calculations/UniaxialA/100.3/TB2J_results/exchange.out"
-    # )
+    # model.add_bond(bond3, "Fe1", "Fe1", (0, 1, 0))
+    # model.add_bond(bond3, "Fe1", "Fe1", (0, -1, 0))
+    # model.add_bond(bond3, "Fe2", "Fe2", (0, 1, 0))
+    # model.add_bond(bond3, "Fe2", "Fe2", (0, -1, 0))
+    # # model = read_exchange_model(
+    # #     "/Volumes/work-backup/projects (closed)/2022 Nanoletters CrSBr/Calculations/UniaxialA/100.3/TB2J_results/exchange.out"
+    # # )
+    # # model = read_exchange_model(
+    # #     "/Users/rybakov.ad/Projects/rad-tools/debug/niI2_v2/exchange.out"
+    # # )
+
     # print(model.magnetic_atoms)
     kpoints = np.linspace(0, 0.5, 100)
     omegas = []
     S = [0, 0, 1]
-    prepare_dicts(model, [0, 0, 0], [0, 0, 1], [S, S], [0.1, 0, 0])
-    # for i in kpoints:
-    #     omegas.append(prepare_dicts(model, [0, 0, 0], [0, 0, 1], [S, S], [i, 0, 0]))
-    # for i in kpoints:
-    #     omegas.append(
-    #         prepare_dicts(
-    #             model,
-    #             [0, 0, 0],
-    #             [0, 0, 1],
-    #             [S, S],
-    #             [0.5, i, 0],
-    #         )
-    #     )
-    # for i in kpoints:
-    #     omegas.append(
-    #         prepare_dicts(
-    #             model,
-    #             [0, 0, 0],
-    #             [0, 0, 1],
-    #             [S, S],
-    #             [(0.5 - i), 0.5, 0],
-    #         )
-    #     )
-    # for i in kpoints:
-    #     omegas.append(
-    #         prepare_dicts(
-    #             model,
-    #             [0, 0, 0],
-    #             [0, 0, 1],
-    #             [S, S],
-    #             [0, (0.5 - i), 0],
-    #         )
-    #     )
-    # omegas = np.array(omegas).T
 
-    # fig, ax = plt.subplots()
-    # kpoints = np.concatenate((kpoints, 0.5 + kpoints, 1 + kpoints, 1.5 + kpoints))
+    def plot_graph(kpoints, omegas, model, S, Q, n):
+        for i in kpoints:
+            omegas.append(prepare_dicts(model, Q, n, S, [i, 0, 0]))
+        for i in kpoints:
+            omegas.append(
+                prepare_dicts(
+                    model,
+                    Q,
+                    n,
+                    [S],
+                    [0.5, i, 0],
+                )
+            )
+        for i in kpoints:
+            omegas.append(
+                prepare_dicts(
+                    model,
+                    Q,
+                    n,
+                    [S],
+                    [(0.5 - i), 0.5, 0],
+                )
+            )
+        for i in kpoints:
+            omegas.append(
+                prepare_dicts(
+                    model,
+                    Q,
+                    n,
+                    [S],
+                    [0, (0.5 - i), 0],
+                )
+            )
+        omegas = np.array(omegas).T
 
-    # ax.plot(kpoints, omegas[0].real, label="0")
-    # ax.plot(kpoints, omegas[1].real, label="1")
-    # ax.plot(kpoints, omegas[2].real, label="2")
-    # ax.plot(kpoints, omegas[3].real, label="3")
-    # ax.set_xlabel(R"k, $0 \rightarrow \pi$")
-    # ax.set_ylabel("E, meV")
-    # ax.legend()
-    # print(np.amin(omegas), np.amax(omegas))
-    # plt.show()
+        fig, ax = plt.subplots()
+        kpoints = np.concatenate((kpoints, 0.5 + kpoints, 1 + kpoints, 1.5 + kpoints))
+
+        for i in range(len(omegas)):
+            ax.plot(kpoints, omegas[i].real, label=f"{i+1}")
+        ax.set_xlabel(R"k, $0 \rightarrow \pi$")
+        ax.set_ylabel("E, meV")
+        ax.legend()
+        plt.savefig("test.png", dpi=400, bbox_inches="tight")
+
+    plot_graph(kpoints, omegas, model, [S], [0, 0, 0], [0, 0, 1])
