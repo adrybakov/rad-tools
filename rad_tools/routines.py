@@ -367,6 +367,15 @@ def print_2D_array(array, fmt="5.2f"):
         ├──────────────────────┼──────────────────────┤
         │ 5.20E+01             │ 6.00E+00             │
         └──────────────────────┴──────────────────────┘
+        >>> array = [[1, 2 - 1j], [3, 4], [52, 6]]
+        >>> rad.print_2D_array(array)
+        ┌────────────────┬────────────────┐
+        │  1.00          │  2.00 - i1.00  │
+        ├────────────────┼────────────────┤
+        │  3.00          │  4.00          │
+        ├────────────────┼────────────────┤
+        │ 52.00          │  6.00          │
+        └────────────────┴────────────────┘
     """
 
     array = np.array(array)
@@ -392,8 +401,12 @@ def print_2D_array(array, fmt="5.2f"):
         for j in range(0, M):
             if complex_values:
                 if np.iscomplex(array[i][j]):
+                    if array.imag[i][j] >= 0:
+                        sign = "+"
+                    else:
+                        sign = "-"
                     print(
-                        f" {array.real[i][j]:{fmt}} + i{array.imag[i][j]:<{fmt}} │",
+                        f" {array.real[i][j]:{fmt}} {sign} i{abs(array.imag[i][j]):<{fmt}} │",
                         end="",
                     )
                 elif "E" in fmt or "e" in fmt:
