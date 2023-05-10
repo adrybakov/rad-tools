@@ -36,7 +36,6 @@ def prepare_dicts(model: ExchangeModel, Q, n, S, k):
     magnetic_atoms = [atom for atom in model.magnetic_atoms]
     for i, atom in enumerate(magnetic_atoms):
         indexing[atom] = i
-    print(magnetic_atoms)
 
     J = []
     d = []
@@ -47,9 +46,6 @@ def prepare_dicts(model: ExchangeModel, Q, n, S, k):
         J.append(np.array(model[(atom1, atom2, R)].matrix, dtype=complex))
         d.append(np.array(model.get_bond_vector(atom1, atom1, R)))
         ij.append((i, j))
-        print(i, j)
-        print_2D_array([d[-1]])
-        print_2D_array(J[-1])
 
     for y, (i, j) in enumerate(ij):
         rotvec = -n * np.linalg.norm(Q * d[y])
@@ -76,8 +72,15 @@ def prepare_dicts(model: ExchangeModel, Q, n, S, k):
     B = np.zeros((N, N), dtype=complex)
     C = np.zeros((N, N), dtype=complex)
     for y, (i, j) in enumerate(ij):
+        print(20 * "=")
+        print(i, j)
+        print(np.matmul(u[i], np.matmul(J[y], np.conjugate(u[j]))))
+        print(np.matmul(k, d[y]))
+        print_2D_array([k, d[y]])
+        print(np.exp(-1j * np.matmul(k, d[y])))
+        print(20 * "=")
         A[i][j] += (
-            sqrt(np.linalg.norm(S[i]) * np.linalg.norm(S[j]))
+            sqrt(np.linalg.norm(S[i]) * np.linalg.norm(S[j]))  # good
             / 2
             * np.matmul(u[i], np.matmul(J[y], np.conjugate(u[j])))
             * np.exp(-1j * np.matmul(k, d[y]))
@@ -94,10 +97,14 @@ def prepare_dicts(model: ExchangeModel, Q, n, S, k):
     left = np.concatenate((2 * A - 2 * C, 2 * np.conjugate(B).T), axis=0)
     right = np.concatenate((2 * B, 2 * A - 2 * C), axis=0)
     h = -np.concatenate((left, right), axis=1)
-    print("A", print_2D_array(A), sep="\n")
-    print("B", print_2D_array(B), sep="\n")
-    print("C", print_2D_array(C), sep="\n")
-    print("h", print_2D_array(h), sep="\n")
+    print("A")
+    print_2D_array(A)
+    print("B")
+    print_2D_array(B)
+    print("C")
+    print_2D_array(C)
+    print("h")
+    print_2D_array(h)
     print(np.linalg.eigvals(h))
     try:
         K = np.linalg.cholesky(h)
