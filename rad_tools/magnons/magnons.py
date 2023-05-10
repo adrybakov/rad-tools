@@ -1,4 +1,4 @@
-from rad_tools import ExchangeModel, Bond, read_exchange_model
+from rad_tools import ExchangeModel, Bond, read_exchange_model, print_2D_array
 from scipy.spatial.transform import Rotation
 import numpy as np
 from math import sqrt, pi
@@ -36,6 +36,7 @@ def prepare_dicts(model: ExchangeModel, Q, n, S, k):
     magnetic_atoms = [atom for atom in model.magnetic_atoms]
     for i, atom in enumerate(magnetic_atoms):
         indexing[atom] = i
+    print(magnetic_atoms)
 
     J = []
     d = []
@@ -46,6 +47,9 @@ def prepare_dicts(model: ExchangeModel, Q, n, S, k):
         J.append(np.array(model[(atom1, atom2, R)].matrix, dtype=complex))
         d.append(np.array(model.get_bond_vector(atom1, atom1, R)))
         ij.append((i, j))
+        print(i, j)
+        print_2D_array([d[-1]])
+        print_2D_array(J[-1])
 
     for y, (i, j) in enumerate(ij):
         rotvec = -n * np.linalg.norm(Q * d[y])
@@ -90,7 +94,11 @@ def prepare_dicts(model: ExchangeModel, Q, n, S, k):
     left = np.concatenate((2 * A - 2 * C, 2 * np.conjugate(B).T), axis=0)
     right = np.concatenate((2 * B, 2 * A - 2 * C), axis=0)
     h = -np.concatenate((left, right), axis=1)
-    print_h(h)
+    print("A", print_2D_array(A), sep="\n")
+    print("B", print_2D_array(B), sep="\n")
+    print("C", print_2D_array(C), sep="\n")
+    print("h", print_2D_array(h), sep="\n")
+    print(np.linalg.eigvals(h))
     try:
         K = np.linalg.cholesky(h)
     except:
@@ -141,11 +149,17 @@ if __name__ == "__main__":
     kpoints = np.linspace(0, 0.5, 100)
     omegas = []
     S = [0, 0, 1]
-    prepare_dicts(model, [0, 0, 0], [0, 0, 1], [S, S], [1, 0, 0])
+    prepare_dicts(model, [0, 0, 0], [0, 0, 1], [S, S], [0.1, 0, 0])
+    # for i in kpoints:
+    #     omegas.append(prepare_dicts(model, [0, 0, 0], [0, 0, 1], [S, S], [i, 0, 0]))
     # for i in kpoints:
     #     omegas.append(
     #         prepare_dicts(
-    #             model, [0, 0, 0], [0, 0, 1], [3 / 2, 3 / 2], [i * model.b1[0], 0, 0]
+    #             model,
+    #             [0, 0, 0],
+    #             [0, 0, 1],
+    #             [S, S],
+    #             [0.5, i, 0],
     #         )
     #     )
     # for i in kpoints:
@@ -154,8 +168,8 @@ if __name__ == "__main__":
     #             model,
     #             [0, 0, 0],
     #             [0, 0, 1],
-    #             [3 / 2, 3 / 2],
-    #             [0.5 * model.b1[0], i * model.b2[1], 0],
+    #             [S, S],
+    #             [(0.5 - i), 0.5, 0],
     #         )
     #     )
     # for i in kpoints:
@@ -164,18 +178,8 @@ if __name__ == "__main__":
     #             model,
     #             [0, 0, 0],
     #             [0, 0, 1],
-    #             [3 / 2, 3 / 2],
-    #             [(0.5 - i) * model.b1[0], 0.5 * model.b2[1], 0],
-    #         )
-    #     )
-    # for i in kpoints:
-    #     omegas.append(
-    #         prepare_dicts(
-    #             model,
-    #             [0, 0, 0],
-    #             [0, 0, 1],
-    #             [3 / 2, 3 / 2],
-    #             [0, (0.5 - i) * model.b2[1], 0],
+    #             [S, S],
+    #             [0, (0.5 - i), 0],
     #         )
     #     )
     # omegas = np.array(omegas).T
