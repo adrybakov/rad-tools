@@ -11,15 +11,15 @@ class Lattice:
 
     @property
     def a(self):
-        return self._cell[0]
+        return self.cell[0]
 
     @property
     def b(self):
-        return self._cell[1]
+        return self.cell[1]
 
     @property
     def c(self):
-        return self._cell[2]
+        return self.cell[2]
 
     @property
     def unit_cell_volume(self):
