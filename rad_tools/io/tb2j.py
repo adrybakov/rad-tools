@@ -12,6 +12,21 @@ def read_exchange_model(filename, quiet=False) -> ExchangeModel:
     r"""
     Read exchange model from TB2J output file.
 
+    In |TB2J|_ exchange Hamiltonian is define in a following notation:
+
+    .. math::
+        H = -\sum_{i,j} \hat{\boldsymbol{S}}_i \cdot \boldsymbol{J}){i,j} \hat{\boldsymbol{S}}_j
+
+    where spin vectors :math:`\boldsymbol{S}_i` are normalized to 1
+    and double counting is present (both :math:`ij` and :math:`ji` are in the sum).
+    :py:class:`.ExchangeModel` can store exchange values in any notation.
+    One could check the notation by calling the attribute :py:func:`.ExchangeModel.notation`.
+    This function reads and stores exchange parameters in the notation of Hamiltonian
+    mentioned above, since for the conversion to the non-normalized spins one need to
+    know the values of spin for each atom and those data are not present in the |TB2J|_
+    file. One could have the data of spins for each atom, but this silent conversion may
+    be confusing for the user, thus it is avoided here.
+
     Parameters
     ----------
     filename : str

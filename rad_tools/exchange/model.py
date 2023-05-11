@@ -17,6 +17,17 @@ class ExchangeModel:
     r"""
     Main entry point for the exchange model.
 
+    By default the following notation of the Hamiltonian is assumed:
+
+    .. math::
+        H = -\sum_{i,j} \hat{\boldsymbol{S}}_i \cdot \boldsymbol{J}){i,j} \hat{\boldsymbol{S}}_j
+
+    where double counting is present (:math:`ij` and :math:`ji` is in the sum).
+    Spin vectors are **not** normalized.
+
+    However, it can be changed via :py:method:`.change_notation` method and
+    checked via :py:attribute:`.notation`.
+
     Attributes
     ----------
     bonds : dict
@@ -48,11 +59,18 @@ class ExchangeModel:
     space_dimensions : tuple of floats
     """
 
+    _notations = ["double-counting", "minus-sign", "spin-normalised"]
+
     def __init__(self) -> None:
         self._cell = np.identity(3, dtype=float)
         self.magnetic_atoms = {}
         self.nonmagnetic_atoms = {}
         self.bonds = {}
+        self._double_counting = True
+        self._spin_normalized = False
+        self._factor_one_half = False
+        self._factor_two = False
+        self._positive_ferromagnetic = True
 
     def __iter__(self):
         return ExchangeModelIterator(self)
@@ -62,6 +80,102 @@ class ExchangeModel:
 
     def __getitem__(self, key) -> Bond:
         return self.bonds[key]
+
+    @property
+    def notation(self):
+        r"""
+        Return a string with a simple comment about the Hamiltonian notation.
+        """
+        result = "H = "
+        if self._positive_ferromagnetic:
+            result += "-"
+        if self._factor_one_half:
+            result += "1/2 "
+        if self._factor_two:
+            result += "2 "
+        result += "sum("
+        if self._double_counting:
+            result += "i,j)"
+        else:
+            result += "i>=j)"
+        result += "S_i J_ij S_j\n"
+        if self._double_counting:
+            result += "Double counting is present"
+        else:
+            result += "No double counting"
+        if self._spin_normalized:
+            result += "Spin vectors are normalized to 1."
+        return result
+
+    def set_notation(
+        self,
+        double_counting=True,
+        spin_normalized=False,
+        factor_one_half=False,
+        factor_two=False,
+        positive_ferromagnetic=True,
+    ):
+        r"""
+        Set the notation of the model.
+
+        It is not changing the J values,
+        but rather telling how to interpret the J values of the model.
+
+        To **change** the notation of the model use :py:method:`.change_notation`.
+        """
+
+    def change_notation(
+        self,
+        double_counting=True,
+        spin_normalized=False,
+        factor_one_half=False,
+        factor_two=False,
+        positive_ferromagnetic=True,
+    ):
+        r"""
+        Change the notation of the Hamiltonian.
+
+        This method changes J values with respect to the ``new_notation``
+        and the notation of the model (use :py:property:`.notation` to check it).
+        In order to tell how to interpret J values (i.e. to set notation)
+        use :py:method:`.set_notation`.
+
+        Parameters
+        ----------
+        double_counting : boll, default True
+        spin_normalized : bool, default False
+            Pay attention to the values of atom's spins.
+        factor_one_half : bool, default False
+        factor_two : bool, default False
+        positive_ferromagnetic : bool, True
+        """
+
+        multiplier = 1
+
+        if self._double_counting and not double_counting:
+            multiplier *= 2
+        elif not self._double_counting and double_counting:
+            multiplier *= 0.5
+
+        if self._factor_one_half and not factor_one_half:
+            multiplier *= 0.5
+        elif not self._factor_one_half and factor_one_half:
+            multiplier *= 2
+
+        if self._factor_two and not factor_two:
+            multiplier *= 2
+        elif not self._factor_two and factor_two:
+            multiplier *= 0.5
+
+        if self._positive_ferromagnetic ^ positive_ferromagnetic:
+            multiplier *= -1
+
+        for atom1, atom2, R in self:
+            bond = self.bonds[(atom1, atom2, R)]
+            if self._spin_normalized and not spin_normalized:
+                factor = multiplier / atom1 / atom2
+            elif not self._spin_normalized and spin_normalized:
+                factor = multiplier * atom1, atom2
 
     @property
     def cell(self):
