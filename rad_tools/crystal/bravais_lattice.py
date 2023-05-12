@@ -10,6 +10,12 @@ __all__ = ["BravaisLattice", "CUB"]
 
 TOLERANCE = 10e-6
 
+RED = "#FF4D67"
+GREEN = "#58EC2E"
+ORANGE = "#F7CB3D"
+BLUE = "#274DD1"
+PURPLE = "#DC5CFF"
+
 
 def deduct_zone(
     cell,
@@ -181,42 +187,50 @@ class BravaisLattice(Lattice):
         r"""There is no variants of the Lattice"""
         return "Only one variant."
 
-    def set_up_axes(self, ax):
-        pass
+    def pepare_figure(self, background=True, focal_length=0.2) -> None:
+        self._fig = plt.figure(figsize=(6, 6))
+        rcParams["axes.linewidth"] = 0
+        rcParams["xtick.color"] = "#B3B3B3"
+        self._ax = self._fig.add_subplot(projection="3d")
+        self._ax.set_proj_type("persp", focal_length=focal_length)
+        if background:
+            self._ax.axes.linewidth = 0
+            self._ax.xaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
+            self._ax.yaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
+            self._ax.zaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
+            self._ax.set_xlabel("x", fontsize=15, alpha=0.5)
+            self._ax.set_ylabel("y", fontsize=15, alpha=0.5)
+            self._ax.set_zlabel("z", fontsize=15, alpha=0.5)
+            self._ax.tick_params(axis="both", zorder=0, color="#B3B3B3")
+        else:
+            self._ax.axis("off")
 
-    def plot(self, kind="conventional", focal_length=0.2, background=True, **kwargs):
+    def plot(self, kind="conventional", **kwargs):
         if isinstance(kind, str):
             kinds = [kind]
         else:
             kinds = kind
-
-        fig = plt.figure(figsize=(6, 6))
-        rcParams["axes.linewidth"] = 0
-        rcParams["xtick.color"] = "#B3B3B3"
-        ax = fig.add_subplot(projection="3d")
-        ax.set_proj_type("persp", focal_length=focal_length)
-        if background:
-            ax.xaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
-            ax.yaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
-            ax.zaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
-            ax.set_xlabel("x", fontsize=15, alpha=0.5)
-            ax.set_ylabel("y", fontsize=15, alpha=0.5)
-            ax.set_zlabel("z", fontsize=15, alpha=0.5)
-            ax.tick_params(axis="both", zorder=0, color="#B3B3B3")
-        else:
-            ax.axis("off")
+        try:
+            a = self._ax
+            del a
+        except AttributeError:
+            raise ValueError("Use .prepare_figure() first.")
         try:
             for kind in kinds:
-                getattr(self, f"plot_{kind}")(ax, **kwargs)
+                getattr(self, f"plot_{kind}")(self._ax, **kwargs)
         except AttributeError:
             d = dir(self)
             for i in d:
                 print(i, i == f"plot_{kind}")
             raise ValueError(f"Plot kind '{kind}' does not exist!")
-        ax.set_aspect("equal")
-        plt.show()
 
-    def plot_real_space(self, ax, vectors=True, colour="black"):
+    def show(self):
+        self._ax.set_aspect("equal")
+        plt.show()
+        del self._fig
+        del self._ax
+
+    def plot_real_space(self, ax, vectors=True, colour=BLUE):
         if vectors:
             ax.text(
                 self.cell[0][0] * 1.1,
@@ -244,7 +258,14 @@ class BravaisLattice(Lattice):
             )
             for i in self.cell:
                 ax.quiver(
-                    0, 0, 0, *tuple(i), arrow_length_ratio=0.2, color=colour, alpha=0.5
+                    0,
+                    0,
+                    0,
+                    *tuple(i),
+                    arrow_length_ratio=0.2,
+                    color=colour,
+                    alpha=0.7,
+                    linewidth=2,
                 )
                 ax.scatter(*tuple(i), s=0)
 
@@ -264,7 +285,7 @@ class BravaisLattice(Lattice):
             plot_line(self.cell[i], self.cell[k])
             plot_line(self.cell[i], self.cell[j] + self.cell[k])
 
-    def plot_reciprocal_space(self, ax, vectors=True, colour="black"):
+    def plot_reciprocal_space(self, ax, vectors=True, colour=RED):
         planes, edges, corners = deduct_zone([self.b1, self.b2, self.b3])
 
         if vectors:
@@ -294,7 +315,14 @@ class BravaisLattice(Lattice):
             )
             for i in [self.b1, self.b2, self.b3]:
                 ax.quiver(
-                    0, 0, 0, *tuple(i), arrow_length_ratio=0.2, color=colour, alpha=0.5
+                    0,
+                    0,
+                    0,
+                    *tuple(i),
+                    arrow_length_ratio=0.2,
+                    color=colour,
+                    alpha=0.7,
+                    linewidth=2,
                 )
                 ax.scatter(*tuple(i), s=0)
         for a, b in edges:
@@ -332,17 +360,16 @@ class BravaisLattice(Lattice):
         if reverse:
             self.make_conventional()
 
-    def plot_kpath(self, ax, kpoints_colour="red", **kwargs):
+    def plot_kpath(self, ax, colour="black", **kwargs):
         reverse = False
         if not self.primitive:
             self.make_primitive()
             reverse = True
-        self.plot_brillouin(ax, **kwargs)
         for point in self.points:
             ax.scatter(
                 *tuple(self.points[point] @ self.reciprocal_cell),
                 s=64,
-                color=kpoints_colour,
+                color=colour,
             )
             ax.text(
                 *tuple(
@@ -353,7 +380,7 @@ class BravaisLattice(Lattice):
                 ),
                 self.PLOT_NAMES[point],
                 fontsize=20,
-                color=kpoints_colour,
+                color=colour,
             )
 
         for subpath in self.path:
@@ -369,12 +396,16 @@ class BravaisLattice(Lattice):
                         .reshape(2, 3)
                         .T
                     ),
-                    color=kpoints_colour,
+                    color=colour,
                     alpha=0.5,
                     linewidth=3,
                 )
         if reverse:
             self.make_conventional()
+
+    def plot_brillouin_kpath(self, ax, zone_colour=RED, path_colour="black", **kwargs):
+        self.plot_brillouin(ax, colour=zone_colour, **kwargs)
+        self.plot_kpath(ax, colour=path_colour, **kwargs)
 
     def plot_wigner_seitz(self, ax, vectors=True, colour="black", **kwargs):
         reverse = False
@@ -659,31 +690,10 @@ if __name__ == "__main__":
 
     focal_length = 0.2
 
-    for lattice in [CUB, FCC, BCC]:
-        l = lattice(pi)
-        # l.plot()
-        # l.plot(kind="primitive")
-        # l.plot(kind="brillouin", focal_length=focal_length)
-        # l.plot(kind="kpath")
-        l.plot(kind=["conventional", "brillouin"])
-
-    l = TET(pi, 2 * pi)
-    # l.plot()
-    # l.plot(kind="primitive")
-    # l.plot(kind="brillouin", focal_length=focal_length, background=False)
-    # l.plot(kind="kpath")
-    l.plot(kind=["conventional", "brillouin"])
-
     l = BCT(pi, 2 * pi)
-    # l.plot()
-    # l.plot(kind="primitive")
-    # l.plot(kind="brillouin", focal_length=focal_length, vectors=False)
-    # l.plot(kind="kpath")
-    l.plot(kind=["conventional", "brillouin"])
-
-    l = BCT(2 * pi, pi)
-    # l.plot()
-    # l.plot(kind="primitive")
-    # l.plot(kind="brillouin", focal_length=focal_length, colour="red")
-    # l.plot(kind="kpath")
-    l.plot(kind=["conventional", "brillouin"])
+    l.pepare_figure()
+    l.plot(kind="primitive")
+    l.plot(kind="kpath")
+    l.plot(kind="brillouin_kpath")
+    l.show()
+    l.plot(kind="primitive")
