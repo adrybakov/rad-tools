@@ -10,15 +10,25 @@ class Lattice:
         self.cell = np.array([a, b, c])
 
     @property
-    def a(self):
+    def reciprocal_cell(self):
+        return np.array(
+            [
+                2 * pi / self.unit_cell_volume * np.cross(self.a2, self.a3),
+                2 * pi / self.unit_cell_volume * np.cross(self.a3, self.a1),
+                2 * pi / self.unit_cell_volume * np.cross(self.a1, self.a2),
+            ]
+        )
+
+    @property
+    def a1(self):
         return self.cell[0]
 
     @property
-    def b(self):
+    def a2(self):
         return self.cell[1]
 
     @property
-    def c(self):
+    def a3(self):
         return self.cell[2]
 
     @property
@@ -31,7 +41,7 @@ class Lattice:
             V = \delta_{\vec{A}}\cdot(\delta_{\vec{B}}\times\delta_{\vec{C}})
         """
 
-        return np.dot(self.a, np.cross(self.b, self.c))
+        return np.dot(self.a1, np.cross(self.a2, self.a3))
 
     @property
     def b1(self):
@@ -45,7 +55,7 @@ class Lattice:
         where :math:`V = \vec{a}\cdot\vec{b}\times\vec{c}`
         """
 
-        return 2 * pi / self.unit_cell_volume * np.cross(self.b, self.c)
+        return self.reciprocal_cell[0]
 
     @property
     def b2(self):
@@ -59,7 +69,7 @@ class Lattice:
         where :math:`V = \vec{a}\cdot\vec{b}\times\vec{c}`
         """
 
-        return 2 * pi / self.unit_cell_volume * np.cross(self.c, self.a)
+        return self.reciprocal_cell[1]
 
     @property
     def b3(self):
@@ -73,7 +83,7 @@ class Lattice:
         where :math:`V = \vec{a}\cdot\vec{b}\times\vec{c}`
         """
 
-        return 2 * pi / self.unit_cell_volume * np.cross(self.a, self.b)
+        return self.reciprocal_cell[2]
 
     def get_bravais_lattice(self):
         r"""
