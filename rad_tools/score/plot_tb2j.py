@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 
 from rad_tools.io.internal import read_template
 from rad_tools.io.tb2j import read_exchange_model
-from rad_tools.routines import OK, RESET, atom_mark_to_latex, rot_angle
+from rad_tools.routines import atom_mark_to_latex, rot_angle
 
 
 def manager(

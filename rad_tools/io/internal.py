@@ -22,9 +22,8 @@ def read_template(filename):
 
     Notes
     -----
-    See also :ref:`Template specification <api>`
+    See also :ref:`Template specification <api>`.
     """
-    # TODO change the link
 
     # Constants
     major_sep = "=" * 20

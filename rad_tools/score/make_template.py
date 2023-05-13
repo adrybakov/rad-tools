@@ -5,10 +5,10 @@ from os import makedirs
 from os.path import abspath, split
 
 import numpy as np
+from termcolor import cprint
 
 from rad_tools import __version__ as version
 from rad_tools.io.tb2j import read_exchange_model
-from rad_tools.routines import OK, RESET, YELLOW
 
 
 def manager(
@@ -102,11 +102,8 @@ def manager(
                     f"{atom1:4} {atom2:4} " + f"{R[0]:3.0f} {R[1]:3.0f} {R[2]:3.0f}\n"
                 )
             file.write("=" * 20 + "\n")
-    print(f"{OK}Template draft is in " + f"{abspath(output_name)}.txt{RESET}")
-    print(
-        f"{YELLOW}Do not forget to correct the template draft "
-        + f"to your needs!{RESET}"
-    )
+    cprint(f"Template draft is in " + f"{abspath(output_name)}.txt", "green")
+    cprint(f"Do not forget to correct the template draft to your needs!", "yellow")
 
 
 def create_parser():

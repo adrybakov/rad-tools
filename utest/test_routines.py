@@ -1,66 +1,10 @@
-from os import getcwd, rmdir
-from os.path import isdir, join
-
 import pytest
 
 from rad_tools.routines import (
-    BLACK,
-    RESET,
-    RED,
-    GREEN,
-    YELLOW,
-    BLUE,
-    MAGENTA,
-    CYAN,
-    WHITE,
-    WARNING,
-    OK,
-    ERROR,
-    get_256_colours,
     atom_mark_to_latex,
     rot_angle,
     absolute_to_relative,
 )
-
-
-def test_terminal_colours():
-    print("\n Please check that the following colours " "are displayed correctly:\n")
-    print(
-        f"{BLACK}BLACK{RESET}",
-        f"{RED}RED{RESET}",
-        f"{GREEN}GREEN{RESET}",
-        f"{YELLOW}YELLOW{RESET}",
-        f"{BLUE}BLUE{RESET}",
-        f"{MAGENTA}MAGENTA{RESET}",
-        f"{CYAN}CYAN{RESET}",
-        f"{WHITE}WHITE{RESET}",
-        sep="\n",
-    )
-    assert WARNING == YELLOW
-    assert OK == GREEN
-    assert ERROR == RED
-
-
-def test_get_256_colours():
-    print("\n Please check that the following colour's table " "looks beautiful:\n")
-    for i in range(0, 16):
-        for j in range(0, 16):
-            print(
-                f"{get_256_colours(16 * i + j)}" f"{16 * i + j:3}" f"{RESET}", end=" "
-            )
-        print()
-    with pytest.raises(ValueError):
-        get_256_colours(345)
-    with pytest.raises(ValueError):
-        get_256_colours(256)
-    with pytest.raises(ValueError):
-        get_256_colours(34.5)
-    with pytest.raises(ValueError):
-        get_256_colours(-45)
-    with pytest.raises(ValueError):
-        get_256_colours("sadfasd")
-    for i in range(0, 256):
-        assert get_256_colours(i) == f"\033[38:5:{i}m"
 
 
 @pytest.mark.parametrize(

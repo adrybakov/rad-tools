@@ -1,7 +1,7 @@
 r"""
 Exchange model.
 
-Write a tutorial with docstrings here.
+Write a tutorial with docstring here.
 """
 
 from copy import deepcopy
@@ -31,17 +31,17 @@ class ExchangeModel:
     nonmagnetic_atoms : dist
         Dictionary with keys : str - marks of atoms and value : 1 x 3 array
         - coordinate of the atom in Angstroms. Only non-magnetic atoms.
-    cell : 3 x 3 array of floats
-    a : 3 x 1 array
-    b : 3 x 1 array
-    c : 3 x 1 array
+    cell : (3, 3) :numpy:`ndarray`
+    a : (3,) :numpy:`ndarray`
+    b : (3,) :numpy:`ndarray`
+    c : (3,) :numpy:`ndarray`
     len_a : float
     len_b : float
     len_c : float
     unit_cell_volume : float
-    b1 : 3 x 1 array
-    b2 : 3 x 1 array
-    b3 : 3 x 1 array
+    b1 : (3,) :numpy:`ndarray`
+    b2 : (3,) :numpy:`ndarray`
+    b3 : (3,) :numpy:`ndarray`
     cell_list : list
     number_spins_in_unit_cell : int
 
@@ -225,7 +225,7 @@ class ExchangeModel:
 
         Returns
         -------
-        cells : n x 3 array
+        cells : (n, 3) :numpy:`ndarray`
             Array of n unit cells.
         """
 
@@ -300,7 +300,7 @@ class ExchangeModel:
 
         Parameters
         ----------
-        bond : :py:class:`Bond`
+        bond : :py:class:`.Bond`
             An instance of :py:class:`Bond` class with the information about
             exchange parameters.
         atom1 : str
@@ -356,7 +356,7 @@ class ExchangeModel:
         r"""
         Remove magnetic atom from the model.
 
-        Note: this method will remove atom from ``magnetic_atoms`` and all the
+        Note: this method will remove atom from :py:attr:`magnetic_atoms` and all the
         bonds, which starts or ends in this atom.
 
         Parameters
@@ -383,7 +383,7 @@ class ExchangeModel:
         ----------
         atom : str
             Name of atom1 in R unit cell.
-        R : 1 x 3 array, default (0, 0, 0)
+        R : (3,) |array_like|_, default (0, 0, 0)
             Radius vector of the unit cell for atom2.
 
         Returns
@@ -408,12 +408,12 @@ class ExchangeModel:
             Name of atom1 in (0, 0, 0) unit cell.
         atom2 : str
             Name of atom2 in R unit cell.
-        R : tuple of ints, default (0, 0, 0)
+        R : (3,) |array_like|_, default (0, 0, 0)
             Radius vector of the unit cell for atom2.
 
         Returns
         -------
-        coordinates : 1 x 3 array
+        coordinates : (3,) :numpy:`ndarray`
             Coordinates of the middle of a bond in real space.
         """
 
@@ -432,12 +432,12 @@ class ExchangeModel:
             Name of atom1 in (0, 0, 0) unit cell.
         atom2 : str
             Name of atom2 in R unit cell.
-        R : tuple of ints, default (0, 0, 0)
+        R : (3,) |array_like|_, default (0, 0, 0)
             Radius vector of the unit cell for atom2.
 
         Returns
         -------
-        v : 1 x 3 array
+        v : (3,) :numpy:`ndarray`
             Vector from atom1 to atom2 of the bond.
         """
 
@@ -456,7 +456,7 @@ class ExchangeModel:
             Name of atom1 in (0, 0, 0) unit cell.
         atom2 : str
             Name of atom2 in R unit cell.
-        R : tuple of ints, default (0, 0, 0)
+        R : (3,) |array_like|_, default (0, 0, 0)
             Radius vector of the unit cell for atom2.
 
         Returns
@@ -477,9 +477,6 @@ class ExchangeModel:
         Saying so the filtering will be performed for each given condition
         one by one.
 
-        .. note::
-            This method modifies the instance at which it is called.
-
         Parameters
         ----------
         max_distance : float or int, optional
@@ -494,6 +491,14 @@ class ExchangeModel:
         R_vector : tuple of ints or list of tuples of ints
             Tuple of 3 integers or list of tuples, specifying the R vectors,
             which will be kept after filtering.
+
+        See Also
+        --------
+        filtered : Returns new object.
+
+        Notes
+        -----
+        This method modifies the instance at which it is called.
         """
 
         if isinstance(template, ExchangeTemplate):
@@ -531,15 +536,16 @@ class ExchangeModel:
         Remove bonds from the exchange model, based on the template.
 
 
-        .. note::
-            This method modifies the instance at which it is called.
-
         Parameters
         ----------
         template : list or :py:class:`.ExchangeTemplate`.
             List of pairs, which will remain in the model. ::
 
                 [(atom1, atom2, R), ...]
+
+        Notes
+        -----
+        This method modifies the instance at which it is called.
         """
 
         if isinstance(template, ExchangeTemplate):
@@ -562,11 +568,6 @@ class ExchangeModel:
         It will create a new instance with sorted :py:attr:`bonds` and all
         the other attributes will be copied (through :py:func:`deepcopy`).
 
-        .. note::
-            This method is not modifying the instance at which it is called.
-            It will create a new instance with merged ``bonds`` and all the
-            other attributes will be copied (through deepcopy).
-
         Parameters
         ----------
         max_distance : float or int, optional
@@ -586,6 +587,16 @@ class ExchangeModel:
         -------
         filtered_model : :py:class:`.ExchangeModel`
             Exchange model after filtering.
+
+        See Also
+        --------
+        filter : Modifies current object.
+
+        Notes
+        -----
+        This method is not modifying the instance at which it is called.
+        It creates a new instance with merged :py:attr:`.bonds` and all the
+        other attributes will be copied (through deepcopy).
         """
 
         filtered_model = deepcopy(self)
@@ -611,6 +622,10 @@ class ExchangeModel:
         ----------
         template : :py:class:`.ExchangeTemplate`
             Template.
+
+        See Also
+        --------
+        forced_symmetry : Returns new object.
         """
 
         if not isinstance(template, ExchangeTemplate):
@@ -654,6 +669,10 @@ class ExchangeModel:
         -------
         new_model : :py:class:`.ExchangeModel`
             Exchange model with forced symmetry.
+
+        See Also
+        --------
+        force_symmetry: Modifies current object.
         """
 
         new_model = deepcopy(self)

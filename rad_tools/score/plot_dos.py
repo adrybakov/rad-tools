@@ -8,7 +8,7 @@ from os.path import abspath, join
 from tqdm import tqdm
 
 from rad_tools.dos import DOSQE, plot_projected, PDOS
-from rad_tools.routines import cprint
+from termcolor import cprint
 
 
 def detect_seednames(input_path):
@@ -86,7 +86,7 @@ def manager(
         seednames = detect_seednames(input_path)
         print(f"Following DOS seednames (filpdos) are detected:")
         for item in seednames:
-            cprint(f"   * {item}", colour="yellow")
+            cprint(f"   * {item}", "green")
     else:
         seednames = [seedname]
 
@@ -94,7 +94,7 @@ def manager(
     for s_i, seedname in enumerate(seednames):
         cprint(
             f"({s_i + 1}/{len(seednames)}) Start to work with {seedname} seedname",
-            colour="yellow",
+            "green",
         )
         # Preparations
         output_root = join(output_path, f"{seedname}{suffix}")
@@ -107,7 +107,7 @@ def manager(
             print(f"    {len(dos.atom_numbers(atom))} of {atom} detected")
 
         # Plot PDOS vs DOS
-        cprint("Total DOS vs total PDOS", colour="yellow")
+        cprint("Total DOS vs total PDOS", "green")
         dos.plot_pdos_tot(
             output_name=join(output_root, "pdos-vs-dos"),
             interactive=interactive,
@@ -119,7 +119,7 @@ def manager(
         print(f"  Result is in {join(output_root, 'pdos-vs-dos')}")
 
         # Plot PDOS for each atom/wfc
-        cprint("Orbital-resolved PDOS:", colour="yellow")
+        cprint("Orbital-resolved PDOS:", "green")
         local_output = join(output_root, "orbital-resolved")
         makedirs(local_output, exist_ok=True)
         data = {}
@@ -182,7 +182,7 @@ def manager(
         print(f"  Results are in {abspath(local_output)}")
 
         # Plot wfc contribution into each atom
-        cprint("Orbital's contribution for each atom.", colour="yellow")
+        cprint("Orbital's contribution for each atom.", "green")
         local_output = join(output_root, "atom-resolved")
         makedirs(local_output, exist_ok=True)
 
@@ -241,7 +241,7 @@ def manager(
         print(f"  Results are in {abspath(local_output)}")
 
         # Plot atom contributions into total PDOS
-        cprint("Atom's contributions into total PDOS:", colour="yellow")
+        cprint("Atom's contributions into total PDOS:", "green")
         projectors = []
         pdos = []
         for atom in dos.atoms:

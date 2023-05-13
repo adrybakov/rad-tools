@@ -4,11 +4,10 @@ from argparse import ArgumentParser
 from os.path import join, split
 
 import numpy as np
+from termcolor import cprint
 
-from rad_tools.routines import cprint
 
-
-def manager(filename, span, output_path, output_name, no_colour=False):
+def manager(filename, span, output_path, output_name):
     r"""
     ``rad-identify-wannier-centres.py`` script.
 
@@ -57,13 +56,10 @@ def manager(filename, span, output_path, output_name, no_colour=False):
                 min_span = np.linalg.norm((centre[1] - a_coord))
                 name = atom
         if min_span - span > separation_tolerance:
-            if no_colour:
-                print(f"Centre {centre} unidentified, " + "try to increase span")
-            else:
-                cprint(
-                    f"Centre {centre} unidentified, " + "try to increase span",
-                    colour="yellow",
-                )
+            cprint(
+                f"Centre {centre} unidentified, " + "try to increase span",
+                "yellow",
+            )
             print(
                 f"    span limit = {span}\n"
                 + f"    minimum distance to the atom ({name}) = {min_span:.8f}\n"
@@ -121,12 +117,5 @@ def create_parser():
         type=str,
         default=None,
         help="Seedname for the output files.",
-    )
-    parser.add_argument(
-        "-nc",
-        "--no-colour",
-        action="store_true",
-        default=False,
-        help="Turn off coloured output.",
     )
     return parser

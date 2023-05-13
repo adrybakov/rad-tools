@@ -43,6 +43,10 @@ extlinks = {
         "%s",
     ),
     "DOI": ("https://doi.org/%s", "DOI: %s"),
+    "numpy": (
+        "https://numpy.org/doc/stable/reference/generated/numpy.%s.html",
+        "numpy.%s",
+    ),
 }
 
 # todo
@@ -151,6 +155,10 @@ custom_links = {
     "pytest": ("pytest", "https://docs.pytest.org/en/7.3.x/"),
     "latex": ("LaTeX", "https://www.latex-project.org/"),
     "black": ("black", "https://black.readthedocs.io"),
+    "array_like": (
+        "array_like",
+        "https://numpy.org/doc/stable/glossary.html#term-array_like",
+    ),
 }
 
 

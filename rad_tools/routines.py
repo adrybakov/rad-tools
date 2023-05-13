@@ -7,151 +7,16 @@ import sys
 
 from math import asin, pi, sqrt
 
+from termcolor import cprint
+
 import numpy as np
 
-# Terminal colours
-BLACK = "\u001b[30m"
-"""
-ANSI escape code for black color of the text.
-"""
-RED = "\u001b[31m"
-"""
-ANSI escape code for red color of the text.
-"""
-GREEN = "\u001b[32m"
-"""
-ANSI escape code for green color of the text.
-"""
-YELLOW = "\u001b[33m"
-"""
-ANSI escape code for yellow color of the text.
-"""
-BLUE = "\u001b[34m"
-"""
-ANSI escape code for blue color of the text.
-"""
-MAGENTA = "\u001b[35m"
-"""
-ANSI escape code for magenta color of the text.
-"""
-CYAN = "\u001b[36m"
-"""
-ANSI escape code for cyan color of the text.
-"""
-WHITE = "\u001b[37m"
-"""
-ANSI escape code for white color of the text.
-"""
-RESET = "\u001b[0m"
-"""
-ANSI escape code for resetting color to default.
-"""
-WARNING = YELLOW
-"""
-ANSI escape code for warnings.
-"""
-OK = GREEN
-"""
-ANSI escape code for ok messages.
-"""
-ERROR = RED
-"""
-ANSI escape code for errors.
-"""
-
 __all__ = [
-    "get_named_colours",
-    "get_256_colours",
-    "cprint",
     "atom_mark_to_latex",
     "rot_angle",
     "absolute_to_relative",
     "winwait",
 ]
-
-
-def get_named_colours(colour: str):
-    r"""
-    Get the colours for the terminal based on name.
-
-    Parameters
-    ----------
-    colour : str
-        Name of the colour.
-        Choices: black, red, green, yellow, blue, magenta, cyan, white.
-    """
-    colour_dict = {
-        "black": BLACK,
-        "red": RED,
-        "green": GREEN,
-        "yellow": YELLOW,
-        "blue": BLUE,
-        "magenta": MAGENTA,
-        "cyan": CYAN,
-        "white": WHITE,
-    }
-    colour = colour.lower()
-    if colour not in colour_dict:
-        return ""
-    return colour_dict[colour]
-
-
-def get_256_colours(n):
-    r"""
-    ANSI escape codes for terminal color with 256-colours support
-    (see: |ANSI|_).
-
-    Parameters
-    ----------
-    n : int
-        Integer from 0 to 255 to be mapped to colours.
-
-    Returns
-    -------
-    str
-        string with the ANSI escape code.
-    """
-
-    if type(n) != int or not 0 <= n <= 255:
-        raise ValueError(
-            f"Integer n have to be in range 0 <= n <= 255. "
-            f"You provided n = {n}, type<n> = {type(n)}"
-        )
-    return f"\033[38:5:{n}m"
-
-
-def cprint(*args, colour=None, **kwargs):
-    r"""
-    Add colour argument to the standard ``print()``.
-
-    Parameters
-    ----------
-    colour : str or int
-        Name or number for a colour. Number is used with the base of 256.
-        Name should comply with :py:func:`.get_named_colours`.
-
-    Example
-    -------
-    >>> import rad_tools as rad
-    >>> rad.cprint("Hellow world!", colour="green")
-    Hellow world!
-    >>> rad.cprint("Hellow world!", colour = 30)
-    Hellow world!
-    >>> rad.cprint("Hellow world!", colour=1342)
-    Hellow world!
-    """
-
-    if isinstance(colour, int):
-        colour = get_256_colours(colour % 256)
-    elif isinstance(colour, str):
-        colour = get_named_colours(colour)
-    else:
-        raise ValueError("Colour must be a string or integer")
-    if colour is not None:
-        print(colour, end="")
-    print(*args, **kwargs)
-    if colour is not None:
-        print(RESET, end="")
 
 
 def atom_mark_to_latex(mark):
@@ -279,5 +144,5 @@ def winwait():
     Add "Press Enter to continue" behaviour to Windows.
     """
     if sys.platform == "win32":
-        cprint("Press Enter to continue", colour="green")
+        cprint("Press Enter to continue", "green")
         input()

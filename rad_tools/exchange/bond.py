@@ -20,33 +20,25 @@ class Bond:
     ----------
     iso : int or float, default None
         Value of isotropic exchange parameter.
-    aniso : 3 x 3 array, None
+    aniso : (3, 3) |array_like|_, default None
         3 x 3 matrix of symmetric anisotropic exchange.
-    dmi : 1 x 3 array, None
+    dmi : (3,) |array_like|_, default None
         Dzyaroshinsky-Moria interaction vector :math:`(D_x, D_y, D_z)`.
-    matrix : 3 x 3 array, None
+    matrix : (3, 3) |array_like|_, default None
         Exchange matrix.
 
     Attributes
     ----------
-    matrix : 3 x 3 array of floats
-        Exchange matrix.
-
-        .. code-block:: python
-
-            [[J_xx, J_xy, J_xz],
-             [J_yx, J_yy, J_yz],
-             [J_zx, J_zy, J_zz]]
-
-    symm_matrix : 3 x 3 array of floats
-    asymm_matrix : 3 x 3 array of floats
+    matrix : 3 x 3 :numpy:`ndarray`
+    symm_matrix : (3, 3) :numpy:`ndarray`
+    asymm_matrix : (3, 3) :numpy:`ndarray`
     iso : float
-    iso_matrix : 3 x 3 array of floats
-    aniso : 3 x 3 array of floats
-    aniso_diagonal : 1 x 3 array of floats
-    aniso_diagonal_matrix : 3 x 3 array of floats
-    dmi : 1 x 3 array of floats
-    dmi_matrix : 3 x 3 array of floats
+    iso_matrix : (3, 3) :numpy:`ndarray`
+    aniso : (3, 3) :numpy:`ndarray`
+    aniso_diagonal : (3,) :numpy:`ndarray`
+    aniso_diagonal_matrix : (3, 3) :numpy:`ndarray`
+    dmi : (3,) :numpy:`ndarray`
+    dmi_matrix : (3, 3) :numpy:`ndarray`
     dmi_module : float
     """
 
@@ -64,7 +56,17 @@ class Bond:
             self.matrix = matrix
 
     @property
-    def matrix(self):
+    def matrix(self) -> np.ndarray:
+        r"""
+        Full exchange matrix.
+
+        .. code-block:: python
+
+            [[J_xx, J_xy, J_xz],
+             [J_yx, J_yy, J_yz],
+             [J_zx, J_zy, J_zz]]
+        """
+
         return self._matrix
 
     @matrix.setter
@@ -78,9 +80,9 @@ class Bond:
         self._matrix = new_matrix
 
     @property
-    def symm_matrix(self):
+    def symm_matrix(self) -> np.ndarray:
         r"""
-        Symmetric part of exchange matrix.
+        Symmetric part of exchange :py:attr:`matrix`.
 
         .. math::
 
@@ -90,9 +92,9 @@ class Bond:
         return (self.matrix + self.matrix.T) / 2
 
     @property
-    def asymm_matrix(self):
+    def asymm_matrix(self) -> np.ndarray:
         """
-        Asymmetric part of exchange matrix.
+        Asymmetric part of exchange :py:attr:`matrix`.
 
         .. math::
 
@@ -102,7 +104,7 @@ class Bond:
         return (self.matrix - self.matrix.T) / 2
 
     @property
-    def iso(self):
+    def iso(self) -> float:
         r"""
         Value of isotropic exchange parameter.
 
@@ -124,9 +126,9 @@ class Bond:
         self.matrix = self.matrix + (new_iso) * np.identity(3, dtype=float)
 
     @property
-    def iso_matrix(self):
+    def iso_matrix(self) -> np.ndarray:
         r"""
-        Isotropic part of the exchange matrix.
+        Isotropic part of the exchange :py:attr:`matrix`.
 
         Matrix form:
 
@@ -140,7 +142,7 @@ class Bond:
         return self.iso * np.identity(3, dtype=float)
 
     @property
-    def aniso(self):
+    def aniso(self) -> np.ndarray:
         r"""
         3 x 3 matrix of symmetric anisotropic exchange.
 
@@ -174,7 +176,7 @@ class Bond:
         self.matrix = self.matrix + new_aniso
 
     @property
-    def aniso_diagonal(self):
+    def aniso_diagonal(self) -> np.ndarray:
         r"""
         Diagonal part of the symmetric anisotropic exchange.
 
@@ -186,9 +188,9 @@ class Bond:
         return np.diag(self.aniso)
 
     @property
-    def aniso_diagonal_matrix(self):
+    def aniso_diagonal_matrix(self) -> np.ndarray:
         r"""
-        Diagonal part of the symmetric anisotropic exchange matrix.
+        Diagonal part of the symmetric anisotropic exchange.
 
         .. code-block:: python
 
@@ -200,7 +202,7 @@ class Bond:
         return np.diag(np.diag(self.aniso))
 
     @property
-    def dmi(self):
+    def dmi(self) -> np.ndarray:
         r"""
         Dzyaroshinsky-Moria interaction vector (Dx, Dy, Dz).
 
@@ -234,9 +236,9 @@ class Bond:
         self.matrix = self.matrix + dmi_matrix
 
     @property
-    def dmi_matrix(self):
+    def dmi_matrix(self) -> np.ndarray:
         r"""
-        Asymmetric part of the exchange matrix.
+        Asymmetric part of the exchange :py:attr:`matrix`.
 
         .. code-block:: python
 
@@ -248,7 +250,7 @@ class Bond:
         return self.asymm_matrix
 
     @property
-    def dmi_module(self):
+    def dmi_module(self) -> float:
         r"""
         Length of the DMI vector in the units of exchange interaction.
         """
@@ -260,8 +262,8 @@ class Bond:
 
         Parameters
         ----------
-        accuracy : int, default 4
-            number of decimals after the point.
+        decimals : int, default 4
+            Number of decimals after the coma.
         """
 
         self.matrix = np.round(self.matrix, decimals=decimals)
