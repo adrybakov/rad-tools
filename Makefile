@@ -95,7 +95,7 @@ help:
 
 examples:
 	@pip3 install . --upgrade
-	@rad-identify-wannier-centres.py docs/examples/rad-identify-wannier-centres/example_centres.xyz -nc > docs/examples/rad-identify-wannier-centres/console_output.txt
+	@rad-identify-wannier-centres.py docs/examples/rad-identify-wannier-centres/example_centres.xyz > docs/examples/rad-identify-wannier-centres/console_output.txt
 	@rad-identify-wannier-centres.py docs/examples/rad-identify-wannier-centres/example_centres.xyz --span 0.11 --output-name example_centres.xyz_bigger_span
 	@rad-make-template.py -on docs/examples/rad-make-template/template_demo
 	@rad-make-template.py -if docs/examples/rad-make-template/exchange.out -on docs/examples/rad-make-template/full_template

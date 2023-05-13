@@ -4,12 +4,10 @@ which may be used across the whole package.
 """
 
 import sys
-
 from math import asin, pi, sqrt
 
-from termcolor import cprint
-
 import numpy as np
+from termcolor import cprint
 
 __all__ = [
     "atom_mark_to_latex",

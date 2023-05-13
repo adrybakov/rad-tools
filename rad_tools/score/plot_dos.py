@@ -5,10 +5,10 @@ from argparse import ArgumentParser
 from os import makedirs, walk
 from os.path import abspath, join
 
+from termcolor import cprint
 from tqdm import tqdm
 
-from rad_tools.dos import DOSQE, plot_projected, PDOS
-from termcolor import cprint
+from rad_tools.dos import DOSQE, PDOS, plot_projected
 
 
 def detect_seednames(input_path):

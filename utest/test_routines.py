@@ -1,10 +1,7 @@
 import pytest
 
-from rad_tools.routines import (
-    atom_mark_to_latex,
-    rot_angle,
-    absolute_to_relative,
-)
+from rad_tools.routines import (absolute_to_relative, atom_mark_to_latex,
+                                rot_angle)
 
 
 @pytest.mark.parametrize(

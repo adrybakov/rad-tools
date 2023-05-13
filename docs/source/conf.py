@@ -159,6 +159,7 @@ custom_links = {
         "array_like",
         "https://numpy.org/doc/stable/glossary.html#term-array_like",
     ),
+    "termcolor": ("termcolor", "https://github.com/termcolor/termcolor"),
 }
 
 
