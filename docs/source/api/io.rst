@@ -13,7 +13,6 @@ Routine for external inputs
 
 .. autosummary:: 
     :toctree: generated/
-    :template: function.rst
 
     read_exchange_model
 

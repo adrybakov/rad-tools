@@ -1,5 +1,5 @@
 r"""
-Input-output from TB2J.
+Input-output from |TB2J|_.
 """
 
 import numpy as np
@@ -10,7 +10,7 @@ from rad_tools.routines import absolute_to_relative
 
 def read_exchange_model(filename, quiet=False) -> ExchangeModel:
     r"""
-    Read exchange model from TB2J output file.
+    Read exchange model from |TB2J|_ output file.
 
     In |TB2J|_ exchange Hamiltonian is define in a following notation:
 
@@ -30,14 +30,14 @@ def read_exchange_model(filename, quiet=False) -> ExchangeModel:
     Parameters
     ----------
     filename : str
-        Path to the TB2J output file.
+        Path to the |TB2J|_ output file.
     quiet : bool, default True
         Whether to suppress output.
 
     Returns
     -------
     model : :py:class:`.ExchangeModel`
-        Exchange model build from TB2J file.
+        Exchange model build from |TB2J|_ file.
     """
 
     major_sep = "=" * 90

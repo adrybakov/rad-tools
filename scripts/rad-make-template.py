@@ -2,6 +2,7 @@
 
 import sys
 from time import sleep
+
 from rad_tools.routines import winwait
 from rad_tools.score.make_template import create_parser, manager
 

@@ -5,10 +5,11 @@ from os.path import abspath, join
 
 import numpy as np
 from matplotlib import pyplot as plt
+from termcolor import cprint
 
 from rad_tools.io.internal import read_template
 from rad_tools.io.tb2j import read_exchange_model
-from rad_tools.routines import OK, RESET, atom_mark_to_latex, rot_angle
+from rad_tools.routines import atom_mark_to_latex, rot_angle
 
 
 def manager(
@@ -208,7 +209,7 @@ def manager(
 
         png_path = join(output_path, f"{output_name}.{wtp}.png")
         plt.savefig(png_path, dpi=400, bbox_inches="tight")
-        print(f"{OK}2D plot with {wtp} is in {abspath(png_path)}{RESET}")
+        cprint(f"2D plot with {wtp} is in {abspath(png_path)}", "green")
 
 
 def create_parser():

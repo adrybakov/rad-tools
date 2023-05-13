@@ -16,16 +16,16 @@ class PDOS:
     Supports k-resolved density of states.
     Support spin-polarised and spin-unpolarised cases.
 
-    PDOS class is iterable (over ``projectors``) and
+    PDOS class is iterable (over :py:attr:`.projectors`) and
     supports item call (return PDOS for ``key`` projector).
 
-    Operations of addition and substruction are defined.
+    Operations of addition and subtraction are defined.
 
     Parameters
     ----------
-    energy : array
+    energy : |array_like|_
         Values of energy for the PDOS. Shape :math:`n_e` is assumed.
-    pdos : array
+    pdos : |array_like|_
         Array with the values of PDOS. Shape is assumed to be:
 
         * Spin-polarized, k-resolved: :math:`(n, 2, n_k, n_e)`
@@ -40,12 +40,12 @@ class PDOS:
         Name of the projectors group.
     projectors : list
         Names of the projectors.
-        If ``projectors_group`` has the form "l" or "l_j",
+        If :py:attr:`projectors_group` has the form "l" or "l_j",
         where l is "s", "p", "d", "f" and j is the total angular momentum,
         the projectors are assigned automatically,
         otherwise it is necessary to provide :math:`n` projectors manually.
         The names of projectors are directly used in the plots.
-    ldos : array, default None
+    ldos : |array_like|_, default None
         Local density of states. Sum of partial density of states over all projectors.
         Computed based on ``pdos`` if not provided.
         Shape is assumed to be:
@@ -62,10 +62,10 @@ class PDOS:
 
     Attributes
     ----------
-    energy : array
+    energy : :numpy:`ndarray`
         Values of energy for the PDOS. Has the shape :math:`n_e`.
-    ldos : array
-    pdos : array
+    ldos : :numpy:`ndarray`
+    pdos : :numpy:`ndarray`
     projectors_group : str
         Name of the projectors group.
     projectors : list
@@ -84,7 +84,7 @@ class PDOS:
         ldos=None,
         spin_pol=False,
     ):
-        self.energy = energy
+        self.energy = np.array(energy)
         self._pdos = None
         self._ldos = None
         self.projectors_group = projectors_group
@@ -173,7 +173,7 @@ class PDOS:
             Projector`s name or index.
         Returns
         -------
-        pdos : array
+        pdos : :numpy:`ndarray`
             Partial density of states.
         """
         if isinstance(key, str):
@@ -188,7 +188,7 @@ class PDOS:
 
         Returns
         -------
-        ldos : array
+        ldos : :numpy:`ndarray`
             Summed density of states along all projectors.
             Has the following shapes:
 
@@ -233,7 +233,7 @@ class PDOS:
 
         Returns
         -------
-        pdos : array
+        pdos : :numpy:`ndarray`
             Has the following shapes:
 
             * Spin-polarized, k-resolved: :math:`(n, 2, n_k, n_e)`
@@ -273,7 +273,7 @@ class PDOS:
     @property
     def k_resolved(self):
         r"""
-        Check if pdos is k-resolved based on shape of ``self.pdos``.
+        Check if pdos is k-resolved based on shape of :py:attr:`.pdos`.
         """
 
         return (
@@ -287,10 +287,13 @@ class PDOS:
         r"""
         Squeeze k-resolved PDOS.
 
+        See Also
+        --------
+        squeezed : Returns new object.
+
         Notes
         -----
         It modifies the instance on which called.
-        See also :py:func:`.PDOS.squeezed`
         """
 
         if self.k_resolved:
@@ -301,12 +304,16 @@ class PDOS:
         r"""
         Return new instance with squeezed PDOS.
 
-        Calls :py:func:`PDOS.squeeze`.
+        Calls :py:func:`.PDOS.squeeze`.
 
         Returns
         -------
-        pdos_squeezed : :py:class:`PDOS`
+        pdos_squeezed : :py:class:`.PDOS`
             Squeezed PDOS.
+
+        See Also
+        --------
+        squeeze : Modifies current object.
         """
 
         squeezed_pdos = deepcopy(self)
@@ -327,10 +334,14 @@ class PDOS:
         Those sums are computed individually for spin-up and
         spin-down in the spin-polarized case.
 
+        See Also
+        --------
+        normalized : Returns new object.
+
         Notes
         -----
         It modifies the instance on which called.
-        See also :py:func:`PDOS.normalized`
+
         """
 
         for i in range(0, self.pdos.shape[0]):
@@ -347,6 +358,10 @@ class PDOS:
         -------
         normalized_pdos : :py:class:`PDOS`
             Normalized PDOS.
+
+        See Also
+        --------
+        normalize : Modifies current object.
         """
 
         normalized_pdos = deepcopy(self)
@@ -437,20 +452,19 @@ class PDOSQE(PDOS):
     Supports the order of projectors of |projwfc|_ (s,p,d,f) and
     the case of projection in the spin-orbit calculations.
     In the custom cases it is necessary to specify projectors manually.
-    If ``projectors_group`` has the form "l" or "l_j",
+    If :py:attr:`.projectors_group` has the form "l" or "l_j",
     where l is "s", "p", "d", "f" and j is the total angular momentum,
     the projectors are assigned automatically,
     otherwise it is necessary to provide :math:`n` projectors manually.
     The names of projectors are directly used in the plots.
-    If ``projectors_group`` is one of "s", "p", "d", "f", then the projectors are:
+    If :py:attr:`.projectors_group` is one of "s", "p", "d", "f", then the projectors are:
 
     * s : :math:`s`
     * p : :math:`p_z`, :math:`p_y`, :math:`p_x`
     * d : :math:`d_{z^2}`, :math:`d_{zx}`, :math:`d_{zy}`, :math:`d_{x^2 - y^2}`, :math:`d_{xy}`
     * f : :math:`f_{z^3}`, :math:`f_{yz^2}`, :math:`f_{xz^2}`, :math:`f_{z(x^2 - y^2)}`, :math:`f_{xyz}`, :math:`f_{y(3x^2 - y^2)}`, :math:`f_{x(x^2 - 3y^2)}`
 
-    If ``projectors_group`` has the form "l_j", then the projectors are :math:`(1, ..., 2j+1)`
-
+    If :py:attr:`.projectors_group` has the form "l_j", then the projectors are :math:`(1, ..., 2j+1)`
     """
 
     _pattern = "[spdf]_j[0-9.]*"
@@ -512,7 +526,7 @@ def plot_projected(
 
     Parameters
     ----------
-    pdos : PDOS
+    pdos : :py:class:`.PDOS`
         PDOS for the plot.
     efermi : float, default 0
         Fermi energy.

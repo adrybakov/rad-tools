@@ -4,10 +4,11 @@ from datetime import datetime
 from os import makedirs
 from os.path import abspath, join
 
+from termcolor import cprint
+
 from rad_tools import __version__ as version
 from rad_tools.io import read_tb2j_model
 from rad_tools.io.internal import read_template
-from rad_tools.routines import OK, RESET
 
 
 def manager(
@@ -66,9 +67,10 @@ def manager(
                 + f" at {cd.hour}:{cd.minute}:{cd.second} by rad-tools {version}\n\n"
             )
             out_file.write(summary_txt)
-        print(
-            f"{OK}Extracted exchange info is in "
-            + f"{abspath(join(output_path, output_name + '.txt'))}{RESET}"
+        cprint(
+            f"Extracted exchange info is in "
+            + f"{abspath(join(output_path, output_name + '.txt'))}",
+            "green",
         )
     else:
         print(f"{summary_txt}")

@@ -1,13 +1,13 @@
 r"""
 Exchange template.
 
-Write a tutorial with docstrings here.
+Write a tutorial with docstring here.
 """
 
 
 class ExchangeTemplate:
     r"""
-    Store a template for sorting the exchange from TB2J file.
+    Store a template for sorting the exchange from |TB2J|_ file.
 
     In addition stores the technical details for plotting,
     orbital decomposition, etc.

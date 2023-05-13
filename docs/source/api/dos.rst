@@ -13,7 +13,6 @@ Classes
 
 .. autosummary::
     :toctree: generated/
-    :template: class.rst
 
     DOSQE
     PDOSQE

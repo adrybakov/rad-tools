@@ -35,21 +35,11 @@ analogous to the command line interface.
             max_distance=5)
 """
 
-from .identify_wannier_centres import (
-    manager as identify_wannier_centres,
-)
-from .plot_tb2j import (
-    manager as plot_tb2j,
-)
-from .extract_tb2j import (
-    manager as extract_tb2j,
-)
-from .plot_dos import (
-    manager as plot_dos,
-)
-from .make_template import (
-    manager as make_template,
-)
+from .extract_tb2j import manager as extract_tb2j
+from .identify_wannier_centres import manager as identify_wannier_centres
+from .make_template import manager as make_template
+from .plot_dos import manager as plot_dos
+from .plot_tb2j import manager as plot_tb2j
 
 __all__ = [
     "identify_wannier_centres",

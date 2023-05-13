@@ -5,21 +5,15 @@ All tools from the package.
 |version|
 """
 
-__version__ = "0.6.1.dev"
+__version__ = "0.6.2.dev"
 
-
-from . import score
-from .score import *
-from . import io
-from .io import *
-from . import exchange
-from .exchange import *
-from . import kpoints
-from .kpoints import *
-from . import dos
+from . import dos, exchange, io, kpoints, score, crystal
 from .dos import *
+from .exchange import *
+from .io import *
+from .kpoints import *
 from .routines import *
-from . import crystal
+from .score import *
 from .crystal import *
 
 __all__ = []

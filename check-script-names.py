@@ -31,9 +31,9 @@ for i, filename in enumerate(f_scripts):
             f_compare_docs.append(
                 join("docs", "source", "user-guide", f"{filename}.rst")
             )
-            if f"{filename.replace('-','_')}_core.py" in f_scripts_core:
+            if f"{filename.replace('-','_')[4:]}.py" in f_scripts_core:
                 f_compare_scripts.append(
-                    join("rad_tools", "score", f"{filename.replace('-','_')}_core.py")
+                    join("rad_tools", "score", f"{filename.replace('-','_')[4:]}.py")
                 )
             else:
                 f_compare_scripts.append(join("scripts", f"{filename}.py"))
@@ -78,11 +78,15 @@ for f_i, filename in enumerate(f_compare_scripts):
                         docs_arguments[-1].add(name.replace('"', "").replace(" ", ""))
 
     # Compare
+    isok = True
+    if len(docs_arguments) != len(script_arguments):
+        print(RED)
+        isok = False
     print(
         f"Comparing arguments for script {split(filename)[1]} \n"
         + f"({len(docs_arguments)} in docs, {len(script_arguments)} in scripts)"
     )
-    isok = True
+    print(RESET)
     for i, argument in enumerate(script_arguments):
         try:
             if argument != docs_arguments[i] or not (

@@ -3,7 +3,7 @@ DOS
 """
 import re
 from os import walk
-from os.path import abspath, join
+from os.path import join
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -13,27 +13,27 @@ from rad_tools.dos.pdos import PDOSQE
 
 class DOSQE:
     r"""
-    Analyse the folder with the Quantum Espresso results and store all information.
+    Analyse the folder with the |QE|_ results and store all information.
 
     Parameters
     ----------
     seedname : str
-        Seedname for the Quantum Espresso output files.
+        Seedname for the |QE|_ output files.
     input_folder : str
-        Path to the folder with Quantum Espresso output files.
+        Path to the folder with |QE|_ output files.
     energy_window : tuple, default None
         Energy limits, necessary for correct plotting.
 
     Attributes
     ----------
     seedname : str
-        Seedname for the Quantum Espresso output files.
+        Seedname for the |QE|_ output files.
     energy : array
         Energy values of the DOS/PDOS.
     k_resolved : bool
     case : int
     casename : str
-        Human readable name of the case base on ``case``.
+        Human readable name of the case base on :py:attr:`.case`.
     nkpoints : int
         Number of k points for k resolved DOS. 1 if DOS is not k resolved.
     nepoints : int
@@ -211,8 +211,8 @@ class DOSQE:
         r"""
         Decompose filenames and extract information about atoms and projectors.
 
-        Note
-        ----
+        Notes
+        -----
         atoms : dist
             Dictionary with the atom labels and their numbers.
 
@@ -275,7 +275,7 @@ class DOSQE:
 
         Returns
         -------
-        total_dos : array
+        total_dos : :numpy:`ndarray`
             Shape :math:`(2, n_e)` if DOS is collinear, spin-polarized;
             :math:`(n_e)` otherwise.
         """
@@ -322,7 +322,7 @@ class DOSQE:
 
         Returns
         -------
-        total_pdos : array
+        total_pdos : :numpy:`ndarray`
             Shape :math:`(2, n_e)` if PDOS is collinear, spin-polarized;
             :math:`(n_e)` otherwise.
         """
@@ -529,7 +529,7 @@ class DOSQE:
         output_name : str
             Name of the output file.
         interactive : bool, default False
-            Whether to plot in interactive matplotlib window.
+            Whether to plot in interactive |matplotlib|_ window.
         efermi : float, default 0
             Fermi energy. Zero of energy scale is shifted to it.
         xlim : tuple, default None
