@@ -118,13 +118,3 @@ Seedname for the output files.
     default : Name of the input file + "_identified"
 
 See also: :ref:`example <output-notes>`.
-
-.. _rad-identify-wannier-centres_no-colour:
-
--nc, --no-colour
-----------------
-Turn off coloured output.
-
-.. code-block:: text
-
-    default : False
