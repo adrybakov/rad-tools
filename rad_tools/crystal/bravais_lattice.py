@@ -1,10 +1,10 @@
 r"""14 Bravais lattice"""
 
+from math import sqrt, sin, cos, tan, pi
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
-from rad_tools.crystal.lattice import Lattice
-from rad_tools import print_2D_array
 
 __all__ = ["BravaisLattice", "CUB"]
 
@@ -149,24 +149,165 @@ def deduct_zone(
     return planes, edges, corners
 
 
-class BravaisLattice(Lattice):
-    PLOT_NAMES = {}
+class Lattice:
+    PLOT_NAMES = {
+        "G": "$\\Gamma$",
+        "M": "$M$",
+        "R": "$R$",
+        "X": "$X$",
+        "K": "$K$",
+        "L": "$L$",
+        "U": "$U$",
+        "W": "$W$",
+        "H": "$H$",
+        "P": "$P$",
+        "N": "$N$",
+        "A": "$A$",
+        "Z": "$Z$",
+        "Z1": "$Z_1$",
+        "Y": "$Y$",
+        "Y1": "$Y_1$",
+        "S": "$S$",  # it is overwritten to sigma if needed.
+        "S1": "$S_1$",  # it is overwritten to sigma if needed.
+        "T": "$T$",
+        "A1": "$A_1$",
+        "X1": "$X_1$",
+        "C": "$C$",
+        "C1": "$C_1$",
+        "D": "$D$",
+        "D1": "$D_1$",
+        "H1": "$H_1$",
+        "L1": "$L_1$",
+        "L2": "$L_2$",
+        "B": "$B$",
+        "B1": "$B_1$",
+        "F": "$F$",
+        "P1": "$P_1$",
+        "P2": "$P_2$",
+        "Q": "$Q$",
+        "Q1": "$Q_1$",
+        "E": "$E$",
+        "H2": "$H_2$",
+        "M1": "$M_1$",
+        "M2": "$M_2$",
+        "N1": "$N_1$",
+        "F1": "$F_1$",
+        "F2": "$F_2$",
+        "F3": "$F_3$",
+        "I": "$I$",
+        "I1": "$I_1$",
+        "X2": "$X_2$",
+        "Y2": "$Y_2$",
+        "Y3": "$Y_3$",
+    }
 
-    def __init__(self, a, b, c) -> None:
-        super().__init__(a, b, c)
+    def __init__(self, a1, a2, a3) -> None:
+        self.cell = np.array([a1, a2, a3])
         self.primitive = False
         self.points = {}
         self.path = []
 
     @property
+    def a1(self):
+        return self.cell[0]
+
+    @property
+    def a2(self):
+        return self.cell[1]
+
+    @property
+    def a3(self):
+        return self.cell[2]
+
+    @property
+    def unit_cell_volume(self):
+        r"""
+        Volume of the unit cell.
+
+        .. math::
+
+            V = \delta_{\vec{A}}\cdot(\delta_{\vec{B}}\times\delta_{\vec{C}})
+        """
+
+        return np.dot(self.a1, np.cross(self.a2, self.a3))
+
+    @property
     def reciprocal_cell(self):
-        return np.array(
+        reverse = False
+        if not self.primitive:
+            self.make_primitive()
+            reverse = True
+
+        result = np.array(
             [
                 2 * pi / self.unit_cell_volume * np.cross(self.a2, self.a3),
                 2 * pi / self.unit_cell_volume * np.cross(self.a3, self.a1),
                 2 * pi / self.unit_cell_volume * np.cross(self.a1, self.a2),
             ]
         )
+        if reverse:
+            self.make_conventional()
+        return result
+
+    @property
+    def b1(self):
+        r"""
+        First reciprocal lattice vector.
+
+        .. math::
+
+            \vec{b}_1 = \frac{2\pi}{V}\vec{b}\times\vec{c}
+
+        where :math:`V = \vec{a}\cdot\vec{b}\times\vec{c}`
+        """
+
+        return self.reciprocal_cell[0]
+
+    @property
+    def b2(self):
+        r"""
+        Second reciprocal lattice vector.
+
+        .. math::
+
+            \vec{b}_2 = \frac{2\pi}{V}\vec{c}\times\vec{a}
+
+        where :math:`V = \vec{a}\cdot\vec{b}\times\vec{c}`
+        """
+
+        return self.reciprocal_cell[1]
+
+    @property
+    def b3(self):
+        r"""
+        Third reciprocal lattice vector.
+
+        .. math::
+
+            \vec{b}_3 = \frac{2\pi}{V}\vec{a}\times\vec{b}
+
+        where :math:`V = \vec{a}\cdot\vec{b}\times\vec{c}`
+        """
+
+        return self.reciprocal_cell[2]
+
+    @property
+    def k_alpha(self):
+        v1 = self.b2 / np.linalg.norm(self.b2)
+        v2 = self.b3 / np.linalg.norm(self.b3)
+        return np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0)) / pi * 180
+
+    @property
+    def k_beta(self):
+        v1 = self.b1 / np.linalg.norm(self.b1)
+        v2 = self.b3 / np.linalg.norm(self.b3)
+        return np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0)) / pi * 180
+
+    @property
+    def k_gamma(self):
+        v1 = self.b1 / np.linalg.norm(self.b1)
+        v2 = self.b2 / np.linalg.norm(self.b2)
+        return np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0)) / pi * 180
 
     def make_primitive(self):
         r"""
@@ -184,10 +325,14 @@ class BravaisLattice(Lattice):
 
     @property
     def variant(self):
-        r"""There is no variants of the Lattice"""
-        return "Only one variant."
+        r"""There is no variations of the Lattice"""
+        return self.__class__.__name__
 
-    def pepare_figure(self, background=True, focal_length=0.2) -> None:
+    @property
+    def pearson_symbol(self):
+        raise NotImplementedError
+
+    def prepare_figure(self, background=True, focal_length=0.2) -> None:
         self._fig = plt.figure(figsize=(6, 6))
         rcParams["axes.linewidth"] = 0
         rcParams["xtick.color"] = "#B3B3B3"
@@ -230,7 +375,12 @@ class BravaisLattice(Lattice):
         del self._fig
         del self._ax
 
-    def plot_real_space(self, ax, vectors=True, colour=BLUE):
+    def legend(self, **kwargs):
+        self._ax.legend(**kwargs)
+
+    def plot_real_space(self, ax, vectors=True, colour=BLUE, label=None):
+        if label is not None:
+            ax.scatter(0, 0, 0, color=colour, label=label)
         if vectors:
             ax.text(
                 self.cell[0][0] * 1.1,
@@ -285,7 +435,9 @@ class BravaisLattice(Lattice):
             plot_line(self.cell[i], self.cell[k])
             plot_line(self.cell[i], self.cell[j] + self.cell[k])
 
-    def plot_reciprocal_space(self, ax, vectors=True, colour=RED):
+    def plot_reciprocal_space(self, ax, vectors=True, colour=RED, label=None):
+        if label is not None:
+            ax.scatter(0, 0, 0, color=colour, label=label)
         planes, edges, corners = deduct_zone([self.b1, self.b2, self.b3])
 
         if vectors:
@@ -360,7 +512,7 @@ class BravaisLattice(Lattice):
         if reverse:
             self.make_conventional()
 
-    def plot_kpath(self, ax, colour="black", **kwargs):
+    def plot_kpath(self, ax, colour="black", label=None):
         reverse = False
         if not self.primitive:
             self.make_primitive()
@@ -368,7 +520,7 @@ class BravaisLattice(Lattice):
         for point in self.points:
             ax.scatter(
                 *tuple(self.points[point] @ self.reciprocal_cell),
-                s=64,
+                s=36,
                 color=colour,
             )
             ax.text(
@@ -381,6 +533,12 @@ class BravaisLattice(Lattice):
                 self.PLOT_NAMES[point],
                 fontsize=20,
                 color=colour,
+            )
+        if label is not None:
+            ax.scatter(
+                *tuple(self.points[point] @ self.reciprocal_cell),
+                color=colour,
+                label=label,
             )
 
         for subpath in self.path:
@@ -407,13 +565,15 @@ class BravaisLattice(Lattice):
         self.plot_brillouin(ax, colour=zone_colour, **kwargs)
         self.plot_kpath(ax, colour=path_colour, **kwargs)
 
-    def plot_wigner_seitz(self, ax, vectors=True, colour="black", **kwargs):
+    def plot_wigner_seitz(self, ax, vectors=True, colour="black", label=None):
         reverse = False
         if not self.primitive:
             self.make_primitive()
             reverse = True
         planes, edges, corners = deduct_zone([self.a1, self.a2, self.a3])
 
+        if label is not None:
+            ax.scatter(0, 0, 0, color=colour, label=label)
         if vectors:
             ax.text(
                 self.a1[0] * 1.1,
@@ -456,10 +616,9 @@ class BravaisLattice(Lattice):
             self.make_conventional()
 
 
-class CUB(BravaisLattice):
+# 1
+class CUB(Lattice):
     r"""Cubic (CUB, cP)"""
-
-    PLOT_NAMES = {"G": "$\\Gamma$", "M": "$M$", "R": "$R$", "X": "$X$"}
 
     def __init__(self, a: float) -> None:
         self.a = a
@@ -474,17 +633,9 @@ class CUB(BravaisLattice):
         self.path = [["G", "X", "M", "G", "R", "X"], ["M", "R"]]
 
 
-class FCC(BravaisLattice):
+# 2
+class FCC(Lattice):
     r"""Face-centred cubic (FCC, cF)"""
-
-    PLOT_NAMES = {
-        "G": "$\\Gamma$",
-        "K": "$K$",
-        "L": "L",
-        "U": "U",
-        "W": "W",
-        "X": "X",
-    }
 
     def __init__(self, a: float) -> None:
         self.a = a
@@ -515,10 +666,9 @@ class FCC(BravaisLattice):
         self.primitive = True
 
 
-class BCC(BravaisLattice):
+# 3
+class BCC(Lattice):
     r"""Body-centered cubic (BCC, cl)"""
-
-    PLOT_NAMES = {"G": "$\\Gamma$", "H": "$H$", "P": "$P$", "N": "$N$"}
 
     def __init__(self, a: float) -> None:
         self.a = a
@@ -550,17 +700,9 @@ class BCC(BravaisLattice):
         self.primitive = True
 
 
-class TET(BravaisLattice):
+# 4
+class TET(Lattice):
     r"""Tetragonal (TET, tP)"""
-
-    PLOT_NAMES = {
-        "G": "$\\Gamma$",
-        "A": "$A$",
-        "M": "$M$",
-        "R": "$R$",
-        "X": "$X$",
-        "Z": "$Z$",
-    }
 
     def __init__(self, a: float, c: float) -> None:
         self.a = a
@@ -582,24 +724,13 @@ class TET(BravaisLattice):
         ]
 
 
-class BCT(BravaisLattice):
+# 5
+class BCT(Lattice):
     r"""Body-centred tetragonal (BCT, tI)"""
 
-    PLOT_NAMES = {
-        "G": "$\\Gamma$",
-        "M": "$M$",
-        "N": "$N$",
-        "P": "$P$",
-        "X": "$X$",
-        "Z": "$Z$",
-        "Z1": "$Z_1$",
-        "S": "$\\Sigma$",
-        "S1": "$\\Sigma_1$",
-        "Y": "$Y$",
-        "Y1": "$Y_1$",
-    }
-
     def __init__(self, a: float, c: float) -> None:
+        self.PLOT_NAMES["S"] = "$\\Sigma$"
+        self.PLOT_NAMES["S1"] = "$\\Sigma_1$"
         if a == c:
             raise ValueError("Are you trying to create BCC Lattice (a == c)?")
         self.a = a
@@ -607,7 +738,7 @@ class BCT(BravaisLattice):
         self.cell = np.diag([a, a, c])
         self.primitive = False
         if self.variant == "BCT1":
-            eta = (1 + c**2 / a**2) / 4
+            eta = (1 + self.c**2 / self.a**2) / 4
             self.points = {
                 "G": np.array([0, 0, 0]),
                 "M": np.array([-1 / 2, 1 / 2, 1 / 2]),
@@ -624,8 +755,8 @@ class BCT(BravaisLattice):
             ]
 
         elif self.variant == "BCT2":
-            eta = (1 + a**2 / c**2) / 4
-            zeta = a**2 / (2 * c**2)
+            eta = (1 + self.a**2 / self.c**2) / 4
+            zeta = self.a**2 / (2 * self.c**2)
             self.points = {
                 "G": np.array([0, 0, 0]),
                 "N": np.array([0, 1 / 2, 0]),
@@ -685,15 +816,778 @@ class BCT(BravaisLattice):
             return "BCT2"
 
 
+# 6
+class ORC(Lattice):
+    r"""
+    Orthorhombic (ORC, oP)
+
+    :math:`a < b < c`
+    """
+
+    def __init__(self, a: float, b: float, c: float) -> None:
+        a, b, c = tuple(sorted([a, b, c]))
+        if a == b == c:
+            raise ValueError("Are you trying to construct CUB Lattice (a = b = c)?")
+        if a == b or b == c:
+            raise ValueError(
+                "Are you trying to construct TET Lattice (a = b != c or a != b == c)?"
+            )
+
+        self.a = a
+        self.b = b
+        self.c = c
+        self.cell = np.diag([a, b, c])
+        self.primitive = True
+        self.points = {
+            "G": np.array([0, 0, 0]),
+            "R": np.array([1 / 2, 1 / 2, 1 / 2]),
+            "S": np.array([1 / 2, 1 / 2, 0]),
+            "T": np.array([0, 1 / 2, 1 / 2]),
+            "U": np.array([1 / 2, 0, 1 / 2]),
+            "X": np.array([1 / 2, 0, 0]),
+            "Y": np.array([0, 1 / 2, 0]),
+            "Z": np.array([0, 0, 1 / 2]),
+        }
+
+        self.path = [
+            ["G", "X", "S", "Y", "G", "Z", "U", "R", "T", "Z"],
+            ["Y", "T"],
+            ["U", "X"],
+            ["S", "R"],
+        ]
+
+
+# 7
+class ORCF(Lattice):
+    r"""
+    Face-centred orthorhombic (ORCF, oF)
+
+    :math:`a < b < c`
+    """
+
+    def __init__(self, a: float, b: float, c: float) -> None:
+        a, b, c = tuple(sorted([a, b, c]))
+        if a == b == c:
+            raise ValueError("Are you trying to construct FCC Lattice (a = b = c)?")
+        if a == b:
+            raise ValueError("FIXME, dont know which lattice it will be.")
+        if b == c:
+            raise ValueError("FIXME, dont know which lattice it will be.")
+        self.a = a
+        self.b = b
+        self.c = c
+        self.cell = np.diag([a, b, c])
+        self.primitive = False
+        if self.variant == "ORCF1":
+            eta = (1 + self.a**2 / self.b**2 + self.a**2 / self.c**2) / 4
+            zeta = (1 + self.a**2 / self.b**2 - self.a**2 / self.c**2) / 4
+            self.points = {
+                "G": np.array([0, 0, 0]),
+                "A": np.array([1 / 2, 1 / 2 + zeta, zeta]),
+                "A1": np.array([1 / 2, 1 / 2 - zeta, 1 - zeta]),
+                "L": np.array([1 / 2, 1 / 2, 1 / 2]),
+                "T": np.array([1, 1 / 2, 1 / 2]),
+                "X": np.array([0, eta, eta]),
+                "X1": np.array([1, 1 - eta, 1 - eta]),
+                "Y": np.array([1 / 2, 0, 1 / 2]),
+                "Z": np.array([1 / 2, 1 / 2, 0]),
+            }
+
+            self.path = [
+                ["G", "Y", "T", "Z", "G", "X", "A1", "Y"],
+                ["T", "X1"],
+                ["X", "A", "Z"],
+                ["L", "G"],
+            ]
+        elif self.variant == "ORCF2":
+            eta = (1 + self.a**2 / self.b**2 - self.a**2 / self.c**2) / 4
+            delta = (1 + self.b**2 / self.a**2 - self.b**2 / self.c**2) / 4
+            phi = (1 + self.c**2 / self.b**2 - self.c**2 / self.a**2) / 4
+
+            self.points = {
+                "G": np.array([0, 0, 0]),
+                "C": np.array([1 / 2, 1 / 2 - eta, 1 - eta]),
+                "C1": np.array([1 / 2, 1 / 2 + eta, eta]),
+                "D": np.array([1 / 2 - delta, 1 / 2, 1 - delta]),
+                "D1": np.array([1 / 2 + delta, 1 / 2, delta]),
+                "L": np.array([1 / 2, 1 / 2, 1 / 2]),
+                "H": np.array([1 - phi, 1 / 2 - phi, 1 / 2]),
+                "H1": np.array([phi, 1 / 2 + phi, 1 / 2]),
+                "X": np.array([0, 1 / 2, 1 / 2]),
+                "Y": np.array([1 / 2, 0, 1 / 2]),
+                "Z": np.array([1 / 2, 1 / 2, 0]),
+            }
+
+            self.path = [
+                ["G", "Y", "C", "D", "X", "G", "Z", "D1", "H", "C"],
+                ["C1", "Z"],
+                ["X", "H1"],
+                ["H", "Y"],
+                ["L", "G"],
+            ]
+        elif self.variant == "ORCF3":
+            eta = (1 + self.a**2 / self.b**2 + self.a**2 / self.c**2) / 4
+            zeta = (1 + self.a**2 / self.b**2 - self.a**2 / self.c**2) / 4
+
+            self.points = {
+                "G": np.array([0, 0, 0]),
+                "A": np.array([1 / 2, 1 / 2 + zeta, zeta]),
+                "A1": np.array([1 / 2, 1 / 2 - zeta, 1 - zeta]),
+                "L": np.array([1 / 2, 1 / 2, 1 / 2]),
+                "T": np.array([1, 1 / 2, 1 / 2]),
+                "X": np.array([0, eta, eta]),
+                "Y": np.array([1 / 2, 0, 1 / 2]),
+                "Z": np.array([1 / 2, 1 / 2, 0]),
+            }
+
+            self.path = [
+                ["G", "Y", "T", "Z", "G", "X", "A1", "Y"],
+                ["X", "A", "Z"],
+                ["L", "G"],
+            ]
+
+    def make_conventional(self):
+        self.cell = np.diag([self.a, self.b, self.c])
+        self.primitive = False
+
+    def make_primitive(self):
+        self.cell = (
+            np.array(
+                [
+                    [0, self.b, self.c],
+                    [self.a, 0, self.c],
+                    [self.a, self.b, 0],
+                ]
+            )
+            / 2
+        )
+        self.primitive = True
+
+    @property
+    def variant(self):
+        r"""
+        Three variants of the Lattice.
+
+        :math:`\text{ORCF}_1: \dfrac{1}{a^2} > \dfrac{1}{b^2} + \dfrac{1}{c^2}`,
+        :math:`\text{ORCF}_2: \dfrac{1}{a^2} < \dfrac{1}{b^2} + \dfrac{1}{c^2}`,
+        :math:`\text{ORCF}_3: \dfrac{1}{a^2} = \dfrac{1}{b^2} + \dfrac{1}{c^2}`,
+        """
+        if 1 / self.a**2 > 1 / self.b**2 + 1 / self.c**2:
+            return "ORCF1"
+        elif 1 / self.a**2 < 1 / self.b**2 + 1 / self.c**2:
+            return "ORCF2"
+        else:
+            return "ORCF3"
+
+
+# 8
+class ORCI(Lattice):
+    r"""
+    Body-centred orthorhombic (ORCI, oI)
+
+    :math:`a < b < c`
+    """
+
+    def __init__(self, a: float, b: float, c: float) -> None:
+        a, b, c = tuple(sorted([a, b, c]))
+        if a == b == c:
+            raise ValueError("Are you trying to construct BCC Lattice (a = b = c)?")
+        if a == b:
+            raise ValueError("Are you trying to construct BCT2 Lattice (a = b < c)?")
+        if b == c:
+            raise ValueError("Are you trying to construct BCT1 Lattice (a < b = c)?")
+        self.a = a
+        self.b = b
+        self.c = c
+        self.cell = np.diag([a, b, c])
+        self.primitive = False
+        zeta = (1 + self.a**2 / self.c**2) / 4
+        eta = (1 + self.b**2 / self.c**2) / 4
+        delta = (self.b**2 - a**2) / (4 * self.c**2)
+        mu = (self.a**2 + self.b**2) / (4 * self.c**2)
+
+        self.points = {
+            "G": np.array([0, 0, 0]),
+            "L": np.array([-mu, mu, 1 / 2 - delta]),
+            "L1": np.array([mu, -mu, 1 / 2 + delta]),
+            "L2": np.array([1 / 2 - delta, 1 / 2 + delta, -mu]),
+            "R": np.array([0, 1 / 2, 0]),
+            "S": np.array([1 / 2, 0, 0]),
+            "T": np.array([0, 0, 1 / 2]),
+            "W": np.array([1 / 4, 1 / 4, 1 / 4]),
+            "X": np.array([-zeta, zeta, zeta]),
+            "X1": np.array([zeta, 1 - zeta, -zeta]),
+            "Y": np.array([eta, -eta, eta]),
+            "Y1": np.array([1 - eta, eta, -eta]),
+            "Z": np.array([1 / 2, 1 / 2, -1 / 2]),
+        }
+
+        self.path = [
+            ["G", "X", "L", "T", "W", "R", "X1", "Z", "G", "Y", "S", "W"],
+            ["L1", "Y"],
+            ["Y1", "Z"],
+        ]
+
+    def make_conventional(self):
+        self.cell = np.diag([self.a, self.b, self.c])
+        self.primitive = False
+
+    def make_primitive(self):
+        self.cell = (
+            np.array(
+                [
+                    [-self.a, self.b, self.c],
+                    [self.a, -self.b, self.c],
+                    [self.a, self.b, -self.c],
+                ]
+            )
+            / 2
+        )
+        self.primitive = True
+
+
+# 9
+class ORCC(Lattice):
+    r"""
+    C-centred orthorhombic (ORCC, oS)
+
+    :math:`a < b`
+    """
+
+    def __init__(self, a: float, b: float, c: float) -> None:
+        a, b, c = tuple(sorted([a, b, c]))
+        if a == b == c:
+            raise ValueError("Are you trying to construct TET Lattice (a = b = c)?")
+        self.a = a
+        self.b = c
+        self.c = b
+        self.cell = np.diag([a, b, c])
+        self.primitive = False
+        zeta = (1 + self.a**2 / self.b**2) / 4
+
+        self.points = {
+            "G": np.array([0, 0, 0]),
+            "A": np.array([zeta, zeta, 1 / 2]),
+            "A1": np.array([-zeta, 1 - zeta, 1 / 2]),
+            "R": np.array([0, 1 / 2, 1 / 2]),
+            "S": np.array([0, 1 / 2, 0]),
+            "T": np.array([-1 / 2, 1 / 2, 1 / 2]),
+            "X": np.array([zeta, zeta, 0]),
+            "X1": np.array([-zeta, 1 - zeta, 0]),
+            "Y": np.array([-1 / 2, 1 / 2, 0]),
+            "Z": np.array([0, 0, 1 / 2]),
+        }
+
+        self.path = [
+            ["G", "X", "S", "R", "A", "Z", "G", "Y", "X1", "A1", "T", "Y"],
+            ["Z", "T"],
+        ]
+
+    def make_conventional(self):
+        self.cell = np.diag([self.a, self.b, self.c])
+        self.primitive = False
+
+    def make_primitive(self):
+        self.cell = (
+            np.array(
+                [
+                    [self.a, -self.b, 0],
+                    [self.a, self.b, 0],
+                    [0, 0, 2 * self.c],
+                ]
+            )
+            / 2
+        )
+        self.primitive = True
+
+
+# 10
+class HEX(Lattice):
+    r"""Hexagonal (HEX, hP)"""
+
+    def __init__(self, a: float, c: float) -> None:
+        self.a = a
+        self.c = c
+        self.cell = np.array(
+            [[a / 2, -a * sqrt(3) / 2, 0], [a / 2, a * sqrt(3) / 2, 0], [0, 0, c]]
+        )
+        self.primitive = True
+
+        self.points = {
+            "G": np.array([0, 0, 0]),
+            "A": np.array([0, 0, 1 / 2]),
+            "H": np.array([1 / 3, 1 / 3, 1 / 2]),
+            "K": np.array([1 / 3, 1 / 3, 0]),
+            "L": np.array([1 / 2, 0, 1 / 2]),
+            "M": np.array([1 / 2, 0, 0]),
+        }
+
+        self.path = [
+            ["G", "M", "K", "G", "A", "L", "H", "A"],
+            ["L", "M"],
+            ["K", "H"],
+        ]
+
+
+# 11
+class RHL(Lattice):
+    r"""Rhombohedral (RHL, hR)"""
+
+    def __init__(self, a: float, alpha: float) -> None:
+        if alpha == 90:
+            raise ValueError("Are you trying to construct CUB Lattice (alpha == 90)?")
+        if alpha >= 120:
+            raise ValueError("alpha has to be < 120 degrees.")
+        self.a = a
+        self.alpha = alpha
+        self.cell = np.array(
+            [
+                [a * cos(alpha / 180 * pi / 2), -a * sin(alpha / 180 * pi / 2), 0],
+                [a * cos(alpha / 180 * pi / 2), a * sin(alpha / 180 * pi / 2), 0],
+                [
+                    a * cos(alpha / 180 * pi) / cos(alpha / 180 * pi / 2),
+                    0,
+                    a
+                    * sqrt(
+                        1 - cos(alpha / 180 * pi) ** 2 / cos(alpha / 180 * pi / 2) ** 2
+                    ),
+                ],
+            ]
+        )
+        self.primitive = True
+        if self.variant == "RHL1":
+            eta = (1 + 4 * cos(alpha / 180 * pi)) / (2 + 4 * cos(alpha / 180 * pi))
+            nu = 3 / 4 - eta / 2
+
+            self.points = {
+                "G": np.array([0, 0, 0]),
+                "B": np.array([eta, 1 / 2, 1 - eta]),
+                "B1": np.array([1 / 2, 1 - eta, eta - 1]),
+                "F": np.array([1 / 2, 1 / 2, 0]),
+                "L": np.array([1 / 2, 0, 0]),
+                "L1": np.array([0, 0, -1 / 2]),
+                "P": np.array([eta, nu, nu]),
+                "P1": np.array([1 - nu, 1 - nu, 1 - eta]),
+                "P2": np.array([nu, nu, eta - 1]),
+                "Q": np.array([1 - nu, nu, 0]),
+                "X": np.array([nu, 0, -nu]),
+                "Z": np.array([1 / 2, 1 / 2, 1 / 2]),
+            }
+
+            self.path = [
+                ["G", "L", "B1"],
+                ["B", "Z", "G", "X"],
+                ["Q", "F", "P1", "Z"],
+                ["L", "P"],
+            ]
+        elif self.variant == "RHL2":
+            eta = 1 / (2 * tan(self.alpha / 180 * pi / 2) ** 2)
+            nu = 3 / 4 - eta / 2
+
+            self.points = {
+                "G": np.array([0, 0, 0]),
+                "F": np.array([1 / 2, -1 / 2, 0]),
+                "L": np.array([1 / 2, 0, 0]),
+                "P": np.array([1 - nu, -nu, 1 - nu]),
+                "P1": np.array([nu, nu - 1, nu - 1]),
+                "Q": np.array([eta, eta, eta]),
+                "Q1": np.array([1 - eta, -eta, -eta]),
+                "Z": np.array([1 / 2, -1 / 2, 1 / 2]),
+            }
+
+            self.path = [["G", "P", "Z", "Q", "G", "F", "P1", "Q1", "L", "Z"]]
+
+    @property
+    def variant(self):
+        r"""
+        Two variants of the Lattice.
+
+        :math:`\text{RHL}_1 \alpha < 90^{\circ}`,
+        :math:`\text{RHL}_2 \alpha > 90^{\circ}`
+        """
+        if self.alpha < 90:
+            return "RHL1"
+        elif self.alpha > 90:
+            return "RHL2"
+
+
+# 12
+class MCL(Lattice):
+    r"""
+    Monoclinic (MCL, mP)
+
+    :math:`a, b \le c`, :math:`\alpha < 90^{\circ}`, :math:`\beta = \gamma = 90^{\circ}`.
+    """
+
+    def __init__(self, a: float, b: float, c: float, alpha: float) -> None:
+        a, b, c = tuple(sorted([a, b, c]))
+        if alpha > 90:
+            raise ValueError("alpha has to be < 90")
+        self.a = a
+        self.b = b
+        self.c = c
+        self.alpha = alpha
+        self.cell = np.array(
+            [
+                [self.a, 0, 0],
+                [0, self.b, 0],
+                [0, c * cos(self.alpha / 180 * pi), c * sin(self.alpha / 180 * pi)],
+            ]
+        )
+        self.primitive = True
+
+        eta = (1 - self.b * cos(self.alpha / 180 * pi) / self.c) / (
+            2 * sin(self.alpha / 180 * pi) ** 2
+        )
+        nu = 1 / 2 - eta * self.c * cos(self.alpha / 180 * pi) / self.b
+
+        self.points = {
+            "G": np.array([0, 0, 0]),
+            "A": np.array([1 / 2, 1 / 2, 0]),
+            "C": np.array([0, 1 / 2, 1 / 2]),
+            "D": np.array([1 / 2, 0, 1 / 2]),
+            "D1": np.array([1 / 2, 0, -1 / 2]),
+            "E": np.array([1 / 2, 1 / 2, 1 / 2]),
+            "H": np.array([0, eta, 1 - nu]),
+            "H1": np.array([0, 1 - eta, nu]),
+            "H2": np.array([0, eta, -nu]),
+            "M": np.array([1 / 2, eta, 1 - nu]),
+            "M1": np.array([1 / 2, 1 - eta, nu]),
+            "M2": np.array([1 / 2, eta, -nu]),
+            "X": np.array([0, 1 / 2, 0]),
+            "Y": np.array([0, 0, 1 / 2]),
+            "Y1": np.array([0, 0, -1 / 2]),
+            "Z": np.array([1 / 2, 0, 0]),
+        }
+
+        self.path = [
+            ["G", "Y", "H", "C", "E", "M1", "A", "X", "H1"],
+            ["M", "D", "Z"],
+            ["Y", "D"],
+        ]
+
+
+# 13
+class MCLC(Lattice):
+    r"""
+    C-centred monoclinic (MCLC, mS)
+
+    :math:`a, b \le c`, :math:`\alpha < 90^{\circ}`, :math:`\beta = \gamma = 90^{\circ}`.
+    """
+
+    def __init__(self, a: float, b: float, c: float, alpha: float) -> None:
+        if a > c:
+            a, c = c, a
+        if b > c:
+            b, c = c, b
+        if alpha > 90:
+            raise ValueError("alpha has to be < 90")
+        self.a = a
+        self.b = b
+        self.c = c
+        self.alpha = alpha
+        self.cell = None
+        self.make_conventional()
+        self.primitive = False
+        # Parameters
+        if self.variant in ["MCLC1", "MCLC2"]:
+            zeta = (2 - b * cos(alpha / 180 * pi) / c) / (
+                4 * sin(alpha / 180 * pi) ** 2
+            )
+            eta = 1 / 2 + 2 * zeta * c * cos(alpha / 180 * pi) / b
+            psi = 3 / 4 - a**2 / (4 * b**2 * sin(alpha / 180 * pi) ** 2)
+            phi = psi + (3 / 4 - psi) * b * cos(alpha / 180 * pi) / c
+        elif self.variant in ["MCLC3", "MCLC4"]:
+            mu = (1 + b**2 / a**2) / 4
+            delta = b * c * cos(alpha / 180 * pi) / (2 * a**2)
+            zeta = (
+                mu
+                - 1 / 4
+                + (1 - b * cos(alpha / 180 * pi) / c) / (4 * sin(alpha / 180 * pi) ** 2)
+            )
+            eta = 1 / 2 + 2 * zeta * c * cos(alpha / 180 * pi) / b
+            phi = 1 + zeta - 2 * mu
+            psi = eta - 2 * delta
+        elif self.variant == "MCLC5":
+            zeta = (
+                b**2 / a**2
+                + (1 - b * cos(alpha / 180 * pi) / c) / sin(alpha / 180 * pi) ** 2
+            ) / 4
+            eta = 1 / 2 + 2 * zeta * c * cos(alpha / 180 * pi) / b
+            mu = (
+                eta / 2
+                + b**2 / (4 * a**2)
+                - b * c * cos(alpha / 180 * pi) / (2 * a**2)
+            )
+            nu = 2 * mu - zeta
+            rho = 1 - zeta * a**2 / b**2
+            omega = (
+                (4 * nu - 1 - b**2 * sin(alpha / 180 * pi) ** 2 / a**2)
+                * c
+                / (2 * b * cos(alpha / 180 * pi))
+            )
+            delta = zeta * c * cos(alpha / 180 * pi) / b + omega / 2 - 1 / 4
+
+        # Path
+        if self.variant == "MCLC1":
+            self.path = [
+                ["G", "Y", "F", "L", "I"],
+                ["I1", "Z", "F1"],
+                ["Y", "X1"],
+                ["X", "G", "N"],
+                ["M", "G"],
+            ]
+            self.points = {
+                "G": np.array([0, 0, 0]),
+                "N": np.array([1 / 2, 0, 0]),
+                "N1": np.array([0, -1 / 2, 0]),
+                "F": np.array([1 - zeta, 1 - zeta, 1 - eta]),
+                "F1": np.array([zeta, zeta, eta]),
+                "F2": np.array([-zeta, -zeta, 1 - eta]),
+                "I": np.array([phi, 1 - phi, 1 / 2]),
+                "I1": np.array([1 - phi, phi - 1, 1 / 2]),
+                "L": np.array([1 / 2, 1 / 2, 1 / 2]),
+                "M": np.array([1 / 2, 0, 1 / 2]),
+                "X": np.array([1 - psi, psi - 1, 0]),
+                "X1": np.array([psi, 1 - psi, 0]),
+                "X2": np.array([psi - 1, -psi, 0]),
+                "Y": np.array([1 / 2, 1 / 2, 0]),
+                "Y1": np.array([-1 / 2, -1 / 2, 0]),
+                "Z": np.array([0, 0, 1 / 2]),
+            }
+        elif self.variant == "MCLC2":
+            self.path = [["G", "Y", "F", "L", "I"], ["I1", "Z", "F1"], ["N", "G", "M"]]
+            self.points = {
+                "G": np.array([0, 0, 0]),
+                "N": np.array([1 / 2, 0, 0]),
+                "N1": np.array([0, -1 / 2, 0]),
+                "F": np.array([1 - zeta, 1 - zeta, 1 - eta]),
+                "F1": np.array([zeta, zeta, eta]),
+                "F2": np.array([-zeta, -zeta, 1 - eta]),
+                "F3": np.array([1 - zeta, -zeta, 1 - eta]),
+                "I": np.array([phi, 1 - phi, 1 / 2]),
+                "I1": np.array([1 - phi, phi - 1, 1 / 2]),
+                "L": np.array([1 / 2, 1 / 2, 1 / 2]),
+                "M": np.array([1 / 2, 0, 1 / 2]),
+                "X": np.array([1 - psi, psi - 1, 0]),
+                "Y": np.array([1 / 2, 1 / 2, 0]),
+                "Y1": np.array([-1 / 2, -1 / 2, 0]),
+                "Z": np.array([0, 0, 1 / 2]),
+            }
+        elif self.variant == "MCLC3":
+            self.points = {
+                "G": np.array([0, 0, 0]),
+                "F": np.array([1 - phi, 1 - phi, 1 - psi]),
+                "F1": np.array([phi, phi - 1, psi]),
+                "F2": np.array([1 - phi, -phi, 1 - psi]),
+                "H": np.array([zeta, zeta, eta]),
+                "H1": np.array([1 - zeta, -zeta, 1 - eta]),
+                "H2": np.array([-zeta, -zeta, 1 - eta]),
+                "I": np.array([1 / 2, -1 / 2, 1 / 2]),
+                "M": np.array([1 / 2, 0, 1 / 2]),
+                "N": np.array([1 / 2, 0, 0]),
+                "N1": np.array([0, -1 / 2, 0]),
+                "X": np.array([1 / 2, -1 / 2, 0]),
+                "Y": np.array([mu, mu, delta]),
+                "Y1": np.array([1 - mu, -mu, -delta]),
+                "Y2": np.array([-mu, -mu, -delta]),
+                "Y3": np.array([mu, mu - 1, delta]),
+                "Z": np.array([0, 0, 1 / 2]),
+            }
+            self.path = [
+                ["G", "Y", "F", "H", "Z", "I", "F1"],
+                ["H1", "Y1", "X", "G", "N"],
+                ["M", "G"],
+            ]
+        elif self.variant == "MCLC4":
+            self.points = {
+                "G": np.array([0, 0, 0]),
+                "F": np.array([1 - phi, 1 - phi, 1 - psi]),
+                "H": np.array([zeta, zeta, eta]),
+                "H1": np.array([1 - zeta, -zeta, 1 - eta]),
+                "H2": np.array([-zeta, -zeta, 1 - eta]),
+                "I": np.array([1 / 2, -1 / 2, 1 / 2]),
+                "M": np.array([1 / 2, 0, 1 / 2]),
+                "N": np.array([1 / 2, 0, 0]),
+                "N1": np.array([0, -1 / 2, 0]),
+                "X": np.array([1 / 2, -1 / 2, 0]),
+                "Y": np.array([mu, mu, delta]),
+                "Y1": np.array([1 - mu, -mu, -delta]),
+                "Y2": np.array([-mu, -mu, -delta]),
+                "Y3": np.array([mu, mu - 1, delta]),
+                "Z": np.array([0, 0, 1 / 2]),
+            }
+            self.path = [
+                ["G", "Y", "F", "H", "Z", "I"],
+                ["H1", "Y1", "X", "G", "N"],
+                ["M", "G"],
+            ]
+        elif self.variant == "MCLC5":
+            self.path = [
+                ["G", "Y", "F", "L", "I"],
+                ["I1", "Z", "H", "F1"],
+                ["H1", "Y1", "X", "G", "N"],
+                ["M", "G"],
+            ]
+            self.points = {
+                "G": np.array([0, 0, 0]),
+                "F": np.array([nu, nu, omega]),
+                "F1": np.array([1 - nu, 1 - nu, 1 - omega]),
+                "F2": np.array([nu, nu - 1, omega]),
+                "H": np.array([zeta, zeta, eta]),
+                "H1": np.array([1 - zeta, -zeta, 1 - eta]),
+                "H2": np.array([-zeta, -zeta, 1 - eta]),
+                "I": np.array([rho, 1 - rho, 1 / 2]),
+                "I1": np.array([1 - rho, rho - 1, 1 / 2]),
+                "L": np.array([1 / 2, 1 / 2, 1 / 2]),
+                "M": np.array([1 / 2, 0, 1 / 2]),
+                "N": np.array([1 / 2, 0, 0]),
+                "N1": np.array([0, -1 / 2, 0]),
+                "X": np.array([1 / 2, -1 / 2, 0]),
+                "Y": np.array([mu, mu, delta]),
+                "Y1": np.array([1 - mu, -mu, -delta]),
+                "Y2": np.array([-mu, -mu, -delta]),
+                "Y3": np.array([mu, mu - 1, delta]),
+                "Z": np.array([0, 0, 1 / 2]),
+            }
+
+    def make_conventional(self):
+        self.cell = np.array(
+            [
+                [self.a, 0, 0],
+                [0, self.b, 0],
+                [
+                    0,
+                    self.c * cos(self.alpha / 180 * pi),
+                    self.c * sin(self.alpha / 180 * pi),
+                ],
+            ]
+        )
+        self.primitive = False
+
+    def make_primitive(self):
+        self.cell = np.array(
+            [
+                [self.a / 2, self.b / 2, 0],
+                [-self.a / 2, self.b / 2, 0],
+                [
+                    0,
+                    self.c * cos(self.alpha / 180 * pi),
+                    self.c * sin(self.alpha / 180 * pi),
+                ],
+            ]
+        )
+        self.primitive = True
+
+    @property
+    def variant(self):
+        r"""
+        Five variant of the Lattice.
+
+        :math:`\text{MCLC}_1: k_{\gamma} > 90^{\circ}`,
+        :math:`\text{MCLC}_2: k_{\gamma} = 90^{\circ}`,
+        :math:`\text{MCLC}_3: k_{\gamma} < 90^{\circ}, \dfrac{b\cos(\alpha)}{c} + \dfrac{b^2\sin(\alpha)^2}{a^2} < 1`
+        :math:`\text{MCLC}_4: k_{\gamma} < 90^{\circ}, \dfrac{b\cos(\alpha)}{c} + \dfrac{b^2\sin(\alpha)^2}{a^2} = 1`
+        :math:`\text{MCLC}_5: k_{\gamma} < 90^{\circ}, \dfrac{b\cos(\alpha)}{c} + \dfrac{b^2\sin(\alpha)^2}{a^2} > 1`
+        """
+
+        if abs(self.k_gamma - 90) < 10e-5:
+            return "MCLC2"
+        elif self.k_gamma > 90:
+            return "MCLC1"
+        # TODO think about the ccriteria of accuracy
+        elif self.k_gamma < 90:
+            if (
+                abs(
+                    self.b * cos(self.alpha / 180 * pi) / self.c
+                    + self.b**2 * sin(self.alpha / 180 * pi) ** 2 / self.a**2
+                    - 1
+                )
+                < 10e-8
+            ):
+                return "MCLC4"
+            elif (
+                self.b * cos(self.alpha / 180 * pi) / self.c
+                + self.b**2 * sin(self.alpha / 180 * pi) ** 2 / self.a**2
+                < 1
+            ):
+                return "MCLC3"
+            elif (
+                self.b * cos(self.alpha / 180 * pi) / self.c
+                + self.b**2 * sin(self.alpha / 180 * pi) ** 2 / self.a**2
+                > 1
+            ):
+                return "MCLC5"
+
+
+# Examples
+cub = CUB(pi)
+fcc = FCC(pi)
+bcc = BCC(pi)
+tet = TET(pi, 2 * pi)
+bct1 = BCT(2 * pi, pi)
+bct2 = BCT(pi, 2 * pi)
+orc = ORC(pi, 2 * pi, 3 * pi)
+orcf1 = ORCF(0.9 * pi, 5 / 4 * pi, 5 / 3 * pi)
+orcf2 = ORCF(1.1 * pi, 5 / 4 * pi, 5 / 3 * pi)
+orcf3 = ORCF(pi, 5 / 4 * pi, 5 / 3 * pi)
+orci = ORCI(pi, 2 * pi, 3 * pi)
+orcc = ORCC(pi, 2 * pi, 3 * pi)
+hex = HEX(pi, 2 * pi)
+rhl1 = RHL(pi, 70)
+rhl2 = RHL(pi, 110)
+mcl = MCL(pi, 2 * pi, 3 * pi, alpha=80)
+mclc1 = MCLC(1 * pi, 1.5 * pi, 2 * pi, 80)
+mclc2 = MCLC(1.47721 * pi, 1.5 * pi, 2 * pi, 80)
+mclc3 = MCLC(pi, pi / 2, pi, 80)
+mclc4 = MCLC(1.06486355 * pi, pi, 1.2 * pi, 80)
+mclc5 = MCLC(pi, pi, pi, 60)
+examples = [
+    cub,
+    fcc,
+    bcc,
+    tet,
+    bct1,
+    bct2,
+    orc,
+    orcf1,
+    orcf2,
+    orcf3,
+    orci,
+    orcc,
+    hex,
+    rhl1,
+    rhl2,
+    mcl,
+    mclc1,
+    mclc2,
+    mclc3,
+    mclc4,
+    mclc5,
+]
+
 if __name__ == "__main__":
     from math import pi
 
-    focal_length = 0.2
+    print(
+        f"BCT1 {bct1.variant}",
+        f"BCT2 {bct2.variant}",
+        f"ORCF1 {orcf1.variant}",
+        f"ORCF2 {orcf2.variant}",
+        f"ORCF3 {orcf3.variant}",
+        f"RHL1 {rhl1.variant}",
+        f"RHL2 {rhl2.variant}",
+        f"MCLC1 {mclc1.variant}",
+        f"MCLC2 {mclc2.variant}",
+        f"MCLC3 {mclc3.variant}",
+        f"MCLC4 {mclc4.variant}",
+        f"MCLC5 {mclc5.variant}",
+        sep="\n",
+    )
 
-    l = BCT(pi, 2 * pi)
-    l.pepare_figure()
-    l.plot(kind="primitive")
-    l.plot(kind="kpath")
-    l.plot(kind="brillouin_kpath")
-    l.show()
-    l.plot(kind="primitive")
+    for e in examples:
+        l = e
+        print(l.variant)
+        l.prepare_figure()
+        l.plot("brillouin_kpath")
+        l.show()
