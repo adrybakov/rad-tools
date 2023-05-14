@@ -1,6 +1,7 @@
 r"""14 Bravais lattice"""
 
 from math import sqrt, sin, cos, tan, pi
+from typing import Iterable
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -374,37 +375,53 @@ class Lattice:
         plt.show()
         del self._fig
         del self._ax
+        plt.close()
+
+    def savefig(self, output_name="graph.png", elev=30, azim=-60, **kwargs):
+        self._ax.set_aspect("equal")
+        self._ax.view_init(elev=elev, azim=azim)
+        self._fig.savefig(output_name, **kwargs)
 
     def legend(self, **kwargs):
         self._ax.legend(**kwargs)
 
-    def plot_real_space(self, ax, vectors=True, colour=BLUE, label=None):
+    def plot_real_space(
+        self, ax, vectors=True, colour=BLUE, label=None, vector_pad=1.1
+    ):
         if label is not None:
             ax.scatter(0, 0, 0, color=colour, label=label)
         if vectors:
+            if not isinstance(vector_pad, Iterable):
+                vector_pad = [vector_pad, vector_pad, vector_pad]
             ax.text(
-                self.cell[0][0] * 1.1,
-                self.cell[0][1],
-                self.cell[0][2],
+                self.cell[0][0] * vector_pad[0],
+                self.cell[0][1] * vector_pad[0],
+                self.cell[0][2] * vector_pad[0],
                 "$a_1$",
                 fontsize=20,
                 color=colour,
+                ha="center",
+                va="center",
             )
             ax.text(
-                self.cell[1][0],
-                self.cell[1][1] * 1.1,
-                self.cell[1][2],
+                self.cell[1][0] * vector_pad[2],
+                self.cell[1][1] * vector_pad[2],
+                self.cell[1][2] * vector_pad[2],
                 "$a_2$",
                 fontsize=20,
                 color=colour,
+                ha="center",
+                va="center",
             )
             ax.text(
-                self.cell[2][0],
-                self.cell[2][1],
-                self.cell[2][2] * 1.1,
+                self.cell[2][0] * vector_pad[2],
+                self.cell[2][1] * vector_pad[2],
+                self.cell[2][2] * vector_pad[2],
                 "$a_3$",
                 fontsize=20,
                 color=colour,
+                ha="center",
+                va="center",
             )
             for i in self.cell:
                 ax.quiver(
@@ -435,35 +452,45 @@ class Lattice:
             plot_line(self.cell[i], self.cell[k])
             plot_line(self.cell[i], self.cell[j] + self.cell[k])
 
-    def plot_reciprocal_space(self, ax, vectors=True, colour=RED, label=None):
+    def plot_reciprocal_space(
+        self, ax, vectors=True, colour=RED, label=None, vector_pad=1.1
+    ):
         if label is not None:
             ax.scatter(0, 0, 0, color=colour, label=label)
         planes, edges, corners = deduct_zone([self.b1, self.b2, self.b3])
 
         if vectors:
+            if not isinstance(vector_pad, Iterable):
+                vector_pad = [vector_pad, vector_pad, vector_pad]
             ax.text(
-                self.b1[0] * 1.1,
-                self.b1[1],
-                self.b1[2],
+                self.b1[0] * vector_pad[0],
+                self.b1[1] * vector_pad[0],
+                self.b1[2] * vector_pad[0],
                 "$b_1$",
                 fontsize=20,
                 color=colour,
+                ha="center",
+                va="center",
             )
             ax.text(
-                self.b2[0],
-                self.b2[1] * 1.1,
-                self.b2[2],
+                self.b2[0] * vector_pad[1],
+                self.b2[1] * vector_pad[1],
+                self.b2[2] * vector_pad[1],
                 "$b_2$",
                 fontsize=20,
                 color=colour,
+                ha="center",
+                va="center",
             )
             ax.text(
-                self.b3[0],
-                self.b3[1],
-                self.b3[2] * 1.1,
+                self.b3[0] * vector_pad[2],
+                self.b3[1] * vector_pad[2],
+                self.b3[2] * vector_pad[2],
                 "$b_3$",
                 fontsize=20,
                 color=colour,
+                ha="center",
+                va="center",
             )
             for i in [self.b1, self.b2, self.b3]:
                 ax.quiver(
@@ -565,7 +592,9 @@ class Lattice:
         self.plot_brillouin(ax, colour=zone_colour, **kwargs)
         self.plot_kpath(ax, colour=path_colour, **kwargs)
 
-    def plot_wigner_seitz(self, ax, vectors=True, colour="black", label=None):
+    def plot_wigner_seitz(
+        self, ax, vectors=True, colour="black", label=None, vector_pad=1.1
+    ):
         reverse = False
         if not self.primitive:
             self.make_primitive()
@@ -575,29 +604,37 @@ class Lattice:
         if label is not None:
             ax.scatter(0, 0, 0, color=colour, label=label)
         if vectors:
+            if not isinstance(vector_pad, Iterable):
+                vector_pad = [vector_pad, vector_pad, vector_pad]
             ax.text(
-                self.a1[0] * 1.1,
-                self.a1[1],
-                self.a1[2],
+                self.a1[0] * vector_pad[0],
+                self.a1[1] * vector_pad[0],
+                self.a1[2] * vector_pad[0],
                 "$a_1$",
                 fontsize=20,
                 color=colour,
+                ha="center",
+                va="center",
             )
             ax.text(
-                self.a2[0],
-                self.a2[1] * 1.1,
-                self.a2[2],
+                self.a2[0] * vector_pad[1],
+                self.a2[1] * vector_pad[1],
+                self.a2[2] * vector_pad[1],
                 "$a_2$",
                 fontsize=20,
                 color=colour,
+                ha="center",
+                va="center",
             )
             ax.text(
-                self.a3[0],
-                self.a3[1],
-                self.a3[2] * 1.1,
+                self.a3[0] * vector_pad[2],
+                self.a3[1] * vector_pad[2],
+                self.a3[2] * vector_pad[2],
                 "$a_3$",
                 fontsize=20,
                 color=colour,
+                ha="center",
+                va="center",
             )
             for i in [self.a1, self.a2, self.a3]:
                 ax.quiver(
@@ -1586,8 +1623,12 @@ if __name__ == "__main__":
     )
 
     for e in examples:
-        l = e
+        l = orc
         print(l.variant)
-        l.prepare_figure()
-        l.plot("brillouin_kpath")
-        l.show()
+        l.prepare_figure(focal_length=0.9)
+        l.plot("brillouin", label="brillouin zone", vector_pad=1.3)
+        l.plot("wigner_seitz", label="wigner_seitz", vector_pad=1.2)
+        l.plot("conventional", label="conventional", vector_pad=1.2)
+        l.legend()
+        l.savefig(dpi=400, azim=-20, elev=20)
+        break
