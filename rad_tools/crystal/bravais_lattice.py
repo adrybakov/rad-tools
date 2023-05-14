@@ -234,6 +234,7 @@ class Lattice:
 
     @property
     def reciprocal_cell(self):
+        # TODO Rethink the issue with the primitive-non primitive
         reverse = False
         if not self.primitive:
             self.make_primitive()
@@ -1557,6 +1558,107 @@ class MCLC(Lattice):
                 return "MCLC5"
 
 
+# 14
+class TRI(Lattice):
+    r"""Triclinic (TRI, aP)"""
+
+    def __init__(
+        self, a: float, b: float, c: float, alpha: float, beta: float, gamma: float
+    ) -> None:
+        self.a = a
+        self.b = b
+        self.c = c
+        self.alpha = alpha
+        self.beta = beta
+        self.gamma = gamma
+        self.cell = np.array(
+            [
+                [a, 0, 0],
+                [b * cos(gamma / 180 * pi), b * sin(gamma / 180 * pi), 0],
+                [
+                    c * cos(beta / 180 * pi),
+                    c
+                    / sin(gamma / 180 * pi)
+                    * (
+                        cos(alpha / 180 * pi)
+                        - cos(beta / 180 * pi) * cos(gamma / 180 * pi)
+                    ),
+                    c
+                    / sin(gamma / 180 * pi)
+                    * sqrt(
+                        sin(gamma / 180 * pi) ** 2
+                        - cos(alpha / 180 * pi) ** 2
+                        - cos(beta / 180 * pi) ** 2
+                        + 2
+                        * cos(alpha / 180 * pi)
+                        * cos(beta / 180 * pi)
+                        * cos(gamma / 180 * pi)
+                    ),
+                ],
+            ]
+        )
+        self.primitive = True
+        if self.variant in ["TRI1a", "TRI1b"]:
+            self.points = {
+                "G": np.array([0, 0, 0]),
+                "L": np.array([1 / 2, 1 / 2, 0]),
+                "M": np.array([0, 1 / 2, 1 / 2]),
+                "N": np.array([1 / 2, 0, 1 / 2]),
+                "R": np.array([1 / 2, 1 / 2, 1 / 2]),
+                "X": np.array([1 / 2, 0, 0]),
+                "Y": np.array([0, 1 / 2, 0]),
+                "Z": np.array([0, 0, 1 / 2]),
+            }
+
+            self.path = [
+                ["X", "G", "Y"],
+                ["L", "G", "Z"],
+                ["N", "G", "M"],
+                "R",
+                "G",
+            ]
+        elif self.variant in ["TRI2a", "TRI2b"]:
+            self.points = {
+                "G": np.array([0, 0, 0]),
+                "L": np.array([1 / 2, 1 / 2, 0]),
+                "M": np.array([0, 1 / 2, 1 / 2]),
+                "N": np.array([1 / 2, 0, 1 / 2]),
+                "R": np.array([1 / 2, 1 / 2, 1 / 2]),
+                "X": np.array([1 / 2, 0, 0]),
+                "Y": np.array([0, 1 / 2, 0]),
+                "Z": np.array([0, 0, 1 / 2]),
+            }
+
+            self.path = [
+                ["X", "G", "Y"],
+                ["L", "G", "Z"],
+                ["N", "G", "M"],
+                "R",
+                "G",
+            ]
+
+    @property
+    def variant(self):
+        r"""
+        Four variants of the Lattice.
+
+
+        :math:`\text{TRI}_{1a} k_{\alpha} > 90^{\circ}, k_{\beta} > 90^{\circ}, k_{\gamma} > 90^{\circ}, k_{\gamma} = \min(k_{\alpha}, k_{\beta}, k_{\gamma})`
+        :math:`\text{TRI}_{1b} k_{\alpha} < 90^{\circ}, k_{\beta} < 90^{\circ}, k_{\gamma} < 90^{\circ}, k_{\gamma} = \max(k_{\alpha}, k_{\beta}, k_{\gamma})`
+        :math:`\text{TRI}_{2a} k_{\alpha} > 90^{\circ}, k_{\beta} > 90^{\circ}, k_{\gamma} = 90^{\circ}`
+        :math:`\text{TRI}_{2b} k_{\alpha} < 90^{\circ}, k_{\beta} < 90^{\circ}, k_{\gamma} = 90^{\circ}`
+        """
+        if abs(self.k_gamma - 90) < 10e-5:
+            if self.k_alpha > 90 and self.k_beta > 90:
+                return "TRI2a"
+            elif self.k_alpha < 90 and self.k_beta < 90:
+                return "TRI2b"
+        elif (min(self.k_gamma, self.k_beta, self.k_alpha)) > 90:
+            return "TRI1a"
+        elif (max(self.k_gamma, self.k_beta, self.k_alpha)) < 90:
+            return "TRI1a"
+
+
 # Examples
 cub = CUB(pi)
 fcc = FCC(pi)
@@ -1579,6 +1681,10 @@ mclc2 = MCLC(1.47721 * pi, 1.5 * pi, 2 * pi, 80)
 mclc3 = MCLC(pi, pi / 2, pi, 80)
 mclc4 = MCLC(1.06486355 * pi, pi, 1.2 * pi, 80)
 mclc5 = MCLC(pi, pi, pi, 60)
+tri1a = TRI(2 * pi, 3 * pi, 4 * pi, 60, 70, 80)
+tri1b = TRI(pi, 2 * pi, 3 * pi, 100, 70, 65)
+tri2a = TRI(pi, 2 * pi, 3 * pi, 100, 70, 65)
+tri2b = TRI(pi, 2 * pi, 3 * pi, 100, 70, 65)
 examples = [
     cub,
     fcc,
@@ -1601,6 +1707,10 @@ examples = [
     mclc3,
     mclc4,
     mclc5,
+    tri1a,
+    tri1b,
+    tri2a,
+    tri2b,
 ]
 
 if __name__ == "__main__":
@@ -1619,16 +1729,20 @@ if __name__ == "__main__":
         f"MCLC3 {mclc3.variant}",
         f"MCLC4 {mclc4.variant}",
         f"MCLC5 {mclc5.variant}",
+        f"TRI1a {tri1a.variant}",
+        f"TRI1b {tri1b.variant}",
+        f"TRI2a {tri2a.variant}",
+        f"TRI2b {tri2b.variant}",
         sep="\n",
     )
 
     for e in examples:
-        l = orc
+        l = tri1a
         print(l.variant)
-        l.prepare_figure(focal_length=0.9)
-        l.plot("brillouin", label="brillouin zone", vector_pad=1.3)
-        l.plot("wigner_seitz", label="wigner_seitz", vector_pad=1.2)
-        l.plot("conventional", label="conventional", vector_pad=1.2)
-        l.legend()
-        l.savefig(dpi=400, azim=-20, elev=20)
+        l.prepare_figure()
+        l.plot("brillouin_kpath")
+        l.show()
         break
+
+
+# TODO FIX TRI Lattice
