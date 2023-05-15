@@ -25,8 +25,8 @@ class ExchangeModel:
     where double counting is present (:math:`ij` and :math:`ji` is in the sum).
     Spin vectors are **not** normalized.
 
-    However, it can be changed via :py:method:`.change_notation` method and
-    checked via :py:attribute:`.notation`.
+    However, it can be changed via :py:meth:`.change_notation` method and
+    checked via :py:attr:`.notation`.
 
     Attributes
     ----------
@@ -121,7 +121,7 @@ class ExchangeModel:
         It is not changing the J values,
         but rather telling how to interpret the J values of the model.
 
-        To **change** the notation of the model use :py:method:`.change_notation`.
+        To **change** the notation of the model use :py:meth:`.change_notation`.
         """
 
     def change_notation(
@@ -136,9 +136,9 @@ class ExchangeModel:
         Change the notation of the Hamiltonian.
 
         This method changes J values with respect to the ``new_notation``
-        and the notation of the model (use :py:property:`.notation` to check it).
+        and the notation of the model (use :py:attr:`.notation` to check it).
         In order to tell how to interpret J values (i.e. to set notation)
-        use :py:method:`.set_notation`.
+        use :py:meth:`.set_notation`.
 
         Parameters
         ----------

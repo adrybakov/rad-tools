@@ -106,6 +106,9 @@ html_theme_options = {
     "icon_links": [],  # pydata bugfix
 }
 
+# fix problem with autosummary and numpydoc:
+numpydoc_show_class_members = False
+
 
 # html_sidebars = {"**": ["search-field.html", "sidebar-nav-bs", "sidebar-ethical-ads"]}
 
@@ -160,6 +163,27 @@ custom_links = {
         "https://numpy.org/doc/stable/glossary.html#term-array_like",
     ),
     "termcolor": ("termcolor", "https://github.com/termcolor/termcolor"),
+    "PearsonSymbol": ("Pearson symbol", "https://en.wikipedia.org/wiki/Pearson_symbol"),
+    "matplotlibFocalLength": (
+        "3D plot projection types",
+        "https://matplotlib.org/stable/gallery/mplot3d/projections.html",
+    ),
+    "matplotlibSavefig": (
+        "plt.savefig()",
+        "https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html",
+    ),
+    "matplotlibViewInit": (
+        "view_init",
+        "https://matplotlib.org/stable/api/_as_gen/mpl_toolkits.mplot3d.axes3d.Axes3D.view_init.html",
+    ),
+    "matplotlibLegend": (
+        "legend()",
+        "https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html",
+    ),
+    "matplotlibColor": (
+        "matplotlib colors",
+        "https://matplotlib.org/stable/tutorials/colors/colors.html",
+    ),
 }
 
 

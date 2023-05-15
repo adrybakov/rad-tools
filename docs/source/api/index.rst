@@ -22,6 +22,7 @@ In the examples across the documentation it is expected to be imported in that w
 .. toctree:: 
    :maxdepth: 2
 
+   crystal
    dos
    exchange
    kpoints

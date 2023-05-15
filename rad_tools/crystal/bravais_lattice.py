@@ -193,6 +193,28 @@ def deduct_zone(
 
 
 class Lattice:
+    r"""
+    General Lattice.
+
+    Attributes
+    ----------
+    path : list
+        K-path.
+    kpoints : dist
+        Dictionary of the high symmetry points.
+        Coordinates are given in relative coordinates.
+
+        .. code-block:: python
+
+            kpoints = {"Name" : [k_x, k_y, k_z], ...}
+
+    pearson_symbol : str
+    crystal_family : str
+    centring_type : str
+    """
+
+    _pearson_symbol = None
+
     PLOT_NAMES = {
         "G": "$\\Gamma$",
         "M": "$M$",
@@ -246,20 +268,111 @@ class Lattice:
 
     def __init__(self, a1, a2, a3) -> None:
         self.cell = np.array([a1, a2, a3])
-        self.primitive = False
+        self.primitive_cell = None
         self.points = {}
-        self.path = []
+        self._path = None
+        self._default_path = None
+
+    @property
+    def path(self):
+        r"""
+        K-point path.
+
+        Manage default path for the predefined lattices and custom user-defined path.
+        """
+        if self._path is None and self._default_path is None:
+            return []
+        if self._path is None:
+            return self._default_path
+        return self._path
+
+    @property
+    def pearson_symbol(self):
+        r"""
+        Pearson symbol.
+
+        Returns
+        -------
+        pearson_symbol : str
+            Pearson symbol of the lattice.
+
+        Raises
+        ------
+        ValueError
+            If the type of the lattice is not defined.
+
+        Notes
+        -----
+        See: |PearsonSymbol|_
+        """
+
+        if self._pearson_symbol is not None:
+            return self._pearson_symbol
+        raise ValueError("Type of the lattice is not defined.")
+
+    @property
+    def crystal_family(self):
+        r"""
+        Crystal family.
+
+        Returns
+        -------
+        crystal_family : str
+            Crystal family of the lattice.
+
+        Raises
+        ------
+        ValueError
+            If the type of the lattice is not defined.
+
+        Notes
+        -----
+        See: |PearsonSymbol|_
+        """
+
+        return pearson_symbol[0]
+
+    @property
+    def centring_type(self):
+        r"""
+        Centring type.
+
+        Returns
+        -------
+        centring_type : str
+            Centring type of the lattice.
+
+        Raises
+        ------
+        ValueError
+            If the type of the lattice is not defined.
+
+        Notes
+        -----
+        See: |PearsonSymbol|_
+        """
+
+        return self.pearson_symbol[1]
 
     @property
     def a1(self):
+        r"""
+        First lattice vector :math:`\vec{a}_1`.
+        """
         return self.cell[0]
 
     @property
     def a2(self):
+        r"""
+        Second lattice vector :math:`\vec{a}_2`.
+        """
         return self.cell[1]
 
     @property
     def a3(self):
+        r"""
+        Third lattice vector :math:`\vec{a}_3`.
+        """
         return self.cell[2]
 
     @property
@@ -269,28 +382,69 @@ class Lattice:
 
         .. math::
 
-            V = \delta_{\vec{A}}\cdot(\delta_{\vec{B}}\times\delta_{\vec{C}})
+            V = \vec{a}_1\cdot(\vec{a}_2\times\vec{a}_3)
+        """
+
+        return np.dot(self.a1, np.cross(self.a2, self.a3))
+
+    @property
+    def prim_a1(self):
+        r"""
+        First lattice vector :math:`\vec{a}_1` of the primitive unit cell.
+        """
+        return self.primitive_cell[0]
+
+    @property
+    def prim_a2(self):
+        r"""
+        Second lattice vector :math:`\vec{a}_2` of the primitive unit cell.
+        """
+        return self.primitive_cell[1]
+
+    @property
+    def prim_a3(self):
+        r"""
+        Third lattice vector :math:`\vec{a}_3` of the primitive unit cell.
+        """
+        return self.primitive_cell[2]
+
+    @property
+    def primitive_unit_cell_volume(self):
+        r"""
+        Volume of the primitive unit cell.
+
+        .. math::
+
+            V = \vec{a}_1\cdot(\vec{a}_2\times\vec{a}_3)
         """
 
         return np.dot(self.a1, np.cross(self.a2, self.a3))
 
     @property
     def reciprocal_cell(self):
-        # TODO Rethink the issue with the primitive-non primitive
-        reverse = False
-        if not self.primitive:
+        r"""
+        Reciprocal cell. Always primitive.
+        """
+
+        if self.primitive_cell is None:
             self.make_primitive()
-            reverse = True
 
         result = np.array(
             [
-                2 * pi / self.unit_cell_volume * np.cross(self.a2, self.a3),
-                2 * pi / self.unit_cell_volume * np.cross(self.a3, self.a1),
-                2 * pi / self.unit_cell_volume * np.cross(self.a1, self.a2),
+                2
+                * pi
+                / self.primitive_unit_cell_volume
+                * np.cross(self.prim_a2, self.prim_a3),
+                2
+                * pi
+                / self.primitive_unit_cell_volume
+                * np.cross(self.prim_a3, self.prim_a1),
+                2
+                * pi
+                / self.primitive_unit_cell_volume
+                * np.cross(self.prim_a1, self.prim_a2),
             ]
         )
-        if reverse:
-            self.make_conventional()
         return result
 
     @property
@@ -300,9 +454,9 @@ class Lattice:
 
         .. math::
 
-            \vec{b}_1 = \frac{2\pi}{V}\vec{b}\times\vec{c}
+            \vec{b}_1 = \frac{2\pi}{V}\vec{a}_2\times\vec{a}_3
 
-        where :math:`V = \vec{a}\cdot\vec{b}\times\vec{c}`
+        where :math:`V = \vec{a}_1\cdot(\vec{a}_2\times\vec{a}_3)`
         """
 
         return self.reciprocal_cell[0]
@@ -314,9 +468,9 @@ class Lattice:
 
         .. math::
 
-            \vec{b}_2 = \frac{2\pi}{V}\vec{c}\times\vec{a}
+            \vec{b}_2 = \frac{2\pi}{V}\vec{a}_3\times\vec{a}_1
 
-        where :math:`V = \vec{a}\cdot\vec{b}\times\vec{c}`
+        where :math:`V = \vec{a}_1\cdot(\vec{a}_2\times\vec{a}_3)`
         """
 
         return self.reciprocal_cell[1]
@@ -328,55 +482,67 @@ class Lattice:
 
         .. math::
 
-            \vec{b}_3 = \frac{2\pi}{V}\vec{a}\times\vec{b}
+            \vec{b}_3 = \frac{2\pi}{V}\vec{a}_1\times\vec{a}_2
 
-        where :math:`V = \vec{a}\cdot\vec{b}\times\vec{c}`
+        where :math:`V = \vec{a}_1\cdot(\vec{a}_2\times\vec{a}_3)`
         """
 
         return self.reciprocal_cell[2]
 
     @property
     def k_alpha(self):
+        r"""
+        Angle between second and third reciprocal lattice vector.
+        """
+
         v1 = self.b2 / np.linalg.norm(self.b2)
         v2 = self.b3 / np.linalg.norm(self.b3)
         return np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0)) / pi * 180
 
     @property
     def k_beta(self):
+        r"""
+        Angle between first and third reciprocal lattice vector.
+        """
+
         v1 = self.b1 / np.linalg.norm(self.b1)
         v2 = self.b3 / np.linalg.norm(self.b3)
         return np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0)) / pi * 180
 
     @property
     def k_gamma(self):
+        r"""
+        Angle between first and second reciprocal lattice vector.
+        """
+
         v1 = self.b1 / np.linalg.norm(self.b1)
         v2 = self.b2 / np.linalg.norm(self.b2)
         return np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0)) / pi * 180
 
     def make_primitive(self):
         r"""
-        This method does nothing.
-        Conventional and primitive lattice are the same.
+        Computes primitive unit cell.
         """
-        pass
 
-    def make_conventional(self):
-        r"""
-        This method does nothing.
-        Conventional and primitive lattice are the same.
-        """
+        # TODO
         pass
 
     @property
     def variant(self):
-        r"""There is no variations of the Lattice"""
+        r"""There is no variations of the lattice"""
         return self.__class__.__name__
 
-    @property
-    def pearson_symbol(self):
-        raise NotImplementedError
-
     def prepare_figure(self, background=True, focal_length=0.2) -> None:
+        r"""
+        Prepare style of the figure for the plot.
+
+        Parameters
+        ----------
+        background : bool, default True
+            Whether to keep the axis on the plot.
+        focal_length : float, default 0.2
+            See: |matplotlibFocalLength|_
+        """
         self._fig = plt.figure(figsize=(6, 6))
         rcParams["axes.linewidth"] = 0
         rcParams["xtick.color"] = "#B3B3B3"
@@ -395,6 +561,43 @@ class Lattice:
             self._ax.axis("off")
 
     def plot(self, kind="conventional", **kwargs):
+        r"""
+        Main plotting function of the Lattice.
+
+        Parameters
+        ----------
+        kind : str
+            Type of the plot to be plotted. Supported plots:
+
+            * "conventional"
+            * "primitive"
+            * "brillouin"
+            * "kpath"
+            * "brillouin_kpath"
+            * "wigner_seitz"
+
+        **kwargs
+            Parameters to be passed to the plotting function.
+            See each function for the list of supported parameters.
+
+        Raises
+        ------
+        ValueError
+            If the plot kind is not supported.
+
+
+        See Also
+        --------
+        plot_conventional : "conventional" plot.
+        plot_primitive : "primitive" plot.
+        plot_brillouin : "brillouin" plot.
+        plot_kpath : "kpath" plot.
+        plot_brillouin_kpath : "brillouin_kpath" plot.
+        plot_wigner_seitz : "wigner_seitz" plot.
+        show : Shows the plot.
+        savefig : Save the figure in the file.
+
+        """
         if isinstance(kind, str):
             kinds = [kind]
         else:
@@ -414,6 +617,9 @@ class Lattice:
             raise ValueError(f"Plot kind '{kind}' does not exist!")
 
     def show(self):
+        r"""
+        Show the figure in the interactive matplotlib window.
+        """
         self._ax.set_aspect("equal")
         plt.show()
         del self._fig
@@ -421,25 +627,67 @@ class Lattice:
         plt.close()
 
     def savefig(self, output_name="graph.png", elev=30, azim=-60, **kwargs):
+        r"""
+        Save the figure in the file
+
+        Parameters
+        ----------
+        output_name : str
+            Name of the file to be saved.
+        elev : float, default 30
+            Passed directly to matplotlib. See |matplotlibViewInit|_.
+        azim : float, default -60
+            Passed directly to matplotlib. See |matplotlibViewInit|_.
+        **kwargs
+            Parameters to be passed to the |matplotlibSavefig|_.
+        """
+
         self._ax.set_aspect("equal")
         self._ax.view_init(elev=elev, azim=azim)
         self._fig.savefig(output_name, **kwargs)
 
     def legend(self, **kwargs):
+        r"""
+        Add legend to the figure.
+        Directly passed to the |matplotlibLegend|_.
+        """
+
         self._ax.legend(**kwargs)
 
     def plot_real_space(
-        self, ax, vectors=True, colour=BLUE, label=None, vector_pad=1.1
+        self, ax, vectors=True, colour=BLUE, label=None, vector_pad=1.1, primitive=False
     ):
+        r"""
+        Plot real space unit cell.
+
+        ax : axes
+            Axes for the plot. 3D.
+        vectors : bool, default True
+            Whether to plot lattice vectors.
+        colour : str, default "#274DD1"
+            Colour for the plot. Any format supported by matplotlib. See |matplotlibColor|_.
+        label : str, default None
+            Label for the plot.
+        vector_pad : float, default 1.1
+            Multiplier for the position of the vectors labels. 1 = position of the vector.
+        primitive : bool, default False
+            Whether to use primitive cell.
+        """
+
+        if primitive:
+            cell = self.primitive_cell
+        else:
+            cell = self.cell
+
         if label is not None:
             ax.scatter(0, 0, 0, color=colour, label=label)
         if vectors:
             if not isinstance(vector_pad, Iterable):
                 vector_pad = [vector_pad, vector_pad, vector_pad]
             ax.text(
-                self.cell[0][0] * vector_pad[0],
-                self.cell[0][1] * vector_pad[0],
-                self.cell[0][2] * vector_pad[0],
+                cell[0][0] * vector_pad[0],
+                cell[0][1] * vector_pad[0],
+                cell[0][2] * vector_pad[0],
                 "$a_1$",
                 fontsize=20,
                 color=colour,
@@ -447,9 +695,9 @@ class Lattice:
                 va="center",
             )
             ax.text(
-                self.cell[1][0] * vector_pad[2],
-                self.cell[1][1] * vector_pad[2],
-                self.cell[1][2] * vector_pad[2],
+                cell[1][0] * vector_pad[2],
+                cell[1][1] * vector_pad[2],
+                cell[1][2] * vector_pad[2],
                 "$a_2$",
                 fontsize=20,
                 color=colour,
@@ -457,16 +705,16 @@ class Lattice:
                 va="center",
             )
             ax.text(
-                self.cell[2][0] * vector_pad[2],
-                self.cell[2][1] * vector_pad[2],
-                self.cell[2][2] * vector_pad[2],
+                cell[2][0] * vector_pad[2],
+                cell[2][1] * vector_pad[2],
+                cell[2][2] * vector_pad[2],
                 "$a_3$",
                 fontsize=20,
                 color=colour,
                 ha="center",
                 va="center",
             )
-            for i in self.cell:
+            for i in cell:
                 ax.quiver(
                     0,
                     0,
@@ -490,14 +738,29 @@ class Lattice:
         for i in range(0, 3):
             j = (i + 1) % 3
             k = (i + 2) % 3
-            plot_line(self.cell[i], np.zeros(3))
-            plot_line(self.cell[i], self.cell[j])
-            plot_line(self.cell[i], self.cell[k])
-            plot_line(self.cell[i], self.cell[j] + self.cell[k])
+            plot_line(cell[i], np.zeros(3))
+            plot_line(cell[i], cell[j])
+            plot_line(cell[i], cell[k])
+            plot_line(cell[i], cell[j] + cell[k])
 
-    def plot_reciprocal_space(
-        self, ax, vectors=True, colour=RED, label=None, vector_pad=1.1
+    def plot_brillouin(
+        self, ax, vectors=True, colour="#FF4D67", label=None, vector_pad=1.1
     ):
+        r"""
+        Plot brillouin zone.
+
+        ax : axes
+            Axes for the plot. 3D.
+        vectors : bool, default True
+            Whether to plot reciprocal lattice vectors.
+        colour : str, default "#FF4D67"
+            Colour for the plot. Any format supported by matplotlib. See |matplotlibColor|_.
+        label : str, default None
+            Label for the plot.
+        vector_pad : float, default 1.1
+            Multiplier for the position of the vectors labels. 1 = position of the vector.
+        """
+
         if label is not None:
             ax.scatter(0, 0, 0, color=colour, label=label)
         planes, edges, corners = deduct_zone([self.b1, self.b2, self.b3])
@@ -555,38 +818,110 @@ class Lattice:
                 color=colour,
             )
 
+    def plot_wigner_seitz(
+        self, ax, vectors=True, colour="black", label=None, vector_pad=1.1
+    ):
+        r"""
+        Plot Wigner-Seitz unit cell.
+
+        ax : axes
+            Axes for the plot. 3D.
+        vectors : bool, default True
+            Whether to plot lattice vectors.
+        colour : str, default "black"
+            Colour for the plot. Any format supported by matplotlib. See |matplotlibColor|_.
+        label : str, default None
+            Label for the plot.
+        vector_pad : float, default 1.1
+            Multiplier for the position of the vectors labels. 1 = position of the vector.
+        """
+
+        a1, a2, a3 = self.prim_a1, self.prim_a2, self.prim_a3
+
+        planes, edges, corners = deduct_zone([a1, a2, a3])
+
+        if label is not None:
+            ax.scatter(0, 0, 0, color=colour, label=label)
+        if vectors:
+            if not isinstance(vector_pad, Iterable):
+                vector_pad = [vector_pad, vector_pad, vector_pad]
+            ax.text(
+                a1[0] * vector_pad[0],
+                a1[1] * vector_pad[0],
+                a1[2] * vector_pad[0],
+                "$a_1$",
+                fontsize=20,
+                color=colour,
+                ha="center",
+                va="center",
+            )
+            ax.text(
+                a2[0] * vector_pad[1],
+                a2[1] * vector_pad[1],
+                a2[2] * vector_pad[1],
+                "$a_2$",
+                fontsize=20,
+                color=colour,
+                ha="center",
+                va="center",
+            )
+            ax.text(
+                a3[0] * vector_pad[2],
+                a3[1] * vector_pad[2],
+                a3[2] * vector_pad[2],
+                "$a_3$",
+                fontsize=20,
+                color=colour,
+                ha="center",
+                va="center",
+            )
+            for i in [a1, a2, a3]:
+                ax.quiver(
+                    0, 0, 0, *tuple(i), arrow_length_ratio=0.2, color=colour, alpha=0.5
+                )
+                ax.scatter(*tuple(i), s=0)
+        for a, b in edges:
+            ax.plot(
+                [a[0], b[0]],
+                [a[1], b[1]],
+                [a[2], b[2]],
+                color=colour,
+            )
+
     def plot_conventional(self, ax, **kwargs):
-        reverse = False
-        if self.primitive:
-            self.make_conventional()
-            reverse = True
-        self.plot_real_space(ax, **kwargs)
-        if reverse:
-            self.make_primitive()
+        r"""
+        Plot conventional unit cell.
+
+        See Also
+        --------
+        plot_real_space : for the list of parameters
+        """
+
+        self.plot_real_space(ax, primitive=False, **kwargs)
 
     def plot_primitive(self, ax, **kwargs):
-        reverse = False
-        if not self.primitive:
-            self.make_primitive()
-            reverse = True
-        self.plot_real_space(ax, **kwargs)
-        if reverse:
-            self.make_conventional()
+        r"""
+        Plot primitive unit cell.
 
-    def plot_brillouin(self, ax, **kwargs):
-        reverse = False
-        if not self.primitive:
-            self.make_primitive()
-            reverse = True
-        self.plot_reciprocal_space(ax, **kwargs)
-        if reverse:
-            self.make_conventional()
+        See Also
+        --------
+        plot_real_space : for the list of parameters
+        """
+
+        self.plot_real_space(ax, primitive=True, **kwargs)
 
     def plot_kpath(self, ax, colour="black", label=None):
-        reverse = False
-        if not self.primitive:
-            self.make_primitive()
-            reverse = True
+        r"""
+        Plot k path in the reciprocal space.
+
+        ax : axes
+            Axes for the plot. 3D.
+        colour : str, default "black"
+            Colour for the plot. Any format supported by matplotlib. See |matplotlibColor|_.
+        label : str, default None
+            Label for the plot.
+        """
+
         for point in self.points:
             ax.scatter(
                 *tuple(self.points[point] @ self.reciprocal_cell),
@@ -606,7 +941,10 @@ class Lattice:
             )
         if label is not None:
             ax.scatter(
-                *tuple(self.points[point] @ self.reciprocal_cell),
+                0,
+                0,
+                0,
+                s=0,
                 color=colour,
                 label=label,
             )
@@ -628,72 +966,30 @@ class Lattice:
                     alpha=0.5,
                     linewidth=3,
                 )
-        if reverse:
-            self.make_conventional()
 
-    def plot_brillouin_kpath(self, ax, zone_colour=RED, path_colour="black", **kwargs):
+    def plot_brillouin_kpath(
+        self, ax, zone_colour="#FF4D67", path_colour="black", **kwargs
+    ):
+        r"""
+        Plot brillouin zone and kpath.
+
+        Parameters
+        ----------
+        ax : axes
+            Axes for the plot. 3D.
+        zone_colour : str, default "#FF4D67"
+            Colour for the brillouin zone. Any format supported by matplotlib. See |matplotlibColor|_.
+        zone_colour : str, default "black"
+            Colour for the k path. Any format supported by matplotlib. See |matplotlibColor|_.
+
+        See Also
+        --------
+        plot_reciprocal_space : plot brillouin zone
+        plot_kpath : plot k path
+        """
+
         self.plot_brillouin(ax, colour=zone_colour, **kwargs)
         self.plot_kpath(ax, colour=path_colour, **kwargs)
-
-    def plot_wigner_seitz(
-        self, ax, vectors=True, colour="black", label=None, vector_pad=1.1
-    ):
-        reverse = False
-        if not self.primitive:
-            self.make_primitive()
-            reverse = True
-        planes, edges, corners = deduct_zone([self.a1, self.a2, self.a3])
-
-        if label is not None:
-            ax.scatter(0, 0, 0, color=colour, label=label)
-        if vectors:
-            if not isinstance(vector_pad, Iterable):
-                vector_pad = [vector_pad, vector_pad, vector_pad]
-            ax.text(
-                self.a1[0] * vector_pad[0],
-                self.a1[1] * vector_pad[0],
-                self.a1[2] * vector_pad[0],
-                "$a_1$",
-                fontsize=20,
-                color=colour,
-                ha="center",
-                va="center",
-            )
-            ax.text(
-                self.a2[0] * vector_pad[1],
-                self.a2[1] * vector_pad[1],
-                self.a2[2] * vector_pad[1],
-                "$a_2$",
-                fontsize=20,
-                color=colour,
-                ha="center",
-                va="center",
-            )
-            ax.text(
-                self.a3[0] * vector_pad[2],
-                self.a3[1] * vector_pad[2],
-                self.a3[2] * vector_pad[2],
-                "$a_3$",
-                fontsize=20,
-                color=colour,
-                ha="center",
-                va="center",
-            )
-            for i in [self.a1, self.a2, self.a3]:
-                ax.quiver(
-                    0, 0, 0, *tuple(i), arrow_length_ratio=0.2, color=colour, alpha=0.5
-                )
-                ax.scatter(*tuple(i), s=0)
-        for a, b in edges:
-            ax.plot(
-                [a[0], b[0]],
-                [a[1], b[1]],
-                [a[2], b[2]],
-                color=colour,
-            )
-
-        if reverse:
-            self.make_conventional()
 
 
 # 1
@@ -701,42 +997,53 @@ class CUB(Lattice):
     r"""
     Cubic (CUB, cP)
 
+    Primitive and conventional lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (a, 0, 0)
+
+        \boldsymbol{a}_2 = (0, a, 0)
+
+        \boldsymbol{a}_3 = (0, 0, a)
+
     Parameters
     ----------
     a : float
         Length of the lattice vectors.
-        Primitive and conventional lattice:
 
-        .. math::
+    Attributes
+    ----------
+    a : float
+        Length of the lattice vectors.
 
-            \begin{bmatrix}
-                a & 0 & 0 \\
-                0 & a & 0 \\
-                0 & 0 & a
-            \end{bmatrix}
     """
+
+    _pearson_symbol = "cP"
 
     def __init__(self, a: float) -> None:
         self.a = a
         self.cell = np.diag([a, a, a])
-        self.primitive = True
+        self.primitive_cell = self.cell
         self.points = {
             "G": np.array([0, 0, 0]),
             "M": np.array([1 / 2, 1 / 2, 0]),
             "R": np.array([1 / 2, 1 / 2, 1 / 2]),
             "X": np.array([0, 1 / 2, 0]),
         }
-        self.path = [["G", "X", "M", "G", "R", "X"], ["M", "R"]]
+        self._default_path = [["G", "X", "M", "G", "R", "X"], ["M", "R"]]
 
 
 # 2
 class FCC(Lattice):
     r"""Face-centred cubic (FCC, cF)"""
 
+    _pearson_symbol = "cF"
+
     def __init__(self, a: float) -> None:
         self.a = a
         self.cell = np.diag([a, a, a])
-        self.primitive = False
+        self.primitive_cell = np.array([[0, a, a], [a, 0, a], [a, a, 0]]) / 2
         self.points = {
             "G": np.array([0, 0, 0]),
             "K": np.array([3 / 8, 3 / 8, 3 / 4]),
@@ -745,66 +1052,48 @@ class FCC(Lattice):
             "W": np.array([1 / 2, 1 / 4, 3 / 4]),
             "X": np.array([1 / 2, 0, 1 / 2]),
         }
-        self.path = [
+        self._default_path = [
             ["G", "X", "W", "K", "G", "L", "U", "W", "L", "K"],
             ["U", "X"],
         ]
 
-    def make_conventional(self):
-        self.cell = np.diag([self.a, self.a, self.a])
-        self.primitive = False
-
-    def make_primitive(self):
-        self.cell = (
-            np.array([[0, self.a, self.a], [self.a, 0, self.a], [self.a, self.a, 0]])
-            / 2
-        )
-        self.primitive = True
-
 
 # 3
 class BCC(Lattice):
-    r"""Body-centered cubic (BCC, cl)"""
+    r"""Body-centered cubic (BCC, cI)"""
+
+    _pearson_symbol = "cI"
 
     def __init__(self, a: float) -> None:
         self.a = a
         self.cell = np.diag([a, a, a])
-        self.primitive = False
+        self.primitive_cell = np.array(
+            [
+                [-a / 2, a / 2, a / 2],
+                [a / 2, -a / 2, a / 2],
+                [a / 2, a / 2, -a / 2],
+            ]
+        )
         self.points = {
             "G": np.array([0, 0, 0]),
             "H": np.array([1 / 2, -1 / 2, 1 / 2]),
             "P": np.array([1 / 4, 1 / 4, 1 / 4]),
             "N": np.array([0, 0, 1 / 2]),
         }
-        self.path = [["G", "H", "N", "G", "P", "H"], ["P", "N"]]
-
-    def make_conventional(self):
-        self.cell = np.diag([self.a, self.a, self.a])
-        self.primitive = False
-
-    def make_primitive(self):
-        self.cell = (
-            np.array(
-                [
-                    [-self.a, self.a, self.a],
-                    [self.a, -self.a, self.a],
-                    [self.a, self.a, -self.a],
-                ]
-            )
-            / 2
-        )
-        self.primitive = True
+        self._default_path = [["G", "H", "N", "G", "P", "H"], ["P", "N"]]
 
 
 # 4
 class TET(Lattice):
     r"""Tetragonal (TET, tP)"""
 
+    _pearson_symbol = "tP"
+
     def __init__(self, a: float, c: float) -> None:
         self.a = a
         self.c = c
         self.cell = np.diag([a, a, c])
-        self.primitive = True
+        self.primitive_cell = self.cell
         self.points = {
             "G": np.array([0, 0, 0]),
             "A": np.array([1 / 2, 1 / 2, 1 / 2]),
@@ -813,7 +1102,7 @@ class TET(Lattice):
             "X": np.array([0, 1 / 2, 0]),
             "Z": np.array([0, 0, 1 / 2]),
         }
-        self.path = [
+        self._default_path = [
             ["G", "X", "M", "G", "Z", "R", "A", "Z"],
             ["X", "R"],
             ["M", "A"],
@@ -824,6 +1113,8 @@ class TET(Lattice):
 class BCT(Lattice):
     r"""Body-centred tetragonal (BCT, tI)"""
 
+    _pearson_symbol = "tI"
+
     def __init__(self, a: float, c: float) -> None:
         self.PLOT_NAMES["S"] = "$\\Sigma$"
         self.PLOT_NAMES["S1"] = "$\\Sigma_1$"
@@ -832,7 +1123,13 @@ class BCT(Lattice):
         self.a = a
         self.c = c
         self.cell = np.diag([a, a, c])
-        self.primitive = False
+        self.primitive_cell = np.array(
+            [
+                [-a / 2, a / 2, c / 2],
+                [a / 2, -a / 2, c / 2],
+                [a / 2, a / 2, -c / 2],
+            ]
+        )
         if self.variant == "BCT1":
             eta = (1 + self.c**2 / self.a**2) / 4
             self.points = {
@@ -845,7 +1142,7 @@ class BCT(Lattice):
                 "Z1": np.array([-eta, 1 - eta, eta]),
             }
 
-            self.path = [
+            self._default_path = [
                 ["G", "X", "M", "G", "Z", "P", "N", "Z1", "M"],
                 ["X", "P"],
             ]
@@ -865,7 +1162,7 @@ class BCT(Lattice):
                 "Z": np.array([1 / 2, 1 / 2, -1 / 2]),
             }
 
-            self.path = [
+            self._default_path = [
                 [
                     "G",
                     "X",
@@ -881,23 +1178,6 @@ class BCT(Lattice):
                 ],
                 ["X", "P"],
             ]
-
-    def make_conventional(self):
-        self.cell = np.diag([self.a, self.a, self.c])
-        self.primitive = False
-
-    def make_primitive(self):
-        self.cell = (
-            np.array(
-                [
-                    [-self.a, self.a, self.c],
-                    [self.a, -self.a, self.c],
-                    [self.a, self.a, -self.c],
-                ]
-            )
-            / 2
-        )
-        self.primitive = True
 
     @property
     def variant(self):
@@ -920,6 +1200,8 @@ class ORC(Lattice):
     :math:`a < b < c`
     """
 
+    _pearson_symbol = "oP"
+
     def __init__(self, a: float, b: float, c: float) -> None:
         a, b, c = tuple(sorted([a, b, c]))
         if a == b == c:
@@ -933,7 +1215,7 @@ class ORC(Lattice):
         self.b = b
         self.c = c
         self.cell = np.diag([a, b, c])
-        self.primitive = True
+        self.primitive_cell = self.cell
         self.points = {
             "G": np.array([0, 0, 0]),
             "R": np.array([1 / 2, 1 / 2, 1 / 2]),
@@ -945,7 +1227,7 @@ class ORC(Lattice):
             "Z": np.array([0, 0, 1 / 2]),
         }
 
-        self.path = [
+        self._default_path = [
             ["G", "X", "S", "Y", "G", "Z", "U", "R", "T", "Z"],
             ["Y", "T"],
             ["U", "X"],
@@ -961,6 +1243,8 @@ class ORCF(Lattice):
     :math:`a < b < c`
     """
 
+    _pearson_symbol = "oF"
+
     def __init__(self, a: float, b: float, c: float) -> None:
         a, b, c = tuple(sorted([a, b, c]))
         if a == b == c:
@@ -973,7 +1257,13 @@ class ORCF(Lattice):
         self.b = b
         self.c = c
         self.cell = np.diag([a, b, c])
-        self.primitive = False
+        self.primitive_cell = np.array(
+            [
+                [0, b / 2, c / 2],
+                [a / 2, 0, c / 2],
+                [a / 2, b / 2, 0],
+            ]
+        )
         if self.variant == "ORCF1":
             eta = (1 + self.a**2 / self.b**2 + self.a**2 / self.c**2) / 4
             zeta = (1 + self.a**2 / self.b**2 - self.a**2 / self.c**2) / 4
@@ -989,7 +1279,7 @@ class ORCF(Lattice):
                 "Z": np.array([1 / 2, 1 / 2, 0]),
             }
 
-            self.path = [
+            self._default_path = [
                 ["G", "Y", "T", "Z", "G", "X", "A1", "Y"],
                 ["T", "X1"],
                 ["X", "A", "Z"],
@@ -1014,7 +1304,7 @@ class ORCF(Lattice):
                 "Z": np.array([1 / 2, 1 / 2, 0]),
             }
 
-            self.path = [
+            self._default_path = [
                 ["G", "Y", "C", "D", "X", "G", "Z", "D1", "H", "C"],
                 ["C1", "Z"],
                 ["X", "H1"],
@@ -1036,28 +1326,11 @@ class ORCF(Lattice):
                 "Z": np.array([1 / 2, 1 / 2, 0]),
             }
 
-            self.path = [
+            self._default_path = [
                 ["G", "Y", "T", "Z", "G", "X", "A1", "Y"],
                 ["X", "A", "Z"],
                 ["L", "G"],
             ]
-
-    def make_conventional(self):
-        self.cell = np.diag([self.a, self.b, self.c])
-        self.primitive = False
-
-    def make_primitive(self):
-        self.cell = (
-            np.array(
-                [
-                    [0, self.b, self.c],
-                    [self.a, 0, self.c],
-                    [self.a, self.b, 0],
-                ]
-            )
-            / 2
-        )
-        self.primitive = True
 
     @property
     def variant(self):
@@ -1084,6 +1357,8 @@ class ORCI(Lattice):
     :math:`a < b < c`
     """
 
+    _pearson_symbol = "oI"
+
     def __init__(self, a: float, b: float, c: float) -> None:
         a, b, c = tuple(sorted([a, b, c]))
         if a == b == c:
@@ -1096,7 +1371,13 @@ class ORCI(Lattice):
         self.b = b
         self.c = c
         self.cell = np.diag([a, b, c])
-        self.primitive = False
+        self.primitive_cell = np.array(
+            [
+                [-a / 2, b / 2, c / 2],
+                [a / 2, -b / 2, c / 2],
+                [a / 2, b / 2, -c / 2],
+            ]
+        )
         zeta = (1 + self.a**2 / self.c**2) / 4
         eta = (1 + self.b**2 / self.c**2) / 4
         delta = (self.b**2 - a**2) / (4 * self.c**2)
@@ -1118,28 +1399,11 @@ class ORCI(Lattice):
             "Z": np.array([1 / 2, 1 / 2, -1 / 2]),
         }
 
-        self.path = [
+        self._default_path = [
             ["G", "X", "L", "T", "W", "R", "X1", "Z", "G", "Y", "S", "W"],
             ["L1", "Y"],
             ["Y1", "Z"],
         ]
-
-    def make_conventional(self):
-        self.cell = np.diag([self.a, self.b, self.c])
-        self.primitive = False
-
-    def make_primitive(self):
-        self.cell = (
-            np.array(
-                [
-                    [-self.a, self.b, self.c],
-                    [self.a, -self.b, self.c],
-                    [self.a, self.b, -self.c],
-                ]
-            )
-            / 2
-        )
-        self.primitive = True
 
 
 # 9
@@ -1150,6 +1414,8 @@ class ORCC(Lattice):
     :math:`a < b`
     """
 
+    _pearson_symbol = "oS"
+
     def __init__(self, a: float, b: float, c: float) -> None:
         a, b, c = tuple(sorted([a, b, c]))
         if a == b == c:
@@ -1158,7 +1424,13 @@ class ORCC(Lattice):
         self.b = c
         self.c = b
         self.cell = np.diag([a, b, c])
-        self.primitive = False
+        self.primitive_cell = np.array(
+            [
+                [a / 2, -b / 2, 0],
+                [a / 2, b / 2, 0],
+                [0, 0, c],
+            ]
+        )
         zeta = (1 + self.a**2 / self.b**2) / 4
 
         self.points = {
@@ -1174,32 +1446,17 @@ class ORCC(Lattice):
             "Z": np.array([0, 0, 1 / 2]),
         }
 
-        self.path = [
+        self._default_path = [
             ["G", "X", "S", "R", "A", "Z", "G", "Y", "X1", "A1", "T", "Y"],
             ["Z", "T"],
         ]
-
-    def make_conventional(self):
-        self.cell = np.diag([self.a, self.b, self.c])
-        self.primitive = False
-
-    def make_primitive(self):
-        self.cell = (
-            np.array(
-                [
-                    [self.a, -self.b, 0],
-                    [self.a, self.b, 0],
-                    [0, 0, 2 * self.c],
-                ]
-            )
-            / 2
-        )
-        self.primitive = True
 
 
 # 10
 class HEX(Lattice):
     r"""Hexagonal (HEX, hP)"""
+
+    _pearson_symbol = "hP"
 
     def __init__(self, a: float, c: float) -> None:
         self.a = a
@@ -1207,7 +1464,7 @@ class HEX(Lattice):
         self.cell = np.array(
             [[a / 2, -a * sqrt(3) / 2, 0], [a / 2, a * sqrt(3) / 2, 0], [0, 0, c]]
         )
-        self.primitive = True
+        self.primitive_cell = self.cell
 
         self.points = {
             "G": np.array([0, 0, 0]),
@@ -1218,7 +1475,7 @@ class HEX(Lattice):
             "M": np.array([1 / 2, 0, 0]),
         }
 
-        self.path = [
+        self._default_path = [
             ["G", "M", "K", "G", "A", "L", "H", "A"],
             ["L", "M"],
             ["K", "H"],
@@ -1228,6 +1485,8 @@ class HEX(Lattice):
 # 11
 class RHL(Lattice):
     r"""Rhombohedral (RHL, hR)"""
+
+    _pearson_symbol = "hR"
 
     def __init__(self, a: float, alpha: float) -> None:
         if alpha == 90:
@@ -1250,7 +1509,7 @@ class RHL(Lattice):
                 ],
             ]
         )
-        self.primitive = True
+        self.primitive_cell = self.cell
         if self.variant == "RHL1":
             eta = (1 + 4 * cos(alpha / 180 * pi)) / (2 + 4 * cos(alpha / 180 * pi))
             nu = 3 / 4 - eta / 2
@@ -1270,7 +1529,7 @@ class RHL(Lattice):
                 "Z": np.array([1 / 2, 1 / 2, 1 / 2]),
             }
 
-            self.path = [
+            self._default_path = [
                 ["G", "L", "B1"],
                 ["B", "Z", "G", "X"],
                 ["Q", "F", "P1", "Z"],
@@ -1291,7 +1550,7 @@ class RHL(Lattice):
                 "Z": np.array([1 / 2, -1 / 2, 1 / 2]),
             }
 
-            self.path = [["G", "P", "Z", "Q", "G", "F", "P1", "Q1", "L", "Z"]]
+            self._default_path = [["G", "P", "Z", "Q", "G", "F", "P1", "Q1", "L", "Z"]]
 
     @property
     def variant(self):
@@ -1315,6 +1574,8 @@ class MCL(Lattice):
     :math:`a, b \le c`, :math:`\alpha < 90^{\circ}`, :math:`\beta = \gamma = 90^{\circ}`.
     """
 
+    _pearson_symbol = "mP"
+
     def __init__(self, a: float, b: float, c: float, alpha: float) -> None:
         a, b, c = tuple(sorted([a, b, c]))
         if alpha > 90:
@@ -1325,12 +1586,12 @@ class MCL(Lattice):
         self.alpha = alpha
         self.cell = np.array(
             [
-                [self.a, 0, 0],
-                [0, self.b, 0],
-                [0, c * cos(self.alpha / 180 * pi), c * sin(self.alpha / 180 * pi)],
+                [a, 0, 0],
+                [0, b, 0],
+                [0, c * cos(alpha / 180 * pi), c * sin(alpha / 180 * pi)],
             ]
         )
-        self.primitive = True
+        self.primitive_cell = self.cell
 
         eta = (1 - self.b * cos(self.alpha / 180 * pi) / self.c) / (
             2 * sin(self.alpha / 180 * pi) ** 2
@@ -1356,7 +1617,7 @@ class MCL(Lattice):
             "Z": np.array([1 / 2, 0, 0]),
         }
 
-        self.path = [
+        self._default_path = [
             ["G", "Y", "H", "C", "E", "M1", "A", "X", "H1"],
             ["M", "D", "Z"],
             ["Y", "D"],
@@ -1371,6 +1632,8 @@ class MCLC(Lattice):
     :math:`a, b \le c`, :math:`\alpha < 90^{\circ}`, :math:`\beta = \gamma = 90^{\circ}`.
     """
 
+    _pearson_symbol = "mS"
+
     def __init__(self, a: float, b: float, c: float, alpha: float) -> None:
         if a > c:
             a, c = c, a
@@ -1382,9 +1645,28 @@ class MCLC(Lattice):
         self.b = b
         self.c = c
         self.alpha = alpha
-        self.cell = None
-        self.make_conventional()
-        self.primitive = False
+        self.cell = np.array(
+            [
+                [a, 0, 0],
+                [0, b, 0],
+                [
+                    0,
+                    c * cos(alpha / 180 * pi),
+                    c * sin(alpha / 180 * pi),
+                ],
+            ]
+        )
+        self.primitive_cell = np.array(
+            [
+                [a / 2, b / 2, 0],
+                [-a / 2, b / 2, 0],
+                [
+                    0,
+                    c * cos(alpha / 180 * pi),
+                    c * sin(alpha / 180 * pi),
+                ],
+            ]
+        )
         # Parameters
         if self.variant in ["MCLC1", "MCLC2"]:
             zeta = (2 - b * cos(alpha / 180 * pi) / c) / (
@@ -1426,7 +1708,7 @@ class MCLC(Lattice):
 
         # Path
         if self.variant == "MCLC1":
-            self.path = [
+            self._default_path = [
                 ["G", "Y", "F", "L", "I"],
                 ["I1", "Z", "F1"],
                 ["Y", "X1"],
@@ -1452,7 +1734,11 @@ class MCLC(Lattice):
                 "Z": np.array([0, 0, 1 / 2]),
             }
         elif self.variant == "MCLC2":
-            self.path = [["G", "Y", "F", "L", "I"], ["I1", "Z", "F1"], ["N", "G", "M"]]
+            self._default_path = [
+                ["G", "Y", "F", "L", "I"],
+                ["I1", "Z", "F1"],
+                ["N", "G", "M"],
+            ]
             self.points = {
                 "G": np.array([0, 0, 0]),
                 "N": np.array([1 / 2, 0, 0]),
@@ -1490,7 +1776,7 @@ class MCLC(Lattice):
                 "Y3": np.array([mu, mu - 1, delta]),
                 "Z": np.array([0, 0, 1 / 2]),
             }
-            self.path = [
+            self._default_path = [
                 ["G", "Y", "F", "H", "Z", "I", "F1"],
                 ["H1", "Y1", "X", "G", "N"],
                 ["M", "G"],
@@ -1513,13 +1799,13 @@ class MCLC(Lattice):
                 "Y3": np.array([mu, mu - 1, delta]),
                 "Z": np.array([0, 0, 1 / 2]),
             }
-            self.path = [
+            self._default_path = [
                 ["G", "Y", "F", "H", "Z", "I"],
                 ["H1", "Y1", "X", "G", "N"],
                 ["M", "G"],
             ]
         elif self.variant == "MCLC5":
-            self.path = [
+            self._default_path = [
                 ["G", "Y", "F", "L", "I"],
                 ["I1", "Z", "H", "F1"],
                 ["H1", "Y1", "X", "G", "N"],
@@ -1546,34 +1832,6 @@ class MCLC(Lattice):
                 "Y3": np.array([mu, mu - 1, delta]),
                 "Z": np.array([0, 0, 1 / 2]),
             }
-
-    def make_conventional(self):
-        self.cell = np.array(
-            [
-                [self.a, 0, 0],
-                [0, self.b, 0],
-                [
-                    0,
-                    self.c * cos(self.alpha / 180 * pi),
-                    self.c * sin(self.alpha / 180 * pi),
-                ],
-            ]
-        )
-        self.primitive = False
-
-    def make_primitive(self):
-        self.cell = np.array(
-            [
-                [self.a / 2, self.b / 2, 0],
-                [-self.a / 2, self.b / 2, 0],
-                [
-                    0,
-                    self.c * cos(self.alpha / 180 * pi),
-                    self.c * sin(self.alpha / 180 * pi),
-                ],
-            ]
-        )
-        self.primitive = True
 
     @property
     def variant(self):
@@ -1620,6 +1878,8 @@ class MCLC(Lattice):
 class TRI(Lattice):
     r"""Triclinic (TRI, aP)"""
 
+    _pearson_symbol = "aP"
+
     def __init__(
         self, a: float, b: float, c: float, alpha: float, beta: float, gamma: float
     ) -> None:
@@ -1655,7 +1915,7 @@ class TRI(Lattice):
                 ],
             ]
         )
-        self.primitive = True
+        self.primitive_cell = self.cell
         if self.variant in ["TRI1a", "TRI1b"]:
             self.points = {
                 "G": np.array([0, 0, 0]),
@@ -1668,7 +1928,7 @@ class TRI(Lattice):
                 "Z": np.array([0, 0, 1 / 2]),
             }
 
-            self.path = [
+            self._default_path = [
                 ["X", "G", "Y"],
                 ["L", "G", "Z"],
                 ["N", "G", "M"],
@@ -1687,7 +1947,7 @@ class TRI(Lattice):
                 "Z": np.array([0, 0, 1 / 2]),
             }
 
-            self.path = [
+            self._default_path = [
                 ["X", "G", "Y"],
                 ["L", "G", "Z"],
                 ["N", "G", "M"],
