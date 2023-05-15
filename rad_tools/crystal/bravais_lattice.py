@@ -7,9 +7,51 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
-__all__ = ["BravaisLattice", "CUB"]
+__all__ = [
+    "Lattice",
+    "CUB",
+    "FCC",
+    "BCC",
+    "TET",
+    "BCT",
+    "ORC",
+    "ORCF",
+    "ORCI",
+    "ORCC",
+    "HEX",
+    "RHL",
+    "MCL",
+    "MCLC",
+    "TRI",
+    "cub",
+    "fcc",
+    "bcc",
+    "tet",
+    "bct1",
+    "bct2",
+    "orc",
+    "orcf1",
+    "orcf2",
+    "orcf3",
+    "orci",
+    "orcc",
+    "hex",
+    "rhl1",
+    "rhl2",
+    "mcl",
+    "mclc1",
+    "mclc2",
+    "mclc3",
+    "mclc4",
+    "mclc5",
+    "tri1a",
+    "tri1b",
+    "tri2a",
+    "tri2b",
+]
 
-TOLERANCE = 10e-6
+DISTANCE_TOLERANCE = 10e-8
+ANGLE_TOLERANCE = 10e-5
 
 RED = "#FF4D67"
 GREEN = "#58EC2E"
@@ -656,7 +698,23 @@ class Lattice:
 
 # 1
 class CUB(Lattice):
-    r"""Cubic (CUB, cP)"""
+    r"""
+    Cubic (CUB, cP)
+
+    Parameters
+    ----------
+    a : float
+        Length of the lattice vectors.
+        Primitive and conventional lattice:
+
+        .. math::
+
+            \begin{bmatrix}
+                a & 0 & 0 \\
+                0 & a & 0 \\
+                0 & 0 & a
+            \end{bmatrix}
+    """
 
     def __init__(self, a: float) -> None:
         self.a = a
