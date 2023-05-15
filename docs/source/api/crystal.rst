@@ -28,3 +28,4 @@ Classes
     RHL
     MCL
     MCLC
+    TRI

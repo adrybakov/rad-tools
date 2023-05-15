@@ -1016,7 +1016,6 @@ class CUB(Lattice):
     ----------
     a : float
         Length of the lattice vectors.
-
     """
 
     _pearson_symbol = "cP"
@@ -1036,7 +1035,39 @@ class CUB(Lattice):
 
 # 2
 class FCC(Lattice):
-    r"""Face-centred cubic (FCC, cF)"""
+    r"""
+    Face-centred cubic (FCC, cF)
+
+    Conventional lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (a, 0, 0)
+
+        \boldsymbol{a}_2 = (0, a, 0)
+
+        \boldsymbol{a}_3 = (0, 0, a)
+
+    Primitive lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (0, a/2, a/2)
+
+        \boldsymbol{a}_2 = (a/2, 0, a/2)
+
+        \boldsymbol{a}_3 = (a/2, a/2, 0)
+
+    Parameters
+    ----------
+    a : float
+        Length of the lattice vector.
+
+    Attributes
+    ----------
+    a : float
+        Length of the lattice vector
+    """
 
     _pearson_symbol = "cF"
 
@@ -1060,7 +1091,39 @@ class FCC(Lattice):
 
 # 3
 class BCC(Lattice):
-    r"""Body-centered cubic (BCC, cI)"""
+    r"""
+    Body-centered cubic (BCC, cI)
+
+    Conventional lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (a, 0, 0)
+
+        \boldsymbol{a}_2 = (0, a, 0)
+
+        \boldsymbol{a}_3 = (0, 0, a)
+
+    Primitive lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (-a/2, a/2, a/2)
+
+        \boldsymbol{a}_2 = (a/2, -a/2, a/2)
+
+        \boldsymbol{a}_3 = (a/2, a/2, -a/2)
+
+    Parameters
+    ----------
+    a : float
+        Length of the lattice vector.
+
+    Attributes
+    ----------
+    a : float
+        Length of the lattice vector
+    """
 
     _pearson_symbol = "cI"
 
@@ -1085,7 +1148,34 @@ class BCC(Lattice):
 
 # 4
 class TET(Lattice):
-    r"""Tetragonal (TET, tP)"""
+    r"""
+    Tetragonal (TET, tP)
+
+    Primitive and conventional lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (a, 0, 0)
+
+        \boldsymbol{a}_2 = (0, a, 0)
+
+        \boldsymbol{a}_3 = (0, 0, c)
+
+    Parameters
+    ----------
+    a : float
+        Length of the lattice vector.
+    c : float
+        Length of the lattice vector.
+
+
+    Attributes
+    ----------
+    a : float
+        Length of the lattice vector
+    c : float
+        Length of the lattice vector.
+    """
 
     _pearson_symbol = "tP"
 
@@ -1111,7 +1201,44 @@ class TET(Lattice):
 
 # 5
 class BCT(Lattice):
-    r"""Body-centred tetragonal (BCT, tI)"""
+    r"""
+    Body-centred tetragonal (BCT, tI)
+
+    Conventional lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (a, 0, 0)
+
+        \boldsymbol{a}_2 = (0, a, 0)
+
+        \boldsymbol{a}_3 = (0, 0, c)
+
+    Primitive lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (-a/2, a/2, c/2)
+
+        \boldsymbol{a}_2 = (a/2, -a/2, c/2)
+
+        \boldsymbol{a}_3 = (a/2, a/2, -c/2)
+
+    Parameters
+    ----------
+    a : float
+        Length of the lattice vector.
+    c : float
+        Length of the lattice vector.
+
+
+    Attributes
+    ----------
+    a : float
+        Length of the lattice vector
+    c : float
+        Length of the lattice vector.
+    """
 
     _pearson_symbol = "tI"
 
@@ -1198,6 +1325,35 @@ class ORC(Lattice):
     Orthorhombic (ORC, oP)
 
     :math:`a < b < c`
+
+    Primitive and conventional lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (a, 0, 0)
+
+        \boldsymbol{a}_2 = (0, b, 0)
+
+        \boldsymbol{a}_3 = (0, 0, c)
+
+    Parameters
+    ----------
+    a : float
+        Length of the lattice vector.
+    b : float
+        Length of the lattice vector.
+    c : float
+        Length of the lattice vector.
+
+
+    Attributes
+    ----------
+    a : float
+        Length of the lattice vector
+    b : float
+        Length of the lattice vector.
+    c : float
+        Length of the lattice vector.
     """
 
     _pearson_symbol = "oP"
@@ -1241,6 +1397,45 @@ class ORCF(Lattice):
     Face-centred orthorhombic (ORCF, oF)
 
     :math:`a < b < c`
+
+    Conventional lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (a, 0, 0)
+
+        \boldsymbol{a}_2 = (0, b, 0)
+
+        \boldsymbol{a}_3 = (0, 0, c)
+
+    Primitive lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (0, b/2, c/2)
+
+        \boldsymbol{a}_2 = (a/2, 0, c/2)
+
+        \boldsymbol{a}_3 = (a/2, b/2, 0)
+
+    Parameters
+    ----------
+    a : float
+        Length of the lattice vector.
+    b : float
+        Length of the lattice vector.
+    c : float
+        Length of the lattice vector.
+
+
+    Attributes
+    ----------
+    a : float
+        Length of the lattice vector
+    b : float
+        Length of the lattice vector.
+    c : float
+        Length of the lattice vector.
     """
 
     _pearson_symbol = "oF"
@@ -1355,6 +1550,45 @@ class ORCI(Lattice):
     Body-centred orthorhombic (ORCI, oI)
 
     :math:`a < b < c`
+
+    Conventional lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (a, 0, 0)
+
+        \boldsymbol{a}_2 = (0, b, 0)
+
+        \boldsymbol{a}_3 = (0, 0, c)
+
+    Primitive lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (-a/2, b/2, c/2)
+
+        \boldsymbol{a}_2 = (a/2, -b/2, c/2)
+
+        \boldsymbol{a}_3 = (a/2, b/2, -c/2)
+
+    Parameters
+    ----------
+    a : float
+        Length of the lattice vector.
+    b : float
+        Length of the lattice vector.
+    c : float
+        Length of the lattice vector.
+
+
+    Attributes
+    ----------
+    a : float
+        Length of the lattice vector
+    b : float
+        Length of the lattice vector.
+    c : float
+        Length of the lattice vector.
     """
 
     _pearson_symbol = "oI"
@@ -1412,6 +1646,45 @@ class ORCC(Lattice):
     C-centred orthorhombic (ORCC, oS)
 
     :math:`a < b`
+
+    Conventional lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (a, 0, 0)
+
+        \boldsymbol{a}_2 = (0, b, 0)
+
+        \boldsymbol{a}_3 = (0, 0, c)
+
+    Primitive lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (a/2, -b/2, 0)
+
+        \boldsymbol{a}_2 = (a/2, b/2, 0)
+
+        \boldsymbol{a}_3 = (0, 0, c)
+
+    Parameters
+    ----------
+    a : float
+        Length of the lattice vector.
+    b : float
+        Length of the lattice vector.
+    c : float
+        Length of the lattice vector.
+
+
+    Attributes
+    ----------
+    a : float
+        Length of the lattice vector
+    b : float
+        Length of the lattice vector.
+    c : float
+        Length of the lattice vector.
     """
 
     _pearson_symbol = "oS"
@@ -1454,7 +1727,34 @@ class ORCC(Lattice):
 
 # 10
 class HEX(Lattice):
-    r"""Hexagonal (HEX, hP)"""
+    r"""
+    Hexagonal (HEX, hP)
+
+    Primitive and conventional lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (a/2, -a\sqrt{3}, 0)
+
+        \boldsymbol{a}_2 = (a/2, a\sqrt{3}, 0)
+
+        \boldsymbol{a}_3 = (0, 0, c)
+
+    Parameters
+    ----------
+    a : float
+        Length of the lattice vector.
+    c : float
+        Length of the lattice vector.
+
+
+    Attributes
+    ----------
+    a : float
+        Length of the lattice vector
+    c : float
+        Length of the lattice vector.
+    """
 
     _pearson_symbol = "hP"
 
@@ -1484,7 +1784,34 @@ class HEX(Lattice):
 
 # 11
 class RHL(Lattice):
-    r"""Rhombohedral (RHL, hR)"""
+    r"""
+    Rhombohedral (RHL, hR)
+
+    Primitive and conventional lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (a\cos(\alpha / 2), -a\sin(\alpha/2), 0)
+
+        \boldsymbol{a}_2 = (a\cos(\alpha / 2), a\sin(\alpha/2), 0)
+
+        \boldsymbol{a}_3 = (\frac{\cos(\alpha)}{\cos(\alpha/2)}, 0, a\sqrt{1 - \frac{\cos^2(\alpha)}{\cos^2(\alpha/2)}})
+
+    Parameters
+    ----------
+    a : float
+        Length of the lattice vector.
+    alpha : float
+        Angle between b and c. In degrees.
+
+
+    Attributes
+    ----------
+    a : float
+        Length of the lattice vector
+    alpha : float
+        Angle between b and c. In degrees.
+    """
 
     _pearson_symbol = "hR"
 
@@ -1572,6 +1899,39 @@ class MCL(Lattice):
     Monoclinic (MCL, mP)
 
     :math:`a, b \le c`, :math:`\alpha < 90^{\circ}`, :math:`\beta = \gamma = 90^{\circ}`.
+
+    Primitive and conventional lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (a, 0, 0)
+
+        \boldsymbol{a}_2 = (0, b, 0)
+
+        \boldsymbol{a}_3 = (0, c\cos(\alpha), c\sin(\alpha))
+
+    Parameters
+    ----------
+    a : float
+        Length of the lattice vector.
+    b : float
+        Length of the lattice vector.
+    c : float
+        Length of the lattice vector.
+    alpha : float
+        Angle between b and c. In degrees.
+
+
+    Attributes
+    ----------
+    a : float
+        Length of the lattice vector
+    b : float
+        Length of the lattice vector.
+    c : float
+        Length of the lattice vector.
+    alpha : float
+        Angle between b and c. In degrees.
     """
 
     _pearson_symbol = "mP"
@@ -1630,6 +1990,49 @@ class MCLC(Lattice):
     C-centred monoclinic (MCLC, mS)
 
     :math:`a, b \le c`, :math:`\alpha < 90^{\circ}`, :math:`\beta = \gamma = 90^{\circ}`.
+
+    Conventional lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (a, 0, 0)
+
+        \boldsymbol{a}_2 = (0, b, 0)
+
+        \boldsymbol{a}_3 = (0, c\cos(\alpha), c\sin(\alpha))
+
+    Primitive lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (a/2, b/2, 0)
+
+        \boldsymbol{a}_2 = (-a/2, b/2, 0)
+
+        \boldsymbol{a}_3 = (0, c\cos(\alpha), c\sin(\alpha))
+
+    Parameters
+    ----------
+    a : float
+        Length of the lattice vector.
+    b : float
+        Length of the lattice vector.
+    c : float
+        Length of the lattice vector.
+    alpha : float
+        Angle between b and c. In degrees.
+
+
+    Attributes
+    ----------
+    a : float
+        Length of the lattice vector
+    b : float
+        Length of the lattice vector.
+    c : float
+        Length of the lattice vector.
+    alpha : float
+        Angle between b and c. In degrees.
     """
 
     _pearson_symbol = "mS"
@@ -1876,7 +2279,49 @@ class MCLC(Lattice):
 
 # 14
 class TRI(Lattice):
-    r"""Triclinic (TRI, aP)"""
+    r"""
+    Triclinic (TRI, aP)
+    Primitive and conventional lattice:
+
+    .. math::
+
+        \boldsymbol{a}_1 = (a, 0, 0)
+
+        \boldsymbol{a}_2 = (b\cos(\gamma), b\sin(\gamma), 0)
+
+        \boldsymbol{a}_3 = (c\cos(\beta), \frac{c(\cos(\alpha) - \cos(\beta)\cos(\gamma))}{\sin{\gamma}}, \frac{c}{\sin(\gamma)}\sqrt{\sin^2(\gamma) - \cos^2(\alpha) - \cos^2(\beta) + 2\cos(\alpha)\cos(\beta)\cos(\gamma)})
+
+    Parameters
+    ----------
+    a : float
+        Length of the lattice vector.
+    b : float
+        Length of the lattice vector.
+    c : float
+        Length of the lattice vector.
+    alpha : float
+        Angle between b and c. In degrees.
+    beta : float
+        Angle between a and c. In degrees.
+    gamma : float
+        Angle between a and b. In degrees.
+
+
+    Attributes
+    ----------
+    a : float
+        Length of the lattice vector
+    b : float
+        Length of the lattice vector.
+    c : float
+        Length of the lattice vector.
+    alpha : float
+        Angle between b and c. In degrees.
+    beta : float
+        Angle between a and c. In degrees.
+    gamma : float
+        Angle between a and b. In degrees.
+    """
 
     _pearson_symbol = "aP"
 
