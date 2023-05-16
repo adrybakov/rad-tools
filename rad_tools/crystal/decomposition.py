@@ -14,7 +14,7 @@ Planes
 Corners
 -------
 * Define potential corners by computing intersection points for each group of three planes.
-* For each point check if it is closer to :math:`\Gamma`, then to any of the other lattice points.
+* For each point check if it is closer (or at the same distance) to :math:`\Gamma`, then to any of the other lattice points.
 * If yes, then take the point.
 
 Edges
@@ -266,7 +266,7 @@ def define_planes(lattice_points, vectors):
     return planes
 
 
-def define_corners(planes, lattice_points, vectors):
+def define_corners(planes, cell, vectors):
     r"""
     Define corners of the first brillouin zone (or Wigner-Seitz cell).
 
@@ -277,6 +277,16 @@ def define_corners(planes, lattice_points, vectors):
         Plane is defined by the vector :math:`v`, which is perpendicular to the plane
         and gives the coordinate of the point from the plane.
         The vector is given in relative coordinates, with respect to the basis vectors.
+    cell : (3,3) array_like, default None
+        Matrix of the basis vectors, rows are interpreted as vectors,
+        columns as cartesian coordinates:
+
+        .. code-block:: python
+            cell = [
+                [v1_x, v1_y, v1_z],
+                [v2_x, v2_y, v2_z],
+                [v3_x, v3_y, v3_z]
+                ]
     lattice_points : list
         List of all lattice points, constructed by the permutations of (i,j,k)
         in the range (-1,0,1). Without (0,0,0) point.
@@ -298,7 +308,7 @@ def define_corners(planes, lattice_points, vectors):
         List of M corners of the Brillouin zone (or Wigner-Seitz cell).
         Corner is defined by the vector :math:`v = v_x, v_y, v_z` in absolute coordinates.
     plane_indices : list
-        Indices of the three planes, which intersection produced the corned.
+        Indices of the three planes, which intersection produced the corners.
     """
 
     # Compute all 3-plane intersections
@@ -332,22 +342,24 @@ def define_corners(planes, lattice_points, vectors):
     # Check if intersection point is closer to the Gamma point then to any other point of lattice.
     ipoints = np.transpose(
         np.tile(intersection_points, (len(vectors), 1)).reshape(
-            len(vectors), len(vectors), 3
+            len(vectors), len(intersection_points), 3
         ),
         (1, 0, 2),
     )
-    lpoints = np.tile(vectors, (len(vectors), 1)).reshape(len(vectors), len(vectors), 3)
+    lpoints = np.tile(vectors, (len(intersection_points), 1)).reshape(
+        len(intersection_points), len(vectors), 3
+    )
 
     compare_matrix = np.around(
         np.linalg.norm(ipoints, axis=2) - np.linalg.norm(ipoints - lpoints, axis=2),
         decimals=TOL_BASE,
     )
-    compare_matrix = np.sum((compare_matrix >= 0) * 1, axis=1)
 
+    compare_matrix = np.sum((compare_matrix > 0) * 1, axis=1)
     corners = []
     tmp = []
     for i in range(compare_matrix.shape[0]):
-        if compare_matrix[i] <= 1:
+        if compare_matrix[i] == 0:
             corners.append(intersection_points[i])
             tmp.append(planes_indices[i])
 
@@ -367,7 +379,10 @@ def define_corners(planes, lattice_points, vectors):
 
 
 if __name__ == "__main__":
-    cell = [[-2, 1.6, 1.2], [2, -1.6, 1.2], [2, 1.6, -1.2]]
-    planes = define_planes(cell=cell)
-    for i in planes:
-        print(i)
+    cell = [[1, 1, -1], [1, -1, 1], [-1, 1, 1]]
+    lattice_points, vectors = get_lattice_points_vectors(cell)
+    planes = define_planes(lattice_points, vectors)
+    tmp = define_corners(planes, cell, vectors)
+    from rad_tools import print_2D_array
+
+    print_2D_array(np.array(tmp[0]))
