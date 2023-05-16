@@ -153,7 +153,7 @@ def winwait():
         input()
 
 
-def print_2D_array(array, fmt="5.2f"):
+def print_2D_array(array, fmt="5.2f", posneg=False):
     r"""
     Print 2D array in the terminal.
 
@@ -163,6 +163,9 @@ def print_2D_array(array, fmt="5.2f"):
         Array to be printed. Passed to ``np.array()`` before any action on it.
     fmt : str
         Format string.
+    posneg : bool, default False
+        Whether to highlight positive and negative values.
+        Only works for real-valued arrays.
 
     Returns
     -------
@@ -204,7 +207,7 @@ def print_2D_array(array, fmt="5.2f"):
     .. doctest::
 
         >>> import rad_tools as rad
-        >>> array = [[1, 2], [3, 4], [52435345345, 6]]
+        >>> array = [[1, 2], [3, 4], [524š5345345, 6]]
         >>> rad.print_2D_array(array, fmt="10.2E")
         ┌────────────┬────────────┐
         │   1.00E+00 │   2.00E+00 │
@@ -289,6 +292,13 @@ def print_2D_array(array, fmt="5.2f"):
                         end="",
                     )
             else:
+                if posneg:
+                    if array.real[i][j] > 0:
+                        cprint(f" {array.real[i][j]:{fmt}} │", "red", end="")
+                    elif array.real[i][j] < 0:
+                        cprint(f" {array.real[i][j]:{fmt}} │", "blue", end="")
+                    else:
+                        cprint(f" {array.real[i][j]:{fmt}} │", "green", end="")
                 print(f" {array.real[i][j]:{fmt}} │", end="")
         print()
         if i != N - 1:
