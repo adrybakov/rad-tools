@@ -3,6 +3,7 @@ Crystals
 """
 
 from .atom import Atom
+from .lattice import Lattice
 from .bravais_lattice import *
 
 __all__ = ["Atom", "Lattice"]

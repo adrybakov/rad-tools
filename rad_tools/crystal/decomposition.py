@@ -1,19 +1,40 @@
 r"""
-Routines defining lattice type.
+The algorithm for defining the planes, edges and corners of the Brillouin zone:
+
+Planes
+------
+* Generate all closest lattice points.
+    By varying the :math:`i`, :math:`j`, :math:`k` indexes in the range :math:`(-1,0,1)`. 
+    The point (0,0,0) is excluded. 
+    Each vector  of the lattice point is defined as :math:`\vec{v} = i\vec{v}_1 + j\vec{v}_2 + k\vec{v}_3`.
+* For each lattice point check if the middle point :math:`\vec{v} / 2` is closer 
+    to :math:`\Gamma` point then to any of the other lattice points. 
+* If yes, then the vector :math:`\vec{v}/2` defines the plane.
+
+Corners
+=======
+* Define potential corners by computing intersection points for each group of three planes.
+* For each point check if it is closer to :math:`\Gamma`, then to any of the other lattice points.
+* If yes, then take the point.
+
+Edges
+=====
+* For each pair of 
 """
 
 
 import numpy as np
 
-TOLERANCE = 10e-8
+TOLERANCE = 1e-8
+TOL_BASE = 8
 
 
-def deduct_zone(
-    cell,
-):
+def deduct_zone(cell):
     r"""
     Construct Brillouin zone (or Wigner-Seitz cell), from the given set of basis vectors.
 
+    Parameters
+    ----------
     cell : (3,3) array_like
         Matrix of the basis vectors, rows are interpreted as vectors,
         columns as cartesian coordinates:
@@ -38,34 +59,7 @@ def deduct_zone(
         Array of M corners of the Brillouin zone (or Wigner-Seitz cell).
     """
 
-    cell = np.array(cell)
-
-    # Compute planes
-    planes_candidates = []
-    other_points = []
-    for i in [-1, 0, 1]:
-        for j in [-1, 0, 1]:
-            for k in [-1, 0, 1]:
-                if i**2 + j**2 + k**2 != 0:
-                    rel_vector = np.array((i, j, k))
-                    vector = np.matmul(rel_vector, cell)
-                    distance_gamma = np.linalg.norm(vector) / 2
-                    planes_candidates.append((rel_vector, vector, distance_gamma))
-                    other_points.append(vector)
-
-    planes_candidates.sort(key=lambda x: x[2])
-    planes = []
-    for plane in planes_candidates:
-        takeit = True
-        for other_point in other_points:
-            if (
-                not (other_point == plane[1]).all()
-                and (plane[2] - np.linalg.norm(plane[1] / 2 - other_point)) > -TOLERANCE
-            ):
-                takeit = False
-                break
-        if takeit:
-            planes.append(plane[0])
+    planes, other_points = define_planes(cell)
 
     # Compute corners
     corners_candidates = []
@@ -138,3 +132,136 @@ def deduct_zone(
             if n == 2:
                 edges.append([fcorner, scorner])
     return planes, edges, corners
+
+
+def get_lattice_points_vectors(cell=None, v1=None, v2=None, v3=None):
+    r"""
+    Get all lattice points and corresponding vectors. Does not include (0,0,0).
+
+    Parameters
+    ----------
+    cell : (3,3) array_like, default None
+        Matrix of the basis vectors, rows are interpreted as vectors,
+        columns as cartesian coordinates:
+
+        .. code-block:: python
+            cell = [
+                [v1_x, v1_y, v1_z],
+                [v2_x, v2_y, v2_z],
+                [v3_x, v3_y, v3_z]
+                ]
+    v1 : (3,) |array_like|_, default None
+        First basis vector (first primitive lattice vector)
+    v2 : (3,) |array_like|_, default None
+        Second basis vector (second primitive lattice vector)
+    v2 : (3,) |array_like|_, default None
+        Third basis vector (third primitive lattice vector)
+    Returns
+    -------
+    lattice_points : list
+        List of all lattice points, constructed by the permutations of (i,j,k)
+        in the range (-1,0,1). Without (0,0,0) point.
+
+        .. code-block:: python
+
+            lattice_points = [p_1, ..., p_26]
+        where :math:`p = (i,j,k)`.
+    vectors : (26, 3) :numpy:`array`
+        Array of the vectors corresponding to the lattice points.
+
+        .. code-block:: python
+
+            vectors = [v_1, ... v_26]
+        where :math:`v = (v_x, v_y, v_z)`.
+    """
+
+    # Check if provided data are sufficient.
+    if cell is None and (v1 is None or v2 is None or v3 is None):
+        raise ValueError(
+            "Either cell or three vectors (v1, v2, v3) have to be passed to the function."
+        )
+    if cell is None:
+        cell = np.array([v1, v2, v3])
+    else:
+        cell = np.array(cell)
+
+    # Check if the cell is not coplanar
+    if np.dot(cell[0], np.cross(cell[1], cell[2])) == 0:
+        raise ValueError(
+            f"Three provided vectors are coplanar.\n"
+            + f"  v1 = {cell[0]}\n  v2 = {cell[1]}\n  v3 = {cell[2]}\n"
+        )
+
+    # Compute plattice_points
+    lattice_points = []
+    vectors = np.zeros((26, 3))
+    index = 0
+    for i in [-1, 0, 1]:
+        for j in [-1, 0, 1]:
+            for k in [-1, 0, 1]:
+                if i**2 + j**2 + k**2 != 0:
+                    lattice_points.append((i, j, k))
+                    vectors[index] = np.matmul(np.array((i, j, k)), cell)
+                    index += 1
+
+    return lattice_points, vectors
+
+
+def define_planes(cell=None, v1=None, v2=None, v3=None):
+    r"""
+    Define planes, which borders the first brillouin zone (or Wigner-Seitz cell).
+
+    Parameters
+    ----------
+    cell : (3,3) array_like, default None
+        Matrix of the basis vectors, rows are interpreted as vectors,
+        columns as cartesian coordinates:
+
+        .. code-block:: python
+            cell = [
+                [v1_x, v1_y, v1_z],
+                [v2_x, v2_y, v2_z],
+                [v3_x, v3_y, v3_z]
+                ]
+    v1 : (3,) |array_like|_, default None
+        First basis vector (first primitive lattice vector)
+    v2 : (3,) |array_like|_, default None
+        Second basis vector (second primitive lattice vector)
+    v2 : (3,) |array_like|_, default None
+        Third basis vector (third primitive lattice vector)
+    Returns
+    -------
+    planes:  list
+        List of N planes (i,j,k), constraining Brillouin zone (or Wigner-Seitz cell).
+        Plane is defined by the vector :math:`v`, which is perpendicular to the plane
+        and gives the coordinate of the point from the plane.
+        The vector is given in relative coordinates, with respect to the basis vectors
+    """
+
+    lattice_points, vectors = get_lattice_points_vectors(cell=cell, v1=v1, v2=v2, v3=v3)
+
+    points = np.transpose(
+        np.tile(vectors / 2, (len(vectors), 1)).reshape(len(vectors), len(vectors), 3),
+        (1, 0, 2),
+    )
+    lpoints = np.tile(vectors, (len(vectors), 1)).reshape(len(vectors), len(vectors), 3)
+
+    compare_matrix = np.around(
+        np.linalg.norm(points, axis=2) - np.linalg.norm(points - lpoints, axis=2),
+        decimals=TOL_BASE,
+    )
+
+    planes = []
+
+    for i in range(compare_matrix.shape[0]):
+        if compare_matrix[i] <= 1:
+            planes.append(lattice_points[i])
+
+    return planes
+
+
+if __name__ == "__main__":
+    cell = [[-2, 1.6, 1.2], [2, -1.6, 1.2], [2, 1.6, -1.2]]
+    planes = define_planes(cell=cell)
+    for i in planes:
+        print(i)

@@ -9,7 +9,6 @@ from rad_tools.crystal.lattice import Lattice
 
 
 __all__ = [
-    "Lattice",
     "CUB",
     "FCC",
     "BCC",

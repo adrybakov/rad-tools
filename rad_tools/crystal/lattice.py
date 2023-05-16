@@ -239,7 +239,7 @@ class Lattice:
             V = \vec{a}_1\cdot(\vec{a}_2\times\vec{a}_3)
         """
 
-        return np.dot(self.a1, np.cross(self.a2, self.a3))
+        return np.dot(self.prim_a1, np.cross(self.prim_a2, self.prim_a3))
 
     @property
     def reciprocal_cell(self):
