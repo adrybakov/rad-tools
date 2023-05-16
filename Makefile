@@ -31,8 +31,6 @@ clean:
 	-@rm -r dist
 
 test: 
-	@pip3 install . --upgrade
-	@pip3 install pytest
 	@pytest -s
 
 VERSION := $(shell grep __version__ rad_tools/__init__.py | tr -d 'a-zA-Z =_":')
