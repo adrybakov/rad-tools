@@ -12,14 +12,15 @@ Planes
 * If yes, then the vector :math:`\vec{v}/2` defines the plane.
 
 Corners
-=======
+-------
 * Define potential corners by computing intersection points for each group of three planes.
 * For each point check if it is closer to :math:`\Gamma`, then to any of the other lattice points.
 * If yes, then take the point.
 
 Edges
-=====
-* For each pair of 
+-----
+* For each pair of corners check if they share two planes.
+* If yes, then take an edge.
 """
 
 
@@ -61,16 +62,16 @@ def deduct_zone(cell):
 
     planes, other_points = define_planes(cell)
 
-    # Compute corners
-    corners_candidates = []
+    # Compute all 3-plane intersections
+    intersection_points = []
     for f, fplane in enumerate(planes):
-        nf = np.matmul(fplane, cell) / 2
+        nf = np.matmul(fplane, cell)
         for s in range(f + 1, len(planes)):
             splane = planes[s]
-            ns = np.matmul(splane, cell) / 2
+            ns = np.matmul(splane, cell)
             for t in range(s + 1, len(planes)):
                 tplane = planes[t]
-                nt = np.matmul(tplane, cell) / 2
+                nt = np.matmul(tplane, cell)
                 A = np.array([nf, ns, nt])
                 b = np.array(
                     [
@@ -81,23 +82,23 @@ def deduct_zone(cell):
                 )
                 try:
                     x = np.linalg.solve(A, b)
-                    corners_candidates.append(x)
+                    intersection_points.append(x)
                 except:
                     pass
 
     corners = []
 
-    # Check if corner is closer to the Gamma point then to any other point of lattice.
-    for corner in corners_candidates:
+    # Check if intersection point is closer to the Gamma point then to any other point of lattice.
+    for point in intersection_points:
         takeit = True
-        for other_point in other_points:
+        for vector in ve in other_points:
             if (
-                np.linalg.norm(corner) - np.linalg.norm(corner - other_point)
+                np.linalg.norm(point) - np.linalg.norm(point - other_point)
             ) > TOLERANCE:
                 takeit = False
                 break
         if takeit:
-            corners.append(corner)
+            corners.append(point)
 
     # Filter equal entries
     new_corners = []
@@ -207,38 +208,36 @@ def get_lattice_points_vectors(cell=None, v1=None, v2=None, v3=None):
     return lattice_points, vectors
 
 
-def define_planes(cell=None, v1=None, v2=None, v3=None):
+def define_planes(lattice_points, vectors):
     r"""
     Define planes, which borders the first brillouin zone (or Wigner-Seitz cell).
 
     Parameters
     ----------
-    cell : (3,3) array_like, default None
-        Matrix of the basis vectors, rows are interpreted as vectors,
-        columns as cartesian coordinates:
+    lattice_points : list
+        List of all lattice points, constructed by the permutations of (i,j,k)
+        in the range (-1,0,1). Without (0,0,0) point.
 
         .. code-block:: python
-            cell = [
-                [v1_x, v1_y, v1_z],
-                [v2_x, v2_y, v2_z],
-                [v3_x, v3_y, v3_z]
-                ]
-    v1 : (3,) |array_like|_, default None
-        First basis vector (first primitive lattice vector)
-    v2 : (3,) |array_like|_, default None
-        Second basis vector (second primitive lattice vector)
-    v2 : (3,) |array_like|_, default None
-        Third basis vector (third primitive lattice vector)
+
+            lattice_points = [p_1, ..., p_26]
+        where :math:`p = (i,j,k)`.
+    vectors : (26, 3) :numpy:`array`
+        Array of the vectors corresponding to the lattice points.
+
+        .. code-block:: python
+
+            vectors = [v_1, ... v_26]
+        where :math:`v = (v_x, v_y, v_z)`.
+
     Returns
     -------
     planes:  list
-        List of N planes (i,j,k), constraining Brillouin zone (or Wigner-Seitz cell).
+        List of N planes (i/2, j/2, k/2), constraining Brillouin zone (or Wigner-Seitz cell).
         Plane is defined by the vector :math:`v`, which is perpendicular to the plane
         and gives the coordinate of the point from the plane.
-        The vector is given in relative coordinates, with respect to the basis vectors
+        The vector is given in relative coordinates, with respect to the basis vectors.
     """
-
-    lattice_points, vectors = get_lattice_points_vectors(cell=cell, v1=v1, v2=v2, v3=v3)
 
     points = np.transpose(
         np.tile(vectors / 2, (len(vectors), 1)).reshape(len(vectors), len(vectors), 3),
@@ -250,14 +249,121 @@ def define_planes(cell=None, v1=None, v2=None, v3=None):
         np.linalg.norm(points, axis=2) - np.linalg.norm(points - lpoints, axis=2),
         decimals=TOL_BASE,
     )
+    compare_matrix = np.sum((compare_matrix >= 0) * 1, axis=1)
 
     planes = []
 
     for i in range(compare_matrix.shape[0]):
         if compare_matrix[i] <= 1:
-            planes.append(lattice_points[i])
+            planes.append(
+                (
+                    lattice_points[i][0] / 2,
+                    lattice_points[i][1] / 2,
+                    lattice_points[i][2] / 2,
+                )
+            )
 
     return planes
+
+
+def define_corners(planes, lattice_points, vectors):
+    r"""
+    Define corners of the first brillouin zone (or Wigner-Seitz cell).
+
+    Parameters
+    ----------
+    planes:  list
+        List of N planes (i/2, j/2, k/2), constraining Brillouin zone (or Wigner-Seitz cell).
+        Plane is defined by the vector :math:`v`, which is perpendicular to the plane
+        and gives the coordinate of the point from the plane.
+        The vector is given in relative coordinates, with respect to the basis vectors.
+    lattice_points : list
+        List of all lattice points, constructed by the permutations of (i,j,k)
+        in the range (-1,0,1). Without (0,0,0) point.
+
+        .. code-block:: python
+
+            lattice_points = [p_1, ..., p_26]
+        where :math:`p = (i,j,k)`.
+    vectors : (26, 3) :numpy:`array`
+        Array of the vectors corresponding to the lattice points.
+
+        .. code-block:: python
+
+            vectors = [v_1, ... v_26]
+        where :math:`v = (v_x, v_y, v_z)`.
+    Returns
+    -------
+    corners : list
+        List of M corners of the Brillouin zone (or Wigner-Seitz cell).
+        Corner is defined by the vector :math:`v = v_x, v_y, v_z` in absolute coordinates.
+    plane_indices : list
+        Indices of the three planes, which intersection produced the corned.
+    """
+
+    # Compute all 3-plane intersections
+    intersection_points = []
+    planes_indices = []
+    for f, fplane in enumerate(planes):
+        nf = np.matmul(fplane, cell)
+        for s in range(f + 1, len(planes)):
+            splane = planes[s]
+            ns = np.matmul(splane, cell)
+            for t in range(s + 1, len(planes)):
+                tplane = planes[t]
+                nt = np.matmul(tplane, cell)
+                A = np.array([nf, ns, nt])
+                b = np.array(
+                    [
+                        np.linalg.norm(nf) ** 2,
+                        np.linalg.norm(ns) ** 2,
+                        np.linalg.norm(nt) ** 2,
+                    ]
+                )
+                try:
+                    x = np.linalg.solve(A, b)
+                    intersection_points.append(x)
+                    planes_indices.append((f, s, t))
+                except:
+                    pass
+
+    corners = []
+
+    # Check if intersection point is closer to the Gamma point then to any other point of lattice.
+    ipoints = np.transpose(
+        np.tile(intersection_points, (len(vectors), 1)).reshape(
+            len(vectors), len(vectors), 3
+        ),
+        (1, 0, 2),
+    )
+    lpoints = np.tile(vectors, (len(vectors), 1)).reshape(len(vectors), len(vectors), 3)
+
+    compare_matrix = np.around(
+        np.linalg.norm(ipoints, axis=2) - np.linalg.norm(ipoints - lpoints, axis=2),
+        decimals=TOL_BASE,
+    )
+    compare_matrix = np.sum((compare_matrix >= 0) * 1, axis=1)
+
+    corners = []
+    tmp = []
+    for i in range(compare_matrix.shape[0]):
+        if compare_matrix[i] <= 1:
+            corners.append(intersection_points[i])
+            tmp.append(planes_indices[i])
+
+    # Filter non-unique entries
+    unique_corners = []
+    for i in range(len(corners)):
+        takeit = True
+        for j in range(len(unique_corners)):
+            if (np.linalg.norm(corners[i] - unique_corners[j]) < TOLERANCE).all():
+                takeit = False
+                break
+        if takeit:
+            unique_corners.append(corners[i])
+            planes_indices.append(tmp[i])
+
+    return unique_corners, planes_indices
 
 
 if __name__ == "__main__":
