@@ -25,10 +25,10 @@ Now one need to use read functions from input-output module:
 
 .. code-block:: python
 
-    from rad_tools.io.tb2j import read_exchange_model
+    from rad_tools.io.tb2j import read_tb2j_model
     from rad_tools.io.internal import read_template
 
-    model = read_exchange_model(filename)
+    model = read_tb2j_model(filename)
     template = read_template(template_filename)
 
 0.4.1
@@ -56,7 +56,7 @@ There are two ways to import read functions:
 
 .. code-block:: python
 
-    from rad_tools.io.tb2j import read_exchange_model
+    from rad_tools.io.tb2j import read_tb2j_model
     from rad_tools.io import read_tb2j_model
 
 .. code-block:: python

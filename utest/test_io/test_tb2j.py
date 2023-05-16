@@ -8,19 +8,17 @@ from rad_tools.io.tb2j import *
 
 
 class TestReadExchangeModel:
-    model = read_exchange_model(
+    model = read_tb2j_model(
         os.path.join("utest", "test_io", "resources", "exchange.out")
     )
 
     def test_empty_filename(self):
         with pytest.raises(TypeError):
-            model = read_exchange_model(None)
+            model = read_tb2j_model(None)
 
     def test_wrong_filename(self):
         with pytest.raises(FileNotFoundError):
-            model = read_exchange_model(
-                "Ah, music. " + "A magic beyond all we do here!"
-            )
+            model = read_tb2j_model("Ah, music. " + "A magic beyond all we do here!")
 
     def test_read_cell(self):
         cell_values = [

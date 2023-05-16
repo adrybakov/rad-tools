@@ -17,6 +17,12 @@ __all__ = [
     "print_2D_array",
 ]
 
+RED = "#FF4D67"
+GREEN = "#58EC2E"
+ORANGE = "#F7CB3D"
+BLUE = "#274DD1"
+PURPLE = "#DC5CFF"
+
 
 def atom_mark_to_latex(mark):
     r"""

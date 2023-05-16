@@ -14,7 +14,7 @@ Routine for external inputs
 .. autosummary:: 
     :toctree: generated/
 
-    read_exchange_model
+    read_tb2j_model
 
 Routine for internal inputs
 ===========================

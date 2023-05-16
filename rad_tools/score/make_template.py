@@ -8,7 +8,7 @@ import numpy as np
 from termcolor import cprint
 
 from rad_tools import __version__ as version
-from rad_tools.io.tb2j import read_exchange_model
+from rad_tools.io.tb2j import read_tb2j_model
 
 
 def manager(
@@ -83,7 +83,7 @@ def manager(
                 + f" at {cd.hour}:{cd.minute}:{cd.second} by rad-tools {version}\n\n"
             )
 
-            model = read_exchange_model(input_filename, quiet=not verbose)
+            model = read_tb2j_model(input_filename, quiet=not verbose)
             model.filter(
                 min_distance=min_distance, max_distance=max_distance, R_vector=R_vector
             )

@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 from termcolor import cprint
 
 from rad_tools.io.internal import read_template
-from rad_tools.io.tb2j import read_exchange_model
+from rad_tools.io.tb2j import read_tb2j_model
 from rad_tools.routines import atom_mark_to_latex, rot_angle
 
 
@@ -56,7 +56,7 @@ def manager(
         )
         R_vector = list(map(tuple, R_vector.tolist()))
 
-    model = read_exchange_model(input_filename, quiet=not verbose)
+    model = read_tb2j_model(input_filename, quiet=not verbose)
     if template_file is not None:
         template = read_template(template_file)
     else:

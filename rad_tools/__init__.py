@@ -7,14 +7,14 @@ All tools from the package.
 
 __version__ = "0.6.2.dev"
 
+from . import crystal, dos, exchange, io, kpoints, score
+from .crystal import *
 from .dos import *
 from .exchange import *
 from .io import *
 from .kpoints import *
 from .routines import *
 from .score import *
-from .crystal import *
-from . import dos, exchange, io, kpoints, score, crystal
 
 __all__ = []
 __all__.extend(score.__all__)

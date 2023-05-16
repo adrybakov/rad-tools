@@ -8,9 +8,11 @@ from rad_tools.exchange.model import Bond, ExchangeModel
 from rad_tools.routines import absolute_to_relative
 
 
-def read_exchange_model(filename, quiet=False) -> ExchangeModel:
+def read_tb2j_model(filename, quiet=False) -> ExchangeModel:
     r"""
     Read exchange model from |TB2J|_ output file.
+
+    .. versionchanged:: 0.6.2
 
     In |TB2J|_ exchange Hamiltonian is define in a following notation:
 

@@ -8,7 +8,8 @@ from os.path import abspath, join
 from termcolor import cprint
 from tqdm import tqdm
 
-from rad_tools.dos import DOSQE, PDOS, plot_projected
+from rad_tools.dos.dos import DOSQE
+from rad_tools.dos.pdos import PDOS, plot_projected
 
 
 def detect_seednames(input_path):
