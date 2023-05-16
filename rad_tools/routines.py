@@ -155,11 +155,11 @@ def winwait():
 
 def print_2D_array(array, fmt="5.2f", posneg=False):
     r"""
-    Print 2D array in the terminal.
+    Print 1D and 2D arrays in the terminal.
 
     Parameters
     ----------
-    array : array
+    array : (N,) or (N, M) |array_like|_
         Array to be printed. Passed to ``np.array()`` before any action on it.
     fmt : str
         Format string.
@@ -251,6 +251,8 @@ def print_2D_array(array, fmt="5.2f", posneg=False):
     """
 
     array = np.array(array)
+    if len(array.shape) == 1:
+        array = np.array([array])
     N = len(array)
     M = len(array[0])
     n = max(len(f"{np.amax(array.real):{fmt}}"), len(f"{np.amin(array.real):{fmt}}"))
@@ -294,12 +296,16 @@ def print_2D_array(array, fmt="5.2f", posneg=False):
             else:
                 if posneg:
                     if array.real[i][j] > 0:
-                        cprint(f" {array.real[i][j]:{fmt}} │", "red", end="")
+                        cprint(f" {array.real[i][j]:{fmt}}", "red", end="")
+                        print(" │", end="")
                     elif array.real[i][j] < 0:
-                        cprint(f" {array.real[i][j]:{fmt}} │", "blue", end="")
+                        cprint(f" {array.real[i][j]:{fmt}}", "blue", end="")
+                        print(" │", end="")
                     else:
-                        cprint(f" {array.real[i][j]:{fmt}} │", "green", end="")
-                print(f" {array.real[i][j]:{fmt}} │", end="")
+                        cprint(f" {array.real[i][j]:{fmt}}", "green", end="")
+                        print(" │", end="")
+                else:
+                    print(f" {array.real[i][j]:{fmt}} │", end="")
         print()
         if i != N - 1:
             print("├" + (M - 1) * f"{nn*'─'}┼" + f"{nn*'─'}┤")
