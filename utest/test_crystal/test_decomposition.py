@@ -18,7 +18,7 @@ from rad_tools.crystal.decomposition import *
             },
         ),  # CUB
         (
-            [[1, 1, -1], [1, -1, 1], [-1, 1, 1]],
+            [[-1, 1, 1], [1, -1, 1], [1, 1, -1]],
             {
                 (1 / 2, 0, 0),
                 (-1 / 2, 0, 0),
@@ -37,7 +37,7 @@ from rad_tools.crystal.decomposition import *
             },
         ),  # FCC
         (
-            [[1, 1, 0], [1, 0, 1], [0, 1, 1]],
+            [[0, 1, 1], [1, 0, 1], [1, 1, 0]],
             {
                 (1 / 2, 0, 0),
                 (-1 / 2, 0, 0),
@@ -398,7 +398,7 @@ from rad_tools.crystal.decomposition import *
         #         (1/2, 1/2, 1/2),
         #         (-1/2, -1/2, -1/2),
         #     },
-        # ),  # TRI2a
+        # ),  # TRI1b
         # (
         #     [
         #         # TODO
@@ -419,7 +419,7 @@ from rad_tools.crystal.decomposition import *
         #         (-1/2, 0, 1/2),
         #         (1/2, 0, -1/2),
         #     },
-        # ),  # TRI1b
+        # ),  # TRI2a
         # (
         #     [
         #         # TODO
@@ -469,12 +469,11 @@ from rad_tools.crystal.decomposition import *
     ],
 )
 def test_define_planes(cell, real_planes):
-    lattice_points, vectors = get_lattice_points_vectors(cell)
-    planes = define_planes(lattice_points, vectors)
+    lattice_points, vectors = get_lattice_points(cell)
+    planes = define_planes(lattice_points, vectors, relative=True)
     assert set(planes) == real_planes
 
 
-# TODO
 @pytest.mark.parametrize(
     "cell, number_of_corners",
     [
@@ -483,11 +482,11 @@ def test_define_planes(cell, real_planes):
             8,
         ),  # CUB
         (
-            [[1, 1, -1], [1, -1, 1], [-1, 1, 1]],
+            [[-1, 1, 1], [1, -1, 1], [1, 1, -1]],
             24,
         ),  # FCC
         (
-            [[1, 1, 0], [1, 0, 1], [0, 1, 1]],
+            [[0, 1, 1], [1, 0, 1], [1, 1, 0]],
             14,
         ),  # BCC
         (
@@ -578,25 +577,25 @@ def test_define_planes(cell, real_planes):
         #     [
         #         #TODO
         #     ],
-        #     {},
+        #     24,
         # ),  # TRI1a
         # (
         #     [
         #         # TODO
         #     ],
-        #     {},
-        # ),  # TRI2a
-        # (
-        #     [
-        #         # TODO
-        #     ],
-        #     {},
+        #     18,
         # ),  # TRI1b
         # (
         #     [
         #         # TODO
         #     ],
-        #     {},
+        #     24,
+        # ),  # TRI2a
+        # (
+        #     [
+        #         # TODO
+        #     ],
+        #     18,
         # ),  # TRI2b
     ],
     ids=[
@@ -628,9 +627,171 @@ def test_define_planes(cell, real_planes):
     ],
 )
 def test_define_corners(cell, number_of_corners):
-    lattice_points, vectors = get_lattice_points_vectors(cell)
+    lattice_points, vectors = get_lattice_points(cell)
     planes = define_planes(lattice_points, vectors)
-    corners, tmp = define_corners(planes, cell, vectors)
-    from rad_tools import print_2D_array
+    corners, plane_indices = define_corners(planes, vectors)
 
     assert len(corners) == number_of_corners
+    assert len(plane_indices) == number_of_corners
+
+
+@pytest.mark.parametrize(
+    "cell, number_of_edges",
+    [
+        (
+            [[2, 0, 0], [0, 2, 0], [0, 0, 2]],
+            12,
+        ),  # CUB
+        (
+            [[-1, 1, 1], [1, -1, 1], [1, 1, -1]],
+            36,
+        ),  # FCC
+        (
+            [[0, 1, 1], [1, 0, 1], [1, 1, 0]],
+            24,
+        ),  # BCC
+        (
+            [[2, 0, 0], [0, 2, 0], [0, 0, 1]],
+            12,
+        ),  # TET
+        (
+            [[0, 1, 2], [1, 0, 2], [1, 1, 0]],
+            28,
+        ),  # BCT1
+        (
+            [[0, 2, 1], [2, 0, 1], [2, 2, 0]],
+            36,
+        ),  # BCT2
+        (
+            [[2, 0, 0], [0, 1, 0], [0, 0, 0.6667]],
+            12,
+        ),  # ORC
+        (
+            [[-2.222, 1.6, 1.2], [2.222, -1.6, 1.2], [2.222, 1.6, -1.2]],
+            28,
+        ),  # ORCF1
+        (
+            [[-1.818, 1.6, 1.2], [1.818, -1.6, 1.2], [1.818, 1.6, -1.2]],
+            36,
+        ),  # ORCF2
+        (
+            [[-2, 1.6, 1.2], [2, -1.6, 1.2], [2, 1.6, -1.2]],
+            24,
+        ),  # ORCF3
+        (
+            [[0, 1, 0.6667], [2, 0, 0.6667], [2, 1, 0]],
+            36,
+        ),  # ORCI
+        (
+            [[2, -1, 0], [2, 1, 0], [0, 0, 0.6667]],
+            18,
+        ),  # ORCC
+        (
+            [[2, -1.155, 0], [0, 2.309, 0], [0, 0, 2]],
+            18,
+        ),  # HEX
+        # (
+        #     [[1.221, -1.743, -0.5609], [1.221, 1.743, -0.5609], [0, 0, 2.201]],
+        #     34,
+        # ),  # RHL1
+        # (
+        #     [[1.743, -1.221, 1.295], [1.743, 1.221, 1.295], [0, 0, 2.491]],
+        #     24
+        # ,
+        # ),  # RHL2
+        (
+            [[2, 0, 0], [0, 1, -0.17632698], [0, 0, 0.67695107]],
+            18,
+        ),  # MCL
+        # (
+        #     [[-2, 1.3333, -0.2351], [2, 1.3333, -0.2351], [0, 0, 1.0154]],
+        #     36,
+        # ),  # MCLC1
+        # (
+        #     [
+        #         [1.35390364, 4 / 3, -0.23510264],
+        #         [-1.35390364, 4 / 3, -0.23510264],
+        #         [0, 0, 1.01542661],
+        #     ],
+        #     28,
+        # ),  # MCLC2
+        # (
+        #     [[2, 4, -0.70530792], [-2, 4, -0.70530792], [0, 0, 2.03085322]],
+        #     28,
+        # ),  # MCLC3
+        # (
+        #     [
+        #         [1.87817491, 2, -0.35265396],
+        #         [-1.87817491, 2, -0.35265396],
+        #         [0, 0, 1.69237769],
+        #     ],
+        #     24,
+        # ),  # MCLC4
+        # (
+        #     [
+        #         [22, 2, -1.15470054],
+        #         [-2, 2, -1.15470054],
+        #         [0, 0, 2.30940108],
+        #     ],
+        #     36,
+        # ),  # MCLC5
+        # (
+        #     [
+        #         #TODO
+        #     ],
+        #     36,
+        # ),  # TRI1a
+        # (
+        #     [
+        #         # TODO
+        #     ],
+        #     28,
+        # ),  # TRI1b
+        # (
+        #     [
+        #         # TODO
+        #     ],
+        #     36,
+        # ),  # TRI2a
+        # (
+        #     [
+        #         # TODO
+        #     ],
+        #     28,
+        # ),  # TRI2b
+    ],
+    ids=[
+        "CUB",
+        "FCC",
+        "BCC",
+        "TET",
+        "BCT1",
+        "BCT2",
+        "ORC",
+        "ORCF1",
+        "ORCF2",
+        "ORCF3",
+        "ORCI",
+        "ORCC",
+        "HEX",
+        # "RHL1",
+        # "RHL2",
+        "MCL",
+        # "MCLC1",
+        # "MCLC2",
+        # "MCLC3",
+        # "MCLC4",
+        # "MCLC5",
+        # "TRI1a",
+        # "TRI1b",
+        # "TRI2a",
+        # "TRI2b",
+    ],
+)
+def test_define_edges(cell, number_of_edges):
+    lattice_points, vectors = get_lattice_points(cell)
+    planes = define_planes(lattice_points, vectors)
+    corners, plane_indices = define_corners(planes, vectors)
+    edges = define_edges(corners, plane_indices)
+
+    assert len(edges) == number_of_edges

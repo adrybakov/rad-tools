@@ -1,5 +1,5 @@
 r"""
-The algorithm for defining the planes, edges and corners of the Brillouin zone:
+The algorithm for defining the planes, edges and corners of the Brillouin zone (or Wigner-Seitz cell):
 
 Planes
 ------
@@ -7,8 +7,7 @@ Planes
     By varying the :math:`i`, :math:`j`, :math:`k` indexes in the range :math:`(-1,0,1)`. 
     The point (0,0,0) is excluded. 
     Each vector  of the lattice point is defined as :math:`\vec{v} = i\vec{v}_1 + j\vec{v}_2 + k\vec{v}_3`.
-* For each lattice point check if the middle point :math:`\vec{v} / 2` is closer 
-    to :math:`\Gamma` point then to any of the other lattice points. 
+* For each lattice point check if the middle point :math:`\vec{v} / 2` is closer to :math:`\Gamma` point then to any of the other lattice points. 
 * If yes, then the vector :math:`\vec{v}/2` defines the plane.
 
 Corners
@@ -25,119 +24,24 @@ Edges
 
 
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib import rcParams
 
 TOLERANCE = 1e-8
 TOL_BASE = 8
 
+__all__ = [
+    "deduct_zone",
+    "get_lattice_points",
+    "define_planes",
+    "define_corners",
+    "define_edges",
+]
 
-def deduct_zone(cell):
+
+def deduct_zone(cell=None, v1=None, v2=None, v3=None):
     r"""
     Construct Brillouin zone (or Wigner-Seitz cell), from the given set of basis vectors.
-
-    Parameters
-    ----------
-    cell : (3,3) array_like
-        Matrix of the basis vectors, rows are interpreted as vectors,
-        columns as cartesian coordinates:
-
-        .. code-block:: python
-            cell = [
-                [b1_x, b1_y, b1_z],
-                [b2_x, b2_y, b2_z],
-                [b3_x, b3_y, b3_z]
-                ]
-    Returns
-    -------
-    planes: (N, 3) array
-        Array of N planes, constraining Brillouin zone (or Wigner-Seitz cell).
-        Plane is defined by the vector :math:`v`, which is perpendicular to the plane
-        and gives the coordinate of the point from the plane.
-        The vector is given in relative coordinates, with respect to the basis vectors
-    edges : (K, 2, 3) array
-        Array of K edges of the Brillouin zone (or Wigner-Seitz cell).
-        Define by the two points.
-    corners: (M, 3) array
-        Array of M corners of the Brillouin zone (or Wigner-Seitz cell).
-    """
-
-    planes, other_points = define_planes(cell)
-
-    # Compute all 3-plane intersections
-    intersection_points = []
-    for f, fplane in enumerate(planes):
-        nf = np.matmul(fplane, cell)
-        for s in range(f + 1, len(planes)):
-            splane = planes[s]
-            ns = np.matmul(splane, cell)
-            for t in range(s + 1, len(planes)):
-                tplane = planes[t]
-                nt = np.matmul(tplane, cell)
-                A = np.array([nf, ns, nt])
-                b = np.array(
-                    [
-                        np.linalg.norm(nf) ** 2,
-                        np.linalg.norm(ns) ** 2,
-                        np.linalg.norm(nt) ** 2,
-                    ]
-                )
-                try:
-                    x = np.linalg.solve(A, b)
-                    intersection_points.append(x)
-                except:
-                    pass
-
-    corners = []
-
-    # Check if intersection point is closer to the Gamma point then to any other point of lattice.
-    for point in intersection_points:
-        takeit = True
-        for vector in ve in other_points:
-            if (
-                np.linalg.norm(point) - np.linalg.norm(point - other_point)
-            ) > TOLERANCE:
-                takeit = False
-                break
-        if takeit:
-            corners.append(point)
-
-    # Filter equal entries
-    new_corners = []
-    for i in range(len(corners)):
-        takeit = True
-        for j in range(len(new_corners)):
-            if (np.abs(corners[i] - new_corners[j]) < TOLERANCE).all():
-                takeit = False
-                break
-        if takeit:
-            new_corners.append(corners[i])
-    corners = new_corners
-
-    # Compute corners
-    corners_planes = []
-    for corner in corners:
-        corners_planes.append([])
-        for plane in planes:
-            A, B, C = tuple(np.matmul(plane, cell) / 2)
-            D = -np.linalg.norm(np.matmul(plane, cell) / 2) ** 2
-            if abs(A * corner[0] + B * corner[1] + C * corner[2] + D) < TOLERANCE:
-                corners_planes[-1].append(plane)
-    edges = []
-    for fc, fcorner in enumerate(corners):
-        for sc in range(fc + 1, len(corners)):
-            scorner = corners[sc]
-            n = 0
-            for fplane in corners_planes[fc]:
-                for splane in corners_planes[sc]:
-                    if np.linalg.norm(fplane - splane) < TOLERANCE:
-                        n += 1
-            if n == 2:
-                edges.append([fcorner, scorner])
-    return planes, edges, corners
-
-
-def get_lattice_points_vectors(cell=None, v1=None, v2=None, v3=None):
-    r"""
-    Get all lattice points and corresponding vectors. Does not include (0,0,0).
 
     Parameters
     ----------
@@ -146,6 +50,7 @@ def get_lattice_points_vectors(cell=None, v1=None, v2=None, v3=None):
         columns as cartesian coordinates:
 
         .. code-block:: python
+
             cell = [
                 [v1_x, v1_y, v1_z],
                 [v2_x, v2_y, v2_z],
@@ -157,6 +62,74 @@ def get_lattice_points_vectors(cell=None, v1=None, v2=None, v3=None):
         Second basis vector (second primitive lattice vector)
     v2 : (3,) |array_like|_, default None
         Third basis vector (third primitive lattice vector)
+
+    Returns
+    -------
+    planes:  list
+        List of N planes, constraining Brillouin zone (or Wigner-Seitz cell).
+        Plane is defined by the vector :math:`v`, which is perpendicular to the plane
+        and gives the coordinate of the point from the plane at the same time.
+        The vector is given in absolute coordinates.
+        Units are the same as in the input (``cell`` or ``v1``,``v2``,``v3``).
+
+        .. code-block:: python
+
+            planes = [v1, ...vN]
+
+        where :math:`v = (v_x, v_y, v_z)`.
+    corners : list
+        List of M corners of the Brillouin zone (or Wigner-Seitz cell).
+        Corner is defined by the vector :math:`v = v_x, v_y, v_z` in absolute coordinates.
+        Units are the same as in the input (``cell`` or ``v1``,``v2``,``v3``).
+    edges: list
+        List of pair of point, each entry define one edge.
+
+        .. code-block:: python
+
+            edges = [(p1, p2), ...]
+
+        where :math:`p = (p_x, p_y, p_z)` in absolute coordinates.
+        Units are the same as in the input (``cell`` or ``v1``,``v2``,``v3``).
+
+    See Also
+    --------
+    get_lattice_points
+    define_planes
+    define_corners
+    define_edges
+    """
+
+    lattice_points, vectors = get_lattice_points(cell)
+    planes = define_planes(lattice_points, vectors, relative=False)
+    corners, plane_indices = define_corners(planes, vectors)
+    edges = define_edges(corners, plane_indices)
+    return planes, edges, corners
+
+
+def get_lattice_points(cell=None, v1=None, v2=None, v3=None):
+    r"""
+    Get all lattice points and corresponding vectors. Does not include (0,0,0).
+
+    Parameters
+    ----------
+    cell : (3,3) array_like, default None
+        Matrix of the basis vectors, rows are interpreted as vectors,
+        columns as cartesian coordinates:
+
+        .. code-block:: python
+
+            cell = [
+                [v1_x, v1_y, v1_z],
+                [v2_x, v2_y, v2_z],
+                [v3_x, v3_y, v3_z]
+                ]
+    v1 : (3,) |array_like|_, default None
+        First basis vector (first primitive lattice vector)
+    v2 : (3,) |array_like|_, default None
+        Second basis vector (second primitive lattice vector)
+    v2 : (3,) |array_like|_, default None
+        Third basis vector (third primitive lattice vector)
+
     Returns
     -------
     lattice_points : list
@@ -166,14 +139,18 @@ def get_lattice_points_vectors(cell=None, v1=None, v2=None, v3=None):
         .. code-block:: python
 
             lattice_points = [p_1, ..., p_26]
-        where :math:`p = (i,j,k)`.
+
+        where :math:`p = (i,j,k)` in relative coordinates with respect to
+        ``cell`` or ``v1``,``v2``,``v3``.
     vectors : (26, 3) :numpy:`array`
         Array of the vectors corresponding to the lattice points.
 
         .. code-block:: python
 
             vectors = [v_1, ... v_26]
-        where :math:`v = (v_x, v_y, v_z)`.
+
+        where :math:`v = (v_x, v_y, v_z)` in absolute coordinates.
+        Units are the same as in the input (``cell`` or ``v1``,``v2``,``v3``).
     """
 
     # Check if provided data are sufficient.
@@ -208,7 +185,7 @@ def get_lattice_points_vectors(cell=None, v1=None, v2=None, v3=None):
     return lattice_points, vectors
 
 
-def define_planes(lattice_points, vectors):
+def define_planes(lattice_points, vectors, relative=False):
     r"""
     Define planes, which borders the first brillouin zone (or Wigner-Seitz cell).
 
@@ -221,6 +198,7 @@ def define_planes(lattice_points, vectors):
         .. code-block:: python
 
             lattice_points = [p_1, ..., p_26]
+
         where :math:`p = (i,j,k)`.
     vectors : (26, 3) :numpy:`array`
         Array of the vectors corresponding to the lattice points.
@@ -228,15 +206,26 @@ def define_planes(lattice_points, vectors):
         .. code-block:: python
 
             vectors = [v_1, ... v_26]
+
         where :math:`v = (v_x, v_y, v_z)`.
+    relative : bool, default False.
+        Whether to return planes in relative or absolute coordinates.
 
     Returns
     -------
     planes:  list
-        List of N planes (i/2, j/2, k/2), constraining Brillouin zone (or Wigner-Seitz cell).
+        List of N planes, constraining Brillouin zone (or Wigner-Seitz cell).
         Plane is defined by the vector :math:`v`, which is perpendicular to the plane
-        and gives the coordinate of the point from the plane.
-        The vector is given in relative coordinates, with respect to the basis vectors.
+        and gives the coordinate of the point from the plane. If ``relative` =` ``True``,
+        then :math:`v = (i,j,k)` in relative coordinates. If ``relative`` = ``False``,
+        then :math:`v = (v_x,v_y,v_z)` in absolute coordinates.
+        Units are the same as in the input (``vectors``).
+
+    See Also
+    --------
+    get_lattice_points
+    define_corners
+    define_edges
     """
 
     points = np.transpose(
@@ -255,18 +244,21 @@ def define_planes(lattice_points, vectors):
 
     for i in range(compare_matrix.shape[0]):
         if compare_matrix[i] <= 1:
-            planes.append(
-                (
-                    lattice_points[i][0] / 2,
-                    lattice_points[i][1] / 2,
-                    lattice_points[i][2] / 2,
+            if relative:
+                planes.append(
+                    (
+                        lattice_points[i][0] / 2,
+                        lattice_points[i][1] / 2,
+                        lattice_points[i][2] / 2,
+                    )
                 )
-            )
+            else:
+                planes.append(vectors[i] / 2)
 
     return planes
 
 
-def define_corners(planes, cell, vectors):
+def define_corners(planes, vectors):
     r"""
     Define corners of the first brillouin zone (or Wigner-Seitz cell).
 
@@ -274,54 +266,44 @@ def define_corners(planes, cell, vectors):
     ----------
     planes:  list
         List of N planes (i/2, j/2, k/2), constraining Brillouin zone (or Wigner-Seitz cell).
-        Plane is defined by the vector :math:`v`, which is perpendicular to the plane
-        and gives the coordinate of the point from the plane.
-        The vector is given in relative coordinates, with respect to the basis vectors.
-    cell : (3,3) array_like, default None
-        Matrix of the basis vectors, rows are interpreted as vectors,
-        columns as cartesian coordinates:
-
-        .. code-block:: python
-            cell = [
-                [v1_x, v1_y, v1_z],
-                [v2_x, v2_y, v2_z],
-                [v3_x, v3_y, v3_z]
-                ]
-    lattice_points : list
-        List of all lattice points, constructed by the permutations of (i,j,k)
-        in the range (-1,0,1). Without (0,0,0) point.
-
-        .. code-block:: python
-
-            lattice_points = [p_1, ..., p_26]
-        where :math:`p = (i,j,k)`.
+        Plane is defined by the vector :math:`v = (v_x,v_y,v_z)` in absolute coordinates,
+        which is perpendicular to the plane and gives the coordinate of the point from the plane.
     vectors : (26, 3) :numpy:`array`
         Array of the vectors corresponding to the lattice points.
 
         .. code-block:: python
 
             vectors = [v_1, ... v_26]
+
         where :math:`v = (v_x, v_y, v_z)`.
+
     Returns
     -------
     corners : list
         List of M corners of the Brillouin zone (or Wigner-Seitz cell).
         Corner is defined by the vector :math:`v = v_x, v_y, v_z` in absolute coordinates.
+        Units are the same as in the input (``vectors`` and ``planes``).
     plane_indices : list
         Indices of the three planes, which intersection produced the corners.
+
+    See Also
+    --------
+    get_lattice_points
+    define_planes
+    define_edges
     """
 
     # Compute all 3-plane intersections
     intersection_points = []
     planes_indices = []
     for f, fplane in enumerate(planes):
-        nf = np.matmul(fplane, cell)
+        nf = fplane
         for s in range(f + 1, len(planes)):
             splane = planes[s]
-            ns = np.matmul(splane, cell)
+            ns = splane
             for t in range(s + 1, len(planes)):
                 tplane = planes[t]
-                nt = np.matmul(tplane, cell)
+                nt = tplane
                 A = np.array([nf, ns, nt])
                 b = np.array(
                     [
@@ -333,13 +315,14 @@ def define_corners(planes, cell, vectors):
                 try:
                     x = np.linalg.solve(A, b)
                     intersection_points.append(x)
-                    planes_indices.append((f, s, t))
+                    planes_indices.append({f, s, t})
                 except:
                     pass
 
     corners = []
 
-    # Check if intersection point is closer to the Gamma point then to any other point of lattice.
+    # Check if intersection point is closer (or at the same distance)
+    # to the Gamma point then to any other point of lattice.
     ipoints = np.transpose(
         np.tile(intersection_points, (len(vectors), 1)).reshape(
             len(vectors), len(intersection_points), 3
@@ -365,6 +348,7 @@ def define_corners(planes, cell, vectors):
 
     # Filter non-unique entries
     unique_corners = []
+    planes_indices = []
     for i in range(len(corners)):
         takeit = True
         for j in range(len(unique_corners)):
@@ -374,15 +358,107 @@ def define_corners(planes, cell, vectors):
         if takeit:
             unique_corners.append(corners[i])
             planes_indices.append(tmp[i])
+        else:
+            planes_indices[j] = planes_indices[j].union(tmp[i])
 
     return unique_corners, planes_indices
 
 
-if __name__ == "__main__":
-    cell = [[1, 1, -1], [1, -1, 1], [-1, 1, 1]]
-    lattice_points, vectors = get_lattice_points_vectors(cell)
-    planes = define_planes(lattice_points, vectors)
-    tmp = define_corners(planes, cell, vectors)
-    from rad_tools import print_2D_array
+def define_edges(corners, plane_indices):
+    r"""
+    Define edges of the first brillouin zone (or Wigner-Seitz cell).
 
-    print_2D_array(np.array(tmp[0]))
+    Parameters
+    ----------
+    corners : list
+        List of M corners of the Brillouin zone (or Wigner-Seitz cell).
+        Corner is defined by the vector :math:`v = v_x, v_y, v_z` in absolute coordinates.
+    plane_indices : list
+        Indices of the three planes, which intersection produced the corners.
+
+    Returns
+    -------
+    edges: list
+        List of pair of point, each entry define one edge.
+
+        .. code-block:: python
+
+            edges = [(p1, p2), ...]
+
+        where :math:`p = (p_x, p_y, p_z)` in absolute coordintes.
+        Units are the same as in the input (``corners``).
+
+    See Also
+    --------
+    get_lattice_points
+    define_planes
+    define_corners
+    """
+
+    edges = []
+    for f in range(len(corners)):
+        for s in range(f + 1, len(corners)):
+            if len(set(plane_indices[f]).intersection(set(plane_indices[s]))) == 2:
+                edges.append([corners[f], corners[s]])
+
+    return edges
+
+
+if __name__ == "__main__":
+    cell = [[-1.818, 1.6, 1.2], [1.818, -1.6, 1.2], [1.818, 1.6, -1.2]]
+    lattice_points, vectors = get_lattice_points(cell)
+    planes = define_planes(lattice_points, vectors)
+    print("===planes===")
+    for i, p in enumerate(planes):
+        print(i, p)
+    corners, plane_indices = define_corners(planes, vectors)
+    print("===corners===")
+    for i, p in enumerate(corners):
+        print(i, p, plane_indices[i])
+
+    edges = define_edges(corners, plane_indices)
+
+    fig = plt.figure(figsize=(6, 6))
+    rcParams["axes.linewidth"] = 0
+    rcParams["xtick.color"] = "#B3B3B3"
+    ax = fig.add_subplot(projection="3d")
+    ax.set_proj_type("persp", focal_length=0.2)
+    ax.axes.linewidth = 0
+    ax.xaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
+    ax.yaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
+    ax.zaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
+    ax.set_xlabel("x", fontsize=15, alpha=0.5)
+    ax.set_ylabel("y", fontsize=15, alpha=0.5)
+    ax.set_zlabel("z", fontsize=15, alpha=0.5)
+    ax.tick_params(axis="both", zorder=0, color="#B3B3B3")
+
+    for i in range(0, 3):
+        ax.text(
+            cell[i][0] * 1.1,
+            cell[i][1] * 1.1,
+            cell[i][2] * 1.1,
+            f"$b_{i+1}$",
+            fontsize=20,
+            color="black",
+            ha="center",
+            va="center",
+        )
+        ax.quiver(
+            0,
+            0,
+            0,
+            *tuple(cell[i]),
+            arrow_length_ratio=0.2,
+            color="black",
+            alpha=0.5,
+            linewidth=2,
+        )
+
+    for i, point in enumerate(corners):
+        ax.scatter(*tuple(point), s=36, color="red")
+        ax.text(
+            *tuple(point),
+            str(i),
+            fontsize=20,
+        )
+    plt.show()
