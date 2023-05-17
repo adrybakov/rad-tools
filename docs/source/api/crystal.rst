@@ -13,8 +13,8 @@ atoms with their relative coordinates.
 .. toctree::
     :maxdepth: 2
     
-    lattice
-    atom
+    crystal.lattice
+    crystal.atom
 
 
 
