@@ -811,7 +811,7 @@ class Lattice:
 
         See Also
         --------
-        plot_reciprocal_space : plot brillouin zone
+        plot_brillouin : plot brillouin zone
         plot_kpath : plot k path
         """
 
