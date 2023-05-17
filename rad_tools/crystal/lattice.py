@@ -1,5 +1,5 @@
 r"""
-General 3D lattice
+General 3D lattice.
 """
 
 
@@ -15,7 +15,7 @@ from rad_tools.crystal.decomposition import deduct_zone
 
 class Lattice:
     r"""
-    General Lattice.
+    General 3D lattice.
 
     Attributes
     ----------
@@ -36,7 +36,7 @@ class Lattice:
 
     _pearson_symbol = None
 
-    PLOT_NAMES = {
+    _PLOT_NAMES = {
         "G": "$\\Gamma$",
         "M": "$M$",
         "R": "$R$",
@@ -89,10 +89,39 @@ class Lattice:
 
     def __init__(self, a1, a2, a3) -> None:
         self.cell = np.array([a1, a2, a3])
-        self.primitive_cell = None
+        self._primitive_cell = None
         self.points = {}
         self._path = None
         self._default_path = None
+
+    @property
+    def primitive_cell(self):
+        r"""
+        Primitive cell of the lattice.
+
+        Raises
+        ------
+
+
+
+        """
+        if self._primitive_cell is None:
+            raise RuntimeError(
+                "Primitive unit cell is not defined.\n"
+                + "Use lattice.primitive_cell = lattice.cell "
+                + "in order to interpret conventional cell as primitive."
+            )
+        return self._primitive_cell
+
+    @primitive_cell.setter
+    def primitive_cell(self, new_primitive_cell):
+        new_primitive_cell = np.array((new_primitive_cell))
+        if new_primitive_cell.shape != (3, 3):
+            raise ValueError(
+                "New primitive cell has to be (3,3) array_like. "
+                + f"Received shape {new_primitive_cell.shape}."
+            )
+        self._primitive_cell = new_primitive_cell
 
     @property
     def path(self):
@@ -247,9 +276,6 @@ class Lattice:
         Reciprocal cell. Always primitive.
         """
 
-        if self.primitive_cell is None:
-            self.make_primitive()
-
         result = np.array(
             [
                 2
@@ -349,7 +375,7 @@ class Lattice:
         pass
 
     @property
-    def variant(self):
+    def variation(self):
         r"""There is no variations of the lattice"""
         return self.__class__.__name__
 
@@ -447,13 +473,13 @@ class Lattice:
         del self._ax
         plt.close()
 
-    def savefig(self, output_name="graph.png", elev=30, azim=-60, **kwargs):
+    def savefig(self, output_name="lattice_graph.png", elev=30, azim=-60, **kwargs):
         r"""
         Save the figure in the file
 
         Parameters
         ----------
-        output_name : str
+        output_name : str, default "lattice_graph.png"
             Name of the file to be saved.
         elev : float, default 30
             Passed directly to matplotlib. See |matplotlibViewInit|_.
@@ -762,7 +788,7 @@ class Lattice:
                     + +0.025 * self.b2
                     + 0.025 * self.b3
                 ),
-                self.PLOT_NAMES[point],
+                self._PLOT_NAMES[point],
                 fontsize=20,
                 color=colour,
             )

@@ -6,8 +6,9 @@ Crystal
 
 .. automodule:: rad_tools.crystal
 
+.. currentmodule:: rad_tools
 
-Crystals are defined through the combination the :py:class:`Lattice` and the set of  
+Crystals are defined as a combination of the the :py:class:`.Lattice` and the set of  
 atoms with their relative coordinates.
 
 .. toctree::
@@ -15,6 +16,22 @@ atoms with their relative coordinates.
     
     crystal.lattice
     crystal.atom
+
+
+When arbitrary crystal structure is considered the :py:attr:`.Crystal.lattice` is an instance of 
+the general :py:class:`.Lattice` class, where the lattice unit cell is interpreted as a conventional one 
+and the primitive unit cell is not defined. The type of the Bravais lattice is not defined as well.
+The process of the definition of the crystal type is divided in two steps: 
+
+* Define primitive cell of the :py:class:`.Crystal`
+* Define the type of the Bravais lattice.
+
+After those two steps primitive cel is well defined and the standard k path is accessible.
+
+.. autosummary::
+    :toctree: generated/
+
+    Crystal
 
 
 

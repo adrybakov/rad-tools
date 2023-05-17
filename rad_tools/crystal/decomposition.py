@@ -70,7 +70,7 @@ def deduct_zone(cell=None, v1=None, v2=None, v3=None):
         Plane is defined by the vector :math:`v`, which is perpendicular to the plane
         and gives the coordinate of the point from the plane at the same time.
         The vector is given in absolute coordinates.
-        Units are the same as in the input (``cell`` or ``v1``,``v2``,``v3``).
+        Units are the same as in the input (``cell`` or ``v1``, ``v2``, ``v3``).
 
         .. code-block:: python
 
@@ -80,7 +80,7 @@ def deduct_zone(cell=None, v1=None, v2=None, v3=None):
     corners : list
         List of M corners of the Brillouin zone (or Wigner-Seitz cell).
         Corner is defined by the vector :math:`v = v_x, v_y, v_z` in absolute coordinates.
-        Units are the same as in the input (``cell`` or ``v1``,``v2``,``v3``).
+        Units are the same as in the input (``cell`` or ``v1``, ``v2``, ``v3``).
     edges: list
         List of pair of point, each entry define one edge.
 
@@ -89,7 +89,7 @@ def deduct_zone(cell=None, v1=None, v2=None, v3=None):
             edges = [(p1, p2), ...]
 
         where :math:`p = (p_x, p_y, p_z)` in absolute coordinates.
-        Units are the same as in the input (``cell`` or ``v1``,``v2``,``v3``).
+        Units are the same as in the input (``cell`` or ``v1``, ``v2``, ``v3``).
 
     See Also
     --------
@@ -141,7 +141,7 @@ def get_lattice_points(cell=None, v1=None, v2=None, v3=None):
             lattice_points = [p_1, ..., p_26]
 
         where :math:`p = (i,j,k)` in relative coordinates with respect to
-        ``cell`` or ``v1``,``v2``,``v3``.
+        ``cell`` or ``v1``, ``v2``, ``v3``.
     vectors : (26, 3) :numpy:`array`
         Array of the vectors corresponding to the lattice points.
 
@@ -150,7 +150,7 @@ def get_lattice_points(cell=None, v1=None, v2=None, v3=None):
             vectors = [v_1, ... v_26]
 
         where :math:`v = (v_x, v_y, v_z)` in absolute coordinates.
-        Units are the same as in the input (``cell`` or ``v1``,``v2``,``v3``).
+        Units are the same as in the input (``cell`` or ``v1``, ``v2``, ``v3``).
     """
 
     # Check if provided data are sufficient.
@@ -216,8 +216,8 @@ def define_planes(lattice_points, vectors, relative=False):
     planes:  list
         List of N planes, constraining Brillouin zone (or Wigner-Seitz cell).
         Plane is defined by the vector :math:`v`, which is perpendicular to the plane
-        and gives the coordinate of the point from the plane. If ``relative` =` ``True``,
-        then :math:`v = (i,j,k)` in relative coordinates. If ``relative`` = ``False``,
+        and gives the coordinate of the point from the plane. If ``relative = True``,
+        then :math:`v = (i,j,k)` in relative coordinates. If ``relative = False``,
         then :math:`v = (v_x,v_y,v_z)` in absolute coordinates.
         Units are the same as in the input (``vectors``).
 
@@ -265,7 +265,7 @@ def define_corners(planes, vectors):
     Parameters
     ----------
     planes:  list
-        List of N planes (i/2, j/2, k/2), constraining Brillouin zone (or Wigner-Seitz cell).
+        List of N planes, constraining Brillouin zone (or Wigner-Seitz cell).
         Plane is defined by the vector :math:`v = (v_x,v_y,v_z)` in absolute coordinates,
         which is perpendicular to the plane and gives the coordinate of the point from the plane.
     vectors : (26, 3) :numpy:`array`

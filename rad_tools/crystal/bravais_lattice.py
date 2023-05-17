@@ -305,8 +305,8 @@ class BCT(Lattice):
     _pearson_symbol = "tI"
 
     def __init__(self, a: float, c: float) -> None:
-        self.PLOT_NAMES["S"] = "$\\Sigma$"
-        self.PLOT_NAMES["S1"] = "$\\Sigma_1$"
+        self._PLOT_NAMES["S"] = "$\\Sigma$"
+        self._PLOT_NAMES["S1"] = "$\\Sigma_1$"
         if a == c:
             raise ValueError("Are you trying to create BCC Lattice (a == c)?")
         self.a = a
@@ -319,7 +319,7 @@ class BCT(Lattice):
                 [a / 2, a / 2, -c / 2],
             ]
         )
-        if self.variant == "BCT1":
+        if self.variation == "BCT1":
             eta = (1 + self.c**2 / self.a**2) / 4
             self.points = {
                 "G": np.array([0, 0, 0]),
@@ -336,7 +336,7 @@ class BCT(Lattice):
                 ["X", "P"],
             ]
 
-        elif self.variant == "BCT2":
+        elif self.variation == "BCT2":
             eta = (1 + self.a**2 / self.c**2) / 4
             zeta = self.a**2 / (2 * self.c**2)
             self.points = {
@@ -369,9 +369,9 @@ class BCT(Lattice):
             ]
 
     @property
-    def variant(self):
+    def variation(self):
         r"""
-        Two variants of the Lattice.
+        Two variations of the Lattice.
 
         :math:`\text{BCT}_1: c < a` and :math:`\text{BCT}_2: c > a`
         """
@@ -521,7 +521,7 @@ class ORCF(Lattice):
                 [a / 2, b / 2, 0],
             ]
         )
-        if self.variant == "ORCF1":
+        if self.variation == "ORCF1":
             eta = (1 + self.a**2 / self.b**2 + self.a**2 / self.c**2) / 4
             zeta = (1 + self.a**2 / self.b**2 - self.a**2 / self.c**2) / 4
             self.points = {
@@ -542,7 +542,7 @@ class ORCF(Lattice):
                 ["X", "A", "Z"],
                 ["L", "G"],
             ]
-        elif self.variant == "ORCF2":
+        elif self.variation == "ORCF2":
             eta = (1 + self.a**2 / self.b**2 - self.a**2 / self.c**2) / 4
             delta = (1 + self.b**2 / self.a**2 - self.b**2 / self.c**2) / 4
             phi = (1 + self.c**2 / self.b**2 - self.c**2 / self.a**2) / 4
@@ -568,7 +568,7 @@ class ORCF(Lattice):
                 ["H", "Y"],
                 ["L", "G"],
             ]
-        elif self.variant == "ORCF3":
+        elif self.variation == "ORCF3":
             eta = (1 + self.a**2 / self.b**2 + self.a**2 / self.c**2) / 4
             zeta = (1 + self.a**2 / self.b**2 - self.a**2 / self.c**2) / 4
 
@@ -590,9 +590,9 @@ class ORCF(Lattice):
             ]
 
     @property
-    def variant(self):
+    def variation(self):
         r"""
-        Three variants of the Lattice.
+        Three variations of the Lattice.
 
         :math:`\text{ORCF}_1: \dfrac{1}{a^2} > \dfrac{1}{b^2} + \dfrac{1}{c^2}`,
         :math:`\text{ORCF}_2: \dfrac{1}{a^2} < \dfrac{1}{b^2} + \dfrac{1}{c^2}`,
@@ -899,7 +899,7 @@ class RHL(Lattice):
             ]
         )
         self.primitive_cell = self.cell
-        if self.variant == "RHL1":
+        if self.variation == "RHL1":
             eta = (1 + 4 * cos(alpha / 180 * pi)) / (2 + 4 * cos(alpha / 180 * pi))
             nu = 3 / 4 - eta / 2
 
@@ -924,7 +924,7 @@ class RHL(Lattice):
                 ["Q", "F", "P1", "Z"],
                 ["L", "P"],
             ]
-        elif self.variant == "RHL2":
+        elif self.variation == "RHL2":
             eta = 1 / (2 * tan(self.alpha / 180 * pi / 2) ** 2)
             nu = 3 / 4 - eta / 2
 
@@ -942,9 +942,9 @@ class RHL(Lattice):
             self._default_path = [["G", "P", "Z", "Q", "G", "F", "P1", "Q1", "L", "Z"]]
 
     @property
-    def variant(self):
+    def variation(self):
         r"""
-        Two variants of the Lattice.
+        Two variations of the Lattice.
 
         :math:`\text{RHL}_1 \alpha < 90^{\circ}`,
         :math:`\text{RHL}_2 \alpha > 90^{\circ}`
@@ -1133,14 +1133,14 @@ class MCLC(Lattice):
             ]
         )
         # Parameters
-        if self.variant in ["MCLC1", "MCLC2"]:
+        if self.variation in ["MCLC1", "MCLC2"]:
             zeta = (2 - b * cos(alpha / 180 * pi) / c) / (
                 4 * sin(alpha / 180 * pi) ** 2
             )
             eta = 1 / 2 + 2 * zeta * c * cos(alpha / 180 * pi) / b
             psi = 3 / 4 - a**2 / (4 * b**2 * sin(alpha / 180 * pi) ** 2)
             phi = psi + (3 / 4 - psi) * b * cos(alpha / 180 * pi) / c
-        elif self.variant in ["MCLC3", "MCLC4"]:
+        elif self.variation in ["MCLC3", "MCLC4"]:
             mu = (1 + b**2 / a**2) / 4
             delta = b * c * cos(alpha / 180 * pi) / (2 * a**2)
             zeta = (
@@ -1151,7 +1151,7 @@ class MCLC(Lattice):
             eta = 1 / 2 + 2 * zeta * c * cos(alpha / 180 * pi) / b
             phi = 1 + zeta - 2 * mu
             psi = eta - 2 * delta
-        elif self.variant == "MCLC5":
+        elif self.variation == "MCLC5":
             zeta = (
                 b**2 / a**2
                 + (1 - b * cos(alpha / 180 * pi) / c) / sin(alpha / 180 * pi) ** 2
@@ -1172,7 +1172,7 @@ class MCLC(Lattice):
             delta = zeta * c * cos(alpha / 180 * pi) / b + omega / 2 - 1 / 4
 
         # Path
-        if self.variant == "MCLC1":
+        if self.variation == "MCLC1":
             self._default_path = [
                 ["G", "Y", "F", "L", "I"],
                 ["I1", "Z", "F1"],
@@ -1198,7 +1198,7 @@ class MCLC(Lattice):
                 "Y1": np.array([-1 / 2, -1 / 2, 0]),
                 "Z": np.array([0, 0, 1 / 2]),
             }
-        elif self.variant == "MCLC2":
+        elif self.variation == "MCLC2":
             self._default_path = [
                 ["G", "Y", "F", "L", "I"],
                 ["I1", "Z", "F1"],
@@ -1221,7 +1221,7 @@ class MCLC(Lattice):
                 "Y1": np.array([-1 / 2, -1 / 2, 0]),
                 "Z": np.array([0, 0, 1 / 2]),
             }
-        elif self.variant == "MCLC3":
+        elif self.variation == "MCLC3":
             self.points = {
                 "G": np.array([0, 0, 0]),
                 "F": np.array([1 - phi, 1 - phi, 1 - psi]),
@@ -1246,7 +1246,7 @@ class MCLC(Lattice):
                 ["H1", "Y1", "X", "G", "N"],
                 ["M", "G"],
             ]
-        elif self.variant == "MCLC4":
+        elif self.variation == "MCLC4":
             self.points = {
                 "G": np.array([0, 0, 0]),
                 "F": np.array([1 - phi, 1 - phi, 1 - psi]),
@@ -1269,7 +1269,7 @@ class MCLC(Lattice):
                 ["H1", "Y1", "X", "G", "N"],
                 ["M", "G"],
             ]
-        elif self.variant == "MCLC5":
+        elif self.variation == "MCLC5":
             self._default_path = [
                 ["G", "Y", "F", "L", "I"],
                 ["I1", "Z", "H", "F1"],
@@ -1299,9 +1299,9 @@ class MCLC(Lattice):
             }
 
     @property
-    def variant(self):
+    def variation(self):
         r"""
-        Five variant of the Lattice.
+        Five variation of the Lattice.
 
         :math:`\text{MCLC}_1: k_{\gamma} > 90^{\circ}`,
         :math:`\text{MCLC}_2: k_{\gamma} = 90^{\circ}`,
@@ -1423,7 +1423,7 @@ class TRI(Lattice):
             ]
         )
         self.primitive_cell = self.cell
-        if self.variant in ["TRI1a", "TRI1b"]:
+        if self.variation in ["TRI1a", "TRI1b"]:
             self.points = {
                 "G": np.array([0, 0, 0]),
                 "L": np.array([1 / 2, 1 / 2, 0]),
@@ -1442,7 +1442,7 @@ class TRI(Lattice):
                 "R",
                 "G",
             ]
-        elif self.variant in ["TRI2a", "TRI2b"]:
+        elif self.variation in ["TRI2a", "TRI2b"]:
             self.points = {
                 "G": np.array([0, 0, 0]),
                 "L": np.array([1 / 2, 1 / 2, 0]),
@@ -1463,9 +1463,9 @@ class TRI(Lattice):
             ]
 
     @property
-    def variant(self):
+    def variation(self):
         r"""
-        Four variants of the Lattice.
+        Four variations of the Lattice.
 
 
         :math:`\text{TRI}_{1a} k_{\alpha} > 90^{\circ}, k_{\beta} > 90^{\circ}, k_{\gamma} > 90^{\circ}, k_{\gamma} = \min(k_{\alpha}, k_{\beta}, k_{\gamma})`
@@ -1542,28 +1542,28 @@ if __name__ == "__main__":
     from math import pi
 
     print(
-        f"BCT1 {bct1.variant}",
-        f"BCT2 {bct2.variant}",
-        f"ORCF1 {orcf1.variant}",
-        f"ORCF2 {orcf2.variant}",
-        f"ORCF3 {orcf3.variant}",
-        f"RHL1 {rhl1.variant}",
-        f"RHL2 {rhl2.variant}",
-        f"MCLC1 {mclc1.variant}",
-        f"MCLC2 {mclc2.variant}",
-        f"MCLC3 {mclc3.variant}",
-        f"MCLC4 {mclc4.variant}",
-        f"MCLC5 {mclc5.variant}",
-        f"TRI1a {tri1a.variant}",
-        f"TRI1b {tri1b.variant}",
-        f"TRI2a {tri2a.variant}",
-        f"TRI2b {tri2b.variant}",
+        f"BCT1 {bct1.variation}",
+        f"BCT2 {bct2.variation}",
+        f"ORCF1 {orcf1.variation}",
+        f"ORCF2 {orcf2.variation}",
+        f"ORCF3 {orcf3.variation}",
+        f"RHL1 {rhl1.variation}",
+        f"RHL2 {rhl2.variation}",
+        f"MCLC1 {mclc1.variation}",
+        f"MCLC2 {mclc2.variation}",
+        f"MCLC3 {mclc3.variation}",
+        f"MCLC4 {mclc4.variation}",
+        f"MCLC5 {mclc5.variation}",
+        f"TRI1a {tri1a.variation}",
+        f"TRI1b {tri1b.variation}",
+        f"TRI2a {tri2a.variation}",
+        f"TRI2b {tri2b.variation}",
         sep="\n",
     )
 
     for e in examples:
         l = tri1a
-        print(l.variant)
+        print(l.variation)
         l.prepare_figure()
         l.plot("brillouin_kpath")
         l.show()

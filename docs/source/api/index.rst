@@ -25,7 +25,6 @@ In the examples across the documentation it is expected to be imported in that w
    crystal
    dos
    exchange
-   kpoints
    io
    score
    routines

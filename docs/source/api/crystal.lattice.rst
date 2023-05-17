@@ -22,10 +22,10 @@ Bravais lattices
 ================
 
 For each type of Bravais lattice a class defined, for some classes there are 
-several variants of lattice, each of which are treated under same class 
-(see :py:attr:`variant` for each class).
+several variations of lattice, each of which are treated under same class 
+(see :py:attr:`variation` for each class).
 
-For each type and variant a predefined example of the lattice is available. It could be accessed in a following way:
+For each type and variation a predefined example of the lattice is available. It could be accessed in a following way:
 
 .. doctest::
 
@@ -37,7 +37,7 @@ For each type and variant a predefined example of the lattice is available. It c
 Cubic lattice system
 --------------------
 
-Pre-defined examples: ``cub``, ``fcc``, ``bcc``.
+Predefined examples: ``cub``, ``fcc``, ``bcc``.
 
 .. autosummary::
     :toctree: generated/
@@ -49,7 +49,7 @@ Pre-defined examples: ``cub``, ``fcc``, ``bcc``.
 Tetragonal lattice system
 -------------------------
 
-Pre-defined examples: ``tet``, ``bct1``, ``bct2``.
+Predefined examples: ``tet``, ``bct1``, ``bct2``.
 
 .. autosummary::
     :toctree: generated/
@@ -60,7 +60,7 @@ Pre-defined examples: ``tet``, ``bct1``, ``bct2``.
 Orthorhombic lattice system
 ---------------------------
 
-Pre-defined examples: ``orc``, ``orcf1``, ``orcf2``, ``orcf3``, ``orci``, ``orcc``.
+Predefined examples: ``orc``, ``orcf1``, ``orcf2``, ``orcf3``, ``orci``, ``orcc``.
 
 .. autosummary::
     :toctree: generated/
@@ -73,7 +73,7 @@ Pre-defined examples: ``orc``, ``orcf1``, ``orcf2``, ``orcf3``, ``orci``, ``orcc
 Hexagonal lattice system
 ------------------------
 
-Pre-defined examples: ``hex``.
+Predefined examples: ``hex``.
 
 .. autosummary::
     :toctree: generated/
@@ -83,7 +83,7 @@ Pre-defined examples: ``hex``.
 Rhombohedral lattice system
 ---------------------------
 
-Pre-defined examples: ``rhl1``, ``rhl2``
+Predefined examples: ``rhl1``, ``rhl2``
 
 .. autosummary::
     :toctree: generated/
@@ -93,7 +93,7 @@ Pre-defined examples: ``rhl1``, ``rhl2``
 Monoclinic lattice system
 -------------------------
 
-Pre-defined examples: ``mcl``, ``mclc1``, ``mclc2``, ``mclc3``, ``mclc4``, ``mclc5``.
+Predefined examples: ``mcl``, ``mclc1``, ``mclc2``, ``mclc3``, ``mclc4``, ``mclc5``.
 
 .. autosummary::
     :toctree: generated/
@@ -104,7 +104,7 @@ Pre-defined examples: ``mcl``, ``mclc1``, ``mclc2``, ``mclc3``, ``mclc4``, ``mcl
 Triclinic lattice system
 ------------------------
 
-Pre-defined examples: ``tri1a``, ``tri1b``, ``tri2a``, ``tri2b``.
+Predefined examples: ``tri1a``, ``tri1b``, ``tri2a``, ``tri2b``.
 
 .. autosummary::
     :toctree: generated/

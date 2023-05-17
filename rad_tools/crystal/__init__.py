@@ -2,6 +2,7 @@ r"""
 Crystals
 """
 
+from .crystal import Crystal
 from .atom import Atom
 from .lattice import Lattice
 from .bravais_lattice import *
@@ -10,5 +11,5 @@ from .bravais_lattice import *
 # because it should not appear in the main package, only in crystal subpackage
 from .decomposition import *
 
-__all__ = ["Atom", "Lattice"]
+__all__ = ["Atom", "Lattice", "Crystal"]
 __all__.extend(bravais_lattice.__all__)
