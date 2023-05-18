@@ -101,12 +101,14 @@ class Lattice:
 
         Raises
         ------
-
-
-
+        ValueError
+            When primitive cell is not defined. Two solutions are available to the user:
+            * Interpret conventional cell as primitive one.
+            * Manually add primitive cell.
         """
+
         if self._primitive_cell is None:
-            raise RuntimeError(
+            raise ValueError(
                 "Primitive unit cell is not defined.\n"
                 + "Use lattice.primitive_cell = lattice.cell "
                 + "in order to interpret conventional cell as primitive."
