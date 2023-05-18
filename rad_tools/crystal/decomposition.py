@@ -25,6 +25,7 @@ Edges
 
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy as sp
 from matplotlib import rcParams
 
 TOLERANCE = 1e-8
@@ -304,16 +305,21 @@ def define_corners(planes, vectors):
             for t in range(s + 1, len(planes)):
                 tplane = planes[t]
                 nt = tplane
-                A = np.array([nf, ns, nt])
-                b = np.array(
-                    [
-                        np.linalg.norm(nf) ** 2,
-                        np.linalg.norm(ns) ** 2,
-                        np.linalg.norm(nt) ** 2,
-                    ]
+                # If not around - overflow error occurs
+                A = np.around(np.array([nf, ns, nt]), decimals=TOL_BASE)
+                b = np.around(
+                    np.array(
+                        [
+                            np.linalg.norm(nf) ** 2,
+                            np.linalg.norm(ns) ** 2,
+                            np.linalg.norm(nt) ** 2,
+                        ]
+                    ),
+                    decimals=TOL_BASE,
                 )
                 try:
                     x = np.linalg.solve(A, b)
+                    xprime = sp.linalg.solve(A, b)
                     intersection_points.append(x)
                     planes_indices.append({f, s, t})
                 except:
@@ -339,6 +345,7 @@ def define_corners(planes, vectors):
     )
 
     compare_matrix = np.sum((compare_matrix > 0) * 1, axis=1)
+
     corners = []
     tmp = []
     for i in range(compare_matrix.shape[0]):
@@ -405,60 +412,11 @@ def define_edges(corners, plane_indices):
 
 
 if __name__ == "__main__":
-    cell = [[-1.818, 1.6, 1.2], [1.818, -1.6, 1.2], [1.818, 1.6, -1.2]]
+    from rad_tools import orcf2
+
+    cell = orcf2.reciprocal_cell
     lattice_points, vectors = get_lattice_points(cell)
     planes = define_planes(lattice_points, vectors)
-    print("===planes===")
-    for i, p in enumerate(planes):
-        print(i, p)
-    corners, plane_indices = define_corners(planes, vectors)
-    print("===corners===")
-    for i, p in enumerate(corners):
-        print(i, p, plane_indices[i])
-
-    edges = define_edges(corners, plane_indices)
-
-    fig = plt.figure(figsize=(6, 6))
-    rcParams["axes.linewidth"] = 0
-    rcParams["xtick.color"] = "#B3B3B3"
-    ax = fig.add_subplot(projection="3d")
-    ax.set_proj_type("persp", focal_length=0.2)
-    ax.axes.linewidth = 0
-    ax.xaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
-    ax.yaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
-    ax.zaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
-    ax.set_xlabel("x", fontsize=15, alpha=0.5)
-    ax.set_ylabel("y", fontsize=15, alpha=0.5)
-    ax.set_zlabel("z", fontsize=15, alpha=0.5)
-    ax.tick_params(axis="both", zorder=0, color="#B3B3B3")
-
-    for i in range(0, 3):
-        ax.text(
-            cell[i][0] * 1.1,
-            cell[i][1] * 1.1,
-            cell[i][2] * 1.1,
-            f"$b_{i+1}$",
-            fontsize=20,
-            color="black",
-            ha="center",
-            va="center",
-        )
-        ax.quiver(
-            0,
-            0,
-            0,
-            *tuple(cell[i]),
-            arrow_length_ratio=0.2,
-            color="black",
-            alpha=0.5,
-            linewidth=2,
-        )
-
-    for i, point in enumerate(corners):
-        ax.scatter(*tuple(point), s=36, color="red")
-        ax.text(
-            *tuple(point),
-            str(i),
-            fontsize=20,
-        )
-    plt.show()
+    corners, planes_indices = define_corners(planes, vectors)
+    edges = define_edges(corners, planes_indices)
+    print(len(edges))
