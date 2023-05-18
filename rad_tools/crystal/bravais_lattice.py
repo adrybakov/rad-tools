@@ -1,12 +1,30 @@
-r"""14 Bravais lattice"""
+r"""
+For each type of Bravais lattice a class defined, for some classes there are 
+several variations of lattice, each of which are treated under same class 
+(see :py:attr:`variation` for each class).
 
-from math import sqrt, sin, cos, tan, pi
-from typing import Iterable
+For each type and variation a predefined example of the lattice is available. 
+It could be accessed in a following way:
+
+.. doctest::
+
+    >>> import rad_tools as rad_tools
+    >>> cubic_example = rad.cub
+
+Each Bravais Lattice is created by the parameters 
+:math:`a`, :math:`b`, :math:`c`, :math:`\alpha`, :math:`\beta`, :math:`\gamma`,
+which corresponds to the conventional lattice. However, attributes of the class 
+``self.a``, ``self.b``, ``self.c``, ``self.alpha``, ``self.beta``, ``self.gamma`` 
+return parameters of the primitive lattice. Conventional lattice may be accessed through
+the attributes ``self.conv_cell``, ``self.conv_a``, ``self.conv_b``, ``self.conv_c``, 
+``self.conv_alpha``, ``self.conv_beta``, ``self.conv_gamma`` .
+"""
+
+from math import cos, pi, sin, sqrt, tan
 
 import numpy as np
-import matplotlib.pyplot as plt
-from rad_tools.crystal.lattice import Lattice
 
+from rad_tools.crystal.lattice import Lattice, _toradians
 
 __all__ = [
     "CUB",
@@ -72,20 +90,29 @@ class CUB(Lattice):
     Parameters
     ----------
     a : float
-        Length of the lattice vectors.
+        Length of the lattice vectors of the conventional cel.
 
     Attributes
     ----------
-    a : float
-        Length of the lattice vectors.
+    conv_a : float
+        Length of the lattice vectors of the conventional cel.
+    conv_cell : (3,3) :numpy:`ndarray`
+        Conventional unit cell.
+
+        .. code-block:: python
+
+            conv_cell = [[a_x, a_y, a_z],
+                         [b_x, b_y, b_z],
+                         [c_x, c_y, c_z]]
+
     """
 
     _pearson_symbol = "cP"
 
     def __init__(self, a: float) -> None:
-        self.a = a
+        self.conv_a = a
         self.cell = np.diag([a, a, a])
-        self.primitive_cell = self.cell
+        self.conv_cell = self.cell
         self.points = {
             "G": np.array([0, 0, 0]),
             "M": np.array([1 / 2, 1 / 2, 0]),
@@ -123,20 +150,29 @@ class FCC(Lattice):
     Parameters
     ----------
     a : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional cel.
 
     Attributes
     ----------
-    a : float
-        Length of the lattice vector
+    conv_a : float
+        Length of the lattice vector of the conventional cel.
+    conv_cell : (3,3) :numpy:`ndarray`
+        Conventional unit cell.
+
+        .. code-block:: python
+
+            conv_cell = [[a_x, a_y, a_z],
+                         [b_x, b_y, b_z],
+                         [c_x, c_y, c_z]]
+
     """
 
     _pearson_symbol = "cF"
 
     def __init__(self, a: float) -> None:
-        self.a = a
-        self.cell = np.diag([a, a, a])
-        self.primitive_cell = np.array([[0, a, a], [a, 0, a], [a, a, 0]]) / 2
+        self.conv_a = a
+        self.cell = np.array([[0, a, a], [a, 0, a], [a, a, 0]]) / 2
+        self.conv_cell = np.diag([a, a, a])
         self.points = {
             "G": np.array([0, 0, 0]),
             "K": np.array([3 / 8, 3 / 8, 3 / 4]),
@@ -179,26 +215,35 @@ class BCC(Lattice):
     Parameters
     ----------
     a : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
 
     Attributes
     ----------
-    a : float
-        Length of the lattice vector
+    conv_a : float
+        Length of the lattice vector of the conventional lattice.
+    conv_cell : (3,3) :numpy:`ndarray`
+        Conventional unit cell.
+
+        .. code-block:: python
+
+            conv_cell = [[a_x, a_y, a_z],
+                         [b_x, b_y, b_z],
+                         [c_x, c_y, c_z]]
+
     """
 
     _pearson_symbol = "cI"
 
     def __init__(self, a: float) -> None:
-        self.a = a
-        self.cell = np.diag([a, a, a])
-        self.primitive_cell = np.array(
+        self.conv_a = a
+        self.cell = np.array(
             [
                 [-a / 2, a / 2, a / 2],
                 [a / 2, -a / 2, a / 2],
                 [a / 2, a / 2, -a / 2],
             ]
         )
+        self.conv_cell = np.diag([a, a, a])
         self.points = {
             "G": np.array([0, 0, 0]),
             "H": np.array([1 / 2, -1 / 2, 1 / 2]),
@@ -226,26 +271,34 @@ class TET(Lattice):
     Parameters
     ----------
     a : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
     c : float
-        Length of the lattice vector.
-
+        Length of the lattice vector of the conventional lattice.
 
     Attributes
     ----------
-    a : float
-        Length of the lattice vector
-    c : float
-        Length of the lattice vector.
+    conv_a : float
+        Length of the lattice vector of the conventional lattice.
+    conv_c : float
+        Length of the lattice vector of the conventional lattice.
+    conv_cell : (3,3) :numpy:`ndarray`
+        Conventional unit cell.
+
+        .. code-block:: python
+
+            conv_cell = [[a_x, a_y, a_z],
+                         [b_x, b_y, b_z],
+                         [c_x, c_y, c_z]]
+
     """
 
     _pearson_symbol = "tP"
 
     def __init__(self, a: float, c: float) -> None:
-        self.a = a
-        self.c = c
+        self.conv_a = a
+        self.conv_c = c
         self.cell = np.diag([a, a, c])
-        self.primitive_cell = self.cell
+        self.conv_cell = self.cell
         self.points = {
             "G": np.array([0, 0, 0]),
             "A": np.array([1 / 2, 1 / 2, 1 / 2]),
@@ -289,17 +342,25 @@ class BCT(Lattice):
     Parameters
     ----------
     a : float
-        Length of the lattice vector.
+        Length of the lattice vector of conventional lattice.
     c : float
-        Length of the lattice vector.
-
+        Length of the lattice vector of conventional lattice.
 
     Attributes
     ----------
-    a : float
-        Length of the lattice vector
-    c : float
-        Length of the lattice vector.
+    conv_a : float
+        Length of the lattice vector of conventional lattice.
+    conv_c : float
+        Length of the lattice vector of conventional lattice.
+    conv_cell : (3,3) :numpy:`ndarray`
+        Conventional unit cell.
+
+        .. code-block:: python
+
+            conv_cell = [[a_x, a_y, a_z],
+                         [b_x, b_y, b_z],
+                         [c_x, c_y, c_z]]
+
     """
 
     _pearson_symbol = "tI"
@@ -309,18 +370,18 @@ class BCT(Lattice):
         self._PLOT_NAMES["S1"] = "$\\Sigma_1$"
         if a == c:
             raise ValueError("Are you trying to create BCC Lattice (a == c)?")
-        self.a = a
-        self.c = c
-        self.cell = np.diag([a, a, c])
-        self.primitive_cell = np.array(
+        self.conv_a = a
+        self.conv_c = c
+        self.cell = np.array(
             [
                 [-a / 2, a / 2, c / 2],
                 [a / 2, -a / 2, c / 2],
                 [a / 2, a / 2, -c / 2],
             ]
         )
+        self.conv_cell = np.diag([a, a, c])
         if self.variation == "BCT1":
-            eta = (1 + self.c**2 / self.a**2) / 4
+            eta = (1 + c**2 / a**2) / 4
             self.points = {
                 "G": np.array([0, 0, 0]),
                 "M": np.array([-1 / 2, 1 / 2, 1 / 2]),
@@ -337,8 +398,8 @@ class BCT(Lattice):
             ]
 
         elif self.variation == "BCT2":
-            eta = (1 + self.a**2 / self.c**2) / 4
-            zeta = self.a**2 / (2 * self.c**2)
+            eta = (1 + a**2 / c**2) / 4
+            zeta = a**2 / (2 * c**2)
             self.points = {
                 "G": np.array([0, 0, 0]),
                 "N": np.array([0, 1 / 2, 0]),
@@ -375,9 +436,9 @@ class BCT(Lattice):
 
         :math:`\text{BCT}_1: c < a` and :math:`\text{BCT}_2: c > a`
         """
-        if self.a > self.c:
+        if self.conv_a > self.conv_c:
             return "BCT1"
-        elif self.a < self.c:
+        elif self.conv_a < self.conv_c:
             return "BCT2"
 
 
@@ -401,21 +462,29 @@ class ORC(Lattice):
     Parameters
     ----------
     a : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
     b : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
     c : float
-        Length of the lattice vector.
-
+        Length of the lattice vector of the conventional lattice.
 
     Attributes
     ----------
-    a : float
-        Length of the lattice vector
-    b : float
-        Length of the lattice vector.
-    c : float
-        Length of the lattice vector.
+    conv_a : float
+        Length of the lattice vector of the conventional lattice.
+    conv_b : float
+        Length of the lattice vector of the conventional lattice.
+    conv_c : float
+        Length of the lattice vector of the conventional lattice.
+    conv_cell : (3,3) :numpy:`ndarray`
+        Conventional unit cell.
+
+        .. code-block:: python
+
+            conv_cell = [[a_x, a_y, a_z],
+                         [b_x, b_y, b_z],
+                         [c_x, c_y, c_z]]
+
     """
 
     _pearson_symbol = "oP"
@@ -428,12 +497,11 @@ class ORC(Lattice):
             raise ValueError(
                 "Are you trying to construct TET Lattice (a = b != c or a != b == c)?"
             )
-
-        self.a = a
-        self.b = b
-        self.c = c
+        self.conv_a = a
+        self.conv_b = b
+        self.conv_c = c
         self.cell = np.diag([a, b, c])
-        self.primitive_cell = self.cell
+        self.conv_cell = self.cell
         self.points = {
             "G": np.array([0, 0, 0]),
             "R": np.array([1 / 2, 1 / 2, 1 / 2]),
@@ -444,7 +512,6 @@ class ORC(Lattice):
             "Y": np.array([0, 1 / 2, 0]),
             "Z": np.array([0, 0, 1 / 2]),
         }
-
         self._default_path = [
             ["G", "X", "S", "Y", "G", "Z", "U", "R", "T", "Z"],
             ["Y", "T"],
@@ -483,21 +550,29 @@ class ORCF(Lattice):
     Parameters
     ----------
     a : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
     b : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
     c : float
-        Length of the lattice vector.
-
+        Length of the lattice vector of the conventional lattice.
 
     Attributes
     ----------
-    a : float
-        Length of the lattice vector
-    b : float
-        Length of the lattice vector.
-    c : float
-        Length of the lattice vector.
+    conv_a : float
+        Length of the lattice vector of the conventional lattice.
+    conv_b : float
+        Length of the lattice vector of the conventional lattice.
+    conv_c : float
+        Length of the lattice vector of the conventional lattice.
+    conv_cell : (3,3) :numpy:`ndarray`
+        Conventional unit cell.
+
+        .. code-block:: python
+
+            conv_cell = [[a_x, a_y, a_z],
+                         [b_x, b_y, b_z],
+                         [c_x, c_y, c_z]]
+
     """
 
     _pearson_symbol = "oF"
@@ -510,20 +585,20 @@ class ORCF(Lattice):
             raise ValueError("FIXME, dont know which lattice it will be.")
         if b == c:
             raise ValueError("FIXME, dont know which lattice it will be.")
-        self.a = a
-        self.b = b
-        self.c = c
-        self.cell = np.diag([a, b, c])
-        self.primitive_cell = np.array(
+        self.conv_a = a
+        self.conv_b = b
+        self.conv_c = c
+        self.cell = np.array(
             [
                 [0, b / 2, c / 2],
                 [a / 2, 0, c / 2],
                 [a / 2, b / 2, 0],
             ]
         )
+        self.conv_cell = np.diag([a, b, c])
         if self.variation == "ORCF1":
-            eta = (1 + self.a**2 / self.b**2 + self.a**2 / self.c**2) / 4
-            zeta = (1 + self.a**2 / self.b**2 - self.a**2 / self.c**2) / 4
+            eta = (1 + a**2 / b**2 + a**2 / c**2) / 4
+            zeta = (1 + a**2 / b**2 - a**2 / c**2) / 4
             self.points = {
                 "G": np.array([0, 0, 0]),
                 "A": np.array([1 / 2, 1 / 2 + zeta, zeta]),
@@ -543,9 +618,9 @@ class ORCF(Lattice):
                 ["L", "G"],
             ]
         elif self.variation == "ORCF2":
-            eta = (1 + self.a**2 / self.b**2 - self.a**2 / self.c**2) / 4
-            delta = (1 + self.b**2 / self.a**2 - self.b**2 / self.c**2) / 4
-            phi = (1 + self.c**2 / self.b**2 - self.c**2 / self.a**2) / 4
+            eta = (1 + a**2 / b**2 - a**2 / c**2) / 4
+            delta = (1 + b**2 / a**2 - b**2 / c**2) / 4
+            phi = (1 + c**2 / b**2 - c**2 / a**2) / 4
 
             self.points = {
                 "G": np.array([0, 0, 0]),
@@ -569,8 +644,8 @@ class ORCF(Lattice):
                 ["L", "G"],
             ]
         elif self.variation == "ORCF3":
-            eta = (1 + self.a**2 / self.b**2 + self.a**2 / self.c**2) / 4
-            zeta = (1 + self.a**2 / self.b**2 - self.a**2 / self.c**2) / 4
+            eta = (1 + a**2 / b**2 + a**2 / c**2) / 4
+            zeta = (1 + a**2 / b**2 - a**2 / c**2) / 4
 
             self.points = {
                 "G": np.array([0, 0, 0]),
@@ -598,9 +673,9 @@ class ORCF(Lattice):
         :math:`\text{ORCF}_2: \dfrac{1}{a^2} < \dfrac{1}{b^2} + \dfrac{1}{c^2}`,
         :math:`\text{ORCF}_3: \dfrac{1}{a^2} = \dfrac{1}{b^2} + \dfrac{1}{c^2}`,
         """
-        if 1 / self.a**2 > 1 / self.b**2 + 1 / self.c**2:
+        if 1 / self.conv_a**2 > 1 / self.conv_b**2 + 1 / self.conv_c**2:
             return "ORCF1"
-        elif 1 / self.a**2 < 1 / self.b**2 + 1 / self.c**2:
+        elif 1 / self.conv_a**2 < 1 / self.conv_b**2 + 1 / self.conv_c**2:
             return "ORCF2"
         else:
             return "ORCF3"
@@ -636,21 +711,30 @@ class ORCI(Lattice):
     Parameters
     ----------
     a : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
     b : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
     c : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
 
 
     Attributes
     ----------
-    a : float
-        Length of the lattice vector
-    b : float
-        Length of the lattice vector.
-    c : float
-        Length of the lattice vector.
+    conv_a : float
+        Length of the lattice vector of the conventional lattice.
+    conv_b : float
+        Length of the lattice vector of the conventional lattice.
+    conv_c : float
+        Length of the lattice vector of the conventional lattice.
+    conv_cell : (3,3) :numpy:`ndarray`
+        Conventional unit cell.
+
+        .. code-block:: python
+
+            conv_cell = [[a_x, a_y, a_z],
+                         [b_x, b_y, b_z],
+                         [c_x, c_y, c_z]]
+
     """
 
     _pearson_symbol = "oI"
@@ -663,21 +747,21 @@ class ORCI(Lattice):
             raise ValueError("Are you trying to construct BCT2 Lattice (a = b < c)?")
         if b == c:
             raise ValueError("Are you trying to construct BCT1 Lattice (a < b = c)?")
-        self.a = a
-        self.b = b
-        self.c = c
-        self.cell = np.diag([a, b, c])
-        self.primitive_cell = np.array(
+        self.conv_a = a
+        self.conv_b = b
+        self.conv_c = c
+        self.cell = np.array(
             [
                 [-a / 2, b / 2, c / 2],
                 [a / 2, -b / 2, c / 2],
                 [a / 2, b / 2, -c / 2],
             ]
         )
-        zeta = (1 + self.a**2 / self.c**2) / 4
-        eta = (1 + self.b**2 / self.c**2) / 4
-        delta = (self.b**2 - a**2) / (4 * self.c**2)
-        mu = (self.a**2 + self.b**2) / (4 * self.c**2)
+        self.conv_cell = np.diag([a, b, c])
+        zeta = (1 + a**2 / c**2) / 4
+        eta = (1 + b**2 / c**2) / 4
+        delta = (b**2 - a**2) / (4 * c**2)
+        mu = (a**2 + b**2) / (4 * c**2)
 
         self.points = {
             "G": np.array([0, 0, 0]),
@@ -732,21 +816,30 @@ class ORCC(Lattice):
     Parameters
     ----------
     a : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
     b : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
     c : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
 
 
     Attributes
     ----------
-    a : float
-        Length of the lattice vector
-    b : float
-        Length of the lattice vector.
-    c : float
-        Length of the lattice vector.
+    conv_a : float
+        Length of the lattice vector of the conventional lattice.
+    conv_b : float
+        Length of the lattice vector of the conventional lattice.
+    conv_c : float
+        Length of the lattice vector of the conventional lattice.
+    conv_cell : (3,3) :numpy:`ndarray`
+        Conventional unit cell.
+
+        .. code-block:: python
+
+            conv_cell = [[a_x, a_y, a_z],
+                         [b_x, b_y, b_z],
+                         [c_x, c_y, c_z]]
+
     """
 
     _pearson_symbol = "oS"
@@ -755,18 +848,18 @@ class ORCC(Lattice):
         a, b, c = tuple(sorted([a, b, c]))
         if a == b == c:
             raise ValueError("Are you trying to construct TET Lattice (a = b = c)?")
-        self.a = a
-        self.b = c
-        self.c = b
-        self.cell = np.diag([a, b, c])
-        self.primitive_cell = np.array(
+        self.conv_a = a
+        self.conv_b = c
+        self.conv_c = b
+        self.cell = np.array(
             [
                 [a / 2, -b / 2, 0],
                 [a / 2, b / 2, 0],
                 [0, 0, c],
             ]
         )
-        zeta = (1 + self.a**2 / self.b**2) / 4
+        self.conv_cell = np.diag([a, b, c])
+        zeta = (1 + a**2 / b**2) / 4
 
         self.points = {
             "G": np.array([0, 0, 0]),
@@ -805,28 +898,37 @@ class HEX(Lattice):
     Parameters
     ----------
     a : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
     c : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
 
 
     Attributes
     ----------
-    a : float
-        Length of the lattice vector
-    c : float
-        Length of the lattice vector.
+    conv_a : float
+        Length of the lattice vector of the conventional lattice.
+    conv_c : float
+        Length of the lattice vector of the conventional lattice.
+    conv_cell : (3,3) :numpy:`ndarray`
+        Conventional unit cell.
+
+        .. code-block:: python
+
+            conv_cell = [[a_x, a_y, a_z],
+                         [b_x, b_y, b_z],
+                         [c_x, c_y, c_z]]
+
     """
 
     _pearson_symbol = "hP"
 
     def __init__(self, a: float, c: float) -> None:
-        self.a = a
-        self.c = c
+        self.conv_a = a
+        self.conv_c = c
         self.cell = np.array(
             [[a / 2, -a * sqrt(3) / 2, 0], [a / 2, a * sqrt(3) / 2, 0], [0, 0, c]]
         )
-        self.primitive_cell = self.cell
+        self.conv_cell = self.cell
 
         self.points = {
             "G": np.array([0, 0, 0]),
@@ -862,17 +964,26 @@ class RHL(Lattice):
     Parameters
     ----------
     a : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
     alpha : float
-        Angle between b and c. In degrees.
+        Angle between b and c. In degrees. Corresponds to the conventional lattice.
 
 
     Attributes
     ----------
-    a : float
-        Length of the lattice vector
-    alpha : float
-        Angle between b and c. In degrees.
+    conv_a : float
+        Length of the lattice vector of the conventional lattice.
+    conv_alpha : float
+        Angle between b and c. In degrees. Corresponds to the conventional lattice.
+    conv_cell : (3,3) :numpy:`ndarray`
+        Conventional unit cell.
+
+        .. code-block:: python
+
+            conv_cell = [[a_x, a_y, a_z],
+                         [b_x, b_y, b_z],
+                         [c_x, c_y, c_z]]
+
     """
 
     _pearson_symbol = "hR"
@@ -882,8 +993,8 @@ class RHL(Lattice):
             raise ValueError("Are you trying to construct CUB Lattice (alpha == 90)?")
         if alpha >= 120:
             raise ValueError("alpha has to be < 120 degrees.")
-        self.a = a
-        self.alpha = alpha
+        self.conv_a = a
+        self.conv_alpha = alpha
         self.cell = np.array(
             [
                 [a * cos(alpha / 180 * pi / 2), -a * sin(alpha / 180 * pi / 2), 0],
@@ -898,7 +1009,7 @@ class RHL(Lattice):
                 ],
             ]
         )
-        self.primitive_cell = self.cell
+        self.conv_cell = self.cell
         if self.variation == "RHL1":
             eta = (1 + 4 * cos(alpha / 180 * pi)) / (2 + 4 * cos(alpha / 180 * pi))
             nu = 3 / 4 - eta / 2
@@ -925,7 +1036,7 @@ class RHL(Lattice):
                 ["L", "P"],
             ]
         elif self.variation == "RHL2":
-            eta = 1 / (2 * tan(self.alpha / 180 * pi / 2) ** 2)
+            eta = 1 / (2 * tan(alpha / 180 * pi / 2) ** 2)
             nu = 3 / 4 - eta / 2
 
             self.points = {
@@ -949,9 +1060,9 @@ class RHL(Lattice):
         :math:`\text{RHL}_1 \alpha < 90^{\circ}`,
         :math:`\text{RHL}_2 \alpha > 90^{\circ}`
         """
-        if self.alpha < 90:
+        if self.conv_alpha < 90:
             return "RHL1"
-        elif self.alpha > 90:
+        elif self.conv_alpha > 90:
             return "RHL2"
 
 
@@ -975,25 +1086,34 @@ class MCL(Lattice):
     Parameters
     ----------
     a : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
     b : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
     c : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
     alpha : float
-        Angle between b and c. In degrees.
+        Angle between b and c. In degrees. Corresponds to the conventional lattice.
 
 
     Attributes
     ----------
-    a : float
-        Length of the lattice vector
-    b : float
-        Length of the lattice vector.
-    c : float
-        Length of the lattice vector.
-    alpha : float
-        Angle between b and c. In degrees.
+    conv_a : float
+        Length of the lattice vector of the conventional lattice.
+    conv_b : float
+        Length of the lattice vector of the conventional lattice.
+    conv_c : float
+        Length of the lattice vector of the conventional lattice.
+    conv_alpha : float
+        Angle between b and c. In degrees. Corresponds to the conventional lattice.
+    conv_cell : (3,3) :numpy:`ndarray`
+        Conventional unit cell.
+
+        .. code-block:: python
+
+            conv_cell = [[a_x, a_y, a_z],
+                         [b_x, b_y, b_z],
+                         [c_x, c_y, c_z]]
+
     """
 
     _pearson_symbol = "mP"
@@ -1002,10 +1122,10 @@ class MCL(Lattice):
         a, b, c = tuple(sorted([a, b, c]))
         if alpha > 90:
             raise ValueError("alpha has to be < 90")
-        self.a = a
-        self.b = b
-        self.c = c
-        self.alpha = alpha
+        self.conv_a = a
+        self.conv_b = b
+        self.conv_c = c
+        self.conv_alpha = alpha
         self.cell = np.array(
             [
                 [a, 0, 0],
@@ -1013,12 +1133,10 @@ class MCL(Lattice):
                 [0, c * cos(alpha / 180 * pi), c * sin(alpha / 180 * pi)],
             ]
         )
-        self.primitive_cell = self.cell
+        self.conv_cell = self.cell
 
-        eta = (1 - self.b * cos(self.alpha / 180 * pi) / self.c) / (
-            2 * sin(self.alpha / 180 * pi) ** 2
-        )
-        nu = 1 / 2 - eta * self.c * cos(self.alpha / 180 * pi) / self.b
+        eta = (1 - b * cos(alpha / 180 * pi) / c) / (2 * sin(alpha / 180 * pi) ** 2)
+        nu = 1 / 2 - eta * c * cos(alpha / 180 * pi) / b
 
         self.points = {
             "G": np.array([0, 0, 0]),
@@ -1076,25 +1194,34 @@ class MCLC(Lattice):
     Parameters
     ----------
     a : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
     b : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
     c : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
     alpha : float
-        Angle between b and c. In degrees.
+        Angle between b and c. In degrees. Corresponds to the conventional lattice
 
 
     Attributes
     ----------
-    a : float
-        Length of the lattice vector
-    b : float
-        Length of the lattice vector.
-    c : float
-        Length of the lattice vector.
-    alpha : float
-        Angle between b and c. In degrees.
+    conv_a : float
+        Length of the lattice vector of the conventional lattice.
+    conv_b : float
+        Length of the lattice vector of the conventional lattice.
+    conv_c : float
+        Length of the lattice vector of the conventional lattice.
+    conv_alpha : float
+        Angle between b and c. In degrees. Corresponds to the conventional lattice
+    conv_cell : (3,3) :numpy:`ndarray`
+        Conventional unit cell.
+
+        .. code-block:: python
+
+            conv_cell = [[a_x, a_y, a_z],
+                         [b_x, b_y, b_z],
+                         [c_x, c_y, c_z]]
+
     """
 
     _pearson_symbol = "mS"
@@ -1106,70 +1233,71 @@ class MCLC(Lattice):
             b, c = c, b
         if alpha > 90:
             raise ValueError("alpha has to be < 90")
-        self.a = a
-        self.b = b
-        self.c = c
-        self.alpha = alpha
+        self.conv_a = a
+        self.conv_b = b
+        self.conv_c = c
+        self.conv_alpha = alpha
         self.cell = np.array(
-            [
-                [a, 0, 0],
-                [0, b, 0],
-                [
-                    0,
-                    c * cos(alpha / 180 * pi),
-                    c * sin(alpha / 180 * pi),
-                ],
-            ]
-        )
-        self.primitive_cell = np.array(
             [
                 [a / 2, b / 2, 0],
                 [-a / 2, b / 2, 0],
                 [
                     0,
-                    c * cos(alpha / 180 * pi),
-                    c * sin(alpha / 180 * pi),
+                    c * cos(alpha * _toradians),
+                    c * sin(alpha * _toradians),
+                ],
+            ]
+        )
+        self.conv_cell = np.array(
+            [
+                [a, 0, 0],
+                [0, b, 0],
+                [
+                    0,
+                    c * cos(alpha * _toradians),
+                    c * sin(alpha * _toradians),
                 ],
             ]
         )
         # Parameters
         if self.variation in ["MCLC1", "MCLC2"]:
-            zeta = (2 - b * cos(alpha / 180 * pi) / c) / (
-                4 * sin(alpha / 180 * pi) ** 2
+            zeta = (2 - b * cos(alpha * _toradians) / c) / (
+                4 * sin(alpha * _toradians) ** 2
             )
-            eta = 1 / 2 + 2 * zeta * c * cos(alpha / 180 * pi) / b
-            psi = 3 / 4 - a**2 / (4 * b**2 * sin(alpha / 180 * pi) ** 2)
-            phi = psi + (3 / 4 - psi) * b * cos(alpha / 180 * pi) / c
+            eta = 1 / 2 + 2 * zeta * c * cos(alpha * _toradians) / b
+            psi = 3 / 4 - a**2 / (4 * b**2 * sin(alpha * _toradians) ** 2)
+            phi = psi + (3 / 4 - psi) * b * cos(alpha * _toradians) / c
         elif self.variation in ["MCLC3", "MCLC4"]:
             mu = (1 + b**2 / a**2) / 4
-            delta = b * c * cos(alpha / 180 * pi) / (2 * a**2)
+            delta = b * c * cos(alpha * _toradians) / (2 * a**2)
             zeta = (
                 mu
                 - 1 / 4
-                + (1 - b * cos(alpha / 180 * pi) / c) / (4 * sin(alpha / 180 * pi) ** 2)
+                + (1 - b * cos(alpha * _toradians) / c)
+                / (4 * sin(alpha * _toradians) ** 2)
             )
-            eta = 1 / 2 + 2 * zeta * c * cos(alpha / 180 * pi) / b
+            eta = 1 / 2 + 2 * zeta * c * cos(alpha * _toradians) / b
             phi = 1 + zeta - 2 * mu
             psi = eta - 2 * delta
         elif self.variation == "MCLC5":
             zeta = (
                 b**2 / a**2
-                + (1 - b * cos(alpha / 180 * pi) / c) / sin(alpha / 180 * pi) ** 2
+                + (1 - b * cos(alpha * _toradians) / c) / sin(alpha * _toradians) ** 2
             ) / 4
-            eta = 1 / 2 + 2 * zeta * c * cos(alpha / 180 * pi) / b
+            eta = 1 / 2 + 2 * zeta * c * cos(alpha * _toradians) / b
             mu = (
                 eta / 2
                 + b**2 / (4 * a**2)
-                - b * c * cos(alpha / 180 * pi) / (2 * a**2)
+                - b * c * cos(alpha * _toradians) / (2 * a**2)
             )
             nu = 2 * mu - zeta
             rho = 1 - zeta * a**2 / b**2
             omega = (
-                (4 * nu - 1 - b**2 * sin(alpha / 180 * pi) ** 2 / a**2)
+                (4 * nu - 1 - b**2 * sin(alpha * _toradians) ** 2 / a**2)
                 * c
-                / (2 * b * cos(alpha / 180 * pi))
+                / (2 * b * cos(alpha * _toradians))
             )
-            delta = zeta * c * cos(alpha / 180 * pi) / b + omega / 2 - 1 / 4
+            delta = zeta * c * cos(alpha * _toradians) / b + omega / 2 - 1 / 4
 
         # Path
         if self.variation == "MCLC1":
@@ -1314,26 +1442,32 @@ class MCLC(Lattice):
             return "MCLC2"
         elif self.k_gamma > 90:
             return "MCLC1"
-        # TODO think about the ccriteria of accuracy
+        # TODO think about the criteria of accuracy
         elif self.k_gamma < 90:
             if (
                 abs(
-                    self.b * cos(self.alpha / 180 * pi) / self.c
-                    + self.b**2 * sin(self.alpha / 180 * pi) ** 2 / self.a**2
+                    self.conv_b * cos(self.conv_alpha * _toradians) / self.conv_c
+                    + self.conv_b**2
+                    * sin(self.conv_alpha * _toradians) ** 2
+                    / self.conv_a**2
                     - 1
                 )
                 < 10e-8
             ):
                 return "MCLC4"
             elif (
-                self.b * cos(self.alpha / 180 * pi) / self.c
-                + self.b**2 * sin(self.alpha / 180 * pi) ** 2 / self.a**2
+                self.conv_b * cos(self.conv_alpha * _toradians) / self.conv_c
+                + self.conv_b**2
+                * sin(self.conv_alpha * _toradians) ** 2
+                / self.conv_a**2
                 < 1
             ):
                 return "MCLC3"
             elif (
-                self.b * cos(self.alpha / 180 * pi) / self.c
-                + self.b**2 * sin(self.alpha / 180 * pi) ** 2 / self.a**2
+                self.conv_b * cos(self.conv_alpha * _toradians) / self.conv_c
+                + self.conv_b**2
+                * sin(self.conv_alpha * _toradians) ** 2
+                / self.conv_a**2
                 > 1
             ):
                 return "MCLC5"
@@ -1343,6 +1477,9 @@ class MCLC(Lattice):
 class TRI(Lattice):
     r"""
     Triclinic (TRI, aP)
+
+
+
     Primitive and conventional lattice:
 
     .. math::
@@ -1356,33 +1493,42 @@ class TRI(Lattice):
     Parameters
     ----------
     a : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
     b : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
     c : float
-        Length of the lattice vector.
+        Length of the lattice vector of the conventional lattice.
     alpha : float
-        Angle between b and c. In degrees.
+        Angle between b and c. In degrees. Corresponds to the conventional lattice.
     beta : float
-        Angle between a and c. In degrees.
+        Angle between a and c. In degrees. Corresponds to the conventional lattice.
     gamma : float
-        Angle between a and b. In degrees.
+        Angle between a and b. In degrees. Corresponds to the conventional lattice.
 
 
     Attributes
     ----------
-    a : float
-        Length of the lattice vector
-    b : float
-        Length of the lattice vector.
-    c : float
-        Length of the lattice vector.
-    alpha : float
-        Angle between b and c. In degrees.
+    conv_a : float
+        Length of the lattice vector of the conventional lattice.
+    conv_b : float
+        Length of the lattice vector of the conventional lattice.
+    conv_c : float
+        Length of the lattice vector of the conventional lattice.
+    conv_alpha : float
+        Angle between b and c. In degrees. Corresponds to the conventional lattice.
     beta : float
-        Angle between a and c. In degrees.
-    gamma : float
-        Angle between a and b. In degrees.
+        Angle between a and c. In degrees. Corresponds to the conventional lattice.
+    conv_gamma : float
+        Angle between a and b. In degrees. Corresponds to the conventional lattice.
+    conv_cell : (3,3) :numpy:`ndarray`
+        Conventional unit cell.
+
+        .. code-block:: python
+
+            conv_cell = [[a_x, a_y, a_z],
+                         [b_x, b_y, b_z],
+                         [c_x, c_y, c_z]]
+
     """
 
     _pearson_symbol = "aP"
@@ -1390,39 +1536,46 @@ class TRI(Lattice):
     def __init__(
         self, a: float, b: float, c: float, alpha: float, beta: float, gamma: float
     ) -> None:
-        self.a = a
-        self.b = b
-        self.c = c
-        self.alpha = alpha
-        self.beta = beta
-        self.gamma = gamma
+        tmp = sorted([(a, alpha), (b, beta), (c, gamma)], key=lambda x: x[0])
+        a = tmp[0][0]
+        alpha = tmp[0][1]
+        b = tmp[1][0]
+        beta = tmp[1][1]
+        c = tmp[2][0]
+        gamma = tmp[2][1]
+        self.conv_a = a
+        self.conv_b = b
+        self.conv_c = c
+        self.conv_alpha = alpha
+        self.conv_beta = beta
+        self.conv_gamma = gamma
         self.cell = np.array(
             [
                 [a, 0, 0],
-                [b * cos(gamma / 180 * pi), b * sin(gamma / 180 * pi), 0],
+                [b * cos(gamma * _toradians), b * sin(gamma * _toradians), 0],
                 [
-                    c * cos(beta / 180 * pi),
+                    c * cos(beta * _toradians),
                     c
-                    / sin(gamma / 180 * pi)
+                    / sin(gamma * _toradians)
                     * (
-                        cos(alpha / 180 * pi)
-                        - cos(beta / 180 * pi) * cos(gamma / 180 * pi)
+                        cos(alpha * _toradians)
+                        - cos(beta * _toradians) * cos(gamma * _toradians)
                     ),
                     c
-                    / sin(gamma / 180 * pi)
+                    / sin(gamma * _toradians)
                     * sqrt(
-                        sin(gamma / 180 * pi) ** 2
-                        - cos(alpha / 180 * pi) ** 2
-                        - cos(beta / 180 * pi) ** 2
+                        sin(gamma * _toradians) ** 2
+                        - cos(alpha * _toradians) ** 2
+                        - cos(beta * _toradians) ** 2
                         + 2
-                        * cos(alpha / 180 * pi)
-                        * cos(beta / 180 * pi)
-                        * cos(gamma / 180 * pi)
+                        * cos(alpha * _toradians)
+                        * cos(beta * _toradians)
+                        * cos(gamma * _toradians)
                     ),
                 ],
             ]
         )
-        self.primitive_cell = self.cell
+        self.conv_cell = self.cell
         if self.variation in ["TRI1a", "TRI1b"]:
             self.points = {
                 "G": np.array([0, 0, 0]),
@@ -1466,7 +1619,6 @@ class TRI(Lattice):
     def variation(self):
         r"""
         Four variations of the Lattice.
-
 
         :math:`\text{TRI}_{1a} k_{\alpha} > 90^{\circ}, k_{\beta} > 90^{\circ}, k_{\gamma} > 90^{\circ}, k_{\gamma} = \min(k_{\alpha}, k_{\beta}, k_{\gamma})`
         :math:`\text{TRI}_{1b} k_{\alpha} < 90^{\circ}, k_{\beta} < 90^{\circ}, k_{\gamma} < 90^{\circ}, k_{\gamma} = \max(k_{\alpha}, k_{\beta}, k_{\gamma})`

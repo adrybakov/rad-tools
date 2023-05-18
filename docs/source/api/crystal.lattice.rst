@@ -21,18 +21,10 @@ General lattice is describe by the class :py:class:`.Lattice`.
 Bravais lattices
 ================
 
-For each type of Bravais lattice a class defined, for some classes there are 
-several variations of lattice, each of which are treated under same class 
-(see :py:attr:`variation` for each class).
-
-For each type and variation a predefined example of the lattice is available. It could be accessed in a following way:
-
-.. doctest::
-
-    >>> import rad_tools as rad_tools
-    >>> cubic_example = rad.cub
+.. automodule:: rad_tools.crystal.bravais_lattice
 
 
+.. currentmodule:: rad_tools
 
 Cubic lattice system
 --------------------

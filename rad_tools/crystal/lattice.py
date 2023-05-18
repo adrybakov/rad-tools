@@ -12,10 +12,30 @@ from matplotlib import rcParams
 
 from rad_tools.crystal.decomposition import deduct_zone
 
+_todegrees = 180 / pi
+_toradians = pi / 180
+
+
+def _angle(v1, v2, radians=False):
+    v1 = v1 / np.linalg.norm(v1)
+    v2 = v2 / np.linalg.norm(v2)
+    alpha = np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0))
+    if radians:
+        return alpha
+    return alpha * _todegrees
+
 
 class Lattice:
     r"""
     General 3D lattice.
+
+    In absence of the atoms (which is always the case for the lattice)
+    and additional lattice points. Every cell is primitive, since lattice points are
+    constructed form the translations. Therefore, general Lattice class does not
+    dos not distinguishes between primitive and conventional lattice as in the
+    Bravais Lattice. Therefore only cell attribute is present and it is always
+    interpreted as the primitive unit cell. In the case of the Bravais lattice additional
+    attribute conv_cell appears.
 
     Attributes
     ----------
@@ -89,41 +109,9 @@ class Lattice:
 
     def __init__(self, a1, a2, a3) -> None:
         self.cell = np.array([a1, a2, a3])
-        self._primitive_cell = None
         self.points = {}
         self._path = None
         self._default_path = None
-
-    @property
-    def primitive_cell(self):
-        r"""
-        Primitive cell of the lattice.
-
-        Raises
-        ------
-        ValueError
-            When primitive cell is not defined. Two solutions are available to the user:
-            * Interpret conventional cell as primitive one.
-            * Manually add primitive cell.
-        """
-
-        if self._primitive_cell is None:
-            raise ValueError(
-                "Primitive unit cell is not defined.\n"
-                + "Use lattice.primitive_cell = lattice.cell "
-                + "in order to interpret conventional cell as primitive."
-            )
-        return self._primitive_cell
-
-    @primitive_cell.setter
-    def primitive_cell(self, new_primitive_cell):
-        new_primitive_cell = np.array((new_primitive_cell))
-        if new_primitive_cell.shape != (3, 3):
-            raise ValueError(
-                "New primitive cell has to be (3,3) array_like. "
-                + f"Received shape {new_primitive_cell.shape}."
-            )
-        self._primitive_cell = new_primitive_cell
 
     @property
     def path(self):
@@ -150,7 +138,7 @@ class Lattice:
 
         Raises
         ------
-        ValueError
+        RuntimeError
             If the type of the lattice is not defined.
 
         Notes
@@ -160,7 +148,7 @@ class Lattice:
 
         if self._pearson_symbol is not None:
             return self._pearson_symbol
-        raise ValueError("Type of the lattice is not defined.")
+        raise RuntimeError("Type of the lattice is not defined.")
 
     @property
     def crystal_family(self):
@@ -228,6 +216,69 @@ class Lattice:
         return self.cell[2]
 
     @property
+    def a(self):
+        r"""
+        Length of the first lattice vector :math:`\vert\vec{a}_1\vert`.
+        """
+
+        return np.linalg.norm(self.cell[0])
+
+    @property
+    def b(self):
+        r"""
+        Length of the second lattice vector :math:`\vert\vec{a}_2\vert`.
+        """
+
+        return np.linalg.norm(self.cell[1])
+
+    @property
+    def c(self):
+        r"""
+        Length of the third lattice vector :math:`\vert\vec{a}_3\vert`.
+        """
+
+        return np.linalg.norm(self.cell[2])
+
+    @property
+    def alpha(self):
+        r"""
+        Angle between second and third lattice vector.
+
+        Returns
+        -------
+        angle : float
+            In degrees
+        """
+
+        return _angle(self.a2, self.a3)
+
+    @property
+    def beta(self):
+        r"""
+        Angle between first and third lattice vector.
+
+        Returns
+        -------
+        angle : float
+            In degrees
+        """
+
+        return _angle(self.a1, self.a3)
+
+    @property
+    def gamma(self):
+        r"""
+        Angle between first and second lattice vector.
+
+        Returns
+        -------
+        angle : float
+            In degrees
+        """
+
+        return _angle(self.a1, self.a2)
+
+    @property
     def unit_cell_volume(self):
         r"""
         Volume of the unit cell.
@@ -239,29 +290,6 @@ class Lattice:
 
         return np.dot(self.a1, np.cross(self.a2, self.a3))
 
-    @property
-    def prim_a1(self):
-        r"""
-        First lattice vector :math:`\vec{a}_1` of the primitive unit cell.
-        """
-        return self.primitive_cell[0]
-
-    @property
-    def prim_a2(self):
-        r"""
-        Second lattice vector :math:`\vec{a}_2` of the primitive unit cell.
-        """
-        return self.primitive_cell[1]
-
-    @property
-    def prim_a3(self):
-        r"""
-        Third lattice vector :math:`\vec{a}_3` of the primitive unit cell.
-        """
-        return self.primitive_cell[2]
-
-    @property
-    def primitive_unit_cell_volume(self):
         r"""
         Volume of the primitive unit cell.
 
@@ -280,18 +308,9 @@ class Lattice:
 
         result = np.array(
             [
-                2
-                * pi
-                / self.primitive_unit_cell_volume
-                * np.cross(self.prim_a2, self.prim_a3),
-                2
-                * pi
-                / self.primitive_unit_cell_volume
-                * np.cross(self.prim_a3, self.prim_a1),
-                2
-                * pi
-                / self.primitive_unit_cell_volume
-                * np.cross(self.prim_a1, self.prim_a2),
+                2 * pi / self.unit_cell_volume * np.cross(self.a2, self.a3),
+                2 * pi / self.unit_cell_volume * np.cross(self.a3, self.a1),
+                2 * pi / self.unit_cell_volume * np.cross(self.a1, self.a2),
             ]
         )
         return result
@@ -339,14 +358,36 @@ class Lattice:
         return self.reciprocal_cell[2]
 
     @property
+    def k_a(self):
+        r"""
+        Length of the first reciprocal lattice vector :math:`\vert\vec{b}_1\vert`.
+        """
+
+        return np.linalg.norm(self.b1)
+
+    @property
+    def k_b(self):
+        r"""
+        Length of the second reciprocal lattice vector :math:`\vert\vec{b}_2\vert`.
+        """
+
+        return np.linalg.norm(self.b2)
+
+    @property
+    def k_c(self):
+        r"""
+        Length of the third reciprocal lattice vector :math:`\vert\vec{b}_3\vert`.
+        """
+
+        return np.linalg.norm(self.b3)
+
+    @property
     def k_alpha(self):
         r"""
         Angle between second and third reciprocal lattice vector.
         """
 
-        v1 = self.b2 / np.linalg.norm(self.b2)
-        v2 = self.b3 / np.linalg.norm(self.b3)
-        return np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0)) / pi * 180
+        return _angle(self.b2, self.b3)
 
     @property
     def k_beta(self):
@@ -354,9 +395,7 @@ class Lattice:
         Angle between first and third reciprocal lattice vector.
         """
 
-        v1 = self.b1 / np.linalg.norm(self.b1)
-        v2 = self.b3 / np.linalg.norm(self.b3)
-        return np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0)) / pi * 180
+        return _angle(self.b1, self.b3)
 
     @property
     def k_gamma(self):
@@ -364,17 +403,19 @@ class Lattice:
         Angle between first and second reciprocal lattice vector.
         """
 
-        v1 = self.b1 / np.linalg.norm(self.b1)
-        v2 = self.b2 / np.linalg.norm(self.b2)
-        return np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0)) / pi * 180
+        return _angle(self.b1, self.b2)
 
-    def make_primitive(self):
+    @property
+    def reciprocal_cell_volume(self):
         r"""
-        Computes primitive unit cell.
+        Volume of the reciprocal cell.
+
+        .. math::
+
+            V = \vec{b}_1\cdot(\vec{b}_2\times\vec{b}_3)
         """
 
-        # TODO
-        pass
+        return np.dot(self.b1, np.cross(self.b2, self.b3))
 
     @property
     def variation(self):
@@ -510,7 +551,7 @@ class Lattice:
         colour="#274DD1",
         label=None,
         vector_pad=1.1,
-        primitive=False,
+        conventional=False,
     ):
         r"""
         Plot real space unit cell.
@@ -525,12 +566,16 @@ class Lattice:
             Label for the plot.
         vector_pad : float, default 1.1
             Multiplier for the position of the vectors labels. 1 = position of the vector.
-        primitive : bool, default False
-            Whether to use primitive cell.
+        conventional : bool, default False
+            Whether to plot conventional cell. Affects result only for the
+            Bravais lattice classes. Ignored for the general :py:class:`.Lattice`.
         """
 
-        if primitive:
-            cell = self.primitive_cell
+        if conventional:
+            try:
+                cell = self.conv_cell
+            except AttributeError:
+                cell = self.cell
         else:
             cell = self.cell
 
@@ -752,7 +797,7 @@ class Lattice:
         plot_real_space : for the list of parameters
         """
 
-        self.plot_real_space(ax, primitive=False, **kwargs)
+        self.plot_real_space(ax, conventional=True, **kwargs)
 
     def plot_primitive(self, ax, **kwargs):
         r"""
@@ -763,7 +808,7 @@ class Lattice:
         plot_real_space : for the list of parameters
         """
 
-        self.plot_real_space(ax, primitive=True, **kwargs)
+        self.plot_real_space(ax, **kwargs)
 
     def plot_kpath(self, ax, colour="black", label=None):
         r"""
