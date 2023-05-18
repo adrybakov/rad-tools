@@ -17,8 +17,8 @@ _toradians = pi / 180
 
 
 def _angle(v1, v2, radians=False):
-    v1 = v1 / np.linalg.norm(v1)
-    v2 = v2 / np.linalg.norm(v2)
+    v1 = np.array(v1) / np.linalg.norm(v1)
+    v2 = np.array(v2) / np.linalg.norm(v2)
     alpha = np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0))
     if radians:
         return alpha
@@ -450,7 +450,7 @@ class Lattice:
         else:
             self._ax.axis("off")
 
-    def plot(self, kind="conventional", **kwargs):
+    def plot(self, kind="primitive", **kwargs):
         r"""
         Main plotting function of the Lattice.
 
@@ -478,7 +478,7 @@ class Lattice:
 
         See Also
         --------
-        plot_conventional : "conventional" plot.
+        plot_conventional : "primitive" plot.
         plot_primitive : "primitive" plot.
         plot_brillouin : "brillouin" plot.
         plot_kpath : "kpath" plot.

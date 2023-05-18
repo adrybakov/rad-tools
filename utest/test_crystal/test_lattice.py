@@ -1,18 +1,35 @@
-from math import pi
+from math import pi, sqrt
+
+import numpy as np
 
 import pytest
 
-from rad_tools.crystal.lattice import *
+from rad_tools.crystal.lattice import Lattice, _angle
+
+_TOL_ANGLE = 1e-5
+
+
+def test_angle():
+    assert abs(_angle([1, 0, 0], [0, 1, 0]) - 90) < _TOL_ANGLE
+    assert abs(_angle([1, 0, 0], [0, 0, 1]) - 90) < _TOL_ANGLE
+    assert abs(_angle([0, 1, 0], [1, 0, 0]) - 90) < _TOL_ANGLE
+    assert abs(_angle([0, 1, 0], [0, 0, 1]) - 90) < _TOL_ANGLE
+    assert abs(_angle([0, 0, 1], [1, 0, 0]) - 90) < _TOL_ANGLE
+    assert abs(_angle([0, 0, 1], [0, 1, 0]) - 90) < _TOL_ANGLE
+    assert abs(_angle([1, 1, 0], [0, 0, 1]) - 90) < _TOL_ANGLE
+    assert abs(_angle([1, 0, 0], [1, 1, 0]) - 45) < _TOL_ANGLE
+    assert abs(_angle([1, 0, 0], [1, sqrt(3), 0]) - 60) < _TOL_ANGLE
+    assert abs(_angle([1, 0, 0], [sqrt(3), 1, 0]) - 30) < _TOL_ANGLE
+    assert abs(_angle([1, 1, 0], [0, 1, 1]) - 60) < _TOL_ANGLE
+    assert abs(_angle([1, 1, 0], [3, 1, 1]) - 31.48215) < _TOL_ANGLE
+    assert abs(_angle([3, 1, 1], [-3, -1, -1]) - 180) < _TOL_ANGLE
+    assert abs(_angle([3, 1, 1], [3, 1, 1])) < _TOL_ANGLE
 
 
 class TestLattice:
     l = Lattice([1, 0, 0], [0, 2, 0], [0, 0, 3])
 
     def test_init(self):
-        assert (self.l.cell == np.array([[1, 0, 0], [0, 2, 0], [0, 0, 3]])).all()
-        assert (self.l.a1 == np.array([1, 0, 0])).all()
-        assert (self.l.a2 == np.array([0, 2, 0])).all()
-        assert (self.l.a3 == np.array([0, 0, 3])).all()
         assert self.l.points == {}
         assert self.l.path == []
 
@@ -24,8 +41,16 @@ class TestLattice:
         with pytest.raises(RuntimeError):
             tmp = self.l.centring_type
 
-    def test_unit_cell_volume(self):
+    def test_cell(self):
+        assert (self.l.cell == np.array([[1, 0, 0], [0, 2, 0], [0, 0, 3]])).all()
+        assert (self.l.a1 == np.array([1, 0, 0])).all()
+        assert (self.l.a2 == np.array([0, 2, 0])).all()
+        assert (self.l.a3 == np.array([0, 0, 3])).all()
         assert self.l.unit_cell_volume == 6
+        assert self.l.a == 1
+        assert self.l.b == 2
+        assert self.l.c == 3
+        assert self.l.alpha == self.l.beta == self.l.gamma == 90
 
     def test_reciprocal_cell(self):
         assert (
@@ -36,3 +61,10 @@ class TestLattice:
         assert (self.l.b2 == np.array([0, pi, 0])).all()
         assert (self.l.b3 == np.array([0, 0, 2 / 3 * pi])).all()
         assert self.l.reciprocal_cell_volume == 4 / 3 * pi**3
+        assert self.l.k_a == 2 * pi
+        assert self.l.k_b == pi
+        assert self.l.k_c == 2 / 3 * pi
+        assert self.l.k_alpha == self.l.k_beta == self.l.k_gamma == 90
+
+    def test_variation(self):
+        assert self.l.variation == "Lattice"
