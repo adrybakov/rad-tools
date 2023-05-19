@@ -237,7 +237,8 @@ def define_planes(lattice_points, vectors, relative=False):
     )
     # Propagation of error: TOLERANCE is defined for x, y, z,
     # here sqrt(x^2 + y^2 + z^2) is tested
-    compare_matrix = np.sum((compare_matrix >= -2 * TOLERANCE) * 1, axis=1)
+    compare_matrix = (compare_matrix >= -2 * TOLERANCE) * 1
+    compare_matrix = np.sum(compare_matrix, axis=1)
 
     planes = []
     f = 0
@@ -322,6 +323,7 @@ def define_corners(planes, vectors):
                         planes_indices.append({f, s, t})
                     except:
                         pass
+    print(len(intersection_points))
 
     corners = []
 
@@ -342,7 +344,9 @@ def define_corners(planes, vectors):
         decimals=TOL_BASE,
     )
 
-    compare_matrix = np.sum((compare_matrix >= TOLERANCE) * 1, axis=1)
+    # print_2D_array(compare_matrix, posneg=1)
+    # print(compare_matrix[10][12])
+    compare_matrix = np.sum((compare_matrix > 2 * TOLERANCE) * 1, axis=1)
     corners = []
     tmp = []
     for i in range(compare_matrix.shape[0]):
@@ -411,7 +415,7 @@ def define_edges(corners, plane_indices):
 
 
 if __name__ == "__main__":
-    from rad_tools import rhl1 as l
+    from rad_tools import tri1a as l
 
     cell = l.reciprocal_cell
     lattice_points, vectors = get_lattice_points(cell)

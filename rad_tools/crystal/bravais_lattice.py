@@ -1539,8 +1539,13 @@ class TRI(Lattice):
                 ),
             ],
         )
+        if (
+            self.k_alpha < self.k_gamma < self.k_beta
+            or self.k_beta < self.k_gamma < self.k_alpha
+        ):
+            raise RuntimeError("k_gamma is not minimal nor maximal.")
         self.conv_cell = self.cell
-        if self.variation in ["TRI1a", "TRI1b"]:
+        if self.variation in ["TRI1a", "TRI2a"]:
             self.points = {
                 "G": np.array([0, 0, 0]),
                 "L": np.array([1 / 2, 1 / 2, 0]),
@@ -1559,16 +1564,16 @@ class TRI(Lattice):
                 "R",
                 "G",
             ]
-        elif self.variation in ["TRI2a", "TRI2b"]:
+        elif self.variation in ["TRI1b", "TRI2b"]:
             self.points = {
                 "G": np.array([0, 0, 0]),
-                "L": np.array([1 / 2, 1 / 2, 0]),
-                "M": np.array([0, 1 / 2, 1 / 2]),
-                "N": np.array([1 / 2, 0, 1 / 2]),
-                "R": np.array([1 / 2, 1 / 2, 1 / 2]),
-                "X": np.array([1 / 2, 0, 0]),
-                "Y": np.array([0, 1 / 2, 0]),
-                "Z": np.array([0, 0, 1 / 2]),
+                "L": np.array([1 / 2, -1 / 2, 0]),
+                "M": np.array([0, 0, 1 / 2]),
+                "N": np.array([-1 / 2, -1 / 2, 1 / 2]),
+                "R": np.array([0, -1 / 2, 1 / 2]),
+                "X": np.array([0, -1 / 2, 0]),
+                "Y": np.array([1 / 2, 0, 0]),
+                "Z": np.array([-1 / 2, 0, 1 / 2]),
             }
 
             self._default_path = [
@@ -1597,7 +1602,7 @@ class TRI(Lattice):
         elif (min(self.k_gamma, self.k_beta, self.k_alpha)) > 90:
             return "TRI1a"
         elif (max(self.k_gamma, self.k_beta, self.k_alpha)) < 90:
-            return "TRI1a"
+            return "TRI1b"
 
 
 # Examples
@@ -1622,10 +1627,38 @@ mclc2 = MCLC(1.4772116295 * pi, 1.5 * pi, 2 * pi, 80)
 mclc3 = MCLC(pi, pi / 2, pi, 80)
 mclc4 = MCLC(1.06486353 * pi, pi, 1.2 * pi, 80)
 mclc5 = MCLC(pi, pi, pi, 60)
-tri1a = TRI(pi, 1.5 * pi, 2 * pi, 120, 110, 100)
-tri1b = TRI(pi, 1.5 * pi, 2 * pi, 60, 70, 80)
-tri2a = TRI(pi, 2 * pi, 3 * pi, 100, 70, 65)
-tri2b = TRI(pi, 2 * pi, 3 * pi, 100, 70, 65)
+tri1a = TRI(
+    1.1747349889 * pi,
+    1.6995495292 * pi,
+    2.6717186812 * pi,
+    80.27301762443797,
+    82.08426124373892,
+    83.77967586736676,
+)
+tri2a = TRI(
+    1.7955292406 * pi,
+    1.9684531741 * pi,
+    2.1769635099 * pi,
+    57.853298599,
+    66.738338973,
+    77.869542155,
+)
+tri1b = TRI(
+    1.2051287186 * pi,
+    1.3385388321 * pi,
+    2.0029128540 * pi,
+    112.14094037,
+    109.20307244,
+    104.22372597,
+)
+tri2b = TRI(
+    1.2568704684 * pi,
+    1.5747625393 * pi,
+    2.1769635099 * pi,
+    122.14670140,
+    113.26166102,
+    77.869542155,
+)
 
 examples = {
     "cub": cub,
@@ -1650,8 +1683,8 @@ examples = {
     "mclc4": mclc4,
     "mclc5": mclc5,
     "tri1a": tri1a,
-    "tri1b": tri1b,
     "tri2a": tri2a,
+    "tri1b": tri1b,
     "tri2b": tri2b,
 }
 
@@ -1659,23 +1692,10 @@ if __name__ == "__main__":
     from math import pi
 
     print(
-        f"BCT1 {bct1.variation}",
-        f"BCT2 {bct2.variation}",
-        f"ORCF1 {orcf1.variation}",
-        f"ORCF2 {orcf2.variation}",
-        f"ORCF3 {orcf3.variation}",
-        f"RHL1 {rhl1.variation}",
-        f"RHL2 {rhl2.variation}",
-        f"MCLC1 {mclc1.variation}",
-        f"MCLC2 {mclc2.variation}",
-        f"MCLC3 {mclc3.variation}",
-        f"MCLC4 {mclc4.variation}",
-        f"MCLC5 {mclc5.variation}",
-        f"TRI1a {tri1a.variation}",
-        f"TRI1b {tri1b.variation}",
-        f"TRI2a {tri2a.variation}",
-        f"TRI2b {tri2b.variation}",
-        sep="\n",
+        f"TRI1a: {tri1a.variation}\n"
+        + f"TRI2a: {tri2a.variation}\n"
+        + f"TRI1b: {tri1b.variation}\n"
+        + f"TRI2b: {tri2b.variation}"
     )
 
     # import matplotlib.pyplot as plt
@@ -1687,14 +1707,18 @@ if __name__ == "__main__":
     #     y.append(MCLC(i * pi, pi, 1.2 * pi, 80).variation)
     # ax.scatter(x, y)
     # plt.show()
-
-    # for e in examples[-4:]:
-    #     l = e
-    #     print(l.variation)
-    #     l.prepare_figure()
-    #     l.plot("brillouin_kpath", label=l.variation)
-    #     l.legend()
-    #     l.show()
+    for e in list(examples)[-4:]:
+        l = examples[e]
+        print(f"k_alpha: {l.k_alpha}")
+        print(f"k_beta: {l.k_beta}")
+        print(f"k_gamma: {l.k_gamma}")
+        print(f"k_a: {l.k_a}")
+        print(f"k_b: {l.k_b}")
+        print(f"k_c: {l.k_c}")
+        l.prepare_figure()
+        l.plot("brillouin_kpath", label=l.variation)
+        l.legend()
+        l.show()
 
 
 # TODO FIX TRI Lattice
