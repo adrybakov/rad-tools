@@ -11,9 +11,7 @@ import numpy as np
 from matplotlib import rcParams
 
 from rad_tools.crystal.decomposition import deduct_zone
-
-_todegrees = 180 / pi
-_toradians = pi / 180
+from rad_tools.routines import _todegrees
 
 
 def _angle(v1, v2, radians=False):
@@ -56,62 +54,61 @@ class Lattice:
 
     _pearson_symbol = None
 
-    _PLOT_NAMES = {
-        "G": "$\\Gamma$",
-        "M": "$M$",
-        "R": "$R$",
-        "X": "$X$",
-        "K": "$K$",
-        "L": "$L$",
-        "U": "$U$",
-        "W": "$W$",
-        "H": "$H$",
-        "P": "$P$",
-        "N": "$N$",
-        "A": "$A$",
-        "Z": "$Z$",
-        "Z1": "$Z_1$",
-        "Y": "$Y$",
-        "Y1": "$Y_1$",
-        "S": "$S$",  # it is overwritten to sigma if needed.
-        "S1": "$S_1$",  # it is overwritten to sigma if needed.
-        "T": "$T$",
-        "A1": "$A_1$",
-        "X1": "$X_1$",
-        "C": "$C$",
-        "C1": "$C_1$",
-        "D": "$D$",
-        "D1": "$D_1$",
-        "H1": "$H_1$",
-        "L1": "$L_1$",
-        "L2": "$L_2$",
-        "B": "$B$",
-        "B1": "$B_1$",
-        "F": "$F$",
-        "P1": "$P_1$",
-        "P2": "$P_2$",
-        "Q": "$Q$",
-        "Q1": "$Q_1$",
-        "E": "$E$",
-        "H2": "$H_2$",
-        "M1": "$M_1$",
-        "M2": "$M_2$",
-        "N1": "$N_1$",
-        "F1": "$F_1$",
-        "F2": "$F_2$",
-        "F3": "$F_3$",
-        "I": "$I$",
-        "I1": "$I_1$",
-        "X2": "$X_2$",
-        "Y2": "$Y_2$",
-        "Y3": "$Y_3$",
-    }
-
     def __init__(self, a1, a2, a3) -> None:
         self.cell = np.array([a1, a2, a3])
         self.points = {}
         self._path = None
         self._default_path = None
+        self._PLOT_NAMES = {
+            "G": "$\\Gamma$",
+            "M": "$M$",
+            "R": "$R$",
+            "X": "$X$",
+            "K": "$K$",
+            "L": "$L$",
+            "U": "$U$",
+            "W": "$W$",
+            "H": "$H$",
+            "P": "$P$",
+            "N": "$N$",
+            "A": "$A$",
+            "Z": "$Z$",
+            "Z1": "$Z_1$",
+            "Y": "$Y$",
+            "Y1": "$Y_1$",
+            "S": "$S$",  # it is overwritten to sigma if needed.
+            "S1": "$S_1$",  # it is overwritten to sigma if needed.
+            "T": "$T$",
+            "A1": "$A_1$",
+            "X1": "$X_1$",
+            "C": "$C$",
+            "C1": "$C_1$",
+            "D": "$D$",
+            "D1": "$D_1$",
+            "H1": "$H_1$",
+            "L1": "$L_1$",
+            "L2": "$L_2$",
+            "B": "$B$",
+            "B1": "$B_1$",
+            "F": "$F$",
+            "P1": "$P_1$",
+            "P2": "$P_2$",
+            "Q": "$Q$",
+            "Q1": "$Q_1$",
+            "E": "$E$",
+            "H2": "$H_2$",
+            "M1": "$M_1$",
+            "M2": "$M_2$",
+            "N1": "$N_1$",
+            "F1": "$F_1$",
+            "F2": "$F_2$",
+            "F3": "$F_3$",
+            "I": "$I$",
+            "I1": "$I_1$",
+            "X2": "$X_2$",
+            "Y2": "$Y_2$",
+            "Y3": "$Y_3$",
+        }
 
     @property
     def path(self):
@@ -501,9 +498,6 @@ class Lattice:
             for kind in kinds:
                 getattr(self, f"plot_{kind}")(self._ax, **kwargs)
         except AttributeError:
-            d = dir(self)
-            for i in d:
-                print(i, i == f"plot_{kind}")
             raise ValueError(f"Plot kind '{kind}' does not exist!")
 
     def show(self):
@@ -844,7 +838,7 @@ class Lattice:
                 0,
                 0,
                 0,
-                s=0,
+                s=36,
                 color=colour,
                 label=label,
             )

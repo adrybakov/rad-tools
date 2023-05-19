@@ -22,14 +22,10 @@ Edges
 * If yes, then take an edge.
 """
 
-
-import matplotlib.pyplot as plt
 import numpy as np
-import scipy as sp
-from matplotlib import rcParams
 
-TOLERANCE = 1e-8
-TOL_BASE = 8
+from rad_tools.routines import TOLERANCE, TOL_BASE, print_2D_array
+
 
 __all__ = [
     "deduct_zone",
@@ -239,12 +235,15 @@ def define_planes(lattice_points, vectors, relative=False):
         np.linalg.norm(points, axis=2) - np.linalg.norm(points - lpoints, axis=2),
         decimals=TOL_BASE,
     )
-    compare_matrix = np.sum((compare_matrix >= 0) * 1, axis=1)
+    # Propagation of error: TOLERANCE is defined for x, y, z,
+    # here sqrt(x^2 + y^2 + z^2) is tested
+    compare_matrix = np.sum((compare_matrix >= -2 * TOLERANCE) * 1, axis=1)
 
     planes = []
-
+    f = 0
     for i in range(compare_matrix.shape[0]):
         if compare_matrix[i] <= 1:
+            f += 1
             if relative:
                 planes.append(
                     (
@@ -255,7 +254,6 @@ def define_planes(lattice_points, vectors, relative=False):
                 )
             else:
                 planes.append(vectors[i] / 2)
-
     return planes
 
 
@@ -306,7 +304,7 @@ def define_corners(planes, vectors):
                 tplane = planes[t]
                 nt = tplane
                 # If not around - overflow error occurs
-                A = np.around(np.array([nf, ns, nt]), decimals=TOL_BASE)
+                A = np.around(np.array([nf, ns, nt]), decimals=TOL_BASE + 1)
                 b = np.around(
                     np.array(
                         [
@@ -317,13 +315,13 @@ def define_corners(planes, vectors):
                     ),
                     decimals=TOL_BASE,
                 )
-                try:
-                    x = np.linalg.solve(A, b)
-                    xprime = sp.linalg.solve(A, b)
-                    intersection_points.append(x)
-                    planes_indices.append({f, s, t})
-                except:
-                    pass
+                if abs(np.linalg.det(A)) > TOLERANCE:
+                    try:
+                        x = np.linalg.solve(A, b)
+                        intersection_points.append(x)
+                        planes_indices.append({f, s, t})
+                    except:
+                        pass
 
     corners = []
 
@@ -344,8 +342,7 @@ def define_corners(planes, vectors):
         decimals=TOL_BASE,
     )
 
-    compare_matrix = np.sum((compare_matrix > 0) * 1, axis=1)
-
+    compare_matrix = np.sum((compare_matrix >= TOLERANCE) * 1, axis=1)
     corners = []
     tmp = []
     for i in range(compare_matrix.shape[0]):
@@ -359,7 +356,9 @@ def define_corners(planes, vectors):
     for i in range(len(corners)):
         takeit = True
         for j in range(len(unique_corners)):
-            if (np.linalg.norm(corners[i] - unique_corners[j]) < TOLERANCE).all():
+            # Propagation of error: TOLERANCE is defined for x, y, z,
+            # here sqrt(x^2 + y^2 + z^2) is tested
+            if np.linalg.norm(corners[i] - unique_corners[j]) < 2 * TOLERANCE:
                 takeit = False
                 break
         if takeit:
@@ -412,11 +411,14 @@ def define_edges(corners, plane_indices):
 
 
 if __name__ == "__main__":
-    from rad_tools import orcf2
+    from rad_tools import rhl1 as l
 
-    cell = orcf2.reciprocal_cell
+    cell = l.reciprocal_cell
     lattice_points, vectors = get_lattice_points(cell)
     planes = define_planes(lattice_points, vectors)
+    print(f"PLANES: {len(planes)}")
     corners, planes_indices = define_corners(planes, vectors)
+    print(f"CORNERS: {len(corners)}")
     edges = define_edges(corners, planes_indices)
-    print(len(edges))
+    print(f"EDGES: {len(edges)}")
+    print(l.variation)

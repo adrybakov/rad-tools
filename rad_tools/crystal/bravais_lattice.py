@@ -24,7 +24,8 @@ from math import cos, pi, sin, sqrt, tan
 
 import numpy as np
 
-from rad_tools.crystal.lattice import Lattice, _toradians
+from rad_tools.crystal.lattice import Lattice
+from rad_tools.routines import _toradians, TOLERANCE
 
 __all__ = [
     "CUB",
@@ -68,9 +69,6 @@ __all__ = [
     "tri2b",
 ]
 
-DISTANCE_TOLERANCE = 10e-8
-ANGLE_TOLERANCE = 10e-5
-
 
 # 1
 class CUB(Lattice):
@@ -111,7 +109,7 @@ class CUB(Lattice):
 
     def __init__(self, a: float) -> None:
         self.conv_a = a
-        self.cell = np.diag([a, a, a])
+        super().__init__([a, 0, 0], [0, a, 0], [0, 0, a])
         self.conv_cell = self.cell
         self.points = {
             "G": np.array([0, 0, 0]),
@@ -171,7 +169,7 @@ class FCC(Lattice):
 
     def __init__(self, a: float) -> None:
         self.conv_a = a
-        self.cell = np.array([[0, a, a], [a, 0, a], [a, a, 0]]) / 2
+        super().__init__([0, a / 2, a / 2], [a / 2, 0, a / 2], [a / 2, a / 2, 0])
         self.conv_cell = np.diag([a, a, a])
         self.points = {
             "G": np.array([0, 0, 0]),
@@ -236,12 +234,8 @@ class BCC(Lattice):
 
     def __init__(self, a: float) -> None:
         self.conv_a = a
-        self.cell = np.array(
-            [
-                [-a / 2, a / 2, a / 2],
-                [a / 2, -a / 2, a / 2],
-                [a / 2, a / 2, -a / 2],
-            ]
+        super().__init__(
+            [-a / 2, a / 2, a / 2], [a / 2, -a / 2, a / 2], [a / 2, a / 2, -a / 2]
         )
         self.conv_cell = np.diag([a, a, a])
         self.points = {
@@ -297,7 +291,7 @@ class TET(Lattice):
     def __init__(self, a: float, c: float) -> None:
         self.conv_a = a
         self.conv_c = c
-        self.cell = np.diag([a, a, c])
+        super().__init__([a, 0, 0], [0, a, 0], [0, 0, c])
         self.conv_cell = self.cell
         self.points = {
             "G": np.array([0, 0, 0]),
@@ -366,19 +360,15 @@ class BCT(Lattice):
     _pearson_symbol = "tI"
 
     def __init__(self, a: float, c: float) -> None:
-        self._PLOT_NAMES["S"] = "$\\Sigma$"
-        self._PLOT_NAMES["S1"] = "$\\Sigma_1$"
         if a == c:
             raise ValueError("Are you trying to create BCC Lattice (a == c)?")
         self.conv_a = a
         self.conv_c = c
-        self.cell = np.array(
-            [
-                [-a / 2, a / 2, c / 2],
-                [a / 2, -a / 2, c / 2],
-                [a / 2, a / 2, -c / 2],
-            ]
+        super().__init__(
+            [-a / 2, a / 2, c / 2], [a / 2, -a / 2, c / 2], [a / 2, a / 2, -c / 2]
         )
+        self._PLOT_NAMES["S"] = "$\\Sigma$"
+        self._PLOT_NAMES["S1"] = "$\\Sigma_1$"
         self.conv_cell = np.diag([a, a, c])
         if self.variation == "BCT1":
             eta = (1 + c**2 / a**2) / 4
@@ -500,7 +490,7 @@ class ORC(Lattice):
         self.conv_a = a
         self.conv_b = b
         self.conv_c = c
-        self.cell = np.diag([a, b, c])
+        super().__init__([a, 0, 0], [0, b, 0], [0, 0, c])
         self.conv_cell = self.cell
         self.points = {
             "G": np.array([0, 0, 0]),
@@ -588,13 +578,7 @@ class ORCF(Lattice):
         self.conv_a = a
         self.conv_b = b
         self.conv_c = c
-        self.cell = np.array(
-            [
-                [0, b / 2, c / 2],
-                [a / 2, 0, c / 2],
-                [a / 2, b / 2, 0],
-            ]
-        )
+        super().__init__([0, b / 2, c / 2], [a / 2, 0, c / 2], [a / 2, b / 2, 0])
         self.conv_cell = np.diag([a, b, c])
         if self.variation == "ORCF1":
             eta = (1 + a**2 / b**2 + a**2 / c**2) / 4
@@ -750,12 +734,8 @@ class ORCI(Lattice):
         self.conv_a = a
         self.conv_b = b
         self.conv_c = c
-        self.cell = np.array(
-            [
-                [-a / 2, b / 2, c / 2],
-                [a / 2, -b / 2, c / 2],
-                [a / 2, b / 2, -c / 2],
-            ]
+        super().__init__(
+            [-a / 2, b / 2, c / 2], [a / 2, -b / 2, c / 2], [a / 2, b / 2, -c / 2]
         )
         self.conv_cell = np.diag([a, b, c])
         zeta = (1 + a**2 / c**2) / 4
@@ -851,13 +831,7 @@ class ORCC(Lattice):
         self.conv_a = a
         self.conv_b = c
         self.conv_c = b
-        self.cell = np.array(
-            [
-                [a / 2, -b / 2, 0],
-                [a / 2, b / 2, 0],
-                [0, 0, c],
-            ]
-        )
+        super().__init__([a / 2, -b / 2, 0], [a / 2, b / 2, 0], [0, 0, c])
         self.conv_cell = np.diag([a, b, c])
         zeta = (1 + a**2 / b**2) / 4
 
@@ -925,8 +899,8 @@ class HEX(Lattice):
     def __init__(self, a: float, c: float) -> None:
         self.conv_a = a
         self.conv_c = c
-        self.cell = np.array(
-            [[a / 2, -a * sqrt(3) / 2, 0], [a / 2, a * sqrt(3) / 2, 0], [0, 0, c]]
+        super().__init__(
+            [a / 2, -a * sqrt(3) / 2, 0], [a / 2, a * sqrt(3) / 2, 0], [0, 0, c]
         )
         self.conv_cell = self.cell
 
@@ -995,19 +969,15 @@ class RHL(Lattice):
             raise ValueError("alpha has to be < 120 degrees.")
         self.conv_a = a
         self.conv_alpha = alpha
-        self.cell = np.array(
+        super().__init__(
+            [a * cos(alpha / 180 * pi / 2), -a * sin(alpha / 180 * pi / 2), 0],
+            [a * cos(alpha / 180 * pi / 2), a * sin(alpha / 180 * pi / 2), 0],
             [
-                [a * cos(alpha / 180 * pi / 2), -a * sin(alpha / 180 * pi / 2), 0],
-                [a * cos(alpha / 180 * pi / 2), a * sin(alpha / 180 * pi / 2), 0],
-                [
-                    a * cos(alpha / 180 * pi) / cos(alpha / 180 * pi / 2),
-                    0,
-                    a
-                    * sqrt(
-                        1 - cos(alpha / 180 * pi) ** 2 / cos(alpha / 180 * pi / 2) ** 2
-                    ),
-                ],
-            ]
+                a * cos(alpha / 180 * pi) / cos(alpha / 180 * pi / 2),
+                0,
+                a
+                * sqrt(1 - cos(alpha / 180 * pi) ** 2 / cos(alpha / 180 * pi / 2) ** 2),
+            ],
         )
         self.conv_cell = self.cell
         if self.variation == "RHL1":
@@ -1126,12 +1096,10 @@ class MCL(Lattice):
         self.conv_b = b
         self.conv_c = c
         self.conv_alpha = alpha
-        self.cell = np.array(
-            [
-                [a, 0, 0],
-                [0, b, 0],
-                [0, c * cos(alpha / 180 * pi), c * sin(alpha / 180 * pi)],
-            ]
+        super().__init__(
+            [a, 0, 0],
+            [0, b, 0],
+            [0, c * cos(alpha / 180 * pi), c * sin(alpha / 180 * pi)],
         )
         self.conv_cell = self.cell
 
@@ -1237,16 +1205,14 @@ class MCLC(Lattice):
         self.conv_b = b
         self.conv_c = c
         self.conv_alpha = alpha
-        self.cell = np.array(
+        super().__init__(
+            [a / 2, b / 2, 0],
+            [-a / 2, b / 2, 0],
             [
-                [a / 2, b / 2, 0],
-                [-a / 2, b / 2, 0],
-                [
-                    0,
-                    c * cos(alpha * _toradians),
-                    c * sin(alpha * _toradians),
-                ],
-            ]
+                0,
+                c * cos(alpha * _toradians),
+                c * sin(alpha * _toradians),
+            ],
         )
         self.conv_cell = np.array(
             [
@@ -1438,7 +1404,7 @@ class MCLC(Lattice):
         :math:`\text{MCLC}_5: k_{\gamma} < 90^{\circ}, \dfrac{b\cos(\alpha)}{c} + \dfrac{b^2\sin(\alpha)^2}{a^2} > 1`
         """
 
-        if abs(self.k_gamma - 90) < 10e-5:
+        if abs(self.k_gamma - 90) < TOLERANCE:
             return "MCLC2"
         elif self.k_gamma > 90:
             return "MCLC1"
@@ -1452,7 +1418,7 @@ class MCLC(Lattice):
                     / self.conv_a**2
                     - 1
                 )
-                < 10e-8
+                < TOLERANCE
             ):
                 return "MCLC4"
             elif (
@@ -1549,31 +1515,29 @@ class TRI(Lattice):
         self.conv_alpha = alpha
         self.conv_beta = beta
         self.conv_gamma = gamma
-        self.cell = np.array(
+        super().__init__(
+            [a, 0, 0],
+            [b * cos(gamma * _toradians), b * sin(gamma * _toradians), 0],
             [
-                [a, 0, 0],
-                [b * cos(gamma * _toradians), b * sin(gamma * _toradians), 0],
-                [
-                    c * cos(beta * _toradians),
-                    c
-                    / sin(gamma * _toradians)
-                    * (
-                        cos(alpha * _toradians)
-                        - cos(beta * _toradians) * cos(gamma * _toradians)
-                    ),
-                    c
-                    / sin(gamma * _toradians)
-                    * sqrt(
-                        sin(gamma * _toradians) ** 2
-                        - cos(alpha * _toradians) ** 2
-                        - cos(beta * _toradians) ** 2
-                        + 2
-                        * cos(alpha * _toradians)
-                        * cos(beta * _toradians)
-                        * cos(gamma * _toradians)
-                    ),
-                ],
-            ]
+                c * cos(beta * _toradians),
+                c
+                / sin(gamma * _toradians)
+                * (
+                    cos(alpha * _toradians)
+                    - cos(beta * _toradians) * cos(gamma * _toradians)
+                ),
+                c
+                / sin(gamma * _toradians)
+                * sqrt(
+                    sin(gamma * _toradians) ** 2
+                    - cos(alpha * _toradians) ** 2
+                    - cos(beta * _toradians) ** 2
+                    + 2
+                    * cos(alpha * _toradians)
+                    * cos(beta * _toradians)
+                    * cos(gamma * _toradians)
+                ),
+            ],
         )
         self.conv_cell = self.cell
         if self.variation in ["TRI1a", "TRI1b"]:
@@ -1625,7 +1589,7 @@ class TRI(Lattice):
         :math:`\text{TRI}_{2a} k_{\alpha} > 90^{\circ}, k_{\beta} > 90^{\circ}, k_{\gamma} = 90^{\circ}`
         :math:`\text{TRI}_{2b} k_{\alpha} < 90^{\circ}, k_{\beta} < 90^{\circ}, k_{\gamma} = 90^{\circ}`
         """
-        if abs(self.k_gamma - 90) < 10e-5:
+        if abs(self.k_gamma - 90) < TOLERANCE:
             if self.k_alpha > 90 and self.k_beta > 90:
                 return "TRI2a"
             elif self.k_alpha < 90 and self.k_beta < 90:
@@ -1650,45 +1614,46 @@ orcf3 = ORCF(pi, 5 / 4 * pi, 5 / 3 * pi)
 orci = ORCI(pi, 2 * pi, 3 * pi)
 orcc = ORCC(pi, 2 * pi, 3 * pi)
 hex = HEX(pi, 2 * pi)
-rhl1 = RHL(pi, 70)
+rhl1 = RHL(pi, 60)
 rhl2 = RHL(pi, 110)
 mcl = MCL(pi, 2 * pi, 3 * pi, alpha=80)
 mclc1 = MCLC(1 * pi, 1.5 * pi, 2 * pi, 80)
-mclc2 = MCLC(1.47721 * pi, 1.5 * pi, 2 * pi, 80)
+mclc2 = MCLC(1.4772116295 * pi, 1.5 * pi, 2 * pi, 80)
 mclc3 = MCLC(pi, pi / 2, pi, 80)
-mclc4 = MCLC(1.06486355 * pi, pi, 1.2 * pi, 80)
+mclc4 = MCLC(1.06486353 * pi, pi, 1.2 * pi, 80)
 mclc5 = MCLC(pi, pi, pi, 60)
-tri1a = TRI(2 * pi, 3 * pi, 4 * pi, 60, 70, 80)
-tri1b = TRI(pi, 2 * pi, 3 * pi, 100, 70, 65)
+tri1a = TRI(pi, 1.5 * pi, 2 * pi, 120, 110, 100)
+tri1b = TRI(pi, 1.5 * pi, 2 * pi, 60, 70, 80)
 tri2a = TRI(pi, 2 * pi, 3 * pi, 100, 70, 65)
 tri2b = TRI(pi, 2 * pi, 3 * pi, 100, 70, 65)
-examples = [
-    cub,
-    fcc,
-    bcc,
-    tet,
-    bct1,
-    bct2,
-    orc,
-    orcf1,
-    orcf2,
-    orcf3,
-    orci,
-    orcc,
-    hex,
-    rhl1,
-    rhl2,
-    mcl,
-    mclc1,
-    mclc2,
-    mclc3,
-    mclc4,
-    mclc5,
-    tri1a,
-    tri1b,
-    tri2a,
-    tri2b,
-]
+
+examples = {
+    "cub": cub,
+    "fcc": fcc,
+    "bcc": bcc,
+    "tet": tet,
+    "bct1": bct1,
+    "bct2": bct2,
+    "orc": orc,
+    "orcf1": orcf1,
+    "orcf2": orcf2,
+    "orcf3": orcf3,
+    "orci": orci,
+    "orcc": orcc,
+    "hex": hex,
+    "rhl1": rhl1,
+    "rhl2": rhl2,
+    "mcl": mcl,
+    "mclc1": mclc1,
+    "mclc2": mclc2,
+    "mclc3": mclc3,
+    "mclc4": mclc4,
+    "mclc5": mclc5,
+    "tri1a": tri1a,
+    "tri1b": tri1b,
+    "tri2a": tri2a,
+    "tri2b": tri2b,
+}
 
 if __name__ == "__main__":
     from math import pi
@@ -1713,13 +1678,23 @@ if __name__ == "__main__":
         sep="\n",
     )
 
-    for e in examples:
-        l = tri1a
-        print(l.variation)
-        l.prepare_figure()
-        l.plot("brillouin_kpath")
-        l.show()
-        break
+    # import matplotlib.pyplot as plt
+
+    # fig, ax = plt.subplots()
+    # x = np.linspace(1.06486353, 1.06486354, 11)
+    # y = []
+    # for i in x:
+    #     y.append(MCLC(i * pi, pi, 1.2 * pi, 80).variation)
+    # ax.scatter(x, y)
+    # plt.show()
+
+    # for e in examples[-4:]:
+    #     l = e
+    #     print(l.variation)
+    #     l.prepare_figure()
+    #     l.plot("brillouin_kpath", label=l.variation)
+    #     l.legend()
+    #     l.show()
 
 
 # TODO FIX TRI Lattice

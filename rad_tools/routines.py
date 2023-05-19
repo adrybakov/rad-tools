@@ -23,6 +23,12 @@ ORANGE = "#F7CB3D"
 BLUE = "#274DD1"
 PURPLE = "#DC5CFF"
 
+TOLERANCE = 1e-8
+TOL_BASE = 8
+
+_todegrees = 180 / pi
+_toradians = pi / 180
+
 
 def atom_mark_to_latex(mark):
     r"""
