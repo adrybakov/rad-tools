@@ -1,29 +1,9 @@
 from math import pi, sqrt
 
 import numpy as np
-
 import pytest
 
-from rad_tools.crystal.lattice import Lattice, _angle
-
-_TOL_ANGLE = 1e-5
-
-
-def test_angle():
-    assert abs(_angle([1, 0, 0], [0, 1, 0]) - 90) < _TOL_ANGLE
-    assert abs(_angle([1, 0, 0], [0, 0, 1]) - 90) < _TOL_ANGLE
-    assert abs(_angle([0, 1, 0], [1, 0, 0]) - 90) < _TOL_ANGLE
-    assert abs(_angle([0, 1, 0], [0, 0, 1]) - 90) < _TOL_ANGLE
-    assert abs(_angle([0, 0, 1], [1, 0, 0]) - 90) < _TOL_ANGLE
-    assert abs(_angle([0, 0, 1], [0, 1, 0]) - 90) < _TOL_ANGLE
-    assert abs(_angle([1, 1, 0], [0, 0, 1]) - 90) < _TOL_ANGLE
-    assert abs(_angle([1, 0, 0], [1, 1, 0]) - 45) < _TOL_ANGLE
-    assert abs(_angle([1, 0, 0], [1, sqrt(3), 0]) - 60) < _TOL_ANGLE
-    assert abs(_angle([1, 0, 0], [sqrt(3), 1, 0]) - 30) < _TOL_ANGLE
-    assert abs(_angle([1, 1, 0], [0, 1, 1]) - 60) < _TOL_ANGLE
-    assert abs(_angle([1, 1, 0], [3, 1, 1]) - 31.48215) < _TOL_ANGLE
-    assert abs(_angle([3, 1, 1], [-3, -1, -1]) - 180) < _TOL_ANGLE
-    assert abs(_angle([3, 1, 1], [3, 1, 1])) < _TOL_ANGLE
+from rad_tools.crystal.lattice import Lattice
 
 
 class TestLattice:

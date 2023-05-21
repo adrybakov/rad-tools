@@ -2,25 +2,34 @@ r"""
 General 3D lattice.
 """
 
-
 from math import pi
 from typing import Iterable
 
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import rcParams
+from matplotlib.patches import FancyArrowPatch
+# Better 3D arrows, see: https://stackoverflow.com/questions/22867620/putting-arrowheads-on-vectors-in-a-3d-plot
+from mpl_toolkits.mplot3d import Axes3D, proj3d
+from scipy.spatial import Voronoi
 
-from rad_tools.crystal.decomposition import deduct_zone
-from rad_tools.routines import _todegrees
+from rad_tools.routines import angle
 
 
-def _angle(v1, v2, radians=False):
-    v1 = np.array(v1) / np.linalg.norm(v1)
-    v2 = np.array(v2) / np.linalg.norm(v2)
-    alpha = np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0))
-    if radians:
-        return alpha
-    return alpha * _todegrees
+class Arrow3D(FancyArrowPatch):
+    def __init__(self, ax, xs, ys, zs, *args, **kwargs):
+        FancyArrowPatch.__init__(self, (0, 0), (0, 0), *args, **kwargs)
+        self._verts3d = xs, ys, zs
+        self._ax = ax
+
+    def draw(self, renderer):
+        xs3d, ys3d, zs3d = self._verts3d
+        xs, ys, zs = proj3d.proj_transform(xs3d, ys3d, zs3d, self._ax.axes.M)
+        self.set_positions((xs[0], ys[0]), (xs[1], ys[1]))
+        FancyArrowPatch.draw(self, renderer)
+
+    def do_3d_projection(self, *_, **__):
+        return 0
 
 
 class Lattice:
@@ -247,7 +256,7 @@ class Lattice:
             In degrees
         """
 
-        return _angle(self.a2, self.a3)
+        return angle(self.a2, self.a3)
 
     @property
     def beta(self):
@@ -260,7 +269,7 @@ class Lattice:
             In degrees
         """
 
-        return _angle(self.a1, self.a3)
+        return angle(self.a1, self.a3)
 
     @property
     def gamma(self):
@@ -273,7 +282,7 @@ class Lattice:
             In degrees
         """
 
-        return _angle(self.a1, self.a2)
+        return angle(self.a1, self.a2)
 
     @property
     def unit_cell_volume(self):
@@ -384,7 +393,7 @@ class Lattice:
         Angle between second and third reciprocal lattice vector.
         """
 
-        return _angle(self.b2, self.b3)
+        return angle(self.b2, self.b3)
 
     @property
     def k_beta(self):
@@ -392,7 +401,7 @@ class Lattice:
         Angle between first and third reciprocal lattice vector.
         """
 
-        return _angle(self.b1, self.b3)
+        return angle(self.b1, self.b3)
 
     @property
     def k_gamma(self):
@@ -400,7 +409,7 @@ class Lattice:
         Angle between first and second reciprocal lattice vector.
         """
 
-        return _angle(self.b1, self.b2)
+        return angle(self.b1, self.b2)
 
     @property
     def reciprocal_cell_volume(self):
@@ -418,6 +427,64 @@ class Lattice:
     def variation(self):
         r"""There is no variations of the lattice"""
         return self.__class__.__name__
+
+    def lattice_points(self, relative=False, reciprocal=False):
+        r"""
+        Compute lattice points
+
+        Parameters
+        ----------
+        relative : bool, default False
+            Whether to return relative or absolute coordinates.
+        reciprocal : bool, default False
+            Whether to use reciprocal or real cell.
+        """
+
+        if reciprocal:
+            cell = self.reciprocal_cell
+        else:
+            cell = self.cell
+
+        lattice_points = np.zeros((27, 3), dtype=float)
+        for i in [-1, 0, 1]:
+            for j in [-1, 0, 1]:
+                for k in [-1, 0, 1]:
+                    point = np.array([i, j, k])
+                    if not relative:
+                        point = point @ cell
+                    lattice_points[9 * (i + 1) + 3 * (j + 1) + (k + 1)] = point
+        return lattice_points
+
+    def voronoi_cell(self, reciprocal=False):
+        r"""
+        Computes Voronoy edges around (0,0,0) point.
+
+        Parameters
+        ----------
+        reciprocal : bool, default False
+            Whether to use reciprocal or real cell.
+
+        Returns
+        -------
+        edges : (N, 2) :numpy:`ndarray`
+            N edges of the Voronoi cell around (0,0,0) point.
+            Each elements contains two indices of the voronoi vertices forming an edge.
+        vertices : (M, 3) :numpy:`ndarray`
+            M vertices of the Voronoi cell around (0,0,0) point.
+            Each element is a vector :math:`v = (v_x, v_y, v_z)`.
+        """
+        voronoi = Voronoi(self.lattice_points(relative=False, reciprocal=reciprocal))
+        edges = set()
+        # Thanks ase for the idea. 13 - is the index of (0,0,0) point.
+        for rv, rp in zip(voronoi.ridge_vertices, voronoi.ridge_points):
+            if -1 not in rv and 13 in rp:
+                for j in range(0, len(rv)):
+                    if (rv[j - 1], rv[j]) not in edges and (
+                        rv[j],
+                        rv[j - 1],
+                    ) not in edges:
+                        edges.add((rv[j - 1], rv[j]))
+        return np.array(list(edges)), voronoi.vertices
 
     def prepare_figure(self, background=True, focal_length=0.2) -> None:
         r"""
@@ -655,65 +722,23 @@ class Lattice:
             Multiplier for the position of the vectors labels. 1 = position of the vector.
         """
 
-        if label is not None:
-            ax.scatter(0, 0, 0, color=colour, label=label)
-        planes, edges, corners = deduct_zone([self.b1, self.b2, self.b3])
-
-        if vectors:
-            if not isinstance(vector_pad, Iterable):
-                vector_pad = [vector_pad, vector_pad, vector_pad]
-            ax.text(
-                self.b1[0] * vector_pad[0],
-                self.b1[1] * vector_pad[0],
-                self.b1[2] * vector_pad[0],
-                "$b_1$",
-                fontsize=20,
-                color=colour,
-                ha="center",
-                va="center",
-            )
-            ax.text(
-                self.b2[0] * vector_pad[1],
-                self.b2[1] * vector_pad[1],
-                self.b2[2] * vector_pad[1],
-                "$b_2$",
-                fontsize=20,
-                color=colour,
-                ha="center",
-                va="center",
-            )
-            ax.text(
-                self.b3[0] * vector_pad[2],
-                self.b3[1] * vector_pad[2],
-                self.b3[2] * vector_pad[2],
-                "$b_3$",
-                fontsize=20,
-                color=colour,
-                ha="center",
-                va="center",
-            )
-            for i in [self.b1, self.b2, self.b3]:
-                ax.quiver(
-                    0,
-                    0,
-                    0,
-                    *tuple(i),
-                    arrow_length_ratio=0.2,
-                    color=colour,
-                    alpha=0.7,
-                    linewidth=2,
-                )
-                ax.scatter(*tuple(i), s=0)
-        for a, b in edges:
-            ax.plot(
-                [a[0], b[0]],
-                [a[1], b[1]],
-                [a[2], b[2]],
-                color=colour,
-            )
+        self.plot_wigner_seitz(
+            ax,
+            vectors=vectors,
+            colour=colour,
+            label=label,
+            vector_pad=vector_pad,
+            reciprocal=True,
+        )
 
     def plot_wigner_seitz(
-        self, ax, vectors=True, colour="black", label=None, vector_pad=1.1
+        self,
+        ax,
+        vectors=True,
+        colour="black",
+        label=None,
+        vector_pad=1.1,
+        reciprocal=False,
     ):
         r"""
         Plot Wigner-Seitz unit cell.
@@ -722,17 +747,21 @@ class Lattice:
             Axes for the plot. 3D.
         vectors : bool, default True
             Whether to plot lattice vectors.
-        colour : str, default "black"
+        colour : str, default "black" or "#FF4D67"
             Colour for the plot. Any format supported by matplotlib. See |matplotlibColor|_.
         label : str, default None
             Label for the plot.
         vector_pad : float, default 1.1
             Multiplier for the position of the vectors labels. 1 = position of the vector.
+        reciprocal : bool, default False
+            Whether to plot reciprocal or real Wigner-Seitz cell.
         """
 
-        a1, a2, a3 = self.prim_a1, self.prim_a2, self.prim_a3
-
-        planes, edges, corners = deduct_zone([a1, a2, a3])
+        if reciprocal:
+            v1, v2, v3 = self.b1, self.b2, self.b3
+            v_literal = "b"
+            if colour is None:
+                colour = "#FF4D67"
 
         if label is not None:
             ax.scatter(0, 0, 0, color=colour, label=label)
@@ -740,45 +769,71 @@ class Lattice:
             if not isinstance(vector_pad, Iterable):
                 vector_pad = [vector_pad, vector_pad, vector_pad]
             ax.text(
-                a1[0] * vector_pad[0],
-                a1[1] * vector_pad[0],
-                a1[2] * vector_pad[0],
-                "$a_1$",
+                v1[0] * vector_pad[0],
+                v1[1] * vector_pad[0],
+                v1[2] * vector_pad[0],
+                f"${v_literal}_1$",
                 fontsize=20,
                 color=colour,
                 ha="center",
                 va="center",
             )
             ax.text(
-                a2[0] * vector_pad[1],
-                a2[1] * vector_pad[1],
-                a2[2] * vector_pad[1],
-                "$a_2$",
+                v2[0] * vector_pad[1],
+                v2[1] * vector_pad[1],
+                v2[2] * vector_pad[1],
+                f"${v_literal}_2$",
                 fontsize=20,
                 color=colour,
                 ha="center",
                 va="center",
             )
             ax.text(
-                a3[0] * vector_pad[2],
-                a3[1] * vector_pad[2],
-                a3[2] * vector_pad[2],
-                "$a_3$",
+                v3[0] * vector_pad[2],
+                v3[1] * vector_pad[2],
+                v3[2] * vector_pad[2],
+                f"${v_literal}_3$",
                 fontsize=20,
                 color=colour,
                 ha="center",
                 va="center",
             )
-            for i in [a1, a2, a3]:
-                ax.quiver(
-                    0, 0, 0, *tuple(i), arrow_length_ratio=0.2, color=colour, alpha=0.5
-                )
-                ax.scatter(*tuple(i), s=0)
-        for a, b in edges:
+            for v in [v1, v2, v3]:
+                # Try beautiful arrows
+                try:
+                    ax.add_artist(
+                        Arrow3D(
+                            ax,
+                            [0, v[0]],
+                            [0, v[1]],
+                            [0, v[2]],
+                            mutation_scale=20,
+                            arrowstyle="-|>",
+                            color=colour,
+                            lw=2,
+                            alpha=0.8,
+                        )
+                    )
+                # Go to default
+                except:
+                    ax.quiver(
+                        0,
+                        0,
+                        0,
+                        *tuple(v),
+                        arrow_length_ratio=0.2,
+                        color=colour,
+                        alpha=0.5,
+                    )
+                # Ghost point to account for the plot range
+                ax.scatter(*tuple(v), s=0)
+
+        edges, vertices = self.voronoi_cell(reciprocal=reciprocal)
+        for i, j in edges:
             ax.plot(
-                [a[0], b[0]],
-                [a[1], b[1]],
-                [a[2], b[2]],
+                [vertices[i][0], vertices[j][0]],
+                [vertices[i][1], vertices[j][1]],
+                [vertices[i][2], vertices[j][2]],
                 color=colour,
             )
 

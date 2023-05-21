@@ -25,7 +25,7 @@ from math import cos, pi, sin, sqrt, tan
 import numpy as np
 
 from rad_tools.crystal.lattice import Lattice
-from rad_tools.routines import _toradians, TOLERANCE
+from rad_tools.routines import TOLERANCE, _toradians
 
 __all__ = [
     "CUB",
@@ -1631,9 +1631,9 @@ tri1a = TRI(
     1.1747349889 * pi,
     1.6995495292 * pi,
     2.6717186812 * pi,
-    80.27301762443797,
-    82.08426124373892,
-    83.77967586736676,
+    80.273017624,
+    82.084261243,
+    83.779675867,
 )
 tri2a = TRI(
     1.7955292406 * pi,
@@ -1647,9 +1647,9 @@ tri1b = TRI(
     1.2051287186 * pi,
     1.3385388321 * pi,
     2.0029128540 * pi,
-    112.14094037,
-    109.20307244,
-    104.22372597,
+    90.742461062,
+    92.924314118,
+    94.955032057,
 )
 tri2b = TRI(
     1.2568704684 * pi,
@@ -1689,7 +1689,6 @@ examples = {
 }
 
 if __name__ == "__main__":
-    from math import pi
 
     print(
         f"TRI1a: {tri1a.variation}\n"
@@ -1698,23 +1697,8 @@ if __name__ == "__main__":
         + f"TRI2b: {tri2b.variation}"
     )
 
-    # import matplotlib.pyplot as plt
-
-    # fig, ax = plt.subplots()
-    # x = np.linspace(1.06486353, 1.06486354, 11)
-    # y = []
-    # for i in x:
-    #     y.append(MCLC(i * pi, pi, 1.2 * pi, 80).variation)
-    # ax.scatter(x, y)
-    # plt.show()
-    for e in list(examples)[-4:]:
+    for e in list(examples):
         l = examples[e]
-        print(f"k_alpha: {l.k_alpha}")
-        print(f"k_beta: {l.k_beta}")
-        print(f"k_gamma: {l.k_gamma}")
-        print(f"k_a: {l.k_a}")
-        print(f"k_b: {l.k_b}")
-        print(f"k_c: {l.k_c}")
         l.prepare_figure()
         l.plot("brillouin_kpath", label=l.variation)
         l.legend()

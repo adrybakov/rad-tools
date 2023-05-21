@@ -15,6 +15,7 @@ __all__ = [
     "absolute_to_relative",
     "winwait",
     "print_2D_array",
+    "angle",
 ]
 
 RED = "#FF4D67"
@@ -317,6 +318,28 @@ def print_2D_array(array, fmt="5.2f", posneg=False):
             print("├" + (M - 1) * f"{nn*'─'}┼" + f"{nn*'─'}┤")
 
     print("└" + (M - 1) * f"{nn*'─'}┴" + f"{nn*'─'}┘")
+
+
+def angle(v1, v2, radians=False):
+    r"""
+    Angle between two vectors.
+
+    Parameters
+    ----------
+    v1 : (3,) |array_like|_
+        First vector.
+    v2 : (3,) |array_like|_
+        Second vector.
+    radians : bool, default False
+        Whether to return value in radians. Return value in degrees by default.
+    """
+
+    v1 = np.array(v1) / np.linalg.norm(v1)
+    v2 = np.array(v2) / np.linalg.norm(v2)
+    alpha = np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0))
+    if radians:
+        return alpha
+    return alpha * _todegrees
 
 
 if __name__ == "__main__":

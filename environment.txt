@@ -2,6 +2,7 @@ black
 isort
 matplotlib
 numpy
+scipy
 pytest
 Sphinx
 sphinx-gallery

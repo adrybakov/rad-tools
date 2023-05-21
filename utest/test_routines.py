@@ -1,7 +1,13 @@
+from math import sqrt
+
 import pytest
 
-from rad_tools.routines import (absolute_to_relative, atom_mark_to_latex,
-                                rot_angle)
+from rad_tools.routines import (
+    absolute_to_relative,
+    atom_mark_to_latex,
+    rot_angle,
+    angle,
+)
 
 
 @pytest.mark.parametrize(
@@ -68,3 +74,21 @@ class TestRotAngle:
 def test_absolute_to_relative(cell, absolute, relative):
     new_relative = absolute_to_relative(cell, *tuple(absolute))
     assert (new_relative == relative).all()
+
+
+def test_angle():
+    tol_angle = 1e-5
+    assert abs(angle([1, 0, 0], [0, 1, 0]) - 90) < tol_angle
+    assert abs(angle([1, 0, 0], [0, 0, 1]) - 90) < tol_angle
+    assert abs(angle([0, 1, 0], [1, 0, 0]) - 90) < tol_angle
+    assert abs(angle([0, 1, 0], [0, 0, 1]) - 90) < tol_angle
+    assert abs(angle([0, 0, 1], [1, 0, 0]) - 90) < tol_angle
+    assert abs(angle([0, 0, 1], [0, 1, 0]) - 90) < tol_angle
+    assert abs(angle([1, 1, 0], [0, 0, 1]) - 90) < tol_angle
+    assert abs(angle([1, 0, 0], [1, 1, 0]) - 45) < tol_angle
+    assert abs(angle([1, 0, 0], [1, sqrt(3), 0]) - 60) < tol_angle
+    assert abs(angle([1, 0, 0], [sqrt(3), 1, 0]) - 30) < tol_angle
+    assert abs(angle([1, 1, 0], [0, 1, 1]) - 60) < tol_angle
+    assert abs(angle([1, 1, 0], [3, 1, 1]) - 31.48215) < tol_angle
+    assert abs(angle([3, 1, 1], [-3, -1, -1]) - 180) < tol_angle
+    assert abs(angle([3, 1, 1], [3, 1, 1])) < tol_angle
