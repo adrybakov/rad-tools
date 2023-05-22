@@ -20,6 +20,9 @@
     },
     "cSpell.words": [
         "Bravais",
+        "linalg",
+        "magmom",
+        "ndarray",
         "voronoi"
     ],
 }
