@@ -25,7 +25,7 @@ from math import cos, pi, sin, sqrt, tan
 import numpy as np
 
 from rad_tools.crystal.lattice import Lattice
-from rad_tools.routines import TOLERANCE, _toradians
+from rad_tools.routines import _toradians
 
 __all__ = [
     "CUB",
@@ -633,12 +633,14 @@ class ORCF(Lattice):
         :math:`\text{ORCF}_2: \dfrac{1}{a^2} < \dfrac{1}{b^2} + \dfrac{1}{c^2}`,
         :math:`\text{ORCF}_3: \dfrac{1}{a^2} = \dfrac{1}{b^2} + \dfrac{1}{c^2}`,
         """
-        if 1 / self.conv_a**2 > 1 / self.conv_b**2 + 1 / self.conv_c**2:
-            return "ORCF1"
-        elif 1 / self.conv_a**2 < 1 / self.conv_b**2 + 1 / self.conv_c**2:
-            return "ORCF2"
-        else:
+
+        expresion = 1 / self.conv_a**2 - 1 / self.conv_b**2 - 1 / self.conv_c**2
+        if np.abs(expresion) < 10 * np.finfo(float).eps:
             return "ORCF3"
+        elif expresion > 0:
+            return "ORCF1"
+        elif expresion < 0:
+            return "ORCF2"
 
 
 # 8
@@ -1380,38 +1382,22 @@ class MCLC(Lattice):
         :math:`\text{MCLC}_5: k_{\gamma} < 90^{\circ}, \dfrac{b\cos(\alpha)}{c} + \dfrac{b^2\sin(\alpha)^2}{a^2} > 1`
         """
 
-        if abs(self.k_gamma - 90) < TOLERANCE:
+        if np.abs(self.k_gamma - 90) <= 10 * np.finfo(float).eps:
             return "MCLC2"
         elif self.k_gamma > 90:
             return "MCLC1"
-        # TODO think about the criteria of accuracy
         elif self.k_gamma < 90:
-            if (
-                abs(
-                    self.conv_b * cos(self.conv_alpha * _toradians) / self.conv_c
-                    + self.conv_b**2
-                    * sin(self.conv_alpha * _toradians) ** 2
-                    / self.conv_a**2
-                    - 1
-                )
-                < TOLERANCE
-            ):
+            expression = (
+                self.conv_b * cos(self.conv_alpha * _toradians) / self.conv_c
+                + self.conv_b**2
+                * sin(self.conv_alpha * _toradians) ** 2
+                / self.conv_a**2
+            )
+            if np.abs(expression - 1) <= 10 * np.finfo(float).eps:
                 return "MCLC4"
-            elif (
-                self.conv_b * cos(self.conv_alpha * _toradians) / self.conv_c
-                + self.conv_b**2
-                * sin(self.conv_alpha * _toradians) ** 2
-                / self.conv_a**2
-                < 1
-            ):
+            elif expression < 1:
                 return "MCLC3"
-            elif (
-                self.conv_b * cos(self.conv_alpha * _toradians) / self.conv_c
-                + self.conv_b**2
-                * sin(self.conv_alpha * _toradians) ** 2
-                / self.conv_a**2
-                > 1
-            ):
+            elif expression > 1:
                 return "MCLC5"
 
 
@@ -1570,7 +1556,7 @@ class TRI(Lattice):
         :math:`\text{TRI}_{2a} k_{\alpha} > 90^{\circ}, k_{\beta} > 90^{\circ}, k_{\gamma} = 90^{\circ}`
         :math:`\text{TRI}_{2b} k_{\alpha} < 90^{\circ}, k_{\beta} < 90^{\circ}, k_{\gamma} = 90^{\circ}`
         """
-        if abs(self.k_gamma - 90) < TOLERANCE:
+        if self.k_gamma == 90:
             if self.k_alpha > 90 and self.k_beta > 90:
                 return "TRI2a"
             elif self.k_alpha < 90 and self.k_beta < 90:
@@ -1666,13 +1652,17 @@ def lattice_example(
     elif lattice == "mcl":
         return MCL(pi, 2 * pi, 3 * pi, alpha=80)
     elif lattice in ["mclc1", "mclc"]:
-        return MCLC(1 * pi, 1.5 * pi, 2 * pi, 80)
+        return MCLC(pi, 1.5 * pi, 2 * pi, 80)
     elif lattice == "mclc2":
-        return MCLC(1.4772116295 * pi, 1.5 * pi, 2 * pi, 80)
+        return MCLC(1.5 * pi * sin(80 * _toradians), 1.5 * pi, 2 * pi, 80)
     elif lattice == "mclc3":
         return MCLC(pi, pi / 2, pi, 80)
     elif lattice == "mclc4":
-        return MCLC(1.06486353 * pi, pi, 1.2 * pi, 80)
+        b = pi
+        c = 1.5 * pi
+        alpha = 80 * _toradians
+        a = sqrt(c * b**2 * sin(alpha) ** 2 / (c - b * cos(alpha)))
+        return MCLC(a, b, c, 80)
     elif lattice == "mclc5":
         return MCLC(pi, pi, pi, 60)
     elif lattice in ["tri1a", "tri1", "tri", "tria"]:
@@ -1716,12 +1706,14 @@ def lattice_example(
 
 
 if __name__ == "__main__":
-    print(
-        f"TRI1a: {lattice_example('tri1a').variation}\n"
-        + f"TRI2a: {lattice_example('tri2a').variation}\n"
-        + f"TRI1b: {lattice_example('tri1b').variation}\n"
-        + f"TRI2b: {lattice_example('tri2b').variation}"
-    )
+    l = lattice_example("MCLC4")
+    print(l.variation, l.k_gamma)
+    # print(
+    #     f"TRI1a: {lattice_example('tri1a').variation}\n"
+    #     + f"TRI2a: {lattice_example('tri2a').variation}\n"
+    #     + f"TRI1b: {lattice_example('tri1b').variation}\n"
+    #     + f"TRI2b: {lattice_example('tri2b').variation}"
+    # )
 
     for e in lattice_example():
         print(e)

@@ -297,16 +297,6 @@ class Lattice:
 
         return np.dot(self.a1, np.cross(self.a2, self.a3))
 
-        r"""
-        Volume of the primitive unit cell.
-
-        .. math::
-
-            V = \vec{a}_1\cdot(\vec{a}_2\times\vec{a}_3)
-        """
-
-        return np.dot(self.prim_a1, np.cross(self.prim_a2, self.prim_a3))
-
     @property
     def reciprocal_cell(self):
         r"""
@@ -487,7 +477,7 @@ class Lattice:
                     ) not in edges_index:
                         edges_index.add((rv[j - 1], rv[j]))
         edges_index = np.array(list(edges_index))
-        edges = np.zeros((edges_index.shape[0], 2, 3), dtype=edges_index.dtype)
+        edges = np.zeros((edges_index.shape[0], 2, 3), dtype=voronoi.vertices.dtype)
         for i in range(edges_index.shape[0]):
             edges[i][0] = voronoi.vertices[edges_index[i][0]]
             edges[i][1] = voronoi.vertices[edges_index[i][1]]
@@ -843,7 +833,6 @@ class Lattice:
                 [p1[2], p2[2]],
                 color=colour,
             )
-        ax.scatter(vertices.T[0], vertices.T[1], vertices.T[2], color="black", s=64)
 
     def plot_conventional(self, ax, **kwargs):
         r"""
