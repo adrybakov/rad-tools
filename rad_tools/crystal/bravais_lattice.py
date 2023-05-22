@@ -8,8 +8,10 @@ It could be accessed in a following way:
 
 .. doctest::
 
-    >>> import rad_tools as rad_tools
+    >>> import rad_tools as rad
     >>> cubic_example = rad.lattice_example("cub")
+    >>> cubic_example.variation
+    'CUB'
 
 Each Bravais Lattice is created by the parameters 
 :math:`a`, :math:`b`, :math:`c`, :math:`\alpha`, :math:`\beta`, :math:`\gamma`,

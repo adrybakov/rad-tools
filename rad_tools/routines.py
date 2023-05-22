@@ -214,7 +214,7 @@ def print_2D_array(array, fmt="5.2f", posneg=False):
     .. doctest::
 
         >>> import rad_tools as rad
-        >>> array = [[1, 2], [3, 4], [524š5345345, 6]]
+        >>> array = [[1, 2], [3, 4], [52414345345, 6]]
         >>> rad.print_2D_array(array, fmt="10.2E")
         ┌────────────┬────────────┐
         │   1.00E+00 │   2.00E+00 │
