@@ -33,6 +33,13 @@ clean:
 test: 
 	@pytest -s
 
+install:
+	@pip install .
+
+test-all: install test html doctest
+	@echo "Done"
+
+
 VERSION := $(shell grep __version__ rad_tools/__init__.py | tr -d 'a-zA-Z =_":')
 .ONESHELL:
 check-pip:
