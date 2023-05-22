@@ -11,35 +11,35 @@ class Atom:
     ----------
     literal : str, default X
         Name of the atom.
-    position : (3,) array_like, default [0,0,0]
-        Position of the atom in relative coordinates.
-    spin : (3,) array_like, default None
+    position : (3,) |array_like|_, default [0,0,0]
+        Position of the atom in absolute coordinates.
+    spin : (3,) |array_like|_, default None
         Classical spin vector of the atom.
-    magmom : (3,) array_like, default None
+    magmom : (3,) |array_like|_, default None
         Magnetic moment of the atom.
+    index : int, default 0
+        Custom index of an atom, used differently in different scenarios.
 
     Attributes
     ----------
     literal : str
-    position : (3,) array_like
-        Position of the atom in relative coordinates.
-    spin : (3,) array_like
-    magmom : (3,) array_like
-
+    position : (3,) :numpy:`ndarray`
+        Position of the atom in absolute coordinates coordinates.
+    spin : (3,) :numpy:`ndarray`
+    magmom : (3,) :numpy:`ndarray`
     """
 
     def __init__(
         self,
         literal="X",
-        position=(
-            0,
-            0,
-            0,
-        ),
+        position=None,
         spin=None,
         magmom=None,
+        index=0,
     ) -> None:
         self.literal = literal
+        if position is None:
+            position = (0, 0, 0)
         self.position = np.array(position)
         self._spin = None
         self._magmom = None
@@ -47,6 +47,7 @@ class Atom:
             self.spin = spin
         if magmom is not None:
             self.magmom = magmom
+        self.index = index
 
     @property
     def spin(self):
@@ -60,7 +61,7 @@ class Atom:
         """
 
         if self._spin is None:
-            raise ValueError(f"Spin is not defined for the atom {self.literal}.")
+            raise ValueError(f"Spin is not defined for the atom {self.fullname}.")
         return self._spin
 
     @spin.setter
@@ -87,7 +88,7 @@ class Atom:
 
         if self._magmom is None:
             raise ValueError(
-                f"Magnetic moment is not defined for the atom {self.literal}."
+                f"Magnetic moment is not defined for the atom {self.fullname}."
             )
         return self._magmom
 
@@ -104,3 +105,8 @@ class Atom:
                 f"New magnetic moment has to be a 3 x 1 vector, shape: {new_magmom.shape}"
             )
         self._magmom = new_magmom
+
+    @property
+    def fullname(self):
+        r"""Return fullname (literal + index) of an atom."""
+        return f"{self.literal} #{self.index}"
