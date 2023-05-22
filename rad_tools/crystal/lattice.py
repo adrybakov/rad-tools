@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import rcParams
 from matplotlib.patches import FancyArrowPatch
+
 # Better 3D arrows, see: https://stackoverflow.com/questions/22867620/putting-arrowheads-on-vectors-in-a-3d-plot
 from mpl_toolkits.mplot3d import Axes3D, proj3d
 from scipy.spatial import Voronoi
@@ -466,25 +467,31 @@ class Lattice:
 
         Returns
         -------
-        edges : (N, 2) :numpy:`ndarray`
+        edges : (N, 2, 3) :numpy:`ndarray`
             N edges of the Voronoi cell around (0,0,0) point.
-            Each elements contains two indices of the voronoi vertices forming an edge.
+            Each elements contains two vectors of the points
+            of the voronoi vertices forming an edge.
         vertices : (M, 3) :numpy:`ndarray`
             M vertices of the Voronoi cell around (0,0,0) point.
             Each element is a vector :math:`v = (v_x, v_y, v_z)`.
         """
         voronoi = Voronoi(self.lattice_points(relative=False, reciprocal=reciprocal))
-        edges = set()
+        edges_index = set()
         # Thanks ase for the idea. 13 - is the index of (0,0,0) point.
         for rv, rp in zip(voronoi.ridge_vertices, voronoi.ridge_points):
             if -1 not in rv and 13 in rp:
                 for j in range(0, len(rv)):
-                    if (rv[j - 1], rv[j]) not in edges and (
+                    if (rv[j - 1], rv[j]) not in edges_index and (
                         rv[j],
                         rv[j - 1],
-                    ) not in edges:
-                        edges.add((rv[j - 1], rv[j]))
-        return np.array(list(edges)), voronoi.vertices
+                    ) not in edges_index:
+                        edges_index.add((rv[j - 1], rv[j]))
+        edges_index = np.array(list(edges_index))
+        edges = np.zeros((edges_index.shape[0], 2, 3), dtype=edges_index.dtype)
+        for i in range(edges_index.shape[0]):
+            edges[i][0] = voronoi.vertices[edges_index[i][0]]
+            edges[i][1] = voronoi.vertices[edges_index[i][1]]
+        return edges, voronoi.vertices[np.unique(edges_index.flatten())]
 
     def prepare_figure(self, background=True, focal_length=0.2) -> None:
         r"""
@@ -829,13 +836,14 @@ class Lattice:
                 ax.scatter(*tuple(v), s=0)
 
         edges, vertices = self.voronoi_cell(reciprocal=reciprocal)
-        for i, j in edges:
+        for p1, p2 in edges:
             ax.plot(
-                [vertices[i][0], vertices[j][0]],
-                [vertices[i][1], vertices[j][1]],
-                [vertices[i][2], vertices[j][2]],
+                [p1[0], p2[0]],
+                [p1[1], p2[1]],
+                [p1[2], p2[2]],
                 color=colour,
             )
+        ax.scatter(vertices.T[0], vertices.T[1], vertices.T[2], color="black", s=64)
 
     def plot_conventional(self, ax, **kwargs):
         r"""

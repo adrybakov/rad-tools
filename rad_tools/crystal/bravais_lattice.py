@@ -9,7 +9,7 @@ It could be accessed in a following way:
 .. doctest::
 
     >>> import rad_tools as rad_tools
-    >>> cubic_example = rad.cub
+    >>> cubic_example = rad.lattice_example("cub")
 
 Each Bravais Lattice is created by the parameters 
 :math:`a`, :math:`b`, :math:`c`, :math:`\alpha`, :math:`\beta`, :math:`\gamma`,
@@ -42,31 +42,7 @@ __all__ = [
     "MCL",
     "MCLC",
     "TRI",
-    "cub",
-    "fcc",
-    "bcc",
-    "tet",
-    "bct1",
-    "bct2",
-    "orc",
-    "orcf1",
-    "orcf2",
-    "orcf3",
-    "orci",
-    "orcc",
-    "hex",
-    "rhl1",
-    "rhl2",
-    "mcl",
-    "mclc1",
-    "mclc2",
-    "mclc3",
-    "mclc4",
-    "mclc5",
-    "tri1a",
-    "tri1b",
-    "tri2a",
-    "tri2b",
+    "lattice_example",
 ]
 
 
@@ -1605,100 +1581,151 @@ class TRI(Lattice):
             return "TRI1b"
 
 
-# Examples
-cub = CUB(pi)
-fcc = FCC(pi)
-bcc = BCC(pi)
-tet = TET(pi, 2 * pi)
-bct1 = BCT(2 * pi, pi)
-bct2 = BCT(pi, 2 * pi)
-orc = ORC(pi, 2 * pi, 3 * pi)
-orcf1 = ORCF(0.9 * pi, 5 / 4 * pi, 5 / 3 * pi)
-orcf2 = ORCF(1.1 * pi, 5 / 4 * pi, 5 / 3 * pi)
-orcf3 = ORCF(pi, 5 / 4 * pi, 5 / 3 * pi)
-orci = ORCI(pi, 2 * pi, 3 * pi)
-orcc = ORCC(pi, 2 * pi, 3 * pi)
-hex = HEX(pi, 2 * pi)
-rhl1 = RHL(pi, 60)
-rhl2 = RHL(pi, 110)
-mcl = MCL(pi, 2 * pi, 3 * pi, alpha=80)
-mclc1 = MCLC(1 * pi, 1.5 * pi, 2 * pi, 80)
-mclc2 = MCLC(1.4772116295 * pi, 1.5 * pi, 2 * pi, 80)
-mclc3 = MCLC(pi, pi / 2, pi, 80)
-mclc4 = MCLC(1.06486353 * pi, pi, 1.2 * pi, 80)
-mclc5 = MCLC(pi, pi, pi, 60)
-tri1a = TRI(
-    1.1747349889 * pi,
-    1.6995495292 * pi,
-    2.6717186812 * pi,
-    80.273017624,
-    82.084261243,
-    83.779675867,
-)
-tri2a = TRI(
-    1.7955292406 * pi,
-    1.9684531741 * pi,
-    2.1769635099 * pi,
-    57.853298599,
-    66.738338973,
-    77.869542155,
-)
-tri1b = TRI(
-    1.2051287186 * pi,
-    1.3385388321 * pi,
-    2.0029128540 * pi,
-    90.742461062,
-    92.924314118,
-    94.955032057,
-)
-tri2b = TRI(
-    1.2568704684 * pi,
-    1.5747625393 * pi,
-    2.1769635099 * pi,
-    122.14670140,
-    113.26166102,
-    77.869542155,
-)
+def lattice_example(
+    lattice=None,
+):
+    r"""
+    Return an example of the lattice.
 
-examples = {
-    "cub": cub,
-    "fcc": fcc,
-    "bcc": bcc,
-    "tet": tet,
-    "bct1": bct1,
-    "bct2": bct2,
-    "orc": orc,
-    "orcf1": orcf1,
-    "orcf2": orcf2,
-    "orcf3": orcf3,
-    "orci": orci,
-    "orcc": orcc,
-    "hex": hex,
-    "rhl1": rhl1,
-    "rhl2": rhl2,
-    "mcl": mcl,
-    "mclc1": mclc1,
-    "mclc2": mclc2,
-    "mclc3": mclc3,
-    "mclc4": mclc4,
-    "mclc5": mclc5,
-    "tri1a": tri1a,
-    "tri2a": tri2a,
-    "tri1b": tri1b,
-    "tri2b": tri2b,
-}
+    Parameters
+    ----------
+    lattice : str, default None
+        Name of the lattice to be returned.
+        For available names see documentation of each Bravais lattice class.
+        Lowercased before usage.
+
+    Returns
+    -------
+    lattice
+        Child of the :py:class:`.Lattice` class is returned.
+        If no math found a list with available examples is returned.
+    """
+
+    all_examples = [
+        "CUB",
+        "FCC",
+        "BCC",
+        "TET",
+        "BCT1",
+        "BCT2",
+        "ORC",
+        "ORCF1",
+        "ORCF2",
+        "ORCF3",
+        "ORCI",
+        "ORCC",
+        "HEX",
+        "RHL1",
+        "RHL2",
+        "MCL",
+        "MCLC1",
+        "MCLC2",
+        "MCLC3",
+        "MCLC4",
+        "MCLC5",
+        "TRI1a",
+        "TRI2a",
+        "TRI1b",
+        "TRI2b",
+    ]
+    if not isinstance(lattice, str):
+        return all_examples
+
+    lattice = lattice.lower()
+
+    if lattice == "cub":
+        return CUB(pi)
+    elif lattice == "fcc":
+        return FCC(pi)
+    elif lattice == "bcc":
+        return BCC(pi)
+    elif lattice == "tet":
+        return TET(pi, 2 * pi)
+    elif lattice in ["bct1", "bct"]:
+        return BCT(2 * pi, pi)
+    elif lattice == "bct2":
+        return BCT(pi, 2 * pi)
+    elif lattice == "orc":
+        return ORC(pi, 2 * pi, 3 * pi)
+    elif lattice in ["orcf1", "orcf"]:
+        return ORCF(0.9 * pi, 5 / 4 * pi, 5 / 3 * pi)
+    elif lattice == "orcf2":
+        return ORCF(1.1 * pi, 5 / 4 * pi, 5 / 3 * pi)
+    elif lattice == "orcf3":
+        return ORCF(pi, 5 / 4 * pi, 5 / 3 * pi)
+    elif lattice == "orci":
+        return ORCI(pi, 2 * pi, 3 * pi)
+    elif lattice == "orcc":
+        return ORCC(pi, 2 * pi, 3 * pi)
+    elif lattice == "hex":
+        return HEX(pi, 2 * pi)
+    elif lattice in ["rhl1", "rhl"]:
+        return RHL(pi, 60)
+    elif lattice == "rhl2":
+        return RHL(pi, 110)
+    elif lattice == "mcl":
+        return MCL(pi, 2 * pi, 3 * pi, alpha=80)
+    elif lattice in ["mclc1", "mclc"]:
+        return MCLC(1 * pi, 1.5 * pi, 2 * pi, 80)
+    elif lattice == "mclc2":
+        return MCLC(1.4772116295 * pi, 1.5 * pi, 2 * pi, 80)
+    elif lattice == "mclc3":
+        return MCLC(pi, pi / 2, pi, 80)
+    elif lattice == "mclc4":
+        return MCLC(1.06486353 * pi, pi, 1.2 * pi, 80)
+    elif lattice == "mclc5":
+        return MCLC(pi, pi, pi, 60)
+    elif lattice in ["tri1a", "tri1", "tri", "tria"]:
+        return TRI(
+            1.1747349889 * pi,
+            1.6995495292 * pi,
+            2.6717186812 * pi,
+            80.273017624,
+            82.084261243,
+            83.779675867,
+        )
+    elif lattice in ["tri2a", "tri2"]:
+        return TRI(
+            1.7955292406 * pi,
+            1.9684531741 * pi,
+            2.1769635099 * pi,
+            57.853298599,
+            66.738338973,
+            77.869542155,
+        )
+    elif lattice in ["tri1b", "trib"]:
+        return TRI(
+            1.2051287186 * pi,
+            1.3385388321 * pi,
+            2.0029128540 * pi,
+            90.742461062,
+            92.924314118,
+            94.955032057,
+        )
+    elif lattice == "tri2b":
+        return TRI(
+            1.2568704684 * pi,
+            1.5747625393 * pi,
+            2.1769635099 * pi,
+            122.14670140,
+            113.26166102,
+            77.869542155,
+        )
+    else:
+        return all_examples
+
 
 if __name__ == "__main__":
-
     print(
-        f"TRI1a: {tri1a.variation}\n"
-        + f"TRI2a: {tri2a.variation}\n"
-        + f"TRI1b: {tri1b.variation}\n"
-        + f"TRI2b: {tri2b.variation}"
+        f"TRI1a: {lattice_example('tri1a').variation}\n"
+        + f"TRI2a: {lattice_example('tri2a').variation}\n"
+        + f"TRI1b: {lattice_example('tri1b').variation}\n"
+        + f"TRI2b: {lattice_example('tri2b').variation}"
     )
 
-    for e in list(examples):
-        l = examples[e]
+    for e in lattice_example():
+        print(e)
+        l = lattice_example(e)
         l.prepare_figure()
         l.plot("brillouin_kpath", label=l.variation)
         l.legend()

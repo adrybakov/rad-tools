@@ -103,29 +103,6 @@ Predefined examples: ``tri1a``, ``tri1b``, ``tri2a``, ``tri2b``.
 
     TRI
 
-Construction of the Brillouin zone 
-==================================
-
-Wigner-Seitz cell is constructed in a same way.
-
-.. automodule:: rad_tools.crystal.decomposition
-
-
-
-Functions
----------
-
-.. currentmodule:: rad_tools.crystal
-
-.. autosummary::
-    :toctree: generated/
-
-    deduct_zone
-    get_lattice_points
-    define_planes
-    define_corners
-    define_edges
-
 
 
 
