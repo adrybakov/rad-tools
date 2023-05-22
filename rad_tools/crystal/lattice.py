@@ -539,7 +539,7 @@ class Lattice:
 
         See Also
         --------
-        plot_conventional : "primitive" plot.
+        plot_conventional : "conventional" plot.
         plot_primitive : "primitive" plot.
         plot_brillouin : "brillouin" plot.
         plot_kpath : "kpath" plot.
