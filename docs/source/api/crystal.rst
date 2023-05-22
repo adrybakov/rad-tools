@@ -9,7 +9,7 @@ Crystal
 .. currentmodule:: rad_tools
 
 Crystals are defined as a combination of the the :py:class:`.Lattice` and the set of  
-atoms with their relative coordinates.
+:py:class:`.Atom`\ s.
 
 .. toctree::
     :maxdepth: 2
@@ -19,8 +19,8 @@ atoms with their relative coordinates.
 
 
 When arbitrary crystal structure is considered the :py:attr:`.Crystal.lattice` is an instance of 
-the general :py:class:`.Lattice` class, where the lattice unit cell is interpreted as a conventional one 
-and the primitive unit cell is not defined. The type of the Bravais lattice is not defined as well.
+the general :py:class:`.Lattice` class, where unit cell is interpreted as a primitive one. 
+The type of the Bravais lattice is not defined as well.
 The process of the definition of the crystal type is divided in two steps: 
 
 * Define primitive cell of the :py:class:`.Crystal`

@@ -1,7 +1,8 @@
 r"""
 Most of the scripts are moved to the library and could be called through 
-the corresponding ``manager`` function, which results in the behaviour 
-analogous to the command line interface.
+the corresponding function, which results in the behaviour 
+analogous to the command line interface. The common logic for the name: 
+If script is called "rad-script-name", then the function is called "script-name".
 
 .. hint::
     Long names of the arguments have to be used, i.e. ``input_path``, not ``ip``.

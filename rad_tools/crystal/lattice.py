@@ -759,6 +759,11 @@ class Lattice:
             v_literal = "b"
             if colour is None:
                 colour = "#FF4D67"
+        else:
+            v1, v2, v3 = self.a1, self.a2, self.a3
+            v_literal = "a"
+            if colour is None:
+                colour = "black"
 
         if label is not None:
             ax.scatter(0, 0, 0, color=colour, label=label)

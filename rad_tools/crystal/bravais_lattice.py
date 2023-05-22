@@ -1418,6 +1418,10 @@ class TRI(Lattice):
 
         \boldsymbol{a}_3 = (c\cos(\beta), \frac{c(\cos(\alpha) - \cos(\beta)\cos(\gamma))}{\sin{\gamma}}, \frac{c}{\sin(\gamma)}\sqrt{\sin^2(\gamma) - \cos^2(\alpha) - \cos^2(\beta) + 2\cos(\alpha)\cos(\beta)\cos(\gamma)})
 
+    Variations of the trigonal lattice are defined through the angles of the reciprocal cell,
+    therefore it is possible to define trigonal Bravais lattice with reciprocal cell parameters
+    (argument ``reciprocal``).
+
     Parameters
     ----------
     a : float
@@ -1432,6 +1436,9 @@ class TRI(Lattice):
         Angle between a and c. In degrees. Corresponds to the conventional lattice.
     gamma : float
         Angle between a and b. In degrees. Corresponds to the conventional lattice.
+    reciprocal : bool, default False
+        Whether to interpret ``a``, ``b``, ``c``, ``alpha``, ``beta``, ``gamma``
+        as reciprocal lattice parameters.
 
 
     Attributes
@@ -1462,21 +1469,23 @@ class TRI(Lattice):
     _pearson_symbol = "aP"
 
     def __init__(
-        self, a: float, b: float, c: float, alpha: float, beta: float, gamma: float
+        self,
+        a: float,
+        b: float,
+        c: float,
+        alpha: float,
+        beta: float,
+        gamma: float,
+        reciprocal=False,
     ) -> None:
-        tmp = sorted([(a, alpha), (b, beta), (c, gamma)], key=lambda x: x[0])
-        a = tmp[0][0]
-        alpha = tmp[0][1]
-        b = tmp[1][0]
-        beta = tmp[1][1]
-        c = tmp[2][0]
-        gamma = tmp[2][1]
-        self.conv_a = a
-        self.conv_b = b
-        self.conv_c = c
-        self.conv_alpha = alpha
-        self.conv_beta = beta
-        self.conv_gamma = gamma
+        if not reciprocal:
+            tmp = sorted([(a, alpha), (b, beta), (c, gamma)], key=lambda x: x[0])
+            a = tmp[0][0]
+            alpha = tmp[0][1]
+            b = tmp[1][0]
+            beta = tmp[1][1]
+            c = tmp[2][0]
+            gamma = tmp[2][1]
         super().__init__(
             [a, 0, 0],
             [b * cos(gamma * _toradians), b * sin(gamma * _toradians), 0],
@@ -1501,6 +1510,14 @@ class TRI(Lattice):
                 ),
             ],
         )
+        if reciprocal:
+            self.cell = self.reciprocal_cell
+        self.conv_a = a
+        self.conv_b = b
+        self.conv_c = c
+        self.conv_alpha = alpha
+        self.conv_beta = beta
+        self.conv_gamma = gamma
         if (
             self.k_alpha < self.k_gamma < self.k_beta
             or self.k_beta < self.k_gamma < self.k_alpha
@@ -1666,62 +1683,22 @@ def lattice_example(
     elif lattice == "mclc5":
         return MCLC(pi, pi, pi, 60)
     elif lattice in ["tri1a", "tri1", "tri", "tria"]:
-        return TRI(
-            1.1747349889 * pi,
-            1.6995495292 * pi,
-            2.6717186812 * pi,
-            80.273017624,
-            82.084261243,
-            83.779675867,
-        )
+        return TRI(1, 1.5, 2, 120, 110, 100, reciprocal=True)
     elif lattice in ["tri2a", "tri2"]:
-        return TRI(
-            1.7955292406 * pi,
-            1.9684531741 * pi,
-            2.1769635099 * pi,
-            57.853298599,
-            66.738338973,
-            77.869542155,
-        )
+        return TRI(1, 1.5, 2, 120, 110, 90, reciprocal=True)
     elif lattice in ["tri1b", "trib"]:
-        return TRI(
-            1.2051287186 * pi,
-            1.3385388321 * pi,
-            2.0029128540 * pi,
-            90.742461062,
-            92.924314118,
-            94.955032057,
-        )
+        return TRI(1, 1.5, 2, 60, 70, 80, reciprocal=True)
     elif lattice == "tri2b":
-        return TRI(
-            1.2568704684 * pi,
-            1.5747625393 * pi,
-            2.1769635099 * pi,
-            122.14670140,
-            113.26166102,
-            77.869542155,
-        )
+        return TRI(1, 1.5, 2, 60, 70, 90, reciprocal=True)
     else:
         return all_examples
 
 
 if __name__ == "__main__":
-    l = lattice_example("MCLC4")
-    print(l.variation, l.k_gamma)
-    # print(
-    #     f"TRI1a: {lattice_example('tri1a').variation}\n"
-    #     + f"TRI2a: {lattice_example('tri2a').variation}\n"
-    #     + f"TRI1b: {lattice_example('tri1b').variation}\n"
-    #     + f"TRI2b: {lattice_example('tri2b').variation}"
-    # )
-
-    for e in lattice_example():
+    for e in lattice_example()[-4:]:
         print(e)
         l = lattice_example(e)
         l.prepare_figure()
         l.plot("brillouin_kpath", label=l.variation)
         l.legend()
         l.show()
-
-
-# TODO FIX TRI Lattice

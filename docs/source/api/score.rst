@@ -1,8 +1,8 @@
 .. _rad-tools_score:
 
-***********************
-Script's core scenarios
-***********************
+******************
+Script's scenarios
+******************
 
 .. automodule:: rad_tools.score
 

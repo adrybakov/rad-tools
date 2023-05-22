@@ -54,6 +54,7 @@ class Atom:
         Classical spin vector of the atom.
 
         .. code-block:: python
+
             S_vec = [S_x, S_y, S_z]
             S = np.linalg.norm(np.array(S))
         """
@@ -80,6 +81,7 @@ class Atom:
         Magnetic moment of the atom.
 
         .. code-block:: python
+
             magmom = [S_x, S_y, S_z]
         """
 
