@@ -72,7 +72,7 @@ class TestRotAngle:
     ],
 )
 def test_absolute_to_relative(cell, absolute, relative):
-    new_relative = absolute_to_relative(cell, *tuple(absolute))
+    new_relative = absolute_to_relative(cell, absolute)
     assert (new_relative == relative).all()
 
 

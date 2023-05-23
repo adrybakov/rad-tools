@@ -28,55 +28,25 @@ class TestReadExchangeModel:
         ]
         assert (self.model.cell == cell_values).all()
 
-    def test_nonmagnetic_atoms(self):
-        assert len(self.model.nonmagnetic_atoms) == 4
-        assert (
-            np.around(
-                self.model.nonmagnetic_atoms["Br1"]
-                - np.array([0.25, 0.2500104, -0.00283399]),
-                4,
-            )
-            == np.zeros(3)
-        ).all()
-        assert (
-            np.around(
-                self.model.nonmagnetic_atoms["Br2"]
-                - np.array([0.75, 0.7500312, 0.23917526]),
-                4,
-            )
-            == np.zeros(3)
-        ).all()
-        assert (
-            np.around(
-                self.model.nonmagnetic_atoms["S1"]
-                - np.array([0.75, 0.7500312, 0.09346231]),
-                4,
-            )
-            == np.zeros(3)
-        ).all()
-        assert (
-            np.around(
-                self.model.nonmagnetic_atoms["S2"]
-                - np.array([0.25, 0.2500104, 0.14287896]),
-                4,
-            )
-            == np.zeros(3)
-        ).all()
-
-    def test_magnetic_atoms(self):
+    @pytest.mark.parametrize(
+        "atom, position",
+        [
+            ("Cr1", [2.6910, 1.2018, 1.7371]),
+            ("Cr2", [0.8970, 3.6054, 3.8336]),
+            ("Br1", [0.8970, 1.2018, -0.0668]),
+            ("Br2", [2.6910, 3.6054, 5.6376]),
+            ("S1", [2.6910, 3.6054, 2.2030]),
+            ("S2", [0.8970, 1.2018, 3.3678]),
+        ],
+        ids=["Cr1", "Cr2", "Br1", "Br2", "S1", "S2"],
+    )
+    def test_atoms(self, atom, position):
+        assert len(self.model.crystal.atoms) - len(self.model.magnetic_atoms) == 4
+        assert len(self.model.crystal.atoms) == 6
         assert len(self.model.magnetic_atoms) == 2
         assert (
             np.around(
-                self.model.magnetic_atoms["Cr1"]
-                - np.array([0.75, 0.2500104, 0.07369649]),
-                4,
-            )
-            == np.zeros(3)
-        ).all()
-        assert (
-            np.around(
-                self.model.magnetic_atoms["Cr2"]
-                - np.array([0.25, 0.7500312, 0.16264053]),
+                self.model.crystal.get_atom(atom).position - np.array(position),
                 4,
             )
             == np.zeros(3)
@@ -169,6 +139,8 @@ class TestReadExchangeModel:
         ],
     )
     def test_read_exchange_examples(self, atom1, atom2, R, iso, aniso, dmi, distance):
+        atom1 = self.model.crystal.get_atom(atom1)
+        atom2 = self.model.crystal.get_atom(atom2)
         assert round(self.model[(atom1, atom2, R)].iso, 4) == iso
         assert round(self.model.get_distance(atom1, atom2, R), 2) == round(distance, 2)
         for i in range(0, 3):
