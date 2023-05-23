@@ -5,7 +5,7 @@ Input-output from |TB2J|_.
 import numpy as np
 
 from rad_tools.exchange.model import Bond, ExchangeModel
-from rad_tools.routines import absolute_to_relative
+from rad_tools.crystal.atom import Atom
 
 
 def read_tb2j_model(filename, quiet=False) -> ExchangeModel:
@@ -59,7 +59,6 @@ def read_tb2j_model(filename, quiet=False) -> ExchangeModel:
     file = open(filename, "r")
     model = ExchangeModel()
     line = True
-    atoms = {}
 
     # Read everything before exchange
     while line:
@@ -67,7 +66,7 @@ def read_tb2j_model(filename, quiet=False) -> ExchangeModel:
 
         # Read cell
         if line and cell_flag in line:
-            model.cell = np.array(
+            model.crystal.lattice.cell = np.array(
                 [
                     list(map(float, file.readline().split())),
                     list(map(float, file.readline().split())),
@@ -80,11 +79,28 @@ def read_tb2j_model(filename, quiet=False) -> ExchangeModel:
             line = file.readline()
             line = file.readline()
             line = file.readline().split()
+            i = 1
             while line and atom_end_flag not in line:
-                atoms[line[0]] = absolute_to_relative(
-                    model.cell, *tuple(map(float, line[1:4]))
+                try:
+                    # Slicing is not used intentionally.
+                    magmom = tuple(map(float, [line[5], line[6], line[7]]))
+                except IndexError:
+                    magmom = None
+                try:
+                    charge = float(line[4])
+                except IndexError:
+                    charge = None
+                model.crystal.add_atom(
+                    Atom(
+                        literal=line[0],
+                        position=tuple(map(float, line[1:4])),
+                        index=i,
+                        magmom=magmom,
+                        charge=charge,
+                    )
                 )
                 line = file.readline().split()
+                i += 1
 
         # Check if the exchange section is reached
         if line and exchange_flag in line:
@@ -95,8 +111,8 @@ def read_tb2j_model(filename, quiet=False) -> ExchangeModel:
         while line and minor_sep not in line:
             line = file.readline()
         line = file.readline().translate(garbage).split()
-        atom1 = line[0]
-        atom2 = line[1]
+        atom1 = model.crystal.get_atom(line[0])
+        atom2 = model.crystal.get_atom(line[1])
         R = tuple(map(int, line[2:5]))
         distance = float(line[-1])
         iso = None
@@ -124,23 +140,14 @@ def read_tb2j_model(filename, quiet=False) -> ExchangeModel:
                 dmi = tuple(map(float, line.translate(garbage).split()[-3:]))
 
         # Adding info from the exchange block to the ExchangeModel structure
-        if atom1 not in model.magnetic_atoms:
-            model.add_atom(atom1, *atoms[atom1])
-        if atom2 not in model.magnetic_atoms:
-            model.add_atom(atom2, *atoms[atom2])
         bond = Bond(iso=iso, aniso=aniso, dmi=dmi)
         model.add_bond(bond, atom1, atom2, R)
-        computed_distance = model.get_distance(atom1, atom2, R)
+        computed_distance = model.crystal.get_distance(atom1, atom2, R)
         if abs(computed_distance - distance) > 0.001 and not quiet:
             print(
                 f"\nComputed distance is a different from the read one:\n"
                 + f"  Computed: {computed_distance:.4f}\n  "
                 + f"Read: {distance:.4f}\n"
             )
-
-    # Fill non-magnetic atoms
-    for atom in atoms:
-        if atom not in model.magnetic_atoms:
-            model.nonmagnetic_atoms[atom] = np.array(atoms[atom])
 
     return model

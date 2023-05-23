@@ -110,7 +110,7 @@ def manager(
             ax.text(
                 x2,
                 y2,
-                atom_mark_to_latex(atom2),
+                atom_mark_to_latex(atom2.literal),
                 va="center",
                 ha="center",
                 fontsize=1.5 * fontsize * scale_atoms,
@@ -118,7 +118,7 @@ def manager(
             ax.text(
                 x1,
                 y1,
-                atom_mark_to_latex(atom1),
+                atom_mark_to_latex(atom1.literal),
                 va="center",
                 ha="center",
                 fontsize=1.5 * fontsize * scale_atoms,

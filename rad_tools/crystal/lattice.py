@@ -14,7 +14,7 @@ from matplotlib.patches import FancyArrowPatch
 from mpl_toolkits.mplot3d import Axes3D, proj3d
 from scipy.spatial import Voronoi
 
-from rad_tools.routines import angle
+from rad_tools.routines import angle, volume
 
 
 class Arrow3D(FancyArrowPatch):
@@ -65,10 +65,14 @@ class Lattice:
     _pearson_symbol = None
 
     def __init__(self, a1, a2, a3) -> None:
+        self._cell = None
         self.cell = np.array([a1, a2, a3])
         self.points = {}
         self._path = None
         self._default_path = None
+        self._fig = None
+        self._ax = None
+        self._artists = {}
         self._PLOT_NAMES = {
             "G": "$\\Gamma$",
             "M": "$M$",
@@ -119,6 +123,22 @@ class Lattice:
             "Y2": "$Y_2$",
             "Y3": "$Y_3$",
         }
+
+    @property
+    def cell(self):
+        if self._cell is None:
+            raise AttributeError(f"Cell is not defined for lattice {self}")
+        return self._cell
+
+    @cell.setter
+    def cell(self, new_cell):
+        try:
+            new_cell = np.array(new_cell)
+        except:
+            raise ValueError(f"New cell is not array_like: {new_cell}")
+        if new_cell.shape != (3, 3):
+            raise ValueError(f"New cell is not 3 x 3 matrix.")
+        self._cell = new_cell
 
     @property
     def path(self):
@@ -289,13 +309,9 @@ class Lattice:
     def unit_cell_volume(self):
         r"""
         Volume of the unit cell.
-
-        .. math::
-
-            V = \vec{a}_1\cdot(\vec{a}_2\times\vec{a}_3)
         """
 
-        return np.dot(self.a1, np.cross(self.a2, self.a3))
+        return volume(self.a1, self.a2, self.a3)
 
     @property
     def reciprocal_cell(self):
@@ -412,14 +428,14 @@ class Lattice:
             V = \vec{b}_1\cdot(\vec{b}_2\times\vec{b}_3)
         """
 
-        return np.dot(self.b1, np.cross(self.b2, self.b3))
+        return volume(self.b1, self.b2, self.b3)
 
     @property
     def variation(self):
         r"""There is no variations of the lattice"""
         return self.__class__.__name__
 
-    def lattice_points(self, relative=False, reciprocal=False):
+    def lattice_points(self, relative=False, reciprocal=False, normalize=False):
         r"""
         Compute lattice points
 
@@ -429,12 +445,17 @@ class Lattice:
             Whether to return relative or absolute coordinates.
         reciprocal : bool, default False
             Whether to use reciprocal or real cell.
+        normalize : bool, default False
+            Whether to normalize corresponding vectors to have the volume equal to one.
         """
 
         if reciprocal:
             cell = self.reciprocal_cell
         else:
             cell = self.cell
+
+        if normalize:
+            cell /= volume(cell) ** (1 / 3.0)
 
         lattice_points = np.zeros((27, 3), dtype=float)
         for i in [-1, 0, 1]:
@@ -446,7 +467,7 @@ class Lattice:
                     lattice_points[9 * (i + 1) + 3 * (j + 1) + (k + 1)] = point
         return lattice_points
 
-    def voronoi_cell(self, reciprocal=False):
+    def voronoi_cell(self, reciprocal=False, normalize=False):
         r"""
         Computes Voronoy edges around (0,0,0) point.
 
@@ -464,8 +485,15 @@ class Lattice:
         vertices : (M, 3) :numpy:`ndarray`
             M vertices of the Voronoi cell around (0,0,0) point.
             Each element is a vector :math:`v = (v_x, v_y, v_z)`.
+        normalize : bool, default False
+            Whether to normalize corresponding vectors to have the volume equal to one.
         """
-        voronoi = Voronoi(self.lattice_points(relative=False, reciprocal=reciprocal))
+
+        voronoi = Voronoi(
+            self.lattice_points(
+                relative=False, reciprocal=reciprocal, normalize=normalize
+            )
+        )
         edges_index = set()
         # Thanks ase for the idea. 13 - is the index of (0,0,0) point.
         for rv, rp in zip(voronoi.ridge_vertices, voronoi.ridge_points):
@@ -494,30 +522,33 @@ class Lattice:
         focal_length : float, default 0.2
             See: |matplotlibFocalLength|_
         """
-        self._fig = plt.figure(figsize=(6, 6))
-        rcParams["axes.linewidth"] = 0
-        rcParams["xtick.color"] = "#B3B3B3"
-        self._ax = self._fig.add_subplot(projection="3d")
-        self._ax.set_proj_type("persp", focal_length=focal_length)
-        if background:
-            self._ax.axes.linewidth = 0
-            self._ax.xaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
-            self._ax.yaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
-            self._ax.zaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
-            self._ax.set_xlabel("x", fontsize=15, alpha=0.5)
-            self._ax.set_ylabel("y", fontsize=15, alpha=0.5)
-            self._ax.set_zlabel("z", fontsize=15, alpha=0.5)
-            self._ax.tick_params(axis="both", zorder=0, color="#B3B3B3")
-        else:
-            self._ax.axis("off")
 
-    def plot(self, kind="primitive", **kwargs):
+        if self._fig is None:
+            self._fig = plt.figure(figsize=(6, 6))
+            rcParams["axes.linewidth"] = 0
+            rcParams["xtick.color"] = "#B3B3B3"
+            self._ax = self._fig.add_subplot(projection="3d")
+            self._ax.set_proj_type("persp", focal_length=focal_length)
+            if background:
+                self._ax.axes.linewidth = 0
+                self._ax.xaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
+                self._ax.yaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
+                self._ax.zaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
+                self._ax.set_xlabel("x", fontsize=15, alpha=0.5)
+                self._ax.set_ylabel("y", fontsize=15, alpha=0.5)
+                self._ax.set_zlabel("z", fontsize=15, alpha=0.5)
+                self._ax.tick_params(axis="both", zorder=0, color="#B3B3B3")
+            else:
+                self._ax.axis("off")
+            self._ax.set_aspect("equal")
+
+    def plot(self, kind="primitive", ax=None, **kwargs):
         r"""
         Main plotting function of the Lattice.
 
         Parameters
         ----------
-        kind : str
+        kind : str or list od str
             Type of the plot to be plotted. Supported plots:
 
             * "conventional"
@@ -527,6 +558,8 @@ class Lattice:
             * "brillouin_kpath"
             * "wigner_seitz"
 
+        ax : axis, optional
+            3D matplotlib axis for the plot.
         **kwargs
             Parameters to be passed to the plotting function.
             See each function for the list of supported parameters.
@@ -547,22 +580,56 @@ class Lattice:
         plot_wigner_seitz : "wigner_seitz" plot.
         show : Shows the plot.
         savefig : Save the figure in the file.
-
         """
+
+        if ax is None:
+            self.prepare_figure()
+            ax = self._ax
         if isinstance(kind, str):
             kinds = [kind]
         else:
             kinds = kind
         try:
-            a = self._ax
-            del a
-        except AttributeError:
-            raise ValueError("Use .prepare_figure() first.")
-        try:
             for kind in kinds:
-                getattr(self, f"plot_{kind}")(self._ax, **kwargs)
+                getattr(self, f"plot_{kind}")(ax=ax, **kwargs)
         except AttributeError:
             raise ValueError(f"Plot kind '{kind}' does not exist!")
+
+    def remove(self, kind="primitive", ax=None):
+        r"""
+        Remove a set of artists from the plot.
+
+        Parameters
+        ----------
+        kind : str or list of str
+            Type of the plot to be removed. Supported plots:
+
+            * "conventional"
+            * "primitive"
+            * "brillouin"
+            * "kpath"
+            * "brillouin_kpath"
+            * "wigner_seitz"
+
+        ax : axis, optional
+            3D matplotlib axis for the plot.
+        """
+
+        if kind == "brillouin_kpath":
+            kinds = ["brillouin", "kpath"]
+        else:
+            kinds = [kind]
+
+        for kind in kinds:
+            if kind not in self._artists:
+                raise ValueError(f"No artists for the {kind} kind.")
+            for artist in self._artists[kind]:
+                if isinstance(artist, list):
+                    for i in artist:
+                        i.remove()
+                else:
+                    artist.remove()
+            del self._artists[kind]
 
     def show(self):
         r"""
@@ -604,18 +671,19 @@ class Lattice:
 
     def plot_real_space(
         self,
-        ax,
+        ax=None,
         vectors=True,
         colour="#274DD1",
         label=None,
         vector_pad=1.1,
         conventional=False,
+        normalize=False,
     ):
         r"""
         Plot real space unit cell.
 
-        ax : axes
-            Axes for the plot. 3D.
+        ax : axis, optional
+            3D matplotlib axis for the plot.
         vectors : bool, default True
             Whether to plot lattice vectors.
         colour : str, default "#274DD1"
@@ -627,7 +695,20 @@ class Lattice:
         conventional : bool, default False
             Whether to plot conventional cell. Affects result only for the
             Bravais lattice classes. Ignored for the general :py:class:`.Lattice`.
+        normalize : bool, default False
+            Whether to normalize corresponding vectors to have the volume equal to one.
         """
+
+        if conventional:
+            artist_group = "conventional"
+        else:
+            artist_group = "primitive"
+
+        self._artists[artist_group] = []
+
+        if ax is None:
+            self.prepare_figure()
+            ax = self._ax
 
         if conventional:
             try:
@@ -637,60 +718,95 @@ class Lattice:
         else:
             cell = self.cell
 
+        if normalize:
+            cell /= volume(cell) ** (1 / 3.0)
+
         if label is not None:
-            ax.scatter(0, 0, 0, color=colour, label=label)
+            self._artists[artist_group].append(
+                ax.scatter(0, 0, 0, color=colour, label=label)
+            )
         if vectors:
             if not isinstance(vector_pad, Iterable):
                 vector_pad = [vector_pad, vector_pad, vector_pad]
-            ax.text(
-                cell[0][0] * vector_pad[0],
-                cell[0][1] * vector_pad[0],
-                cell[0][2] * vector_pad[0],
-                "$a_1$",
-                fontsize=20,
-                color=colour,
-                ha="center",
-                va="center",
+            self._artists[artist_group].append(
+                ax.text(
+                    cell[0][0] * vector_pad[0],
+                    cell[0][1] * vector_pad[0],
+                    cell[0][2] * vector_pad[0],
+                    "$a_1$",
+                    fontsize=20,
+                    color=colour,
+                    ha="center",
+                    va="center",
+                )
             )
-            ax.text(
-                cell[1][0] * vector_pad[2],
-                cell[1][1] * vector_pad[2],
-                cell[1][2] * vector_pad[2],
-                "$a_2$",
-                fontsize=20,
-                color=colour,
-                ha="center",
-                va="center",
+            self._artists[artist_group].append(
+                ax.text(
+                    cell[1][0] * vector_pad[2],
+                    cell[1][1] * vector_pad[2],
+                    cell[1][2] * vector_pad[2],
+                    "$a_2$",
+                    fontsize=20,
+                    color=colour,
+                    ha="center",
+                    va="center",
+                )
             )
-            ax.text(
-                cell[2][0] * vector_pad[2],
-                cell[2][1] * vector_pad[2],
-                cell[2][2] * vector_pad[2],
-                "$a_3$",
-                fontsize=20,
-                color=colour,
-                ha="center",
-                va="center",
+            self._artists[artist_group].append(
+                ax.text(
+                    cell[2][0] * vector_pad[2],
+                    cell[2][1] * vector_pad[2],
+                    cell[2][2] * vector_pad[2],
+                    "$a_3$",
+                    fontsize=20,
+                    color=colour,
+                    ha="center",
+                    va="center",
+                )
             )
             for i in cell:
-                ax.quiver(
-                    0,
-                    0,
-                    0,
-                    *tuple(i),
-                    arrow_length_ratio=0.2,
-                    color=colour,
-                    alpha=0.7,
-                    linewidth=2,
-                )
-                ax.scatter(*tuple(i), s=0)
+                # Try beautiful arrows
+                try:
+                    self._artists[artist_group].append(
+                        ax.add_artist(
+                            Arrow3D(
+                                ax,
+                                [0, i[0]],
+                                [0, i[1]],
+                                [0, i[2]],
+                                mutation_scale=20,
+                                arrowstyle="-|>",
+                                color=colour,
+                                lw=2,
+                                alpha=0.7,
+                            )
+                        )
+                    )
+                # Go to default
+                except:
+                    self._artists[artist_group].append(
+                        ax.quiver(
+                            0,
+                            0,
+                            0,
+                            *tuple(i),
+                            arrow_length_ratio=0.2,
+                            color=colour,
+                            alpha=0.7,
+                            linewidth=2,
+                        )
+                    )
+                # Ghost point to account for the plot range
+                self._artists[artist_group].append(ax.scatter(*tuple(i), s=0))
 
         def plot_line(line, shift):
-            ax.plot(
-                [shift[0], shift[0] + line[0]],
-                [shift[1], shift[1] + line[1]],
-                [shift[2], shift[2] + line[2]],
-                color=colour,
+            self._artists[artist_group].append(
+                ax.plot(
+                    [shift[0], shift[0] + line[0]],
+                    [shift[1], shift[1] + line[1]],
+                    [shift[2], shift[2] + line[2]],
+                    color=colour,
+                )
             )
 
         for i in range(0, 3):
@@ -702,21 +818,29 @@ class Lattice:
             plot_line(cell[i], cell[j] + cell[k])
 
     def plot_brillouin(
-        self, ax, vectors=True, colour="#FF4D67", label=None, vector_pad=1.1
+        self,
+        ax=None,
+        vectors=True,
+        colour="#FF4D67",
+        label=None,
+        vector_pad=1.1,
+        normalize=False,
     ):
         r"""
         Plot brillouin zone.
 
-        ax : axes
-            Axes for the plot. 3D.
+        ax : axis, optional
+            3D matplotlib axis for the plot.
         vectors : bool, default True
             Whether to plot reciprocal lattice vectors.
         colour : str, default "#FF4D67"
             Colour for the plot. Any format supported by matplotlib. See |matplotlibColor|_.
-        label : str, default None
+        label : str, optional
             Label for the plot.
         vector_pad : float, default 1.1
             Multiplier for the position of the vectors labels. 1 = position of the vector.
+        normalize : bool, default False
+            Whether to normalize corresponding vectors to have the volume equal to one.
         """
 
         self.plot_wigner_seitz(
@@ -726,22 +850,24 @@ class Lattice:
             label=label,
             vector_pad=vector_pad,
             reciprocal=True,
+            normalize=normalize,
         )
 
     def plot_wigner_seitz(
         self,
-        ax,
+        ax=None,
         vectors=True,
         colour="black",
         label=None,
         vector_pad=1.1,
         reciprocal=False,
+        normalize=False,
     ):
         r"""
         Plot Wigner-Seitz unit cell.
 
-        ax : axes
-            Axes for the plot. 3D.
+        ax : axis, optional
+            3D matplotlib axis for the plot.
         vectors : bool, default True
             Whether to plot lattice vectors.
         colour : str, default "black" or "#FF4D67"
@@ -752,7 +878,20 @@ class Lattice:
             Multiplier for the position of the vectors labels. 1 = position of the vector.
         reciprocal : bool, default False
             Whether to plot reciprocal or real Wigner-Seitz cell.
+        normalize : bool, default False
+            Whether to normalize corresponding vectors to have the volume equal to one.
         """
+
+        if reciprocal:
+            artist_group = "brillouin"
+        else:
+            artist_group = "wigner_seitz"
+
+        self._artists[artist_group] = []
+
+        if ax is None:
+            self.prepare_figure()
+            ax = self._ax
 
         if reciprocal:
             v1, v2, v3 = self.b1, self.b2, self.b3
@@ -765,81 +904,101 @@ class Lattice:
             if colour is None:
                 colour = "black"
 
+        if normalize:
+            factor = volume(v1, v2, v3) ** (1 / 3.0)
+            v1 /= factor
+            v2 /= factor
+            v3 /= factor
+
         if label is not None:
-            ax.scatter(0, 0, 0, color=colour, label=label)
+            self._artists[artist_group].append(
+                ax.scatter(0, 0, 0, color=colour, label=label)
+            )
         if vectors:
             if not isinstance(vector_pad, Iterable):
                 vector_pad = [vector_pad, vector_pad, vector_pad]
-            ax.text(
-                v1[0] * vector_pad[0],
-                v1[1] * vector_pad[0],
-                v1[2] * vector_pad[0],
-                f"${v_literal}_1$",
-                fontsize=20,
-                color=colour,
-                ha="center",
-                va="center",
+            self._artists[artist_group].append(
+                ax.text(
+                    v1[0] * vector_pad[0],
+                    v1[1] * vector_pad[0],
+                    v1[2] * vector_pad[0],
+                    f"${v_literal}_1$",
+                    fontsize=20,
+                    color=colour,
+                    ha="center",
+                    va="center",
+                )
             )
-            ax.text(
-                v2[0] * vector_pad[1],
-                v2[1] * vector_pad[1],
-                v2[2] * vector_pad[1],
-                f"${v_literal}_2$",
-                fontsize=20,
-                color=colour,
-                ha="center",
-                va="center",
+            self._artists[artist_group].append(
+                ax.text(
+                    v2[0] * vector_pad[1],
+                    v2[1] * vector_pad[1],
+                    v2[2] * vector_pad[1],
+                    f"${v_literal}_2$",
+                    fontsize=20,
+                    color=colour,
+                    ha="center",
+                    va="center",
+                )
             )
-            ax.text(
-                v3[0] * vector_pad[2],
-                v3[1] * vector_pad[2],
-                v3[2] * vector_pad[2],
-                f"${v_literal}_3$",
-                fontsize=20,
-                color=colour,
-                ha="center",
-                va="center",
+            self._artists[artist_group].append(
+                ax.text(
+                    v3[0] * vector_pad[2],
+                    v3[1] * vector_pad[2],
+                    v3[2] * vector_pad[2],
+                    f"${v_literal}_3$",
+                    fontsize=20,
+                    color=colour,
+                    ha="center",
+                    va="center",
+                )
             )
             for v in [v1, v2, v3]:
                 # Try beautiful arrows
                 try:
-                    ax.add_artist(
-                        Arrow3D(
-                            ax,
-                            [0, v[0]],
-                            [0, v[1]],
-                            [0, v[2]],
-                            mutation_scale=20,
-                            arrowstyle="-|>",
-                            color=colour,
-                            lw=2,
-                            alpha=0.8,
+                    self._artists[artist_group].append(
+                        ax.add_artist(
+                            Arrow3D(
+                                ax,
+                                [0, v[0]],
+                                [0, v[1]],
+                                [0, v[2]],
+                                mutation_scale=20,
+                                arrowstyle="-|>",
+                                color=colour,
+                                lw=2,
+                                alpha=0.8,
+                            )
                         )
                     )
                 # Go to default
                 except:
-                    ax.quiver(
-                        0,
-                        0,
-                        0,
-                        *tuple(v),
-                        arrow_length_ratio=0.2,
-                        color=colour,
-                        alpha=0.5,
+                    self._artists[artist_group].append(
+                        ax.quiver(
+                            0,
+                            0,
+                            0,
+                            *tuple(v),
+                            arrow_length_ratio=0.2,
+                            color=colour,
+                            alpha=0.5,
+                        )
                     )
                 # Ghost point to account for the plot range
-                ax.scatter(*tuple(v), s=0)
+                self._artists[artist_group].append(ax.scatter(*tuple(v), s=0))
 
-        edges, vertices = self.voronoi_cell(reciprocal=reciprocal)
+        edges, vertices = self.voronoi_cell(reciprocal=reciprocal, normalize=normalize)
         for p1, p2 in edges:
-            ax.plot(
-                [p1[0], p2[0]],
-                [p1[1], p2[1]],
-                [p1[2], p2[2]],
-                color=colour,
+            self._artists[artist_group].append(
+                ax.plot(
+                    [p1[0], p2[0]],
+                    [p1[1], p2[1]],
+                    [p1[2], p2[2]],
+                    color=colour,
+                )
             )
 
-    def plot_conventional(self, ax, **kwargs):
+    def plot_conventional(self, **kwargs):
         r"""
         Plot conventional unit cell.
 
@@ -848,9 +1007,12 @@ class Lattice:
         plot_real_space : for the list of parameters
         """
 
-        self.plot_real_space(ax, conventional=True, **kwargs)
+        if "colour" not in kwargs:
+            kwargs["colour"] = "black"
 
-    def plot_primitive(self, ax, **kwargs):
+        self.plot_real_space(conventional=True, **kwargs)
+
+    def plot_primitive(self, **kwargs):
         r"""
         Plot primitive unit cell.
 
@@ -859,9 +1021,9 @@ class Lattice:
         plot_real_space : for the list of parameters
         """
 
-        self.plot_real_space(ax, **kwargs)
+        self.plot_real_space(**kwargs)
 
-    def plot_kpath(self, ax, colour="black", label=None):
+    def plot_kpath(self, ax=None, colour="black", label=None, normalize=False):
         r"""
         Plot k path in the reciprocal space.
 
@@ -871,63 +1033,84 @@ class Lattice:
             Colour for the plot. Any format supported by matplotlib. See |matplotlibColor|_.
         label : str, default None
             Label for the plot.
+        normalize : bool, default False
+            Whether to normalize corresponding vectors to have the volume equal to one.
         """
 
+        artist_group = "kpath"
+
+        self._artists[artist_group] = []
+
+        if ax is None:
+            self.prepare_figure()
+            ax = self._ax
+
+        cell = self.reciprocal_cell
+
+        if normalize:
+            cell /= volume(cell) ** (1 / 3.0)
+
         for point in self.points:
-            ax.scatter(
-                *tuple(self.points[point] @ self.reciprocal_cell),
-                s=36,
-                color=colour,
+            self._artists[artist_group].append(
+                ax.scatter(
+                    *tuple(self.points[point] @ cell),
+                    s=36,
+                    color=colour,
+                )
             )
-            ax.text(
-                *tuple(
-                    self.points[point] @ self.reciprocal_cell
-                    + 0.025 * self.b1
-                    + +0.025 * self.b2
-                    + 0.025 * self.b3
-                ),
-                self._PLOT_NAMES[point],
-                fontsize=20,
-                color=colour,
+            self._artists[artist_group].append(
+                ax.text(
+                    *tuple(
+                        self.points[point] @ cell
+                        + 0.025 * cell[0]
+                        + +0.025 * cell[1]
+                        + 0.025 * cell[2]
+                    ),
+                    self._PLOT_NAMES[point],
+                    fontsize=20,
+                    color=colour,
+                )
             )
         if label is not None:
-            ax.scatter(
-                0,
-                0,
-                0,
-                s=36,
-                color=colour,
-                label=label,
+            self._artists[artist_group].append(
+                ax.scatter(
+                    0,
+                    0,
+                    0,
+                    s=36,
+                    color=colour,
+                    label=label,
+                )
             )
 
         for subpath in self.path:
             for i in range(len(subpath) - 1):
-                ax.plot(
-                    *tuple(
-                        np.concatenate(
-                            (
-                                self.points[subpath[i]] @ self.reciprocal_cell,
-                                self.points[subpath[i + 1]] @ self.reciprocal_cell,
+                self._artists[artist_group].append(
+                    ax.plot(
+                        *tuple(
+                            np.concatenate(
+                                (
+                                    self.points[subpath[i]] @ cell,
+                                    self.points[subpath[i + 1]] @ cell,
+                                )
                             )
-                        )
-                        .reshape(2, 3)
-                        .T
-                    ),
-                    color=colour,
-                    alpha=0.5,
-                    linewidth=3,
+                            .reshape(2, 3)
+                            .T
+                        ),
+                        color=colour,
+                        alpha=0.5,
+                        linewidth=3,
+                    )
                 )
 
     def plot_brillouin_kpath(
-        self, ax, zone_colour="#FF4D67", path_colour="black", **kwargs
+        self, zone_colour="#FF4D67", path_colour="black", **kwargs
     ):
         r"""
         Plot brillouin zone and kpath.
 
         Parameters
         ----------
-        ax : axes
-            Axes for the plot. 3D.
         zone_colour : str, default "#FF4D67"
             Colour for the brillouin zone. Any format supported by matplotlib. See |matplotlibColor|_.
         zone_colour : str, default "black"
@@ -936,8 +1119,8 @@ class Lattice:
         See Also
         --------
         plot_brillouin : plot brillouin zone
-        plot_kpath : plot k path
+        plot_kpath : plot kpath
         """
 
-        self.plot_brillouin(ax, colour=zone_colour, **kwargs)
-        self.plot_kpath(ax, colour=path_colour, **kwargs)
+        self.plot_brillouin(colour=zone_colour, **kwargs)
+        self.plot_kpath(colour=path_colour, **kwargs)

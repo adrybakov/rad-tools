@@ -4,7 +4,7 @@
 Crystal
 *******
 
-.. automodule:: rad_tools.crystal
+.. versionadded:: 0.6.2
 
 .. currentmodule:: rad_tools
 
@@ -27,6 +27,9 @@ The process of the definition of the crystal type is divided in two steps:
 * Define the type of the Bravais lattice.
 
 After those two steps primitive cel is well defined and the standard k path is accessible.
+
+Class
+=====
 
 .. autosummary::
     :toctree: generated/

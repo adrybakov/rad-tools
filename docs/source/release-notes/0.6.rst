@@ -39,4 +39,7 @@ Move to the usage of |termcolor|_ for colourful terminal output.
 0.6.2
 -----
 Add :py:func:`.print_2D_array`. 
-Rename :py:func:`read_exchange_model` to :py:func:`read_tb2j_model`.
+Rename :py:func:`.read_exchange_model` to :py:func:`.read_tb2j_model`.
+
+Introduce the :ref:`rad-tools_crystal` module. Rewrite :py:class:`.ExchangeModel` 
+with the new objects from it.

@@ -9,8 +9,13 @@ from math import cos, pi, sin, sqrt
 
 import numpy as np
 
+from typing import Tuple
+
+
 from rad_tools.exchange.bond import Bond
 from rad_tools.exchange.template import ExchangeTemplate
+from rad_tools.crystal.crystal import Crystal
+from rad_tools.crystal.atom import Atom
 
 
 class ExchangeModel:
@@ -28,43 +33,38 @@ class ExchangeModel:
     However, it can be changed via :py:meth:`.change_notation` method and
     checked via :py:attr:`.notation`.
 
+    Parameters
+    ----------
+    crystal : :py:class:`.Crystal`, optional
+        Crystal on which the model is build.
+        By default it is orthonormal lattice
+        ("CUB with :math:`a = 1`) with no atoms.
+
     Attributes
     ----------
+    crystal : :py:class:`.Crystal`
     bonds : dict
         Dictionary of bonds.
 
         .. code-block:: python
 
             {(Atom_1, Atom_2, R): bond, ...}
-    magnetic_atoms : dict
-        Dictionary with keys : str - marks of atoms and value : 1 x 3 array
-        - coordinate of the atom in Angstroms.
-    nonmagnetic_atoms : dist
-        Dictionary with keys : str - marks of atoms and value : 1 x 3 array
-        - coordinate of the atom in Angstroms. Only non-magnetic atoms.
-    cell : (3, 3) :numpy:`ndarray`
-    a : (3,) :numpy:`ndarray`
-    b : (3,) :numpy:`ndarray`
-    c : (3,) :numpy:`ndarray`
-    len_a : float
-    len_b : float
-    len_c : float
-    unit_cell_volume : float
-    b1 : (3,) :numpy:`ndarray`
-    b2 : (3,) :numpy:`ndarray`
-    b3 : (3,) :numpy:`ndarray`
+    magnetic_atoms : list
+        List of magnetic atoms.
     cell_list : list
     number_spins_in_unit_cell : int
-
     space_dimensions : tuple of floats
     """
 
     _notations = ["double-counting", "minus-sign", "spin-normalised"]
 
-    def __init__(self) -> None:
-        self._cell = np.identity(3, dtype=float)
-        self.magnetic_atoms = {}
-        self.nonmagnetic_atoms = {}
+    def __init__(self, crystal: Crystal = None) -> None:
+        self._crystal = None
+        if crystal is None:
+            crystal = Crystal()
+        self.crystal = crystal
+
+        self.magnetic_atoms = []
         self.bonds = {}
         self._double_counting = True
         self._spin_normalized = False
@@ -80,6 +80,24 @@ class ExchangeModel:
 
     def __getitem__(self, key) -> Bond:
         return self.bonds[key]
+
+    @property
+    def crystal(self) -> Crystal:
+        r"""
+        Crystal of the model.
+
+        Crystal, which define the structure.
+        See :py:class:`.Crystal`.
+        """
+        return self._crystal
+
+    @crystal.setter
+    def crystal(self, new_crystal: Crystal):
+        if not isinstance(new_crystal, Crystal):
+            raise TypeError(
+                "New crystal is not a Crystal. " + f"Received {type(new_crystal)}."
+            )
+        self._crystal = new_crystal
 
     @property
     def notation(self):
@@ -173,161 +191,12 @@ class ExchangeModel:
         for atom1, atom2, R in self:
             bond = self.bonds[(atom1, atom2, R)]
             if self._spin_normalized and not spin_normalized:
-                factor = multiplier / atom1 / atom2
+                factor = multiplier / atom1.spin / atom2.spin
             elif not self._spin_normalized and spin_normalized:
-                factor = multiplier * atom1, atom2
-
-    @property
-    def cell(self):
-        r"""
-        Matrix of lattice vectors in Angstrom.
-
-        .. code-block:: python
-
-            [[a_x  a_y  a_z],
-             [b_x  b_y  b_z],
-             [c_x  x_y  c_z]]
-
-        Default cell is orthonormal:
-
-        .. code-block:: python
-
-            np.identity(3, dtype=float)
-        """
-
-        return self._cell
-
-    @cell.setter
-    def cell(self, new_cell):
-        new_cell = np.array(new_cell)
-        if new_cell.shape != (3, 3):
-            raise ValueError("Cell matrix shape have to be equal (3, 3)")
-        if np.linalg.det(new_cell) == 0:
-            raise ValueError("Lattice vectors are coplanar.")
-        self._cell = new_cell
-
-    @property
-    def a(self):
-        r"""
-        First lattice vector :math:`\vec{a} = (a_x, a_y, a_z)`.
-        """
-
-        return self.cell[0]
-
-    @a.setter
-    def a(self, new_a):
-        new_a = np.array(new_a)
-        if new_a.shape != (3,):
-            raise ValueError("new_a is not a 3 component vector")
-        self._cell[0] = new_a
-
-    @property
-    def b(self):
-        r"""
-        Second lattice vector :math:`\vec{b} = (b_x, b_y, b_z)`.
-        """
-
-        return self.cell[1]
-
-    @b.setter
-    def b(self, new_b):
-        new_b = np.array(new_b)
-        if new_b.shape != (3,):
-            raise ValueError("new_b is not a 3 component vector")
-        self._cell[1] = new_b
-
-    @property
-    def c(self):
-        r"""
-        Third lattice vector :math:`\vec{b} = (b_x, b_y, b_z)`.
-        """
-
-        return self.cell[2]
-
-    @c.setter
-    def c(self, new_c):
-        new_c = np.array(new_c)
-        if new_c.shape != (3,):
-            raise ValueError("new_c is not a 3 component vector")
-        self._cell[2] = new_c
-
-    @property
-    def len_a(self):
-        r"""
-        Length of lattice vector :math:`\vec{a}`.
-        """
-
-        return sqrt(np.sum(self.a**2))
-
-    @property
-    def len_b(self):
-        r"""
-        Length of lattice vector :math:`\vec{b}`.
-        """
-
-        return sqrt(np.sum(self.b**2))
-
-    @property
-    def len_c(self):
-        r"""
-        Length of lattice vector :math:`\vec{c}`.
-        """
-
-        return sqrt(np.sum(self.c**2))
-
-    @property
-    def unit_cell_volume(self):
-        r"""
-        Volume of the unit cell.
-
-        .. math::
-
-            V = \delta_{\vec{A}}\cdot(\delta_{\vec{B}}\times\delta_{\vec{C}})
-        """
-
-        return np.dot(self.a, np.cross(self.b, self.c))
-
-    @property
-    def b1(self):
-        r"""
-        First reciprocal lattice vector
-
-        .. math::
-
-            \vec{b}_1 = \frac{2\pi}{V}\vec{b}\times\vec{c}
-
-        where :math:`V = \vec{a}\cdot\vec{b}\times\vec{c}`
-        """
-
-        return 2 * pi / self.unit_cell_volume * np.cross(self.b, self.c)
-
-    @property
-    def b2(self):
-        r"""
-        Second reciprocal lattice vector
-
-        .. math::
-
-            \vec{b}_2 = \frac{2\pi}{V}\vec{c}\times\vec{a}
-
-        where :math:`V = \vec{a}\cdot\vec{b}\times\vec{c}`
-        """
-
-        return 2 * pi / self.unit_cell_volume * np.cross(self.c, self.a)
-
-    @property
-    def b3(self):
-        r"""
-        Third reciprocal lattice vector
-
-        .. math::
-
-            \vec{b}_3 = \frac{2\pi}{V}\vec{a}\times\vec{b}
-
-        where :math:`V = \vec{a}\cdot\vec{b}\times\vec{c}`
-        """
-
-        return 2 * pi / self.unit_cell_volume * np.cross(self.a, self.b)
+                factor = multiplier * atom1.spin * atom2.spin
+            else:
+                factor = multiplier
+            self.bonds[(atom1, atom2, R)] = factor * bond
 
     @property
     def cell_list(self):
@@ -383,8 +252,8 @@ class ExchangeModel:
         x_max, y_max, z_max = None, None, None
         x_min, y_min, z_min = None, None, None
         for atom1, atom2, R in self:
-            x1, y1, z1 = self.get_atom_coordinates(atom1)
-            x2, y2, z2 = self.get_atom_coordinates(atom2, R)
+            x1, y1, z1 = self.crystal.get_atom_coordinates(atom1)
+            x2, y2, z2 = self.crystal.get_atom_coordinates(atom2, R)
             if x_max is None:
                 x_min, y_min, z_min = x1, y1, z1
                 x_max, y_max, z_max = x1, y1, z1
@@ -408,7 +277,7 @@ class ExchangeModel:
         for atom1, atom2, R in self:
             self[(atom1, atom2, R)].round(decimals)
 
-    def add_bond(self, bond: Bond, atom1, atom2, R):
+    def add_bond(self, bond: Bond, atom1: Atom, atom2: Atom, R):
         r"""
         Add one bond to the model.
 
@@ -417,29 +286,34 @@ class ExchangeModel:
         bond : :py:class:`.Bond`
             An instance of :py:class:`Bond` class with the information about
             exchange parameters.
-        atom1 : str
-            Name of atom1 in (0, 0, 0) unit cell.
-        atom2 : str
-            Name of atom2 in R unit cell.
+        atom1 : :py:class:`Atom`
+            Atom object in (0, 0, 0) unit cell.
+        atom2 : :py:class:`Atom`
+            Atom object in R unit cell.
         R : tuple of ints
             Vector of the unit cell for atom2.
-            In the relative coordinates in real space.
+            In the relative coordinates (i,j,k).
         """
+
+        if atom1 not in self.magnetic_atoms:
+            self.add_atom(atom1)
+        if atom2 not in self.magnetic_atoms:
+            self.add_atom(atom2)
 
         self.bonds[(atom1, atom2, R)] = bond
 
-    def remove_bond(self, atom1, atom2, R):
+    def remove_bond(self, atom1: Atom, atom2: Atom, R):
         r"""
         Remove one bond from the model.
 
         Parameters
         ----------
-        atom1 : str
-            Name of atom1 in (0, 0, 0) unit cell.
-        atom2 : str
-            Name of atom2 in R unit cell.
+        atom1 : py:class:`.Atom`
+            Atom object in (0, 0, 0) unit cell.
+        atom2 : py:class:`.Atom`
+            Atom object in R unit cell.
         R : tuple of ints
-            Radius vector of the unit cell for atom2.
+            Radius vector of the unit cell for atom2 (i,j,k).
         """
 
         try:
@@ -447,139 +321,43 @@ class ExchangeModel:
         except KeyError:
             pass
 
-    def add_atom(self, name, a, b, c):
+    def add_atom(self, atom: Atom):
         r"""
-        Add magnetic atom to the model.
+        Add atom to the model.
 
         Parameters
         ----------
-        name : str
-            Mark for the atom. Note: if an atom with the same mark already
-            exists in ``magnetic_atoms`` then it will be rewritten.
-        a : int or float
-            Relative coordinate of the atom along a lattice vector.
-        b : int or float
-            Relative coordinate of the atom along b lattice vector.
-        c : int or float
-            Relative coordinate of the atom along c lattice vector.
+        atom : :py:class:`.Atom`
+            Atom object.
         """
 
-        self.magnetic_atoms[name] = np.array([a, b, c])
+        self.magnetic_atoms.append(atom)
+        self.crystal.add_atom(atom)
 
-    def remove_atom(self, name):
+    def remove_atom(self, atom):
         r"""
         Remove magnetic atom from the model.
 
-        Note: this method will remove atom from :py:attr:`magnetic_atoms` and all the
-        bonds, which starts or ends in this atom.
+        Note: this method will remove atom itself and all the
+        bonds, which starts or ends in this atom, if atom is magnetic.
 
         Parameters
         ----------
-        name : str
-            Mark for the atom.
+        atom : :py:class:`.Atom`
+            Atom object.
         """
 
         bonds_for_removal = []
-        if name in self.magnetic_atoms:
-            del self.magnetic_atoms[name]
+        if atom in self.magnetic_atoms:
+            self.magnetic_atoms.remove(atom)
         for atom1, atom2, R in self:
-            if atom1 == name or atom2 == name:
+            if atom1 == atom or atom2 == atom:
                 bonds_for_removal.append((atom1, atom2, R))
 
         for bond in bonds_for_removal:
             self.remove_bond(*bond)
 
-    def get_atom_coordinates(self, atom, R=(0, 0, 0)):
-        r"""
-        Getter for the atom coordinates.
-
-        Parameters
-        ----------
-        atom : str
-            Name of atom1 in R unit cell.
-        R : (3,) |array_like|_, default (0, 0, 0)
-            Radius vector of the unit cell for atom2.
-
-        Returns
-        -------
-        coordinates : 1 x 3 array
-            Coordinates of atom in the cell R in real space.
-        """
-
-        R = np.array(R)
-        try:
-            return np.matmul(R + self.magnetic_atoms[atom], self.cell)
-        except KeyError:
-            return np.matmul(R + self.nonmagnetic_atoms[atom], self.cell)
-
-    def get_bond_centre_coordinates(self, atom1, atom2, R=(0, 0, 0)):
-        r"""
-        Getter for the middle point of the bond.
-
-        Parameters
-        ----------
-        atom1 : str
-            Name of atom1 in (0, 0, 0) unit cell.
-        atom2 : str
-            Name of atom2 in R unit cell.
-        R : (3,) |array_like|_, default (0, 0, 0)
-            Radius vector of the unit cell for atom2.
-
-        Returns
-        -------
-        coordinates : (3,) :numpy:`ndarray`
-            Coordinates of the middle of a bond in real space.
-        """
-
-        atom1 = self.get_atom_coordinates(atom1)
-        atom2 = self.get_atom_coordinates(atom2, R)
-
-        return (atom1 + atom2) / 2
-
-    def get_bond_vector(self, atom1, atom2, R=(0, 0, 0)):
-        r"""
-        Getter for vector between the atom1 and atom2.
-
-        Parameters
-        ----------
-        atom1 : str
-            Name of atom1 in (0, 0, 0) unit cell.
-        atom2 : str
-            Name of atom2 in R unit cell.
-        R : (3,) |array_like|_, default (0, 0, 0)
-            Radius vector of the unit cell for atom2.
-
-        Returns
-        -------
-        v : (3,) :numpy:`ndarray`
-            Vector from atom1 to atom2 of the bond.
-        """
-
-        atom1 = self.get_atom_coordinates(atom1)
-        atom2 = self.get_atom_coordinates(atom2, R)
-
-        return atom2 - atom1
-
-    def get_distance(self, atom1, atom2, R=(0, 0, 0)):
-        r"""
-        Getter for distance between the atom1 and atom2.
-
-        Parameters
-        ----------
-        atom1 : str
-            Name of atom1 in (0, 0, 0) unit cell.
-        atom2 : str
-            Name of atom2 in R unit cell.
-        R : (3,) |array_like|_, default (0, 0, 0)
-            Radius vector of the unit cell for atom2.
-
-        Returns
-        -------
-        distance : floats
-            Distance between atom1 and atom2.
-        """
-
-        return sqrt(np.sum(self.get_bond_vector(atom1, atom2, R) ** 2))
+        self.crystal.remove_atom(atom)
 
     def filter(
         self, max_distance=None, min_distance=None, template=None, R_vector=None
@@ -619,6 +397,7 @@ class ExchangeModel:
             template = template.get_list()
         if template is not None:
             template = set(template)
+
         if R_vector is not None:
             if type(R_vector) == tuple:
                 R_vector = {R_vector}
@@ -629,7 +408,7 @@ class ExchangeModel:
 
         bonds_for_removal = set()
         for atom1, atom2, R in self:
-            dis = self.get_distance(atom1, atom2, R)
+            dis = self.crystal.get_distance(atom1, atom2, R)
 
             if max_distance is not None and dis > max_distance:
                 bonds_for_removal.add((atom1, atom2, R))
@@ -639,7 +418,12 @@ class ExchangeModel:
 
             if R_vector is not None and R not in R_vector:
                 bonds_for_removal.add((atom1, atom2, R))
-            if template is not None and (atom1, atom2, R) not in template:
+            # Here literals, not objects are compared, because in general
+            # template only has information about literals and R.
+            if (
+                template is not None
+                and (atom1.literal, atom2.literal, R) not in template
+            ):
                 bonds_for_removal.add((atom1, atom2, R))
 
         for atom1, atom2, R in bonds_for_removal:
@@ -666,8 +450,12 @@ class ExchangeModel:
             template = template.get_list()
         template = set(template)
 
+        # Here literals, not objects are compared, because in general
+        # template only has information about literals and R.
         for atom1, atom2, R in template:
-            self.remove_bond(atom1, atom2, R)
+            self.remove_bond(
+                self.crystal.get_atom(atom1), self.crystal.get_atom(atom2), R
+            )
 
     def filtered(
         self, max_distance=None, min_distance=None, template=None, R_vector=None
@@ -751,14 +539,18 @@ class ExchangeModel:
             bonds = template.names[name]
             symm_matrix = np.zeros((3, 3), dtype=float)
             dmi_module = 0
-            for bond in bonds:
+            for atom1, atom2, R in bonds:
+                # Here literals, not objects are obtained, because in general
+                # template only has information about literals and R.
+                bond = (self.crystal.get_atom(atom1), self.crystal.get_atom(atom2), R)
                 symm_matrix = symm_matrix + self[bond].symm_matrix
                 dmi_module = dmi_module + self[bond].dmi_module
 
             symm_matrix = symm_matrix / len(bonds)
             dmi_module = dmi_module / len(bonds)
 
-            for bond in bonds:
+            for atom1, atom2, R in bonds:
+                bond = (self.crystal.get_atom(atom1), self.crystal.get_atom(atom2), R)
                 if self[bond].dmi_module != 0:
                     asymm_factor = dmi_module / self[bond].dmi_module
                 else:
@@ -842,6 +634,8 @@ class ExchangeModel:
             scalar_written = False
             for atom1, atom2, R in template.names[name]:
                 # Get values from the model
+                atom1 = self.crystal.get_atom(atom1)
+                atom2 = self.crystal.get_atom(atom2)
                 bond = self[(atom1, atom2, R)]
                 iso = bond.iso
                 aniso = bond.aniso
@@ -981,8 +775,139 @@ class ExchangeModel:
         spin_vector = np.array(
             [cos(phi) * sin(theta), sin(phi) * sin(theta), cos(theta)]
         )
-        energy = np.matmul(np.matmul(spin_vector, energy), spin_vector)
+        energy = spin_vector @ energy @ spin_vector
         return energy
+
+    # OLD METHODS AND ATTRIBUTES, KEPT FOR BACKWARD COMPATIBILITY
+
+    @property
+    def cell(self):
+        r"""
+        Matrix of lattice vectors.
+
+        See :py:attr:`.Crystal.cell`.
+        """
+
+        return self.crystal.lattice.cell
+
+    @cell.setter
+    def cell(self, new_cell):
+        self.crystal.cell = new_cell
+
+    @property
+    def a(self):
+        r"""
+        First lattice vector :math:`\vec{a} = (a_x, a_y, a_z)`.
+        """
+
+        return self.crystal.lattice.a1
+
+    @property
+    def b(self):
+        r"""
+        Second lattice vector :math:`\vec{b} = (b_x, b_y, b_z)`.
+        """
+
+        return self.crystal.lattice.a2
+
+    @property
+    def c(self):
+        r"""
+        Third lattice vector :math:`\vec{b} = (b_x, b_y, b_z)`.
+        """
+
+        return self.crystal.lattice.a3
+
+    @property
+    def len_a(self):
+        r"""
+        Length of lattice vector :math:`\vec{a}`.
+        """
+
+        return self.crystal.lattice.a
+
+    @property
+    def len_b(self):
+        r"""
+        Length of lattice vector :math:`\vec{b}`.
+        """
+
+        return self.crystal.lattice.b
+
+    @property
+    def len_c(self):
+        r"""
+        Length of lattice vector :math:`\vec{c}`.
+        """
+
+        return self.crystal.lattice.c
+
+    @property
+    def unit_cell_volume(self):
+        r"""
+        Volume of the unit cell.
+
+        See :py:attr:`.Lattice.unit_cell_volume`
+        """
+
+        return self.crystal.lattice.unit_cell_volume
+
+    @property
+    def b1(self):
+        r"""
+        First reciprocal lattice vector
+
+        See :py:attr:`.Lattice.b1`
+        """
+
+        return self.crystal.lattice.b1
+
+    @property
+    def b2(self):
+        r"""
+        Second reciprocal lattice vector
+
+        See :py:attr:`.Lattice.b2`
+        """
+
+        return self.crystal.lattice.b2
+
+    @property
+    def b3(self):
+        r"""
+        Third reciprocal lattice vector
+
+        See :py:attr:`.Lattice.b3`
+        """
+
+        return self.crystal.lattice.b3
+
+    def get_atom_coordinates(self, atom, R=(0, 0, 0)):
+        r"""
+        Getter for the atom coordinates.
+
+        See :py:meth:`.Crystal.get_atom_coordinates`.
+        """
+
+        return self.crystal.get_atom_coordinates(atom, R)
+
+    def get_bond_vector(self, atom1, atom2, R=(0, 0, 0)):
+        r"""
+        Getter for distance between the atom1 and atom2.
+
+        See :py:meth:`.Crystal.get_vector`
+        """
+
+        return self.crystal.get_vector(atom1, atom2, R)
+
+    def get_distance(self, atom1, atom2, R=(0, 0, 0)):
+        r"""
+        Getter for distance between the atom1 and atom2.
+
+        See :py:meth:`.Crystal.get_distance`
+        """
+
+        return self.crystal.get_distance(atom1, atom2, R)
 
 
 class ExchangeModelIterator:
@@ -990,7 +915,7 @@ class ExchangeModelIterator:
         self._bonds = list(exchange_model.bonds)
         self._index = 0
 
-    def __next__(self) -> Bond:
+    def __next__(self) -> Tuple[Atom, Atom, tuple]:
         if self._index < len(self._bonds):
             result = self._bonds[self._index]
             self._index += 1

@@ -112,7 +112,7 @@ def rot_angle(x, y, dummy=False):
             return 180 + asin(sin) / pi * 180
 
 
-def absolute_to_relative(cell, x, y, z):
+def absolute_to_relative(cell, absolute):
     r"""
     Compute relative coordinates with respect to the unit cell.
 
@@ -120,12 +120,8 @@ def absolute_to_relative(cell, x, y, z):
     ----------
     cell : 3 x 3 array
         Lattice vectors.
-    x : float
-        x coordinate.
-    y : float
-        y coordinate.
-    z : float
-        z coordinate.
+    absolute : (3,) |array_like|_
+        Absolute coordinates.
 
     Returns
     -------
@@ -136,7 +132,7 @@ def absolute_to_relative(cell, x, y, z):
     a = np.array(cell[0], dtype=float)
     b = np.array(cell[1], dtype=float)
     c = np.array(cell[2], dtype=float)
-    v = np.array([x, y, z], dtype=float)
+    v = np.array(absolute, dtype=float)
     if (v == np.zeros(3)).all():
         return np.zeros(3)
     B = np.array([np.dot(a, v), np.dot(b, v), np.dot(c, v)])
@@ -149,6 +145,42 @@ def absolute_to_relative(cell, x, y, z):
     )
     relative = np.linalg.solve(A, B)
     return relative
+
+
+def volume(*args):
+    r"""
+    Return volume, defined by three vectors.
+
+    .. math::
+
+            V = \vec{v}_1\cdot(\vec{v}_2\times\vec{v}_3)
+
+    Parameters
+    ----------
+    v1 : (3,) |array_like|_
+        First vector.
+    v2 : (3,) |array_like|_
+        Second vector.
+    v3 : (3,) |array_like|_
+        Third vector.
+    cell : (3,3) |array_like|_
+        Cell. Rows are vectors.
+    """
+    if len(args) == 1:
+        v1 = np.array(args[0][0])
+        v2 = np.array(args[0][1])
+        v3 = np.array(args[0][2])
+    elif len(args) == 3:
+        v1 = np.array(args[0])
+        v2 = np.array(args[1])
+        v3 = np.array(args[2])
+    else:
+        raise ValueError(
+            "Unable to identify input. "
+            + "Supported: one (3,3) array_like, or three (3,) array_like."
+        )
+
+    return v1 @ np.cross(v2, v3)
 
 
 def winwait():

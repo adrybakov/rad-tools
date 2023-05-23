@@ -1,5 +1,5 @@
 r"""
-Crystals
+Crystal module.
 """
 
 from .atom import Atom
