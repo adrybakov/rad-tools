@@ -10,12 +10,7 @@ import numpy as np
 from termcolor import cprint
 
 __all__ = [
-    "atom_mark_to_latex",
-    "rot_angle",
-    "absolute_to_relative",
-    "winwait",
     "print_2D_array",
-    "angle",
 ]
 
 RED = "#FF4D67"

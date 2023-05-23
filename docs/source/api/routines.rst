@@ -13,5 +13,3 @@ Collection of routines
     :toctree: generated/
 
     print_2D_array
-    winwait
-    absolute_to_relative
