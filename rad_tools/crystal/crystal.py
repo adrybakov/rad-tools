@@ -1,9 +1,11 @@
-from rad_tools.crystal.lattice import Lattice
-from rad_tools.crystal.bravais_lattice import lattice_example
-from rad_tools.crystal.atom import Atom
-from rad_tools.routines import absolute_to_relative
 from math import sqrt
+
 import numpy as np
+
+from rad_tools.crystal.atom import Atom
+from rad_tools.crystal.bravais_lattice import lattice_example
+from rad_tools.crystal.lattice import Lattice
+from rad_tools.routines import absolute_to_relative
 
 
 class Crystal:

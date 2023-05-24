@@ -4,8 +4,8 @@ Input-output from |TB2J|_.
 
 import numpy as np
 
-from rad_tools.exchange.model import Bond, ExchangeModel
 from rad_tools.crystal.atom import Atom
+from rad_tools.exchange.model import Bond, ExchangeModel
 
 
 def read_tb2j_model(filename, quiet=False) -> ExchangeModel:

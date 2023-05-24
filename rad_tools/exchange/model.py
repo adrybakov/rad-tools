@@ -6,16 +6,14 @@ Write a tutorial with docstring here.
 
 from copy import deepcopy
 from math import cos, pi, sin, sqrt
+from typing import Tuple
 
 import numpy as np
 
-from typing import Tuple
-
-
+from rad_tools.crystal.atom import Atom
+from rad_tools.crystal.crystal import Crystal
 from rad_tools.exchange.bond import Bond
 from rad_tools.exchange.template import ExchangeTemplate
-from rad_tools.crystal.crystal import Crystal
-from rad_tools.crystal.atom import Atom
 
 
 class ExchangeModel:
