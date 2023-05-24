@@ -6,7 +6,7 @@ Write a tutorial with docstring here.
 
 from copy import deepcopy
 from math import cos, pi, sin, sqrt
-from typing import Tuple
+from typing import Tuple, Iterable
 
 import numpy as np
 
@@ -16,20 +16,48 @@ from rad_tools.exchange.bond import Bond
 from rad_tools.exchange.template import ExchangeTemplate
 
 
+class NotationError(ValueError):
+    r"""
+    Class for the errors with the exchange Hamiltonian notation.
+
+    Parameters
+    ----------
+    name : str
+        Name of the corresponding attribute.
+    hr_name : str, optional
+        Human-readable name of the property.
+
+    """
+
+    def __init__(self, name, hr_name=None):
+        if hr_name is None:
+            hr_name = name
+        self.message = (
+            f"\n\nNotation`s interpretation is not set for the model ({hr_name}). "
+            + f"Set the notation first ExchangeModel.{name}=True "
+            + f"or ExchangeModel.{name}=False. "
+            + f"Note: When the attribute is set for the first time it sets the interpretation, "
+            + "afterwards it change the notation. "
+            + f"If you want to set the interpretation again, use "
+            + f"ExchangeModel.set_interpretation({name} = True) or "
+            + f"ExchangeModel.set_interpretation({name} = False).\n\n"
+        )
+
+    def __str__(self):
+        return self.message
+
+
 class ExchangeModel:
     r"""
-    Main entry point for the exchange model.
+    Exchange Hamiltonian.
 
-    By default the following notation of the Hamiltonian is assumed:
+    By default the notation of the exchange Hamiltonian is not defined
+    and could be different in different context.
+    However, in could always be checked via :py:attr:`.notation`.
+    In user-specific cases it is the responsibility of the user to
+    set the interpretation of the Hamiltonian`s notation.
 
-    .. math::
-        H = -\sum_{i,j} \hat{\boldsymbol{S}}_i \cdot \boldsymbol{J}){i,j} \hat{\boldsymbol{S}}_j
-
-    where double counting is present (:math:`ij` and :math:`ji` is in the sum).
-    Spin vectors are **not** normalized.
-
-    However, it can be changed via :py:meth:`.change_notation` method and
-    checked via :py:attr:`.notation`.
+    For the predefined notations see :py:meth:`.notation`:
 
     Parameters
     ----------
@@ -37,6 +65,9 @@ class ExchangeModel:
         Crystal on which the model is build.
         By default it is orthonormal lattice
         ("CUB with :math:`a = 1`) with no atoms.
+    notation : str or tuple of bool, optional
+        One of the predefined notations or list of 5 bool.
+        See :py:attr:`.notation` for details.
 
     Attributes
     ----------
@@ -51,12 +82,21 @@ class ExchangeModel:
         List of magnetic atoms.
     cell_list : list
     number_spins_in_unit_cell : int
+    notation : str
     space_dimensions : tuple of floats
+    double_counting : bool
+    spin_normalized : bool
+    factor_one_half : bool
+    factor_two : bool
+    minus_sign : bool
     """
 
-    _notations = ["double-counting", "minus-sign", "spin-normalised"]
-
-    def __init__(self, crystal: Crystal = None) -> None:
+    def __init__(self, crystal: Crystal = None, notation=None) -> None:
+        self._predefined_notations = {
+            "standard": (True, False, False, False, True),
+            "tb2j": (True, True, False, False, True),
+            "spinw": (True, False, False, False, False),
+        }
         self._crystal = None
         if crystal is None:
             crystal = Crystal()
@@ -64,11 +104,360 @@ class ExchangeModel:
 
         self.magnetic_atoms = []
         self.bonds = {}
-        self._double_counting = True
-        self._spin_normalized = False
-        self._factor_one_half = False
-        self._factor_two = False
-        self._positive_ferromagnetic = True
+
+        # Notation settings
+        self._double_counting = None
+        self._spin_normalized = None
+        self._factor_one_half = None
+        self._factor_two = None
+        self._minus_sign = None
+        if notation is not None:
+            self.notation = notation
+
+    # Notation attributes
+    @property
+    def notation(self):
+        r"""
+        Return a string with a simple comment about the Hamiltonian notation.
+
+        It can be set with a
+
+        * string
+            One of the predefined notations: "standard", "TB2J", "SpinW"
+        * iterable with 5 elements
+            Each element is converted to bool and the parameters are set with values.
+            Order: (double counting, spin normalized, factor 1/2, factor 2, minus sign).
+
+        Predefined notations:
+
+        * Standard
+            (True, False, False, False, True)
+
+            .. math::
+                H = -\sum_{i,j} \hat{\boldsymbol{S}}_i \cdot \boldsymbol{J}_{i,j} \hat{\boldsymbol{S}}_j
+
+            where double counting is present (:math:`ij` and :math:`ji` is in the sum).
+            Spin vectors are **not** normalized.
+        * |TB2J|_
+            (True, True, False, False, True)
+
+            .. math::
+                H = -\sum_{i,j} \hat{\boldsymbol{S}}_i \cdot \boldsymbol{J}_{i,j} \hat{\boldsymbol{S}}_j
+
+            where double counting is present (:math:`ij` and :math:`ji` is in the sum).
+            Spin vectors are normalized to 1.
+        * SpinW
+            (True, False, False, False, False)
+
+            .. math::
+                H = \sum_{i,j} \hat{\boldsymbol{S}}_i \cdot \boldsymbol{J}_{i,j} \hat{\boldsymbol{S}}_j
+
+            where double counting is present (:math:`ij` and :math:`ji` is in the sum).
+            Spin vectors are **not** normalized.
+
+
+        Setting of this attribute either change the notation
+        (if corresponding attributes are defined)
+        or set the interpretation (if corresponding attribute are not defined).
+
+        See Also
+        --------
+        double_counting
+        spin_normalized
+        factor_one_half
+        factor_two
+        minus_sign
+        set_interpretation
+        """
+        if self._double_counting is None:
+            raise NotationError("double_counting", "double counting")
+        if self._spin_normalized is None:
+            raise NotationError("spin_normalized", "spin normalized")
+        if self._factor_one_half is None:
+            raise NotationError("factor_one_half", "factor 1/2")
+        if self._factor_two is None:
+            raise NotationError("factor_two", "factor 2")
+        if self._minus_sign is None:
+            raise NotationError("minus_sign", "minus sign")
+        result = "H = "
+        if self._minus_sign:
+            result += "-"
+        if self._factor_one_half and not self._factor_two:
+            result += "1/2 "
+        if self._factor_two and not self.factor_one_half:
+            result += "2 "
+        result += "sum_{"
+        if self._double_counting:
+            result += "i,j} "
+        else:
+            result += "i>=j} "
+        result += "S_i J_ij S_j\n"
+        if self._double_counting:
+            result += "Double counting is present.\n"
+        else:
+            result += "No double counting.\n"
+        if self._spin_normalized:
+            result += "Spin vectors are normalized to 1.\n"
+        else:
+            result += "Spin vectors are not normalized.\n"
+        return result
+
+    @notation.setter
+    def notation(self, new_notation):
+        if isinstance(new_notation, str):
+            new_notation = new_notation.lower()
+            if new_notation not in self._predefined_notations:
+                raise ValueError(
+                    f"Predefine notations are: "
+                    + f"{list(self._predefined_notations)}, got: {new_notation}"
+                )
+            new_notation = self._predefined_notations[new_notation]
+        elif isinstance(new_notation, Iterable) and len(new_notation) == 5:
+            new_notation = tuple(map(bool, new_notation))
+        else:
+            raise ValueError(
+                "New notation has to be either a string "
+                + "or an iterable with five elements, "
+                + f"got: {new_notation}"
+            )
+        (
+            self.double_counting,
+            self.spin_normalized,
+            self.factor_one_half,
+            self.factor_two,
+            self.minus_sign,
+        ) = new_notation
+
+    def set_interpretation(
+        self,
+        double_counting: bool = None,
+        spin_normalized: bool = None,
+        factor_one_half: bool = None,
+        factor_two: bool = None,
+        minus_sign: bool = None,
+    ):
+        r"""
+        Set the interpretation of the model`s notation.
+
+        It is not changing the J values,
+        but rather indicate how to interpret the J values of the model.
+
+        Parameters
+        ----------
+        double_counting : bool, optional
+        spin_normalized : bool, optional
+        factor_one_half : bool, optional
+        factor_two : bool, optional
+        minus_sign : bool, optional
+
+        See Also
+        --------
+        double_counting
+        spin_normalized
+        factor_one_half
+        factor_two
+        minus_sign
+        """
+
+        if double_counting is not None:
+            self._double_counting = bool(double_counting)
+        if spin_normalized is not None:
+            self._spin_normalized = bool(spin_normalized)
+        if factor_one_half is not None:
+            self._factor_one_half = bool(factor_one_half)
+        if factor_two is not None:
+            self._factor_two = bool(factor_two)
+        if minus_sign is not None:
+            self._minus_sign = bool(minus_sign)
+
+    @property
+    def double_counting(self) -> bool:
+        r"""
+        Whether double counting is present in the model.
+
+        Access this attribute to check the current notation of the model,
+        set this attribute to change the notation of the model.
+
+        Raises
+        ------
+        :py:exc:`.NotationError`
+            If the interpretation of the model`s notation is not set.
+
+        See Also
+        --------
+        set_interpretation : to change the interpretation of the model`s notation
+            without the modification of the parameters.
+        """
+
+        if self._double_counting is None:
+            raise NotationError("double_counting", "double counting")
+        return self._double_counting
+
+    @double_counting.setter
+    def double_counting(self, new_value: bool):
+        if self._double_counting is not None:
+            factor = 1
+            if self._double_counting and not new_value:
+                factor = 2
+            elif not self._double_counting and new_value:
+                factor = 0.5
+            if factor != 1:
+                # TODO Think about bond`s filtering/addition
+                for atom1, atom2, R in self:
+                    bond = self.bonds[(atom1, atom2, R)]
+                    self.bonds[(atom1, atom2, R)] = factor * bond
+        self._double_counting = bool(new_value)
+
+    @property
+    def spin_normalized(self) -> bool:
+        r"""
+        Whether spin is normalized.
+
+        Access this attribute to check the current notation of the model,
+        set this attribute to change the notation of the model.
+
+        Raises
+        ------
+        :py:exc:`.NotationError`
+            If the interpretation of the model`s notation is not set.
+
+        See Also
+        --------
+        set_interpretation : to change the interpretation of the model`s notation
+            without the modification of the parameters.
+        """
+
+        if self._spin_normalized is None:
+            raise NotationError("spin_normalized", "spin normalized")
+        return self._spin_normalized
+
+    @spin_normalized.setter
+    def spin_normalized(self, new_value: bool):
+        if self._spin_normalized is not None:
+            if self._spin_normalized ^ new_value:
+                for atom1, atom2, R in self:
+                    bond = self.bonds[(atom1, atom2, R)]
+                    if self._spin_normalized and not new_value:
+                        self.bonds[(atom1, atom2, R)] = bond / atom1.spin / atom2.spin
+                    elif not self._spin_normalized and new_value:
+                        self.bonds[(atom1, atom2, R)] = bond * atom1.spin * atom2.spin
+        self._spin_normalized = bool(new_value)
+
+    @property
+    def factor_one_half(self) -> bool:
+        r"""
+        Whether factor 1/2 is present in the model.
+
+        Access this attribute to check the current notation of the model,
+        set this attribute to change the notation of the model.
+
+        Raises
+        ------
+        :py:exc:`.NotationError`
+            If the interpretation of the model`s notation is not set.
+
+        See Also
+        --------
+        set_interpretation : to change the interpretation of the model`s notation
+            without the modification of the parameters.
+        """
+
+        if self._factor_one_half is None:
+            raise NotationError("factor_one_half", "factor 1/2")
+        return self._factor_one_half
+
+    @factor_one_half.setter
+    def factor_one_half(self, new_value: bool):
+        if self._factor_one_half is not None:
+            factor = 1
+            if self._factor_one_half and not new_value:
+                factor = 0.5
+            elif not self._factor_one_half and new_value:
+                factor = 2
+            if factor != 1:
+                for atom1, atom2, R in self:
+                    bond = self.bonds[(atom1, atom2, R)]
+                    self.bonds[(atom1, atom2, R)] = factor * bond
+        self._factor_one_half = bool(new_value)
+        if self._factor_one_half and self.factor_two:
+            self._factor_one_half = False
+            self._factor_two = False
+
+    @property
+    def factor_two(self) -> bool:
+        r"""
+        Whether factor 2 is present in the model.
+
+        Access this attribute to check the current notation of the model,
+        set this attribute to change the notation of the model.
+
+        Raises
+        ------
+        :py:exc:`.NotationError`
+            If the interpretation of the model`s notation is not set.
+
+        See Also
+        --------
+        set_interpretation : to change the interpretation of the model`s notation
+            without the modification of the parameters.
+        """
+
+        if self._factor_two is None:
+            raise NotationError("factor_two", "factor 2")
+        return self._factor_two
+
+    @factor_two.setter
+    def factor_two(self, new_value: bool):
+        if self._factor_two is not None:
+            factor = 1
+            if self._factor_two and not new_value:
+                factor = 2
+            elif not self._factor_two and new_value:
+                factor = 0.5
+            if factor != 1:
+                for atom1, atom2, R in self:
+                    bond = self.bonds[(atom1, atom2, R)]
+                    self.bonds[(atom1, atom2, R)] = factor * bond
+        self._factor_two = bool(new_value)
+        if self._factor_one_half and self.factor_two:
+            self._factor_one_half = False
+            self._factor_two = False
+
+    @property
+    def minus_sign(self) -> bool:
+        r"""
+        Whether the minus sign is present in the model.
+
+        Access this attribute to check the current notation of the model,
+        set this attribute to change the notation of the model.
+
+        Raises
+        ------
+        :py:exc:`.NotationError`
+            If the interpretation of the model`s notation is not set.
+
+        See Also
+        --------
+        set_interpretation : to change the interpretation of the model`s notation
+            without the modification of the parameters.
+        """
+
+        if self._minus_sign is None:
+            raise NotationError("minus_sign", "minus sign")
+        return self._minus_sign
+
+    @minus_sign.setter
+    def minus_sign(self, new_value: bool):
+        if self._minus_sign is not None:
+            factor = 1
+            if self._minus_sign ^ new_value:
+                factor = -1
+
+            if factor != 1:
+                for atom1, atom2, R in self:
+                    bond = self.bonds[(atom1, atom2, R)]
+                    self.bonds[(atom1, atom2, R)] = factor * bond
+        self._minus_sign = bool(new_value)
 
     def __iter__(self):
         return ExchangeModelIterator(self)
@@ -96,105 +485,6 @@ class ExchangeModel:
                 "New crystal is not a Crystal. " + f"Received {type(new_crystal)}."
             )
         self._crystal = new_crystal
-
-    @property
-    def notation(self):
-        r"""
-        Return a string with a simple comment about the Hamiltonian notation.
-        """
-        result = "H = "
-        if self._positive_ferromagnetic:
-            result += "-"
-        if self._factor_one_half:
-            result += "1/2 "
-        if self._factor_two:
-            result += "2 "
-        result += "sum("
-        if self._double_counting:
-            result += "i,j)"
-        else:
-            result += "i>=j)"
-        result += "S_i J_ij S_j\n"
-        if self._double_counting:
-            result += "Double counting is present"
-        else:
-            result += "No double counting"
-        if self._spin_normalized:
-            result += "Spin vectors are normalized to 1."
-        return result
-
-    def set_notation(
-        self,
-        double_counting=True,
-        spin_normalized=False,
-        factor_one_half=False,
-        factor_two=False,
-        positive_ferromagnetic=True,
-    ):
-        r"""
-        Set the notation of the model.
-
-        It is not changing the J values,
-        but rather telling how to interpret the J values of the model.
-
-        To **change** the notation of the model use :py:meth:`.change_notation`.
-        """
-
-    def change_notation(
-        self,
-        double_counting=True,
-        spin_normalized=False,
-        factor_one_half=False,
-        factor_two=False,
-        positive_ferromagnetic=True,
-    ):
-        r"""
-        Change the notation of the Hamiltonian.
-
-        This method changes J values with respect to the ``new_notation``
-        and the notation of the model (use :py:attr:`.notation` to check it).
-        In order to tell how to interpret J values (i.e. to set notation)
-        use :py:meth:`.set_notation`.
-
-        Parameters
-        ----------
-        double_counting : boll, default True
-        spin_normalized : bool, default False
-            Pay attention to the values of atom's spins.
-        factor_one_half : bool, default False
-        factor_two : bool, default False
-        positive_ferromagnetic : bool, True
-        """
-
-        multiplier = 1
-
-        if self._double_counting and not double_counting:
-            multiplier *= 2
-        elif not self._double_counting and double_counting:
-            multiplier *= 0.5
-
-        if self._factor_one_half and not factor_one_half:
-            multiplier *= 0.5
-        elif not self._factor_one_half and factor_one_half:
-            multiplier *= 2
-
-        if self._factor_two and not factor_two:
-            multiplier *= 2
-        elif not self._factor_two and factor_two:
-            multiplier *= 0.5
-
-        if self._positive_ferromagnetic ^ positive_ferromagnetic:
-            multiplier *= -1
-
-        for atom1, atom2, R in self:
-            bond = self.bonds[(atom1, atom2, R)]
-            if self._spin_normalized and not spin_normalized:
-                factor = multiplier / atom1.spin / atom2.spin
-            elif not self._spin_normalized and spin_normalized:
-                factor = multiplier * atom1.spin * atom2.spin
-            else:
-                factor = multiplier
-            self.bonds[(atom1, atom2, R)] = factor * bond
 
     @property
     def cell_list(self):

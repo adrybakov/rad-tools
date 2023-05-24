@@ -57,7 +57,7 @@ def read_tb2j_model(filename, quiet=False) -> ExchangeModel:
     dmi_flag = "DMI:"
 
     file = open(filename, "r")
-    model = ExchangeModel()
+    model = ExchangeModel(notation="TB2J")
     line = True
 
     # Read everything before exchange

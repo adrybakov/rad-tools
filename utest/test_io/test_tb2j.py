@@ -284,3 +284,10 @@ class TestReadExchangeModel:
             R_vector=R_vector, max_distance=max_distance
         )
         assert len(filtered_model.bonds) == elements_number
+
+    def test_notation(self):
+        assert self.model.double_counting == True
+        assert self.model.spin_normalized == True
+        assert self.model.factor_one_half == False
+        assert self.model.factor_two == False
+        assert self.model.minus_sign == True
