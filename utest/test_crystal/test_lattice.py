@@ -2,8 +2,10 @@ from math import pi, sqrt
 
 import numpy as np
 import pytest
-
-from rad_tools.crystal.lattice import Lattice
+import numpy as np
+from math import acos, sqrt
+from rad_tools.crystal.lattice import *
+from rad_tools.routines import _todegrees
 
 
 class TestLattice:
@@ -48,3 +50,16 @@ class TestLattice:
 
     def test_variation(self):
         assert self.l.variation == "Lattice"
+
+
+def test_get_niggli():
+    a = 3
+    b = sqrt(27)
+    c = 2
+    alpha = acos(-5 / 2 / sqrt(27) / 2) * _todegrees
+    beta = acos(-4 / 2 / 3 / 2) * _todegrees
+    gamma = acos(-22 / 2 / 3 / sqrt(27)) * _todegrees
+    assert (
+        np.array([[4, 9, 9], [9 / 2, 3 / 2, 2]])
+        == get_niggli(a, b, c, alpha, beta, gamma)
+    ).all()

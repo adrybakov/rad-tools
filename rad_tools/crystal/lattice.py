@@ -2,21 +2,23 @@ r"""
 General 3D lattice.
 """
 
-from math import pi
+from math import acos, cos, floor, log10, pi, sqrt
 from typing import Iterable
 
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import rcParams
 from matplotlib.patches import FancyArrowPatch
-
-# Better 3D arrows, see: https://stackoverflow.com/questions/22867620/putting-arrowheads-on-vectors-in-a-3d-plot
 from mpl_toolkits.mplot3d import Axes3D, proj3d
 from scipy.spatial import Voronoi
+from termcolor import cprint
 
-from rad_tools.routines import angle, volume
+from rad_tools.routines import _todegrees, _toradians, angle, volume
+
+__all__ = ["Lattice", "get_niggli"]
 
 
+# Better 3D arrows, see: https://stackoverflow.com/questions/22867620/putting-arrowheads-on-vectors-in-a-3d-plot
 class Arrow3D(FancyArrowPatch):
     def __init__(self, ax, xs, ys, zs, *args, **kwargs):
         FancyArrowPatch.__init__(self, (0, 0), (0, 0), *args, **kwargs)
@@ -1121,3 +1123,238 @@ class Lattice:
 
         self.plot_brillouin(colour=zone_colour, **kwargs)
         self.plot_kpath(colour=path_colour, **kwargs)
+
+
+def get_niggli(a=1, b=1, c=1, alpha=90, beta=90, gamma=90, eps_rel=1e-5, verbose=False):
+    r"""
+    Computes Niggli matrix form.
+
+    Parameters
+    ----------
+    a : float, default=1
+        Length of the :math:`a_1` vector.
+    b : float, default=1
+        Length of the :math:`a_2` vector.
+    c : float, default=1
+        Length of the :math:`a_3` vector.
+    alpha : float, default=90
+        Angle between vectors :math:`a_2` and :math:`a_3`. In degrees.
+    beta : float, default=90
+        Angle between vectors :math:`a_1` and :math:`a_3`. In degrees.
+    gamma : float, default=90
+        Angle between vectors :math:`a_1` and :math:`a_2`. In degrees.
+    eps_rel : float, default 1e-5
+        Relative epsilon as defined in [2]_.
+    verbose : bool, default=False
+        Whether to print the steps of an algoritm.
+
+    Returns
+    -------
+    result : (3,2) :numpy:`ndarray`
+        Niggli matrix form as defined in [1]_:
+
+        .. math::
+
+            \begin{pmatrix}
+                A & B & C \\
+                \xi & \eta & \zeta
+            \end{pmatrix}
+
+
+    References
+    ----------
+    .. [1] Křivý, I. and Gruber, B., 1976.
+        A unified algorithm for determining the reduced (Niggli) cell.
+        Acta Crystallographica Section A: Crystal Physics, Diffraction,
+        Theoretical and General Crystallography,
+        32(2), pp.297-298.
+    .. [2] Grosse-Kunstleve, R.W., Sauter, N.K. and Adams, P.D., 2004.
+        Numerically stable algorithms for the computation of reduced unit cells.
+        Acta Crystallographica Section A: Foundations of Crystallography,
+        60(1), pp.1-6.
+
+    Examples
+    --------
+    Example from [1]_
+    (parameters are reproducing :math:`A=9`, :math:`B=27`, :math:`C=4`, 
+    :math:`\xi` = -5, :math:`\eta` = -4, :math:`\zeta = -22`):
+
+    .. doctest::
+
+        >>> import rad_tools as rad
+        >>> from rad_tools.routines import _todegrees
+        >>> from math import acos, sqrt
+        >>> a = 3
+        >>> b = sqrt(27)
+        >>> c = 2
+        >>> print(f"{a} {b:.3f} {c}")
+        3 5.196 2
+        >>> alpha = acos(-5 / 2 / sqrt(27) / 2) * _todegrees
+        >>> beta = acos(-4 / 2 / 3 / 2) * _todegrees
+        >>> gamma = acos(-22 / 2 / 3 / sqrt(27)) * _todegrees
+        >>> print(f"{alpha:.2f} {beta:.2f} {gamma:.2f}")
+        103.92 109.47 134.88
+        >>> niggli_matrix_form = rad.get_niggli(a, b, c, alpha, beta, gamma, verbose=True)
+                       A         B         C        xi        eta      zeta   
+        start:       9.00000  27.00000   4.00000  -5.00000  -4.00000 -22.00000
+        2 appl. to   9.00000  27.00000   4.00000  -5.00000  -4.00000 -22.00000
+        1 appl. to   9.00000   4.00000  27.00000  -5.00000 -22.00000  -4.00000
+        4 appl. to   4.00000   9.00000  27.00000 -22.00000  -5.00000  -4.00000
+        5 appl. to   4.00000   9.00000  27.00000 -22.00000  -5.00000  -4.00000
+        4 appl. to   4.00000   9.00000  14.00000  -4.00000  -9.00000  -4.00000
+        6 appl. to   4.00000   9.00000  14.00000  -4.00000  -9.00000  -4.00000
+        4 appl. to   4.00000   9.00000   9.00000  -8.00000  -1.00000  -4.00000
+        7 appl. to   4.00000   9.00000   9.00000  -8.00000  -1.00000  -4.00000
+        3 appl. to   4.00000   9.00000   9.00000  -9.00000  -1.00000   4.00000
+        5 appl. to   4.00000   9.00000   9.00000   9.00000   1.00000   4.00000
+        3 appl. to   4.00000   9.00000   9.00000  -9.00000  -3.00000   4.00000
+        result:      4.00000   9.00000   9.00000   9.00000   3.00000   4.00000
+        >>> niggli_matrix_form
+        array([[4. , 9. , 9. ],
+               [4.5, 1.5, 2. ]])
+
+    """
+
+    eps = eps_rel * volume(a, b, c, alpha, beta, gamma) ** (1 / 3.0)
+    n = abs(floor(log10(abs(eps))))
+
+    # 0
+    A = a**2
+    B = b**2
+    C = c**2
+    xi = 2 * b * c * cos(alpha * _toradians)
+    eta = 2 * a * c * cos(beta * _toradians)
+    zeta = 2 * a * b * cos(gamma * _toradians)
+    N = (
+        max(
+            len(str(A).split(".")[0]),
+            len(str(B).split(".")[0]),
+            len(str(C).split(".")[0]),
+            len(str(xi).split(".")[0]),
+            len(str(eta).split(".")[0]),
+            len(str(zeta).split(".")[0]),
+        )
+        + 1
+        + n
+    )
+
+    def compare(x, condition, y):
+        if condition == "<":
+            return x < y - eps
+        if condition == ">":
+            return y < x - eps
+        if condition == "<=":
+            return not y < x - eps
+        if condition == ">=":
+            return not x < y - eps
+        if condition == "==":
+            return not (x < y - eps or y < x - eps)
+
+    def summary_line():
+        return (
+            f"{A:{N}.{n}f} {B:{N}.{n}f} {C:{N}.{n}f} "
+            + f"{xi:{N}.{n}f} {eta:{N}.{n}f} {zeta:{N}.{n}f}"
+        )
+
+    if verbose:
+        print(
+            f"           {'A':^{N}} {'B':^{N}} {'C':^{N}} "
+            + f"{'xi':^{N}} {'eta':^{N}} {'zeta':^{N}}"
+        )
+        cprint(
+            f"start:     {summary_line()}",
+            color="yellow",
+        )
+        phrase = "appl. to"
+    while True:
+        # 1
+        if compare(A, ">", B) or (
+            compare(A, "==", B) and compare(abs(xi), ">", abs(eta))
+        ):
+            if verbose:
+                print(f"1 {phrase} {summary_line()}")
+            A, xi, B, eta = B, eta, A, xi
+        # 2
+        if compare(B, ">", C) or (
+            compare(B, "==", C) and compare(abs(eta), ">", abs(zeta))
+        ):
+            if verbose:
+                print(f"2 {phrase} {summary_line()}")
+            B, eta, C, zeta = C, zeta, B, eta
+            continue
+        # 3
+        if compare(xi * eta * zeta, ">", 0):
+            if verbose:
+                print(f"3 {phrase} {summary_line()}")
+            xi, eta, zeta = abs(xi), abs(eta), abs(zeta)
+        # 4
+        if compare(xi * eta * zeta, "<=", 0):
+            if verbose:
+                print(f"4 {phrase} {summary_line()}")
+            xi, eta, zeta = -abs(xi), -abs(eta), -abs(zeta)
+        # 5
+        if (
+            compare(abs(xi), ">", B)
+            or (compare(xi, "==", B) and compare(2 * eta, "<", zeta))
+            or (compare(xi, "==", -B) and compare(zeta, "<", 0))
+        ):
+            if verbose:
+                print(f"5 {phrase} {summary_line()}")
+            C = B + C - xi * np.sign(xi)
+            eta = eta - zeta * np.sign(xi)
+            xi = xi - 2 * B * np.sign(xi)
+            continue
+        # 6
+        if (
+            compare(abs(eta), ">", A)
+            or (compare(eta, "==", A) and compare(2 * xi, "<", zeta))
+            or (compare(eta, "==", -A) and compare(zeta, "<", 0))
+        ):
+            if verbose:
+                print(f"6 {phrase} {summary_line()}")
+            C = A + C - eta * np.sign(eta)
+            xi = xi - zeta * np.sign(eta)
+            eta = eta - 2 * A * np.sign(eta)
+            continue
+        # 7
+        if (
+            compare(abs(zeta), ">", A)
+            or (compare(zeta, "==", A) and compare(2 * xi, "<", eta))
+            or (compare(zeta, "==", -A) and compare(eta, "<", 0))
+        ):
+            if verbose:
+                print(f"7 {phrase} {summary_line()}")
+            B = A + B - zeta * np.sign(zeta)
+            xi = xi - eta * np.sign(zeta)
+            zeta = zeta - 2 * A * np.sign(zeta)
+            continue
+        # 8
+        if compare(xi + eta + zeta + A + B, "<", 0) or (
+            compare(xi + eta + zeta + A + B, "==", 0)
+            and compare(2 * (A + eta) + zeta, ">", 0)
+        ):
+            if verbose:
+                print(f"8 {phrase} {summary_line()}")
+            C = A + B + C + xi + eta + zeta
+            xi = 2 * B + xi + zeta
+            eta = 2 * A + eta + zeta
+            continue
+        break
+    if verbose:
+        cprint(
+            f"result:    {summary_line()}",
+            color="green",
+        )
+    return np.around(np.array([[A, B, C], [xi / 2, eta / 2, zeta / 2]]), decimals=n)
+
+
+if __name__ == "__main__":
+    get_niggli(
+        3,
+        sqrt(27),
+        2,
+        acos(-5 / 2 / sqrt(27) / 2) * _todegrees,
+        acos(-4 / 2 / 3 / 2) * _todegrees,
+        acos(-22 / 2 / 3 / sqrt(27)) * _todegrees,
+        verbose=True,
+    )

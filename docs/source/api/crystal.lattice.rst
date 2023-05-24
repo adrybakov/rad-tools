@@ -10,12 +10,20 @@ General 3D lattice
 ==================
 .. currentmodule:: rad_tools
 
-General lattice is describe by the class :py:class:`.Lattice`.
+General lattice is describe by the class :py:class:`.Lattice`. 
 
 .. autosummary::
     :toctree: generated/
 
     Lattice
+
+Functions
+=========
+
+.. autosummary::
+    :toctree: generated/
+
+    get_niggli
 
 
 Bravais lattices
