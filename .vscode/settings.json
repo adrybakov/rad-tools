@@ -24,6 +24,7 @@
         "magmom",
         "matplotlib",
         "ndarray",
+        "niggli",
         "projwfc",
         "termcolor",
         "voronoi"
