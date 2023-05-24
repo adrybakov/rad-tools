@@ -39,11 +39,11 @@ Installation
 Requirement for RAD-tools installation are:
 
 * Python itself (>=3.6)
-* |NumPy|_
-* |SciPy|_
-* |matplotlib|_
-* |tqdm|_
-* |termcolor|_
+* NumPy
+* SciPy
+* matplotlib
+* tqdm
+* termcolor
 
 RAD-tools can be installed with ``pip`` or from source.
 
