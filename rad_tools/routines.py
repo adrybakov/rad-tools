@@ -4,14 +4,12 @@ which may be used across the whole package.
 """
 
 import sys
-from math import asin, pi, sqrt
+from math import asin, cos, pi, sqrt
 
 import numpy as np
 from termcolor import cprint
 
-__all__ = [
-    "print_2D_array",
-]
+__all__ = ["print_2D_array", "volume", "angle", "absolute_to_relative"]
 
 RED = "#FF4D67"
 GREEN = "#58EC2E"
@@ -144,11 +142,29 @@ def absolute_to_relative(cell, absolute):
 
 def volume(*args):
     r"""
-    Return volume, defined by three vectors.
+    Computes volume.
 
-    .. math::
+    Three type of arguments are expected:
 
-            V = \vec{v}_1\cdot(\vec{v}_2\times\vec{v}_3)
+    * One argument.
+        ``cell`` - matrix, which contains three vectors.
+        Volume is computed as:
+
+        .. math::
+            V = v_1 \cdot (v_2 \times \v_3)
+    * Three argument.
+        ``v1``, ``v2``, ``v3`` - three vectors, firming a volume in space.
+        Volume is computed as:
+
+        .. math::
+            V = v_1 \cdot (v_2 \times \v_3)
+    * Six arguments.
+        ``a``, ``b``, ``c``, ``alpha``, ``beta``,``gamma`` - vector`s lengths and angles.
+        Volume is computed as:
+
+        .. math::
+            V = abc\sqrt(1+2\cos(\alpha)\cos(\beta)\cos(\gamma)
+            -\cos^2(\alpha) - \cos^2(\beta) - \cos^2(\gamma))
 
     Parameters
     ----------
@@ -159,20 +175,50 @@ def volume(*args):
     v3 : (3,) |array_like|_
         Third vector.
     cell : (3,3) |array_like|_
-        Cell. Rows are vectors.
+        Cell matrix, rows are interpreted as vectors.
+    a : float, default=1
+        Length of the :math:`v_1` vector.
+    b : float, default=1
+        Length of the :math:`v_2` vector.
+    c : float, default=1
+        Length of the :math:`v_3` vector.
+    alpha : float, default=90
+        Angle between vectors :math:`v_2` and :math:`v_3`. In degrees.
+    beta : float, default=90
+        Angle between vectors :math:`v_1` and :math:`v_3`. In degrees.
+    gamma : float, default=90
+        Angle between vectors :math:`v_1` and :math:`v_2`. In degrees.
+
+    Returns
+    -------
+    volume: float
+        Volume of corresponding region in space.
     """
     if len(args) == 1:
-        v1 = np.array(args[0][0])
-        v2 = np.array(args[0][1])
-        v3 = np.array(args[0][2])
+        v1, v2, v3 = np.array(args[0])
     elif len(args) == 3:
-        v1 = np.array(args[0])
-        v2 = np.array(args[1])
-        v3 = np.array(args[2])
+        v1, v2, v3 = np.array(args)
+    elif len(args) == 6:
+        a, b, c, alpha, beta, gamma = args
+        alpha = alpha * _toradians
+        beta = beta * _toradians
+        gamma = gamma * _toradians
+        return (
+            a
+            * b
+            * c
+            * sqrt(
+                1
+                + 2 * cos(alpha) * cos(beta) * cos(gamma)
+                - cos(alpha) ** 2
+                - cos(beta) ** 2
+                - cos(gamma) ** 2
+            )
+        )
     else:
         raise ValueError(
             "Unable to identify input. "
-            + "Supported: one (3,3) array_like, or three (3,) array_like."
+            + "Supported: one (3,3) array_like, or three (3,) array_like, or 6 floats."
         )
 
     return v1 @ np.cross(v2, v3)
@@ -194,7 +240,7 @@ def print_2D_array(array, fmt="5.2f", posneg=False):
     Parameters
     ----------
     array : (N,) or (N, M) |array_like|_
-        Array to be printed. Passed to ``np.array()`` before any action on it.
+        Array to be printed. Passed to :numpy:`array`() before any action on it.
     fmt : str
         Format string.
     posneg : bool, default False
@@ -359,6 +405,11 @@ def angle(v1, v2, radians=False):
         Second vector.
     radians : bool, default False
         Whether to return value in radians. Return value in degrees by default.
+
+    Returns
+    -------
+    angle: float
+        Angle in degrees or radians (see ``radians``).
     """
 
     v1 = np.array(v1) / np.linalg.norm(v1)

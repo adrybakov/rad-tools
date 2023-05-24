@@ -2,12 +2,8 @@ from math import sqrt
 
 import pytest
 
-from rad_tools.routines import (
-    absolute_to_relative,
-    atom_mark_to_latex,
-    rot_angle,
-    angle,
-)
+from rad_tools.routines import (absolute_to_relative, angle,
+                                atom_mark_to_latex, rot_angle)
 
 
 @pytest.mark.parametrize(
