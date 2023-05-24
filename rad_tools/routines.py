@@ -119,7 +119,7 @@ def absolute_to_relative(cell, absolute):
     Returns
     -------
     relative : 1 x 3 array
-        Relative coordinate.
+        Relative coordinates.
     """
 
     a = np.array(cell[0], dtype=float)
@@ -147,24 +147,23 @@ def volume(*args):
     Three type of arguments are expected:
 
     * One argument.
-        ``cell`` - matrix, which contains three vectors.
+        Matrix ``cell``.
         Volume is computed as:
 
         .. math::
-            V = v_1 \cdot (v_2 \times \v_3)
-    * Three argument.
-        ``v1``, ``v2``, ``v3`` - three vectors, firming a volume in space.
+            V = v_1 \cdot (v_2 \times v_3)
+    * Three arguments.
+        Vectors ``v1``, ``v2``, ``v3``.
         Volume is computed as:
 
         .. math::
-            V = v_1 \cdot (v_2 \times \v_3)
+            V = v_1 \cdot (v_2 \times v_3)
     * Six arguments.
-        ``a``, ``b``, ``c``, ``alpha``, ``beta``,``gamma`` - vector`s lengths and angles.
+        Parameters ``a``, ``b``, ``c``, ``alpha``, ``beta``, ``gamma``.
         Volume is computed as:
 
         .. math::
-            V = abc\sqrt(1+2\cos(\alpha)\cos(\beta)\cos(\gamma)
-            -\cos^2(\alpha) - \cos^2(\beta) - \cos^2(\gamma))
+            V = abc\sqrt(1+2\cos(\alpha)\cos(\beta)\cos(\gamma)-\cos^2(\alpha)-\cos^2(\beta)-\cos^2(\gamma))
 
     Parameters
     ----------
@@ -240,7 +239,7 @@ def print_2D_array(array, fmt="5.2f", posneg=False):
     Parameters
     ----------
     array : (N,) or (N, M) |array_like|_
-        Array to be printed. Passed to :numpy:`array`() before any action on it.
+        Array to be printed. Passed to :numpy:`array`\ () before any action on it.
     fmt : str
         Format string.
     posneg : bool, default False

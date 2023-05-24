@@ -1131,22 +1131,22 @@ def get_niggli(a=1, b=1, c=1, alpha=90, beta=90, gamma=90, eps_rel=1e-5, verbose
 
     Parameters
     ----------
-    a : float, default=1
+    a : float, default 1
         Length of the :math:`a_1` vector.
-    b : float, default=1
+    b : float, default 1
         Length of the :math:`a_2` vector.
-    c : float, default=1
+    c : float, default 1
         Length of the :math:`a_3` vector.
-    alpha : float, default=90
+    alpha : float, default 90
         Angle between vectors :math:`a_2` and :math:`a_3`. In degrees.
-    beta : float, default=90
+    beta : float, default 90
         Angle between vectors :math:`a_1` and :math:`a_3`. In degrees.
-    gamma : float, default=90
+    gamma : float, default 90
         Angle between vectors :math:`a_1` and :math:`a_2`. In degrees.
     eps_rel : float, default 1e-5
         Relative epsilon as defined in [2]_.
-    verbose : bool, default=False
-        Whether to print the steps of an algoritm.
+    verbose : bool, default False
+        Whether to print the steps of an algorithm.
 
     Returns
     -------
@@ -1157,7 +1157,7 @@ def get_niggli(a=1, b=1, c=1, alpha=90, beta=90, gamma=90, eps_rel=1e-5, verbose
 
             \begin{pmatrix}
                 A & B & C \\
-                \xi & \eta & \zeta
+                \xi/2 & \eta/2 & \zeta/2
             \end{pmatrix}
 
 
@@ -1189,9 +1189,9 @@ def get_niggli(a=1, b=1, c=1, alpha=90, beta=90, gamma=90, eps_rel=1e-5, verbose
         >>> c = 2
         >>> print(f"{a} {b:.3f} {c}")
         3 5.196 2
-        >>> alpha = acos(-5 / 2 / sqrt(27) / 2) * _todegrees
-        >>> beta = acos(-4 / 2 / 3 / 2) * _todegrees
-        >>> gamma = acos(-22 / 2 / 3 / sqrt(27)) * _todegrees
+        >>> alpha = acos(-5 / 2 / b / c) * _todegrees
+        >>> beta = acos(-4 / 2 / a / c) * _todegrees
+        >>> gamma = acos(-22 / 2 / a / b) * _todegrees
         >>> print(f"{alpha:.2f} {beta:.2f} {gamma:.2f}")
         103.92 109.47 134.88
         >>> niggli_matrix_form = rad.get_niggli(a, b, c, alpha, beta, gamma, verbose=True)
