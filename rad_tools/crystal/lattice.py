@@ -688,7 +688,7 @@ class Lattice:
             Whether to plot lattice vectors.
         colour : str, default "#274DD1"
             Colour for the plot. Any format supported by matplotlib. See |matplotlibColor|_.
-        label : str, default None
+        label : str, optional
             Label for the plot.
         vector_pad : float, default 1.1
             Multiplier for the position of the vectors labels. 1 = position of the vector.
@@ -872,7 +872,7 @@ class Lattice:
             Whether to plot lattice vectors.
         colour : str, default "black" or "#FF4D67"
             Colour for the plot. Any format supported by matplotlib. See |matplotlibColor|_.
-        label : str, default None
+        label : str, optional
             Label for the plot.
         vector_pad : float, default 1.1
             Multiplier for the position of the vectors labels. 1 = position of the vector.
@@ -1031,7 +1031,7 @@ class Lattice:
             Axes for the plot. 3D.
         colour : str, default "black"
             Colour for the plot. Any format supported by matplotlib. See |matplotlibColor|_.
-        label : str, default None
+        label : str, optional
             Label for the plot.
         normalize : bool, default False
             Whether to normalize corresponding vectors to have the volume equal to one.

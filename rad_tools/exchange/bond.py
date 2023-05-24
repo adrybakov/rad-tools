@@ -18,13 +18,13 @@ class Bond:
 
     Parameters
     ----------
-    iso : int or float, default None
+    iso : int or float, optional
         Value of isotropic exchange parameter.
-    aniso : (3, 3) |array_like|_, default None
+    aniso : (3, 3) |array_like|_, optional
         3 x 3 matrix of symmetric anisotropic exchange.
-    dmi : (3,) |array_like|_, default None
+    dmi : (3,) |array_like|_, optional
         Dzyaroshinsky-Moria interaction vector :math:`(D_x, D_y, D_z)`.
-    matrix : (3, 3) |array_like|_, default None
+    matrix : (3, 3) |array_like|_, optional
         Exchange matrix.
 
     Attributes

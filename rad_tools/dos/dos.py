@@ -21,7 +21,7 @@ class DOSQE:
         Seedname for the |QE|_ output files.
     input_folder : str
         Path to the folder with |QE|_ output files.
-    energy_window : tuple, default None
+    energy_window : tuple, optional
         Energy limits, necessary for correct plotting.
 
     Attributes
@@ -420,7 +420,7 @@ class DOSQE:
         ----------
         atom : str
             Label of an atom.
-        atom_number : int, default None
+        atom_number : int, optional
             Number of an atom. If ``None`` then return wfc and wfc numbers of first atom.
 
         Returns
@@ -451,7 +451,7 @@ class DOSQE:
             Name of the projector wave function.
         wfc_numbers : int
             Number of wave function projector.
-        atom_numbers : list or int, default None
+        atom_numbers : list or int, optional
             If ``None``, then PDOS summed over all atom numbers for ``atom``.
 
         Returns
@@ -532,9 +532,9 @@ class DOSQE:
             Whether to plot in interactive |matplotlib|_ window.
         efermi : float, default 0
             Fermi energy. Zero of energy scale is shifted to it.
-        xlim : tuple, default None
+        xlim : tuple, optional
             Limits for energy scale.
-        ylim : tuple, default None
+        ylim : tuple, optional
             Limits for dos scale.
         save_pickle : bool, default False
             Whether to save figure as a .pickle file.

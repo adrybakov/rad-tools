@@ -45,7 +45,7 @@ class PDOS:
         the projectors are assigned automatically,
         otherwise it is necessary to provide :math:`n` projectors manually.
         The names of projectors are directly used in the plots.
-    ldos : |array_like|_, default None
+    ldos : |array_like|_, optional
         Local density of states. Sum of partial density of states over all projectors.
         Computed based on ``pdos`` if not provided.
         Shape is assumed to be:
@@ -532,7 +532,7 @@ def plot_projected(
         Fermi energy.
     output_name : str, default "pdos"
         output_name for the plot file. Extension ".png" is added at the end.
-    title : str, default None
+    title : str, optional
         Title of the plot. Passed to the ``ax.set_title()``.
     xlim : tuple
         limits for the x (Energy) axis

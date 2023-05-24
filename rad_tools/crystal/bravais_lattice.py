@@ -1594,7 +1594,7 @@ def lattice_example(
 
     Parameters
     ----------
-    lattice : str, default None
+    lattice : str, optional
         Name of the lattice to be returned.
         For available names see documentation of each Bravais lattice class.
         Lowercased before usage.
