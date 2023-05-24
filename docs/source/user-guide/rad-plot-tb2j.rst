@@ -20,7 +20,9 @@ distances (see :ref:`--max-distance <rad-plot-tb2j_max-distance>`,
 and template file (see :ref:`--template-file <rad-plot-tb2j_template-file>`). 
 The result is defined by logical conjugate of the specified conditions.
 
-``--input-filename`` (or ``-if``) argument is required, the rest of them are optional.
+:ref:`--input-filename <rad-plot-tb2j_input-filename>` 
+(or :ref:`-if <rad-plot-tb2j_input-filename>`) argument is required, 
+the rest of them are optional.
 
 
 Output files have the following name structure: 
