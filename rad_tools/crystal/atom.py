@@ -101,7 +101,7 @@ class Atom:
 
         .. code-block:: python
 
-            magmom = [S_x, S_y, S_z]
+            magmom = [m_x, m_y, m_z]
         """
 
         if self._magmom is None:
