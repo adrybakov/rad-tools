@@ -4,10 +4,12 @@ Installation
 
 Requirement for RAD-tools installation are:
 
-* |Python| itself (>=3.6)
-* |NumPy|
-* |matplotlib|
-* |tqdm|
+* |Python|_ itself (>=3.6)
+* |NumPy|_
+* |SciPy|_
+* |matplotlib|_
+* |tqdm|_
+* |termcolor|_
 
 Most likely you already have Python installed on your machine
 (if not check these links: |Python-installation|).
@@ -41,8 +43,9 @@ then you may need to use ``python3`` instead
 .. hint::
    Use ``exit()`` to close python console.
 
-The packages (NumPy, matplotlib, tqdm) are installed automatically 
-during the installation of RAD-tools, so you do not have to worry about them.
+The packages (|NumPy|_, |SciPy|_, |matplotlib|_, |tqdm|_, |termcolor|_) 
+are installed automatically during the installation of RAD-tools, 
+so you do not have to worry about them.
 
 .. _installation-pip:
 

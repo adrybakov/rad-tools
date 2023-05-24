@@ -30,7 +30,7 @@ It is expected to be used in two ways:
 
 * Via scripts (i.e. usage from command line)
 
-For the detailed descriprion check
+For the detailed description check
 `documentation. <https://rad-tools.adrybakov.com>`_
 
 Installation
@@ -39,9 +39,11 @@ Installation
 Requirement for RAD-tools installation are:
 
 * Python itself (>=3.6)
-* NumPy
-* matplotlib
-* tqdm
+* |NumPy|_
+* |SciPy|_
+* |matplotlib|_
+* |tqdm|_
+* |termcolor|_
 
 RAD-tools can be installed with ``pip`` or from source.
 

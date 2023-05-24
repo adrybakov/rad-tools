@@ -22,7 +22,10 @@
         "Bravais",
         "linalg",
         "magmom",
+        "matplotlib",
         "ndarray",
+        "projwfc",
+        "termcolor",
         "voronoi"
     ],
 }

@@ -2,6 +2,7 @@ numpydoc
 sphinx_copybutton
 pydata-sphinx-theme
 sphinx-design
+sphinx-gallery
 urllib3==1.26.15
 numpy
 scipy
