@@ -84,7 +84,7 @@ which requires pytest (requires Python 3.7+) to be installed:
 
    make test
 
-To install RAD-tools, run (you may need to use ``pip3``):
+To install pytest, run (you may need to use ``pip3``):
 
 .. code-block:: console
 
