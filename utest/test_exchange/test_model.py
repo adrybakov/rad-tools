@@ -463,35 +463,6 @@ class TestExchangeModel:
         )
         assert len(filtered_model.bonds) == 1
 
-    def test_remove(self):
-        model = ExchangeModel()
-        Cr1 = Atom("Cr1", (0.25, 0.25, 0))
-        Cr2 = Atom("Cr2", (0.75, 0.75, 0))
-        bonds = [
-            (12, Cr1, Cr2, (0, 0, 0)),
-            (12, Cr2, Cr1, (0, 0, 0)),
-            (12, Cr1, Cr1, (1, 0, 0)),
-            (12, Cr1, Cr1, (-1, 0, 0)),
-            (12, Cr2, Cr2, (1, 0, 0)),
-            (12, Cr2, Cr2, (-1, 0, 0)),
-            (12, Cr1, Cr1, (0, 2, 0)),
-            (12, Cr1, Cr1, (0, -2, 0)),
-            (12, Cr2, Cr2, (0, 2, 0)),
-            (12, Cr2, Cr2, (0, -2, 0)),
-            (12, Cr2, Cr1, (2, 2, 0)),
-            (12, Cr1, Cr2, (-2, -2, 0)),
-        ]
-        for iso, atom1, atom2, R in bonds:
-            model.add_bond(Bond(iso=iso), atom1, atom2, R)
-
-        assert len(model.bonds) == 12
-        model.remove(template=[("Cr1", "Cr2", (0, 0, 0)), ("Cr2", "Cr2", (-1, 0, 0))])
-        assert len(model.bonds) == 10
-        model.remove(template=[("Cr1", "Cr2", (-2, -2, 0)), ("Cr2", "Cr2", (0, 2, 0))])
-        assert len(model.bonds) == 8
-        model.remove(template=[("Cr1", "Cr2", (-20, -2, 0)), ("Cr2", "Cr2", (3, 2, 0))])
-        assert len(model.bonds) == 8
-
     def test_force_symmetry(self):
         template1 = ExchangeTemplate()
         template2 = ExchangeTemplate()

@@ -429,34 +429,6 @@ class ExchangeModel:
         for atom1, atom2, R in bonds_for_removal:
             self.remove_bond(atom1, atom2, R)
 
-    def remove(self, template):
-        r"""
-        Remove bonds from the exchange model, based on the template.
-
-
-        Parameters
-        ----------
-        template : list or :py:class:`.ExchangeTemplate`.
-            List of pairs, which will remain in the model. ::
-
-                [(atom1, atom2, R), ...]
-
-        Notes
-        -----
-        This method modifies the instance at which it is called.
-        """
-
-        if isinstance(template, ExchangeTemplate):
-            template = template.get_list()
-        template = set(template)
-
-        # Here literals, not objects are compared, because in general
-        # template only has information about literals and R.
-        for atom1, atom2, R in template:
-            self.remove_bond(
-                self.crystal.get_atom(atom1), self.crystal.get_atom(atom2), R
-            )
-
     def filtered(
         self, max_distance=None, min_distance=None, template=None, R_vector=None
     ):
