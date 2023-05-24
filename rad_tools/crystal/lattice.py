@@ -1007,9 +1007,6 @@ class Lattice:
         plot_real_space : for the list of parameters
         """
 
-        if "colour" not in kwargs:
-            kwargs["colour"] = "black"
-
         self.plot_real_space(conventional=True, **kwargs)
 
     def plot_primitive(self, **kwargs):
