@@ -13,3 +13,6 @@ Collection of routines
     :toctree: generated/
 
     print_2D_array
+    volume
+    angle
+    absolute_to_relative
