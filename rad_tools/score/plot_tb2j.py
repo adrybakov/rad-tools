@@ -95,11 +95,10 @@ def manager(
         ax.set_xlabel("x, Angstroms")
         ax.set_ylabel("y, Angstroms")
 
-        for atom1, atom2, R in model:
-            bond = model[(atom1, atom2, R)]
-            dis = model.get_distance(atom1, atom2, R)
-            x1, y1, z1 = model.get_atom_coordinates(atom1)
-            x2, y2, z2 = model.get_atom_coordinates(atom2, R)
+        for atom1, atom2, R, J in model:
+            dis = model.crystal.get_distance(atom1, atom2, R)
+            x1, y1, z1 = model.crystal.get_atom_coordinates(atom1)
+            x2, y2, z2 = model.crystal.get_atom_coordinates(atom2, R)
             xm = (x1 + x2) / 2
             ym = (y1 + y2) / 2
             zm = (z1 + z2) / 2
@@ -128,7 +127,7 @@ def manager(
                 ax.text(
                     xm,
                     ym,
-                    str(round(bond.iso, 4)),
+                    str(round(J.iso, 4)),
                     va="bottom",
                     ha=ha,
                     rotation_mode="anchor",
@@ -150,7 +149,7 @@ def manager(
                 ax.text(
                     xm,
                     ym,
-                    str(round(sqrt(np.sum(bond.dmi**2)), 4)),
+                    str(round(sqrt(np.sum(J.dmi**2)), 4)),
                     va="bottom",
                     ha=ha,
                     rotation_mode="anchor",

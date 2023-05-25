@@ -11,16 +11,19 @@ def test_atom():
     with pytest.raises(ValueError):
         a = atom.spin
     with pytest.raises(ValueError):
+        a = atom.spin_vector
+    with pytest.raises(ValueError):
         a = atom.magmom
     with pytest.raises(ValueError):
-        atom.spin = 23
+        atom.spin_vector = 23
     with pytest.raises(ValueError):
-        atom.spin = "adsfasdfs"
+        atom.spin_vector = "adsfasdfs"
     with pytest.raises(ValueError):
-        atom.spin = (4, 5)
+        atom.spin_vector = (4, 5)
     with pytest.raises(ValueError):
-        atom.spin = (4, 5, 4, 5)
-    atom.spin = (0, 0, 1 / 2)
-    assert (atom.spin == np.array([0, 0, 1 / 2])).all()
-    atom.spin = [0, 0, 1 / 2]
-    assert (atom.spin == np.array([0, 0, 1 / 2])).all()
+        atom.spin_vector = (4, 5, 4, 5)
+    atom.spin_vector = (0, 0, 1 / 2)
+    assert (atom.spin_vector - np.array([0, 0, 1]) < 1e-10).all()
+    atom.spin = 2
+    assert (atom.spin_vector - np.array([0, 0, 2]) < 1e-10).all()
+    assert atom.spin == 2

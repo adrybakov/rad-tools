@@ -5,7 +5,7 @@ import pytest
 
 from rad_tools.crystal.atom import Atom
 from rad_tools.exchange.parameter import ExchangeParameter
-from rad_tools.exchange.model import ExchangeModel
+from rad_tools.exchange.model import ExchangeModel, NotationError
 from rad_tools.exchange.template import ExchangeTemplate
 
 
@@ -18,24 +18,25 @@ class TestExchangeModel:
         model.add_atom(Cr2)
         bonds = [
             (12, Cr1, Cr2, (0, 0, 0)),
-            (12, Cr2, Cr1, (0, 0, 0)),
-            (12, Cr1, Cr1, (1, 0, 0)),
-            (12, Cr1, Cr1, (-1, 0, 0)),
-            (12, Cr2, Cr2, (1, 0, 0)),
-            (12, Cr2, Cr2, (-1, 0, 0)),
-            (12, Cr1, Cr1, (0, 2, 0)),
-            (12, Cr1, Cr1, (0, -2, 0)),
-            (12, Cr2, Cr2, (0, 2, 0)),
-            (12, Cr2, Cr2, (0, -2, 0)),
-            (12, Cr2, Cr1, (2, 2, 0)),
-            (12, Cr1, Cr2, (-2, -2, 0)),
+            (2, Cr2, Cr1, (0, 0, 0)),
+            (6, Cr1, Cr1, (1, 0, 0)),
+            (3.425, Cr1, Cr1, (-1, 0, 0)),
+            (5.3, Cr2, Cr2, (1, 0, 0)),
+            (7.34, Cr2, Cr2, (-1, 0, 0)),
+            (12.4, Cr1, Cr1, (0, 2, 0)),
+            (34, Cr1, Cr1, (0, -2, 0)),
+            (1.098, Cr2, Cr2, (0, 2, 0)),
+            (0.0054, Cr2, Cr2, (0, -2, 0)),
+            (0.35, Cr2, Cr1, (2, 2, 0)),
+            (-2.35, Cr1, Cr2, (-2, -2, 0)),
         ]
         for iso, atom1, atom2, R in bonds:
             model.add_bond(ExchangeParameter(iso=iso), atom1, atom2, R)
-        for atom1, atom2, R in model:
+        for i, (atom1, atom2, R, J) in enumerate(model):
             assert isinstance(atom1, Atom)
             assert isinstance(atom2, Atom)
             assert isinstance(R, tuple)
+            assert J == ExchangeParameter(iso=bonds[i][0])
 
     def test_contains(self):
         model = ExchangeModel()
@@ -563,6 +564,117 @@ class TestExchangeModel:
 
         assert (Cr2, Cr2, (11, 0, 0)) not in model
         assert (Cr2, Cr2, (-1, 0, 0)) not in model
+
+    def test_notation_manipulation(self):
+        model = ExchangeModel()
+        Cr = Atom("Cr", (0, 0, 0), spin=3 / 2)
+        model[Cr, Cr, (1, 0, 0)] = ExchangeParameter(iso=1)
+        assert model[Cr, Cr, (1, 0, 0)].iso == 1
+
+        with pytest.raises(NotationError):
+            model.double_counting
+        with pytest.raises(NotationError):
+            model.spin_normalized
+        with pytest.raises(NotationError):
+            model.factor_one_half
+        with pytest.raises(NotationError):
+            model.factor_two
+        with pytest.raises(NotationError):
+            model.minus_sign
+
+        model.notation = "standard"
+        assert model[Cr, Cr, (1, 0, 0)].iso == 1
+        model.notation = "standard"
+        assert model[Cr, Cr, (1, 0, 0)].iso == 1
+
+        assert model.double_counting
+        model.double_counting = False
+        assert model[Cr, Cr, (1, 0, 0)].iso == 2
+        model.double_counting = True
+        assert model[Cr, Cr, (1, 0, 0)].iso == 1
+
+        assert not model.spin_normalized
+        model.spin_normalized = True
+        assert model[Cr, Cr, (1, 0, 0)].iso == 9 / 4
+        model.spin_normalized = False
+        assert model[Cr, Cr, (1, 0, 0)].iso == 1
+
+        assert not model.factor_one_half
+        assert not model.factor_two
+        model.factor_one_half = True
+        assert model[Cr, Cr, (1, 0, 0)].iso == 2
+        model.factor_one_half = False
+        assert model[Cr, Cr, (1, 0, 0)].iso == 1
+        model.factor_two = True
+        assert model[Cr, Cr, (1, 0, 0)].iso == 0.5
+        model.factor_two = False
+        assert model[Cr, Cr, (1, 0, 0)].iso == 1
+        model.factor_one_half = True
+        assert model[Cr, Cr, (1, 0, 0)].iso == 2
+        model.factor_two = True
+        assert model[Cr, Cr, (1, 0, 0)].iso == 1
+        model.factor_two = False
+        assert model[Cr, Cr, (1, 0, 0)].iso == 1
+        model.factor_one_half = False
+        assert model[Cr, Cr, (1, 0, 0)].iso == 1
+
+        assert model.minus_sign
+        model.minus_sign = False
+        assert model[Cr, Cr, (1, 0, 0)].iso == -1
+        model.minus_sign = True
+        assert model[Cr, Cr, (1, 0, 0)].iso == 1
+
+        model.notation = "SpinW"
+        assert model[Cr, Cr, (1, 0, 0)].iso == -1
+        model.notation = "TB2J"
+        assert model[Cr, Cr, (1, 0, 0)].iso == 9 / 4
+
+    def test_predefined_notations(self):
+        model = ExchangeModel()
+        Cr = Atom("Cr", (0, 0, 0), spin=3 / 2)
+        model[Cr, Cr, (1, 0, 0)] = ExchangeParameter(iso=1)
+        assert model[Cr, Cr, (1, 0, 0)].iso == 1
+
+        with pytest.raises(NotationError):
+            model.double_counting
+        with pytest.raises(NotationError):
+            model.spin_normalized
+        with pytest.raises(NotationError):
+            model.factor_one_half
+        with pytest.raises(NotationError):
+            model.factor_two
+        with pytest.raises(NotationError):
+            model.minus_sign
+
+        model.notation = "standard"
+        assert model[Cr, Cr, (1, 0, 0)].iso == 1
+        assert (
+            model.double_counting
+            and not model.spin_normalized
+            and not model.factor_one_half
+            and not model.factor_two
+            and model.minus_sign
+        )
+
+        model.notation = "TB2J"
+        assert model[Cr, Cr, (1, 0, 0)].iso == 9 / 4
+        assert (
+            model.double_counting
+            and model.spin_normalized
+            and not model.factor_one_half
+            and not model.factor_two
+            and model.minus_sign
+        )
+
+        model.notation = "SpinW"
+        assert model[Cr, Cr, (1, 0, 0)].iso == -1
+        assert (
+            model.double_counting
+            and not model.spin_normalized
+            and not model.factor_one_half
+            and not model.factor_two
+            and not model.minus_sign
+        )
 
     def test_ferromagnetic_energy(self):
         model = ExchangeModel()

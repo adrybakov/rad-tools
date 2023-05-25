@@ -55,8 +55,8 @@ def manager(
         force_symmetry=force_symmetry,
         isotropic=isotropic,
         anisotropic=anisotropic,
-        out_matrix=matrix,
-        out_dmi=dmi,
+        matrix=matrix,
+        dmi=dmi,
     )
 
     if output_name is not None:

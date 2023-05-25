@@ -78,7 +78,7 @@ class ExchangeModel:
 
         .. code-block:: python
 
-            {(Atom_1, Atom_2, R): bond, ...}
+            {(Atom_1, Atom_2, R): J, ...}
     magnetic_atoms : list
         List of magnetic atoms.
     cell_list : list
@@ -305,9 +305,8 @@ class ExchangeModel:
                 factor = 0.5
             if factor != 1:
                 # TODO Think about bond`s filtering/addition
-                for atom1, atom2, R in self:
-                    bond = self.bonds[(atom1, atom2, R)]
-                    self.bonds[(atom1, atom2, R)] = factor * bond
+                for atom1, atom2, R, J in self:
+                    self[atom1, atom2, R] = J * factor
         self._double_counting = bool(new_value)
 
     @property
@@ -337,12 +336,11 @@ class ExchangeModel:
     def spin_normalized(self, new_value: bool):
         if self._spin_normalized is not None:
             if self._spin_normalized ^ new_value:
-                for atom1, atom2, R in self:
-                    bond = self.bonds[(atom1, atom2, R)]
+                for atom1, atom2, R, J in self:
                     if self._spin_normalized and not new_value:
-                        self.bonds[(atom1, atom2, R)] = bond / atom1.spin / atom2.spin
+                        self[atom1, atom2, R] = J / atom1.spin / atom2.spin
                     elif not self._spin_normalized and new_value:
-                        self.bonds[(atom1, atom2, R)] = bond * atom1.spin * atom2.spin
+                        self[atom1, atom2, R] = J * atom1.spin * atom2.spin
         self._spin_normalized = bool(new_value)
 
     @property
@@ -377,9 +375,8 @@ class ExchangeModel:
             elif not self._factor_one_half and new_value:
                 factor = 2
             if factor != 1:
-                for atom1, atom2, R in self:
-                    bond = self.bonds[(atom1, atom2, R)]
-                    self.bonds[(atom1, atom2, R)] = factor * bond
+                for atom1, atom2, R, J in self:
+                    self[atom1, atom2, R] = J * factor
         self._factor_one_half = bool(new_value)
         if self._factor_one_half and self.factor_two:
             self._factor_one_half = False
@@ -417,9 +414,8 @@ class ExchangeModel:
             elif not self._factor_two and new_value:
                 factor = 0.5
             if factor != 1:
-                for atom1, atom2, R in self:
-                    bond = self.bonds[(atom1, atom2, R)]
-                    self.bonds[(atom1, atom2, R)] = factor * bond
+                for atom1, atom2, R, J in self:
+                    self[atom1, atom2, R] = J * factor
         self._factor_two = bool(new_value)
         if self._factor_one_half and self.factor_two:
             self._factor_one_half = False
@@ -456,16 +452,15 @@ class ExchangeModel:
                 factor = -1
 
             if factor != 1:
-                for atom1, atom2, R in self:
-                    bond = self.bonds[(atom1, atom2, R)]
-                    self.bonds[(atom1, atom2, R)] = factor * bond
+                for atom1, atom2, R, J in self:
+                    self[atom1, atom2, R] = J * factor
         self._minus_sign = bool(new_value)
 
     def __iter__(self):
         return ExchangeModelIterator(self)
 
-    def __contains__(self, item):
-        return item in self.bonds
+    def __contains__(self, key):
+        return key in self.bonds
 
     def __getitem__(self, key) -> ExchangeParameter:
         return self.bonds[key]
@@ -503,7 +498,7 @@ class ExchangeModel:
         """
 
         cells = set()
-        for atom1, atom2, R in self:
+        for atom1, atom2, R, J in self:
             cells.add(R)
         return np.array(list(cells))
 
@@ -541,7 +536,7 @@ class ExchangeModel:
 
         x_max, y_max, z_max = None, None, None
         x_min, y_min, z_min = None, None, None
-        for atom1, atom2, R in self:
+        for atom1, atom2, R, J in self:
             x1, y1, z1 = self.crystal.get_atom_coordinates(atom1)
             x2, y2, z2 = self.crystal.get_atom_coordinates(atom2, R)
             if x_max is None:
@@ -555,15 +550,41 @@ class ExchangeModel:
             z_min = min(z1, z2, z_min)
         return x_min, y_min, z_min, x_max, y_max, z_max
 
-    def add_bond(self, bond: ExchangeParameter, atom1: Atom, atom2: Atom, R):
+    def __setitem__(self, key, value):
+        self.add_bond(value, *key)
+
+    def add_bond(self, J: ExchangeParameter, atom1: Atom, atom2: Atom, R):
         r"""
         Add one bond to the model.
 
+        More straightforward syntax is advised:
+
+        .. doctest::
+
+            >>> import rad_tools as rad
+            >>> Cr = rad.Atom("Cr")
+            >>> J = rad.ExchangeParameter(iso=1)
+            >>> model = rad.ExchangeModel(rad.Crystal())
+            >>> model[Cr, Cr, (1,0,0)] = J
+            >>> (Cr, Cr, (1,0,0)) in model
+            True
+
+        It is the same as
+
+        .. doctest::
+
+            >>> import rad_tools as rad
+            >>> Cr = rad.Atom("Cr")
+            >>> J = rad.ExchangeParameter(iso=1)
+            >>> model = rad.ExchangeModel(rad.Crystal())
+            >>> model.add_bond(J, Cr, Cr, (1,0,0))
+            >>> (Cr, Cr, (1,0,0)) in model
+            True
+
         Parameters
         ----------
-        bond : :py:class:`.Bond`
-            An instance of :py:class:`Bond` class with the information about
-            exchange parameters.
+        J : :py:class:`.ExchangeParameter`
+            An instance of :py:class:`ExchangeParameter`.
         atom1 : :py:class:`Atom`
             Atom object in (0, 0, 0) unit cell.
         atom2 : :py:class:`Atom`
@@ -578,11 +599,45 @@ class ExchangeModel:
         if atom2 not in self.magnetic_atoms:
             self.add_atom(atom2)
 
-        self.bonds[(atom1, atom2, R)] = bond
+        self.bonds[(atom1, atom2, R)] = J
+
+    def __delitem__(self, key):
+        self.remove_bond(*key)
 
     def remove_bond(self, atom1: Atom, atom2: Atom, R):
         r"""
         Remove one bond from the model.
+
+        More straightforward syntax is advised:
+
+        .. doctest::
+
+            >>> import rad_tools as rad
+            >>> Cr = rad.Atom("Cr")
+            >>> J = rad.ExchangeParameter(iso=1)
+            >>> model = rad.ExchangeModel(rad.Crystal())
+            >>> model[Cr, Cr, (1,0,0)] = J
+            >>> (Cr, Cr, (1,0,0)) in model
+            True
+            >>> del model[Cr, Cr, (1,0,0)]
+            >>> (Cr, Cr, (1,0,0)) in model
+            False
+
+
+        It is the same as
+
+        .. doctest::
+
+            >>> import rad_tools as rad
+            >>> Cr = rad.Atom("Cr")
+            >>> J = rad.ExchangeParameter(iso=1)
+            >>> model = rad.ExchangeModel(rad.Crystal())
+            >>> model[Cr, Cr, (1,0,0)] = J
+            >>> (Cr, Cr, (1,0,0)) in model
+            True
+            >>> model.remove_bond(Cr, Cr, (1,0,0))
+            >>> (Cr, Cr, (1,0,0)) in model
+            False
 
         Parameters
         ----------
@@ -628,12 +683,12 @@ class ExchangeModel:
         bonds_for_removal = []
         if atom in self.magnetic_atoms:
             self.magnetic_atoms.remove(atom)
-        for atom1, atom2, R in self:
+        for atom1, atom2, R, J in self:
             if atom1 == atom or atom2 == atom:
                 bonds_for_removal.append((atom1, atom2, R))
 
         for bond in bonds_for_removal:
-            self.remove_bond(*bond)
+            del self[bond]
 
         self.crystal.remove_atom(atom)
 
@@ -685,7 +740,7 @@ class ExchangeModel:
                 raise TypeError("Type is not supported, supported: list.")
 
         bonds_for_removal = set()
-        for atom1, atom2, R in self:
+        for atom1, atom2, R, J in self:
             dis = self.crystal.get_distance(atom1, atom2, R)
 
             if max_distance is not None and dis > max_distance:
@@ -705,7 +760,7 @@ class ExchangeModel:
                 bonds_for_removal.add((atom1, atom2, R))
 
         for atom1, atom2, R in bonds_for_removal:
-            self.remove_bond(atom1, atom2, R)
+            del self[atom1, atom2, R]
 
     def filtered(
         self, max_distance=None, min_distance=None, template=None, R_vector=None
@@ -792,20 +847,20 @@ class ExchangeModel:
             for atom1, atom2, R in bonds:
                 # Here literals, not objects are obtained, because in general
                 # template only has information about literals and R.
-                bond = (self.crystal.get_atom(atom1), self.crystal.get_atom(atom2), R)
-                symm_matrix = symm_matrix + self[bond].symm_matrix
-                dmi_module = dmi_module + self[bond].dmi_module
+                J = self[self.crystal.get_atom(atom1), self.crystal.get_atom(atom2), R]
+                symm_matrix = symm_matrix + J.symm_matrix
+                dmi_module = dmi_module + J.dmi_module
 
             symm_matrix = symm_matrix / len(bonds)
             dmi_module = dmi_module / len(bonds)
 
             for atom1, atom2, R in bonds:
-                bond = (self.crystal.get_atom(atom1), self.crystal.get_atom(atom2), R)
-                if self[bond].dmi_module != 0:
-                    asymm_factor = dmi_module / self[bond].dmi_module
+                J = self[self.crystal.get_atom(atom1), self.crystal.get_atom(atom2), R]
+                if J.dmi_module != 0:
+                    asymm_factor = dmi_module / J.dmi_module
                 else:
                     asymm_factor = 0
-                self[bond].matrix = symm_matrix + self[bond].asymm_matrix * asymm_factor
+                J.matrix = symm_matrix + J.asymm_matrix * asymm_factor
 
     def forced_symmetry(self, template):
         r"""
@@ -842,8 +897,8 @@ class ExchangeModel:
         force_symmetry=False,
         isotropic=False,
         anisotropic=False,
-        out_matrix=False,
-        out_dmi=False,
+        matrix=False,
+        dmi=False,
     ):
         r"""
         Return exchange model based on the template file in .txt format.
@@ -863,9 +918,9 @@ class ExchangeModel:
             Whether to output isotropic exchange.
         anisotropic : bool, default False
             Whether to output anisotropic exchange.
-        out_matrix : bool, default False
+        matrix : bool, default False
             Whether to output whole matrix exchange.
-        out_dmi : bool, default False
+        dmi : bool, default False
             Whether to output DMI exchange.
 
         Returns
@@ -886,13 +941,7 @@ class ExchangeModel:
                 # Get values from the model
                 atom1 = self.crystal.get_atom(atom1)
                 atom2 = self.crystal.get_atom(atom2)
-                bond = self[(atom1, atom2, R)]
-                iso = bond.iso
-                aniso = bond.aniso
-                dmi = bond.dmi
-                abs_dmi = bond.dmi_module
-                rel_dmi = abs_dmi / iso
-                matrix = bond.matrix
+                J = self[atom1, atom2, R]
 
                 if not force_symmetry:
                     # Write the values
@@ -901,40 +950,40 @@ class ExchangeModel:
                         + f"({R[0]:2.0f}, {R[1]:2.0f}, {R[2]:2.0f})\n"
                     )
                     if isotropic:
-                        summary += f"    Isotropic: {iso:.{decimals}f}\n"
+                        summary += f"    Isotropic: {J.iso:.{decimals}f}\n"
                     if anisotropic:
                         summary += (
                             f"    Anisotropic:\n"
-                            + f"        {aniso[0][0]:{decimals+3}.{decimals}f}  "
-                            + f"{aniso[0][1]:{decimals+3}.{decimals}f}  "
-                            + f"{aniso[0][2]:{decimals+3}.{decimals}f}\n"
-                            + f"        {aniso[1][0]:{decimals+3}.{decimals}f}  "
-                            + f"{aniso[1][1]:{decimals+3}.{decimals}f}  "
-                            + f"{aniso[1][2]:{decimals+3}.{decimals}f}\n"
-                            + f"        {aniso[2][0]:{decimals+3}.{decimals}f}  "
-                            + f"{aniso[2][1]:{decimals+3}.{decimals}f}  "
-                            + f"{aniso[2][2]:{decimals+3}.{decimals}f}\n"
+                            + f"        {J.aniso[0][0]:{decimals+3}.{decimals}f}  "
+                            + f"{J.aniso[0][1]:{decimals+3}.{decimals}f}  "
+                            + f"{J.aniso[0][2]:{decimals+3}.{decimals}f}\n"
+                            + f"        {J.aniso[1][0]:{decimals+3}.{decimals}f}  "
+                            + f"{J.aniso[1][1]:{decimals+3}.{decimals}f}  "
+                            + f"{J.aniso[1][2]:{decimals+3}.{decimals}f}\n"
+                            + f"        {J.aniso[2][0]:{decimals+3}.{decimals}f}  "
+                            + f"{J.aniso[2][1]:{decimals+3}.{decimals}f}  "
+                            + f"{J.aniso[2][2]:{decimals+3}.{decimals}f}\n"
                         )
-                    if out_matrix:
+                    if matrix:
                         summary += (
                             f"    Matrix:\n"
-                            + f"        {matrix[0][0]:{decimals+3}.{decimals}f}  "
-                            + f"{matrix[0][1]:{decimals+3}.{decimals}f}  "
-                            + f"{matrix[0][2]:{decimals+3}.{decimals}f}\n"
-                            + f"        {matrix[1][0]:{decimals+3}.{decimals}f}  "
-                            + f"{matrix[1][1]:{decimals+3}.{decimals}f}  "
-                            + f"{matrix[1][2]:{decimals+3}.{decimals}f}\n"
-                            + f"        {matrix[2][0]:{decimals+3}.{decimals}f}  "
-                            + f"{matrix[2][1]:{decimals+3}.{decimals}f}  "
-                            + f"{matrix[2][2]:{decimals+3}.{decimals}f}\n"
+                            + f"        {J.matrix[0][0]:{decimals+3}.{decimals}f}  "
+                            + f"{J.matrix[0][1]:{decimals+3}.{decimals}f}  "
+                            + f"{J.matrix[0][2]:{decimals+3}.{decimals}f}\n"
+                            + f"        {J.matrix[1][0]:{decimals+3}.{decimals}f}  "
+                            + f"{J.matrix[1][1]:{decimals+3}.{decimals}f}  "
+                            + f"{J.matrix[1][2]:{decimals+3}.{decimals}f}\n"
+                            + f"        {J.matrix[2][0]:{decimals+3}.{decimals}f}  "
+                            + f"{J.matrix[2][1]:{decimals+3}.{decimals}f}  "
+                            + f"{J.matrix[2][2]:{decimals+3}.{decimals}f}\n"
                         )
-                    if out_dmi:
+                    if dmi:
                         summary += (
-                            f"    |DMI|: {abs_dmi:.{decimals}f}\n"
-                            + f"    |DMI/J|: {rel_dmi:.{decimals}f}\n"
-                            + f"    DMI: {dmi[0]:.{decimals}f} "
-                            + f"{dmi[1]:.{decimals}f} "
-                            + f"{dmi[2]:.{decimals}f}\n"
+                            f"    |DMI|: {J.dmi_module:.{decimals}f}\n"
+                            + f"    |DMI/J|: {J.rel_dmi:.{decimals}f}\n"
+                            + f"    DMI: {J.dmi[0]:.{decimals}f} "
+                            + f"{J.dmi[1]:.{decimals}f} "
+                            + f"{J.dmi[2]:.{decimals}f}\n"
                         )
                     summary += "\n"
                 else:
@@ -942,43 +991,43 @@ class ExchangeModel:
                         scalar_written = True
                         summary += f"{name}\n"
                         if isotropic:
-                            summary += f"    Isotropic: {iso:.{decimals}f}\n"
+                            summary += f"    Isotropic: {J.iso:.{decimals}f}\n"
                         if anisotropic:
                             summary += (
                                 f"    Anisotropic:\n"
-                                + f"        {aniso[0][0]:{decimals+3}.{decimals}f}  "
-                                + f"{aniso[0][1]:{decimals+3}.{decimals}f}  "
-                                + f"{aniso[0][2]:{decimals+3}.{decimals}f}\n"
-                                + f"        {aniso[1][0]:{decimals+3}.{decimals}f}  "
-                                + f"{aniso[1][1]:{decimals+3}.{decimals}f}  "
-                                + f"{aniso[1][2]:{decimals+3}.{decimals}f}\n"
-                                + f"        {aniso[2][0]:{decimals+3}.{decimals}f}  "
-                                + f"{aniso[2][1]:{decimals+3}.{decimals}f}  "
-                                + f"{aniso[2][2]:{decimals+3}.{decimals}f}\n"
+                                + f"        {J.aniso[0][0]:{decimals+3}.{decimals}f}  "
+                                + f"{J.aniso[0][1]:{decimals+3}.{decimals}f}  "
+                                + f"{J.aniso[0][2]:{decimals+3}.{decimals}f}\n"
+                                + f"        {J.aniso[1][0]:{decimals+3}.{decimals}f}  "
+                                + f"{J.aniso[1][1]:{decimals+3}.{decimals}f}  "
+                                + f"{J.aniso[1][2]:{decimals+3}.{decimals}f}\n"
+                                + f"        {J.aniso[2][0]:{decimals+3}.{decimals}f}  "
+                                + f"{J.aniso[2][1]:{decimals+3}.{decimals}f}  "
+                                + f"{J.aniso[2][2]:{decimals+3}.{decimals}f}\n"
                             )
-                        if out_matrix:
+                        if matrix:
                             summary += (
                                 f"    Matrix:\n"
-                                + f"        {matrix[0][0]:{decimals+3}.{decimals}f}  "
-                                + f"{matrix[0][1]:{decimals+3}.{decimals}f}  "
-                                + f"{matrix[0][2]:{decimals+3}.{decimals}f}\n"
-                                + f"        {matrix[1][0]:{decimals+3}.{decimals}f}  "
-                                + f"{matrix[1][1]:{decimals+3}.{decimals}f}  "
-                                + f"{matrix[1][2]:{decimals+3}.{decimals}f}\n"
-                                + f"        {matrix[2][0]:{decimals+3}.{decimals}f}  "
-                                + f"{matrix[2][1]:{decimals+3}.{decimals}f}  "
-                                + f"{matrix[2][2]:{decimals+3}.{decimals}f}\n"
+                                + f"        {J.matrix[0][0]:{decimals+3}.{decimals}f}  "
+                                + f"{J.matrix[0][1]:{decimals+3}.{decimals}f}  "
+                                + f"{J.matrix[0][2]:{decimals+3}.{decimals}f}\n"
+                                + f"        {J.matrix[1][0]:{decimals+3}.{decimals}f}  "
+                                + f"{J.matrix[1][1]:{decimals+3}.{decimals}f}  "
+                                + f"{J.matrix[1][2]:{decimals+3}.{decimals}f}\n"
+                                + f"        {J.matrix[2][0]:{decimals+3}.{decimals}f}  "
+                                + f"{J.matrix[2][1]:{decimals+3}.{decimals}f}  "
+                                + f"{J.matrix[2][2]:{decimals+3}.{decimals}f}\n"
                             )
-                        if out_dmi:
+                        if dmi:
                             summary += (
-                                f"    |DMI|: {abs_dmi:.{decimals}f}\n"
-                                + f"    |DMI/J|: {rel_dmi:.{decimals}f}\n"
+                                f"    |DMI|: {J.dmi_module:.{decimals}f}\n"
+                                + f"    |DMI/J|: {J.rel_dmi:.{decimals}f}\n"
                             )
-                    if out_dmi:
+                    if dmi:
                         summary += (
-                            f"    DMI: {dmi[0]:{decimals+3}.{decimals}f} "
-                            + f"{dmi[1]:{decimals+3}.{decimals}f} "
-                            + f"{dmi[2]:{decimals+3}.{decimals}f} "
+                            f"    DMI: {J.dmi[0]:{decimals+3}.{decimals}f} "
+                            + f"{J.dmi[1]:{decimals+3}.{decimals}f} "
+                            + f"{J.dmi[2]:{decimals+3}.{decimals}f} "
                             + f"({atom1:3} {atom2:3} "
                             + f"{R[0]:2.0f} {R[1]:2.0f} {R[2]:2.0f})\n"
                         )
@@ -987,6 +1036,7 @@ class ExchangeModel:
 
         return summary
 
+    # TODO Fix notation
     def ferromagnetic_energy(self, theta=0, phi=0):
         r"""
         Compute energy of the model assuming ferromagnetic state.
@@ -1020,8 +1070,8 @@ class ExchangeModel:
         theta = theta / 180 * pi
         phi = phi / 180 * pi
         energy = np.zeros((3, 3), dtype=float)
-        for bond in self:
-            energy -= self[bond].matrix
+        for atom1, atom2, R, J in self:
+            energy -= J.matrix
         spin_vector = np.array(
             [cos(phi) * sin(theta), sin(phi) * sin(theta), cos(theta)]
         )
@@ -1163,11 +1213,14 @@ class ExchangeModel:
 class ExchangeModelIterator:
     def __init__(self, exchange_model: ExchangeModel) -> None:
         self._bonds = list(
-            map(lambda x: (x, exchange_model.bonds[x]), exchange_model.bonds)
+            map(
+                lambda x: (x[0], x[1], x[2], exchange_model.bonds[x]),
+                exchange_model.bonds,
+            )
         )
         self._index = 0
 
-    def __next__(self) -> Tuple[Atom, Atom, tuple]:
+    def __next__(self) -> Tuple[Atom, Atom, tuple, ExchangeParameter]:
         if self._index < len(self._bonds):
             result = self._bonds[self._index]
             self._index += 1

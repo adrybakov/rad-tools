@@ -38,6 +38,7 @@ class ExchangeParameter:
     Attributes
     ----------
     matrix : 3 x 3 :numpy:`ndarray`
+    T
     symm_matrix : (3, 3) :numpy:`ndarray`
     asymm_matrix : (3, 3) :numpy:`ndarray`
     iso : float
@@ -91,6 +92,9 @@ class ExchangeParameter:
 
     @property
     def T(self):
+        r"""
+        Transposes a matrix of the exchange parameter.
+        """
         return ExchangeParameter(matrix=self.matrix.T)
 
     @property
@@ -290,6 +294,17 @@ class ExchangeParameter:
         """
 
         return np.linalg.norm(self.dmi)
+
+    @property
+    def rel_dmi(self) -> float:
+        r"""
+        Relative value of DMI.
+
+        .. math::
+            \frac{\vert DMI\vert}{\vert J\vert}
+        """
+
+        return self.dmi_module / abs(self.iso)
 
     # Definition of operators
 

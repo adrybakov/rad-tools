@@ -13,8 +13,12 @@ class Atom:
         Name of the atom.
     position : (3,) |array_like|_, default [0,0,0]
         Position of the atom in absolute coordinates.
-    spin : (3,) |array_like|_, optional
+    spin : float, optional
+        Spin of the atom.
+    spin_vector : (3,) |array_like|_, optional
         Classical spin vector of the atom.
+        By default oriented alond z axis.
+        Only the direction matters, for the value use ``spin``.
     magmom : (3,) |array_like|_, optional
         Magnetic moment of the atom.
     charge : float, optional
@@ -39,6 +43,7 @@ class Atom:
         literal="X",
         position=None,
         spin=None,
+        spin_vector=None,
         magmom=None,
         charge=None,
         index=None,
@@ -48,12 +53,15 @@ class Atom:
             position = (0, 0, 0)
         self.position = np.array(position)
         self._spin = None
+        self._spin_vector = None
         self._magmom = None
         self._charge = None
         self._index = None
 
         if spin is not None:
             self.spin = spin
+        if spin_vector is not None:
+            self.spin_vector = spin_vector
         if magmom is not None:
             self.magmom = magmom
         if charge is not None:
@@ -84,15 +92,48 @@ class Atom:
 
     @spin.setter
     def spin(self, new_spin):
-        try:
-            new_spin = np.array(new_spin)
-        except:
-            raise ValueError(f"New spin value is not array-like, new_spin = {new_spin}")
-        if new_spin.shape != (3,):
-            raise ValueError(
-                f"New spin has to be a 3 x 1 vector, shape: {new_spin.shape}"
-            )
         self._spin = new_spin
+
+    @property
+    def spin_vector(self):
+        r"""
+        Classical spin vector of the atom.
+
+        If :py:attr:`spin` is set:
+
+        .. math::
+
+            \vec{S} = (S_x, S_y, S_z)
+
+        If :py:attr:`spin` is not set:
+
+        .. math::
+
+            \vec{n} = (n_x, n_y, n_z): \vec{n} \parallel \vec{S}, \vert \vec{n}\vert = 1
+        """
+
+        if self._spin_vector is None:
+            raise ValueError(
+                f"Spin vector is not defined for the atom {self.fullname}."
+            )
+        if self._spin is not None:
+            return self._spin * self._spin_vector
+        return self._spin_vector
+
+    @spin_vector.setter
+    def spin_vector(self, new_spin_vector):
+        try:
+            new_spin_vector = np.array(new_spin_vector)
+            new_spin_vector /= np.linalg.norm(new_spin_vector)
+        except:
+            raise ValueError(
+                f"New spin vector is not array-like, new_spin = {new_spin_vector}"
+            )
+        if new_spin_vector.shape != (3,):
+            raise ValueError(
+                f"New spin vector has to be a 3 x 1 vector, shape: {new_spin_vector.shape}"
+            )
+        self._spin_vector = new_spin_vector
 
     @property
     def magmom(self):
@@ -155,4 +196,7 @@ class Atom:
     @property
     def fullname(self):
         r"""Return fullname (literal + index) of an atom."""
-        return f"{self.literal} #{self.index}"
+        try:
+            return f"{self.literal} #{self.index}"
+        except ValueError:
+            return self.literal
