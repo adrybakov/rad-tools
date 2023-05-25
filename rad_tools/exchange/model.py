@@ -5,7 +5,7 @@ Write a tutorial with docstring here.
 """
 
 from copy import deepcopy
-from math import cos, pi, sin, sqrt
+from math import cos, pi, sin
 from typing import Tuple, Iterable
 
 import numpy as np
@@ -1162,7 +1162,9 @@ class ExchangeModel:
 
 class ExchangeModelIterator:
     def __init__(self, exchange_model: ExchangeModel) -> None:
-        self._bonds = list(exchange_model.bonds)
+        self._bonds = list(
+            map(lambda x: (x, exchange_model.bonds[x]), exchange_model.bonds)
+        )
         self._index = 0
 
     def __next__(self) -> Tuple[Atom, Atom, tuple]:
