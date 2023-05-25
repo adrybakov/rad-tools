@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 from rad_tools.crystal.atom import Atom
-from rad_tools.exchange.bond import Bond
+from rad_tools.exchange.parameter import ExchangeParameter
 from rad_tools.exchange.model import ExchangeModel
 from rad_tools.exchange.template import ExchangeTemplate
 
@@ -31,7 +31,7 @@ class TestExchangeModel:
             (12, Cr1, Cr2, (-2, -2, 0)),
         ]
         for iso, atom1, atom2, R in bonds:
-            model.add_bond(Bond(iso=iso), atom1, atom2, R)
+            model.add_bond(ExchangeParameter(iso=iso), atom1, atom2, R)
         for atom1, atom2, R in model:
             assert isinstance(atom1, Atom)
             assert isinstance(atom2, Atom)
@@ -58,7 +58,7 @@ class TestExchangeModel:
             (12, Cr1, Cr2, (-2, -2, 0)),
         ]
         for iso, atom1, atom2, R in bonds:
-            model.add_bond(Bond(iso=iso), atom1, atom2, R)
+            model.add_bond(ExchangeParameter(iso=iso), atom1, atom2, R)
         assert (Cr1, Cr2, (0, 0, 0)) in model
         assert (Cr2, Cr2, (1, 0, 0)) in model
         assert (Cr1, Cr2, (4, 0, 0)) not in model
@@ -85,7 +85,7 @@ class TestExchangeModel:
             (12, Cr1, Cr2, (-2, -2, 0)),
         ]
         for iso, atom1, atom2, R in bonds:
-            model.add_bond(Bond(iso=iso), atom1, atom2, R)
+            model.add_bond(ExchangeParameter(iso=iso), atom1, atom2, R)
         assert model[(Cr1, Cr2, (0, 0, 0))].iso == 12
         assert model[(Cr2, Cr2, (1, 0, 0))].iso == 12
         assert model[(Cr1, Cr2, (-2, -2, 0))].iso == 12
@@ -173,9 +173,9 @@ class TestExchangeModel:
         Cr1 = Atom("Cr1", (1, 6, 2))
         Cr2 = Atom("Cr2", (1, 3, 2))
         Cr3 = Atom("Cr3", (1, 6, 2))
-        model.add_bond(Bond(iso=1), Cr1, Cr2, (0, 0, 0))
-        model.add_bond(Bond(iso=2), Cr1, Cr3, (0, -1, 0))
-        model.add_bond(Bond(iso=3), Cr2, Cr1, (0, 0, -3))
+        model.add_bond(ExchangeParameter(iso=1), Cr1, Cr2, (0, 0, 0))
+        model.add_bond(ExchangeParameter(iso=2), Cr1, Cr3, (0, -1, 0))
+        model.add_bond(ExchangeParameter(iso=3), Cr2, Cr1, (0, 0, -3))
         cells = model.cell_list.tolist()
         cells = [tuple(i) for i in cells]
         assert len(cells) == 3
@@ -211,9 +211,9 @@ class TestExchangeModel:
         Cr1 = Atom("Cr1", (1, 6, 2))
         Cr2 = Atom("Cr2", (1, 3, 5))
         Cr3 = Atom("Cr3", (1, 3, 3))
-        model.add_bond(Bond(iso=1), Cr1, Cr2, (0, 0, 0))
-        model.add_bond(Bond(iso=2), Cr1, Cr3, (0, -1, 0))
-        model.add_bond(Bond(iso=3), Cr2, Cr1, (0, 0, -3))
+        model.add_bond(ExchangeParameter(iso=1), Cr1, Cr2, (0, 0, 0))
+        model.add_bond(ExchangeParameter(iso=2), Cr1, Cr3, (0, -1, 0))
+        model.add_bond(ExchangeParameter(iso=3), Cr2, Cr1, (0, 0, -3))
         x_min, y_min, z_min, x_max, y_max, z_max = model.space_dimensions
         assert x_min == 1
         assert y_min == -7
@@ -222,33 +222,15 @@ class TestExchangeModel:
         assert y_max == 6
         assert z_max == 5
 
-    def test_round(self):
-        model = ExchangeModel()
-        model.cell = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
-        Cr1 = Atom("Cr1", (1, 6, 2))
-        Cr2 = Atom("Cr2", (1, 3, 5))
-        Cr3 = Atom("Cr3", (1, 3, 3))
-        model.add_bond(Bond(iso=1 / 3), Cr1, Cr2, (0, 0, 0))
-        model.add_bond(Bond(iso=2 / 7), Cr1, Cr3, (0, -1, 0))
-        model.add_bond(Bond(iso=3 / 11), Cr2, Cr1, (0, 0, -3))
-        model.round(4)
-        assert model[(Cr1, Cr2, (0, 0, 0))].iso == 0.3333
-        assert model[(Cr1, Cr3, (0, -1, 0))].iso == 0.2857
-        assert model[(Cr2, Cr1, (0, 0, -3))].iso == 0.2727
-        model.round(1)
-        assert model[(Cr1, Cr2, (0, 0, 0))].iso == 0.3
-        assert model[(Cr1, Cr3, (0, -1, 0))].iso == 0.3
-        assert model[(Cr2, Cr1, (0, 0, -3))].iso == 0.3
-
     def test_add_bond(self):
         model = ExchangeModel()
         Cr1 = Atom("Cr1", (2, 5, 1))
         Cr2 = Atom("Cr2", (4, 2, 1))
         Cr3 = Atom("Cr3", (5, 1, 8))
-        bond12 = Bond(iso=12)
-        bond13 = Bond(iso=13)
-        bond23 = Bond(iso=23)
-        bond31 = Bond(iso=31)
+        bond12 = ExchangeParameter(iso=12)
+        bond13 = ExchangeParameter(iso=13)
+        bond23 = ExchangeParameter(iso=23)
+        bond31 = ExchangeParameter(iso=31)
         model.add_bond(bond12, Cr1, Cr2, (0, 0, 0))
         model.add_bond(bond23, Cr2, Cr3, (0, 0, 0))
         model.add_bond(bond31, Cr3, Cr1, (0, 0, 0))
@@ -268,10 +250,10 @@ class TestExchangeModel:
         Cr1 = Atom("Cr1", (2, 5, 1))
         Cr2 = Atom("Cr2", (4, 2, 1))
         Cr3 = Atom("Cr3", (5, 1, 8))
-        bond12 = Bond(iso=12)
-        bond13 = Bond(iso=13)
-        bond23 = Bond(iso=23)
-        bond31 = Bond(iso=31)
+        bond12 = ExchangeParameter(iso=12)
+        bond13 = ExchangeParameter(iso=13)
+        bond23 = ExchangeParameter(iso=23)
+        bond31 = ExchangeParameter(iso=31)
         model.add_bond(bond12, Cr1, Cr2, (0, 0, 0))
         model.add_bond(bond23, Cr2, Cr3, (0, 0, 0))
         model.add_bond(bond31, Cr3, Cr1, (0, 0, 0))
@@ -321,10 +303,10 @@ class TestExchangeModel:
         Cr1 = Atom("Cr1", (2, 5, 1))
         Cr2 = Atom("Cr2", (4, 2, 1))
         Cr3 = Atom("Cr3", (5, 1, 8))
-        bond12 = Bond(iso=12)
-        bond13 = Bond(iso=13)
-        bond23 = Bond(iso=23)
-        bond31 = Bond(iso=31)
+        bond12 = ExchangeParameter(iso=12)
+        bond13 = ExchangeParameter(iso=13)
+        bond23 = ExchangeParameter(iso=23)
+        bond31 = ExchangeParameter(iso=31)
         model.add_bond(bond12, Cr1, Cr2, (0, 0, 0))
         model.add_bond(bond23, Cr2, Cr3, (0, 0, 0))
         model.add_bond(bond31, Cr3, Cr1, (0, 0, 0))
@@ -441,7 +423,7 @@ class TestExchangeModel:
             (12, Cr1, Cr2, (-2, -2, 0)),
         ]
         for iso, atom1, atom2, R in bonds:
-            model.add_bond(Bond(iso=iso), atom1, atom2, R)
+            model.add_bond(ExchangeParameter(iso=iso), atom1, atom2, R)
 
         assert len(model.bonds) == 12
         filtered_model = model.filtered(max_distance=1)
@@ -479,7 +461,7 @@ class TestExchangeModel:
             ([[1, 2, 0], [2, 1, 2], [0, -2, 0]], Cr2, Cr2, (-1, 0, 0)),
         ]
         for matrix, atom1, atom2, R in bonds:
-            model.add_bond(Bond(matrix=matrix), atom1, atom2, R)
+            model.add_bond(ExchangeParameter(matrix=matrix), atom1, atom2, R)
 
         template1.names = {
             "J1": [("Cr1", "Cr2", (0, 0, 0)), ("Cr2", "Cr1", (0, 0, 0))],
@@ -531,7 +513,7 @@ class TestExchangeModel:
             == np.array([[1, 3, 0], [3, 1, 1.5], [0, -1.5, 0]])
         ).all()
         for matrix, atom1, atom2, R in bonds:
-            model.add_bond(Bond(matrix=matrix), atom1, atom2, R)
+            model.add_bond(ExchangeParameter(matrix=matrix), atom1, atom2, R)
         model.force_symmetry(template=template2)
         assert len(model.bonds) == 5
         assert (
@@ -558,7 +540,7 @@ class TestExchangeModel:
         assert (Cr2, Cr2, (-1, 0, 0)) not in model
 
         for matrix, atom1, atom2, R in bonds:
-            model.add_bond(Bond(matrix=matrix), atom1, atom2, R)
+            model.add_bond(ExchangeParameter(matrix=matrix), atom1, atom2, R)
         model.force_symmetry(template=template3)
         assert len(model.bonds) == 4
         assert (
@@ -588,13 +570,13 @@ class TestExchangeModel:
         Cr1 = Atom("Cr1", (1, 1, 1))
         Cr2 = Atom("Cr2", (1, 1, 1))
         Cr3 = Atom("Cr3", (1, 1, 1))
-        model.add_bond(Bond(iso=1), Cr1, Cr2, (0, 0, 0))
-        model.add_bond(Bond(iso=2), Cr1, Cr3, (0, -1, 0))
-        model.add_bond(Bond(iso=3), Cr2, Cr1, (0, 0, -3))
+        model.add_bond(ExchangeParameter(iso=1), Cr1, Cr2, (0, 0, 0))
+        model.add_bond(ExchangeParameter(iso=2), Cr1, Cr3, (0, -1, 0))
+        model.add_bond(ExchangeParameter(iso=3), Cr2, Cr1, (0, 0, -3))
         assert model.ferromagnetic_energy() == -6
         assert model.ferromagnetic_energy(theta=23, phi=234) == -6
         model.add_bond(
-            Bond(iso=3, aniso=[[1, 0, 0], [0, 2, 0], [0, 0, -3]]),
+            ExchangeParameter(iso=3, aniso=[[1, 0, 0], [0, 2, 0], [0, 0, -3]]),
             Cr2,
             Cr1,
             (0, 0, -1),

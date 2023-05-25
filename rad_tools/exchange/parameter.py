@@ -3,12 +3,11 @@ Exchange parameter class.
 """
 
 # SElf is introduced in python 3.11, it is too fresh for my taste
-from typing import TypeVar
+from typing import TypeVar, Union
 
 Self = TypeVar("Self", bound="ExchangeParameter")
 
 import numpy as np
-from rad_tools.routines import print_2D_array
 
 
 class ExchangeParameter:
@@ -67,11 +66,11 @@ class ExchangeParameter:
         else:
             self.matrix = matrix
 
-    # Try to call for the attribute of numpy.ndarray
-    def __getattr__(self, name):
-        if name[:2] == "__":
-            raise AttributeError(name)
-        return getattr(self.matrix, name)
+    # # Try to call for the attribute of numpy.ndarray
+    # def __getattr__(self, name):
+    #     if name[:2] == "__":
+    #         raise AttributeError(name)
+    #     return getattr(self.matrix, name)
 
     def __format__(self, fmt):
         return self.__str__(fmt=fmt)
@@ -85,6 +84,14 @@ class ExchangeParameter:
 
     def __repr__(self):
         return str(self)
+
+    @property
+    def __array_interface__(self):
+        return self.matrix.__array_interface__
+
+    @property
+    def T(self):
+        return ExchangeParameter(matrix=self.matrix.T)
 
     @property
     def matrix(self) -> np.ndarray:
@@ -120,7 +127,7 @@ class ExchangeParameter:
             J_{symm} = \dfrac{J + J^T}{2}
         """
 
-        return (self + self.T) / 2
+        return (self.matrix + self.matrix.T) / 2
 
     @property
     def asymm_matrix(self) -> np.ndarray:
@@ -132,7 +139,7 @@ class ExchangeParameter:
             J_{asymm} = \dfrac{J - J^T}{2}
         """
 
-        return (self - self.T) / 2
+        return (self.matrix - self.matrix.T) / 2
 
     @property
     def iso(self) -> float:
@@ -399,12 +406,15 @@ class ExchangeParameter:
 
     # ==
     def __eq__(self, other):
-        if not isinstance(other, ExchangeParameter):
-            raise TypeError(
-                f"TypeError: unsupported operand type(s) "
-                + f"for ==: 'ExchangeParameter' and '{other.__class__.__name__}'"
-            )
-        return (self.matrix == other.matrix).all()
+        if isinstance(other, ExchangeParameter):
+            return (self.matrix == other.matrix).all()
+        try:
+            other = np.array(other, dtype=float)
+        except:
+            raise ValueError(f"Other is not array_like: \n{other}")
+        if other.shape != (3, 3):
+            raise ValueError("Other has to be equal to (3, 3)")
+        return (self.matrix == other).all()
 
     # !=
     def __neq__(self, other):

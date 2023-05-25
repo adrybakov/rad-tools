@@ -14,7 +14,7 @@ Classes
 .. autosummary::
     :toctree: generated/
 
-    Bond
+    ExchangeParameter
     ExchangeModel
     ExchangeTemplate
     

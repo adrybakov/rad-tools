@@ -12,7 +12,7 @@ import numpy as np
 
 from rad_tools.crystal.atom import Atom
 from rad_tools.crystal.crystal import Crystal
-from rad_tools.exchange.bond import Bond
+from rad_tools.exchange.parameter import ExchangeParameter
 from rad_tools.exchange.template import ExchangeTemplate
 
 
@@ -47,6 +47,7 @@ class NotationError(ValueError):
         return self.message
 
 
+# TODO Write symmetry constrains
 class ExchangeModel:
     r"""
     Exchange Hamiltonian.
@@ -115,6 +116,7 @@ class ExchangeModel:
             self.notation = notation
 
     # Notation attributes
+    # TODO Write doctests
     @property
     def notation(self):
         r"""
@@ -465,7 +467,7 @@ class ExchangeModel:
     def __contains__(self, item):
         return item in self.bonds
 
-    def __getitem__(self, key) -> Bond:
+    def __getitem__(self, key) -> ExchangeParameter:
         return self.bonds[key]
 
     @property
@@ -553,19 +555,7 @@ class ExchangeModel:
             z_min = min(z1, z2, z_min)
         return x_min, y_min, z_min, x_max, y_max, z_max
 
-    def round(self, decimals=4):
-        r"""Round exchange parameters.
-
-        Parameters
-        ----------
-        decimals : int, default 4
-            Number of decimals after the comma.
-        """
-
-        for atom1, atom2, R in self:
-            self[(atom1, atom2, R)].round(decimals)
-
-    def add_bond(self, bond: Bond, atom1: Atom, atom2: Atom, R):
+    def add_bond(self, bond: ExchangeParameter, atom1: Atom, atom2: Atom, R):
         r"""
         Add one bond to the model.
 

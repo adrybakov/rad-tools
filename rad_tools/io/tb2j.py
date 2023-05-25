@@ -5,7 +5,8 @@ Input-output from |TB2J|_.
 import numpy as np
 
 from rad_tools.crystal.atom import Atom
-from rad_tools.exchange.model import Bond, ExchangeModel
+from rad_tools.exchange.model import ExchangeModel
+from rad_tools.exchange.parameter import ExchangeParameter
 
 
 def read_tb2j_model(filename, quiet=False) -> ExchangeModel:
@@ -140,7 +141,7 @@ def read_tb2j_model(filename, quiet=False) -> ExchangeModel:
                 dmi = tuple(map(float, line.translate(garbage).split()[-3:]))
 
         # Adding info from the exchange block to the ExchangeModel structure
-        bond = Bond(iso=iso, aniso=aniso, dmi=dmi)
+        bond = ExchangeParameter(iso=iso, aniso=aniso, dmi=dmi)
         model.add_bond(bond, atom1, atom2, R)
         computed_distance = model.crystal.get_distance(atom1, atom2, R)
         if abs(computed_distance - distance) > 0.001 and not quiet:
