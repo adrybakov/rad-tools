@@ -419,6 +419,41 @@ def angle(v1, v2, radians=False):
     return alpha * _todegrees
 
 
+def reciprocal_cell(cell):
+    r"""
+    Computes reciprocal cell.
+
+    Parameters
+    ----------
+    cell : (3,3) |array_like|_
+        Cell matrix, rows are interpreted as vectors.
+
+    Returns
+    -------
+    reciprocal_cell : (3,3) :numpy:`ndarray`
+        Reciprocal cell matrix, rows are interpreted as vectors.
+        :math:`cell = (\vec{v}_1, \vec{v}_2, \vec{v}_3)`, where
+
+        .. math::
+
+        \begin{matrix}
+            \vec{b}_1 = \frac{2\pi}{V}\vec{a}_2\times\vec{a}_3 \\
+            \vec{b}_2 = \frac{2\pi}{V}\vec{a}_3\times\vec{a}_1 \\
+            \vec{b}_3 = \frac{2\pi}{V}\vec{a}_1\times\vec{a}_2 \\
+        \end{matrix}
+
+    """
+    vol = volume(cell)
+    reciprocal_cell = np.array(
+        [
+            2 * pi / vol * np.cross(cell[1], cell[2]),
+            2 * pi / vol * np.cross(cell[2], cell[0]),
+            2 * pi / vol * np.cross(cell[0], cell[1]),
+        ]
+    )
+    return reciprocal_cell
+
+
 if __name__ == "__main__":
     a = [[1, 2], [3, 4], [5, 6]]
     print_2D_array(a)

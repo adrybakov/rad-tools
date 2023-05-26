@@ -1,4 +1,6 @@
-from math import sqrt
+from math import sqrt, pi
+
+import numpy as np
 
 import pytest
 
@@ -8,6 +10,7 @@ from rad_tools.routines import (
     atom_mark_to_latex,
     rot_angle,
     volume,
+    reciprocal_cell,
 )
 
 
@@ -100,3 +103,17 @@ def test_angle():
 )
 def test_volume(args, result, eps):
     assert volume(*args) - result < eps
+
+
+@pytest.mark.parametrize(
+    "cell, rec_cell",
+    [
+        (
+            [[1, 0, 0], [0, 2, 0], [0, 0, 3]],
+            [[2 * pi, 0, 0], [0, pi, 0], [0, 0, 2 / 3 * pi]],
+        )
+    ],
+)
+def test_reciprocal_cell(cell, rec_cell):
+    rcell = reciprocal_cell(cell)
+    assert (rcell - np.array(rec_cell) < 1e-10).all()
