@@ -70,6 +70,6 @@ def test_niggli_run():
     beta = 64.130
     gamma = 64.150
     a = 4
-    b = 4, 472
+    b = 4.472
     c = 4.583
     get_niggli(a, b, c, alpha, beta, gamma)
