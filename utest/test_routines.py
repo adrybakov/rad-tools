@@ -2,8 +2,13 @@ from math import sqrt
 
 import pytest
 
-from rad_tools.routines import (absolute_to_relative, angle,
-                                atom_mark_to_latex, rot_angle)
+from rad_tools.routines import (
+    absolute_to_relative,
+    angle,
+    atom_mark_to_latex,
+    rot_angle,
+    volume,
+)
 
 
 @pytest.mark.parametrize(
@@ -88,3 +93,10 @@ def test_angle():
     assert abs(angle([1, 1, 0], [3, 1, 1]) - 31.48215) < tol_angle
     assert abs(angle([3, 1, 1], [-3, -1, -1]) - 180) < tol_angle
     assert abs(angle([3, 1, 1], [3, 1, 1])) < tol_angle
+
+
+@pytest.mark.parametrize(
+    "args, result, eps", [((4, 4.472, 4.583, 79.03, 64.13, 64.15), 66.3840797, 1e-8)]
+)
+def test_volume(args, result, eps):
+    assert volume(*args) - result < eps

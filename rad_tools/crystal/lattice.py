@@ -1125,7 +1125,17 @@ class Lattice:
         self.plot_kpath(colour=path_colour, **kwargs)
 
 
-def get_niggli(a=1, b=1, c=1, alpha=90, beta=90, gamma=90, eps_rel=1e-5, verbose=False):
+def get_niggli(
+    a=1,
+    b=1,
+    c=1,
+    alpha=90,
+    beta=90,
+    gamma=90,
+    eps_rel=1e-5,
+    verbose=False,
+    return_cell=False,
+):
     r"""
     Computes Niggli matrix form.
 
@@ -1147,6 +1157,8 @@ def get_niggli(a=1, b=1, c=1, alpha=90, beta=90, gamma=90, eps_rel=1e-5, verbose
         Relative epsilon as defined in [2]_.
     verbose : bool, default False
         Whether to print the steps of an algorithm.
+    return_cell : bool, default False
+        Whether to return cell parameters instead of Niggli matrix form.
 
     Returns
     -------
@@ -1159,6 +1171,8 @@ def get_niggli(a=1, b=1, c=1, alpha=90, beta=90, gamma=90, eps_rel=1e-5, verbose
                 A & B & C \\
                 \xi/2 & \eta/2 & \zeta/2
             \end{pmatrix}
+        
+        If return_cell == True, then return Niggli cell: (a, b, c, alpha, beta, gamma).
 
 
     References
@@ -1345,16 +1359,16 @@ def get_niggli(a=1, b=1, c=1, alpha=90, beta=90, gamma=90, eps_rel=1e-5, verbose
             f"result:    {summary_line()}",
             color="green",
         )
+    if return_cell:
+        a = round(sqrt(A), n)
+        b = round(sqrt(B), n)
+        c = round(sqrt(C), n)
+        alpha = round(acos(xi / 2 / b / c), n)
+        beta = round(acos(eta / 2 / a / c), n)
+        gamma = round(acos(zeta / 2 / a / b), n)
+        return a, b, c, alpha, beta, gamma
     return np.around(np.array([[A, B, C], [xi / 2, eta / 2, zeta / 2]]), decimals=n)
 
 
 if __name__ == "__main__":
-    get_niggli(
-        3,
-        sqrt(27),
-        2,
-        acos(-5 / 2 / sqrt(27) / 2) * _todegrees,
-        acos(-4 / 2 / 3 / 2) * _todegrees,
-        acos(-22 / 2 / 3 / sqrt(27)) * _todegrees,
-        verbose=True,
-    )
+    get_niggli(4, 4.472, 4.583, 79.030, 64.130, 64.150, verbose=True)
