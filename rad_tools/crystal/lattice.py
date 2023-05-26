@@ -1363,12 +1363,24 @@ def get_niggli(
         a = round(sqrt(A), n)
         b = round(sqrt(B), n)
         c = round(sqrt(C), n)
-        alpha = round(acos(xi / 2 / b / c), n)
-        beta = round(acos(eta / 2 / a / c), n)
-        gamma = round(acos(zeta / 2 / a / b), n)
+        alpha = round(acos(xi / 2 / b / c) * _todegrees, n)
+        beta = round(acos(eta / 2 / a / c) * _todegrees, n)
+        gamma = round(acos(zeta / 2 / a / b) * _todegrees, n)
         return a, b, c, alpha, beta, gamma
     return np.around(np.array([[A, B, C], [xi / 2, eta / 2, zeta / 2]]), decimals=n)
 
 
 if __name__ == "__main__":
-    get_niggli(4, 4.472, 4.583, 79.030, 64.130, 64.150, verbose=True)
+    print(
+        get_niggli(
+            4,
+            4.472,
+            4.583,
+            79.030,
+            64.130,
+            64.150,
+            verbose=True,
+            eps_rel=0.001,
+            return_cell=True,
+        )
+    )
