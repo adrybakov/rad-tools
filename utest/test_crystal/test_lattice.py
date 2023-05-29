@@ -15,6 +15,31 @@ class TestLattice:
         assert self.l.points == {}
         assert self.l.path == []
 
+    def test_extended_init(self):
+        with pytest.raises(ValueError):
+            l = Lattice(1, 2)
+        l = Lattice(1, 1, 1, 90, 90, 60)
+        assert l.a - 1 < 1e-10
+        assert l.b - 1 < 1e-10
+        assert l.c - 1 < 1e-10
+        assert l.alpha - 90 < 1e-10
+        assert l.beta - 90 < 1e-10
+        assert l.gamma - 60 < 1e-10
+        l = Lattice([1, 0, 0], [1 / 2, sqrt(3) / 2, 0], [0, 0, 1])
+        assert l.a - 1 < 1e-10
+        assert l.b - 1 < 1e-10
+        assert l.c - 1 < 1e-10
+        assert l.alpha - 90 < 1e-10
+        assert l.beta - 90 < 1e-10
+        assert l.gamma - 60 < 1e-10
+        l = Lattice([[1, 0, 0], [1 / 2, sqrt(3) / 2, 0], [0, 0, 1]])
+        assert l.a - 1 < 1e-10
+        assert l.b - 1 < 1e-10
+        assert l.c - 1 < 1e-10
+        assert l.alpha - 90 < 1e-10
+        assert l.beta - 90 < 1e-10
+        assert l.gamma - 60 < 1e-10
+
     def test_undefined_pearson_symbol(self):
         with pytest.raises(RuntimeError):
             tmp = self.l.pearson_symbol

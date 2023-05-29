@@ -2,7 +2,7 @@ r"""
 General 3D lattice.
 """
 
-from math import acos, cos, floor, log10, pi, sqrt
+from math import acos, cos, floor, log10, pi, sqrt, sin
 from typing import Iterable
 
 import matplotlib.pyplot as plt
@@ -13,7 +13,7 @@ from mpl_toolkits.mplot3d import Axes3D, proj3d
 from scipy.spatial import Voronoi
 from termcolor import cprint
 
-from rad_tools.routines import _todegrees, _toradians, angle, volume
+from rad_tools.routines import _todegrees, _toradians, angle, volume, reciprocal_cell
 
 __all__ = ["Lattice", "get_niggli"]
 
@@ -47,6 +47,38 @@ class Lattice:
     interpreted as the primitive unit cell. In the case of the Bravais lattice additional
     attribute conv_cell appears.
 
+    Lattice can be created in a three alternative ways:
+
+    .. doctest::
+
+        >>> import rad_tools as rad
+        >>> l = rad.Lattice(cell=[[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+        >>> l = rad.Lattice(a1=[1,0,0], a2=[0,1,0], a3=[0,0,1]])
+        >>> l = rad.Lattice(1, 1, 1, 90, 90, 90)
+
+    Parameters
+    ----------
+    cell : (3,3) |array_like|_
+        Unit cell, rows are vectors, columns are coordinates.
+    a1 : (3,) |array_like|_
+        First vector of unit cell (cell[0]).
+    a2 : (3,) |array_like|_
+        SEcond vector of unit cell (cell[1]).
+    a3 : (3,) |array_like|_
+        Third vector of unit cell (cell[2]).
+    a : float, default=1
+        Length of the :math:`a_1` vector.
+    b : float, default=1
+        Length of the :math:`a_2` vector.
+    c : float, default=1
+        Length of the :math:`a_3` vector.
+    alpha : float, default=90
+        Angle between vectors :math:`a_2` and :math:`a_3`. In degrees.
+    beta : float, default=90
+        Angle between vectors :math:`a_1` and :math:`a_3`. In degrees.
+    gamma : float, default=90
+        Angle between vectors :math:`a_1` and :math:`a_2`. In degrees.
+
     Attributes
     ----------
     path : list
@@ -66,9 +98,41 @@ class Lattice:
 
     _pearson_symbol = None
 
-    def __init__(self, a1, a2, a3) -> None:
+    def __init__(self, *args) -> None:
         self._cell = None
-        self.cell = np.array([a1, a2, a3])
+        if len(args) == 1:
+            self.cell = np.array(args[0])
+        elif len(args) == 3:
+            self.cell = np.array(args)
+        elif len(args) == 6:
+            a, b, c, alpha, beta, gamma = args
+            alpha = alpha * _toradians
+            beta = beta * _toradians
+            gamma = gamma * _toradians
+            self.cell = np.array(
+                [
+                    [a, 0, 0],
+                    [b * cos(gamma), b * sin(gamma), 0],
+                    [
+                        c * cos(beta),
+                        c / sin(gamma) * (cos(alpha) - cos(beta) * cos(gamma)),
+                        c
+                        / sin(gamma)
+                        * sqrt(
+                            1
+                            + 2 * cos(alpha) * cos(beta) * cos(gamma)
+                            - cos(alpha) ** 2
+                            - cos(beta) ** 2
+                            - cos(gamma) ** 2
+                        ),
+                    ],
+                ]
+            )
+        else:
+            raise ValueError(
+                "Unable to identify input parameters. "
+                + "Supported: one (3,3) array_like, or three (3,) array_like, or 6 floats."
+            )
         self.points = {}
         self._path = None
         self._default_path = None
@@ -321,14 +385,7 @@ class Lattice:
         Reciprocal cell. Always primitive.
         """
 
-        result = np.array(
-            [
-                2 * pi / self.unit_cell_volume * np.cross(self.a2, self.a3),
-                2 * pi / self.unit_cell_volume * np.cross(self.a3, self.a1),
-                2 * pi / self.unit_cell_volume * np.cross(self.a1, self.a2),
-            ]
-        )
-        return result
+        return reciprocal_cell(self.cell)
 
     @property
     def b1(self):
@@ -1370,17 +1427,78 @@ def get_niggli(
     return np.around(np.array([[A, B, C], [xi / 2, eta / 2, zeta / 2]]), decimals=n)
 
 
-if __name__ == "__main__":
-    print(
-        get_niggli(
-            4,
-            4.472,
-            4.583,
-            79.030,
-            64.130,
-            64.150,
-            verbose=True,
-            eps_rel=0.001,
-            return_cell=True,
-        )
+def lepage(
+    a=1,
+    b=1,
+    c=1,
+    alpha=90,
+    beta=90,
+    gamma=90,
+    eps_rel=1e-5,
+    verbose=False,
+):
+    r"""
+    Le Page algorithm [1_].
+
+    Parameters
+    ----------
+    a : float, default 1
+        Length of the :math:`a_1` vector.
+    b : float, default 1
+        Length of the :math:`a_2` vector.
+    c : float, default 1
+        Length of the :math:`a_3` vector.
+    alpha : float, default 90
+        Angle between vectors :math:`a_2` and :math:`a_3`. In degrees.
+    beta : float, default 90
+        Angle between vectors :math:`a_1` and :math:`a_3`. In degrees.
+    gamma : float, default 90
+        Angle between vectors :math:`a_1` and :math:`a_2`. In degrees.
+    eps_rel : float, default 1e-5
+        Relative epsilon as defined in [2]_.
+    verbose : bool, default False
+        Whether to print the steps of an algorithm.
+
+    References
+    ----------
+    .. [1] Le Page, Y., 1982.
+        The derivation of the axes of the conventional unit cell from
+        the dimensions of the Buerger-reduced cell.
+        Journal of Applied Crystallography, 15(3), pp.255-259.
+    """
+
+    # Niggli reduction
+    a, b, c, alpha, beta, gamma = get_niggli(
+        a, b, c, alpha, beta, gamma, return_cell=True
     )
+    from rad_tools.routines import cell_from_param
+
+    cell = cell_from_param(a, b, c, alpha, beta, gamma)
+    rcell = reciprocal_cell(cell)
+    L = np.array(
+        [
+            [
+                a
+                * sin(beta * _toradians)
+                * sin(angle(rcell[0], rcell[1]) * _toradians),
+                0,
+                0,
+            ],
+            [
+                -a
+                * sin(beta * _toradians)
+                * sin(angle(rcell[0], rcell[1]) * _toradians),
+                b * sin(alpha * _toradians),
+                0,
+            ],
+            [a * cos(beta * _toradians), b * cos(alpha * _toradians), c],
+        ]
+    )
+    U = np.array([1, 0, -2])
+    h = np.array([0, 0, 1])
+
+    miller_indices = (np.indices((5, 5, 5)) - 2).transpose((1, 2, 3, 0)).reshape(125, 3)
+
+
+if __name__ == "__main__":
+    print(lepage(4, 4.472, 4.583, 79.030, 64.130, 64.150, verbose=True, eps_rel=0.001))

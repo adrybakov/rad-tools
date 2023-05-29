@@ -1488,30 +1488,7 @@ class TRI(Lattice):
             beta = tmp[1][1]
             c = tmp[2][0]
             gamma = tmp[2][1]
-        super().__init__(
-            [a, 0, 0],
-            [b * cos(gamma * _toradians), b * sin(gamma * _toradians), 0],
-            [
-                c * cos(beta * _toradians),
-                c
-                / sin(gamma * _toradians)
-                * (
-                    cos(alpha * _toradians)
-                    - cos(beta * _toradians) * cos(gamma * _toradians)
-                ),
-                c
-                / sin(gamma * _toradians)
-                * sqrt(
-                    sin(gamma * _toradians) ** 2
-                    - cos(alpha * _toradians) ** 2
-                    - cos(beta * _toradians) ** 2
-                    + 2
-                    * cos(alpha * _toradians)
-                    * cos(beta * _toradians)
-                    * cos(gamma * _toradians)
-                ),
-            ],
-        )
+        super().__init__(a, b, c, alpha, beta, gamma)
         if reciprocal:
             self.cell = self.reciprocal_cell
         self.conv_a = a
