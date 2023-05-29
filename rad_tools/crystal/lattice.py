@@ -1434,8 +1434,9 @@ def lepage(
     alpha=90,
     beta=90,
     gamma=90,
-    eps_rel=1e-5,
+    eps_rel=1e-4,
     verbose=False,
+    delta_max=None,
 ):
     r"""
     Le Page algorithm [1_].
@@ -1454,7 +1455,7 @@ def lepage(
         Angle between vectors :math:`a_1` and :math:`a_3`. In degrees.
     gamma : float, default 90
         Angle between vectors :math:`a_1` and :math:`a_2`. In degrees.
-    eps_rel : float, default 1e-5
+    eps_rel : float, default 1e-4
         Relative epsilon as defined in [2]_.
     verbose : bool, default False
         Whether to print the steps of an algorithm.
@@ -1467,38 +1468,430 @@ def lepage(
         Journal of Applied Crystallography, 15(3), pp.255-259.
     """
 
+    eps = eps_rel * volume(a, b, c, alpha, beta, gamma) ** (1 / 3.0)
+    if delta_max is None:
+        delta_max = eps
+    target_axes = {
+        "CUB": np.concatenate(
+            (
+                np.zeros(24),
+                abs(cos(60 * _toradians)) * np.ones(24),
+                abs(cos(45 * _toradians)) * np.ones(24),
+                np.ones(9),
+            )
+        ),
+        "HEX": np.concatenate(
+            (
+                np.zeros(18),
+                abs(cos(60 * _toradians)) * np.ones(12),
+                abs(cos(30 * _toradians)) * np.ones(12),
+                np.ones(7),
+            )
+        ),
+        "TET": np.concatenate(
+            (np.zeros(12), abs(cos(45 * _toradians)) * np.ones(8), np.ones(5))
+        ),
+        "RHL": np.concatenate((abs(cos(60 * _toradians)) * np.ones(6), np.ones(3))),
+        "ORC": np.concatenate((np.zeros(6), np.ones(3))),
+        "MCL": np.concatenate((np.zeros(6), np.ones(3))),
+    }
+
+    conventional_axis = {
+        "CUB": np.concatenate(
+            (
+                np.zeros(4),
+                abs(cos(45 * _toradians)) * np.ones(4),
+                np.ones(1),
+            )
+        ),
+        "TET": {
+            "z": np.concatenate((np.zeros(4), np.ones(1))),
+            "xy": np.concatenate(
+                (np.zeros(2), abs(cos(45 * _toradians)) * np.ones(2), np.ones(1))
+            ),
+        },
+    }
+
+    limit = 1.5
+
     # Niggli reduction
     a, b, c, alpha, beta, gamma = get_niggli(
         a, b, c, alpha, beta, gamma, return_cell=True
     )
-    from rad_tools.routines import cell_from_param
+    lattice = Lattice(a, b, c, alpha, beta, gamma)
 
-    cell = cell_from_param(a, b, c, alpha, beta, gamma)
-    rcell = reciprocal_cell(cell)
-    L = np.array(
-        [
-            [
-                a
-                * sin(beta * _toradians)
-                * sin(angle(rcell[0], rcell[1]) * _toradians),
-                0,
-                0,
-            ],
-            [
-                -a
-                * sin(beta * _toradians)
-                * sin(angle(rcell[0], rcell[1]) * _toradians),
-                b * sin(alpha * _toradians),
-                0,
-            ],
-            [a * cos(beta * _toradians), b * cos(alpha * _toradians), c],
-        ]
-    )
-    U = np.array([1, 0, -2])
-    h = np.array([0, 0, 1])
-
+    # find all axes
     miller_indices = (np.indices((5, 5, 5)) - 2).transpose((1, 2, 3, 0)).reshape(125, 3)
+    axes = []
+    for d_i in miller_indices:
+        for r_i in miller_indices:
+            if abs(d_i @ r_i) == 2:
+                t = d_i @ lattice.cell
+                tau = r_i @ lattice.reciprocal_cell
+                delta = (
+                    np.arctan(np.linalg.norm(np.cross(t, tau)) / abs(t @ tau))
+                    * _todegrees
+                )
+                if delta < limit:
+                    axes.append([d_i, t / np.linalg.norm(t), abs(d_i @ r_i), delta])
+
+    # sort and filter
+    axes.sort(key=lambda x: x[-1])
+    keep_index = np.ones(len(axes))
+    for i in range(len(axes)):
+        if keep_index[i]:
+            for j in range(i + 1, len(axes)):
+                if (
+                    (axes[i][0] == axes[j][0]).all()
+                    or (axes[i][0] == -axes[j][0]).all()
+                    or (axes[i][0] == 2 * axes[j][0]).all()
+                    or (axes[i][0] == 0.5 * axes[j][0]).all()
+                ):
+                    keep_index[i] = 0
+                    break
+    new_axes = []
+    for i in range(len(axes)):
+        if keep_index[i]:
+            if set(axes[i][0]) == {0, 2}:
+                axes[i][0] = axes[i][0] / 2
+            new_axes.append(axes[i])
+    axes = new_axes
+
+    n = len(axes)
+    angle_set = np.zeros((n, n), dtype=float)
+    for i in range(n):
+        for j in range(n):
+            angle_set[i][j] = np.array(axes[i][1]) @ np.array(axes[j][1])
+
+    delta = None
+    while delta is None or delta >= delta_max:
+        found_candidate = False
+        n = len(axes)
+        result = None
+        try:
+            delta = max(axes, key=lambda x: x[-1])[-1]
+        except ValueError:
+            delta = 0
+        print(f"delta     = {delta:11.8f}")
+        print(f"delta_max = {delta_max:11.8f}")
+
+        # CUB
+        if (
+            n**2 == target_axes["CUB"].shape[0]
+            and (
+                np.abs(np.sort(np.abs(angle_set.flatten())) - target_axes["CUB"]) < eps
+            ).all()
+        ):
+            xyz = []
+            for i in range(n):
+                if (
+                    np.abs(np.sort(np.abs(angle_set[i])) - conventional_axis["CUB"])
+                    < eps
+                ).all():
+                    xyz.append(axes[i])
+            det = np.abs(
+                np.linalg.det(
+                    [
+                        xyz[0][0],
+                        xyz[1][0],
+                        xyz[2][0],
+                    ]
+                )
+            )
+            if det == 1:
+                result = "CUB"
+                found_candidate = True
+            elif det == 4:
+                result = "FCC"
+                found_candidate = True
+            elif det == 2:
+                result = "BCC"
+                found_candidate = True
+
+        # HEX
+        if not found_candidate and (
+            n**2 == target_axes["HEX"].shape[0]
+            and (
+                np.abs(np.sort(np.abs(angle_set.flatten())) - target_axes["HEX"]) < eps
+            ).all()
+        ):
+            result = "HEX"
+            found_candidate = True
+
+        # TET
+        if not found_candidate and (
+            n**2 == target_axes["TET"].shape[0]
+            and (
+                np.abs(np.sort(np.abs(angle_set.flatten())) - target_axes["TET"]) < eps
+            ).all()
+        ):
+            x, y, z = None, None, None
+            x_alt, y_alt = None, None
+            for i in range(n):
+                if (
+                    np.abs(
+                        np.sort(np.abs(angle_set[i])) - conventional_axis["TET"]["z"]
+                    )
+                    < eps
+                ).all():
+                    z = axes[i]
+                if (
+                    np.abs(
+                        np.sort(np.abs(angle_set[i])) - conventional_axis["TET"]["xy"]
+                    )
+                    < eps
+                ).all():
+                    if x is None:
+                        x = axes[i]
+                    elif y is None and abs(axes[i][1] @ x[1]) < eps:
+                        y = axes[i]
+                    elif x_alt is None:
+                        x_alt = axes[i]
+                    else:
+                        y_alt = axes[i]
+
+            if np.linalg.norm(x_alt[0] @ lattice.cell) < np.linalg.norm(
+                x[0] @ lattice.cell
+            ):
+                x, y = x_alt, y_alt
+
+            det = np.abs(
+                np.linalg.det(
+                    [
+                        x[0],
+                        y[0],
+                        z[0],
+                    ]
+                )
+            )
+            if det == 1:
+                result = "TET"
+                found_candidate = True
+            elif det == 2:
+                result = "BCT"
+                found_candidate = True
+
+        # RHL
+        if not found_candidate and (
+            n**2 == target_axes["RHL"].shape[0]
+            and (
+                np.abs(np.sort(np.abs(angle_set.flatten())) - target_axes["RHL"]) < eps
+            ).all()
+        ):
+            result = "RHL"
+            found_candidate = True
+
+        # ORC
+        if not found_candidate and (
+            n**2 == target_axes["ORC"].shape[0]
+            and (
+                np.abs(np.sort(np.abs(angle_set.flatten())) - target_axes["ORC"]) < eps
+            ).all()
+        ):
+            C = np.array(
+                [
+                    axes[0][0],
+                    axes[1][0],
+                    axes[2][0],
+                ],
+                dtype=float,
+            ).T
+            det = np.abs(np.linalg.det(C))
+            if det == 1:
+                result = "ORC"
+                found_candidate = True
+            if det == 4:
+                result = "ORCF"
+                found_candidate = True
+            if det == 2:
+                v1, v2, v3, v4 = (
+                    C @ [0, 1, 1],
+                    C @ [1, 0, 1],
+                    C @ [1, 1, 0],
+                    C @ [1, 1, 1],
+                )
+
+                def gcd(p, q):
+                    while q != 0:
+                        p, q = q, p % q
+                    return p
+
+                if (
+                    gcd(abs(v4[0]), abs(v4[1])) > 1
+                    and gcd(abs(v4[0]), abs(v4[2])) > 1
+                    and gcd(abs(v4[1]), abs(v4[2])) > 1
+                ):
+                    result = "ORCI"
+                    found_candidate = True
+                else:
+                    result = "ORCC"
+                    found_candidate = True
+
+        # MCL
+        if not found_candidate and (n == 1):
+            v = axes[0][0] @ lattice.cell
+            a, b, c = lattice.cell
+
+            ax = []
+            test_ax = []
+
+            if abs(a @ v) < eps:
+                ax.append(np.array([1, 0, 0]))
+            else:
+                test_ax.append(np.array([1, 0, 0]))
+            if abs(b @ v) < eps:
+                ax.append(np.array([0, 1, 0]))
+            else:
+                test_ax.append(np.array([0, 1, 0]))
+            if abs(c @ v) < eps:
+                ax.append(np.array([0, 0, 1]))
+            else:
+                test_ax.append(np.array([0, 0, 1]))
+
+            indices = [[1, 0], [0, 1], [1, 1], [1, -1]]
+            if len(ax) == 2:
+                a, b = ax
+                ax = [a, b, a + b, a - b]
+                ax.sort(key=lambda x: np.linalg.norm(x @ lattice.cell))
+                a = ax[0]
+                b = ax[1]
+                c = axes[0][0]
+            elif len(test_ax) == 2:
+                tmp = ax
+                a, b = test_ax
+                ax = [a, b, a + b, a - b]
+                new_ax = []
+                for i in ax:
+                    if abs((i @ lattice.cell) @ v) < eps:
+                        new_ax.append(i)
+
+                a, b = tmp[0], new_ax[0]
+                ax = [a, b, a + b, a - b]
+                ax.sort(key=lambda x: np.linalg.norm(x @ lattice.cell))
+                a = ax[0]
+                b = ax[1]
+                c = axes[0][0]
+
+            C = np.array(
+                [
+                    a,
+                    b,
+                    c,
+                ],
+                dtype=float,
+            ).T
+            det = np.abs(np.linalg.det(C))
+            if det == 1:
+                result = "MCL"
+                found_candidate = True
+            if det == 2:
+                result = "MCLC"
+                found_candidate = True
+
+        # TRI
+        if not found_candidate:
+            result = "TRI"
+
+        if len(axes) > 0:
+            # remove worst axes
+            while len(axes) >= 2 and axes[-1][-1] == axes[-2][-1]:
+                axes = axes[:-1]
+                angle_set = np.delete(angle_set, -1, -1)[:-1]
+            axes = axes[:-1]
+            angle_set = np.delete(angle_set, -1, -1)[:-1]
+        print(f"System: {result}")
+        print("=====END WHILE=====")
+
+    return result
 
 
 if __name__ == "__main__":
-    print(lepage(4, 4.472, 4.583, 79.030, 64.130, 64.150, verbose=True, eps_rel=0.001))
+    print(
+        lepage(
+            4,
+            4.472,
+            4.583,
+            79.030,
+            64.130,
+            64.150,
+            verbose=True,
+            eps_rel=0.001,
+            delta_max=0.006,
+        )
+    )
+
+    from rad_tools.crystal.bravais_lattice import lattice_example
+
+    delta_max = [
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        1e-5,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        1e-5,
+        None,
+        None,
+        None,
+        None,
+    ]
+    for i, name in enumerate(
+        [
+            "CUB",
+            "FCC",
+            "BCC",
+            "HEX",
+            "TET",
+            "BCT1",
+            "BCT2",
+            "RHL1",
+            "RHL2",
+            "ORC",
+            "ORCF1",
+            "ORCF2",
+            "ORCF3",
+            "ORCI",
+            "ORCC",
+            "MCL",
+            "MCLC1",
+            "MCLC2",
+            "MCLC3",
+            "MCLC4",
+            "MCLC5",
+            "TRI1a",
+            "TRI2a",
+            "TRI1b",
+            "TRI2b",
+        ]
+    ):
+        lattice = lattice_example(name)
+        print("\n" + "=" * 80)
+        print(
+            name,
+            lepage(
+                lattice.a,
+                lattice.b,
+                lattice.c,
+                lattice.alpha,
+                lattice.beta,
+                lattice.gamma,
+                verbose=True,
+                delta_max=delta_max[i],
+            ),
+        )
+
+    print("\n" + "=" * 80)
