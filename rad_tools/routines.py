@@ -4,7 +4,7 @@ which may be used across the whole package.
 """
 
 import sys
-from math import asin, cos, pi, sqrt
+from math import asin, cos, pi, sqrt, sin
 
 import numpy as np
 from termcolor import cprint
@@ -175,17 +175,17 @@ def volume(*args):
         Third vector.
     cell : (3,3) |array_like|_
         Cell matrix, rows are interpreted as vectors.
-    a : float, default=1
+    a : float, default 1
         Length of the :math:`v_1` vector.
-    b : float, default=1
+    b : float, default 1
         Length of the :math:`v_2` vector.
-    c : float, default=1
+    c : float, default 1
         Length of the :math:`v_3` vector.
-    alpha : float, default=90
+    alpha : float, default 90
         Angle between vectors :math:`v_2` and :math:`v_3`. In degrees.
-    beta : float, default=90
+    beta : float, default 90
         Angle between vectors :math:`v_1` and :math:`v_3`. In degrees.
-    gamma : float, default=90
+    gamma : float, default 90
         Angle between vectors :math:`v_1` and :math:`v_2`. In degrees.
 
     Returns
@@ -452,6 +452,61 @@ def reciprocal_cell(cell):
         ]
     )
     return reciprocal_cell
+
+
+def cell_from_param(a=1, b=1, c=1, alpha=90, beta=90, gamma=90):
+    r"""
+    Return cell from lattice parameters.
+
+    Parameters
+    ----------
+    a : float, default 1
+        Length of the :math:`a_1` vector.
+    b : float, default 1
+        Length of the :math:`a_2` vector.
+    c : float, default 1
+        Length of the :math:`a_3` vector.
+    alpha : float, default 90
+        Angle between vectors :math:`a_2` and :math:`a_3`. In degrees.
+    beta : float, default 90
+        Angle between vectors :math:`a_1` and :math:`a_3`. In degrees.
+    gamma : float, default 90
+        Angle between vectors :math:`a_1` and :math:`a_2`. In degrees.
+
+    Returns
+    -------
+    cell : (3,3) :numpy:`ndarray`
+        Cell matrix.
+
+        .. code-block:: python
+
+            cell = [[a1_x, a1_y, a1_z],
+                    [a2_x, a2_y, a2_z],
+                    [a3_x, a3_y, a3_z]]
+    """
+
+    alpha = alpha * _toradians
+    beta = beta * _toradians
+    gamma = gamma * _toradians
+    return np.array(
+        [
+            [a, 0, 0],
+            [b * cos(gamma), b * sin(gamma), 0],
+            [
+                c * cos(beta),
+                c / sin(gamma) * (cos(alpha) - cos(beta) * cos(gamma)),
+                c
+                / sin(gamma)
+                * sqrt(
+                    1
+                    + 2 * cos(alpha) * cos(beta) * cos(gamma)
+                    - cos(alpha) ** 2
+                    - cos(beta) ** 2
+                    - cos(gamma) ** 2
+                ),
+            ],
+        ]
+    )
 
 
 if __name__ == "__main__":

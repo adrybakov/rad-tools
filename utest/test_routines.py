@@ -11,6 +11,7 @@ from rad_tools.routines import (
     rot_angle,
     volume,
     reciprocal_cell,
+    cell_from_param,
 )
 
 
@@ -117,3 +118,11 @@ def test_volume(args, result, eps):
 def test_reciprocal_cell(cell, rec_cell):
     rcell = reciprocal_cell(cell)
     assert (rcell - np.array(rec_cell) < 1e-10).all()
+
+
+@pytest.mark.parametrize(
+    "a, b, c, alpha, beta, gamma, cell",
+    [(1, 1, 1, 90, 90, 90, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])],
+)
+def test_cell_from_param(a, b, c, alpha, beta, gamma, cell):
+    assert (cell_from_param(a, b, c, alpha, beta, gamma) - np.array(cell) < 1e-8).all()
