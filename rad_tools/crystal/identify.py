@@ -16,8 +16,10 @@ from rad_tools.routines import (
     reciprocal_cell,
 )
 
+__all__ = ["niggli", "lepage"]
 
-def get_niggli(
+
+def niggli(
     a=1,
     b=1,
     c=1,
@@ -100,7 +102,7 @@ def get_niggli(
         >>> gamma = acos(-22 / 2 / a / b) * _todegrees
         >>> print(f"{alpha:.2f} {beta:.2f} {gamma:.2f}")
         103.92 109.47 134.88
-        >>> niggli_matrix_form = rad.get_niggli(a, b, c, alpha, beta, gamma, verbose=True)
+        >>> niggli_matrix_form = rad.niggli(a, b, c, alpha, beta, gamma, verbose=True)
                        A         B         C        xi        eta      zeta   
         start:       9.00000  27.00000   4.00000  -5.00000  -4.00000 -22.00000
         2 appl. to   9.00000  27.00000   4.00000  -5.00000  -4.00000 -22.00000
@@ -350,9 +352,7 @@ def lepage(
     limit = 1.5
 
     # Niggli reduction
-    a, b, c, alpha, beta, gamma = get_niggli(
-        a, b, c, alpha, beta, gamma, return_cell=True
-    )
+    a, b, c, alpha, beta, gamma = niggli(a, b, c, alpha, beta, gamma, return_cell=True)
     cell = cell_from_param(a, b, c, alpha, beta, gamma)
     rcell = reciprocal_cell(cell)
 

@@ -23,7 +23,7 @@ Functions
 .. autosummary::
     :toctree: generated/
 
-    get_niggli
+    niggli
 
 
 Bravais lattices
