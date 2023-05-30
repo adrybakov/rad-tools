@@ -322,42 +322,21 @@ def lepage(
 
     target_angles = {
         "CUB": np.concatenate(
-            (
-                np.zeros(24),
-                abs(cos(60 * _toradians)) * np.ones(24),
-                abs(cos(45 * _toradians)) * np.ones(24),
-                np.ones(9),
-            )
+            (np.zeros(9), 45 * np.ones(24), 60 * np.ones(24), 90 * np.ones(24))
         ),
         "HEX": np.concatenate(
-            (
-                np.zeros(18),
-                abs(cos(60 * _toradians)) * np.ones(12),
-                abs(cos(30 * _toradians)) * np.ones(12),
-                np.ones(7),
-            )
+            (np.zeros(7), 30 * np.ones(12), 60 * np.ones(12), 90 * np.ones(18))
         ),
-        "TET": np.concatenate(
-            (np.zeros(12), abs(cos(45 * _toradians)) * np.ones(8), np.ones(5))
-        ),
-        "RHL": np.concatenate((abs(cos(60 * _toradians)) * np.ones(6), np.ones(3))),
-        "ORC": np.concatenate((np.zeros(6), np.ones(3))),
-        "MCL": np.concatenate((np.zeros(6), np.ones(3))),
+        "TET": np.concatenate((np.zeros(5), 45 * np.ones(8), 90 * np.ones(12))),
+        "RHL": np.concatenate((np.zeros(3), 60 * np.ones(6))),
+        "ORC": np.concatenate((np.zeros(3), 90 * np.ones(6))),
     }
 
     conventional_axis = {
-        "CUB": np.concatenate(
-            (
-                np.zeros(4),
-                abs(cos(45 * _toradians)) * np.ones(4),
-                np.ones(1),
-            )
-        ),
+        "CUB": np.concatenate((np.zeros(1), 45 * np.ones(4), 90 * np.ones(4))),
         "TET": {
-            "z": np.concatenate((np.zeros(4), np.ones(1))),
-            "xy": np.concatenate(
-                (np.zeros(2), abs(cos(45 * _toradians)) * np.ones(2), np.ones(1))
-            ),
+            "z": np.concatenate((np.zeros(1), 90 * np.ones(4))),
+            "xy": np.concatenate((np.zeros(1), 45 * np.ones(2), 90 * np.ones(2))),
         },
     }
 
@@ -419,7 +398,10 @@ def lepage(
     angles = np.zeros((n, n), dtype=float)
     for i in range(n):
         for j in range(n):
-            angles[i][j] = np.array(axes[i][1]) @ np.array(axes[j][1])
+            angles[i][j] = (
+                acos(abs(np.clip(np.array(axes[i][1]) @ np.array(axes[j][1]), -1, 1)))
+                * _todegrees
+            )
 
     delta = None
     separator = lambda x: "=" * 20 + f" Cycle {x} " + "=" * 20
