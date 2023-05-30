@@ -6,6 +6,7 @@ import numpy as np
 from math import acos, sqrt
 from rad_tools.crystal.identify import niggli, lepage
 from rad_tools.routines import _todegrees
+from rad_tools.crystal.bravais_lattice import lattice_example
 
 
 def test_niggli():
@@ -37,3 +38,28 @@ def test_niggli_run():
     assert alpha - alphap < 1e-3
     assert beta - betap < 1e-3
     assert gamma - gammap < 1e-3
+
+
+lattices = lattice_example()
+
+
+@pytest.mark.parametrize("name", lattices, ids=lattices)
+def test_lepage(name):
+    lattice = lattice_example(name)
+    type_name = ""
+    for i in name:
+        if i in "12345":
+            break
+        type_name += i
+
+    assert (
+        lepage(
+            lattice.a,
+            lattice.b,
+            lattice.c,
+            lattice.alpha,
+            lattice.beta,
+            lattice.gamma,
+        )
+        == type_name
+    )

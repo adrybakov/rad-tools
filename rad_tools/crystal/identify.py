@@ -272,7 +272,9 @@ def lepage(
     beta=90,
     gamma=90,
     eps_rel=1e-4,
+    limit=1.5,
     verbose=False,
+    very_verbose=False,
     delta_max=None,
 ):
     r"""
@@ -294,8 +296,12 @@ def lepage(
         Angle between vectors :math:`a_1` and :math:`a_2`. In degrees.
     eps_rel : float, default 1e-4
         Relative epsilon as defined in [2]_.
+    limit : float, default 1.5
+        Limit for the Miller index search.
     verbose : bool, default False
         Whether to print the steps of an algorithm.
+    very_verbose : bool, default False
+        Whether to print the detailed steps of an algorithm.
 
     References
     ----------
@@ -648,84 +654,97 @@ if __name__ == "__main__":
             79.030,
             64.130,
             64.150,
-            verbose=True,
+            very_verbose=True,
+            eps_rel=0.001,
+            delta_max=0.006,
+        )
+    )
+    print(
+        lepage(
+            4,
+            4,
+            4,
+            90,
+            90,
+            90,
+            very_verbose=True,
             eps_rel=0.001,
             delta_max=0.006,
         )
     )
 
-    from rad_tools.crystal.bravais_lattice import lattice_example
+    # from rad_tools.crystal.bravais_lattice import lattice_example
 
-    delta_max = [
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        1e-5,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        1e-5,
-        None,
-        None,
-        None,
-        None,
-    ]
-    for i, name in enumerate(
-        [
-            "CUB",
-            "FCC",
-            "BCC",
-            "HEX",
-            "TET",
-            "BCT1",
-            "BCT2",
-            "RHL1",
-            "RHL2",
-            "ORC",
-            "ORCF1",
-            "ORCF2",
-            "ORCF3",
-            "ORCI",
-            "ORCC",
-            "MCL",
-            "MCLC1",
-            "MCLC2",
-            "MCLC3",
-            "MCLC4",
-            "MCLC5",
-            "TRI1a",
-            "TRI2a",
-            "TRI1b",
-            "TRI2b",
-        ]
-    ):
-        lattice = lattice_example(name)
-        print("\n" + "=" * 80)
-        print(
-            name,
-            lepage(
-                lattice.a,
-                lattice.b,
-                lattice.c,
-                lattice.alpha,
-                lattice.beta,
-                lattice.gamma,
-                verbose=True,
-                delta_max=delta_max[i],
-            ),
-        )
+    # delta_max = [
+    #     None,
+    #     None,
+    #     None,
+    #     None,
+    #     None,
+    #     None,
+    #     None,
+    #     1e-5,
+    #     None,
+    #     None,
+    #     None,
+    #     None,
+    #     None,
+    #     None,
+    #     None,
+    #     None,
+    #     None,
+    #     None,
+    #     None,
+    #     None,
+    #     1e-5,
+    #     None,
+    #     None,
+    #     None,
+    #     None,
+    # ]
+    # for i, name in enumerate(
+    #     [
+    #         "CUB",
+    #         "FCC",
+    #         "BCC",
+    #         "HEX",
+    #         "TET",
+    #         "BCT1",
+    #         "BCT2",
+    #         "RHL1",
+    #         "RHL2",
+    #         "ORC",
+    #         "ORCF1",
+    #         "ORCF2",
+    #         "ORCF3",
+    #         "ORCI",
+    #         "ORCC",
+    #         "MCL",
+    #         "MCLC1",
+    #         "MCLC2",
+    #         "MCLC3",
+    #         "MCLC4",
+    #         "MCLC5",
+    #         "TRI1a",
+    #         "TRI2a",
+    #         "TRI1b",
+    #         "TRI2b",
+    #     ]
+    # ):
+    #     lattice = lattice_example(name)
+    #     print("\n" + "=" * 80)
+    #     print(
+    #         name,
+    #         lepage(
+    #             lattice.a,
+    #             lattice.b,
+    #             lattice.c,
+    #             lattice.alpha,
+    #             lattice.beta,
+    #             lattice.gamma,
+    #             verbose=True,
+    #             delta_max=delta_max[i],
+    #         ),
+    #     )
 
-    print("\n" + "=" * 80)
+    # print("\n" + "=" * 80)
