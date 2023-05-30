@@ -48,10 +48,21 @@ All the files used in the usage examples are available :examples:`here <>`.
    rad-identify-wannier-centres
 
 .. toctree::
+   :maxdepth: 1
 
    output-notes
 
+Library
+=======
+Description of some methods and algorithms implemented in 
+
+.. toctree::
+   :maxdepth: 1
+
+   lepage
 
 
-   
-There are no more guides. You are now guideless. Good luck.
+.. div:: logo-custom-text
+    
+   There are no more guides. You are now guideless. Good luck.
+

@@ -89,21 +89,37 @@ else:
     major, minor, rest = version.split(".")[0:3]
     switcher_version = f"{major}.{minor}"
 html_theme_options = {
-    "github_url": "https://github.com/adrybakov/rad-tools",
-    "twitter_url": "https://twitter.com/adrybakov",
     "collapse_navigation": True,
     "use_edit_page_button": True,
-    "navbar_end": ["theme-switcher.html", "version-switcher", "navbar-icon-links.html"],
+    "navbar_center": ["version-switcher", "navbar-nav"],
+    "navbar_end": ["theme-switcher", "navbar-icon-links"],
     "switcher": {
         "version_match": switcher_version,
         "json_url": "https://rad-tools.adrybakov.com/en/stable/_static/versions.json",
     },
-    "navbar_align": "content",
+    "navbar_align": "left",
     "logo": {
         "image_light": "_static/logo_black.png",
         "image_dark": "_static/logo_white.png",
     },
-    "icon_links": [],  # pydata bugfix
+    "header_links_before_dropdown": 4,
+    "icon_links": [
+        {
+            "name": "Twitter",
+            "url": "https://twitter.com/adrybakov",
+            "icon": "fa-brands fa-twitter",
+        },
+        {
+            "name": "GitHub",
+            "url": "https://github.com/adrybakov/rad-tools",
+            "icon": "fa-brands fa-github",
+        },
+        {
+            "name": "PyPI",
+            "url": "https://pypi.org/project/rad-tools/",
+            "icon": "fa-custom fa-pypi",
+        },
+    ],
 }
 
 # fix problem with autosummary and numpydoc:

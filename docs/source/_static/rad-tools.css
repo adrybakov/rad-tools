@@ -56,3 +56,17 @@ html[data-theme=dark] h2 {
 .bd-sidebar-secondary {
   width: 14rem;
 }
+
+
+
+.logo-custom-text {
+  font-family: "CustomLogoFont";
+}
+
+@font-face {
+  font-family: "CustomLogoFont";
+  src: url("file:///Users/rybakov.ad/Projects/rad-tools/docs/source/_static/CustomLogoFont.eot");
+  src: url("file:///Users/rybakov.ad/Projects/rad-tools/docs/source/_static/CustomLogoFont.woff") format("woff"),
+    url("file:///Users/rybakov.ad/Projects/rad-tools/docs/source/_static/CustomLogoFont.ttf") format("truetype"),
+    url("file:///Users/rybakov.ad/Projects/rad-tools/docs/source/_static/CustomLogoFont.svg#filename") format("svg");
+}
