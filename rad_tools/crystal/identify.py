@@ -14,6 +14,7 @@ from rad_tools.routines import (
     volume,
     cell_from_param,
     reciprocal_cell,
+    print_2D_array,
 )
 
 __all__ = ["niggli", "lepage"]
@@ -311,10 +312,15 @@ def lepage(
         Journal of Applied Crystallography, 15(3), pp.255-259.
     """
 
+    if very_verbose:
+        verbose = True
+
     eps = eps_rel * volume(a, b, c, alpha, beta, gamma) ** (1 / 3.0)
+    decimals = 3
     if delta_max is None:
         delta_max = eps
-    target_axes = {
+
+    target_angles = {
         "CUB": np.concatenate(
             (
                 np.zeros(24),
@@ -355,29 +361,27 @@ def lepage(
         },
     }
 
-    limit = 1.5
-
     # Niggli reduction
     a, b, c, alpha, beta, gamma = niggli(a, b, c, alpha, beta, gamma, return_cell=True)
     cell = cell_from_param(a, b, c, alpha, beta, gamma)
     rcell = reciprocal_cell(cell)
 
-    # find all axes
+    # Find all axes with twins
     miller_indices = (np.indices((5, 5, 5)) - 2).transpose((1, 2, 3, 0)).reshape(125, 3)
     axes = []
-    for d_i in miller_indices:
-        for r_i in miller_indices:
-            if abs(d_i @ r_i) == 2:
-                t = d_i @ cell
-                tau = r_i @ rcell
+    for U in miller_indices:
+        for h in miller_indices:
+            if abs(U @ h) == 2:
+                t = U @ cell
+                tau = h @ rcell
                 delta = (
                     np.arctan(np.linalg.norm(np.cross(t, tau)) / abs(t @ tau))
                     * _todegrees
                 )
                 if delta < limit:
-                    axes.append([d_i, t / np.linalg.norm(t), abs(d_i @ r_i), delta])
+                    axes.append([U, t / np.linalg.norm(t), abs(U @ h), delta])
 
-    # sort and filter
+    # Sort and filter
     axes.sort(key=lambda x: x[-1])
     keep_index = np.ones(len(axes))
     for i in range(len(axes)):
@@ -399,36 +403,58 @@ def lepage(
             new_axes.append(axes[i])
     axes = new_axes
 
+    if very_verbose:
+        cprint(f"Axes with delta < {limit}:", color="yellow")
+        print(f"       U     {'delta':>{3+decimals}}")
+        for ax in axes:
+            print(
+                f"  ({ax[0][0]:2.0f} "
+                + f"{ax[0][1]:2.0f} "
+                + f"{ax[0][0]:2.0f}) "
+                + f"{ax[-1]:{3+decimals}.{decimals}f}"
+            )
+
+    # Compute angles matrix
     n = len(axes)
-    angle_set = np.zeros((n, n), dtype=float)
+    angles = np.zeros((n, n), dtype=float)
     for i in range(n):
         for j in range(n):
-            angle_set[i][j] = np.array(axes[i][1]) @ np.array(axes[j][1])
+            angles[i][j] = np.array(axes[i][1]) @ np.array(axes[j][1])
 
     delta = None
+    separator = lambda x: "=" * 20 + f" Cycle {x} " + "=" * 20
+    i = 0
     while delta is None or delta >= delta_max:
-        found_candidate = False
-        n = len(axes)
-        result = None
+        if verbose:
+            i += 1
+            print(separator(i))
+
+        if very_verbose:
+            print("Axes:")
+            print_2D_array(list(map(lambda x: x[0], axes)), fmt="2.0f")
+            print("Angles:")
+            print_2D_array(angles, fmt=f"{3+decimals}.{decimals}f")
+
         try:
             delta = max(axes, key=lambda x: x[-1])[-1]
         except ValueError:
             delta = 0
-        print(f"delta     = {delta:11.8f}")
-        print(f"delta_max = {delta_max:11.8f}")
+
+        continue_search = True
+        n = len(axes)
+        result = None
 
         # CUB
         if (
-            n**2 == target_axes["CUB"].shape[0]
+            n**2 == target_angles["CUB"].shape[0]
             and (
-                np.abs(np.sort(np.abs(angle_set.flatten())) - target_axes["CUB"]) < eps
+                np.abs(np.sort(np.abs(angles.flatten())) - target_angles["CUB"]) < eps
             ).all()
         ):
             xyz = []
             for i in range(n):
                 if (
-                    np.abs(np.sort(np.abs(angle_set[i])) - conventional_axis["CUB"])
-                    < eps
+                    np.abs(np.sort(np.abs(angles[i])) - conventional_axis["CUB"]) < eps
                 ).all():
                     xyz.append(axes[i])
             det = np.abs(
@@ -442,45 +468,39 @@ def lepage(
             )
             if det == 1:
                 result = "CUB"
-                found_candidate = True
             elif det == 4:
                 result = "FCC"
-                found_candidate = True
             elif det == 2:
                 result = "BCC"
-                found_candidate = True
+            continue_search = False
 
         # HEX
-        if not found_candidate and (
-            n**2 == target_axes["HEX"].shape[0]
+        if continue_search and (
+            n**2 == target_angles["HEX"].shape[0]
             and (
-                np.abs(np.sort(np.abs(angle_set.flatten())) - target_axes["HEX"]) < eps
+                np.abs(np.sort(np.abs(angles.flatten())) - target_angles["HEX"]) < eps
             ).all()
         ):
             result = "HEX"
-            found_candidate = True
+            continue_search = False
 
         # TET
-        if not found_candidate and (
-            n**2 == target_axes["TET"].shape[0]
+        if continue_search and (
+            n**2 == target_angles["TET"].shape[0]
             and (
-                np.abs(np.sort(np.abs(angle_set.flatten())) - target_axes["TET"]) < eps
+                np.abs(np.sort(np.abs(angles.flatten())) - target_angles["TET"]) < eps
             ).all()
         ):
             x, y, z = None, None, None
             x_alt, y_alt = None, None
             for i in range(n):
                 if (
-                    np.abs(
-                        np.sort(np.abs(angle_set[i])) - conventional_axis["TET"]["z"]
-                    )
+                    np.abs(np.sort(np.abs(angles[i])) - conventional_axis["TET"]["z"])
                     < eps
                 ).all():
                     z = axes[i]
                 if (
-                    np.abs(
-                        np.sort(np.abs(angle_set[i])) - conventional_axis["TET"]["xy"]
-                    )
+                    np.abs(np.sort(np.abs(angles[i])) - conventional_axis["TET"]["xy"])
                     < eps
                 ).all():
                     if x is None:
@@ -506,26 +526,25 @@ def lepage(
             )
             if det == 1:
                 result = "TET"
-                found_candidate = True
             elif det == 2:
                 result = "BCT"
-                found_candidate = True
+            continue_search = False
 
         # RHL
-        if not found_candidate and (
-            n**2 == target_axes["RHL"].shape[0]
+        if continue_search and (
+            n**2 == target_angles["RHL"].shape[0]
             and (
-                np.abs(np.sort(np.abs(angle_set.flatten())) - target_axes["RHL"]) < eps
+                np.abs(np.sort(np.abs(angles.flatten())) - target_angles["RHL"]) < eps
             ).all()
         ):
             result = "RHL"
-            found_candidate = True
+            continue_search = False
 
         # ORC
-        if not found_candidate and (
-            n**2 == target_axes["ORC"].shape[0]
+        if continue_search and (
+            n**2 == target_angles["ORC"].shape[0]
             and (
-                np.abs(np.sort(np.abs(angle_set.flatten())) - target_axes["ORC"]) < eps
+                np.abs(np.sort(np.abs(angles.flatten())) - target_angles["ORC"]) < eps
             ).all()
         ):
             C = np.array(
@@ -539,10 +558,8 @@ def lepage(
             det = np.abs(np.linalg.det(C))
             if det == 1:
                 result = "ORC"
-                found_candidate = True
             if det == 4:
                 result = "ORCF"
-                found_candidate = True
             if det == 2:
                 v1, v2, v3, v4 = (
                     C @ [0, 1, 1],
@@ -562,13 +579,12 @@ def lepage(
                     and gcd(abs(v4[1]), abs(v4[2])) > 1
                 ):
                     result = "ORCI"
-                    found_candidate = True
                 else:
                     result = "ORCC"
-                    found_candidate = True
+            continue_search = False
 
         # MCL
-        if not found_candidate and (n == 1):
+        if continue_search and (n == 1):
             v = axes[0][0] @ cell
             a, b, c = cell
 
@@ -623,24 +639,26 @@ def lepage(
             det = np.abs(np.linalg.det(C))
             if det == 1:
                 result = "MCL"
-                found_candidate = True
             if det == 2:
                 result = "MCLC"
-                found_candidate = True
+            continue_search = False
 
         # TRI
-        if not found_candidate:
+        if continue_search:
             result = "TRI"
+
+        if verbose:
+            print(
+                f"System {result} with the worst delta = {delta:{3+decimals}.{decimals}f}"
+            )
 
         if len(axes) > 0:
             # remove worst axes
             while len(axes) >= 2 and axes[-1][-1] == axes[-2][-1]:
                 axes = axes[:-1]
-                angle_set = np.delete(angle_set, -1, -1)[:-1]
+                angles = np.delete(angles, -1, -1)[:-1]
             axes = axes[:-1]
-            angle_set = np.delete(angle_set, -1, -1)[:-1]
-        print(f"System: {result}")
-        print("=====END WHILE=====")
+            angles = np.delete(angles, -1, -1)[:-1]
 
     return result
 
