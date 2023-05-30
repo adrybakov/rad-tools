@@ -17,14 +17,6 @@ General lattice is describe by the class :py:class:`.Lattice`.
 
     Lattice
 
-Functions
-=========
-
-.. autosummary::
-    :toctree: generated/
-
-    niggli
-
 
 Bravais lattices
 ================

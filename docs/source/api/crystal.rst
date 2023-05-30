@@ -36,7 +36,11 @@ Class
 
     Crystal
 
+Functions
+=========
 
+.. autosummary::
+    :toctree: generated/
 
-
-
+    niggli
+    lepage
