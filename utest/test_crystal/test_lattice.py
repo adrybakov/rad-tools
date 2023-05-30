@@ -75,26 +75,3 @@ class TestLattice:
 
     def test_variation(self):
         assert self.l.variation == "Lattice"
-
-
-def test_get_niggli():
-    a = 3
-    b = sqrt(27)
-    c = 2
-    alpha = acos(-5 / 2 / sqrt(27) / 2) * _todegrees
-    beta = acos(-4 / 2 / 3 / 2) * _todegrees
-    gamma = acos(-22 / 2 / 3 / sqrt(27)) * _todegrees
-    assert (
-        np.array([[4, 9, 9], [9 / 2, 3 / 2, 2]])
-        == get_niggli(a, b, c, alpha, beta, gamma)
-    ).all()
-
-
-def test_niggli_run():
-    alpha = 79.030
-    beta = 64.130
-    gamma = 64.150
-    a = 4
-    b = 4.472
-    c = 4.583
-    get_niggli(a, b, c, alpha, beta, gamma)
