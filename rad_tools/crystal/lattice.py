@@ -23,11 +23,11 @@ class Arrow3D(FancyArrowPatch):
     def __init__(self, ax, xs, ys, zs, *args, **kwargs):
         FancyArrowPatch.__init__(self, (0, 0), (0, 0), *args, **kwargs)
         self._verts3d = xs, ys, zs
-        self._ax = ax
+        self.ax = ax
 
     def draw(self, renderer):
         xs3d, ys3d, zs3d = self._verts3d
-        xs, ys, zs = proj3d.proj_transform(xs3d, ys3d, zs3d, self._ax.axes.M)
+        xs, ys, zs = proj3d.proj_transform(xs3d, ys3d, zs3d, self.ax.axes.M)
         self.set_positions((xs[0], ys[0]), (xs[1], ys[1]))
         FancyArrowPatch.draw(self, renderer)
 
@@ -136,8 +136,8 @@ class Lattice:
         self.points = {}
         self._path = None
         self._default_path = None
-        self._fig = None
-        self._ax = None
+        self.fig = None
+        self.ax = None
         self._artists = {}
         self._PLOT_NAMES = {
             "G": "$\\Gamma$",
@@ -582,24 +582,24 @@ class Lattice:
             See: |matplotlibFocalLength|_
         """
 
-        if self._fig is None:
-            self._fig = plt.figure(figsize=(6, 6))
+        if self.fig is None:
+            self.fig = plt.figure(figsize=(6, 6))
             rcParams["axes.linewidth"] = 0
             rcParams["xtick.color"] = "#B3B3B3"
-            self._ax = self._fig.add_subplot(projection="3d")
-            self._ax.set_proj_type("persp", focal_length=focal_length)
+            self.ax = self.fig.add_subplot(projection="3d")
+            self.ax.set_proj_type("persp", focal_length=focal_length)
             if background:
-                self._ax.axes.linewidth = 0
-                self._ax.xaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
-                self._ax.yaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
-                self._ax.zaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
-                self._ax.set_xlabel("x", fontsize=15, alpha=0.5)
-                self._ax.set_ylabel("y", fontsize=15, alpha=0.5)
-                self._ax.set_zlabel("z", fontsize=15, alpha=0.5)
-                self._ax.tick_params(axis="both", zorder=0, color="#B3B3B3")
+                self.ax.axes.linewidth = 0
+                self.ax.xaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
+                self.ax.yaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
+                self.ax.zaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
+                self.ax.set_xlabel("x", fontsize=15, alpha=0.5)
+                self.ax.set_ylabel("y", fontsize=15, alpha=0.5)
+                self.ax.set_zlabel("z", fontsize=15, alpha=0.5)
+                self.ax.tick_params(axis="both", zorder=0, color="#B3B3B3")
             else:
-                self._ax.axis("off")
-            self._ax.set_aspect("equal")
+                self.ax.axis("off")
+            self.ax.set_aspect("equal")
 
     def plot(self, kind="primitive", ax=None, **kwargs):
         r"""
@@ -643,7 +643,7 @@ class Lattice:
 
         if ax is None:
             self.prepare_figure()
-            ax = self._ax
+            ax = self.ax
         if isinstance(kind, str):
             kinds = [kind]
         else:
@@ -694,10 +694,10 @@ class Lattice:
         r"""
         Show the figure in the interactive matplotlib window.
         """
-        self._ax.set_aspect("equal")
+        self.ax.set_aspect("equal")
         plt.show()
-        del self._fig
-        del self._ax
+        del self.fig
+        del self.ax
         plt.close()
 
     def savefig(self, output_name="lattice_graph.png", elev=30, azim=-60, **kwargs):
@@ -716,9 +716,9 @@ class Lattice:
             Parameters to be passed to the |matplotlibSavefig|_.
         """
 
-        self._ax.set_aspect("equal")
-        self._ax.view_init(elev=elev, azim=azim)
-        self._fig.savefig(output_name, **kwargs)
+        self.ax.set_aspect("equal")
+        self.ax.view_init(elev=elev, azim=azim)
+        self.fig.savefig(output_name, **kwargs)
 
     def legend(self, **kwargs):
         r"""
@@ -726,7 +726,7 @@ class Lattice:
         Directly passed to the |matplotlibLegend|_.
         """
 
-        self._ax.legend(**kwargs)
+        self.ax.legend(**kwargs)
 
     def plot_real_space(
         self,
@@ -767,7 +767,7 @@ class Lattice:
 
         if ax is None:
             self.prepare_figure()
-            ax = self._ax
+            ax = self.ax
 
         if conventional:
             try:
@@ -950,7 +950,7 @@ class Lattice:
 
         if ax is None:
             self.prepare_figure()
-            ax = self._ax
+            ax = self.ax
 
         if reciprocal:
             v1, v2, v3 = self.b1, self.b2, self.b3
@@ -1099,7 +1099,7 @@ class Lattice:
 
         if ax is None:
             self.prepare_figure()
-            ax = self._ax
+            ax = self.ax
 
         cell = self.reciprocal_cell
 
