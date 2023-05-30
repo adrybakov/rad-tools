@@ -65,8 +65,8 @@ html[data-theme=dark] h2 {
 
 @font-face {
   font-family: "CustomLogoFont";
-  src: url("file:///Users/rybakov.ad/Projects/rad-tools/docs/source/_static/CustomLogoFont.eot");
-  src: url("file:///Users/rybakov.ad/Projects/rad-tools/docs/source/_static/CustomLogoFont.woff") format("woff"),
-    url("file:///Users/rybakov.ad/Projects/rad-tools/docs/source/_static/CustomLogoFont.ttf") format("truetype"),
-    url("file:///Users/rybakov.ad/Projects/rad-tools/docs/source/_static/CustomLogoFont.svg#filename") format("svg");
+  src: url("https://rad-tools.adrybakov.com/en/stable/_static/CustomLogoFont.eot");
+  src: url("https://rad-tools.adrybakov.com/en/stable/_static/CustomLogoFont.woff") format("woff"),
+    url("https://rad-tools.adrybakov.com/en/stable/_static/CustomLogoFont.ttf") format("truetype"),
+    url("https://rad-tools.adrybakov.com/en/stable/_static/CustomLogoFont.svg#filename") format("svg");
 }
