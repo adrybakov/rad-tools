@@ -397,11 +397,12 @@ def lepage(
     n = len(axes)
     angles = np.zeros((n, n), dtype=float)
     for i in range(n):
-        for j in range(n):
+        for j in range(i, n):
             angles[i][j] = (
                 acos(abs(np.clip(np.array(axes[i][1]) @ np.array(axes[j][1]), -1, 1)))
                 * _todegrees
             )
+    angles += angles.T
 
     delta = None
     separator = lambda x: "=" * 20 + f" Cycle {x} " + "=" * 20
