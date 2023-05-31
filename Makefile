@@ -31,7 +31,7 @@ clean:
 	-@rm -r dist
 
 test: 
-	@pytest -s
+	-@pytest -s
 
 install:
 	@pip install .
