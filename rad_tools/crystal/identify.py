@@ -616,6 +616,7 @@ def lepage(
             )
     angles += angles.T
 
+    # Main check cycle
     delta = None
     separator = lambda x: "=" * 20 + f" Cycle {x} " + "=" * 20
     cycle = 0
