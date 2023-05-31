@@ -4,9 +4,9 @@
 Exchange postprocessing
 ***********************
 
-.. automodule:: rad_tools.exchange
+.. automodule:: radtools.exchange
 
-.. currentmodule:: rad_tools
+.. currentmodule:: radtools
 
 Classes
 =======

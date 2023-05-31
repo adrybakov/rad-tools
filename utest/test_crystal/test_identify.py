@@ -1,12 +1,11 @@
-from math import sqrt
+from math import acos, sqrt
 
 import numpy as np
 import pytest
-import numpy as np
-from math import acos, sqrt
-from rad_tools.crystal.identify import niggli, lepage
-from rad_tools.routines import _todegrees
-from rad_tools.crystal.bravais_lattice import lattice_example, Lattice
+
+from radtools.crystal.bravais_lattice import Lattice, lattice_example
+from radtools.crystal.identify import lepage, niggli
+from radtools.routines import _todegrees
 
 
 def test_niggli():

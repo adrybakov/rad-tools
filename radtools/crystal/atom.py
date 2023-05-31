@@ -2,7 +2,7 @@ r"""Atom class"""
 
 import numpy as np
 
-from rad_tools.crystal.atom_types import atom_types
+from radtools.crystal.atom_types import atom_types
 
 
 class Atom:

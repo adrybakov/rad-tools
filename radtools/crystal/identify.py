@@ -5,18 +5,11 @@ Crystal/lattice identification.
 from math import acos, cos, floor, log10, sqrt
 
 import numpy as np
-
 from termcolor import cprint
 
-from rad_tools.routines import (
-    _todegrees,
-    _toradians,
-    volume,
-    cell_from_param,
-    reciprocal_cell,
-    print_2D_array,
-    get_permutation,
-)
+from radtools.routines import (_todegrees, _toradians, cell_from_param,
+                               get_permutation, print_2D_array,
+                               reciprocal_cell, volume)
 
 __all__ = ["niggli", "lepage"]
 
@@ -91,8 +84,8 @@ def niggli(
 
     .. doctest::
 
-        >>> import rad_tools as rad
-        >>> from rad_tools.routines import _todegrees
+        >>> import radtools as rad
+        >>> from radtools.routines import _todegrees
         >>> from math import acos, sqrt
         >>> a = 3
         >>> b = sqrt(27)
@@ -708,7 +701,7 @@ def lepage(
 
 
 if __name__ == "__main__":
-    from rad_tools.crystal.bravais_lattice import lattice_example
+    from radtools.crystal.bravais_lattice import lattice_example
 
     for i, name in enumerate(
         [

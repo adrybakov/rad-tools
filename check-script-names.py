@@ -12,7 +12,7 @@ for dirpath, dirnames, filenames in walk("scripts"):
     break
 
 f_scripts_core = []
-for dirpath, dirnames, filenames in walk(join("rad_tools", "score")):
+for dirpath, dirnames, filenames in walk(join("radtools", "score")):
     f_scripts_core.extend(filenames)
     break
 
@@ -33,7 +33,7 @@ for i, filename in enumerate(f_scripts):
             )
             if f"{filename.replace('-','_')[4:]}.py" in f_scripts_core:
                 f_compare_scripts.append(
-                    join("rad_tools", "score", f"{filename.replace('-','_')[4:]}.py")
+                    join("radtools", "score", f"{filename.replace('-','_')[4:]}.py")
                 )
             else:
                 f_compare_scripts.append(join("scripts", f"{filename}.py"))

@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-from rad_tools import __version__
+from radtools import __version__
 
 __version__ = __version__
 

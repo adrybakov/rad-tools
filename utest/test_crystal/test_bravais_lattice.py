@@ -1,6 +1,6 @@
 import pytest
 
-from rad_tools.crystal.bravais_lattice import *
+from radtools.crystal.bravais_lattice import *
 
 lattice_names = lattice_example()
 lattices = [lattice_example(i) for i in lattice_names]

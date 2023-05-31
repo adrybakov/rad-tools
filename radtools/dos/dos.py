@@ -8,7 +8,7 @@ from os.path import join
 import matplotlib.pyplot as plt
 import numpy as np
 
-from rad_tools.dos.pdos import PDOSQE
+from radtools.dos.pdos import PDOSQE
 
 
 class DOSQE:

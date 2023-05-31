@@ -15,7 +15,7 @@ is iterable, support index access and ``in`` function.
 
 The distances of the bonds are not directly read from the TB2J exchange file, but computed based on the atoms's positions.
 
-:doc:`Bond <../api/generated/rad_tools.ExchangeParameter>` class does 
+:doc:`Bond <../api/generated/radtools.ExchangeParameter>` class does 
 not contain information about the distance. 
 
 When exchange model is read from the TB2J exchange file the order of bonds is 

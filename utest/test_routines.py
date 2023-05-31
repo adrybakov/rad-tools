@@ -1,19 +1,11 @@
-from math import sqrt, pi
+from math import pi, sqrt
 
 import numpy as np
-
 import pytest
 
-from rad_tools.routines import (
-    absolute_to_relative,
-    angle,
-    atom_mark_to_latex,
-    rot_angle,
-    volume,
-    reciprocal_cell,
-    cell_from_param,
-    get_permutation,
-)
+from radtools.routines import (absolute_to_relative, angle, atom_mark_to_latex,
+                               cell_from_param, get_permutation,
+                               reciprocal_cell, rot_angle, volume)
 
 
 @pytest.mark.parametrize(

@@ -6,14 +6,14 @@ Write a tutorial with docstring here.
 
 from copy import deepcopy
 from math import cos, pi, sin
-from typing import Tuple, Iterable
+from typing import Iterable, Tuple
 
 import numpy as np
 
-from rad_tools.crystal.atom import Atom
-from rad_tools.crystal.crystal import Crystal
-from rad_tools.exchange.parameter import ExchangeParameter
-from rad_tools.exchange.template import ExchangeTemplate
+from radtools.crystal.atom import Atom
+from radtools.crystal.crystal import Crystal
+from radtools.exchange.parameter import ExchangeParameter
+from radtools.exchange.template import ExchangeTemplate
 
 
 class NotationError(ValueError):
@@ -178,7 +178,7 @@ class ExchangeModel:
 
         .. doctest::
 
-            >>> import rad_tools as rad
+            >>> import radtools as rad
             >>> model = rad.ExchangeModel()
             >>> model.notation = "standard"
             >>> model.notation
@@ -203,7 +203,7 @@ class ExchangeModel:
 
         .. doctest::
 
-            >>> import rad_tools as rad
+            >>> import radtools as rad
             >>> model = rad.ExchangeModel()
             >>> Cr = rad.Atom("Cr", spin=1.5)
             >>> model.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
@@ -230,7 +230,7 @@ class ExchangeModel:
 
         .. doctest::
 
-            >>> import rad_tools as rad
+            >>> import radtools as rad
             >>> model = rad.ExchangeModel()
             >>> Cr = rad.Atom("Cr", spin=1.5)
             >>> model.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
@@ -251,7 +251,7 @@ class ExchangeModel:
 
         .. doctest::
 
-            >>> import rad_tools as rad
+            >>> import radtools as rad
             >>> model = rad.ExchangeModel()
             >>> Cr = rad.Atom("Cr", spin=1.5)
             >>> model.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
@@ -693,7 +693,7 @@ class ExchangeModel:
 
         .. doctest::
 
-            >>> import rad_tools as rad
+            >>> import radtools as rad
             >>> Cr = rad.Atom("Cr")
             >>> J = rad.ExchangeParameter(iso=1)
             >>> model = rad.ExchangeModel(rad.Crystal())
@@ -705,7 +705,7 @@ class ExchangeModel:
 
         .. doctest::
 
-            >>> import rad_tools as rad
+            >>> import radtools as rad
             >>> Cr = rad.Atom("Cr")
             >>> J = rad.ExchangeParameter(iso=1)
             >>> model = rad.ExchangeModel(rad.Crystal())
@@ -744,7 +744,7 @@ class ExchangeModel:
 
         .. doctest::
 
-            >>> import rad_tools as rad
+            >>> import radtools as rad
             >>> Cr = rad.Atom("Cr")
             >>> J = rad.ExchangeParameter(iso=1)
             >>> model = rad.ExchangeModel(rad.Crystal())
@@ -760,7 +760,7 @@ class ExchangeModel:
 
         .. doctest::
 
-            >>> import rad_tools as rad
+            >>> import radtools as rad
             >>> Cr = rad.Atom("Cr")
             >>> J = rad.ExchangeParameter(iso=1)
             >>> model = rad.ExchangeModel(rad.Crystal())

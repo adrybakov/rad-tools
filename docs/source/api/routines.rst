@@ -4,9 +4,9 @@
 Collection of routines
 **********************
 
-.. automodule:: rad_tools.routines
+.. automodule:: radtools.routines
 
-.. currentmodule:: rad_tools
+.. currentmodule:: radtools
 
 
 .. autosummary::

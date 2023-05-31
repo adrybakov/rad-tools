@@ -1,11 +1,10 @@
-from math import pi, sqrt
+from math import acos, pi, sqrt
 
 import numpy as np
 import pytest
-import numpy as np
-from math import acos, sqrt
-from rad_tools.crystal.lattice import *
-from rad_tools.routines import _todegrees
+
+from radtools.crystal.lattice import *
+from radtools.routines import _todegrees
 
 
 class TestLattice:

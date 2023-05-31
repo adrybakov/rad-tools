@@ -3,10 +3,10 @@ from math import pi, sqrt
 import numpy as np
 import pytest
 
-from rad_tools.crystal.atom import Atom
-from rad_tools.exchange.parameter import ExchangeParameter
-from rad_tools.exchange.model import ExchangeModel, NotationError
-from rad_tools.exchange.template import ExchangeTemplate
+from radtools.crystal.atom import Atom
+from radtools.exchange.model import ExchangeModel, NotationError
+from radtools.exchange.parameter import ExchangeParameter
+from radtools.exchange.template import ExchangeTemplate
 
 
 class TestExchangeModel:

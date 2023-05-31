@@ -4,9 +4,9 @@
 Script's scenarios
 ******************
 
-.. automodule:: rad_tools.score
+.. automodule:: radtools.score
 
-.. currentmodule:: rad_tools
+.. currentmodule:: radtools
 
 Scenarios
 =========

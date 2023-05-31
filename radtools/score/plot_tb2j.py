@@ -7,9 +7,9 @@ import numpy as np
 from matplotlib import pyplot as plt
 from termcolor import cprint
 
-from rad_tools.io.internal import read_template
-from rad_tools.io.tb2j import read_tb2j_model
-from rad_tools.routines import atom_mark_to_latex, rot_angle
+from radtools.io.internal import read_template
+from radtools.io.tb2j import read_tb2j_model
+from radtools.routines import atom_mark_to_latex, rot_angle
 
 
 def manager(

@@ -4,9 +4,9 @@
 Density of state postprocessing
 *******************************
 
-.. automodule:: rad_tools.dos
+.. automodule:: radtools.dos
 
-.. currentmodule:: rad_tools
+.. currentmodule:: radtools
 
 Classes
 =======

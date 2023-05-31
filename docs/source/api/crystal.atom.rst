@@ -4,9 +4,9 @@
 Atom
 ****
 
-.. automodule:: rad_tools.crystal.atom
+.. automodule:: radtools.crystal.atom
 
-.. currentmodule:: rad_tools
+.. currentmodule:: radtools
 
 
 .. autosummary::

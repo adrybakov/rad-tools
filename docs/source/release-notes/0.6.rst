@@ -23,11 +23,11 @@ Debugged :ref:`rad-plot-dos.py <rad-plot-dos>` on the real-world data.
 Add several new features to it.
 
 Remade the import structure of the package. 
-The main entry point is ``rad_tools``:
+The main entry point is ``radtools``:
 
 .. code-block:: console
 
-    import rad_tools as rad
+    import radtools as rad
 
 Only public methods and classes are imported into the main module.
 Absolute import for the internal usage is still possible.
@@ -35,17 +35,3 @@ Absolute import for the internal usage is still possible.
 0.6.1
 -----
 Move to the usage of |termcolor|_ for colourful terminal output.
-
-0.6.2
------
-Add :py:func:`.print_2D_array`. 
-Rename :py:func:`.read_exchange_model` to :py:func:`.read_tb2j_model`.
-
-Introduce the :ref:`rad-tools_crystal` module. Rewrite :py:class:`.ExchangeModel` 
-with the new objects from it.
-
-Major design change in the :py:mod:`.exchange`:
-* Move from the concept (atom1, atom2, R) -> bond to the concept bond = (atom1, atom2, R, J)
-* Made class :py:class:`ExchangeMatrix` from the :py:class:`Bond`.
-* Introduce new interface design for the :py:class:`.ExchangeModel`.
- 

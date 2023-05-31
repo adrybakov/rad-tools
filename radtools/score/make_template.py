@@ -7,8 +7,8 @@ from os.path import abspath, split
 import numpy as np
 from termcolor import cprint
 
-from rad_tools import __version__ as version
-from rad_tools.io.tb2j import read_tb2j_model
+from radtools import __version__ as version
+from radtools.io.tb2j import read_tb2j_model
 
 
 def manager(

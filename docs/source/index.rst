@@ -17,6 +17,10 @@ RAD-tools
     api/index
     release-notes/index
 
+The name of the project for PyPi installation is "rad-tools". 
+
+The name of the project for the import is "radtools".
+
 If you are using the graphics produced by the package in your work, 
 please give a credit to the developers by citing the package:
 

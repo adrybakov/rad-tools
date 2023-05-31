@@ -15,8 +15,8 @@ Instead of using the class to load the file as before:
 
 .. code-block:: python
 
-    from rad_tools.exchange.model import ExchangeModelTB2J
-    from rad_tools.exchange.template import ExchangeTemplate
+    from radtools.exchange.model import ExchangeModelTB2J
+    from radtools.exchange.template import ExchangeTemplate
 
     model = ExchangeModelTB2J(filename)
     template = ExchangeTemplate(template_filename)
@@ -25,8 +25,8 @@ Now one need to use read functions from input-output module:
 
 .. code-block:: python
 
-    from rad_tools.io.tb2j import read_tb2j_model
-    from rad_tools.io.internal import read_template
+    from radtools.io.tb2j import read_tb2j_model
+    from radtools.io.internal import read_template
 
     model = read_tb2j_model(filename)
     template = read_template(template_filename)
@@ -56,13 +56,13 @@ There are two ways to import read functions:
 
 .. code-block:: python
 
-    from rad_tools.io.tb2j import read_tb2j_model
-    from rad_tools.io import read_tb2j_model
+    from radtools.io.tb2j import read_tb2j_model
+    from radtools.io import read_tb2j_model
 
 .. code-block:: python
 
-    from rad_tools.io.internal import 
-    from rad_tools.io import read_template
+    from radtools.io.internal import 
+    from radtools.io import read_template
 
 Add :py:meth:`.number_spins_in_unit_cell` property to the :py:class:`.ExchangeModel`.
 
@@ -80,13 +80,13 @@ There are two ways to import read functions:
 
 .. code-block:: python
 
-    from rad_tools.exchange.model import ExchangeModel
-    from rad_tools.exchange import ExchangeModel
+    from radtools.exchange.model import ExchangeModel
+    from radtools.exchange import ExchangeModel
 
 .. code-block:: python
 
-    from rad_tools.exchange.template import ExchangeTemplate
-    from rad_tools.exchange import ExchangeTemplate
+    from radtools.exchange.template import ExchangeTemplate
+    from radtools.exchange import ExchangeTemplate
 
 0.4.7
 -----

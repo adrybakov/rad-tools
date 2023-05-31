@@ -6,7 +6,7 @@ Crystal
 
 .. versionadded:: 0.6.2
 
-.. currentmodule:: rad_tools
+.. currentmodule:: radtools
 
 Crystals are defined as a combination of the the :py:class:`.Lattice` and the set of  
 :py:class:`.Atom`\ s.

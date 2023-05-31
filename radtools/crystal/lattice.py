@@ -2,7 +2,7 @@ r"""
 General 3D lattice.
 """
 
-from math import cos, sqrt, sin
+from math import cos, sin, sqrt
 from typing import Iterable
 
 import matplotlib.pyplot as plt
@@ -12,14 +12,9 @@ from matplotlib.patches import FancyArrowPatch
 from mpl_toolkits.mplot3d import Axes3D, proj3d
 from scipy.spatial import Voronoi
 
-from rad_tools.routines import (
-    _toradians,
-    angle,
-    volume,
-    reciprocal_cell,
-    cell_from_param,
-)
-from rad_tools.crystal.identify import lepage
+from radtools.crystal.identify import lepage
+from radtools.routines import (_toradians, angle, cell_from_param,
+                               reciprocal_cell, volume)
 
 __all__ = ["Lattice"]
 
@@ -57,7 +52,7 @@ class Lattice:
 
     .. doctest::
 
-        >>> import rad_tools as rad
+        >>> import radtools as rad
         >>> l = rad.Lattice([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
         >>> l = rad.Lattice([1,0,0], [0,1,0], [0,0,1])
         >>> l = rad.Lattice(1, 1, 1, 90, 90, 90)

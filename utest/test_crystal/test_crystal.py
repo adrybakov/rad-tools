@@ -1,6 +1,6 @@
 import pytest
 
-from rad_tools.crystal.crystal import Crystal
+from radtools.crystal.crystal import Crystal
 
 
 def test_deepcopy():

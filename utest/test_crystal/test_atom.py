@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from rad_tools import Atom
+from radtools import Atom
 
 
 def test_atom():

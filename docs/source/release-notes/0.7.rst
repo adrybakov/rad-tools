@@ -1,0 +1,24 @@
+.. _release-notes_0.7:
+
+***********
+Version 0.7
+***********
+
+**Date:** 
+
+Whats new?
+----------
+Major change: name of the package for pip installation is kept the 
+same: "rad-tools". All imports in python code moved to "radtools".
+
+Add :py:func:`.print_2D_array`. 
+Rename :py:func:`.read_exchange_model` to :py:func:`.read_tb2j_model`.
+
+Introduce the :ref:`rad-tools_crystal` module. Rewrite :py:class:`.ExchangeModel` 
+with the new objects from it.
+
+Major design change in the :py:mod:`.exchange`:
+* Move from the concept (atom1, atom2, R) -> bond to the concept bond = (atom1, atom2, R, J)
+* Made class :py:class:`ExchangeMatrix` from the :py:class:`Bond`.
+* Introduce new interface design for the :py:class:`.ExchangeModel`.
+ 

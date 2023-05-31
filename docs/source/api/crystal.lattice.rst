@@ -4,11 +4,11 @@
 Lattice
 *******
 
-.. automodule:: rad_tools.crystal.lattice
+.. automodule:: radtools.crystal.lattice
 
 General 3D lattice
 ==================
-.. currentmodule:: rad_tools
+.. currentmodule:: radtools
 
 General lattice is describe by the class :py:class:`.Lattice`. 
 
@@ -21,10 +21,10 @@ General lattice is describe by the class :py:class:`.Lattice`.
 Bravais lattices
 ================
 
-.. automodule:: rad_tools.crystal.bravais_lattice
+.. automodule:: radtools.crystal.bravais_lattice
 
 
-.. currentmodule:: rad_tools
+.. currentmodule:: radtools
 
 Cubic lattice system
 --------------------

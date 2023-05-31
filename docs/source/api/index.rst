@@ -1,4 +1,4 @@
-.. module:: rad_tools
+.. module:: radtools
 
 .. _api:
 
@@ -14,7 +14,7 @@ The main interface to the package may be imported as
 
 .. code-block:: python
 
-   import rad_tools as rad
+   import radtools as rad
 
 In the examples across the documentation it is expected to be imported in that way.
 

@@ -4,7 +4,7 @@
 Custom Exceptions
 *****************
 
-.. currentmodule:: rad_tools
+.. currentmodule:: radtools
 
 NotationError
 =============

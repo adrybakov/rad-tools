@@ -2,7 +2,7 @@ from math import sqrt
 
 import pytest
 
-from rad_tools.exchange.parameter import *
+from radtools.exchange.parameter import *
 
 
 class TestExchangeParameter:
@@ -234,4 +234,3 @@ class TestExchangeParameter:
         assert parameter1 == parameter2 / 2
         assert parameter2 != parameter3
         assert parameter3 == parameter1 + parameter2
-

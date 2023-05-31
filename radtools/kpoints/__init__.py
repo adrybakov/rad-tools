@@ -6,7 +6,7 @@ Examples
 
 .. code-block:: python
 
-    from rad_tools.kpoints import HighSymmetryPoints
+    from radtools.kpoints import HighSymmetryPoints
 
     hexagonal = HighSymmetryPoints().hex()
 

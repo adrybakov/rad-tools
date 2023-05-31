@@ -8,7 +8,7 @@ It could be accessed in a following way:
 
 .. doctest::
 
-    >>> import rad_tools as rad
+    >>> import radtools as rad
     >>> cubic_example = rad.lattice_example("cub")
     >>> cubic_example.variation
     'CUB'
@@ -26,8 +26,8 @@ from math import cos, pi, sin, sqrt, tan
 
 import numpy as np
 
-from rad_tools.crystal.lattice import Lattice
-from rad_tools.routines import _toradians
+from radtools.crystal.lattice import Lattice
+from radtools.routines import _toradians
 
 __all__ = [
     "CUB",

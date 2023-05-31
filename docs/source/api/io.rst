@@ -4,9 +4,9 @@
 Input-output
 ************
 
-.. automodule:: rad_tools.io
+.. automodule:: radtools.io
 
-.. currentmodule:: rad_tools
+.. currentmodule:: radtools
 
 Routine for external inputs
 ===========================

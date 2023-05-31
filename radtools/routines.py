@@ -4,7 +4,7 @@ which may be used across the whole package.
 """
 
 import sys
-from math import asin, cos, pi, sqrt, sin
+from math import asin, cos, pi, sin, sqrt
 
 import numpy as np
 from termcolor import cprint
@@ -264,7 +264,7 @@ def print_2D_array(array, fmt="5.2f", posneg=False):
 
     .. doctest::
 
-        >>> import rad_tools as rad
+        >>> import radtools as rad
         >>> array = [[1, 2], [3, 4], [5, 6]]
         >>> rad.print_2D_array(array)
         ┌───────┬───────┐
@@ -279,7 +279,7 @@ def print_2D_array(array, fmt="5.2f", posneg=False):
 
     .. doctest::
 
-        >>> import rad_tools as rad
+        >>> import radtools as rad
         >>> rad.print_2D_array(array, fmt="10.2f")
         ┌────────────┬────────────┐
         │       1.00 │       2.00 │
@@ -293,7 +293,7 @@ def print_2D_array(array, fmt="5.2f", posneg=False):
 
     .. doctest::
 
-        >>> import rad_tools as rad
+        >>> import radtools as rad
         >>> array = [[1, 2], [3, 4], [52414345345, 6]]
         >>> rad.print_2D_array(array, fmt="10.2E")
         ┌────────────┬────────────┐
@@ -308,7 +308,7 @@ def print_2D_array(array, fmt="5.2f", posneg=False):
 
     .. doctest::
 
-        >>> import rad_tools as rad
+        >>> import radtools as rad
         >>> array = [[1, 2 + 1j], [3, 4], [52, 6]]
         >>> rad.print_2D_array(array)
         ┌────────────────┬────────────────┐
@@ -340,7 +340,7 @@ def print_2D_array(array, fmt="5.2f", posneg=False):
 
     .. doctest::
 
-        >>> import rad_tools as rad
+        >>> import radtools as rad
         >>> rad.print_2D_array([])
         None
         >>> rad.print_2D_array([[]])

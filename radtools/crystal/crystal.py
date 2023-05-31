@@ -2,10 +2,10 @@ from math import sqrt
 
 import numpy as np
 
-from rad_tools.crystal.atom import Atom
-from rad_tools.crystal.bravais_lattice import lattice_example
-from rad_tools.crystal.lattice import Lattice
-from rad_tools.routines import absolute_to_relative
+from radtools.crystal.atom import Atom
+from radtools.crystal.bravais_lattice import lattice_example
+from radtools.crystal.lattice import Lattice
+from radtools.routines import absolute_to_relative
 
 
 class Crystal:
@@ -18,7 +18,7 @@ class Crystal:
 
     .. doctest::
 
-        >>> import rad_tools as rad
+        >>> import radtools as rad
         >>> cub = rad.lattice_example("CUB")
         >>> crystal = rad.Crystal(cub)
         >>> crystal.lattice.pearson_symbol
@@ -69,7 +69,7 @@ class Crystal:
 
         .. doctest::
 
-            >>> import rad_tools as rad
+            >>> import radtools as rad
             >>> c = rad.Crystal()
             >>> c.add_atom(rad.Atom("Cr", (0.5, 0.5, 0.5)))
             >>> c.cell

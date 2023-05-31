@@ -6,9 +6,9 @@ from os.path import abspath, join
 
 from termcolor import cprint
 
-from rad_tools import __version__ as version
-from rad_tools.io.internal import read_template
-from rad_tools.io.tb2j import read_tb2j_model
+from radtools import __version__ as version
+from radtools.io.internal import read_template
+from radtools.io.tb2j import read_tb2j_model
 
 
 def manager(

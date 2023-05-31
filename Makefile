@@ -40,7 +40,7 @@ test-all: install test html doctest
 	@echo "Done"
 
 
-VERSION := $(shell grep __version__ rad_tools/__init__.py | tr -d 'a-zA-Z =_":')
+VERSION := $(shell grep __version__ radtools/__init__.py | tr -d 'a-zA-Z =_":')
 .ONESHELL:
 check-pip:
 #	@echo "\x1b[33m"
@@ -50,7 +50,7 @@ check-pip:
 	@echo "Have you done this?"
 	@echo "  * Change version in __init__.py?"
 	@echo "\x1b[0m"
-	@grep "__version__" rad_tools/__init__.py
+	@grep "__version__" radtools/__init__.py
 	@echo "\x1b[33m"
 	@echo "  * Release note?"
 	@echo "  * Commit all the changes?"
@@ -76,7 +76,7 @@ pip: check-pip
 	@read -p "Press Enter if yes:"
 	-@rm -r dist
 	-@rm -r build
-	-@rm -r rad_tools.egg-info
+	-@rm -r radtools.egg-info
 	@python3 setup.py sdist bdist_wheel 
 	@python3 -m twine upload --repository pypi dist/* --verbose
 	@git tag -a "$(VERSION)" -m "Version $(VERSION)"

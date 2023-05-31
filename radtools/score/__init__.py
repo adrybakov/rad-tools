@@ -15,7 +15,7 @@ If script is called "rad-script-name", then the function is called "script-name"
 
     .. code-block:: python
 
-        from rad_tools import identify_wannier_centres
+        from radtools import identify_wannier_centres
         
         identify_wannier_centres("seedname_centres.xyz", 
             span = 0.2, 
@@ -29,7 +29,7 @@ If script is called "rad-script-name", then the function is called "script-name"
 
     .. code-block:: python
 
-        from rad_tools import make_template
+        from radtools import make_template
         
         make_template(output_name="template",
             input_filename="exchange.out",
