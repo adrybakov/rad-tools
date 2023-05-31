@@ -74,7 +74,7 @@ def test_lepage(name):
             "HEX",
         ),
     ],
-    ids=["crsbr", "nio2"],
+    ids=["crsbr", "nii2"],
 )
 def test_custom_lepage(cell, name):
     lattice = Lattice(cell)
@@ -103,7 +103,6 @@ def test_lepage_paper():
         eps_rel=0.001,
         delta_max=0.006,
     )
-    print(results)
     assert results[0][0] == "BCT"
     assert results[0][1] - 1.482 < 0.001
     assert results[1][0] == "ORCF"
