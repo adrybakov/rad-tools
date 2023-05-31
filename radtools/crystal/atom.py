@@ -97,6 +97,9 @@ class Atom:
             )
         return self.literal == other.literal and self.index == other.index
 
+    def __hash__(self):
+        return hash(str(self.literal) + str(self.index))
+
     # !=
     def __neq__(self, other):
         return not self == other
