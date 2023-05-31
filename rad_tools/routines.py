@@ -9,7 +9,13 @@ from math import asin, cos, pi, sqrt, sin
 import numpy as np
 from termcolor import cprint
 
-__all__ = ["print_2D_array", "volume", "angle", "absolute_to_relative"]
+__all__ = [
+    "print_2D_array",
+    "volume",
+    "angle",
+    "absolute_to_relative",
+    "get_permutation",
+]
 
 RED = "#FF4D67"
 GREEN = "#58EC2E"
@@ -330,66 +336,73 @@ def print_2D_array(array, fmt="5.2f", posneg=False):
     """
 
     array = np.array(array)
-    if len(array.shape) == 1:
-        array = np.array([array])
-    N = len(array)
-    M = len(array[0])
-    n = max(len(f"{np.amax(array.real):{fmt}}"), len(f"{np.amin(array.real):{fmt}}"))
-    n = max(n, len(f"{np.amax(array.imag):{fmt}}"), len(f"{np.amin(array.imag):{fmt}}"))
-    if "E" in fmt or "e" in fmt:
-        n = int(fmt.split(".")[0])
-    else:
-        n = max(n, int(fmt.split(".")[0]))
-    fmt = f"{n}.{fmt.split('.')[1]}"
-    complex_values = not np.isreal(array).all()
-    if complex_values:
-        nn = 2 * n + 6
+    if array.shape != (0,) and array.shape != (0, 0):
+        if len(array.shape) == 1:
+            array = np.array([array])
+        N = len(array)
+        M = len(array[0])
+        n = max(
+            len(f"{np.amax(array.real):{fmt}}"), len(f"{np.amin(array.real):{fmt}}")
+        )
+        n = max(
+            n, len(f"{np.amax(array.imag):{fmt}}"), len(f"{np.amin(array.imag):{fmt}}")
+        )
         if "E" in fmt or "e" in fmt:
-            nn += 8
-    else:
-        nn = n + 2
-    print("┌" + (M - 1) * f"{nn*'─'}┬" + f"{nn*'─'}┐")
-    for i in range(0, N):
-        print("│", end="")
-        for j in range(0, M):
-            if complex_values:
-                if np.iscomplex(array[i][j]):
-                    if array.imag[i][j] >= 0:
-                        sign = "+"
+            n = int(fmt.split(".")[0])
+        else:
+            n = max(n, int(fmt.split(".")[0]))
+        fmt = f"{n}.{fmt.split('.')[1]}"
+        complex_values = not np.isreal(array).all()
+        if complex_values:
+            nn = 2 * n + 6
+            if "E" in fmt or "e" in fmt:
+                nn += 8
+        else:
+            nn = n + 2
+        print("┌" + (M - 1) * f"{nn*'─'}┬" + f"{nn*'─'}┐")
+        for i in range(0, N):
+            print("│", end="")
+            for j in range(0, M):
+                if complex_values:
+                    if np.iscomplex(array[i][j]):
+                        if array.imag[i][j] >= 0:
+                            sign = "+"
+                        else:
+                            sign = "-"
+                        print(
+                            f" {array.real[i][j]:{fmt}} {sign} i{abs(array.imag[i][j]):<{fmt}} │",
+                            end="",
+                        )
+                    elif "E" in fmt or "e" in fmt:
+                        print(
+                            f" {array.real[i][j]:{fmt}}{(n + 8)*' '} │",
+                            end="",
+                        )
                     else:
-                        sign = "-"
-                    print(
-                        f" {array.real[i][j]:{fmt}} {sign} i{abs(array.imag[i][j]):<{fmt}} │",
-                        end="",
-                    )
-                elif "E" in fmt or "e" in fmt:
-                    print(
-                        f" {array.real[i][j]:{fmt}}{(n + 8)*' '} │",
-                        end="",
-                    )
+                        print(
+                            f" {array.real[i][j]:{fmt}}{(n + 4)*' '} │",
+                            end="",
+                        )
                 else:
-                    print(
-                        f" {array.real[i][j]:{fmt}}{(n + 4)*' '} │",
-                        end="",
-                    )
-            else:
-                if posneg:
-                    if array.real[i][j] > 0:
-                        cprint(f" {array.real[i][j]:{fmt}}", "red", end="")
-                        print(" │", end="")
-                    elif array.real[i][j] < 0:
-                        cprint(f" {array.real[i][j]:{fmt}}", "blue", end="")
-                        print(" │", end="")
+                    if posneg:
+                        if array.real[i][j] > 0:
+                            cprint(f" {array.real[i][j]:{fmt}}", "red", end="")
+                            print(" │", end="")
+                        elif array.real[i][j] < 0:
+                            cprint(f" {array.real[i][j]:{fmt}}", "blue", end="")
+                            print(" │", end="")
+                        else:
+                            cprint(f" {array.real[i][j]:{fmt}}", "green", end="")
+                            print(" │", end="")
                     else:
-                        cprint(f" {array.real[i][j]:{fmt}}", "green", end="")
-                        print(" │", end="")
-                else:
-                    print(f" {array.real[i][j]:{fmt}} │", end="")
-        print()
-        if i != N - 1:
-            print("├" + (M - 1) * f"{nn*'─'}┼" + f"{nn*'─'}┤")
+                        print(f" {array.real[i][j]:{fmt}} │", end="")
+            print()
+            if i != N - 1:
+                print("├" + (M - 1) * f"{nn*'─'}┼" + f"{nn*'─'}┤")
 
-    print("└" + (M - 1) * f"{nn*'─'}┴" + f"{nn*'─'}┘")
+        print("└" + (M - 1) * f"{nn*'─'}┴" + f"{nn*'─'}┘")
+    else:
+        print("None")
 
 
 def angle(v1, v2, radians=False):
@@ -509,12 +522,20 @@ def cell_from_param(a=1, b=1, c=1, alpha=90, beta=90, gamma=90):
     )
 
 
-if __name__ == "__main__":
-    a = [[1, 2], [3, 4], [5, 6]]
-    print_2D_array(a)
-    print_2D_array(a, fmt="10.2f")
-    a = [[1, 2], [3, 4], [52435345345, 6]]
-    print_2D_array(a, fmt="10.2E")
-    a = [[1, 2 + 1j], [3, 4], [52, 6]]
-    print_2D_array(a)
-    print_2D_array(a, fmt="4.2E")
+def get_permutation(n, k):
+    if k == n:
+        return [[i for i in range(n)]]
+    elif n < k:
+        raise ValueError("Permutations: n < k")
+    else:
+        result = [[i] for i in range(n)]
+        true_k = k
+        k = 0
+        while k < true_k - 1:
+            new_result = []
+            for i in range(len(result)):
+                for j in range(result[i][-1] + 1, n):
+                    new_result.append(result[i] + [j])
+            result = new_result
+            k += 1
+        return result

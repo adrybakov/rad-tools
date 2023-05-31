@@ -12,6 +12,7 @@ from rad_tools.routines import (
     volume,
     reciprocal_cell,
     cell_from_param,
+    get_permutation,
 )
 
 
@@ -126,3 +127,10 @@ def test_reciprocal_cell(cell, rec_cell):
 )
 def test_cell_from_param(a, b, c, alpha, beta, gamma, cell):
     assert (cell_from_param(a, b, c, alpha, beta, gamma) - np.array(cell) < 1e-8).all()
+
+
+@pytest.mark.parametrize(
+    "n, k, shape", [(10, 9, (10, 9)), (1, 1, (1, 1)), (11, 9, (55, 9))]
+)
+def test_get_permutation(n, k, shape):
+    assert np.array(get_permutation(n, k)).shape == shape

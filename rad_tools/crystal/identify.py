@@ -15,6 +15,7 @@ from rad_tools.routines import (
     cell_from_param,
     reciprocal_cell,
     print_2D_array,
+    get_permutation,
 )
 
 __all__ = ["niggli", "lepage"]
@@ -265,6 +266,231 @@ def niggli(
     return np.around(np.array([[A, B, C], [xi / 2, eta / 2, zeta / 2]]), decimals=n)
 
 
+def check_cub(angles: np.ndarray, axes: np.ndarray, eps):
+    target_angles = np.array(
+        [
+            [0, 45, 45, 45, 45, 90, 90, 90, 90],
+            [0, 45, 45, 45, 45, 90, 90, 90, 90],
+            [0, 45, 45, 45, 45, 90, 90, 90, 90],
+            [0, 45, 45, 60, 60, 60, 60, 90, 90],
+            [0, 45, 45, 60, 60, 60, 60, 90, 90],
+            [0, 45, 45, 60, 60, 60, 60, 90, 90],
+            [0, 45, 45, 60, 60, 60, 60, 90, 90],
+            [0, 45, 45, 60, 60, 60, 60, 90, 90],
+            [0, 45, 45, 60, 60, 60, 60, 90, 90],
+        ]
+    )
+
+    conventional_axis = np.array([0, 45, 45, 45, 45, 90, 90, 90, 90])
+
+    axes = np.array([i[0] for i in axes])
+
+    if angles.shape[0] >= 9:
+        indices = get_permutation(angles.shape[0], 9)
+        for index in indices:
+            sub_angles = angles[np.ix_(index, index)]
+            sub_axes = axes[index]
+            if (
+                np.abs(np.sort(sub_angles.flatten()) - np.sort(target_angles.flatten()))
+                < eps
+            ).all():
+                xyz = []
+                for i in range(9):
+                    if (np.abs(np.sort(sub_angles[i]) - conventional_axis) < eps).all():
+                        xyz.append(sub_axes[i])
+                det = np.abs(np.linalg.det(xyz))
+                if det == 1:
+                    result = "CUB"
+                elif det == 4:
+                    result = "FCC"
+                elif det == 2:
+                    result = "BCC"
+                return result, False
+        return None, True
+    return None, True
+
+
+def check_hex(angles: np.ndarray, eps):
+    target_angles = np.array(
+        [
+            [0, 90, 90, 90, 90, 90, 90],
+            [0, 30, 30, 60, 60, 90, 90],
+            [0, 30, 30, 60, 60, 90, 90],
+            [0, 30, 30, 60, 60, 90, 90],
+            [0, 30, 30, 60, 60, 90, 90],
+            [0, 30, 30, 60, 60, 90, 90],
+            [0, 30, 30, 60, 60, 90, 90],
+        ]
+    )
+
+    if 7 <= angles.shape[0] < 9:
+        indices = get_permutation(angles.shape[0], 7)
+        for index in indices:
+            sub_angles = angles[np.ix_(index, index)]
+            if (
+                np.abs(np.sort(sub_angles.flatten()) - np.sort(target_angles.flatten()))
+                < eps
+            ).all():
+                return "HEX", False
+        return None, True
+    return None, True
+
+
+def check_tet(angles: np.ndarray, axes: np.ndarray, eps, cell):
+    target_angles = np.array(
+        [
+            [0, 90, 90, 90, 90],
+            [0, 45, 45, 90, 90],
+            [0, 45, 45, 90, 90],
+            [0, 45, 45, 90, 90],
+            [0, 45, 45, 90, 90],
+        ]
+    )
+
+    conventional_axis = np.array([0, 90, 90, 90, 90])
+
+    axes = np.array([i[0] for i in axes])
+
+    if 5 <= angles.shape[0] < 9:
+        indices = get_permutation(angles.shape[0], 5)
+        for index in indices:
+            sub_angles = angles[np.ix_(index, index)]
+            sub_axes = axes[index]
+            if (
+                np.abs(np.sort(sub_angles.flatten()) - np.sort(target_angles.flatten()))
+                < eps
+            ).all():
+                xy = []
+                for i in range(5):
+                    if (np.abs(np.sort(sub_angles[i]) - conventional_axis) < eps).all():
+                        z = sub_axes[i]
+                    else:
+                        xy.append(sub_axes[i])
+                xy.sort(key=lambda x: np.linalg.norm(x @ cell))
+
+                xyz = [z, xy[0], xy[1]]
+
+                det = np.abs(np.linalg.det(xyz))
+                if det == 1:
+                    result = "TET"
+                elif det == 2:
+                    result = "BCT"
+                return result, False
+        return None, True
+    return None, True
+
+
+def check_rhl(angles: np.ndarray, eps):
+    target_angles = np.array(
+        [
+            [0, 60, 60],
+            [0, 60, 60],
+            [0, 60, 60],
+        ]
+    )
+
+    if 3 <= angles.shape[0] < 5:
+        indices = get_permutation(angles.shape[0], 3)
+        for index in indices:
+            sub_angles = angles[np.ix_(index, index)]
+            if (
+                np.abs(np.sort(sub_angles.flatten()) - np.sort(target_angles.flatten()))
+                < eps
+            ).all():
+                return "RHL", False
+        return None, True
+    return None, True
+
+
+def check_orc(angles: np.ndarray, axes: np.ndarray, eps):
+    target_angles = np.array(
+        [
+            [0, 90, 90],
+            [0, 90, 90],
+            [0, 90, 90],
+        ]
+    )
+
+    axes = np.array([i[0] for i in axes])
+    if 3 <= angles.shape[0] < 5:
+        indices = get_permutation(angles.shape[0], 3)
+        for index in indices:
+            sub_angles = angles[np.ix_(index, index)]
+            sub_axes = axes[index]
+            if (
+                np.abs(np.sort(sub_angles.flatten()) - np.sort(target_angles.flatten()))
+                < eps
+            ).all():
+                C = np.array(sub_axes, dtype=float).T
+                det = np.abs(np.linalg.det(C))
+                if det == 1:
+                    result = "ORC"
+                if det == 4:
+                    result = "ORCF"
+                if det == 2:
+                    v = C @ [1, 1, 1]
+
+                    def gcd(p, q):
+                        while q != 0:
+                            p, q = q, p % q
+                        return p
+
+                    if (
+                        gcd(abs(v[0]), abs(v[1])) > 1
+                        and gcd(abs(v[0]), abs(v[2])) > 1
+                        and gcd(abs(v[1]), abs(v[2])) > 1
+                    ):
+                        result = "ORCI"
+                    else:
+                        result = "ORCC"
+                return result, False
+        return None, True
+    return None, True
+
+
+def get_perpendicular_shortest(v, cell, eps):
+    perp_axes = []
+
+    miller_indices = (np.indices((3, 3, 3)) - 1).transpose((1, 2, 3, 0)).reshape(27, 3)
+
+    for index in miller_indices:
+        if (index != [0, 0, 0]).any():
+            if abs((index @ cell) @ (v @ cell)) < eps:
+                perp_axes.append(index)
+
+    perp_axes.sort(key=lambda x: np.linalg.norm(x @ cell))
+
+    # indices 0 and 2 (not 0 and 1), since v and -v are present in miller_indices
+    return perp_axes[0], perp_axes[2]
+
+
+def check_mcl(angles: np.ndarray, axes: np.ndarray, eps, cell):
+    axes = np.array([i[0] for i in axes])
+    if 1 <= angles.shape[0] < 3:
+        indices = get_permutation(angles.shape[0], 1)
+        for index in indices:
+            sub_axes = axes[index]
+            b = sub_axes[0]
+
+            a, c = get_perpendicular_shortest(b, cell, eps)
+
+            C = np.array(
+                [
+                    a,
+                    b,
+                    c,
+                ],
+                dtype=float,
+            ).T
+            det = np.abs(np.linalg.det(C))
+            if det == 1:
+                return "MCL", False
+            if det == 2:
+                return "MCLC", False
+        return None, True
+    return None, True
+
+
 def lepage(
     a=1,
     b=1,
@@ -316,30 +542,10 @@ def lepage(
 
     limit = max(1.5, delta_max * 1.1)
 
-    eps = eps_rel * volume(a, b, c, alpha, beta, gamma) ** (1 / 3.0)
-    decimals = abs(floor(log10(abs(eps))))
+    eps_volumetric = eps_rel * volume(a, b, c, alpha, beta, gamma) ** (1 / 3.0)
+    decimals = abs(floor(log10(abs(eps_volumetric))))
     if delta_max is None:
         delta_max = eps
-
-    target_angles = {
-        "CUB": np.concatenate(
-            (np.zeros(9), 45 * np.ones(24), 60 * np.ones(24), 90 * np.ones(24))
-        ),
-        "HEX": np.concatenate(
-            (np.zeros(7), 30 * np.ones(12), 60 * np.ones(12), 90 * np.ones(18))
-        ),
-        "TET": np.concatenate((np.zeros(5), 45 * np.ones(8), 90 * np.ones(12))),
-        "RHL": np.concatenate((np.zeros(3), 60 * np.ones(6))),
-        "ORC": np.concatenate((np.zeros(3), 90 * np.ones(6))),
-    }
-
-    conventional_axis = {
-        "CUB": np.concatenate((np.zeros(1), 45 * np.ones(4), 90 * np.ones(4))),
-        "TET": {
-            "z": np.concatenate((np.zeros(1), 90 * np.ones(4))),
-            "xy": np.concatenate((np.zeros(1), 45 * np.ones(2), 90 * np.ones(2))),
-        },
-    }
 
     # Niggli reduction
     a, b, c, alpha, beta, gamma = niggli(a, b, c, alpha, beta, gamma, return_cell=True)
@@ -412,17 +618,18 @@ def lepage(
 
     delta = None
     separator = lambda x: "=" * 20 + f" Cycle {x} " + "=" * 20
-    i = 0
-    while delta is None or delta >= delta_max:
+    cycle = 0
+    while delta is None or delta > delta_max:
         if verbose:
-            i += 1
-            print(separator(i))
+            cycle += 1
+            print(separator(cycle))
 
         try:
             delta = max(axes, key=lambda x: x[-1])[-1]
         except ValueError:
             delta = 0
-        # eps = max(delta, 100 * np.finfo(float).eps)
+        eps = max(eps_volumetric, delta)
+        decimals = abs(floor(log10(abs(eps))))
         if very_verbose:
             decimals = abs(floor(log10(abs(eps))))
             print(
@@ -430,7 +637,14 @@ def lepage(
                 + f"delta   = {delta:{4+decimals}.{1+decimals}f}"
             )
             print("Axes:")
-            print_2D_array(list(map(lambda x: x[0], axes)), fmt="2.0f")
+            print(f"       U     {'delta':>{4+decimals}}")
+            for ax in axes:
+                print(
+                    f"  ({ax[0][0]:2.0f} "
+                    + f"{ax[0][1]:2.0f} "
+                    + f"{ax[0][0]:2.0f}) "
+                    + f"{ax[-1]:{4+decimals}.{1+decimals}f}"
+                )
             print("Angles:")
             print_2D_array(angles, fmt=f"{4+decimals}.{1+decimals}f")
 
@@ -439,203 +653,27 @@ def lepage(
         result = None
 
         # CUB
-        if (
-            n**2 == target_angles["CUB"].shape[0]
-            and (
-                np.abs(np.sort(np.abs(angles.flatten())) - target_angles["CUB"]) < eps
-            ).all()
-        ):
-            xyz = []
-            for i in range(n):
-                if (
-                    np.abs(np.sort(np.abs(angles[i])) - conventional_axis["CUB"]) < eps
-                ).all():
-                    xyz.append(axes[i])
-            det = np.abs(
-                np.linalg.det(
-                    [
-                        xyz[0][0],
-                        xyz[1][0],
-                        xyz[2][0],
-                    ]
-                )
-            )
-            if det == 1:
-                result = "CUB"
-            elif det == 4:
-                result = "FCC"
-            elif det == 2:
-                result = "BCC"
-            continue_search = False
+        result, continue_search = check_cub(angles, axes, eps)
 
         # HEX
-        if continue_search and (
-            n**2 == target_angles["HEX"].shape[0]
-            and (
-                np.abs(np.sort(np.abs(angles.flatten())) - target_angles["HEX"]) < eps
-            ).all()
-        ):
-            result = "HEX"
-            continue_search = False
+        if continue_search:
+            result, continue_search = check_hex(angles, eps)
 
         # TET
-        if continue_search and (
-            n**2 == target_angles["TET"].shape[0]
-            and (
-                np.abs(np.sort(np.abs(angles.flatten())) - target_angles["TET"]) < eps
-            ).all()
-        ):
-            x, y, z = None, None, None
-            x_alt, y_alt = None, None
-            for i in range(n):
-                if (
-                    np.abs(np.sort(np.abs(angles[i])) - conventional_axis["TET"]["z"])
-                    < eps
-                ).all():
-                    z = axes[i]
-                if (
-                    np.abs(np.sort(np.abs(angles[i])) - conventional_axis["TET"]["xy"])
-                    < eps
-                ).all():
-                    if x is None:
-                        x = axes[i]
-                    elif y is None and abs(axes[i][1] @ x[1]) < eps:
-                        y = axes[i]
-                    elif x_alt is None:
-                        x_alt = axes[i]
-                    else:
-                        y_alt = axes[i]
-
-            if np.linalg.norm(x_alt[0] @ cell) < np.linalg.norm(x[0] @ cell):
-                x, y = x_alt, y_alt
-
-            det = np.abs(
-                np.linalg.det(
-                    [
-                        x[0],
-                        y[0],
-                        z[0],
-                    ]
-                )
-            )
-            if det == 1:
-                result = "TET"
-            elif det == 2:
-                result = "BCT"
-            continue_search = False
+        if continue_search:
+            result, continue_search = check_tet(angles, axes, eps, cell)
 
         # RHL
-        if continue_search and (
-            n**2 == target_angles["RHL"].shape[0]
-            and (
-                np.abs(np.sort(np.abs(angles.flatten())) - target_angles["RHL"]) < eps
-            ).all()
-        ):
-            result = "RHL"
-            continue_search = False
+        if continue_search:
+            result, continue_search = check_rhl(angles, eps)
 
         # ORC
-        if continue_search and (
-            n**2 == target_angles["ORC"].shape[0]
-            and (
-                np.abs(np.sort(np.abs(angles.flatten())) - target_angles["ORC"]) < eps
-            ).all()
-        ):
-            C = np.array(
-                [
-                    axes[0][0],
-                    axes[1][0],
-                    axes[2][0],
-                ],
-                dtype=float,
-            ).T
-            det = np.abs(np.linalg.det(C))
-            if det == 1:
-                result = "ORC"
-            if det == 4:
-                result = "ORCF"
-            if det == 2:
-                v1, v2, v3, v4 = (
-                    C @ [0, 1, 1],
-                    C @ [1, 0, 1],
-                    C @ [1, 1, 0],
-                    C @ [1, 1, 1],
-                )
-
-                def gcd(p, q):
-                    while q != 0:
-                        p, q = q, p % q
-                    return p
-
-                if (
-                    gcd(abs(v4[0]), abs(v4[1])) > 1
-                    and gcd(abs(v4[0]), abs(v4[2])) > 1
-                    and gcd(abs(v4[1]), abs(v4[2])) > 1
-                ):
-                    result = "ORCI"
-                else:
-                    result = "ORCC"
-            continue_search = False
+        if continue_search:
+            result, continue_search = check_orc(angles, axes, eps)
 
         # MCL
-        if continue_search and (n == 1):
-            v = axes[0][0] @ cell
-            a, b, c = cell
-
-            ax = []
-            test_ax = []
-
-            if abs(a @ v) < eps:
-                ax.append(np.array([1, 0, 0]))
-            else:
-                test_ax.append(np.array([1, 0, 0]))
-            if abs(b @ v) < eps:
-                ax.append(np.array([0, 1, 0]))
-            else:
-                test_ax.append(np.array([0, 1, 0]))
-            if abs(c @ v) < eps:
-                ax.append(np.array([0, 0, 1]))
-            else:
-                test_ax.append(np.array([0, 0, 1]))
-
-            indices = [[1, 0], [0, 1], [1, 1], [1, -1]]
-            if len(ax) == 2:
-                a, b = ax
-                ax = [a, b, a + b, a - b]
-                ax.sort(key=lambda x: np.linalg.norm(x @ cell))
-                a = ax[0]
-                b = ax[1]
-                c = axes[0][0]
-            elif len(test_ax) == 2:
-                tmp = ax
-                a, b = test_ax
-                ax = [a, b, a + b, a - b]
-                new_ax = []
-                for i in ax:
-                    if abs((i @ cell) @ v) < eps:
-                        new_ax.append(i)
-
-                a, b = tmp[0], new_ax[0]
-                ax = [a, b, a + b, a - b]
-                ax.sort(key=lambda x: np.linalg.norm(x @ cell))
-                a = ax[0]
-                b = ax[1]
-                c = axes[0][0]
-
-            C = np.array(
-                [
-                    a,
-                    b,
-                    c,
-                ],
-                dtype=float,
-            ).T
-            det = np.abs(np.linalg.det(C))
-            if det == 1:
-                result = "MCL"
-            if det == 2:
-                result = "MCLC"
-            continue_search = False
+        if continue_search:
+            result, continue_search = check_mcl(angles, axes, eps, cell)
 
         # TRI
         if continue_search:
@@ -643,7 +681,7 @@ def lepage(
 
         if verbose:
             print(
-                f"System {result} with the worst delta = {delta:{3+decimals}.{decimals}f}"
+                f"System {result} with the worst delta = {delta:{4+decimals}.{1+decimals}f}"
             )
 
         if len(axes) > 0:
@@ -687,64 +725,36 @@ if __name__ == "__main__":
 
     # from rad_tools.crystal.bravais_lattice import lattice_example
 
-    # delta_max = [
-    #     None,
-    #     None,
-    #     None,
-    #     None,
-    #     None,
-    #     None,
-    #     None,
-    #     1e-5,
-    #     None,
-    #     None,
-    #     None,
-    #     None,
-    #     None,
-    #     None,
-    #     None,
-    #     None,
-    #     None,
-    #     None,
-    #     None,
-    #     None,
-    #     1e-5,
-    #     None,
-    #     None,
-    #     None,
-    #     None,
-    # ]
     # for i, name in enumerate(
     #     [
-    #         "CUB",
-    #         "FCC",
-    #         "BCC",
-    #         "HEX",
-    #         "TET",
-    #         "BCT1",
-    #         "BCT2",
+    #         #         "CUB",
+    #         #         "FCC",
+    #         #         "BCC",
+    #         #         "HEX",
+    #         #         "TET",
+    #         #         "BCT1",
+    #         #         "BCT2",
     #         "RHL1",
-    #         "RHL2",
-    #         "ORC",
-    #         "ORCF1",
-    #         "ORCF2",
-    #         "ORCF3",
-    #         "ORCI",
-    #         "ORCC",
-    #         "MCL",
-    #         "MCLC1",
-    #         "MCLC2",
-    #         "MCLC3",
-    #         "MCLC4",
+    #         #         "RHL2",
+    #         #         "ORC",
+    #         #         "ORCF1",
+    #         #         "ORCF2",
+    #         #         "ORCF3",
+    #         #         "ORCI",
+    #         #         "ORCC",
+    #         # "MCL",
+    #         #         "MCLC1",
+    #         #         "MCLC2",
+    #         #         "MCLC3",
+    #         #         "MCLC4",
     #         "MCLC5",
-    #         "TRI1a",
-    #         "TRI2a",
-    #         "TRI1b",
-    #         "TRI2b",
+    #         #         "TRI1a",
+    #         #         "TRI2a",
+    #         #         "TRI1b",
+    #         #         "TRI2b",
     #     ]
     # ):
     #     lattice = lattice_example(name)
-    #     print("\n" + "=" * 80)
     #     print(
     #         name,
     #         lepage(
@@ -754,9 +764,7 @@ if __name__ == "__main__":
     #             lattice.alpha,
     #             lattice.beta,
     #             lattice.gamma,
-    #             verbose=True,
-    #             delta_max=delta_max[i],
+    #             very_verbose=True,
+    #             delta_max=0.00001,
     #         ),
     #     )
-
-    # print("\n" + "=" * 80)
