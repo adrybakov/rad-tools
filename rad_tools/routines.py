@@ -15,6 +15,8 @@ __all__ = [
     "angle",
     "absolute_to_relative",
     "get_permutation",
+    "cell_from_param",
+    "reciprocal_cell",
 ]
 
 RED = "#FF4D67"
@@ -333,10 +335,20 @@ def print_2D_array(array, fmt="5.2f", posneg=False):
         ├────────────────┼────────────────┤
         │ 52.00          │  6.00          │
         └────────────────┴────────────────┘
+
+    Empty arrays:
+
+    .. doctest::
+
+        >>> import rad_tools as rad
+        >>> rad.print_2D_array([])
+        None
+        >>> rad.print_2D_array([[]])
+        None
     """
 
     array = np.array(array)
-    if array.shape != (0,) and array.shape != (0, 0):
+    if array.shape != (0,) and array.shape != (1, 0):
         if len(array.shape) == 1:
             array = np.array([array])
         N = len(array)
@@ -449,11 +461,11 @@ def reciprocal_cell(cell):
 
         .. math::
 
-        \begin{matrix}
-            \vec{b}_1 = \frac{2\pi}{V}\vec{a}_2\times\vec{a}_3 \\
-            \vec{b}_2 = \frac{2\pi}{V}\vec{a}_3\times\vec{a}_1 \\
-            \vec{b}_3 = \frac{2\pi}{V}\vec{a}_1\times\vec{a}_2 \\
-        \end{matrix}
+            \begin{matrix}
+                \vec{b}_1 = \frac{2\pi}{V}\vec{a}_2\times\vec{a}_3 \\
+                \vec{b}_2 = \frac{2\pi}{V}\vec{a}_3\times\vec{a}_1 \\
+                \vec{b}_3 = \frac{2\pi}{V}\vec{a}_1\times\vec{a}_2 \\
+            \end{matrix}
 
     """
     vol = volume(cell)
@@ -523,6 +535,27 @@ def cell_from_param(a=1, b=1, c=1, alpha=90, beta=90, gamma=90):
 
 
 def get_permutation(n, k):
+    r"""
+    Return array of index permutations
+
+    Parameters
+    ----------
+    n : int
+        Amount of index to be used:
+
+        .. code-block::
+
+            range(0, n)
+    k : int
+        Length of the permuted arrays.
+
+    Returns
+    -------
+    permutations : list
+        List of permutations. If N permutations found,
+        the it is a list of N lists of length k.
+
+    """
     if k == n:
         return [[i for i in range(n)]]
     elif n < k:

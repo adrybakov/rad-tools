@@ -501,10 +501,11 @@ def lepage(
     eps_rel=1e-4,
     verbose=False,
     very_verbose=False,
+    give_all_results=False,
     delta_max=0.01,
 ):
     r"""
-    Le Page algorithm [1_].
+    Le Page algorithm [1]_.
 
     Parameters
     ----------
@@ -521,11 +522,13 @@ def lepage(
     gamma : float, default 90
         Angle between vectors :math:`a_1` and :math:`a_2`. In degrees.
     eps_rel : float, default 1e-4
-        Relative epsilon as defined in [2]_.
+        Relative epsilon.
     verbose : bool, default False
         Whether to print the steps of an algorithm.
     very_verbose : bool, default False
         Whether to print the detailed steps of an algorithm.
+    give_all_results : bool, default False
+        Whether to give the whole list of consecutive results.
     delta_max : float, default 0.01
         Maximum angle tolerance, in degrees.
 
@@ -601,7 +604,7 @@ def lepage(
             print(
                 f"  ({ax[0][0]:2.0f} "
                 + f"{ax[0][1]:2.0f} "
-                + f"{ax[0][0]:2.0f}) "
+                + f"{ax[0][2]:2.0f}) "
                 + f"{ax[-1]:{4+decimals}.{1+decimals}f}"
             )
 
@@ -620,6 +623,8 @@ def lepage(
     delta = None
     separator = lambda x: "=" * 20 + f" Cycle {x} " + "=" * 20
     cycle = 0
+    if give_all_results:
+        results = []
     while delta is None or delta > delta_max:
         if verbose:
             cycle += 1
@@ -643,7 +648,7 @@ def lepage(
                 print(
                     f"  ({ax[0][0]:2.0f} "
                     + f"{ax[0][1]:2.0f} "
-                    + f"{ax[0][0]:2.0f}) "
+                    + f"{ax[0][2]:2.0f}) "
                     + f"{ax[-1]:{4+decimals}.{1+decimals}f}"
                 )
             print("Angles:")
@@ -693,79 +698,57 @@ def lepage(
             axes = axes[:-1]
             angles = np.delete(angles, -1, -1)[:-1]
 
+        if give_all_results:
+            results.append((result, delta))
+
+    if give_all_results:
+        return results
+
     return result
 
 
 if __name__ == "__main__":
-    print(
-        lepage(
-            4,
-            4.472,
-            4.583,
-            79.030,
-            64.130,
-            64.150,
-            very_verbose=True,
-            eps_rel=0.001,
-            delta_max=0.006,
-        )
-    )
-    print(
-        lepage(
-            4,
-            4,
-            4,
-            90,
-            90,
-            90,
-            very_verbose=True,
-            eps_rel=0.001,
-            delta_max=0.006,
-        )
-    )
+    from rad_tools.crystal.bravais_lattice import lattice_example
 
-    # from rad_tools.crystal.bravais_lattice import lattice_example
-
-    # for i, name in enumerate(
-    #     [
-    #         #         "CUB",
-    #         #         "FCC",
-    #         #         "BCC",
-    #         #         "HEX",
-    #         #         "TET",
-    #         #         "BCT1",
-    #         #         "BCT2",
-    #         "RHL1",
-    #         #         "RHL2",
-    #         #         "ORC",
-    #         #         "ORCF1",
-    #         #         "ORCF2",
-    #         #         "ORCF3",
-    #         #         "ORCI",
-    #         #         "ORCC",
-    #         # "MCL",
-    #         #         "MCLC1",
-    #         #         "MCLC2",
-    #         #         "MCLC3",
-    #         #         "MCLC4",
-    #         "MCLC5",
-    #         #         "TRI1a",
-    #         #         "TRI2a",
-    #         #         "TRI1b",
-    #         #         "TRI2b",
-    #     ]
-    # ):
-    #     lattice = lattice_example(name)
-    #     print(
-    #         name,
-    #         lepage(
-    #             lattice.a,
-    #             lattice.b,
-    #             lattice.c,
-    #             lattice.alpha,
-    #             lattice.beta,
-    #             lattice.gamma,
-    #             very_verbose=True,
-    #             delta_max=0.00001,
-    #         ),
-    #     )
+    for i, name in enumerate(
+        [
+            #         "CUB",
+            #         "FCC",
+            #         "BCC",
+            #         "HEX",
+            #         "TET",
+            #         "BCT1",
+            #         "BCT2",
+            #         "RHL1",
+            #         "RHL2",
+            #         "ORC",
+            #         "ORCF1",
+            #         "ORCF2",
+            #         "ORCF3",
+            #         "ORCI",
+            #         "ORCC",
+            #         "MCL",
+            #         "MCLC1",
+            #         "MCLC2",
+            #         "MCLC3",
+            #         "MCLC4",
+            "MCLC5",
+            #         "TRI1a",
+            #         "TRI2a",
+            #         "TRI1b",
+            #         "TRI2b",
+        ]
+    ):
+        lattice = lattice_example(name)
+        print(
+            name,
+            lepage(
+                lattice.a,
+                lattice.b,
+                lattice.c,
+                lattice.alpha,
+                lattice.beta,
+                lattice.gamma,
+                very_verbose=True,
+            ),
+        )

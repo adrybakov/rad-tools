@@ -945,6 +945,12 @@ class RHL(Lattice):
     def __init__(self, a: float, alpha: float) -> None:
         if alpha == 90:
             raise ValueError("Are you trying to construct CUB Lattice (alpha == 90)?")
+        if alpha == 60:
+            raise ValueError("Are you trying to construct FCC Lattice (alpha == 60)?")
+        if alpha == 109.47122:
+            raise ValueError(
+                "Are you trying to construct BCC Lattice (alpha == 109.47122)?"
+            )
         if alpha >= 120:
             raise ValueError("alpha has to be < 120 degrees.")
         self.conv_a = a
@@ -1181,6 +1187,8 @@ class MCLC(Lattice):
             b, c = c, b
         if alpha > 90:
             raise ValueError("alpha has to be < 90")
+        if a == b or b == c or a == c:
+            raise ValueError("a, b, c have to be different")
         self.conv_a = a
         self.conv_b = b
         self.conv_c = c
@@ -1642,7 +1650,8 @@ def lattice_example(
     elif lattice == "hex":
         return HEX(pi, 2 * pi)
     elif lattice in ["rhl1", "rhl"]:
-        return RHL(pi, 60)
+        # If alpha = 60 it is effectively FCC!
+        return RHL(pi, 70)
     elif lattice == "rhl2":
         return RHL(pi, 110)
     elif lattice == "mcl":
@@ -1652,7 +1661,7 @@ def lattice_example(
     elif lattice == "mclc2":
         return MCLC(1.5 * pi * sin(80 * _toradians), 1.5 * pi, 2 * pi, 80)
     elif lattice == "mclc3":
-        return MCLC(pi, pi / 2, pi, 80)
+        return MCLC(pi, pi / 2, 1.1 * pi, 80)
     elif lattice == "mclc4":
         b = pi
         c = 1.5 * pi
@@ -1660,7 +1669,7 @@ def lattice_example(
         a = sqrt(c * b**2 * sin(alpha) ** 2 / (c - b * cos(alpha)))
         return MCLC(a, b, c, 80)
     elif lattice == "mclc5":
-        return MCLC(pi, pi, pi, 60)
+        return MCLC(pi, 1.1 * pi, 1.2 * pi, 60)
     elif lattice in ["tri1a", "tri1", "tri", "tria"]:
         return TRI(1, 1.5, 2, 120, 110, 100, reciprocal=True)
     elif lattice in ["tri2a", "tri2"]:

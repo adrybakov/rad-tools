@@ -16,3 +16,6 @@ Collection of routines
     volume
     angle
     absolute_to_relative
+    get_permutation
+    cell_from_param
+    reciprocal_cell

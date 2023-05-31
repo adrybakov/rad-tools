@@ -58,8 +58,8 @@ class Lattice:
     .. doctest::
 
         >>> import rad_tools as rad
-        >>> l = rad.Lattice(cell=[[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-        >>> l = rad.Lattice(a1=[1,0,0], a2=[0,1,0], a3=[0,0,1]])
+        >>> l = rad.Lattice([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+        >>> l = rad.Lattice([1,0,0], [0,1,0], [0,0,1])
         >>> l = rad.Lattice(1, 1, 1, 90, 90, 90)
 
     Parameters
