@@ -319,16 +319,8 @@ Step XIII
 If all previous checks failed set system type to "TRI and go to :ref:`step-vii`. 
 
 
-
-
-
-
-
-
-
-
-
-
+References
+==========
 
 .. [1] Le Page, Y., 1982.
     The derivation of the axes of the conventional unit cell from

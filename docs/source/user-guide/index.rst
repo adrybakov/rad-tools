@@ -54,7 +54,7 @@ All the files used in the usage examples are available :examples:`here <>`.
 
 Library
 =======
-Description of some methods and algorithms implemented in 
+Description of some methods and algorithms implemented in the package.
 
 .. toctree::
    :maxdepth: 1
