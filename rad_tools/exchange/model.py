@@ -33,14 +33,16 @@ class NotationError(ValueError):
         if hr_name is None:
             hr_name = name
         self.message = (
-            f"\n\nNotation`s interpretation is not set for the model ({hr_name}). "
-            + f"Set the notation first ExchangeModel.{name}=True "
-            + f"or ExchangeModel.{name}=False. "
+            f"\n\nNotation`s interpretation is not set for the model ({hr_name}).\n"
+            + f"Set the notation first:\n"
+            + f"    ExchangeModel.{name} = True  "
+            + f"or  ExchangeModel.{name} = False\n\n"
             + f"Note: When the attribute is set for the first time it sets the interpretation, "
-            + "afterwards it change the notation. "
-            + f"If you want to set the interpretation again, use "
-            + f"ExchangeModel.set_interpretation({name} = True) or "
-            + f"ExchangeModel.set_interpretation({name} = False).\n\n"
+            + "afterwards it change the notation.\n\n"
+            + f"If you want to set the interpretation again, use \n"
+            + f"    ExchangeModel.set_interpretation({name} = True)"
+            + "\nor\n"
+            + f"    ExchangeModel.set_interpretation({name} = False)\n"
         )
 
     def __str__(self):
@@ -162,6 +164,130 @@ class ExchangeModel:
         (if corresponding attributes are defined)
         or set the interpretation (if corresponding attribute are not defined).
 
+        Returns
+        -------
+        notation : (5,) tuple of bool
+            ``True``/``False`` values of notation properties:
+
+            .. code-block:: python
+
+                (double_counting, spin_normalized, factor_one_half, factor_two, minus_sign)
+
+        Examples
+        --------
+        Setting one of the predefined notations:
+
+        .. doctest::
+
+            >>> import rad_tools as rad
+            >>> model = rad.ExchangeModel()
+            >>> model.notation = "standard"
+            >>> model.notation
+            H = -sum_{i,j} S_i J_ij S_j
+            Double counting is present.
+            Spin vectors are not normalized.
+            (True, False, False, False, True)
+            >>> model.notation = "TB2J"
+            >>> model.notation
+            H = -sum_{i,j} S_i J_ij S_j
+            Double counting is present.
+            Spin vectors are normalized to 1.
+            (True, True, False, False, True)
+            >>> model.notation = "SpinW"
+            >>> model.notation
+            H = sum_{i,j} S_i J_ij S_j
+            Double counting is present.
+            Spin vectors are not normalized.
+            (True, False, False, False, False)
+
+        Setting the notation:
+
+        .. doctest::
+
+            >>> import rad_tools as rad
+            >>> model = rad.ExchangeModel()
+            >>> Cr = rad.Atom("Cr", spin=1.5)
+            >>> model.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
+            >>> model[Cr, Cr, (1, 0, 0)].iso
+            1.0
+            >>> # For the first time interpretation is set,
+            >>> # values of exchange are not changed
+            >>> model.notation = "standard"
+            >>> model[Cr, Cr, (1, 0, 0)].iso
+            1.0
+            >>> # Once the notation is set the values
+            >>> # are changing if the notation is changed again.
+            >>> model.notation = "TB2J"
+            >>> model[Cr, Cr, (1, 0, 0)].iso
+            2.25
+            >>> model.notation = "SpinW"
+            >>> model[Cr, Cr, (1, 0, 0)].iso
+            -1.0
+            >>> model.notation = "standard"
+            >>> model[Cr, Cr, (1, 0, 0)].iso
+            1.0
+
+        Setting individual properties:
+
+        .. doctest::
+
+            >>> import rad_tools as rad
+            >>> model = rad.ExchangeModel()
+            >>> Cr = rad.Atom("Cr", spin=1.5)
+            >>> model.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
+            >>> model[Cr, Cr, (1, 0, 0)].iso
+            1.0
+            >>> # For the first time interpretation is set,
+            >>> # values of exchange are not changed
+            >>> model.minus_sign = True
+            >>> model[Cr, Cr, (1, 0, 0)].iso
+            1.0
+            >>> # Once the property is set the values
+            >>> # are changing if the property is changed again.
+            >>> model.minus_sign = False
+            >>> model[Cr, Cr, (1, 0, 0)].iso
+            -1.0
+
+        Changing individual properties:
+
+        .. doctest::
+
+            >>> import rad_tools as rad
+            >>> model = rad.ExchangeModel()
+            >>> Cr = rad.Atom("Cr", spin=1.5)
+            >>> model.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
+            >>> model[Cr, Cr, (1, 0, 0)].iso
+            1.0
+            >>> model.notation = "standard"
+            >>> model[Cr, Cr, (1, 0, 0)].iso
+            1.0
+            >>> model.double_counting, model.spin_normalized, model.factor_one_half, model.factor_two, model.minus_sign
+            (True, False, False, False, True)
+            >>> model.minus_sign = False
+            >>> model[Cr, Cr, (1, 0, 0)].iso
+            -1.0
+            >>> model.factor_one_half, model.factor_two
+            (False, False)
+            >>> model.factor_one_half = True
+            >>> model[Cr, Cr, (1, 0, 0)].iso
+            -2.0
+            >>> model.factor_one_half, model.factor_two
+            (True, False)
+            >>> model.factor_two = True
+            >>> model[Cr, Cr, (1, 0, 0)].iso
+            -1.0
+            >>> # Note that the values are switched to False,
+            >>> # since factor one half and two are cancelling each other
+            >>> model.factor_one_half, model.factor_two
+            (False, False)
+            >>> model.spin_normalized = True
+            >>> model[Cr, Cr, (1, 0, 0)].iso
+            -2.25
+            >>> model.double_counting = False
+            >>> model[Cr, Cr, (1, 0, 0)].iso
+            -4.5
+
+
         See Also
         --------
         double_counting
@@ -181,28 +307,35 @@ class ExchangeModel:
             raise NotationError("factor_two", "factor 2")
         if self._minus_sign is None:
             raise NotationError("minus_sign", "minus sign")
-        result = "H = "
+        text_result = "H = "
         if self._minus_sign:
-            result += "-"
+            text_result += "-"
         if self._factor_one_half and not self._factor_two:
-            result += "1/2 "
+            text_result += "1/2 "
         if self._factor_two and not self.factor_one_half:
-            result += "2 "
-        result += "sum_{"
+            text_result += "2 "
+        text_result += "sum_{"
         if self._double_counting:
-            result += "i,j} "
+            text_result += "i,j} "
         else:
-            result += "i>=j} "
-        result += "S_i J_ij S_j\n"
+            text_result += "i>=j} "
+        text_result += "S_i J_ij S_j\n"
         if self._double_counting:
-            result += "Double counting is present.\n"
+            text_result += "Double counting is present.\n"
         else:
-            result += "No double counting.\n"
+            text_result += "No double counting.\n"
         if self._spin_normalized:
-            result += "Spin vectors are normalized to 1.\n"
+            text_result += "Spin vectors are normalized to 1."
         else:
-            result += "Spin vectors are not normalized.\n"
-        return result
+            text_result += "Spin vectors are not normalized."
+        print(text_result)
+        return (
+            self.double_counting,
+            self.spin_normalized,
+            self.factor_one_half,
+            self.factor_two,
+            self.minus_sign,
+        )
 
     @notation.setter
     def notation(self, new_notation):
