@@ -316,7 +316,7 @@ Go to :ref:`step-vii`.
 Step XIII
 ---------
 
-If all previous checks failed set system type to "TRI and go to :ref:`step-vii`. 
+If all previous checks failed set system type to "TRI" and go to :ref:`step-vii`. 
 
 
 References
