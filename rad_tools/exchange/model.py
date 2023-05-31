@@ -118,7 +118,6 @@ class ExchangeModel:
             self.notation = notation
 
     # Notation attributes
-    # TODO Write doctests
     @property
     def notation(self):
         r"""
