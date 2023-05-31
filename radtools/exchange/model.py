@@ -1065,7 +1065,6 @@ class ExchangeModel:
             self.force_symmetry(template=template)
         else:
             self.filter(template=template)
-        self.round(decimals=decimals)
         summary = ""
         for name in template.names:
             scalar_written = False
