@@ -273,10 +273,9 @@ def lepage(
     beta=90,
     gamma=90,
     eps_rel=1e-4,
-    limit=1.5,
     verbose=False,
     very_verbose=False,
-    delta_max=None,
+    delta_max=0.01,
 ):
     r"""
     Le Page algorithm [1_].
@@ -297,12 +296,12 @@ def lepage(
         Angle between vectors :math:`a_1` and :math:`a_2`. In degrees.
     eps_rel : float, default 1e-4
         Relative epsilon as defined in [2]_.
-    limit : float, default 1.5
-        Limit for the Miller index search.
     verbose : bool, default False
         Whether to print the steps of an algorithm.
     very_verbose : bool, default False
         Whether to print the detailed steps of an algorithm.
+    delta_max : float, default 0.01
+        Maximum angle tolerance, in degrees.
 
     References
     ----------
@@ -315,8 +314,10 @@ def lepage(
     if very_verbose:
         verbose = True
 
+    limit = max(1.5, delta_max * 1.1)
+
     eps = eps_rel * volume(a, b, c, alpha, beta, gamma) ** (1 / 3.0)
-    decimals = 3
+    decimals = abs(floor(log10(abs(eps))))
     if delta_max is None:
         delta_max = eps
 
@@ -344,6 +345,11 @@ def lepage(
     a, b, c, alpha, beta, gamma = niggli(a, b, c, alpha, beta, gamma, return_cell=True)
     cell = cell_from_param(a, b, c, alpha, beta, gamma)
     rcell = reciprocal_cell(cell)
+    if very_verbose:
+        print("Cell:")
+        print_2D_array(cell, fmt=f"{4+decimals}.{1+decimals}f")
+        print("Reciprocal cell:")
+        print_2D_array(rcell, fmt=f"{4+decimals}.{1+decimals}f")
 
     # Find all axes with twins
     miller_indices = (np.indices((5, 5, 5)) - 2).transpose((1, 2, 3, 0)).reshape(125, 3)
@@ -383,14 +389,14 @@ def lepage(
     axes = new_axes
 
     if very_verbose:
-        cprint(f"Axes with delta < {limit}:", color="yellow")
-        print(f"       U     {'delta':>{3+decimals}}")
+        print(f"Axes with delta < {limit}:")
+        print(f"       U     {'delta':>{4+decimals}}")
         for ax in axes:
             print(
                 f"  ({ax[0][0]:2.0f} "
                 + f"{ax[0][1]:2.0f} "
                 + f"{ax[0][0]:2.0f}) "
-                + f"{ax[-1]:{3+decimals}.{decimals}f}"
+                + f"{ax[-1]:{4+decimals}.{1+decimals}f}"
             )
 
     # Compute angles matrix
@@ -412,16 +418,21 @@ def lepage(
             i += 1
             print(separator(i))
 
-        if very_verbose:
-            print("Axes:")
-            print_2D_array(list(map(lambda x: x[0], axes)), fmt="2.0f")
-            print("Angles:")
-            print_2D_array(angles, fmt=f"{3+decimals}.{decimals}f")
-
         try:
             delta = max(axes, key=lambda x: x[-1])[-1]
         except ValueError:
             delta = 0
+        # eps = max(delta, 100 * np.finfo(float).eps)
+        if very_verbose:
+            decimals = abs(floor(log10(abs(eps))))
+            print(
+                f"Epsilon = {eps:{4+decimals}.{1+decimals}f}\n"
+                + f"delta   = {delta:{4+decimals}.{1+decimals}f}"
+            )
+            print("Axes:")
+            print_2D_array(list(map(lambda x: x[0], axes)), fmt="2.0f")
+            print("Angles:")
+            print_2D_array(angles, fmt=f"{4+decimals}.{1+decimals}f")
 
         continue_search = True
         n = len(axes)
