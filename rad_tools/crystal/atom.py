@@ -2,10 +2,19 @@ r"""Atom class"""
 
 import numpy as np
 
+from rad_tools.crystal.atom_types import atom_types
+
 
 class Atom:
     r"""
     Atom.
+
+    Notes
+    -----
+    "==" (and "!=") operation compare two atoms based on their literals and indexes.
+    If index of one atom is not define, then comparison raises ``ValueError``.
+    For the check of the atom type use :py:attr:`Atom.type`.
+    In most cases :py:attr:`Atom.literal` = :py:attr:`Atom.type`.
 
     Parameters
     ----------
@@ -31,8 +40,10 @@ class Atom:
     Attributes
     ----------
     literal : str
+    type : str
+    index : int
     position : (3,) :numpy:`ndarray`
-        Position of the atom in absolute coordinates coordinates.
+        Position of the atom in absolute coordinates.
     spin : (3,) :numpy:`ndarray`
     magmom : (3,) :numpy:`ndarray`
     charge : float
@@ -48,7 +59,9 @@ class Atom:
         charge=None,
         index=None,
     ) -> None:
-        self.literal = literal
+        self._literal = "X"
+        self._index = None
+        self._type = None
         if position is None:
             position = (0, 0, 0)
         self.position = np.array(position)
@@ -56,8 +69,8 @@ class Atom:
         self._spin_vector = None
         self._magmom = None
         self._charge = None
-        self._index = None
 
+        self.literal = literal
         if spin is not None:
             self.spin = spin
         if spin_vector is not None:
@@ -74,6 +87,55 @@ class Atom:
 
     def __format__(self, format_spec):
         return format(str(self), format_spec)
+
+    # ==
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, Atom):
+            raise TypeError(
+                f"TypeError: unsupported operand type(s) "
+                + f"for =: '{other.__class__.__name__}' and 'Atom'"
+            )
+        return self.literal == other.literal and self.index == other.index
+
+    # !=
+    def __neq__(self, other):
+        return not self == other
+
+    @property
+    def literal(self):
+        return self._literal
+
+    @literal.setter
+    def literal(self, new_literal):
+        self._literal = new_literal
+        self._type = None
+
+    @property
+    def type(self):
+        r"""
+        Type of an atom (i.e. Cr, Ni, ...).
+        """
+        if self._type is None:
+            self._type = "X"
+            for i in atom_types:
+                if i in self._literal:
+                    self._type = i
+                    break
+        return self._type
+
+    @property
+    def index(self):
+        r"""
+        Index of an atom, meant to be unique for some group of atoms.
+        """
+
+        if self._index is None:
+            raise ValueError(f"Index is not defined for the atom {self}.")
+        return self._index
+
+    @index.setter
+    def index(self, new_index):
+        self._index = new_index
 
     @property
     def spin(self):
@@ -180,23 +242,9 @@ class Atom:
         self._charge = new_charge
 
     @property
-    def index(self):
-        r"""
-        Index of the atom.
-        """
-
-        if self._index is None:
-            raise ValueError(f"Index is not defined for the atom {self}.")
-        return self._index
-
-    @index.setter
-    def index(self, new_index):
-        self._index = new_index
-
-    @property
     def fullname(self):
         r"""Return fullname (literal + index) of an atom."""
         try:
-            return f"{self.literal} #{self.index}"
+            return f"{self.literal}_{self.index}"
         except ValueError:
             return self.literal
