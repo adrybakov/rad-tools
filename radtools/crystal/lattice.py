@@ -2,7 +2,6 @@ r"""
 General 3D lattice.
 """
 
-from math import cos, sin, sqrt
 from typing import Iterable
 
 import matplotlib.pyplot as plt
@@ -14,7 +13,6 @@ from scipy.spatial import Voronoi
 
 from radtools.crystal.identify import lepage
 from radtools.routines import (
-    _toradians,
     angle,
     cell_from_param,
     reciprocal_cell,
@@ -39,6 +37,42 @@ class Arrow3D(FancyArrowPatch):
 
     def do_3d_projection(self, *_, **__):
         return 0
+
+
+def get_3D_axes(background=True, focal_length=0.2):
+    r"""
+    Prepare style of the figure for the plot.
+
+    Parameters
+    ----------
+    background : bool, default True
+        Whether to keep the axis on the plot.
+    focal_length : float, default 0.2
+        See: |matplotlibFocalLength|_
+
+    Returns
+    -------
+    fig
+    ax
+    """
+
+    fig = plt.figure(figsize=(6, 6))
+    rcParams["axes.linewidth"] = 0
+    rcParams["xtick.color"] = "#B3B3B3"
+    ax = fig.add_subplot(projection="3d")
+    ax.set_proj_type("persp", focal_length=focal_length)
+    if background:
+        ax.axes.linewidth = 0
+        ax.xaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
+        ax.yaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
+        ax.zaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
+        ax.set_xlabel("x", fontsize=15, alpha=0.5)
+        ax.set_ylabel("y", fontsize=15, alpha=0.5)
+        ax.set_zlabel("z", fontsize=15, alpha=0.5)
+        ax.tick_params(axis="both", zorder=0, color="#B3B3B3")
+    else:
+        ax.axis("off")
+    return fig, ax
 
 
 class Lattice:
@@ -589,23 +623,9 @@ class Lattice:
         """
 
         if self.fig is None:
-            self.fig = plt.figure(figsize=(6, 6))
-            rcParams["axes.linewidth"] = 0
-            rcParams["xtick.color"] = "#B3B3B3"
-            self.ax = self.fig.add_subplot(projection="3d")
-            self.ax.set_proj_type("persp", focal_length=focal_length)
-            if background:
-                self.ax.axes.linewidth = 0
-                self.ax.xaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
-                self.ax.yaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
-                self.ax.zaxis._axinfo["grid"]["color"] = (1, 1, 1, 1)
-                self.ax.set_xlabel("x", fontsize=15, alpha=0.5)
-                self.ax.set_ylabel("y", fontsize=15, alpha=0.5)
-                self.ax.set_zlabel("z", fontsize=15, alpha=0.5)
-                self.ax.tick_params(axis="both", zorder=0, color="#B3B3B3")
-            else:
-                self.ax.axis("off")
-            self.ax.set_aspect("equal")
+            self.fig, self.ax = get_3D_axes(
+                background=background, focal_length=focal_length
+            )
 
     def plot(self, kind="primitive", ax=None, **kwargs):
         r"""
@@ -659,6 +679,8 @@ class Lattice:
                 getattr(self, f"plot_{kind}")(ax=ax, **kwargs)
         except AttributeError:
             raise ValueError(f"Plot kind '{kind}' does not exist!")
+        ax.relim()
+        ax.set_aspect("equal")
 
     def remove(self, kind="primitive", ax=None):
         r"""
@@ -695,6 +717,10 @@ class Lattice:
                 else:
                     artist.remove()
             del self._artists[kind]
+        if ax is None:
+            ax = self.ax
+        ax.relim(visible_only=True)
+        ax.set_aspect("equal")
 
     def show(self):
         r"""
