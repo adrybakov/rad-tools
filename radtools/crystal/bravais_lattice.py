@@ -27,6 +27,7 @@ from math import cos, pi, sin, sqrt, tan
 import numpy as np
 
 from radtools.crystal.lattice import Lattice
+from radtools.crystal.identify import lepage
 from radtools.routines import _toradians
 
 __all__ = [
@@ -45,6 +46,7 @@ __all__ = [
     "MCLC",
     "TRI",
     "lattice_example",
+    "bravais_lattice_from_param",
 ]
 
 
@@ -1569,6 +1571,81 @@ class TRI(Lattice):
             return "TRI1a"
         elif (max(self.k_gamma, self.k_beta, self.k_alpha)) < 90:
             return "TRI1b"
+        else:
+            return "TRI"
+
+
+def bravais_lattice_from_param(a, b, c, alpha, beta, gamma) -> Lattice:
+    r"""
+    Return Bravais lattice.
+
+    Parameters
+    ----------
+    a : float, default 1
+        Length of the :math:`a_1` vector.
+    b : float, default 1
+        Length of the :math:`a_2` vector.
+    c : float, default 1
+        Length of the :math:`a_3` vector.
+    alpha : float, default 90
+        Angle between vectors :math:`a_2` and :math:`a_3`. In degrees.
+    beta : float, default 90
+        Angle between vectors :math:`a_1` and :math:`a_3`. In degrees.
+    gamma : float, default 90
+        Angle between vectors :math:`a_1` and :math:`a_2`. In degrees.
+    lattice_type : str
+        Lattice type.
+    """
+
+    lattice_type = lepage(a, b, c, alpha, beta, gamma)
+
+    if lattice_type == "CUB":
+        a = (a + b + c) / 3
+        return CUB(a)
+    if lattice_type == "FCC":
+        a = (a + b + c) / 3
+        return FCC(a)
+    if lattice_type == "BCC":
+        a = (a + b + c) / 3
+        return BCC(a)
+    if lattice_type == "TET":
+        if a == b:
+            return TET((a + b) / 2, c)
+        elif a == c:
+            return TET((a + c) / 2, b)
+        elif b == c:
+            return TET((b + c) / 2, a)
+    if lattice_type == "BCT":
+        if a == b:
+            return BCT((a + b) / 2, c)
+        elif a == c:
+            return BCT((a + c) / 2, b)
+        elif b == c:
+            return BCT((b + c) / 2, a)
+    if lattice_type == "ORC":
+        return ORC(a, b, c)
+    if lattice_type == "ORCF":
+        return ORCF(a, b, c)
+    if lattice_type == "ORCC":
+        return ORCC(a, b, c)
+    if lattice_type == "ORCI":
+        return ORCI(a, b, c)
+    if lattice_type == "HEX":
+        if abs(a - b) < abs(a - c) and abs(a - b) < abs(b - c):
+            return HEX((a + b) / 2, c)
+        elif abs(a - c) < abs(a - b) and abs(a - c) < abs(b - c):
+            return HEX((a + c) / 2, b)
+        elif abs(b - c) < abs(a - c) and abs(b - c) < abs(a - b):
+            return HEX((b + c) / 2, a)
+    if lattice_type == "RHL":
+        return RHL((a + b + c) / 3, (alpha + beta + gamma) / 2)
+    if lattice_type == "MCL":
+        alpha, beta, gamma = [alpha, beta, gamma].sort()
+        return MCL(a, b, c, alpha)
+    if lattice_type == "MCLC":
+        alpha, beta, gamma = [alpha, beta, gamma].sort()
+        return MCLC(a, b, c, alpha)
+    return TRI(a, b, c, alpha, beta, gamma)
 
 
 def lattice_example(

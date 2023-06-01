@@ -23,8 +23,18 @@ Bravais lattices
 
 .. automodule:: radtools.crystal.bravais_lattice
 
-
 .. currentmodule:: radtools
+
+Functions
+---------
+Several functions are available for obtaining Bravais lattices
+
+.. autosummary::
+    :toctree: generated/
+
+    lattice_example
+    bravais_lattice_from_param
+
 
 Cubic lattice system
 --------------------

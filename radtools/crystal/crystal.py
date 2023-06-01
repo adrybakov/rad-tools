@@ -3,7 +3,7 @@ from math import sqrt
 import numpy as np
 
 from radtools.crystal.atom import Atom
-from radtools.crystal.bravais_lattice import lattice_example
+from radtools.crystal.bravais_lattice import bravais_lattice_from_param
 from radtools.crystal.lattice import Lattice
 from radtools.routines import absolute_to_relative
 
@@ -266,6 +266,39 @@ class Crystal:
         """
 
         return sqrt(np.sum(self.get_vector(atom1, atom2, R) ** 2))
+
+    def find_primitive_cell(self):
+        r"""
+        Find primitive cell.
+        """
+        pass
+
+    def identify_lattice(self, find_primitive=True):
+        r"""
+        Identify Bravais lattice type.
+
+        Parameters
+        ----------
+        find_primitive : bool, default True
+            Whether to find primitive cell before identification.
+        """
+
+        # Define primitive cell
+        if find_primitive:
+            self.find_primitive_cell()
+
+        # Get new lattice object
+        new_lattice = bravais_lattice_from_param(*self.lattice.parameters)
+
+        # Rotational matrix form the predefined lattice orientation to the crystal`s orientation
+        R = self.lattice.cell @ np.linalg.inv(new_lattice.cell)
+
+        # Rotate new lattice
+        new_lattice.cell = R @ new_lattice.cell
+        new_lattice.conv_cell = R @ new_lattice.conv_cell
+
+        # Assign new lattice
+        self.lattice = new_lattice
 
 
 class CrystalIterator:

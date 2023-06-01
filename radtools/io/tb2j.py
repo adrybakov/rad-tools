@@ -9,11 +9,11 @@ from radtools.exchange.model import ExchangeModel
 from radtools.exchange.parameter import ExchangeParameter
 
 
-def read_tb2j_model(filename, quiet=False) -> ExchangeModel:
+def read_tb2j_model(filename, quiet=True) -> ExchangeModel:
     r"""
     Read exchange model from |TB2J|_ output file.
 
-    .. versionchanged:: 0.6.2
+    .. versionchanged:: 0.7
 
     In |TB2J|_ exchange Hamiltonian is define in a following notation:
 
@@ -106,6 +106,9 @@ def read_tb2j_model(filename, quiet=False) -> ExchangeModel:
         # Check if the exchange section is reached
         if line and exchange_flag in line:
             break
+
+    # Identify lattice type
+    model.crystal.identify_lattice()
 
     # Read exchange
     while line:

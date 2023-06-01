@@ -26,7 +26,7 @@ class TestReadExchangeModel:
             [0.000, 4.807, 0.000],
             [0.000, 0.000, 23.571],
         ]
-        assert (self.model.cell == cell_values).all()
+        assert (abs(self.model.cell - cell_values) < 1e-4).all()
 
     @pytest.mark.parametrize(
         "atom, position",

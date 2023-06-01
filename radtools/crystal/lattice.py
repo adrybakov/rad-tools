@@ -13,8 +13,13 @@ from mpl_toolkits.mplot3d import Axes3D, proj3d
 from scipy.spatial import Voronoi
 
 from radtools.crystal.identify import lepage
-from radtools.routines import (_toradians, angle, cell_from_param,
-                               reciprocal_cell, volume)
+from radtools.routines import (
+    _toradians,
+    angle,
+    cell_from_param,
+    reciprocal_cell,
+    volume,
+)
 
 __all__ = ["Lattice"]
 
@@ -350,6 +355,24 @@ class Lattice:
         """
 
         return angle(self.a1, self.a2)
+
+    @property
+    def parameters(self):
+        r"""
+        Return cell parameters.
+
+        :math:`(a, b, c, \alpha, \beta, \gamma)`
+
+        Returns
+        -------
+        a : float
+        b : float
+        c : float
+        alpha : float
+        beta : float
+        gamma : float
+        """
+        return self.a, self.b, self.c, self.alpha, self.beta, self.gamma
 
     @property
     def unit_cell_volume(self):

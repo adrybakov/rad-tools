@@ -425,22 +425,64 @@ class TestExchangeModel:
         ]
         for iso, atom1, atom2, R in bonds:
             model.add_bond(ExchangeParameter(iso=iso), atom1, atom2, R)
-
         assert len(model.bonds) == 12
+        assert (Cr1, Cr2, (0, 0, 0)) in model
+        assert (Cr2, Cr1, (0, 0, 0)) in model
+        assert (Cr1, Cr1, (1, 0, 0)) in model
+        assert (Cr1, Cr1, (-1, 0, 0)) in model
+        assert (Cr2, Cr2, (1, 0, 0)) in model
+        assert (Cr2, Cr2, (-1, 0, 0)) in model
+        assert (Cr1, Cr1, (0, 2, 0)) in model
+        assert (Cr1, Cr1, (0, -2, 0)) in model
+        assert (Cr2, Cr2, (0, 2, 0)) in model
+        assert (Cr2, Cr2, (0, -2, 0)) in model
+        assert (Cr2, Cr1, (2, 2, 0)) in model
+        assert (Cr1, Cr2, (-2, -2, 0)) in model
         filtered_model = model.filtered(max_distance=1)
         assert len(filtered_model.bonds) == 6
+        assert (Cr1, Cr2, (0, 0, 0)) in model
+        assert (Cr2, Cr1, (0, 0, 0)) in model
+        assert (Cr1, Cr1, (1, 0, 0)) in model
+        assert (Cr1, Cr1, (-1, 0, 0)) in model
+        assert (Cr2, Cr2, (1, 0, 0)) in model
+        assert (Cr2, Cr2, (-1, 0, 0)) in model
         filtered_model = model.filtered(min_distance=1)
         assert len(filtered_model.bonds) == 10
+        assert (Cr1, Cr1, (1, 0, 0)) in model
+        assert (Cr1, Cr1, (-1, 0, 0)) in model
+        assert (Cr2, Cr2, (1, 0, 0)) in model
+        assert (Cr2, Cr2, (-1, 0, 0)) in model
+        assert (Cr1, Cr1, (0, 2, 0)) in model
+        assert (Cr1, Cr1, (0, -2, 0)) in model
+        assert (Cr2, Cr2, (0, 2, 0)) in model
+        assert (Cr2, Cr2, (0, -2, 0)) in model
+        assert (Cr2, Cr1, (2, 2, 0)) in model
+        assert (Cr1, Cr2, (-2, -2, 0)) in model
         filtered_model = model.filtered(min_distance=1, max_distance=2)
         assert len(filtered_model.bonds) == 8
+        assert (Cr1, Cr1, (1, 0, 0)) in model
+        assert (Cr1, Cr1, (-1, 0, 0)) in model
+        assert (Cr2, Cr2, (1, 0, 0)) in model
+        assert (Cr2, Cr2, (-1, 0, 0)) in model
+        assert (Cr1, Cr1, (0, 2, 0)) in model
+        assert (Cr1, Cr1, (0, -2, 0)) in model
+        assert (Cr2, Cr2, (0, 2, 0)) in model
+        assert (Cr2, Cr2, (0, -2, 0)) in model
         filtered_model = model.filtered(R_vector=(0, 0, 0))
         assert len(filtered_model.bonds) == 2
+        assert (Cr2, Cr1, (0, 0, 0)) in model
+        assert (Cr1, Cr2, (0, 0, 0)) in model
         filtered_model = model.filtered(R_vector=[(0, 0, 0), (1, 0, 0)])
         assert len(filtered_model.bonds) == 4
+        assert (Cr2, Cr1, (0, 0, 0)) in model
+        assert (Cr1, Cr2, (0, 0, 0)) in model
+        assert (Cr1, Cr1, (1, 0, 0)) in model
+        assert (Cr2, Cr2, (1, 0, 0)) in model
         # In the template there are literals, not objects, because in general
         # template only has information about literals and R.
         filtered_model = model.filtered(template=[("Cr1", "Cr2", (0, 0, 0))])
         assert len(filtered_model.bonds) == 1
+        assert (Cr1, Cr2, (0, 0, 0)) in model
         filtered_model = model.filtered(
             template=[("Cr1", "Cr2", (0, 0, 0))], R_vector=[(0, 0, 0), (1, 0, 0)]
         )

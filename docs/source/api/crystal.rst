@@ -4,7 +4,7 @@
 Crystal
 *******
 
-.. versionadded:: 0.6.2
+.. versionadded:: 0.7
 
 .. currentmodule:: radtools
 
