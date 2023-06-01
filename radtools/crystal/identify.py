@@ -7,9 +7,15 @@ from math import acos, cos, floor, log10, sqrt
 import numpy as np
 from termcolor import cprint
 
-from radtools.routines import (_todegrees, _toradians, cell_from_param,
-                               get_permutation, print_2D_array,
-                               reciprocal_cell, volume)
+from radtools.routines import (
+    _todegrees,
+    _toradians,
+    cell_from_param,
+    get_permutation,
+    print_2D_array,
+    reciprocal_cell,
+    volume,
+)
 
 __all__ = ["niggli", "lepage"]
 
