@@ -27,6 +27,7 @@
         "ndarray",
         "niggli",
         "projwfc",
+        "radtools",
         "termcolor",
         "voronoi"
     ],
