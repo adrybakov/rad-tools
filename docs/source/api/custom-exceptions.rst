@@ -12,3 +12,4 @@ NotationError
     :toctree: generated/
 
     exchange.model.NotationError
+    crystal.bravais_lattice.NotEnoughParameters

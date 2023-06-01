@@ -20,6 +20,10 @@ which corresponds to the conventional lattice. However, attributes of the class
 return parameters of the primitive lattice. Conventional lattice may be accessed through
 the attributes ``self.conv_cell``, ``self.conv_a``, ``self.conv_b``, ``self.conv_c``, 
 ``self.conv_alpha``, ``self.conv_beta``, ``self.conv_gamma`` .
+
+.. [1] Setyawan, W. and Curtarolo, S., 2010. 
+    High-throughput electronic band structure calculations: Challenges and tools. 
+    Computational materials science, 49(2), pp.299-312. 
 """
 
 from math import cos, pi, sin, sqrt, tan
@@ -28,7 +32,7 @@ import numpy as np
 
 from radtools.crystal.lattice import Lattice
 from radtools.crystal.identify import lepage
-from radtools.routines import _toradians
+from radtools.routines import _toradians, param_from_cell
 
 __all__ = [
     "CUB",
@@ -50,6 +54,37 @@ __all__ = [
 ]
 
 
+class NotEnoughParameters(Exception):
+    r"""
+    Class for the errors with Bravais lattice creation.
+
+    Parameters
+    ----------
+    lattice : str
+        Lattice type name.
+    parameters : dict
+        Dictionary of parameters names and values
+    """
+
+    def __init__(self, lattice, parameters):
+        self.message = (
+            f"\nFor the Bravais lattice type '{lattice}' the cell "
+            + f"\nor the following lattice parameters are needed:\n    "
+        )
+        for i, param in enumerate(parameters):
+            self.message += f"{param[0]}"
+            if i != len(parameters) - 1:
+                self.message += ", "
+        self.message += "\nGot:\n"
+        for i, param in enumerate(parameters):
+            self.message += f"    {param[0]}" + f" = {param[1]}"
+            if i != len(parameters) - 1:
+                self.message += ", "
+
+    def __str__(self):
+        return self.message
+
+
 # 1
 class CUB(Lattice):
     r"""
@@ -67,8 +102,16 @@ class CUB(Lattice):
 
     Parameters
     ----------
-    a : float
+    a : float, optional
         Length of the lattice vectors of the conventional cel.
+    cell : (3,3) |array_like|_, optional
+        Cell matrix, rows are interpreted as vectors.
+
+        .. code-block:: python
+
+            cell = [[a1_x, a1_y, a1_z],
+                    [a2_x, a2_y, a2_z],
+                    [a3_x, a3_y, a3_z]]
 
     Attributes
     ----------
@@ -87,9 +130,15 @@ class CUB(Lattice):
 
     _pearson_symbol = "cP"
 
-    def __init__(self, a: float) -> None:
-        self.conv_a = a
-        super().__init__([a, 0, 0], [0, a, 0], [0, 0, a])
+    def __init__(self, a: float = None, cell=None) -> None:
+        if a is None and cell is None:
+            raise NotEnoughParameters("CUB", [("a", a)])
+        if cell is not None:
+            super().__init__(cell)
+            self.conv_a = np.linalg.norm(cell[0])
+        else:
+            super().__init__([a, 0, 0], [0, a, 0], [0, 0, a])
+            self.conv_a = a
         self.conv_cell = self.cell
         self.points = {
             "G": np.array([0, 0, 0]),
@@ -127,8 +176,18 @@ class FCC(Lattice):
 
     Parameters
     ----------
-    a : float
+    a : float, optional
         Length of the lattice vector of the conventional cel.
+    cell : (3,3) |array_like|_, optional
+        Cell matrix, rows are interpreted as vectors.
+
+        .. code-block:: python
+
+            cell = [[a1_x, a1_y, a1_z],
+                    [a2_x, a2_y, a2_z],
+                    [a3_x, a3_y, a3_z]]
+    primitive : bool, default True
+        Whether to interpret cell as primitive.
 
     Attributes
     ----------
@@ -147,10 +206,19 @@ class FCC(Lattice):
 
     _pearson_symbol = "cF"
 
-    def __init__(self, a: float) -> None:
-        self.conv_a = a
-        super().__init__([0, a / 2, a / 2], [a / 2, 0, a / 2], [a / 2, a / 2, 0])
-        self.conv_cell = np.diag([a, a, a])
+    def __init__(self, a: float = None, cell=None, primitive=True) -> None:
+        if a is None and cell is None:
+            raise NotEnoughParameters("FCC", [("a", a)])
+        if cell is not None:
+            if primitive:
+                super().__init__(cell)
+                # TODO
+            else:
+                pass  # TODO
+        else:
+            self.conv_a = a
+            super().__init__([0, a / 2, a / 2], [a / 2, 0, a / 2], [a / 2, a / 2, 0])
+            self.conv_cell = np.diag([a, a, a])
         self.points = {
             "G": np.array([0, 0, 0]),
             "K": np.array([3 / 8, 3 / 8, 3 / 4]),
@@ -1579,6 +1647,8 @@ def bravais_lattice_from_param(a, b, c, alpha, beta, gamma) -> Lattice:
     r"""
     Return Bravais lattice.
 
+    Orientation is default as described in [1]_.
+
     Parameters
     ----------
     a : float, default 1
@@ -1595,6 +1665,16 @@ def bravais_lattice_from_param(a, b, c, alpha, beta, gamma) -> Lattice:
         Angle between vectors :math:`a_1` and :math:`a_2`. In degrees.
     lattice_type : str
         Lattice type.
+
+    Returns
+    -------
+    bravais_lattice
+
+    References
+    ----------
+    [1] Setyawan, W. and Curtarolo, S., 2010.
+        High-throughput electronic band structure calculations: Challenges and tools.
+        Computational materials science, 49(2), pp.299-312.
     """
 
     lattice_type = lepage(a, b, c, alpha, beta, gamma)
@@ -1646,6 +1726,69 @@ def bravais_lattice_from_param(a, b, c, alpha, beta, gamma) -> Lattice:
         alpha, beta, gamma = [alpha, beta, gamma].sort()
         return MCLC(a, b, c, alpha)
     return TRI(a, b, c, alpha, beta, gamma)
+
+
+def bravais_lattice_from_cell(cell) -> Lattice:
+    r"""
+    Return Bravais lattice.
+
+    Orientation of the cell is respected, however the lattice vectors are renamed
+    with respect to [1]_.
+
+    Parameters
+    ----------
+    cell : (3,3) |array_like|_
+        Cell matrix, rows are interpreted as vectors.
+
+        .. code-block:: python
+
+            cell = [[a1_x, a1_y, a1_z],
+                    [a2_x, a2_y, a2_z],
+                    [a3_x, a3_y, a3_z]]
+
+    lattice_type : str
+        Lattice type.
+
+    Returns
+    -------
+    bravais_lattice
+
+    References
+    ----------
+    [1] Setyawan, W. and Curtarolo, S., 2010.
+        High-throughput electronic band structure calculations: Challenges and tools.
+        Computational materials science, 49(2), pp.299-312.
+    """
+
+    lattice_type = lepage(*param_from_cell(cell))
+
+    if lattice_type == "CUB":
+        return CUB(cell=cell)
+    if lattice_type == "FCC":
+        return FCC(cell=cell)
+    if lattice_type == "BCC":
+        return BCC(cell=cell)
+    if lattice_type == "TET":
+        return TET(cell=cell)
+    if lattice_type == "BCT":
+        return BCT(cell=cell)
+    if lattice_type == "ORC":
+        return ORC(cell=cell)
+    if lattice_type == "ORCF":
+        return ORCF(cell=cell)
+    if lattice_type == "ORCC":
+        return ORCC(cell=cell)
+    if lattice_type == "ORCI":
+        return ORCI(cell=cell)
+    if lattice_type == "HEX":
+        return HEX(cell=cell)
+    if lattice_type == "RHL":
+        return RHL(cell=cell)
+    if lattice_type == "MCL":
+        return MCL(cell=cell)
+    if lattice_type == "MCLC":
+        return MCLC(cell=cell)
+    return TRI(cell=cell)
 
 
 def lattice_example(

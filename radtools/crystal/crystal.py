@@ -3,8 +3,8 @@ from math import sqrt
 import numpy as np
 
 from radtools.crystal.atom import Atom
-from radtools.crystal.bravais_lattice import bravais_lattice_from_param
 from radtools.crystal.lattice import Lattice
+from radtools.crystal.bravais_lattice import bravais_lattice_from_cell
 from radtools.routines import absolute_to_relative
 
 
@@ -287,18 +287,7 @@ class Crystal:
         if find_primitive:
             self.find_primitive_cell()
 
-        # Get new lattice object
-        new_lattice = bravais_lattice_from_param(*self.lattice.parameters)
-
-        # Rotational matrix form the predefined lattice orientation to the crystal`s orientation
-        R = self.lattice.cell @ np.linalg.inv(new_lattice.cell)
-
-        # Rotate new lattice
-        new_lattice.cell = R @ new_lattice.cell
-        new_lattice.conv_cell = R @ new_lattice.conv_cell
-
-        # Assign new lattice
-        self.lattice = new_lattice
+        self.lattice = bravais_lattice_from_cell(self.lattice.cell)
 
 
 class CrystalIterator:
@@ -315,3 +304,12 @@ class CrystalIterator:
 
     def __iter__(self):
         return self
+
+
+if __name__ == "__main__":
+    l = Lattice([[2, 0, 0], [0, 3, 0], [0, 0, 1]])
+    c = Crystal(l)
+    c.identify_lattice()
+    c.plot("primitive")
+    c.plot("brillouin_kpath")
+    c.show()

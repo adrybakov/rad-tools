@@ -534,6 +534,47 @@ def cell_from_param(a=1, b=1, c=1, alpha=90, beta=90, gamma=90):
     )
 
 
+def param_from_cell(cell):
+    r"""
+    Return lattice parameters from cell.
+
+    Parameters
+    ----------
+    cell : (3,3) |array_like|_
+        Cell matrix, rows are interpreted as vectors.
+
+        .. code-block:: python
+
+            cell = [[a1_x, a1_y, a1_z],
+                    [a2_x, a2_y, a2_z],
+                    [a3_x, a3_y, a3_z]]
+
+    Returns
+    -------
+    a : float
+        Length of the :math:`a_1` vector.
+    b : float
+        Length of the :math:`a_2` vector.
+    c : float
+        Length of the :math:`a_3` vector.
+    alpha : float
+        Angle between vectors :math:`a_2` and :math:`a_3`. In degrees.
+    beta : float
+        Angle between vectors :math:`a_1` and :math:`a_3`. In degrees.
+    gamma : float
+        Angle between vectors :math:`a_1` and :math:`a_2`. In degrees.
+    """
+
+    return (
+        np.linalg.norm(cell[0]),
+        np.linalg.norm(cell[1]),
+        np.linalg.norm(cell[2]),
+        angle(cell[1], cell[2]),
+        angle(cell[0], cell[2]),
+        angle(cell[0], cell[1]),
+    )
+
+
 def get_permutation(n, k):
     r"""
     Return array of index permutations
