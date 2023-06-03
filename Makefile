@@ -113,6 +113,9 @@ examples:
 	@rad-extract-tb2j.py -if docs/examples/rad-extract-tb2j/exchange.out -tf docs/examples/rad-extract-tb2j/template.txt -op docs/examples/rad-extract-tb2j/ -on summary_forced_symmetry -all -fs
 	@rad-extract-tb2j.py -if docs/examples/rad-extract-tb2j/exchange.out -tf docs/examples/rad-extract-tb2j/template.txt -op docs/examples/rad-extract-tb2j/ -on summary -all
 
+pictures:
+	@python3 docs/source/img/bravais-lattices/plot.py -op docs/source/img/bravais-lattices 
+
 push: examples
 	@git push
 

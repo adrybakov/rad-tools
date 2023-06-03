@@ -533,8 +533,34 @@ class Lattice:
 
         For the :py:class:`.Lattice` return "Lattice".
 
+        For the Bravais lattice with only one variation the name of the class is returned.
+
         For the variation of each Bravais lattice type see
         corresponding ``variation`` attribute.
+
+        Examples
+        --------
+
+        .. doctest::
+
+            >>> import radtools as rad
+            >>> l = rad.lattice_example("cub")
+            >>> l.variation
+            'CUB'
+
+        .. doctest::
+
+            >>> import radtools as rad
+            >>> l = rad.lattice_example("BCT1")
+            >>> l.variation
+            'BCT1'
+
+        .. doctest::
+
+            >>> import radtools as rad
+            >>> l = rad.lattice_example("MCLC4")
+            >>> l.variation
+            'MCLC4'
 
         See Also
         --------
@@ -664,8 +690,8 @@ class Lattice:
             * "primitive"
             * "brillouin"
             * "kpath"
-            * "brillouin_kpath"
-            * "wigner_seitz"
+            * "brillouin-kpath"
+            * "wigner-seitz"
 
         ax : axis, optional
             3D matplotlib axis for the plot.
@@ -686,7 +712,7 @@ class Lattice:
         plot_brillouin : "brillouin" plot.
         plot_kpath : "kpath" plot.
         plot_brillouin_kpath : "brillouin_kpath" plot.
-        plot_wigner_seitz : "wigner_seitz" plot.
+        plot_wigner_seitz : "wigner-seitz" plot.
         show : Shows the plot.
         savefig : Save the figure in the file.
         """
@@ -700,6 +726,7 @@ class Lattice:
             kinds = kind
         try:
             for kind in kinds:
+                kind = kind.replace("-", "_")
                 getattr(self, f"plot_{kind}")(ax=ax, **kwargs)
         except AttributeError:
             raise ValueError(f"Plot kind '{kind}' does not exist!")
@@ -746,14 +773,22 @@ class Lattice:
         ax.relim(visible_only=True)
         ax.set_aspect("equal")
 
-    def show(self):
+    def show(self, elev=30, azim=-60):
         r"""
         Show the figure in the interactive matplotlib window.
+
+        Parameters
+        ----------
+        elev : float, default 30
+            Passed directly to matplotlib. See |matplotlibViewInit|_.
+        azim : float, default -60
+            Passed directly to matplotlib. See |matplotlibViewInit|_.
         """
         self.ax.set_aspect("equal")
+        self.ax.view_init(elev=elev, azim=azim)
         plt.show()
-        del self.fig
-        del self.ax
+        self.fig = None
+        self.ax = None
         plt.close()
 
     def savefig(self, output_name="lattice_graph.png", elev=30, azim=-60, **kwargs):
@@ -775,6 +810,14 @@ class Lattice:
         self.ax.set_aspect("equal")
         self.ax.view_init(elev=elev, azim=azim)
         self.fig.savefig(output_name, **kwargs)
+
+    def clear(self):
+        r"""
+        Clear the axis.
+        """
+
+        if self.ax is not None:
+            self.ax.cla()
 
     def legend(self, **kwargs):
         r"""

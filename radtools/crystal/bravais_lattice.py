@@ -145,6 +145,10 @@ class CUB(Lattice):
 
         \boldsymbol{a}_3 = (0, 0, a)
 
+    .. sealso::
+
+        :ref:`lattice-cub` for more information.
+
     Parameters
     ----------
     a : float, optional
@@ -233,6 +237,10 @@ class FCC(Lattice):
         \boldsymbol{a}_2 = (a/2, 0, a/2)
 
         \boldsymbol{a}_3 = (a/2, a/2, 0)
+
+    .. sealso::
+
+        :ref:`lattice-fcc` for more information.
 
     Parameters
     ----------
@@ -335,6 +343,10 @@ class BCC(Lattice):
 
         \boldsymbol{a}_3 = (a/2, a/2, -a/2)
 
+    .. sealso::
+
+        :ref:`lattice-bcc` for more information.
+
     Parameters
     ----------
     a : float, optional
@@ -421,6 +433,10 @@ class TET(Lattice):
         \boldsymbol{a}_2 = (0, a, 0)
 
         \boldsymbol{a}_3 = (0, 0, c)
+
+    .. sealso::
+
+        :ref:`lattice-tet` for more information.
 
     Parameters
     ----------
@@ -537,6 +553,10 @@ class BCT(Lattice):
         \boldsymbol{a}_2 = (a/2, -a/2, c/2)
 
         \boldsymbol{a}_3 = (a/2, a/2, -c/2)
+
+    .. sealso::
+
+        :ref:`lattice-bct` for more information.
 
     Parameters
     ----------
@@ -702,6 +722,10 @@ class ORC(Lattice):
 
         \boldsymbol{a}_3 = (0, 0, c)
 
+    .. sealso::
+
+        :ref:`lattice-orc` for more information.
+
     Parameters
     ----------
     a : float, optional
@@ -830,6 +854,10 @@ class ORCF(Lattice):
         \boldsymbol{a}_2 = (a/2, 0, c/2)
 
         \boldsymbol{a}_3 = (a/2, b/2, 0)
+
+    .. sealso::
+
+        :ref:`lattice-orcf` for more information.
 
     Parameters
     ----------
@@ -1037,6 +1065,10 @@ class ORCI(Lattice):
 
         \boldsymbol{a}_3 = (a/2, b/2, -c/2)
 
+    .. sealso::
+
+        :ref:`lattice-orci` for more information.
+
     Parameters
     ----------
     a : float, optional
@@ -1188,6 +1220,10 @@ class ORCC(Lattice):
 
         \boldsymbol{a}_3 = (0, 0, c)
 
+    .. sealso::
+
+        :ref:`lattice-orcc` for more information.
+
     Parameters
     ----------
     a : float, optional
@@ -1318,6 +1354,10 @@ class HEX(Lattice):
 
         \boldsymbol{a}_3 = (0, 0, c)
 
+    .. sealso::
+
+        :ref:`lattice-hex` for more information.
+
     Parameters
     ----------
     a : float, None
@@ -1432,6 +1472,10 @@ class RHL(Lattice):
         \boldsymbol{a}_2 = (a\cos(\alpha / 2), a\sin(\alpha/2), 0)
 
         \boldsymbol{a}_3 = (\frac{\cos(\alpha)}{\cos(\alpha/2)}, 0, a\sqrt{1 - \frac{\cos^2(\alpha)}{\cos^2(\alpha/2)}})
+
+    .. sealso::
+
+        :ref:`lattice-rhl` for more information.
 
     Parameters
     ----------
@@ -1590,6 +1634,10 @@ class MCL(Lattice):
         \boldsymbol{a}_2 = (0, b, 0)
 
         \boldsymbol{a}_3 = (0, c\cos(\alpha), c\sin(\alpha))
+
+    .. sealso::
+
+        :ref:`lattice-mcl` for more information.
 
     Parameters
     ----------
@@ -1762,6 +1810,10 @@ class MCLC(Lattice):
         \boldsymbol{a}_2 = (-a/2, b/2, 0)
 
         \boldsymbol{a}_3 = (0, c\cos(\alpha), c\sin(\alpha))
+
+    .. sealso::
+
+        :ref:`lattice-mclc` for more information.
 
     Parameters
     ----------
@@ -2118,6 +2170,10 @@ class TRI(Lattice):
     Variations of the trigonal lattice are defined through the angles of the reciprocal cell,
     therefore it is possible to define trigonal Bravais lattice with reciprocal cell parameters
     (argument ``reciprocal``).
+
+    .. sealso::
+
+        :ref:`lattice-tri` for more information.
 
     Parameters
     ----------
