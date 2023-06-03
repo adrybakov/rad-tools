@@ -1,8 +1,8 @@
 .. _rad-make-template:
 
-************************
-``rad-make-template.py``
-************************
+********************
+rad-make-template.py
+********************
 
 Script for the creation of template`s draft.
 

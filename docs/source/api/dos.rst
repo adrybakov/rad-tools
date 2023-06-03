@@ -1,4 +1,4 @@
-.. _rad-tools_dos:
+.. _api_dos:
 
 *******************************
 Density of state postprocessing

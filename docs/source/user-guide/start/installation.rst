@@ -1,3 +1,5 @@
+.. _rad-tools_installation:
+
 ************
 Installation
 ************

@@ -1,4 +1,4 @@
-.. _rad-tools_routines:
+.. _api_routines:
 
 **********************
 Collection of routines

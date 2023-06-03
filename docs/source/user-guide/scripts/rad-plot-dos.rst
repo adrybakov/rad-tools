@@ -1,8 +1,8 @@
 .. _rad-plot-dos:
 
-**********************
-``rad-plot-dos.py``
-**********************
+***************
+rad-plot-dos.py
+***************
 
 .. versionchanged:: 0.5.21 Renamed from ``rad-dos-plotter.py``
 
@@ -55,9 +55,9 @@ Each seedname folder has the structure:
     seedname/
     ├── pdos-vs-dos.png
     ├── atomic-contributions.png
-    └── atom-resolved/
-        ├── output_name_1
-        └── output_name_2
+    ├── atom-resolved/
+    │   ├── output_name_1
+    │   └── output_name_2
     └── orbital-resolved/
         ├── output_name_1
         └── output_name_2

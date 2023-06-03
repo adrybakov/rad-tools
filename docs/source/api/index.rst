@@ -2,9 +2,9 @@
 
 .. _api:
 
-*****************
-API documentation
-*****************
+*************
+API reference
+*************
 
 :Release: |version|
 

@@ -1,8 +1,8 @@
 .. _rad-identify-wannier-centres:
 
-***********************************
-``rad-identify-wannier-centres.py``
-***********************************
+*******************************
+rad-identify-wannier-centres.py
+*******************************
 
 Identifies wannier centres with respect to the atom or to 
 the point between the atom`s pair.

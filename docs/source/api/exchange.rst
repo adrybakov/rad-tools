@@ -1,8 +1,8 @@
-.. _rad-tools_exchange:
+.. _api_exchange:
 
-***********************
-Exchange postprocessing
-***********************
+********************
+Exchange Hamiltonian
+********************
 
 .. automodule:: radtools.exchange
 

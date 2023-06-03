@@ -528,7 +528,31 @@ class Lattice:
 
     @property
     def variation(self):
-        r"""There is no variations of the lattice"""
+        r"""
+        Variation of the lattice, if any.
+
+        For the :py:class:`.Lattice` return "Lattice".
+
+        For the variation of each Bravais lattice type see
+        corresponding ``variation`` attribute.
+
+        See Also
+        --------
+        :py:attr:`.CUB.variation`
+        :py:attr:`.FCC.variation`
+        :py:attr:`.BCC.variation`
+        :py:attr:`.TET.variation`
+        :py:attr:`.BCT.variation`
+        :py:attr:`.ORC.variation`
+        :py:attr:`.ORCF.variation`
+        :py:attr:`.ORCI.variation`
+        :py:attr:`.ORCC.variation`
+        :py:attr:`.HEX.variation`
+        :py:attr:`.RHL.variation`
+        :py:attr:`.MCL.variation`
+        :py:attr:`.MCLC.variation`
+        :py:attr:`.TRI.variation`
+        """
         return self.__class__.__name__
 
     def identify(self):

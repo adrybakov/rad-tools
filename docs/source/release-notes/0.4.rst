@@ -50,7 +50,7 @@ Add reciprocal vectors to the ExchangeModel.
 0.4.4
 -----
 
-Add :ref:`rad-tools_io` interface.
+Add :ref:`api_io` interface.
 
 There are two ways to import read functions:
 

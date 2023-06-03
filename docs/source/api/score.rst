@@ -1,4 +1,4 @@
-.. _rad-tools_score:
+.. _api_score:
 
 ******************
 Script's scenarios

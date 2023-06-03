@@ -1,8 +1,8 @@
 .. _rad-plot-tb2j:
 
-********************
-``rad-plot-tb2j.py``
-********************
+****************
+rad-plot-tb2j.py
+****************
 
 Script for visualizations of 
 |TB2J|_  results.

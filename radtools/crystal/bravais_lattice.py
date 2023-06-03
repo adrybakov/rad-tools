@@ -1,38 +1,14 @@
 r"""
-For each type of Bravais lattice a class defined, for some classes there are 
-several variations of lattice, each of which are treated under same class 
-(see :py:attr:`variation` for each class).
-
-For each type and variation a predefined example of the lattice is available. 
-It could be accessed in a following way:
-
-.. doctest::
-
-    >>> import radtools as rad
-    >>> cubic_example = rad.lattice_example("cub")
-    >>> cubic_example.variation
-    'CUB'
-
-Each Bravais Lattice is created by the parameters 
-:math:`a`, :math:`b`, :math:`c`, :math:`\alpha`, :math:`\beta`, :math:`\gamma`,
-which corresponds to the conventional lattice. However, attributes of the class 
-``self.a``, ``self.b``, ``self.c``, ``self.alpha``, ``self.beta``, ``self.gamma`` 
-return parameters of the primitive lattice. Conventional lattice may be accessed through
-the attributes ``self.conv_cell``, ``self.conv_a``, ``self.conv_b``, ``self.conv_c``, 
-``self.conv_alpha``, ``self.conv_beta``, ``self.conv_gamma`` .
-
-.. [1] Setyawan, W. and Curtarolo, S., 2010. 
-    High-throughput electronic band structure calculations: Challenges and tools. 
-    Computational materials science, 49(2), pp.299-312. 
+Bravais lattices.
 """
 
-from math import cos, pi, sin, sqrt, tan
+from math import cos, pi, sin, sqrt, tan, floor, log10
 
 import numpy as np
 
 from radtools.crystal.lattice import Lattice
 from radtools.crystal.identify import lepage
-from radtools.routines import _toradians, param_from_cell
+from radtools.routines import _toradians, param_from_cell, volume
 
 __all__ = [
     "CUB",
@@ -51,6 +27,7 @@ __all__ = [
     "TRI",
     "lattice_example",
     "bravais_lattice_from_param",
+    "bravais_lattice_from_cell",
 ]
 
 
@@ -85,6 +62,74 @@ class NotEnoughParameters(Exception):
         return self.message
 
 
+class CellTypeMismatch(Exception):
+    r"""
+    Class for the errors with Bravais lattice creation.
+
+    Parameters
+    ----------
+    lattice_type : str
+        Target lattice type
+    eps_rel : float, default 1e-5
+        Relative epsilon as defined in [1]_.
+    a : float
+        Length of the :math:`a_1` vector.
+    b : float
+        Length of the :math:`a_2` vector.
+    c : float
+        Length of the :math:`a_3` vector.
+    alpha : float
+        Angle between vectors :math:`a_2` and :math:`a_3`. In degrees.
+    beta : float
+        Angle between vectors :math:`a_1` and :math:`a_3`. In degrees.
+    gamma : float
+        Angle between vectors :math:`a_1` and :math:`a_2`. In degrees.
+    correct_lattice_type : str, optional
+        Correct lattice type
+
+    References
+    ----------
+    .. [1] Grosse-Kunstleve, R.W., Sauter, N.K. and Adams, P.D., 2004.
+        Numerically stable algorithms for the computation of reduced unit cells.
+        Acta Crystallographica Section A: Foundations of Crystallography,
+        60(1), pp.1-6.
+    """
+
+    def __init__(
+        self,
+        lattice_type,
+        eps_rel,
+        a,
+        b,
+        c,
+        alpha,
+        beta,
+        gamma,
+        correct_lattice_type=None,
+    ):
+        n = abs(
+            floor(
+                log10(abs(eps_rel * volume(a, b, c, alpha, beta, gamma) ** (1 / 3.0)))
+            )
+        )
+        self.message = (
+            f"\nCell is not '{lattice_type}':\n"
+            + f"    Relative epsilon = {eps_rel},\n"
+            + f"    a = {a:{n+6}.{n+1}f},\n"
+            + f"    b = {a:{n+6}.{n+1}f},\n"
+            + f"    c = {c:{n+6}.{n+1}f},\n"
+            + f"    alpha = {alpha:{n+6}.{n+1}f},\n"
+            + f"    beta = {beta:{n+6}.{n+1}f},\n"
+            + f"    gamma = {gamma:{n+6}.{n+1}f},\n"
+        )
+        if correct_lattice_type is None:
+            correct_lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+        self.message += f"Lattice type from parameters: '{correct_lattice_type}'"
+
+    def __str__(self):
+        return self.message
+
+
 # 1
 class CUB(Lattice):
     r"""
@@ -112,6 +157,8 @@ class CUB(Lattice):
             cell = [[a1_x, a1_y, a1_z],
                     [a2_x, a2_y, a2_z],
                     [a3_x, a3_y, a3_z]]
+    eps_rel : float, default 1e-5
+        Relative epsilon as defined in [1]_.
 
     Attributes
     ----------
@@ -126,16 +173,29 @@ class CUB(Lattice):
                          [b_x, b_y, b_z],
                          [c_x, c_y, c_z]]
 
+    References
+    ----------
+    .. [1] Grosse-Kunstleve, R.W., Sauter, N.K. and Adams, P.D., 2004.
+        Numerically stable algorithms for the computation of reduced unit cells.
+        Acta Crystallographica Section A: Foundations of Crystallography,
+        60(1), pp.1-6.
+
     """
 
     _pearson_symbol = "cP"
 
-    def __init__(self, a: float = None, cell=None) -> None:
+    def __init__(self, a: float = None, cell=None, eps_rel=1e-5) -> None:
         if a is None and cell is None:
             raise NotEnoughParameters("CUB", [("a", a)])
         if cell is not None:
+            a, b, c, alpha, beta, gamma = param_from_cell(cell)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "CUB":
+                raise CellTypeMismatch(
+                    "CUB", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
             super().__init__(cell)
-            self.conv_a = np.linalg.norm(cell[0])
+            self.conv_a = (a + b + c) / 3
         else:
             super().__init__([a, 0, 0], [0, a, 0], [0, 0, a])
             self.conv_a = a
@@ -179,15 +239,15 @@ class FCC(Lattice):
     a : float, optional
         Length of the lattice vector of the conventional cel.
     cell : (3,3) |array_like|_, optional
-        Cell matrix, rows are interpreted as vectors.
+        Primitive cell matrix, rows are interpreted as vectors.
 
         .. code-block:: python
 
             cell = [[a1_x, a1_y, a1_z],
                     [a2_x, a2_y, a2_z],
                     [a3_x, a3_y, a3_z]]
-    primitive : bool, default True
-        Whether to interpret cell as primitive.
+    eps_rel : float, default 1e-5
+        Relative epsilon as defined in [1]_.
 
     Attributes
     ----------
@@ -202,23 +262,40 @@ class FCC(Lattice):
                          [b_x, b_y, b_z],
                          [c_x, c_y, c_z]]
 
+    References
+    ----------
+    .. [1] Grosse-Kunstleve, R.W., Sauter, N.K. and Adams, P.D., 2004.
+        Numerically stable algorithms for the computation of reduced unit cells.
+        Acta Crystallographica Section A: Foundations of Crystallography,
+        60(1), pp.1-6.
+
     """
 
     _pearson_symbol = "cF"
 
-    def __init__(self, a: float = None, cell=None, primitive=True) -> None:
+    def __init__(self, a: float = None, cell=None, eps_rel=1e-5) -> None:
         if a is None and cell is None:
             raise NotEnoughParameters("FCC", [("a", a)])
         if cell is not None:
-            if primitive:
-                super().__init__(cell)
-                # TODO
-            else:
-                pass  # TODO
+            a, b, c, alpha, beta, gamma = param_from_cell(cell)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "FCC":
+                raise CellTypeMismatch(
+                    "FCC", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+            super().__init__(cell)
+            self.conv_cell = [
+                [-1.0, 1.0, 1.0],
+                [1.0, -1.0, 1.0],
+                [1.0, 1.0, -1.0],
+            ] @ self.cell
+            a, b, c, alpha, beta, gamma = param_from_cell(self.conv_cell)
+            self.conv_a = (a + b + c) / 3
         else:
             self.conv_a = a
             super().__init__([0, a / 2, a / 2], [a / 2, 0, a / 2], [a / 2, a / 2, 0])
             self.conv_cell = np.diag([a, a, a])
+
         self.points = {
             "G": np.array([0, 0, 0]),
             "K": np.array([3 / 8, 3 / 8, 3 / 4]),
@@ -260,8 +337,18 @@ class BCC(Lattice):
 
     Parameters
     ----------
-    a : float
+    a : float, optional
         Length of the lattice vector of the conventional lattice.
+    cell : (3,3) |array_like|_, optional
+        Primitive cell matrix, rows are interpreted as vectors.
+
+        .. code-block:: python
+
+            cell = [[a1_x, a1_y, a1_z],
+                    [a2_x, a2_y, a2_z],
+                    [a3_x, a3_y, a3_z]]
+    eps_rel : float, default 1e-5
+        Relative epsilon as defined in [1]_.
 
     Attributes
     ----------
@@ -276,16 +363,41 @@ class BCC(Lattice):
                          [b_x, b_y, b_z],
                          [c_x, c_y, c_z]]
 
+    References
+    ----------
+    .. [1] Grosse-Kunstleve, R.W., Sauter, N.K. and Adams, P.D., 2004.
+        Numerically stable algorithms for the computation of reduced unit cells.
+        Acta Crystallographica Section A: Foundations of Crystallography,
+        60(1), pp.1-6.
+
     """
 
     _pearson_symbol = "cI"
 
-    def __init__(self, a: float) -> None:
-        self.conv_a = a
-        super().__init__(
-            [-a / 2, a / 2, a / 2], [a / 2, -a / 2, a / 2], [a / 2, a / 2, -a / 2]
-        )
-        self.conv_cell = np.diag([a, a, a])
+    def __init__(self, a: float = None, cell=None, eps_rel=1e-5) -> None:
+        if a is None and cell is None:
+            raise NotEnoughParameters("BCC", [("a", a)])
+        if cell is not None:
+            a, b, c, alpha, beta, gamma = param_from_cell(cell)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "BCC":
+                raise CellTypeMismatch(
+                    "BCC", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+            super().__init__(cell)
+            self.conv_cell = [
+                [0, 1.0, 1.0],
+                [1.0, 0, 1.0],
+                [1.0, 1.0, 0],
+            ] @ self.cell
+            a, b, c, alpha, beta, gamma = param_from_cell(self.conv_cell)
+            self.conv_a = (a + b + c) / 3
+        else:
+            self.conv_a = a
+            super().__init__(
+                [-a / 2, a / 2, a / 2], [a / 2, -a / 2, a / 2], [a / 2, a / 2, -a / 2]
+            )
+            self.conv_cell = np.diag([a, a, a])
         self.points = {
             "G": np.array([0, 0, 0]),
             "H": np.array([1 / 2, -1 / 2, 1 / 2]),
@@ -312,10 +424,20 @@ class TET(Lattice):
 
     Parameters
     ----------
-    a : float
+    a : float, optional
         Length of the lattice vector of the conventional lattice.
-    c : float
+    c : float, optional
         Length of the lattice vector of the conventional lattice.
+    cell : (3,3) |array_like|_, optional
+        Primitive cell matrix, rows are interpreted as vectors.
+
+        .. code-block:: python
+
+            cell = [[a1_x, a1_y, a1_z],
+                    [a2_x, a2_y, a2_z],
+                    [a3_x, a3_y, a3_z]]
+    eps_rel : float, default 1e-5
+        Relative epsilon as defined in [1]_.
 
     Attributes
     ----------
@@ -332,14 +454,49 @@ class TET(Lattice):
                          [b_x, b_y, b_z],
                          [c_x, c_y, c_z]]
 
+    References
+    ----------
+    .. [1] Grosse-Kunstleve, R.W., Sauter, N.K. and Adams, P.D., 2004.
+        Numerically stable algorithms for the computation of reduced unit cells.
+        Acta Crystallographica Section A: Foundations of Crystallography,
+        60(1), pp.1-6.
+
     """
 
     _pearson_symbol = "tP"
 
-    def __init__(self, a: float, c: float) -> None:
-        self.conv_a = a
-        self.conv_c = c
-        super().__init__([a, 0, 0], [0, a, 0], [0, 0, c])
+    def __init__(
+        self, a: float = None, c: float = None, cell=None, eps_rel=1e-5
+    ) -> None:
+        if (a is None or c is None) and cell is None:
+            raise NotEnoughParameters("TET", [("a", a), ("c", c)])
+        if cell is not None:
+            eps = eps_rel * volume(cell) ** (1 / 3.0)
+            a, b, c, alpha, beta, gamma = param_from_cell(cell)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "TET":
+                raise CellTypeMismatch(
+                    "TET", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+            if not (a < c - eps or c < a - eps):
+                cell = [cell[0], cell[2], cell[1]]
+                a, b, c, alpha, beta, gamma = param_from_cell(cell)
+            elif not (b < c - eps or b < c - eps):
+                cell = [cell[1], cell[2], cell[0]]
+                a, b, c, alpha, beta, gamma = param_from_cell(cell)
+
+            super().__init__(cell)
+            self.conv_a = (a + b) / 2
+            self.conv_c = c
+        else:
+            lattice_type = lepage(a, a, c, 90, 90, 90, eps_rel=eps_rel)
+            if lattice_type != "TET":
+                raise CellTypeMismatch(
+                    "TET", eps_rel, a, a, c, 90, 90, 90, lattice_type
+                )
+            self.conv_a = a
+            self.conv_c = c
+            super().__init__([a, 0, 0], [0, a, 0], [0, 0, c])
         self.conv_cell = self.cell
         self.points = {
             "G": np.array([0, 0, 0]),
@@ -383,10 +540,20 @@ class BCT(Lattice):
 
     Parameters
     ----------
-    a : float
+    a : float, optional
         Length of the lattice vector of conventional lattice.
-    c : float
+    c : float, optional
         Length of the lattice vector of conventional lattice.
+    cell : (3,3) |array_like|_, optional
+        Primitive cell matrix, rows are interpreted as vectors.
+
+        .. code-block:: python
+
+            cell = [[a1_x, a1_y, a1_z],
+                    [a2_x, a2_y, a2_z],
+                    [a3_x, a3_y, a3_z]]
+    eps_rel : float, default 1e-5
+        Relative epsilon as defined in [1]_.
 
     Attributes
     ----------
@@ -403,21 +570,59 @@ class BCT(Lattice):
                          [b_x, b_y, b_z],
                          [c_x, c_y, c_z]]
 
+    References
+    ----------
+    .. [1] Grosse-Kunstleve, R.W., Sauter, N.K. and Adams, P.D., 2004.
+        Numerically stable algorithms for the computation of reduced unit cells.
+        Acta Crystallographica Section A: Foundations of Crystallography,
+        60(1), pp.1-6.
+
     """
 
     _pearson_symbol = "tI"
 
-    def __init__(self, a: float, c: float) -> None:
-        if a == c:
-            raise ValueError("Are you trying to create BCC Lattice (a == c)?")
-        self.conv_a = a
-        self.conv_c = c
-        super().__init__(
-            [-a / 2, a / 2, c / 2], [a / 2, -a / 2, c / 2], [a / 2, a / 2, -c / 2]
-        )
+    def __init__(
+        self, a: float = None, c: float = None, cell=None, eps_rel=1e-4
+    ) -> None:
+        if (a is None or c is None) and cell is None:
+            raise NotEnoughParameters("BCT", [("a", a), ("c", c)])
+        if cell is not None:
+            eps = eps_rel * volume(cell) ** (1 / 3.0)
+            a, b, c, alpha, beta, gamma = param_from_cell(cell)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "BCT":
+                raise CellTypeMismatch(
+                    "BCT", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+            conv_cell = [[0, 1.0, 1.0], [1.0, 0, 1.0], [1.0, 1.0, 0]] @ cell
+            a, b, c, alpha, beta, gamma = param_from_cell(conv_cell)
+            if not (a < c - eps or c < a - eps):
+                cell = [cell[0], cell[2], cell[1]]
+            elif not (b < c - eps or b < c - eps):
+                cell = [cell[1], cell[2], cell[0]]
+
+            self.conv_cell = [[0, 1.0, 1.0], [1.0, 0, 1.0], [1.0, 1.0, 0]] @ cell
+            a, b, c, alpha, beta, gamma = param_from_cell(self.conv_cell)
+            super().__init__(cell)
+            self.conv_a = (a + b) / 2
+            self.conv_c = c
+        else:
+            self.conv_a = a
+            self.conv_c = c
+            super().__init__(
+                [-a / 2, a / 2, c / 2], [a / 2, -a / 2, c / 2], [a / 2, a / 2, -c / 2]
+            )
+            a, b, c, alpha, beta, gamma = param_from_cell(self.cell)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "BCT":
+                raise CellTypeMismatch(
+                    "BCT", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+            self.conv_cell = np.diag([a, a, c])
+
         self._PLOT_NAMES["S"] = "$\\Sigma$"
         self._PLOT_NAMES["S1"] = "$\\Sigma_1$"
-        self.conv_cell = np.diag([a, a, c])
+
         if self.variation == "BCT1":
             eta = (1 + c**2 / a**2) / 4
             self.points = {
@@ -499,12 +704,22 @@ class ORC(Lattice):
 
     Parameters
     ----------
-    a : float
+    a : float, optional
         Length of the lattice vector of the conventional lattice.
-    b : float
+    b : float, optional
         Length of the lattice vector of the conventional lattice.
-    c : float
+    c : float, optional
         Length of the lattice vector of the conventional lattice.
+    cell : (3,3) |array_like|_, optional
+        Primitive cell matrix, rows are interpreted as vectors.
+
+        .. code-block:: python
+
+            cell = [[a1_x, a1_y, a1_z],
+                    [a2_x, a2_y, a2_z],
+                    [a3_x, a3_y, a3_z]]
+    eps_rel : float, default 1e-5
+        Relative epsilon as defined in [1]_.
 
     Attributes
     ----------
@@ -523,22 +738,53 @@ class ORC(Lattice):
                          [b_x, b_y, b_z],
                          [c_x, c_y, c_z]]
 
+    References
+    ----------
+    .. [1] Grosse-Kunstleve, R.W., Sauter, N.K. and Adams, P.D., 2004.
+        Numerically stable algorithms for the computation of reduced unit cells.
+        Acta Crystallographica Section A: Foundations of Crystallography,
+        60(1), pp.1-6.
+
     """
 
     _pearson_symbol = "oP"
 
-    def __init__(self, a: float, b: float, c: float) -> None:
-        a, b, c = tuple(sorted([a, b, c]))
-        if a == b == c:
-            raise ValueError("Are you trying to construct CUB Lattice (a = b = c)?")
-        if a == b or b == c:
-            raise ValueError(
-                "Are you trying to construct TET Lattice (a = b != c or a != b == c)?"
-            )
-        self.conv_a = a
-        self.conv_b = b
-        self.conv_c = c
-        super().__init__([a, 0, 0], [0, b, 0], [0, 0, c])
+    def __init__(
+        self, a: float = None, b: float = None, c: float = None, cell=None, eps_rel=1e-5
+    ) -> None:
+        if (a is None or b is None or c is None) and cell is None:
+            raise NotEnoughParameters("ORC", [("a", a), ("b", b), ("c", c)])
+        if cell is not None:
+            eps = eps_rel * volume(cell) ** (1 / 3.0)
+            a, b, c, alpha, beta, gamma = param_from_cell(cell)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "ORC":
+                raise CellTypeMismatch(
+                    "ORC", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+            if b < a - eps:
+                cell = [cell[1], cell[0], cell[2]]
+            if c < a - eps:
+                cell = [cell[2], cell[0], cell[1]]
+            elif c < b - eps:
+                cell = [cell[0], cell[2], cell[1]]
+
+            a, b, c, alpha, beta, gamma = param_from_cell(cell)
+            super().__init__(cell)
+            self.conv_a = a
+            self.conv_b = b
+            self.conv_c = c
+        else:
+            lattice_type = lepage(a, b, c, 90, 90, 90, eps_rel=eps_rel)
+            if lattice_type != "ORC":
+                raise CellTypeMismatch(
+                    "ORC", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+            a, b, c = tuple(sorted([a, b, c]))
+            self.conv_a = a
+            self.conv_b = b
+            self.conv_c = c
+            super().__init__([a, 0, 0], [0, b, 0], [0, 0, c])
         self.conv_cell = self.cell
         self.points = {
             "G": np.array([0, 0, 0]),
@@ -587,12 +833,22 @@ class ORCF(Lattice):
 
     Parameters
     ----------
-    a : float
+    a : float, optional
         Length of the lattice vector of the conventional lattice.
-    b : float
+    b : float, optional
         Length of the lattice vector of the conventional lattice.
-    c : float
+    c : float, optional
         Length of the lattice vector of the conventional lattice.
+    cell : (3,3) |array_like|_, optional
+        Primitive cell matrix, rows are interpreted as vectors.
+
+        .. code-block:: python
+
+            cell = [[a1_x, a1_y, a1_z],
+                    [a2_x, a2_y, a2_z],
+                    [a3_x, a3_y, a3_z]]
+    eps_rel : float, default 1e-5
+        Relative epsilon as defined in [1]_.
 
     Attributes
     ----------
@@ -611,23 +867,62 @@ class ORCF(Lattice):
                          [b_x, b_y, b_z],
                          [c_x, c_y, c_z]]
 
+    References
+    ----------
+    .. [1] Grosse-Kunstleve, R.W., Sauter, N.K. and Adams, P.D., 2004.
+        Numerically stable algorithms for the computation of reduced unit cells.
+        Acta Crystallographica Section A: Foundations of Crystallography,
+        60(1), pp.1-6.
+
     """
 
     _pearson_symbol = "oF"
 
-    def __init__(self, a: float, b: float, c: float) -> None:
-        a, b, c = tuple(sorted([a, b, c]))
-        if a == b == c:
-            raise ValueError("Are you trying to construct FCC Lattice (a = b = c)?")
-        if a == b:
-            raise ValueError("FIXME, dont know which lattice it will be.")
-        if b == c:
-            raise ValueError("FIXME, dont know which lattice it will be.")
-        self.conv_a = a
-        self.conv_b = b
-        self.conv_c = c
-        super().__init__([0, b / 2, c / 2], [a / 2, 0, c / 2], [a / 2, b / 2, 0])
-        self.conv_cell = np.diag([a, b, c])
+    def __init__(
+        self, a: float = None, b: float = None, c: float = None, cell=None, eps_rel=1e-4
+    ) -> None:
+        if (a is None or b is None or c is None) and cell is None:
+            raise NotEnoughParameters("ORCF", [("a", a), ("b", b), ("c", c)])
+        if cell is not None:
+            eps = eps_rel * volume(cell) ** (1 / 3.0)
+            a, b, c, alpha, beta, gamma = param_from_cell(cell)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "ORCF":
+                raise CellTypeMismatch(
+                    "ORCF", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+            conv_cell = [[-1.0, 1.0, 1.0], [1.0, -1.0, 1.0], [1.0, 1.0, -1.0]] @ cell
+            a, b, c, alpha, beta, gamma = param_from_cell(conv_cell)
+            if b < a - eps:
+                cell = [cell[1], cell[0], cell[2]]
+            if c < a - eps:
+                cell = [cell[2], cell[0], cell[1]]
+            elif c < b - eps:
+                cell = [cell[0], cell[2], cell[1]]
+
+            super().__init__(cell)
+            self.conv_cell = [
+                [-1.0, 1.0, 1.0],
+                [1.0, -1.0, 1.0],
+                [1.0, 1.0, -1.0],
+            ] @ self.cell
+            a, b, c, alpha, beta, gamma = param_from_cell(self.conv_cell)
+            self.conv_a = a
+            self.conv_b = b
+            self.conv_c = c
+        else:
+            a, b, c = tuple(sorted([a, b, c]))
+            self.conv_a = a
+            self.conv_b = b
+            self.conv_c = c
+            super().__init__([0, b / 2, c / 2], [a / 2, 0, c / 2], [a / 2, b / 2, 0])
+            a, b, c, alpha, beta, gamma = param_from_cell(self.cell)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "ORCF":
+                raise CellTypeMismatch(
+                    "ORCF", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+            self.conv_cell = np.diag([a, b, c])
         if self.variation == "ORCF1":
             eta = (1 + a**2 / b**2 + a**2 / c**2) / 4
             zeta = (1 + a**2 / b**2 - a**2 / c**2) / 4
@@ -744,12 +1039,22 @@ class ORCI(Lattice):
 
     Parameters
     ----------
-    a : float
+    a : float, optional
         Length of the lattice vector of the conventional lattice.
-    b : float
+    b : float, optional
         Length of the lattice vector of the conventional lattice.
-    c : float
+    c : float, optional
         Length of the lattice vector of the conventional lattice.
+    cell : (3,3) |array_like|_, optional
+        Primitive cell matrix, rows are interpreted as vectors.
+
+        .. code-block:: python
+
+            cell = [[a1_x, a1_y, a1_z],
+                    [a2_x, a2_y, a2_z],
+                    [a3_x, a3_y, a3_z]]
+    eps_rel : float, default 1e-5
+        Relative epsilon as defined in [1]_.
 
 
     Attributes
@@ -769,25 +1074,65 @@ class ORCI(Lattice):
                          [b_x, b_y, b_z],
                          [c_x, c_y, c_z]]
 
+    References
+    ----------
+    .. [1] Grosse-Kunstleve, R.W., Sauter, N.K. and Adams, P.D., 2004.
+        Numerically stable algorithms for the computation of reduced unit cells.
+        Acta Crystallographica Section A: Foundations of Crystallography,
+        60(1), pp.1-6.
+
     """
 
     _pearson_symbol = "oI"
 
-    def __init__(self, a: float, b: float, c: float) -> None:
-        a, b, c = tuple(sorted([a, b, c]))
-        if a == b == c:
-            raise ValueError("Are you trying to construct BCC Lattice (a = b = c)?")
-        if a == b:
-            raise ValueError("Are you trying to construct BCT2 Lattice (a = b < c)?")
-        if b == c:
-            raise ValueError("Are you trying to construct BCT1 Lattice (a < b = c)?")
-        self.conv_a = a
-        self.conv_b = b
-        self.conv_c = c
-        super().__init__(
-            [-a / 2, b / 2, c / 2], [a / 2, -b / 2, c / 2], [a / 2, b / 2, -c / 2]
-        )
-        self.conv_cell = np.diag([a, b, c])
+    def __init__(
+        self, a: float = None, b: float = None, c: float = None, cell=None, eps_rel=1e-5
+    ) -> None:
+        if (a is None or b is None or c is None) and cell is None:
+            raise NotEnoughParameters("ORCI", [("a", a), ("b", b), ("c", c)])
+        if cell is not None:
+            eps = eps_rel * volume(cell) ** (1 / 3.0)
+            a, b, c, alpha, beta, gamma = param_from_cell(cell)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "ORCI":
+                raise CellTypeMismatch(
+                    "ORCI", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+            conv_cell = [[0, 1.0, 1.0], [1.0, 0, 1.0], [1.0, 1.0, 0]] @ cell
+            a, b, c, alpha, beta, gamma = param_from_cell(conv_cell)
+            if b < a - eps:
+                cell = [cell[1], cell[0], cell[2]]
+            if c < a - eps:
+                cell = [cell[2], cell[0], cell[1]]
+            elif c < b - eps:
+                cell = [cell[0], cell[2], cell[1]]
+
+            super().__init__(cell)
+            self.conv_cell = [
+                [0, 1.0, 1.0],
+                [1.0, 0, 1.0],
+                [1.0, 1.0, 0],
+            ] @ self.cell
+            a, b, c, alpha, beta, gamma = param_from_cell(self.conv_cell)
+            self.conv_a = a
+            self.conv_b = b
+            self.conv_c = c
+        else:
+            a, b, c = tuple(sorted([a, b, c]))
+            self.conv_a = a
+            self.conv_b = b
+            self.conv_c = c
+            super().__init__(
+                [-a / 2, b / 2, c / 2], [a / 2, -b / 2, c / 2], [a / 2, b / 2, -c / 2]
+            )
+            a, b, c, alpha, beta, gamma = param_from_cell(self.cell)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "ORCI":
+                raise CellTypeMismatch(
+                    "ORCI", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+            self.conv_cell = np.diag([a, b, c])
+
         zeta = (1 + a**2 / c**2) / 4
         eta = (1 + b**2 / c**2) / 4
         delta = (b**2 - a**2) / (4 * c**2)
@@ -845,12 +1190,22 @@ class ORCC(Lattice):
 
     Parameters
     ----------
-    a : float
+    a : float, optional
         Length of the lattice vector of the conventional lattice.
-    b : float
+    b : float, optional
         Length of the lattice vector of the conventional lattice.
-    c : float
+    c : float, optional
         Length of the lattice vector of the conventional lattice.
+    cell : (3,3) |array_like|_, optional
+        Primitive cell matrix, rows are interpreted as vectors.
+
+        .. code-block:: python
+
+            cell = [[a1_x, a1_y, a1_z],
+                    [a2_x, a2_y, a2_z],
+                    [a3_x, a3_y, a3_z]]
+    eps_rel : float, default 1e-5
+        Relative epsilon as defined in [1]_.
 
 
     Attributes
@@ -870,19 +1225,63 @@ class ORCC(Lattice):
                          [b_x, b_y, b_z],
                          [c_x, c_y, c_z]]
 
+    References
+    ----------
+    .. [1] Grosse-Kunstleve, R.W., Sauter, N.K. and Adams, P.D., 2004.
+        Numerically stable algorithms for the computation of reduced unit cells.
+        Acta Crystallographica Section A: Foundations of Crystallography,
+        60(1), pp.1-6.
+
     """
 
     _pearson_symbol = "oS"
 
-    def __init__(self, a: float, b: float, c: float) -> None:
-        a, b, c = tuple(sorted([a, b, c]))
-        if a == b == c:
-            raise ValueError("Are you trying to construct TET Lattice (a = b = c)?")
-        self.conv_a = a
-        self.conv_b = c
-        self.conv_c = b
-        super().__init__([a / 2, -b / 2, 0], [a / 2, b / 2, 0], [0, 0, c])
-        self.conv_cell = np.diag([a, b, c])
+    def __init__(
+        self, a: float = None, b: float = None, c: float = None, cell=None, eps_rel=1e-5
+    ) -> None:
+        if (a is None or b is None or c is None) and cell is None:
+            raise NotEnoughParameters("ORCC", [("a", a), ("b", b), ("c", c)])
+        if cell is not None:
+            eps = eps_rel * volume(cell) ** (1 / 3.0)
+            a, b, c, alpha, beta, gamma = param_from_cell(cell)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "ORCC":
+                raise CellTypeMismatch(
+                    "ORCC", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+
+            if not (a < c - eps or c < a - eps):
+                cell = [cell[0], cell[2], cell[1]]
+                a, b, c, alpha, beta, gamma = param_from_cell(cell)
+            elif not (b < c - eps or c < b - eps):
+                cell = [cell[1], cell[2], cell[0]]
+                a, b, c, alpha, beta, gamma = param_from_cell(cell)
+
+            conv_cell = [[1.0, 1.0, 0], [-1.0, 1.0, 0], [0, 0, 1.0]] @ cell
+            a, b, c, alpha, beta, gamma = param_from_cell(conv_cell)
+            if b < a - eps:
+                cell = [cell[1], cell[0], cell[2]]
+
+            super().__init__(cell)
+            self.conv_cell = [[1.0, 1.0, 0], [-1.0, 1.0, 0], [0, 0, 1.0]] @ self.cell
+            a, b, c, alpha, beta, gamma = param_from_cell(self.conv_cell)
+            self.conv_a = a
+            self.conv_b = b
+            self.conv_c = c
+        else:
+            a, b, c = tuple(sorted([a, b, c]))
+            self.conv_a = a
+            self.conv_b = b
+            self.conv_c = c
+            super().__init__([a / 2, -b / 2, 0], [a / 2, b / 2, 0], [0, 0, c])
+            a, b, c, alpha, beta, gamma = param_from_cell(self.cell)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "ORCC":
+                raise CellTypeMismatch(
+                    "ORCC", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+            self.conv_cell = np.diag([a, b, c])
+
         zeta = (1 + a**2 / b**2) / 4
 
         self.points = {
@@ -921,10 +1320,20 @@ class HEX(Lattice):
 
     Parameters
     ----------
-    a : float
+    a : float, None
         Length of the lattice vector of the conventional lattice.
-    c : float
+    c : float, None
         Length of the lattice vector of the conventional lattice.
+    cell : (3,3) |array_like|_, optional
+        Primitive cell matrix, rows are interpreted as vectors.
+
+        .. code-block:: python
+
+            cell = [[a1_x, a1_y, a1_z],
+                    [a2_x, a2_y, a2_z],
+                    [a3_x, a3_y, a3_z]]
+    eps_rel : float, default 1e-5
+        Relative epsilon as defined in [1]_.
 
 
     Attributes
@@ -942,16 +1351,55 @@ class HEX(Lattice):
                          [b_x, b_y, b_z],
                          [c_x, c_y, c_z]]
 
+    References
+    ----------
+    .. [1] Grosse-Kunstleve, R.W., Sauter, N.K. and Adams, P.D., 2004.
+        Numerically stable algorithms for the computation of reduced unit cells.
+        Acta Crystallographica Section A: Foundations of Crystallography,
+        60(1), pp.1-6.
+
     """
 
     _pearson_symbol = "hP"
 
-    def __init__(self, a: float, c: float) -> None:
-        self.conv_a = a
-        self.conv_c = c
-        super().__init__(
-            [a / 2, -a * sqrt(3) / 2, 0], [a / 2, a * sqrt(3) / 2, 0], [0, 0, c]
-        )
+    def __init__(
+        self, a: float = None, c: float = None, cell=None, eps_rel=1e-4
+    ) -> None:
+        if (a is None or c is None) and cell is None:
+            raise NotEnoughParameters("HEX", [("a", a), ("c", c)])
+        if cell is not None:
+            eps = eps_rel * volume(cell) ** (1 / 3.0)
+            a, b, c, alpha, beta, gamma = param_from_cell(cell)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "HEX":
+                raise CellTypeMismatch(
+                    "HEX", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+
+            if not (a < c - eps or c < a - eps):
+                cell = [cell[0], cell[2], cell[1]]
+                a, b, c, alpha, beta, gamma = param_from_cell(cell)
+            elif not (b < c - eps or c < b - eps):
+                cell = [cell[1], cell[2], cell[0]]
+                a, b, c, alpha, beta, gamma = param_from_cell(cell)
+
+            super().__init__(cell)
+            self.conv_a = a
+            self.conv_b = b
+            self.conv_c = c
+        else:
+            self.conv_a = a
+            self.conv_c = c
+            super().__init__(
+                [a / 2, -a * sqrt(3) / 2, 0], [a / 2, a * sqrt(3) / 2, 0], [0, 0, c]
+            )
+            a, b, c, alpha, beta, gamma = param_from_cell(self.cell)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "HEX":
+                raise CellTypeMismatch(
+                    "HEX", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+
         self.conv_cell = self.cell
 
         self.points = {
@@ -987,10 +1435,20 @@ class RHL(Lattice):
 
     Parameters
     ----------
-    a : float
+    a : float, optional
         Length of the lattice vector of the conventional lattice.
-    alpha : float
+    alpha : float, optional
         Angle between b and c. In degrees. Corresponds to the conventional lattice.
+    cell : (3,3) |array_like|_, optional
+        Primitive cell matrix, rows are interpreted as vectors.
+
+        .. code-block:: python
+
+            cell = [[a1_x, a1_y, a1_z],
+                    [a2_x, a2_y, a2_z],
+                    [a3_x, a3_y, a3_z]]
+    eps_rel : float, default 1e-5
+        Relative epsilon as defined in [1]_.
 
 
     Attributes
@@ -1008,33 +1466,57 @@ class RHL(Lattice):
                          [b_x, b_y, b_z],
                          [c_x, c_y, c_z]]
 
+    References
+    ----------
+    .. [1] Grosse-Kunstleve, R.W., Sauter, N.K. and Adams, P.D., 2004.
+        Numerically stable algorithms for the computation of reduced unit cells.
+        Acta Crystallographica Section A: Foundations of Crystallography,
+        60(1), pp.1-6.
+
     """
 
     _pearson_symbol = "hR"
 
-    def __init__(self, a: float, alpha: float) -> None:
-        if alpha == 90:
-            raise ValueError("Are you trying to construct CUB Lattice (alpha == 90)?")
-        if alpha == 60:
-            raise ValueError("Are you trying to construct FCC Lattice (alpha == 60)?")
-        if alpha == 109.47122:
-            raise ValueError(
-                "Are you trying to construct BCC Lattice (alpha == 109.47122)?"
+    def __init__(
+        self, a: float = None, alpha: float = None, cell=None, eps_rel=1e-5
+    ) -> None:
+        if (a is None or alpha is None) and cell is None:
+            raise NotEnoughParameters("RHL", [("a", a), ("alpha", alpha)])
+        if cell is not None:
+            a, b, c, alpha, beta, gamma = param_from_cell(cell)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "RHL":
+                raise CellTypeMismatch(
+                    "RHL", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+
+            super().__init__(cell)
+            self.conv_a = (a + b + c) / 3
+            self.conv_alpha = (alpha + beta + gamma) / 3
+        else:
+            if alpha >= 120:
+                raise ValueError("alpha has to be < 120 degrees.")
+            self.conv_a = a
+            self.conv_alpha = alpha
+            super().__init__(
+                [a * cos(alpha / 180 * pi / 2), -a * sin(alpha / 180 * pi / 2), 0],
+                [a * cos(alpha / 180 * pi / 2), a * sin(alpha / 180 * pi / 2), 0],
+                [
+                    a * cos(alpha / 180 * pi) / cos(alpha / 180 * pi / 2),
+                    0,
+                    a
+                    * sqrt(
+                        1 - cos(alpha / 180 * pi) ** 2 / cos(alpha / 180 * pi / 2) ** 2
+                    ),
+                ],
             )
-        if alpha >= 120:
-            raise ValueError("alpha has to be < 120 degrees.")
-        self.conv_a = a
-        self.conv_alpha = alpha
-        super().__init__(
-            [a * cos(alpha / 180 * pi / 2), -a * sin(alpha / 180 * pi / 2), 0],
-            [a * cos(alpha / 180 * pi / 2), a * sin(alpha / 180 * pi / 2), 0],
-            [
-                a * cos(alpha / 180 * pi) / cos(alpha / 180 * pi / 2),
-                0,
-                a
-                * sqrt(1 - cos(alpha / 180 * pi) ** 2 / cos(alpha / 180 * pi / 2) ** 2),
-            ],
-        )
+            a, b, c, alpha, beta, gamma = param_from_cell(self.cell)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "RHL":
+                raise CellTypeMismatch(
+                    "RHL", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+
         self.conv_cell = self.cell
         if self.variation == "RHL1":
             eta = (1 + 4 * cos(alpha / 180 * pi)) / (2 + 4 * cos(alpha / 180 * pi))
@@ -1111,14 +1593,24 @@ class MCL(Lattice):
 
     Parameters
     ----------
-    a : float
+    a : float, optional
         Length of the lattice vector of the conventional lattice.
-    b : float
+    b : float, optional
         Length of the lattice vector of the conventional lattice.
-    c : float
+    c : float, optional
         Length of the lattice vector of the conventional lattice.
-    alpha : float
+    alpha : float, optional
         Angle between b and c. In degrees. Corresponds to the conventional lattice.
+    cell : (3,3) |array_like|_, optional
+        Primitive cell matrix, rows are interpreted as vectors.
+
+        .. code-block:: python
+
+            cell = [[a1_x, a1_y, a1_z],
+                    [a2_x, a2_y, a2_z],
+                    [a3_x, a3_y, a3_z]]
+    eps_rel : float, default 1e-5
+        Relative epsilon as defined in [1]_.
 
 
     Attributes
@@ -1140,23 +1632,79 @@ class MCL(Lattice):
                          [b_x, b_y, b_z],
                          [c_x, c_y, c_z]]
 
+    References
+    ----------
+    .. [1] Grosse-Kunstleve, R.W., Sauter, N.K. and Adams, P.D., 2004.
+        Numerically stable algorithms for the computation of reduced unit cells.
+        Acta Crystallographica Section A: Foundations of Crystallography,
+        60(1), pp.1-6.
+
     """
 
     _pearson_symbol = "mP"
 
-    def __init__(self, a: float, b: float, c: float, alpha: float) -> None:
-        a, b, c = tuple(sorted([a, b, c]))
-        if alpha > 90:
-            raise ValueError("alpha has to be < 90")
-        self.conv_a = a
-        self.conv_b = b
-        self.conv_c = c
-        self.conv_alpha = alpha
-        super().__init__(
-            [a, 0, 0],
-            [0, b, 0],
-            [0, c * cos(alpha / 180 * pi), c * sin(alpha / 180 * pi)],
-        )
+    def __init__(
+        self, a: float, b: float, c: float, alpha: float, cell=None, eps_rel=1e-5
+    ) -> None:
+        if (a is None or alpha is None) and cell is None:
+            raise NotEnoughParameters(
+                "MCL", [("a", a), ("b", b), ("c", c), ("alpha", alpha)]
+            )
+        if cell is not None:
+            a, b, c, alpha, beta, gamma = param_from_cell(cell)
+            eps = eps_rel * volume(cell) ** (1 / 3.0)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "MCL":
+                raise CellTypeMismatch(
+                    "MCL", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+            eps = eps_rel * volume(cell) ** (1 / 3.0)
+
+            # beta != 90
+            if cos(beta * _toradians) + eps < 0 or 0 < cos(beta * _toradians) - eps:
+                cell = [cell[1], cell[2], cell[0]]
+                a, b, c, alpha, beta, gamma = param_from_cell(cell)
+            # gamma != 90
+            elif cos(gamma * _toradians) + eps < 0 or 0 < cos(gamma * _toradians) - eps:
+                cell = [cell[2], cell[0], cell[1]]
+                a, b, c, alpha, beta, gamma = param_from_cell(cell)
+
+            # alpha > 90
+            if cos(alpha * _toradians) < -eps:
+                cell = [cell[0], cell[2], -cell[1]]
+                a, b, c, alpha, beta, gamma = param_from_cell(cell)
+
+            # b > c
+            if c < b - eps:
+                cell = [-cell[0], cell[2], cell[1]]
+                a, b, c, alpha, beta, gamma = param_from_cell(cell)
+
+            super().__init__(cell)
+            self.conv_a = a
+            self.conv_b = b
+            self.conv_c = c
+            self.conv_alpha = alpha
+        else:
+            eps = eps_rel * volume(a, b, c, alpha, 90, 90) ** (1 / 3.0)
+            b, c = tuple(sorted([b, c]))
+            if cos(alpha * _toradians) < -eps:
+                alpha = alpha - 90
+            self.conv_a = a
+            self.conv_b = b
+            self.conv_c = c
+            self.conv_alpha = alpha
+            super().__init__(
+                [a, 0, 0],
+                [0, b, 0],
+                [0, c * cos(alpha * _toradians), c * sin(alpha * _toradians)],
+            )
+            a, b, c, alpha, beta, gamma = param_from_cell(self.cell)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "MCL":
+                raise CellTypeMismatch(
+                    "MCL", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+
         self.conv_cell = self.cell
 
         eta = (1 - b * cos(alpha / 180 * pi) / c) / (2 * sin(alpha / 180 * pi) ** 2)
@@ -1217,14 +1765,24 @@ class MCLC(Lattice):
 
     Parameters
     ----------
-    a : float
+    a : float, optional
         Length of the lattice vector of the conventional lattice.
-    b : float
+    b : float, optional
         Length of the lattice vector of the conventional lattice.
-    c : float
+    c : float, optional
         Length of the lattice vector of the conventional lattice.
-    alpha : float
+    alpha : float, optional
         Angle between b and c. In degrees. Corresponds to the conventional lattice
+    cell : (3,3) |array_like|_, optional
+        Primitive cell matrix, rows are interpreted as vectors.
+
+        .. code-block:: python
+
+            cell = [[a1_x, a1_y, a1_z],
+                    [a2_x, a2_y, a2_z],
+                    [a3_x, a3_y, a3_z]]
+    eps_rel : float, default 1e-5
+        Relative epsilon as defined in [1]_.
 
 
     Attributes
@@ -1246,43 +1804,102 @@ class MCLC(Lattice):
                          [b_x, b_y, b_z],
                          [c_x, c_y, c_z]]
 
+    References
+    ----------
+    .. [1] Grosse-Kunstleve, R.W., Sauter, N.K. and Adams, P.D., 2004.
+        Numerically stable algorithms for the computation of reduced unit cells.
+        Acta Crystallographica Section A: Foundations of Crystallography,
+        60(1), pp.1-6.
+
     """
 
     _pearson_symbol = "mS"
 
-    def __init__(self, a: float, b: float, c: float, alpha: float) -> None:
-        if a > c:
-            a, c = c, a
-        if b > c:
-            b, c = c, b
-        if alpha > 90:
-            raise ValueError("alpha has to be < 90")
-        if a == b or b == c or a == c:
-            raise ValueError("a, b, c have to be different")
-        self.conv_a = a
-        self.conv_b = b
-        self.conv_c = c
-        self.conv_alpha = alpha
-        super().__init__(
-            [a / 2, b / 2, 0],
-            [-a / 2, b / 2, 0],
-            [
-                0,
-                c * cos(alpha * _toradians),
-                c * sin(alpha * _toradians),
-            ],
-        )
-        self.conv_cell = np.array(
-            [
-                [a, 0, 0],
-                [0, b, 0],
+    def __init__(
+        self, a: float, b: float, c: float, alpha: float, cell=None, eps_rel=1e-5
+    ) -> None:
+        if (a is None or alpha is None) and cell is None:
+            raise NotEnoughParameters(
+                "MCLC", [("a", a), ("b", b), ("c", c), ("alpha", alpha)]
+            )
+        if cell is not None:
+            a, b, c, alpha, beta, gamma = param_from_cell(cell)
+            eps = eps_rel * volume(cell) ** (1 / 3.0)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "MCLC":
+                raise CellTypeMismatch(
+                    "MCLC", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+            eps = eps_rel * volume(cell) ** (1 / 3.0)
+
+            # a == c
+            if not (a < c - eps or c < a - eps):
+                cell = [cell[2], cell[1], cell[1]]
+            # b == c
+            elif not (b < c - eps or c < b - eps):
+                cell = [cell[1], cell[2], cell[0]]
+
+            conv_cell = [[1.0, -1.0, 0.0], [1.0, 1.0, 0.0], [0.0, 0.0, 1.0]] @ cell
+            a, b, c, alpha, beta, gamma = param_from_cell(conv_cell)
+
+            # alpha > 90
+            if cos(alpha * _toradians) < -eps:
+                cell = [cell[0], cell[2], -cell[1]]
+                conv_cell = [[1.0, -1.0, 0.0], [1.0, 1.0, 0.0], [0.0, 0.0, 1.0]] @ cell
+                a, b, c, alpha, beta, gamma = param_from_cell(conv_cell)
+
+            # b > c
+            if c < b - eps:
+                cell = [-cell[0], cell[2], cell[1]]
+                conv_cell = [[1.0, -1.0, 0.0], [1.0, 1.0, 0.0], [0.0, 0.0, 1.0]] @ cell
+                a, b, c, alpha, beta, gamma = param_from_cell(conv_cell)
+
+            super().__init__(cell)
+            self.conv_cell = [
+                [1.0, -1.0, 0.0],
+                [1.0, 1.0, 0.0],
+                [0.0, 0.0, 1.0],
+            ] @ self.cell
+            self.conv_a = a
+            self.conv_b = b
+            self.conv_c = c
+            self.conv_alpha = alpha
+        else:
+            eps = eps_rel * volume(a, b, c, alpha, 90, 90) ** (1 / 3.0)
+            b, c = tuple(sorted([b, c]))
+            if cos(alpha * _toradians) < -eps:
+                alpha = alpha - 90
+            self.conv_a = a
+            self.conv_b = b
+            self.conv_c = c
+            self.conv_alpha = alpha
+            super().__init__(
+                [a / 2, b / 2, 0],
+                [-a / 2, b / 2, 0],
                 [
                     0,
                     c * cos(alpha * _toradians),
                     c * sin(alpha * _toradians),
                 ],
-            ]
-        )
+            )
+            self.conv_cell = np.array(
+                [
+                    [a, 0, 0],
+                    [0, b, 0],
+                    [
+                        0,
+                        c * cos(alpha * _toradians),
+                        c * sin(alpha * _toradians),
+                    ],
+                ]
+            )
+            a, b, c, alpha, beta, gamma = param_from_cell(self.cell)
+            lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
+            if lattice_type != "MCLC":
+                raise CellTypeMismatch(
+                    "MCLC", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
+                )
+
         # Parameters
         if self.variation in ["MCLC1", "MCLC2"]:
             zeta = (2 - b * cos(alpha * _toradians) / c) / (
@@ -1626,8 +2243,11 @@ class TRI(Lattice):
         Four variations of the Lattice.
 
         :math:`\text{TRI}_{1a} k_{\alpha} > 90^{\circ}, k_{\beta} > 90^{\circ}, k_{\gamma} > 90^{\circ}, k_{\gamma} = \min(k_{\alpha}, k_{\beta}, k_{\gamma})`
+
         :math:`\text{TRI}_{1b} k_{\alpha} < 90^{\circ}, k_{\beta} < 90^{\circ}, k_{\gamma} < 90^{\circ}, k_{\gamma} = \max(k_{\alpha}, k_{\beta}, k_{\gamma})`
+
         :math:`\text{TRI}_{2a} k_{\alpha} > 90^{\circ}, k_{\beta} > 90^{\circ}, k_{\gamma} = 90^{\circ}`
+
         :math:`\text{TRI}_{2b} k_{\alpha} < 90^{\circ}, k_{\beta} < 90^{\circ}, k_{\gamma} = 90^{\circ}`
         """
         if self.k_gamma == 90:
@@ -1672,7 +2292,7 @@ def bravais_lattice_from_param(a, b, c, alpha, beta, gamma) -> Lattice:
 
     References
     ----------
-    [1] Setyawan, W. and Curtarolo, S., 2010.
+    .. [1] Setyawan, W. and Curtarolo, S., 2010.
         High-throughput electronic band structure calculations: Challenges and tools.
         Computational materials science, 49(2), pp.299-312.
     """
@@ -1755,40 +2375,41 @@ def bravais_lattice_from_cell(cell) -> Lattice:
 
     References
     ----------
-    [1] Setyawan, W. and Curtarolo, S., 2010.
+    .. [1] Setyawan, W. and Curtarolo, S., 2010.
         High-throughput electronic band structure calculations: Challenges and tools.
         Computational materials science, 49(2), pp.299-312.
     """
 
     lattice_type = lepage(*param_from_cell(cell))
 
-    if lattice_type == "CUB":
-        return CUB(cell=cell)
-    if lattice_type == "FCC":
-        return FCC(cell=cell)
-    if lattice_type == "BCC":
-        return BCC(cell=cell)
-    if lattice_type == "TET":
-        return TET(cell=cell)
-    if lattice_type == "BCT":
-        return BCT(cell=cell)
-    if lattice_type == "ORC":
-        return ORC(cell=cell)
-    if lattice_type == "ORCF":
-        return ORCF(cell=cell)
-    if lattice_type == "ORCC":
-        return ORCC(cell=cell)
-    if lattice_type == "ORCI":
-        return ORCI(cell=cell)
-    if lattice_type == "HEX":
-        return HEX(cell=cell)
-    if lattice_type == "RHL":
-        return RHL(cell=cell)
-    if lattice_type == "MCL":
-        return MCL(cell=cell)
-    if lattice_type == "MCLC":
-        return MCLC(cell=cell)
-    return TRI(cell=cell)
+    # if lattice_type == "CUB":
+    #     return CUB(cell=cell)
+    # if lattice_type == "FCC":
+    #     return FCC(cell=cell)
+    # if lattice_type == "BCC":
+    #     return BCC(cell=cell)
+    # if lattice_type == "TET":
+    #     return TET(cell=cell)
+    # if lattice_type == "BCT":
+    #     return BCT(cell=cell)
+    # if lattice_type == "ORC":
+    #     return ORC(cell=cell)
+    # if lattice_type == "ORCF":
+    #     return ORCF(cell=cell)
+    # if lattice_type == "ORCC":
+    #     return ORCC(cell=cell)
+    # if lattice_type == "ORCI":
+    #     return ORCI(cell=cell)
+    # if lattice_type == "HEX":
+    #     return HEX(cell=cell)
+    # if lattice_type == "RHL":
+    #     return RHL(cell=cell)
+    # if lattice_type == "MCL":
+    #     return MCL(cell=cell)
+    # if lattice_type == "MCLC":
+    #     return MCLC(cell=cell)
+    # return TRI(cell=cell)
+    return Lattice(cell)
 
 
 def lattice_example(

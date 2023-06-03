@@ -67,7 +67,7 @@ class ExchangeModel:
     crystal : :py:class:`.Crystal`, optional
         Crystal on which the model is build.
         By default it is orthonormal lattice
-        ("CUB with :math:`a = 1`) with no atoms.
+        (:py:class:`.CUB`, :math:`a = 1`) with no atoms.
     notation : str or tuple of bool, optional
         One of the predefined notations or list of 5 bool.
         See :py:attr:`.notation` for details.

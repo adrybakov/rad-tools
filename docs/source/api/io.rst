@@ -1,4 +1,4 @@
-.. _rad-tools_io:
+.. _api_io:
 
 ************
 Input-output

@@ -1,8 +1,8 @@
 .. _rad-extract-tb2j:
 
-***********************
-``rad-extract-tb2j.py``
-***********************
+*******************
+rad-extract-tb2j.py
+*******************
 
 Script for extracting of template-based model from 
 |TB2J|_ results.

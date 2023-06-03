@@ -1,46 +1,57 @@
-.. _rad-tools_crystal:
+.. _api_crystal:
 
 *******
 Crystal
 *******
 
-.. versionadded:: 0.7
+Classes
+=======
 
 .. currentmodule:: radtools
-
-Crystals are defined as a combination of the the :py:class:`.Lattice` and the set of  
-:py:class:`.Atom`\ s.
-
-.. toctree::
-    :maxdepth: 2
-    
-    crystal.lattice
-    crystal.atom
-
-
-When arbitrary crystal structure is considered the :py:attr:`.Crystal.lattice` is an instance of 
-the general :py:class:`.Lattice` class, where unit cell is interpreted as a primitive one. 
-The type of the Bravais lattice is not defined as well.
-The process of the definition of the crystal type is divided in two steps: 
-
-* Define primitive cell of the :py:class:`.Crystal`
-* Define the type of the Bravais lattice.
-
-After those two steps primitive cel is well defined and the standard k path is accessible.
-
-Class
-=====
 
 .. autosummary::
     :toctree: generated/
 
     Crystal
+    Lattice
+    Atom
 
-Functions
-=========
+Bravais lattice classes
+=======================
+
+.. autosummary::
+    :toctree: generated/
+
+    CUB
+    FCC
+    BCC
+    TET
+    BCT    
+    ORC
+    ORCF
+    ORCI
+    ORCC
+    HEX
+    RHL
+    MCL
+    MCLC
+    TRI
+
+Identification routines
+=======================
 
 .. autosummary::
     :toctree: generated/
 
     niggli
     lepage
+
+Functions for obtaining Bravais lattices
+========================================
+
+.. autosummary::
+    :toctree: generated/
+
+    lattice_example
+    bravais_lattice_from_param
+    bravais_lattice_from_cell

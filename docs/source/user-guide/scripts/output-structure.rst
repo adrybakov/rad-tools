@@ -1,8 +1,8 @@
 .. _output-notes:
 
-************
-Output notes
-************
+****************
+Output structure
+****************
 
 For all scripts there is a common logic for the ``--output-path`` and 
 ``--output-name`` arguments. In some scripts only ``--output-name`` 
@@ -16,7 +16,7 @@ all output files. Here is an example for this case:
 
 
 The ``script.py`` script is executed from the 
-folder *example* and the file structure is:
+folder "example" and the file structure is:
 
 .. code-block:: text
 
@@ -39,7 +39,8 @@ After the execution the "example" folder looks similar to:
     └── output/
 
 Script produced two output files "output-name-1"
-and "output-name-2". Shared seedname "output-name" comes by default.
+and "output-name-2". Shared seedname "output-name" is different for each 
+script and comes by default.
 
 .. important::
     The output files are not located in "output" folder since the 

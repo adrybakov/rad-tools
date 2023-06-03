@@ -1,4 +1,4 @@
-.. _rad-tools_custom-exceptions:
+.. _api_custom-exceptions:
 
 *****************
 Custom Exceptions
@@ -13,3 +13,4 @@ NotationError
 
     exchange.model.NotationError
     crystal.bravais_lattice.NotEnoughParameters
+    crystal.bravais_lattice.CellTypeMismatch
