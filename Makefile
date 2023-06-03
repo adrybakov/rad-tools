@@ -114,7 +114,7 @@ examples:
 	@rad-extract-tb2j.py -if docs/examples/rad-extract-tb2j/exchange.out -tf docs/examples/rad-extract-tb2j/template.txt -op docs/examples/rad-extract-tb2j/ -on summary -all
 
 pictures:
-	@python3 docs/source/img/bravais-lattices/plot.py -op docs/source/img/bravais-lattices 
+	@python3 docs/source/user-guide/module/crystal/bravais-lattices/plot_all.py -op docs/source/user-guide/module/crystal/bravais-lattices/
 
 push: examples
 	@git push

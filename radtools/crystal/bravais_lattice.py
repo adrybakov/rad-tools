@@ -145,7 +145,7 @@ class CUB(Lattice):
 
         \boldsymbol{a}_3 = (0, 0, a)
 
-    .. sealso::
+    .. seealso::
 
         :ref:`lattice-cub` for more information.
 
@@ -238,7 +238,7 @@ class FCC(Lattice):
 
         \boldsymbol{a}_3 = (a/2, a/2, 0)
 
-    .. sealso::
+    .. seealso::
 
         :ref:`lattice-fcc` for more information.
 
@@ -343,7 +343,7 @@ class BCC(Lattice):
 
         \boldsymbol{a}_3 = (a/2, a/2, -a/2)
 
-    .. sealso::
+    .. seealso::
 
         :ref:`lattice-bcc` for more information.
 
@@ -434,7 +434,7 @@ class TET(Lattice):
 
         \boldsymbol{a}_3 = (0, 0, c)
 
-    .. sealso::
+    .. seealso::
 
         :ref:`lattice-tet` for more information.
 
@@ -554,7 +554,7 @@ class BCT(Lattice):
 
         \boldsymbol{a}_3 = (a/2, a/2, -c/2)
 
-    .. sealso::
+    .. seealso::
 
         :ref:`lattice-bct` for more information.
 
@@ -722,7 +722,7 @@ class ORC(Lattice):
 
         \boldsymbol{a}_3 = (0, 0, c)
 
-    .. sealso::
+    .. seealso::
 
         :ref:`lattice-orc` for more information.
 
@@ -855,7 +855,7 @@ class ORCF(Lattice):
 
         \boldsymbol{a}_3 = (a/2, b/2, 0)
 
-    .. sealso::
+    .. seealso::
 
         :ref:`lattice-orcf` for more information.
 
@@ -1065,7 +1065,7 @@ class ORCI(Lattice):
 
         \boldsymbol{a}_3 = (a/2, b/2, -c/2)
 
-    .. sealso::
+    .. seealso::
 
         :ref:`lattice-orci` for more information.
 
@@ -1220,7 +1220,7 @@ class ORCC(Lattice):
 
         \boldsymbol{a}_3 = (0, 0, c)
 
-    .. sealso::
+    .. seealso::
 
         :ref:`lattice-orcc` for more information.
 
@@ -1354,7 +1354,7 @@ class HEX(Lattice):
 
         \boldsymbol{a}_3 = (0, 0, c)
 
-    .. sealso::
+    .. seealso::
 
         :ref:`lattice-hex` for more information.
 
@@ -1473,7 +1473,7 @@ class RHL(Lattice):
 
         \boldsymbol{a}_3 = (\frac{\cos(\alpha)}{\cos(\alpha/2)}, 0, a\sqrt{1 - \frac{\cos^2(\alpha)}{\cos^2(\alpha/2)}})
 
-    .. sealso::
+    .. seealso::
 
         :ref:`lattice-rhl` for more information.
 
@@ -1635,7 +1635,7 @@ class MCL(Lattice):
 
         \boldsymbol{a}_3 = (0, c\cos(\alpha), c\sin(\alpha))
 
-    .. sealso::
+    .. seealso::
 
         :ref:`lattice-mcl` for more information.
 
@@ -1811,7 +1811,7 @@ class MCLC(Lattice):
 
         \boldsymbol{a}_3 = (0, c\cos(\alpha), c\sin(\alpha))
 
-    .. sealso::
+    .. seealso::
 
         :ref:`lattice-mclc` for more information.
 
@@ -2171,7 +2171,7 @@ class TRI(Lattice):
     therefore it is possible to define trigonal Bravais lattice with reciprocal cell parameters
     (argument ``reciprocal``).
 
-    .. sealso::
+    .. seealso::
 
         :ref:`lattice-tri` for more information.
 
@@ -2527,7 +2527,7 @@ def lattice_example(
     elif lattice == "bcc":
         return BCC(pi)
     elif lattice == "tet":
-        return TET(pi, 2 * pi)
+        return TET(pi, 1.5 * pi)
     elif lattice in ["bct1", "bct"]:
         return BCT(2 * pi, pi)
     elif lattice == "bct2":

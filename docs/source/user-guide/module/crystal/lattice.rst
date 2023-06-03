@@ -64,9 +64,9 @@ Predefined examples: ``cub``, ``fcc``, ``bcc``.
 .. toctree::
     :maxdepth: 1
     
-    cub
-    fcc
-    bcc
+    bravais-lattices/cub/index
+    bravais-lattices/fcc/index
+    bravais-lattices/bcc/index
 
 Tetragonal lattice system
 -------------------------
@@ -76,7 +76,7 @@ Predefined examples: ``tet``, ``bct1``, ``bct2``.
 .. toctree::
     :maxdepth: 1
     
-    tet 
+    bravais-lattices/tet/index
     bct
 
 Orthorhombic lattice system
