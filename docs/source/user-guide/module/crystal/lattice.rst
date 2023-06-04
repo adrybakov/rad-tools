@@ -16,7 +16,7 @@ General lattice is describe by the class :py:class:`.Lattice`.
 Bravais lattices
 ================
 
-Bravais lattice classification follows specification from [1]_.
+Bravais lattice notation follows Setyawan and Curtarolo [1]_.
 
 For each type of Bravais lattice a class defined, for some classes there are 
 several variations of lattice, each of which are treated under same class 
@@ -40,9 +40,6 @@ return parameters of the primitive lattice. Conventional lattice may be accessed
 the attributes ``conv_cell``, ``conv_a``, ``conv_b``, ``conv_c``, 
 ``conv_alpha``, ``conv_beta``, ``conv_gamma`` .
 
-.. [1] Setyawan, W. and Curtarolo, S., 2010. 
-    High-throughput electronic band structure calculations: Challenges and tools. 
-    Computational materials science, 49(2), pp.299-312. 
 
 .. currentmodule:: radtools
 
@@ -77,7 +74,7 @@ Predefined examples: ``tet``, ``bct1``, ``bct2``.
     :maxdepth: 1
     
     bravais-lattices/tet/index
-    bct
+    bravais-lattices/bct/index
 
 Orthorhombic lattice system
 ---------------------------
@@ -87,7 +84,7 @@ Predefined examples: ``orc``, ``orcf1``, ``orcf2``, ``orcf3``, ``orci``, ``orcc`
 .. toctree::
     :maxdepth: 1
     
-    orc
+    bravais-lattices/orc/index
     orcf
     orci
     orcc
@@ -134,6 +131,10 @@ Predefined examples: ``tri1a``, ``tri1b``, ``tri2a``, ``tri2b``.
     tri
 
 
-
+References
+==========
+.. [1] Setyawan, W. and Curtarolo, S., 2010. 
+    High-throughput electronic band structure calculations: Challenges and tools. 
+    Computational materials science, 49(2), pp.299-312. 
 
 

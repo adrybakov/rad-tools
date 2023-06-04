@@ -29,6 +29,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx_design",
     "sphinx.ext.doctest",
+    "sphinx_togglebutton",
 ]
 
 autosummary_generate = True

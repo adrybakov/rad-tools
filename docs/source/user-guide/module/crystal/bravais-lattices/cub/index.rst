@@ -1,8 +1,8 @@
 .. _lattice-cub:
 
-***
-CUB
-***
+***************
+Cubic (CUB, cP)
+***************
 
 Cubic lattice is described by the class :py:class:`.CUB`.
 
@@ -16,6 +16,17 @@ It is defined by one parameter: :math:`a` with primitive and conventional lattic
 
     \boldsymbol{a}_3 = (0, 0, a)
 
+Variations
+==========
+
+There are no variations for cubic lattice. 
+One example is predefined: ``cub`` with :math:`a = \pi`.
+
+Example structure
+=================
+
+**Default kpath**: :math:`\Gamma-X-M-\Gamma-R-X\vert M-R`.
+
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30
     :header-rows: 1
@@ -24,7 +35,7 @@ It is defined by one parameter: :math:`a` with primitive and conventional lattic
       - Code
     * - .. figure:: cub_brillouin.png 
             :target: ../../../../../_images/cub_brillouin.png 
-      - .. literalinclude:: plot_brillouin.py
+      - .. literalinclude:: cub_brillouin.py
             :language: py
 
 .. list-table:: Primitive and conventional cell
@@ -34,7 +45,7 @@ It is defined by one parameter: :math:`a` with primitive and conventional lattic
       - Code
     * - .. figure:: cub_real.png 
             :target: ../../../../../_images/cub_real.png 
-      - .. literalinclude:: plot_real.py
+      - .. literalinclude:: cub_real.py
             :language: py
 
 .. list-table:: Wigner-Seitz cell
@@ -45,5 +56,5 @@ It is defined by one parameter: :math:`a` with primitive and conventional lattic
       - Code
     * - .. figure:: cub_wigner-seitz.png 
             :target: ../../../../../_images/cub_wigner-seitz.png 
-      - .. literalinclude:: plot_wigner-seitz.py
+      - .. literalinclude:: cub_wigner-seitz.py
             :language: py

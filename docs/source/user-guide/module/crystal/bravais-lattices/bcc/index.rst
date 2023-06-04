@@ -1,8 +1,8 @@
 .. _lattice-bcc:
 
-***
-BCC
-***
+*****************************
+Body-centered cubic (BCC, cI)
+*****************************
 
 Body-centered cubic lattice is described by the class :py:class:`.BCC`.
 
@@ -26,6 +26,16 @@ And primitive lattice:
 
     \boldsymbol{a}_3 = (a/2, a/2, -a/2)
 
+Variations
+==========
+
+There are no variations for body-centered cubic lattice. 
+One example is predefined: ``bcc`` with :math:`a = \pi`.
+
+Example structure
+=================
+
+**Default kpath**: :math:`\Gamma-H-N-\Gamma-P-H\vert P-N`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30
@@ -35,7 +45,7 @@ And primitive lattice:
       - Code
     * - .. figure:: bcc_brillouin.png 
             :target: ../../../../../_images/bcc_brillouin.png 
-      - .. literalinclude:: plot_brillouin.py
+      - .. literalinclude:: bcc_brillouin.py
             :language: py
 
 .. list-table:: Primitive and conventional cell
@@ -45,7 +55,7 @@ And primitive lattice:
       - Code
     * - .. figure:: bcc_real.png 
             :target: ../../../../../_images/bcc_real.png 
-      - .. literalinclude:: plot_real.py
+      - .. literalinclude:: bcc_real.py
             :language: py
 
 .. list-table:: Wigner-Seitz cell
@@ -56,5 +66,5 @@ And primitive lattice:
       - Code
     * - .. figure:: bcc_wigner-seitz.png 
             :target: ../../../../../_images/bcc_wigner-seitz.png 
-      - .. literalinclude:: plot_wigner-seitz.py
+      - .. literalinclude:: bcc_wigner-seitz.py
             :language: py

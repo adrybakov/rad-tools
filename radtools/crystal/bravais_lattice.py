@@ -302,7 +302,7 @@ class FCC(Lattice):
         else:
             self.conv_a = a
             super().__init__([0, a / 2, a / 2], [a / 2, 0, a / 2], [a / 2, a / 2, 0])
-            self.conv_cell = np.diag([a, a, a])
+            self.conv_cell = np.diag([self.conv_a, self.conv_a, self.conv_a])
 
         self.points = {
             "G": np.array([0, 0, 0]),
@@ -409,7 +409,7 @@ class BCC(Lattice):
             super().__init__(
                 [-a / 2, a / 2, a / 2], [a / 2, -a / 2, a / 2], [a / 2, a / 2, -a / 2]
             )
-            self.conv_cell = np.diag([a, a, a])
+            self.conv_cell = np.diag([self.conv_a, self.conv_a, self.conv_a])
         self.points = {
             "G": np.array([0, 0, 0]),
             "H": np.array([1 / 2, -1 / 2, 1 / 2]),
@@ -638,13 +638,13 @@ class BCT(Lattice):
                 raise CellTypeMismatch(
                     "BCT", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
                 )
-            self.conv_cell = np.diag([a, a, c])
+            self.conv_cell = np.diag([self.conv_a, self.conv_a, self.conv_c])
 
         self._PLOT_NAMES["S"] = "$\\Sigma$"
         self._PLOT_NAMES["S1"] = "$\\Sigma_1$"
 
         if self.variation == "BCT1":
-            eta = (1 + c**2 / a**2) / 4
+            eta = (1 + self.conv_c**2 / self.conv_a**2) / 4
             self.points = {
                 "G": np.array([0, 0, 0]),
                 "M": np.array([-1 / 2, 1 / 2, 1 / 2]),
@@ -661,8 +661,8 @@ class BCT(Lattice):
             ]
 
         elif self.variation == "BCT2":
-            eta = (1 + a**2 / c**2) / 4
-            zeta = a**2 / (2 * c**2)
+            eta = (1 + self.conv_a**2 / self.conv_c**2) / 4
+            zeta = self.conv_a**2 / (2 * self.conv_c**2)
             self.points = {
                 "G": np.array([0, 0, 0]),
                 "N": np.array([0, 1 / 2, 0]),
@@ -787,11 +787,13 @@ class ORC(Lattice):
                     "ORC", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
                 )
             if b < a - eps:
-                cell = [cell[1], cell[0], cell[2]]
+                # minus preserves right-hand order
+                cell = [cell[1], cell[0], -cell[2]]
             if c < a - eps:
                 cell = [cell[2], cell[0], cell[1]]
             elif c < b - eps:
-                cell = [cell[0], cell[2], cell[1]]
+                # minus preserves right-hand order
+                cell = [cell[0], cell[2], -cell[1]]
 
             a, b, c, alpha, beta, gamma = param_from_cell(cell)
             super().__init__(cell)
@@ -2529,11 +2531,11 @@ def lattice_example(
     elif lattice == "tet":
         return TET(pi, 1.5 * pi)
     elif lattice in ["bct1", "bct"]:
-        return BCT(2 * pi, pi)
+        return BCT(1.5 * pi, pi)
     elif lattice == "bct2":
-        return BCT(pi, 2 * pi)
+        return BCT(pi, 1.5 * pi)
     elif lattice == "orc":
-        return ORC(pi, 2 * pi, 3 * pi)
+        return ORC(pi, 1.5 * pi, 2 * pi)
     elif lattice in ["orcf1", "orcf"]:
         return ORCF(0.9 * pi, 5 / 4 * pi, 5 / 3 * pi)
     elif lattice == "orcf2":

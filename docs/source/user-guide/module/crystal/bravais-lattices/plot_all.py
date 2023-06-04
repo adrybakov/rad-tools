@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 from os.path import join
 import radtools as rad
+import matplotlib.pyplot as plt
 
 
 def plot(output_path="."):
@@ -10,13 +11,20 @@ def plot(output_path="."):
         "FCC": [23, 28, 46],
         "BCC": [11, 30, 46],
         "TET": [30, 30, 30],
+        "BCT1": [30, 37, 26],
+        "BCT2": [36, 40, 41],
+        "ORC": [35, 36, 20],
     }
     azim = {
         "CUB": [23, 23, 23],
         "FCC": [28, 23, 19],
         "BCC": [25, -180, 19],
         "TET": [23, 30, 30],
+        "BCT1": [28, 72, 59],
+        "BCT2": [28, 85, 59],
+        "ORC": [34, 35, 30],
     }
+
     wtps = {
         "CUB": [["brillouin-kpath"], ["primitive"], ["wigner-seitz"]],
         "FCC": [
@@ -34,19 +42,51 @@ def plot(output_path="."):
             ["primitive"],
             ["wigner-seitz"],
         ],
+        "BCT1": [
+            ["brillouin-kpath"],
+            ["primitive", "conventional"],
+            ["wigner-seitz"],
+        ],
+        "BCT2": [
+            ["brillouin-kpath"],
+            ["primitive", "conventional"],
+            ["wigner-seitz"],
+        ],
+        "ORC": [
+            ["brillouin-kpath"],
+            ["primitive"],
+            ["wigner-seitz"],
+        ],
     }
     names = {
         "CUB": ["brillouin", "real", "wigner-seitz"],
         "FCC": ["brillouin", "real", "wigner-seitz"],
         "BCC": ["brillouin", "real", "wigner-seitz"],
         "TET": ["brillouin", "real", "wigner-seitz"],
+        "BCT1": ["brillouin", "real", "wigner-seitz"],
+        "BCT2": ["brillouin", "real", "wigner-seitz"],
+        "ORC": ["brillouin", "real", "wigner-seitz"],
     }
 
-    for i, name in enumerate(lattices[:4]):
+    for i, name in enumerate(lattices[:7]):
+        output_subname = (
+            name.replace("1", "")
+            .replace("2", "")
+            .replace("3", "")
+            .replace("4", "")
+            .replace("5", "")
+            .replace("1a", "")
+            .replace("2a", "")
+            .replace("1b", "")
+            .replace("2b", "")
+        )
         l = rad.lattice_example(name)
         for j, wtp in enumerate(wtps[name]):
             py_file = open(
-                join(output_path, name.lower(), f"plot_{names[name][j]}.py"), "w"
+                join(
+                    output_path, output_subname, f"{name.lower()}_{names[name][j]}.py"
+                ),
+                "w",
             )
             py_file.write(
                 f'import radtools as rad\n\nl = rad.lattice_example(f"{name}")\n'
@@ -76,12 +116,15 @@ def plot(output_path="."):
                     py_file.write("l.legend()\n")
                     l.legend()
             l.savefig(
-                join(output_path, name.lower(), f"{name.lower()}_{names[name][j]}.png"),
+                join(
+                    output_path, output_subname, f"{name.lower()}_{names[name][j]}.png"
+                ),
                 elev=elev[name][j],
                 azim=azim[name][j],
                 dpi=300,
                 bbox_inches="tight",
             )
+            plt.close()
             py_file.write(
                 "# Save an image:\n"
                 + "l.savefig(\n"
