@@ -16,7 +16,8 @@ def test_niggli():
     beta = acos(-4 / 2 / 3 / 2) * _todegrees
     gamma = acos(-22 / 2 / 3 / sqrt(27)) * _todegrees
     assert (
-        np.array([[4, 9, 9], [9 / 2, 3 / 2, 2]]) == niggli(a, b, c, alpha, beta, gamma)
+        np.array([[4, 9, 9], [9 / 2, 3 / 2, 2]]) - niggli(a, b, c, alpha, beta, gamma)
+        < 1e-5
     ).all()
 
 
@@ -65,17 +66,27 @@ def test_lepage(name):
 
 
 @pytest.mark.parametrize(
-    "cell, name",
+    "cell, name, eps_rel",
     [
-        ([[3.588, 0.000, 0.000], [0.000, 4.807, 0.000], [0.000, 0.000, 23.571]], "ORC"),
+        (
+            [[3.588, 0.000, 0.000], [0.000, 4.807, 0.000], [0.000, 0.000, 23.571]],
+            "ORC",
+            1e-5,
+        ),
         (
             [[6.137, 0.000, 0.000], [-3.068, 5.315, 0.000], [0.000, 0.000, 20.718]],
             "HEX",
+            1e-3,
+        ),
+        (
+            [[6.137, 0.000, 0.000], [-3.068, 5.315, 0.000], [0.000, 0.000, 20.718]],
+            "TRI",
+            1e-4,
         ),
     ],
-    ids=["crsbr", "nii2"],
+    ids=["crsbr", "nii2", "custom"],
 )
-def test_custom_lepage(cell, name):
+def test_custom_lepage(cell, name, eps_rel):
     lattice = Lattice(cell)
     assert (
         lepage(
@@ -85,6 +96,7 @@ def test_custom_lepage(cell, name):
             lattice.alpha,
             lattice.beta,
             lattice.gamma,
+            eps_rel=eps_rel,
         )
         == name
     )

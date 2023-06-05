@@ -3,6 +3,13 @@ import pytest
 from radtools.crystal.bravais_lattice import *
 
 lattice_names = lattice_example()
+
+
+@pytest.mark.parametrize("name", lattice_names, ids=lattice_names)
+def test_examples(name):
+    l = lattice_example(name)
+
+
 lattices = [lattice_example(i) for i in lattice_names]
 n_edges = [
     12,

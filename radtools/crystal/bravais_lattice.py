@@ -602,7 +602,7 @@ class BCT(Lattice):
     _pearson_symbol = "tI"
 
     def __init__(
-        self, a: float = None, c: float = None, cell=None, eps_rel=1e-4
+        self, a: float = None, c: float = None, cell=None, eps_rel=1e-5
     ) -> None:
         if (a is None or c is None) and cell is None:
             raise NotEnoughParameters("BCT", [("a", a), ("c", c)])
@@ -909,7 +909,7 @@ class ORCF(Lattice):
     _pearson_symbol = "oF"
 
     def __init__(
-        self, a: float = None, b: float = None, c: float = None, cell=None, eps_rel=1e-4
+        self, a: float = None, b: float = None, c: float = None, cell=None, eps_rel=1e-5
     ) -> None:
         if (a is None or b is None or c is None) and cell is None:
             raise NotEnoughParameters("ORCF", [("a", a), ("b", b), ("c", c)])
@@ -1148,7 +1148,7 @@ class ORCI(Lattice):
     _pearson_symbol = "oI"
 
     def __init__(
-        self, a: float = None, b: float = None, c: float = None, cell=None, eps_rel=1e-4
+        self, a: float = None, b: float = None, c: float = None, cell=None, eps_rel=1e-5
     ) -> None:
         if (a is None or b is None or c is None) and cell is None:
             raise NotEnoughParameters("ORCI", [("a", a), ("b", b), ("c", c)])
@@ -1436,7 +1436,7 @@ class HEX(Lattice):
     _pearson_symbol = "hP"
 
     def __init__(
-        self, a: float = None, c: float = None, cell=None, eps_rel=1e-4
+        self, a: float = None, c: float = None, cell=None, eps_rel=1e-5
     ) -> None:
         if (a is None or c is None) and cell is None:
             raise NotEnoughParameters("HEX", [("a", a), ("c", c)])

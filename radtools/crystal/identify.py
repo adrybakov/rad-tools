@@ -255,14 +255,14 @@ def niggli(
             color="green",
         )
     if return_cell:
-        a = round(sqrt(A), n)
-        b = round(sqrt(B), n)
-        c = round(sqrt(C), n)
-        alpha = round(acos(xi / 2 / b / c) * _todegrees, n)
-        beta = round(acos(eta / 2 / a / c) * _todegrees, n)
-        gamma = round(acos(zeta / 2 / a / b) * _todegrees, n)
+        a = sqrt(A)
+        b = sqrt(B)
+        c = sqrt(C)
+        alpha = acos(xi / 2 / b / c) * _todegrees
+        beta = acos(eta / 2 / a / c) * _todegrees
+        gamma = acos(zeta / 2 / a / b) * _todegrees
         return a, b, c, alpha, beta, gamma
-    return np.around(np.array([[A, B, C], [xi / 2, eta / 2, zeta / 2]]), decimals=n)
+    return np.array([[A, B, C], [xi / 2, eta / 2, zeta / 2]])
 
 
 def check_cub(angles: np.ndarray, axes: np.ndarray, eps):
@@ -707,47 +707,59 @@ def lepage(
 
 
 if __name__ == "__main__":
-    from radtools.crystal.bravais_lattice import lattice_example
-
-    for i, name in enumerate(
-        [
-            "CUB",
-            "FCC",
-            "BCC",
-            "HEX",
-            "TET",
-            "BCT1",
-            "BCT2",
-            "RHL1",
-            "RHL2",
-            "ORC",
-            "ORCF1",
-            "ORCF2",
-            "ORCF3",
-            "ORCI",
-            "ORCC",
-            "MCL",
-            "MCLC1",
-            "MCLC2",
-            "MCLC3",
-            "MCLC4",
-            "MCLC5",
-            "TRI1a",
-            "TRI2a",
-            "TRI1b",
-            "TRI2b",
-        ]
-    ):
-        lattice = lattice_example(name)
-        print(
-            name,
-            lepage(
-                lattice.a,
-                lattice.b,
-                lattice.c,
-                lattice.alpha,
-                lattice.beta,
-                lattice.gamma,
-                very_verbose=True,
-            ),
+    print(
+        lepage(
+            6.137,
+            6.136925044352425,
+            20.718,
+            90.0,
+            90.0,
+            119.99501387877993,
+            eps_rel=1e-4,
         )
+    )
+    # from radtools.crystal.bravais_lattice import lattice_example
+
+    # for i, name in enumerate(
+    #     [
+    #         "CUB",
+    #         "FCC",
+    #         "BCC",
+    #         "HEX",
+    #         "TET",
+    #         "BCT1",
+    #         "BCT2",
+    #         "RHL1",
+    #         "RHL2",
+    #         "ORC",
+    #         "ORCF1",
+    #         "ORCF2",
+    #         "ORCF3",
+    #         "ORCI",
+    #         "ORCC",
+    #         "MCL",
+    #         "MCLC1",
+    #         "MCLC2",
+    #         "MCLC3",
+    #         "MCLC4",
+    #         "MCLC5",
+    #         "TRI1a",
+    #         "TRI2a",
+    #         "TRI1b",
+    #         "TRI2b",
+    #     ]
+    # ):
+    #     lattice = lattice_example(name)
+
+    #     print(
+    #         name,
+    #         lepage(
+    #             lattice.a,
+    #             lattice.b,
+    #             lattice.c,
+    #             lattice.alpha,
+    #             lattice.beta,
+    #             lattice.gamma,
+    #             very_verbose=True,
+    #         ),
+    #     )
