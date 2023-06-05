@@ -117,8 +117,8 @@ Predefined examples: ``mcl``, ``mclc1``, ``mclc2``, ``mclc3``, ``mclc4``, ``mclc
 .. toctree::
     :maxdepth: 1
 
-    mcl
-    mclc
+    bravais-lattices/mcl/index
+    bravais-lattices/mclc/index
 
 Triclinic lattice system
 ------------------------
@@ -128,7 +128,7 @@ Predefined examples: ``tri1a``, ``tri1b``, ``tri2a``, ``tri2b``.
 .. toctree::
     :maxdepth: 1
 
-    tri
+    bravais-lattices/tri/index
 
 
 References

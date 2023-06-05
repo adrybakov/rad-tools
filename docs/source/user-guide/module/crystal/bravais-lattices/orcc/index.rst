@@ -78,3 +78,10 @@ Example structure
 Ordering of lattice parameters
 ==============================
 TODO
+
+Edge cases
+==========
+If :math:`a = b`, then the lattice is :ref:`lattice-tet`.
+
+If :math:`a = b = \sqrt{2} c`, then the lattice is :ref:`lattice-cub`.
+

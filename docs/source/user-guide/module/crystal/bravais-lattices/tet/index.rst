@@ -59,3 +59,9 @@ Example structure
             :target: ../../../../../_images/tet_wigner-seitz.png 
       - .. literalinclude:: tet_wigner-seitz.py
             :language: py
+
+
+Edge cases
+==========
+
+If :math:`a = c`, then the lattice is :ref:`lattice-cub`.

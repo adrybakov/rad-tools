@@ -112,3 +112,25 @@ def test_lepage_paper():
     assert results[3][1] - 0.714 < 0.001
     assert results[4][0] == "MCLC"
     assert results[4][1] - 0.005 < 0.001
+
+
+@pytest.mark.parametrize(
+    "a, b, c, alpha, beta, gamma, ltype",
+    [
+        (1, 1, 2, 60, 90, 90, "TET"),
+        (1, 1, 1, 30, 90, 90, "ORCC"),
+        (1, 1, 1, 45, 90, 90, "ORCC"),
+        (3.2, 1, 1, 45, 90, 90, "ORCC"),
+        (1, 1, 1, 60, 90, 90, "HEX"),
+    ],
+)
+def test_lepage_custom(a, b, c, alpha, beta, gamma, ltype):
+    assert ltype == lepage(
+        a,
+        b,
+        c,
+        alpha,
+        beta,
+        gamma,
+        eps_rel=0.001,
+    )

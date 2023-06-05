@@ -188,10 +188,13 @@ ORCF\ :sub:`3`
       - .. literalinclude:: orcf3_wigner-seitz.py
             :language: py
 
-
-
-
-
 Ordering of lattice parameters
 ==============================
 TODO
+
+Edge cases
+==========
+If :math:`a = b \ne c` or :math:`a = c \ne b` or :math:`b = c \ne a`, 
+then the lattice is :ref:`lattice-bct`.
+
+If :math:`a = b = c`, then the lattice is :ref:`lattice-fcc`.

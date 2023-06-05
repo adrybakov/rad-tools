@@ -123,3 +123,8 @@ BCT\ :sub:`2`
             :target: ../../../../../_images/bct2_wigner-seitz.png 
       - .. literalinclude:: bct2_wigner-seitz.py
             :language: py
+
+Edge cases
+==========
+
+If :math:`a = c` then the lattice is :ref:`lattice-bcc`.

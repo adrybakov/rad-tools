@@ -1316,15 +1316,18 @@ class ORCC(Lattice):
                     "ORCC", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
                 )
 
+            # a == c
             if not (a < c - eps or c < a - eps):
                 cell = [cell[0], cell[2], cell[1]]
                 a, b, c, alpha, beta, gamma = param_from_cell(cell)
+            # b = c
             elif not (b < c - eps or c < b - eps):
                 cell = [cell[1], cell[2], cell[0]]
                 a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
             conv_cell = [[1.0, 1.0, 0], [-1.0, 1.0, 0], [0, 0, 1.0]] @ cell
             a, b, c, alpha, beta, gamma = param_from_cell(conv_cell)
+            # b < a
             if b < a - eps:
                 cell = [cell[1], cell[0], cell[2]]
 
@@ -1335,7 +1338,7 @@ class ORCC(Lattice):
             self.conv_b = b
             self.conv_c = c
         else:
-            a, b, c = tuple(sorted([a, b, c]))
+            a, b = tuple(sorted([a, b]))
             self.conv_a = a
             self.conv_b = b
             self.conv_c = c
@@ -1765,6 +1768,7 @@ class MCL(Lattice):
         else:
             eps = eps_rel * volume(a, b, c, alpha, 90, 90) ** (1 / 3.0)
             b, c = tuple(sorted([b, c]))
+            a, c = tuple(sorted([a, c]))
             if cos(alpha * _toradians) < -eps:
                 alpha = alpha - 90
             self.conv_a = a
@@ -1785,8 +1789,8 @@ class MCL(Lattice):
 
         self.conv_cell = self.cell
 
-        eta = (1 - b * cos(alpha / 180 * pi) / c) / (2 * sin(alpha / 180 * pi) ** 2)
-        nu = 1 / 2 - eta * c * cos(alpha / 180 * pi) / b
+        eta = (1 - b * cos(alpha * _toradians) / c) / (2 * sin(alpha * _toradians) ** 2)
+        nu = 1 / 2 - eta * c * cos(alpha * _toradians) / b
 
         self.points = {
             "G": np.array([0, 0, 0]),
@@ -1949,6 +1953,7 @@ class MCLC(Lattice):
         else:
             eps = eps_rel * volume(a, b, c, alpha, 90, 90) ** (1 / 3.0)
             b, c = tuple(sorted([b, c]))
+            a, c = tuple(sorted([a, c]))
             if cos(alpha * _toradians) < -eps:
                 alpha = alpha - 90
             self.conv_a = a
@@ -1966,12 +1971,12 @@ class MCLC(Lattice):
             )
             self.conv_cell = np.array(
                 [
-                    [a, 0, 0],
-                    [0, b, 0],
+                    [self.conv_a, 0, 0],
+                    [0, self.conv_b, 0],
                     [
                         0,
-                        c * cos(alpha * _toradians),
-                        c * sin(alpha * _toradians),
+                        self.conv_c * cos(alpha * _toradians),
+                        self.conv_c * sin(alpha * _toradians),
                     ],
                 ]
             )
@@ -1984,43 +1989,88 @@ class MCLC(Lattice):
 
         # Parameters
         if self.variation in ["MCLC1", "MCLC2"]:
-            zeta = (2 - b * cos(alpha * _toradians) / c) / (
-                4 * sin(alpha * _toradians) ** 2
+            zeta = (
+                2 - self.conv_b * cos(self.conv_alpha * _toradians) / self.conv_c
+            ) / (4 * sin(self.conv_alpha * _toradians) ** 2)
+            eta = (
+                1 / 2
+                + 2
+                * zeta
+                * self.conv_c
+                * cos(self.conv_alpha * _toradians)
+                / self.conv_b
             )
-            eta = 1 / 2 + 2 * zeta * c * cos(alpha * _toradians) / b
-            psi = 3 / 4 - a**2 / (4 * b**2 * sin(alpha * _toradians) ** 2)
-            phi = psi + (3 / 4 - psi) * b * cos(alpha * _toradians) / c
+            psi = 3 / 4 - self.conv_a**2 / (
+                4 * self.conv_b**2 * sin(self.conv_alpha * _toradians) ** 2
+            )
+            phi = (
+                psi
+                + (3 / 4 - psi) * self.conv_b * cos(self.conv_alpha * _toradians) / c
+            )
         elif self.variation in ["MCLC3", "MCLC4"]:
-            mu = (1 + b**2 / a**2) / 4
-            delta = b * c * cos(alpha * _toradians) / (2 * a**2)
+            mu = (1 + self.conv_b**2 / self.conv_a**2) / 4
+            delta = (
+                self.conv_b
+                * c
+                * cos(self.conv_alpha * _toradians)
+                / (2 * self.conv_a**2)
+            )
             zeta = (
                 mu
                 - 1 / 4
-                + (1 - b * cos(alpha * _toradians) / c)
-                / (4 * sin(alpha * _toradians) ** 2)
+                + (1 - self.conv_b * cos(self.conv_alpha * _toradians) / self.conv_c)
+                / (4 * sin(self.conv_alpha * _toradians) ** 2)
             )
-            eta = 1 / 2 + 2 * zeta * c * cos(alpha * _toradians) / b
+            eta = (
+                1 / 2
+                + 2
+                * zeta
+                * self.conv_c
+                * cos(self.conv_alpha * _toradians)
+                / self.conv_b
+            )
             phi = 1 + zeta - 2 * mu
             psi = eta - 2 * delta
         elif self.variation == "MCLC5":
             zeta = (
-                b**2 / a**2
-                + (1 - b * cos(alpha * _toradians) / c) / sin(alpha * _toradians) ** 2
+                self.conv_b**2 / self.conv_a**2
+                + (1 - self.conv_b * cos(self.conv_alpha * _toradians) / self.conv_c)
+                / sin(self.conv_alpha * _toradians) ** 2
             ) / 4
-            eta = 1 / 2 + 2 * zeta * c * cos(alpha * _toradians) / b
+            eta = (
+                1 / 2
+                + 2
+                * zeta
+                * self.conv_c
+                * cos(self.conv_alpha * _toradians)
+                / self.conv_b
+            )
             mu = (
                 eta / 2
-                + b**2 / (4 * a**2)
-                - b * c * cos(alpha * _toradians) / (2 * a**2)
+                + self.conv_b**2 / (4 * self.conv_a**2)
+                - self.conv_b
+                * self.conv_c
+                * cos(self.conv_alpha * _toradians)
+                / (2 * self.conv_a**2)
             )
             nu = 2 * mu - zeta
-            rho = 1 - zeta * a**2 / b**2
+            rho = 1 - zeta * self.conv_a**2 / self.conv_b**2
             omega = (
-                (4 * nu - 1 - b**2 * sin(alpha * _toradians) ** 2 / a**2)
-                * c
-                / (2 * b * cos(alpha * _toradians))
+                (
+                    4 * nu
+                    - 1
+                    - self.conv_b**2
+                    * sin(self.conv_alpha * _toradians) ** 2
+                    / self.conv_a**2
+                )
+                * self.conv_c
+                / (2 * self.conv_b * cos(self.conv_alpha * _toradians))
             )
-            delta = zeta * c * cos(alpha * _toradians) / b + omega / 2 - 1 / 4
+            delta = (
+                zeta * self.conv_c * cos(self.conv_alpha * _toradians) / self.conv_b
+                + omega / 2
+                - 1 / 4
+            )
 
         # Path
         if self.variation == "MCLC1":
@@ -2582,21 +2632,35 @@ def lattice_example(
     elif lattice == "rhl2":
         return RHL(pi, 110)
     elif lattice == "mcl":
-        return MCL(pi, 2 * pi, 3 * pi, alpha=80)
+        return MCL(pi, 1.3 * pi, 1.6 * pi, alpha=75)
     elif lattice in ["mclc1", "mclc"]:
-        return MCLC(pi, 1.5 * pi, 2 * pi, 80)
+        return MCLC(pi, 1.4 * pi, 1.7 * pi, 80)
     elif lattice == "mclc2":
-        return MCLC(1.5 * pi * sin(80 * _toradians), 1.5 * pi, 2 * pi, 80)
+        return MCLC(1.4 * pi * sin(75 * _toradians), 1.4 * pi, 1.7 * pi, 75)
     elif lattice == "mclc3":
-        return MCLC(pi, pi / 2, 1.1 * pi, 80)
+        b = pi
+        x = 1.1
+        alpha = 78
+        ralpha = alpha * _toradians
+        c = b * (x**2) / (x**2 - 1) * cos(ralpha) * 1.8
+        a = x * b * sin(ralpha)
+        return MCLC(a, b, c, alpha)
     elif lattice == "mclc4":
         b = pi
-        c = 1.5 * pi
-        alpha = 80 * _toradians
-        a = sqrt(c * b**2 * sin(alpha) ** 2 / (c - b * cos(alpha)))
-        return MCLC(a, b, c, 80)
+        x = 1.2
+        alpha = 65
+        ralpha = alpha * _toradians
+        c = b * (x**2) / (x**2 - 1) * cos(ralpha)
+        a = x * b * sin(ralpha)
+        return MCLC(a, b, c, alpha)
     elif lattice == "mclc5":
-        return MCLC(pi, 1.1 * pi, 1.2 * pi, 60)
+        b = pi
+        x = 1.4
+        alpha = 53
+        ralpha = alpha * _toradians
+        c = b * (x**2) / (x**2 - 1) * cos(ralpha) * 0.9
+        a = x * b * sin(ralpha)
+        return MCLC(a, b, c, alpha)
     elif lattice in ["tri1a", "tri1", "tri", "tria"]:
         return TRI(1, 1.5, 2, 120, 110, 100, reciprocal=True)
     elif lattice in ["tri2a", "tri2"]:

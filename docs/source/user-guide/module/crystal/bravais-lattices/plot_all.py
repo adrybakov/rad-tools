@@ -21,6 +21,16 @@ def plot(output_path="."):
         "HEX": [19, 35, 32],
         "RHL1": [-41, 35, 19],
         "RHL2": [14, 35, 30],
+        "MCL": [12, 25, 11],
+        "MCLC1": [21, 29, 45],
+        "MCLC2": [11, 30, 13],
+        "MCLC3": [23, 39, 41],
+        "MCLC4": [19, 25, 5],
+        "MCLC5": [-5, 20, 13],
+        "TRI1a": [45, 31, 9],
+        "TRI2a": [10, 39, 30],
+        "TRI1b": [30, 12, 21],
+        "TRI2b": [40, 17, 19],
     }
     azim = {
         "CUB": [23, 23, 23],
@@ -38,6 +48,16 @@ def plot(output_path="."):
         "HEX": [20, 23, 10],
         "RHL1": [-13, 52, -19],
         "RHL2": [-85, 52, -29],
+        "MCL": [25, 40, 37],
+        "MCLC1": [53, 83, 67],
+        "MCLC2": [64, 62, 29],
+        "MCLC3": [34, 68, 61],
+        "MCLC4": [45, 70, 66],
+        "MCLC5": [59, 56, 66],
+        "TRI1a": [-55, -20, 18],
+        "TRI2a": [32, 44, 62],
+        "TRI1b": [42, 11, 39],
+        "TRI2b": [1, 54, 13],
     }
 
     wtps = {
@@ -112,6 +132,56 @@ def plot(output_path="."):
             ["primitive"],
             ["wigner-seitz"],
         ],
+        "MCL": [
+            ["brillouin-kpath"],
+            ["primitive"],
+            ["wigner-seitz"],
+        ],
+        "MCLC1": [
+            ["brillouin-kpath"],
+            ["primitive", "conventional"],
+            ["wigner-seitz"],
+        ],
+        "MCLC2": [
+            ["brillouin-kpath"],
+            ["primitive", "conventional"],
+            ["wigner-seitz"],
+        ],
+        "MCLC3": [
+            ["brillouin-kpath"],
+            ["primitive", "conventional"],
+            ["wigner-seitz"],
+        ],
+        "MCLC4": [
+            ["brillouin-kpath"],
+            ["primitive", "conventional"],
+            ["wigner-seitz"],
+        ],
+        "MCLC5": [
+            ["brillouin-kpath"],
+            ["primitive", "conventional"],
+            ["wigner-seitz"],
+        ],
+        "TRI1a": [
+            ["brillouin-kpath"],
+            ["primitive"],
+            ["wigner-seitz"],
+        ],
+        "TRI2a": [
+            ["brillouin-kpath"],
+            ["primitive"],
+            ["wigner-seitz"],
+        ],
+        "TRI1b": [
+            ["brillouin-kpath"],
+            ["primitive"],
+            ["wigner-seitz"],
+        ],
+        "TRI2b": [
+            ["brillouin-kpath"],
+            ["primitive"],
+            ["wigner-seitz"],
+        ],
     }
     names = {
         "CUB": ["brillouin", "real", "wigner-seitz"],
@@ -129,6 +199,16 @@ def plot(output_path="."):
         "HEX": ["brillouin", "real", "wigner-seitz"],
         "RHL1": ["brillouin", "real", "wigner-seitz"],
         "RHL2": ["brillouin", "real", "wigner-seitz"],
+        "MCL": ["brillouin", "real", "wigner-seitz"],
+        "MCLC1": ["brillouin", "real", "wigner-seitz"],
+        "MCLC2": ["brillouin", "real", "wigner-seitz"],
+        "MCLC3": ["brillouin", "real", "wigner-seitz"],
+        "MCLC4": ["brillouin", "real", "wigner-seitz"],
+        "MCLC5": ["brillouin", "real", "wigner-seitz"],
+        "TRI1a": ["brillouin", "real", "wigner-seitz"],
+        "TRI2a": ["brillouin", "real", "wigner-seitz"],
+        "TRI1b": ["brillouin", "real", "wigner-seitz"],
+        "TRI2b": ["brillouin", "real", "wigner-seitz"],
     }
 
     for i, name in enumerate(names):
@@ -138,10 +218,10 @@ def plot(output_path="."):
             .replace("3", "")
             .replace("4", "")
             .replace("5", "")
-            .replace("1a", "")
-            .replace("2a", "")
-            .replace("1b", "")
-            .replace("2b", "")
+            .replace("a", "")
+            .replace("a", "")
+            .replace("b", "")
+            .replace("b", "")
         )
         l = rad.lattice_example(name)
         for j, wtp in enumerate(wtps[name]):

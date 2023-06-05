@@ -16,7 +16,7 @@ with primitive and conventional lattice:
 
     \boldsymbol{a}_2 = (a\cos(\alpha / 2), a\sin(\alpha/2), 0)
 
-    \boldsymbol{a}_3 = (\frac{\cos(\alpha)}{\cos(\alpha/2)}, 0, a\sqrt{1 - \frac{\cos^2(\alpha)}{\cos^2(\alpha/2)}})
+    \boldsymbol{a}_3 = \left(\frac{\cos(\alpha)}{\cos(\alpha/2)}, 0, a\sqrt{1 - \frac{\cos^2(\alpha)}{\cos^2(\alpha/2)}}\right)
 
 
 Variations
@@ -30,8 +30,6 @@ RHL\ :sub:`1`
 :math:`\alpha < 90^{\circ}`.
 
 Predefined example: ``rhl1`` with :math:`a = \pi` and :math:`\alpha = 70` 
-
-One example is predefined: ``rhl`` with :math:`a = \pi` and :math:`c = 2\pi`.
 
 RHL\ :sub:`2`
 -------------
@@ -120,4 +118,12 @@ RHL\ :sub:`2`
 
 Edge cases
 ==========
-TODO: FCC and BCC
+In rhombohedral lattice :math:`a = b = c` and :math:`\alpha = \beta = \gamma`, 
+thus three edge cases exist:
+
+If :math:`\alpha = 60^{\circ}`, then the lattice is :ref:`lattice-fcc`
+
+If :math:`\alpha \approx 109.47122063^{\circ}` (:math:`\cos(\alpha) = -1/3`), 
+then the lattice is :ref:`lattice-bcc`.
+
+If :math:`\alpha = 90^{\circ}`, then the lattice is :ref:`lattice-cub`.
