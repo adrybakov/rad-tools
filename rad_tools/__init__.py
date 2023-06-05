@@ -5,7 +5,7 @@ All tools from the package.
 |version|
 """
 
-__version__ = "0.6.1"
+__version__ = "0.6.2"
 
 
 from . import dos, exchange, io, kpoints, score

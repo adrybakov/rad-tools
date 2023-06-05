@@ -35,3 +35,7 @@ Absolute import for the internal usage is still possible.
 0.6.1
 -----
 Move to the usage of |termcolor|_ for colourful terminal output.
+
+0.6.2
+-----
+Change domain from rad-tools.adrybakov.com to rad-tools.org
