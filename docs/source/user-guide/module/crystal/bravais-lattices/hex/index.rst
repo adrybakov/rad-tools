@@ -1,8 +1,10 @@
 .. _lattice-hex:
 
-*******************
-Hexagonal (HEX, hP)
-*******************
+***************
+Hexagonal (HEX)
+***************
+
+**Pearson symbol**: hP
 
 Hexagonal lattice is described by the class :py:class:`.HEX`.
 

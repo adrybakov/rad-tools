@@ -1,8 +1,10 @@
 .. _lattice-bct:
 
-*********************************
-Body-centred tetragonal (BCT, tI)
-*********************************
+*****************************
+Body-centred tetragonal (BCT)
+*****************************
+
+**Pearson symbol**: tI
 
 Body-centered tetragonal lattice is described by the class :py:class:`.BCT`.
 

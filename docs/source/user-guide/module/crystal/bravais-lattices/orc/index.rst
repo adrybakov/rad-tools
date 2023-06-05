@@ -1,8 +1,10 @@
 .. _lattice-orc:
 
-**********************
-Orthorhombic (ORC, oP)
-**********************
+******************
+Orthorhombic (ORC)
+******************
+
+**Pearson symbol**: oP
 
 Orthorombic lattice is described by the class :py:class:`.ORC`.
 

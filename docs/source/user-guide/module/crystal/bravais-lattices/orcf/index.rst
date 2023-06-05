@@ -1,8 +1,10 @@
 .. _lattice-orcf:
 
-************************************
-Face-centred orthorhombic (ORCF, oF)
-************************************
+********************************
+Face-centred orthorhombic (ORCF)
+********************************
+
+**Pearson symbol**: oF
 
 Face-centered orthorombic lattice is described by the class :py:class:`.ORCF`.
 

@@ -1,8 +1,10 @@
 .. _lattice-tet:
 
-********************
-Tetragonal (TET, tP)
-********************
+****************
+Tetragonal (TET)
+****************
+
+**Pearson symbol**: tP
 
 Tetragonal lattice is described by the class :py:class:`.TET`.
 

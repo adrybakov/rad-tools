@@ -1,8 +1,10 @@
 .. _lattice-tri:
 
-*******************
-Triclinic (TRI, aP)
-*******************
+***************
+Triclinic (TRI)
+***************
+
+**Pearson symbol**: aP
 
 Triclinic lattice is described by the class :py:class:`.TRI`.
 

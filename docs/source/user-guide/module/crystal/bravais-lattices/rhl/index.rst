@@ -1,8 +1,10 @@
 .. _lattice-rhl:
 
-**********************
-Rhombohedral (RHL, hR)
-**********************
+******************
+Rhombohedral (RHL)
+******************
+
+**Pearson symbol**: hR
 
 Rhombohedral lattice is described by the class :py:class:`.RHL`.
 

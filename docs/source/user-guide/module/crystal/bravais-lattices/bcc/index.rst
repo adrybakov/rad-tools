@@ -1,8 +1,10 @@
 .. _lattice-bcc:
 
-*****************************
-Body-centered cubic (BCC, cI)
-*****************************
+*************************
+Body-centered cubic (BCC)
+*************************
+
+**Pearson symbol**: cI
 
 Body-centered cubic lattice is described by the class :py:class:`.BCC`.
 

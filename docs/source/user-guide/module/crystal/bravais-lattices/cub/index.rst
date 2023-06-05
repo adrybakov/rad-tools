@@ -1,8 +1,10 @@
 .. _lattice-cub:
 
-***************
-Cubic (CUB, cP)
-***************
+***********
+Cubic (CUB)
+***********
+
+**Pearson symbol**: cP
 
 Cubic lattice is described by the class :py:class:`.CUB`.
 

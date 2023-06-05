@@ -1,8 +1,10 @@
 .. _lattice-mcl:
 
-********************
-Monoclinic (MCL, mP)
-********************
+****************
+Monoclinic (MCL)
+****************
+
+**Pearson symbol**: mP
 
 Monoclinic lattice is described by the class :py:class:`.MCL`.
 

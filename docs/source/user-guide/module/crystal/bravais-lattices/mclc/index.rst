@@ -1,8 +1,10 @@
 .. _lattice-mclc:
 
-**********************************
-Base-centred monoclinic (MCLC, mS)
-**********************************
+******************************
+Base-centred monoclinic (MCLC)
+******************************
+
+**Pearson symbol**: mS
 
 Base-centered monoclinic lattice is described by the class :py:class:`.MCLC`.
 

@@ -1,8 +1,10 @@
 .. _lattice-orcc:
 
-************************************
-Base-centred orthorhombic (ORCC, oS)
-************************************
+********************************
+Base-centred orthorhombic (ORCC)
+********************************
+
+**Pearson symbol**: oS
 
 Base-centered orthorombic lattice is described by the class :py:class:`.ORCC`.
 

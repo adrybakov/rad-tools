@@ -1,8 +1,10 @@
 .. _lattice-orci:
 
-************************************
-Body-centred orthorhombic (ORCI, oI)
-************************************
+********************************
+Body-centred orthorhombic (ORCI)
+********************************
+
+**Pearson symbol**: oI
 
 Body-centered orthorombic lattice is described by the class :py:class:`.ORCI`.
 
