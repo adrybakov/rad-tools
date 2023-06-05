@@ -21,7 +21,7 @@ with primitive and conventional lattice:
     \boldsymbol{a}_3 = (0, c\cos(\alpha), c\sin(\alpha))
 
 
-Order of parameters: :math:`a \le c`, :math:`b \le c`, :math:`\alpha < 90^{\circ}`.
+Order of parameters: :math:`b \le c`, :math:`\alpha < 90^{\circ}`.
 
 
 Variations

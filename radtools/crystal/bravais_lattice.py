@@ -1768,7 +1768,6 @@ class MCL(Lattice):
         else:
             eps = eps_rel * volume(a, b, c, alpha, 90, 90) ** (1 / 3.0)
             b, c = tuple(sorted([b, c]))
-            a, c = tuple(sorted([a, c]))
             if cos(alpha * _toradians) < -eps:
                 alpha = alpha - 90
             self.conv_a = a
@@ -1953,7 +1952,6 @@ class MCLC(Lattice):
         else:
             eps = eps_rel * volume(a, b, c, alpha, 90, 90) ** (1 / 3.0)
             b, c = tuple(sorted([b, c]))
-            a, c = tuple(sorted([a, c]))
             if cos(alpha * _toradians) < -eps:
                 alpha = alpha - 90
             self.conv_a = a
