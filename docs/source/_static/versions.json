@@ -2,21 +2,21 @@
     {
         "name": "v0.7 (stable)",
         "version": "0.7",
-        "url": "https://rad-tools.adrybakov.com/en/stable/"
+        "url": "https://rad-tools.org/en/stable/"
     },
     {
         "name": "dev",
         "version": "dev",
-        "url": "https://rad-tools.adrybakov.com/en/dev/"
+        "url": "https://rad-tools.org/en/dev/"
     },
     {
         "name": "v0.6",
         "version": "0.6",
-        "url": "https://rad-tools.adrybakov.com/en/0.6/"
+        "url": "https://rad-tools.org/en/0.6/"
     },
     {
         "name": "v0.5",
         "version": "0.5",
-        "url": "https://rad-tools.adrybakov.com/en/0.5/"
+        "url": "https://rad-tools.org/en/0.5/"
     }
 ]

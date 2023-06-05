@@ -95,7 +95,7 @@ html_theme_options = {
     "navbar_end": ["theme-switcher", "navbar-icon-links"],
     "switcher": {
         "version_match": switcher_version,
-        "json_url": "https://rad-tools.adrybakov.com/en/stable/_static/versions.json",
+        "json_url": "https://rad-tools.org/en/stable/_static/versions.json",
     },
     "navbar_align": "left",
     "logo": {

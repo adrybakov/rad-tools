@@ -101,4 +101,4 @@ please give a credit to the developers by citing the package:
 
 .. code-block::
         
-    RAD-tools package, https://rad-tools.adrybakov.com/
+    RAD-tools package, https://rad-tools.org/
