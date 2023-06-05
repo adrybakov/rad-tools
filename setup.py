@@ -17,7 +17,7 @@ setup(
     author="Andrey Rybakov",
     author_email="rybakov.ad@icloud.com",
     license="MIT license",
-    url="https://rad-tools.adrybakov.com/en/stable/",
+    url="https://rad-tools.org/en/stable/",
     download_url="https://github.com/adrybakov/rad-tools.git",
     packages=find_packages(),
     scripts=[

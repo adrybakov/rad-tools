@@ -7,7 +7,7 @@ Various scripts for condense matter calculations and post-processing.
     :target: https://badge.fury.io/py/rad-tools
     
 .. image:: https://readthedocs.org/projects/rad-tools/badge/?version=stable
-    :target: https://rad-tools.adrybakov.com/en/stable/?badge=stable
+    :target: https://rad-tools.org/en/stable/?badge=stable
     :alt: Documentation Status
    
 .. image:: https://static.pepy.tech/personalized-badge/rad-tools?period=total&units=international_system&left_color=black&right_color=blue&left_text=Downloads
@@ -31,7 +31,7 @@ It is expected to be used in two ways:
 * Via scripts (i.e. usage from command line)
 
 For the detailed descriprion check
-`documentation. <https://rad-tools.adrybakov.com>`_
+`documentation. <https://rad-tools.org>`_
 
 Installation
 ============
