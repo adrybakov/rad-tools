@@ -952,10 +952,18 @@ class ORCF(Lattice):
                 raise CellTypeMismatch(
                     "ORCF", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
                 )
-            self.conv_cell = np.diag([a, b, c])
+            self.conv_cell = np.diag([self.conv_a, self.conv_b, self.conv_c])
         if self.variation == "ORCF1":
-            eta = (1 + a**2 / b**2 + a**2 / c**2) / 4
-            zeta = (1 + a**2 / b**2 - a**2 / c**2) / 4
+            eta = (
+                1
+                + self.conv_a**2 / self.conv_b**2
+                + self.conv_a**2 / self.conv_c**2
+            ) / 4
+            zeta = (
+                1
+                + self.conv_a**2 / self.conv_b**2
+                - self.conv_a**2 / self.conv_c**2
+            ) / 4
             self.points = {
                 "G": np.array([0, 0, 0]),
                 "A": np.array([1 / 2, 1 / 2 + zeta, zeta]),
@@ -975,9 +983,21 @@ class ORCF(Lattice):
                 ["L", "G"],
             ]
         elif self.variation == "ORCF2":
-            eta = (1 + a**2 / b**2 - a**2 / c**2) / 4
-            delta = (1 + b**2 / a**2 - b**2 / c**2) / 4
-            phi = (1 + c**2 / b**2 - c**2 / a**2) / 4
+            eta = (
+                1
+                + self.conv_a**2 / self.conv_b**2
+                - self.conv_a**2 / self.conv_c**2
+            ) / 4
+            delta = (
+                1
+                + self.conv_b**2 / self.conv_a**2
+                - self.conv_b**2 / self.conv_c**2
+            ) / 4
+            phi = (
+                1
+                + self.conv_c**2 / self.conv_b**2
+                - self.conv_c**2 / self.conv_a**2
+            ) / 4
 
             self.points = {
                 "G": np.array([0, 0, 0]),
@@ -1001,8 +1021,16 @@ class ORCF(Lattice):
                 ["L", "G"],
             ]
         elif self.variation == "ORCF3":
-            eta = (1 + a**2 / b**2 + a**2 / c**2) / 4
-            zeta = (1 + a**2 / b**2 - a**2 / c**2) / 4
+            eta = (
+                1
+                + self.conv_a**2 / self.conv_b**2
+                + self.conv_a**2 / self.conv_c**2
+            ) / 4
+            zeta = (
+                1
+                + self.conv_a**2 / self.conv_b**2
+                - self.conv_a**2 / self.conv_c**2
+            ) / 4
 
             self.points = {
                 "G": np.array([0, 0, 0]),
@@ -1120,7 +1148,7 @@ class ORCI(Lattice):
     _pearson_symbol = "oI"
 
     def __init__(
-        self, a: float = None, b: float = None, c: float = None, cell=None, eps_rel=1e-5
+        self, a: float = None, b: float = None, c: float = None, cell=None, eps_rel=1e-4
     ) -> None:
         if (a is None or b is None or c is None) and cell is None:
             raise NotEnoughParameters("ORCI", [("a", a), ("b", b), ("c", c)])
@@ -1165,12 +1193,12 @@ class ORCI(Lattice):
                 raise CellTypeMismatch(
                     "ORCI", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
                 )
-            self.conv_cell = np.diag([a, b, c])
+            self.conv_cell = np.diag([self.conv_a, self.conv_b, self.conv_c])
 
-        zeta = (1 + a**2 / c**2) / 4
-        eta = (1 + b**2 / c**2) / 4
-        delta = (b**2 - a**2) / (4 * c**2)
-        mu = (a**2 + b**2) / (4 * c**2)
+        zeta = (1 + self.conv_a**2 / self.conv_c**2) / 4
+        eta = (1 + self.conv_b**2 / self.conv_c**2) / 4
+        delta = (self.conv_b**2 - self.conv_a**2) / (4 * self.conv_c**2)
+        mu = (self.conv_a**2 + self.conv_b**2) / (4 * self.conv_c**2)
 
         self.points = {
             "G": np.array([0, 0, 0]),
@@ -1318,9 +1346,9 @@ class ORCC(Lattice):
                 raise CellTypeMismatch(
                     "ORCC", eps_rel, a, b, c, alpha, beta, gamma, lattice_type
                 )
-            self.conv_cell = np.diag([a, b, c])
+            self.conv_cell = np.diag([self.conv_a, self.conv_b, self.conv_c])
 
-        zeta = (1 + a**2 / b**2) / 4
+        zeta = (1 + self.conv_a**2 / self.conv_b**2) / 4
 
         self.points = {
             "G": np.array([0, 0, 0]),
@@ -2537,15 +2565,15 @@ def lattice_example(
     elif lattice == "orc":
         return ORC(pi, 1.5 * pi, 2 * pi)
     elif lattice in ["orcf1", "orcf"]:
-        return ORCF(0.9 * pi, 5 / 4 * pi, 5 / 3 * pi)
+        return ORCF(0.7 * pi, 5 / 4 * pi, 5 / 3 * pi)
     elif lattice == "orcf2":
-        return ORCF(1.1 * pi, 5 / 4 * pi, 5 / 3 * pi)
+        return ORCF(1.2 * pi, 5 / 4 * pi, 5 / 3 * pi)
     elif lattice == "orcf3":
         return ORCF(pi, 5 / 4 * pi, 5 / 3 * pi)
     elif lattice == "orci":
-        return ORCI(pi, 2 * pi, 3 * pi)
+        return ORCI(pi, 1.3 * pi, 1.7 * pi)
     elif lattice == "orcc":
-        return ORCC(pi, 2 * pi, 3 * pi)
+        return ORCC(pi, 1.3 * pi, 1.7 * pi)
     elif lattice == "hex":
         return HEX(pi, 2 * pi)
     elif lattice in ["rhl1", "rhl"]:

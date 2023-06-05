@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 
 
 def plot(output_path="."):
-    lattices = rad.lattice_example()
     elev = {
         "CUB": [28, 28, 28],
         "FCC": [23, 28, 46],
@@ -14,6 +13,11 @@ def plot(output_path="."):
         "BCT1": [30, 37, 26],
         "BCT2": [36, 40, 41],
         "ORC": [35, 36, 20],
+        "ORCF1": [21, 24, 44],
+        "ORCF2": [15, 25, 38],
+        "ORCF3": [25, 27, 23],
+        "ORCI": [35, 32, 30],
+        "ORCC": [22, 39, 33],
     }
     azim = {
         "CUB": [23, 23, 23],
@@ -23,6 +27,11 @@ def plot(output_path="."):
         "BCT1": [28, 72, 59],
         "BCT2": [28, 85, 59],
         "ORC": [34, 35, 30],
+        "ORCF1": [49, 38, 28],
+        "ORCF2": [36, 28, 14],
+        "ORCF3": [62, 36, 38],
+        "ORCI": [23, -12, 12],
+        "ORCC": [57, 15, -40],
     }
 
     wtps = {
@@ -57,6 +66,31 @@ def plot(output_path="."):
             ["primitive"],
             ["wigner-seitz"],
         ],
+        "ORCF1": [
+            ["brillouin-kpath"],
+            ["primitive", "conventional"],
+            ["wigner-seitz"],
+        ],
+        "ORCF2": [
+            ["brillouin-kpath"],
+            ["primitive", "conventional"],
+            ["wigner-seitz"],
+        ],
+        "ORCF3": [
+            ["brillouin-kpath"],
+            ["primitive", "conventional"],
+            ["wigner-seitz"],
+        ],
+        "ORCI": [
+            ["brillouin-kpath"],
+            ["primitive", "conventional"],
+            ["wigner-seitz"],
+        ],
+        "ORCC": [
+            ["brillouin-kpath"],
+            ["primitive", "conventional"],
+            ["wigner-seitz"],
+        ],
     }
     names = {
         "CUB": ["brillouin", "real", "wigner-seitz"],
@@ -66,9 +100,14 @@ def plot(output_path="."):
         "BCT1": ["brillouin", "real", "wigner-seitz"],
         "BCT2": ["brillouin", "real", "wigner-seitz"],
         "ORC": ["brillouin", "real", "wigner-seitz"],
+        "ORCF1": ["brillouin", "real", "wigner-seitz"],
+        "ORCF2": ["brillouin", "real", "wigner-seitz"],
+        "ORCF3": ["brillouin", "real", "wigner-seitz"],
+        "ORCI": ["brillouin", "real", "wigner-seitz"],
+        "ORCC": ["brillouin", "real", "wigner-seitz"],
     }
 
-    for i, name in enumerate(lattices[:7]):
+    for i, name in enumerate(names):
         output_subname = (
             name.replace("1", "")
             .replace("2", "")

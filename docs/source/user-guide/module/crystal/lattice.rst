@@ -85,9 +85,9 @@ Predefined examples: ``orc``, ``orcf1``, ``orcf2``, ``orcf3``, ``orci``, ``orcc`
     :maxdepth: 1
     
     bravais-lattices/orc/index
-    orcf
-    orci
-    orcc
+    bravais-lattices/orcf/index
+    bravais-lattices/orci/index
+    bravais-lattices/orcc/index
 
 Hexagonal lattice system
 ------------------------
