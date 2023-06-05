@@ -1,12 +1,12 @@
-.. _rad-tools_exchange:
+.. _api_exchange:
 
-***********************
-Exchange postprocessing
-***********************
+********************
+Exchange Hamiltonian
+********************
 
-.. automodule:: rad_tools.exchange
+.. automodule:: radtools.exchange
 
-.. currentmodule:: rad_tools
+.. currentmodule:: radtools
 
 Classes
 =======
@@ -14,7 +14,7 @@ Classes
 .. autosummary::
     :toctree: generated/
 
-    Bond
-    ExchangeModel
+    ExchangeParameter
+    ExchangeHamiltonian
     ExchangeTemplate
     

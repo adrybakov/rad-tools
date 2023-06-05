@@ -1,12 +1,12 @@
-.. _rad-tools_dos:
+.. _api_dos:
 
 *******************************
 Density of state postprocessing
 *******************************
 
-.. automodule:: rad_tools.dos
+.. automodule:: radtools.dos
 
-.. currentmodule:: rad_tools
+.. currentmodule:: radtools
 
 Classes
 =======

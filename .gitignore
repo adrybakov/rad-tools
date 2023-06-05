@@ -19,3 +19,4 @@ tmp.py
 docs/make.bat
 docs/build
 docs/source/api/generated
+*generated

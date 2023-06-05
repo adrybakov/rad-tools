@@ -6,4 +6,4 @@
 
 member
 
-.. auto{{ objtype }}:: {{ fullname | replace("rad_tools.", "rad_tools::") }}
+.. auto{{ objtype }}:: {{ fullname | replace("radtools.", "radtools::") }}

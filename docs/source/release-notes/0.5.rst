@@ -7,15 +7,15 @@ Version 0.5
 Whats new?
 ----------
 Rewrite the internals of the 
-:py:class:`.ExchangeModel`.
+:py:class:`.ExchangeHamiltonian`.
 
 The idea is to allow one to modify the model with respect to the expected 
-symmetry and desired accuracy of the parameters. Furthermore, :py:class:`.ExchangeModel`
+symmetry and desired accuracy of the parameters. Furthermore, :py:class:`.ExchangeHamiltonian`
 is iterable, support index access and ``in`` function.
 
 The distances of the bonds are not directly read from the TB2J exchange file, but computed based on the atoms's positions.
 
-:doc:`Bond <../api/generated/rad_tools.Bond>` class does 
+:doc:`Bond <../api/generated/radtools.ExchangeParameter>` class does 
 not contain information about the distance. 
 
 When exchange model is read from the TB2J exchange file the order of bonds is 
@@ -52,7 +52,7 @@ create only two modes of outputs.
 
 0.5.7
 -----
-Add :py:meth:`.ferromagnetic_energy` method to the :py:class:`.ExchangeModel`
+Add :py:meth:`.ferromagnetic_energy` method to the :py:class:`.ExchangeHamiltonian`
 
 Full remake of :ref:`rad-plot-dos.py <rad-plot-dos>` script.
 
@@ -89,8 +89,8 @@ Add version of the package to the information header of the output files.
 
 0.5.16
 ------
-Add :py:meth:`.remove` method to the 
-:py:class:`.ExchangeModel`
+Add :py:meth:`ExchangeHamiltonian.remove` method to the 
+:py:class:`.ExchangeHamiltonian`
 
 0.5.17
 ------

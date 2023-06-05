@@ -1,4 +1,4 @@
-Template is created on 13 May 2023 at 3:32:16 by rad-tools 0.6.0
+Template is created on 6 June 2023 at 1:18:44 by rad-tools 0.7.dev
 
 ====================
 Neighbors template:

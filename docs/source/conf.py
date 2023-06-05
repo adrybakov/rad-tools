@@ -1,7 +1,7 @@
 import sys
 from os.path import abspath
 
-from rad_tools import __version__
+from radtools import __version__
 
 sys.path.insert(0, abspath(".."))
 
@@ -89,22 +89,41 @@ else:
     major, minor, rest = version.split(".")[0:3]
     switcher_version = f"{major}.{minor}"
 html_theme_options = {
-    "github_url": "https://github.com/adrybakov/rad-tools",
-    "twitter_url": "https://twitter.com/adrybakov",
     "collapse_navigation": True,
     "use_edit_page_button": True,
-    "navbar_end": ["theme-switcher.html", "version-switcher", "navbar-icon-links.html"],
+    "navbar_center": ["version-switcher", "navbar-nav"],
+    "navbar_end": ["theme-switcher", "navbar-icon-links"],
     "switcher": {
         "version_match": switcher_version,
         "json_url": "https://rad-tools.org/en/stable/_static/versions.json",
     },
-    "navbar_align": "content",
+    "navbar_align": "left",
     "logo": {
         "image_light": "_static/logo_black.png",
         "image_dark": "_static/logo_white.png",
     },
-    "icon_links": [],  # pydata bugfix
+    "header_links_before_dropdown": 4,
+    "icon_links": [
+        {
+            "name": "Twitter",
+            "url": "https://twitter.com/adrybakov",
+            "icon": "fa-brands fa-twitter",
+        },
+        {
+            "name": "GitHub",
+            "url": "https://github.com/adrybakov/rad-tools",
+            "icon": "fa-brands fa-github",
+        },
+        {
+            "name": "PyPI",
+            "url": "https://pypi.org/project/rad-tools/",
+            "icon": "fa-custom fa-pypi",
+        },
+    ],
 }
+
+# fix problem with autosummary and numpydoc:
+numpydoc_show_class_members = False
 
 
 # html_sidebars = {"**": ["search-field.html", "sidebar-nav-bs", "sidebar-ethical-ads"]}
@@ -146,8 +165,10 @@ custom_links = {
     "Wannier90": ("Wannier90", "http://www.wannier.org/"),
     "Python": ("Python", "https://python.org"),
     "NumPy": ("NumPy", "https://numpy.org/"),
+    "SciPy": ("SciPy", "https://scipy.org/"),
     "matplotlib": ("matplotlib", "https://matplotlib.org/"),
     "tqdm": ("tqdm", "https://tqdm.github.io/"),
+    "termcolor": ("termcolor", "https://pypi.org/project/termcolor/"),
     "Python-installation": (
         "Python installation",
         "https://wiki.python.org/moin/BeginnersGuide/Download",
@@ -160,6 +181,27 @@ custom_links = {
         "https://numpy.org/doc/stable/glossary.html#term-array_like",
     ),
     "termcolor": ("termcolor", "https://github.com/termcolor/termcolor"),
+    "PearsonSymbol": ("Pearson symbol", "https://en.wikipedia.org/wiki/Pearson_symbol"),
+    "matplotlibFocalLength": (
+        "3D plot projection types",
+        "https://matplotlib.org/stable/gallery/mplot3d/projections.html",
+    ),
+    "matplotlibSavefig": (
+        "plt.savefig()",
+        "https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html",
+    ),
+    "matplotlibViewInit": (
+        "view_init",
+        "https://matplotlib.org/stable/api/_as_gen/mpl_toolkits.mplot3d.axes3d.Axes3D.view_init.html",
+    ),
+    "matplotlibLegend": (
+        "legend()",
+        "https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html",
+    ),
+    "matplotlibColor": (
+        "matplotlib colors",
+        "https://matplotlib.org/stable/tutorials/colors/colors.html",
+    ),
 }
 
 

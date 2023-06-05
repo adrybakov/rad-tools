@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-from rad_tools import __version__
+from radtools import __version__
 
 __version__ = __version__
 
@@ -29,7 +29,7 @@ setup(
         "scripts/rad-identify-wannier-centres.py",
         "scripts/compute-energies.py",
     ],
-    install_requires=["numpy", "matplotlib", "tqdm", "termcolor"],
+    install_requires=["numpy", "matplotlib", "scipy", "tqdm", "termcolor"],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Programming Language :: Python :: 3",

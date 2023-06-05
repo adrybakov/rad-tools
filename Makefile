@@ -25,17 +25,23 @@ doctest:
 clean:
 	-@rm -r docs/build
 	-@rm -r docs/source/api/generated
+	-@rm -r docs/source/api/crystal/generated
 	-@rm -r docs/source/api/_autosummary
 	-@rm -r rad_tools.egg-info
 	-@rm -r build
 	-@rm -r dist
 
-test:
-	@pip3 install . --upgrade
-	@pip3 install pytest
-	@pytest -s
+test: 
+	-@pytest -s
 
-VERSION := $(shell grep __version__ rad_tools/__init__.py | tr -d 'a-zA-Z =_":')
+install:
+	@pip install .
+
+test-all: install test html doctest
+	@echo "Done"
+
+
+VERSION := $(shell grep __version__ radtools/__init__.py | tr -d 'a-zA-Z =_":')
 .ONESHELL:
 check-pip:
 #	@echo "\x1b[33m"
@@ -45,7 +51,7 @@ check-pip:
 	@echo "Have you done this?"
 	@echo "  * Change version in __init__.py?"
 	@echo "\x1b[0m"
-	@grep "__version__" rad_tools/__init__.py
+	@grep "__version__" radtools/__init__.py
 	@echo "\x1b[33m"
 	@echo "  * Release note?"
 	@echo "  * Commit all the changes?"
@@ -71,7 +77,7 @@ pip: check-pip
 	@read -p "Press Enter if yes:"
 	-@rm -r dist
 	-@rm -r build
-	-@rm -r rad_tools.egg-info
+	-@rm -r radtools.egg-info
 	@python3 setup.py sdist bdist_wheel 
 	@python3 -m twine upload --repository pypi dist/* --verbose
 	@git tag -a "$(VERSION)" -m "Version $(VERSION)"
@@ -107,6 +113,9 @@ examples:
 	@rad-plot-tb2j.py -if docs/examples/rad-plot-tb2j/exchange.out -op docs/examples/rad-plot-tb2j/  -on exchange_R -wtp iso -R 1 0 0 1 1 0 0 1 0 -1 0 0 -1 -1 0 0 -1 0 -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange"
 	@rad-extract-tb2j.py -if docs/examples/rad-extract-tb2j/exchange.out -tf docs/examples/rad-extract-tb2j/template.txt -op docs/examples/rad-extract-tb2j/ -on summary_forced_symmetry -all -fs
 	@rad-extract-tb2j.py -if docs/examples/rad-extract-tb2j/exchange.out -tf docs/examples/rad-extract-tb2j/template.txt -op docs/examples/rad-extract-tb2j/ -on summary -all
+
+pictures:
+	@python3 docs/source/user-guide/module/crystal/bravais-lattices/plot_all.py -op docs/source/user-guide/module/crystal/bravais-lattices/
 
 push: examples
 	@git push
