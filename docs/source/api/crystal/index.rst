@@ -44,8 +44,8 @@ Identification routines
     niggli
     lepage
 
-Functions for obtaining Bravais lattices
-========================================
+Bravais lattice generation
+==========================
 
 .. autosummary::
     :toctree: generated/

@@ -9,7 +9,7 @@ Lattice
 
 
 .. autosummary::
-    :toctree: ../generated/
+    :toctree: generated/
 
     Lattice
 

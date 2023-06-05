@@ -10,6 +10,6 @@ Crystal
 
 
 .. autosummary::
-    :toctree: ../generated/
+    :toctree: generated/
 
     Crystal

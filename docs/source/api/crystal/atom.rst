@@ -7,7 +7,7 @@ Atom
 .. currentmodule:: radtools
 
 .. autosummary::
-    :toctree: ../generated/
+    :toctree: generated/
 
     Atom
 
@@ -30,4 +30,3 @@ Properties
     Atom.spin_vector
     Atom.magmom
     Atom.charge
-    Atom.position
