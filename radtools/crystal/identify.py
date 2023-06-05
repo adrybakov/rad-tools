@@ -321,7 +321,7 @@ def check_hex(angles: np.ndarray, eps):
             [0, 30, 30, 60, 60, 90, 90],
         ]
     )
-
+    angles = angles[:7]
     if 7 <= angles.shape[0]:
         indices = get_permutation(angles.shape[0], 7)
         for index in indices:
@@ -350,6 +350,7 @@ def check_tet(angles: np.ndarray, axes: np.ndarray, eps, cell):
 
     axes = np.array([i[0] for i in axes])
 
+    angles = angles[:5]
     if 5 <= angles.shape[0]:
         indices = get_permutation(angles.shape[0], 5)
         for index in indices:
@@ -388,6 +389,7 @@ def check_rhl(angles: np.ndarray, eps):
         ]
     )
 
+    angles = angles[:3]
     if 3 <= angles.shape[0]:
         indices = get_permutation(angles.shape[0], 3)
         for index in indices:
@@ -410,6 +412,7 @@ def check_orc(angles: np.ndarray, axes: np.ndarray, eps):
         ]
     )
 
+    angles = angles[:3]
     axes = np.array([i[0] for i in axes])
     if 3 <= angles.shape[0]:
         indices = get_permutation(angles.shape[0], 3)
@@ -465,6 +468,7 @@ def get_perpendicular_shortest(v, cell, eps):
 
 def check_mcl(angles: np.ndarray, axes: np.ndarray, eps, cell):
     axes = np.array([i[0] for i in axes])
+    angles = angles[:1]
     if 1 <= angles.shape[0]:
         indices = get_permutation(angles.shape[0], 1)
         for index in indices:
@@ -715,7 +719,7 @@ if __name__ == "__main__":
             90.0,
             90.0,
             119.99501387877993,
-            eps_rel=1e-3,
+            very_verbose=True,
         )
     )
     # from radtools.crystal.bravais_lattice import lattice_example
