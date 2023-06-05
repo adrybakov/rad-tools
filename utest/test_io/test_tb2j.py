@@ -7,7 +7,7 @@ from radtools.io import read_template
 from radtools.io.tb2j import *
 
 
-class TestReadExchangeModel:
+class TestReadExchangeHamiltonian:
     model = read_tb2j_model(
         os.path.join("utest", "test_io", "resources", "exchange.out")
     )

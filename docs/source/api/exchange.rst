@@ -15,6 +15,6 @@ Classes
     :toctree: generated/
 
     ExchangeParameter
-    ExchangeModel
+    ExchangeHamiltonian
     ExchangeTemplate
     

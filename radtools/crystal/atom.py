@@ -35,7 +35,7 @@ class Atom:
     index : int, optional
         Custom index of an atom, used differently in different scenarios.
         Meant to be unique, when an atom belongs to some group
-        (i.e. to :py:class:`.Crystal` or :py:class:`.ExchangeModel`).
+        (i.e. to :py:class:`.Crystal` or :py:class:`.ExchangeHamiltonian`).
 
     Attributes
     ----------

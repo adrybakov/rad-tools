@@ -5,11 +5,11 @@ Input-output from |TB2J|_.
 import numpy as np
 
 from radtools.crystal.atom import Atom
-from radtools.exchange.model import ExchangeModel
+from radtools.exchange.model import ExchangeHamiltonian
 from radtools.exchange.parameter import ExchangeParameter
 
 
-def read_tb2j_model(filename, quiet=True) -> ExchangeModel:
+def read_tb2j_model(filename, quiet=True) -> ExchangeHamiltonian:
     r"""
     Read exchange model from |TB2J|_ output file.
 
@@ -22,8 +22,8 @@ def read_tb2j_model(filename, quiet=True) -> ExchangeModel:
 
     where spin vectors :math:`\boldsymbol{S}_i` are normalized to 1
     and double counting is present (both :math:`ij` and :math:`ji` are in the sum).
-    :py:class:`.ExchangeModel` can store exchange values in any notation.
-    One could check the notation by calling the attribute :py:func:`.ExchangeModel.notation`.
+    :py:class:`.ExchangeHamiltonian` can store exchange values in any notation.
+    One could check the notation by calling the attribute :py:func:`.ExchangeHamiltonian.notation`.
     This function reads and stores exchange parameters in the notation of Hamiltonian
     mentioned above, since for the conversion to the non-normalized spins one need to
     know the values of spin for each atom and those data are not present in the |TB2J|_
@@ -39,7 +39,7 @@ def read_tb2j_model(filename, quiet=True) -> ExchangeModel:
 
     Returns
     -------
-    model : :py:class:`.ExchangeModel`
+    model : :py:class:`.ExchangeHamiltonian`
         Exchange model build from |TB2J|_ file.
     """
 
@@ -58,7 +58,7 @@ def read_tb2j_model(filename, quiet=True) -> ExchangeModel:
     dmi_flag = "DMI:"
 
     file = open(filename, "r")
-    model = ExchangeModel(notation="TB2J")
+    model = ExchangeHamiltonian(notation="TB2J")
     line = True
 
     # Read everything before exchange
@@ -143,7 +143,7 @@ def read_tb2j_model(filename, quiet=True) -> ExchangeModel:
             if line and dmi_flag in line:
                 dmi = tuple(map(float, line.translate(garbage).split()[-3:]))
 
-        # Adding info from the exchange block to the ExchangeModel structure
+        # Adding info from the exchange block to the ExchangeHamiltonian structure
         bond = ExchangeParameter(iso=iso, aniso=aniso, dmi=dmi)
         model.add_bond(bond, atom1, atom2, R)
         computed_distance = model.crystal.get_distance(atom1, atom2, R)

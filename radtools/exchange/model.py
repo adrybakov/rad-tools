@@ -35,14 +35,14 @@ class NotationError(ValueError):
         self.message = (
             f"\n\nNotation`s interpretation is not set for the model ({hr_name}).\n"
             + f"Set the notation first:\n"
-            + f"    ExchangeModel.{name} = True  "
-            + f"or  ExchangeModel.{name} = False\n\n"
+            + f"    ExchangeHamiltonian.{name} = True  "
+            + f"or  ExchangeHamiltonian.{name} = False\n\n"
             + f"Note: When the attribute is set for the first time it sets the interpretation, "
             + "afterwards it change the notation.\n\n"
             + f"If you want to set the interpretation again, use \n"
-            + f"    ExchangeModel.set_interpretation({name} = True)"
+            + f"    ExchangeHamiltonian.set_interpretation({name} = True)"
             + "\nor\n"
-            + f"    ExchangeModel.set_interpretation({name} = False)\n"
+            + f"    ExchangeHamiltonian.set_interpretation({name} = False)\n"
         )
 
     def __str__(self):
@@ -50,7 +50,7 @@ class NotationError(ValueError):
 
 
 # TODO Write symmetry constrains
-class ExchangeModel:
+class ExchangeHamiltonian:
     r"""
     Exchange Hamiltonian.
 
@@ -179,7 +179,7 @@ class ExchangeModel:
         .. doctest::
 
             >>> import radtools as rad
-            >>> model = rad.ExchangeModel()
+            >>> model = rad.ExchangeHamiltonian()
             >>> model.notation = "standard"
             >>> model.notation
             H = -sum_{i,j} S_i J_ij S_j
@@ -204,7 +204,7 @@ class ExchangeModel:
         .. doctest::
 
             >>> import radtools as rad
-            >>> model = rad.ExchangeModel()
+            >>> model = rad.ExchangeHamiltonian()
             >>> Cr = rad.Atom("Cr", spin=1.5)
             >>> model.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
             >>> model[Cr, Cr, (1, 0, 0)].iso
@@ -231,7 +231,7 @@ class ExchangeModel:
         .. doctest::
 
             >>> import radtools as rad
-            >>> model = rad.ExchangeModel()
+            >>> model = rad.ExchangeHamiltonian()
             >>> Cr = rad.Atom("Cr", spin=1.5)
             >>> model.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
             >>> model[Cr, Cr, (1, 0, 0)].iso
@@ -252,7 +252,7 @@ class ExchangeModel:
         .. doctest::
 
             >>> import radtools as rad
-            >>> model = rad.ExchangeModel()
+            >>> model = rad.ExchangeHamiltonian()
             >>> Cr = rad.Atom("Cr", spin=1.5)
             >>> model.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
             >>> model[Cr, Cr, (1, 0, 0)].iso
@@ -589,7 +589,7 @@ class ExchangeModel:
         self._minus_sign = bool(new_value)
 
     def __iter__(self):
-        return ExchangeModelIterator(self)
+        return ExchangeHamiltonianIterator(self)
 
     def __contains__(self, key):
         return key in self.bonds
@@ -696,7 +696,7 @@ class ExchangeModel:
             >>> import radtools as rad
             >>> Cr = rad.Atom("Cr")
             >>> J = rad.ExchangeParameter(iso=1)
-            >>> model = rad.ExchangeModel(rad.Crystal())
+            >>> model = rad.ExchangeHamiltonian(rad.Crystal())
             >>> model[Cr, Cr, (1,0,0)] = J
             >>> (Cr, Cr, (1,0,0)) in model
             True
@@ -708,7 +708,7 @@ class ExchangeModel:
             >>> import radtools as rad
             >>> Cr = rad.Atom("Cr")
             >>> J = rad.ExchangeParameter(iso=1)
-            >>> model = rad.ExchangeModel(rad.Crystal())
+            >>> model = rad.ExchangeHamiltonian(rad.Crystal())
             >>> model.add_bond(J, Cr, Cr, (1,0,0))
             >>> (Cr, Cr, (1,0,0)) in model
             True
@@ -747,7 +747,7 @@ class ExchangeModel:
             >>> import radtools as rad
             >>> Cr = rad.Atom("Cr")
             >>> J = rad.ExchangeParameter(iso=1)
-            >>> model = rad.ExchangeModel(rad.Crystal())
+            >>> model = rad.ExchangeHamiltonian(rad.Crystal())
             >>> model[Cr, Cr, (1,0,0)] = J
             >>> (Cr, Cr, (1,0,0)) in model
             True
@@ -763,7 +763,7 @@ class ExchangeModel:
             >>> import radtools as rad
             >>> Cr = rad.Atom("Cr")
             >>> J = rad.ExchangeParameter(iso=1)
-            >>> model = rad.ExchangeModel(rad.Crystal())
+            >>> model = rad.ExchangeHamiltonian(rad.Crystal())
             >>> model[Cr, Cr, (1,0,0)] = J
             >>> (Cr, Cr, (1,0,0)) in model
             True
@@ -924,7 +924,7 @@ class ExchangeModel:
 
         Returns
         -------
-        filtered_model : :py:class:`.ExchangeModel`
+        filtered_model : :py:class:`.ExchangeHamiltonian`
             Exchange model after filtering.
 
         See Also
@@ -1010,7 +1010,7 @@ class ExchangeModel:
 
         Returns
         -------
-        new_model : :py:class:`.ExchangeModel`
+        new_model : :py:class:`.ExchangeHamiltonian`
             Exchange model with forced symmetry.
 
         See Also
@@ -1341,8 +1341,8 @@ class ExchangeModel:
         return self.crystal.get_distance(atom1, atom2, R)
 
 
-class ExchangeModelIterator:
-    def __init__(self, exchange_model: ExchangeModel) -> None:
+class ExchangeHamiltonianIterator:
+    def __init__(self, exchange_model: ExchangeHamiltonian) -> None:
         self._bonds = list(
             map(
                 lambda x: (x[0], x[1], x[2], exchange_model.bonds[x]),

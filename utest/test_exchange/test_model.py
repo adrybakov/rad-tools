@@ -4,14 +4,14 @@ import numpy as np
 import pytest
 
 from radtools.crystal.atom import Atom
-from radtools.exchange.model import ExchangeModel, NotationError
+from radtools.exchange.model import ExchangeHamiltonian, NotationError
 from radtools.exchange.parameter import ExchangeParameter
 from radtools.exchange.template import ExchangeTemplate
 
 
-class TestExchangeModel:
+class TestExchangeHamiltonian:
     def test_iteration(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         Cr1 = Atom("Cr1", (0.25, 0.25, 0))
         Cr2 = Atom("Cr2", (0.75, 0.75, 0))
         model.add_atom(Cr1)
@@ -39,7 +39,7 @@ class TestExchangeModel:
             assert J == ExchangeParameter(iso=bonds[i][0])
 
     def test_contains(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         Cr1 = Atom("Cr1", (0.25, 0.25, 0))
         Cr2 = Atom("Cr2", (0.75, 0.75, 0))
         model.add_atom(Cr1)
@@ -66,7 +66,7 @@ class TestExchangeModel:
         assert (Cr1, Cr2, (0, 8, 0)) not in model
 
     def test_getitem(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         Cr1 = Atom("Cr1", (0.25, 0.25, 0))
         Cr2 = Atom("Cr2", (0.75, 0.75, 0))
         model.add_atom(Cr1)
@@ -94,12 +94,12 @@ class TestExchangeModel:
             assert model[(Cr1, Cr2, (0, 8, 0))].iso == 12
 
     def test_cell_error(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         with pytest.raises(ValueError):
             model.cell = [3, 4, 5]
 
     def test_abc(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         model.cell = [[1, 2, 3], [0, 1, 0], [0, 0, 1]]
         assert (model.a == np.array([1, 2, 3])).all()
         assert (model.b == np.array([0, 1, 0])).all()
@@ -119,14 +119,14 @@ class TestExchangeModel:
         assert (model.cell == np.array([[2, 5, 3], [7, 3, 1], [8, 4, 9]])).all()
 
     def test_len_abc(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         model.cell = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
         assert model.len_a == sqrt(14)
         assert model.len_b == sqrt(77)
         assert model.len_c == sqrt(194)
 
     def test_unit_cell_volume(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         model.cell = [[1, 2, 3], [4, 5, 6], [7, 8, 8]]
         assert model.unit_cell_volume == np.dot(
             np.array([1, 2, 3]), np.cross(np.array([4, 5, 6]), np.array([7, 8, 8]))
@@ -151,7 +151,7 @@ class TestExchangeModel:
         ],
     )
     def test_len_abc_and_volume(self, a, b, c, A, B, C, volume):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         model.cell = np.array([a, b, c], dtype=float)
         assert A == round(model.len_a, 4)
         assert B == round(model.len_b, 4)
@@ -159,7 +159,7 @@ class TestExchangeModel:
         assert volume == round(model.unit_cell_volume, 4)
 
     def test_b123(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         a = [1, 2, 3]
         b = [4, 5, 6]
         c = [7, 8, 8]
@@ -169,7 +169,7 @@ class TestExchangeModel:
         assert (model.b3 == 2 * pi / 3 * np.cross(a, b)).all()
 
     def test_cell_list(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         model.cell = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
         Cr1 = Atom("Cr1", (1, 6, 2))
         Cr2 = Atom("Cr2", (1, 3, 2))
@@ -188,7 +188,7 @@ class TestExchangeModel:
         Cr1 = Atom("Cr1", (1, 6, 2))
         Cr2 = Atom("Cr2", (1, 3, 5))
         Cr3 = Atom("Cr3", (1, 3, 3))
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         model.add_atom(Cr1)
         assert model.number_spins_in_unit_cell == 1
         model.add_atom(Cr2)
@@ -207,7 +207,7 @@ class TestExchangeModel:
         assert model.number_spins_in_unit_cell == 0
 
     def test_space_dimensions(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         model.cell = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
         Cr1 = Atom("Cr1", (1, 6, 2))
         Cr2 = Atom("Cr2", (1, 3, 5))
@@ -224,7 +224,7 @@ class TestExchangeModel:
         assert z_max == 5
 
     def test_add_bond(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         Cr1 = Atom("Cr1", (2, 5, 1))
         Cr2 = Atom("Cr2", (4, 2, 1))
         Cr3 = Atom("Cr3", (5, 1, 8))
@@ -247,7 +247,7 @@ class TestExchangeModel:
         assert (Cr1, Cr3, (0, 0, 0)) in model
 
     def test_remove_bond(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         Cr1 = Atom("Cr1", (2, 5, 1))
         Cr2 = Atom("Cr2", (4, 2, 1))
         Cr3 = Atom("Cr3", (5, 1, 8))
@@ -278,7 +278,7 @@ class TestExchangeModel:
         assert (Cr1, Cr3, (0, 0, 0)) in model
 
     def test_add_atom(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         assert len(model.magnetic_atoms) == 0
         Cr1 = Atom("Cr1", (2, 5, 1))
         model.add_atom(Cr1)
@@ -300,7 +300,7 @@ class TestExchangeModel:
         assert model.magnetic_atoms[1].position[2] == 1
 
     def test_remove_atom(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         Cr1 = Atom("Cr1", (2, 5, 1))
         Cr2 = Atom("Cr2", (4, 2, 1))
         Cr3 = Atom("Cr3", (5, 1, 8))
@@ -327,7 +327,7 @@ class TestExchangeModel:
         assert (Cr1, Cr3, (0, 0, 0)) not in model
 
     def test_get_atom_coordinates(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         model.cell = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
         Cr1 = Atom("Cr1", (1, 6, 2))
         model.add_atom(Cr1)
@@ -382,7 +382,7 @@ class TestExchangeModel:
         assert z == -2
 
     def test_get_bond_vector(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         model.cell = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
         Cr1 = Atom("Cr1", (1, 6, 2))
         Cr2 = Atom("Cr2", (1, 3, 4))
@@ -394,7 +394,7 @@ class TestExchangeModel:
         assert (vector == np.array([30, 17, -48])).all()
 
     def test_get_distance(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         model.cell = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
         Cr1 = Atom("Cr1", (1, 6, 2))
         Cr2 = Atom("Cr2", (1, 3, 4))
@@ -406,7 +406,7 @@ class TestExchangeModel:
         assert d == sqrt(900 + 17**2 + 48**2)
 
     def test_filter(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         Cr1 = Atom("Cr1", (0.25, 0.25, 0))
         Cr2 = Atom("Cr2", (0.75, 0.75, 0))
         bonds = [
@@ -492,7 +492,7 @@ class TestExchangeModel:
         template1 = ExchangeTemplate()
         template2 = ExchangeTemplate()
         template3 = ExchangeTemplate()
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         Cr1 = Atom("Cr1", (0.25, 0.25, 0))
         Cr2 = Atom("Cr2", (0.75, 0.75, 0))
         bonds = [
@@ -608,7 +608,7 @@ class TestExchangeModel:
         assert (Cr2, Cr2, (-1, 0, 0)) not in model
 
     def test_notation_manipulation(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         Cr = Atom("Cr", (0, 0, 0), spin=3 / 2)
         model[Cr, Cr, (1, 0, 0)] = ExchangeParameter(iso=1)
         assert model[Cr, Cr, (1, 0, 0)].iso == 1
@@ -672,7 +672,7 @@ class TestExchangeModel:
         assert model[Cr, Cr, (1, 0, 0)].iso == 9 / 4
 
     def test_predefined_notations(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         Cr = Atom("Cr", (0, 0, 0), spin=3 / 2)
         model[Cr, Cr, (1, 0, 0)] = ExchangeParameter(iso=1)
         assert model[Cr, Cr, (1, 0, 0)].iso == 1
@@ -719,7 +719,7 @@ class TestExchangeModel:
         )
 
     def test_ferromagnetic_energy(self):
-        model = ExchangeModel()
+        model = ExchangeHamiltonian()
         model.cell = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
         Cr1 = Atom("Cr1", (1, 1, 1))
         Cr2 = Atom("Cr2", (1, 1, 1))

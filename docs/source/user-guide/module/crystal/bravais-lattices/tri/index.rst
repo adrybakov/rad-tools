@@ -46,7 +46,7 @@ TRI\ :sub:`2b`
 
 :math:`k_{\alpha} < 90^{\circ}, k_{\beta} < 90^{\circ}, k_{\gamma} = 90^{\circ}`
 
-In definition of the examples we cheated and defined the through reciprocal lattice parameters.
+In definition of the examples we cheated and defined them through reciprocal lattice parameters.
 
 Example structures
 ==================
