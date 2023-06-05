@@ -269,11 +269,11 @@ class Crystal:
 
     def find_primitive_cell(self):
         r"""
-        Find primitive cell.
+        Detect primitive cell.
         """
         pass
 
-    def identify_lattice(self, find_primitive=True):
+    def identify(self, find_primitive=True):
         r"""
         Identify Bravais lattice type.
 
@@ -309,7 +309,7 @@ class CrystalIterator:
 if __name__ == "__main__":
     l = Lattice([[2, 0, 0], [0, 3, 0], [0, 0, 1]])
     c = Crystal(l)
-    c.identify_lattice()
+    c.identify()
     c.plot("primitive")
     c.plot("brillouin_kpath")
     c.show()

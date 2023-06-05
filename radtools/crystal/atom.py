@@ -7,7 +7,7 @@ from radtools.crystal.atom_types import atom_types
 
 class Atom:
     r"""
-    Atom.
+    Atom class.
 
     Notes
     -----

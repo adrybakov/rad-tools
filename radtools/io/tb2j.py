@@ -108,7 +108,7 @@ def read_tb2j_model(filename, quiet=True) -> ExchangeModel:
             break
 
     # Identify lattice type
-    model.crystal.identify_lattice()
+    model.crystal.identify()
 
     # Read exchange
     while line:

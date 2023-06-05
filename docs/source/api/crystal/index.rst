@@ -1,20 +1,18 @@
-.. _api_crystal:
+.. currentmodule:: radtools
 
-*******
-Crystal
-*******
+**************
+Crystal module
+**************
 
 Classes
 =======
 
-.. currentmodule:: radtools
+.. toctree:: 
+    :maxdepth: 2
 
-.. autosummary::
-    :toctree: generated/
-
-    Crystal
-    Lattice
-    Atom
+    crystal
+    lattice
+    atom
 
 Bravais lattice classes
 =======================

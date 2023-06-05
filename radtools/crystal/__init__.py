@@ -2,11 +2,11 @@ r"""
 Crystal module.
 """
 
-from .atom import Atom
-from .bravais_lattice import *
 from .crystal import Crystal
-from .identify import *
 from .lattice import *
+from .bravais_lattice import *
+from .identify import *
+from .atom import Atom
 
 __all__ = ["Atom", "Crystal"]
 __all__.extend(bravais_lattice.__all__)

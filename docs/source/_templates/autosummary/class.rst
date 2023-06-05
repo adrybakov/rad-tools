@@ -4,8 +4,21 @@
 
 .. autoclass:: {{ objname }}
 
-   {% block methods %}
+   {% block attributes %}
+   {% if attributes %}
+   .. rubric:: {{ _('Properties') }}
 
+   .. autosummary::
+      :toctree:
+   {% for item in attributes %}
+      {%- if not item.startswith('_') %}
+      ~{{ name }}.{{ item }}
+      {%- endif -%}
+   {%- endfor %}
+   {% endif %}
+   {% endblock %}
+
+   {% block methods %}
    {% if methods %}
    .. rubric:: {{ _('Methods') }}
 
@@ -19,17 +32,4 @@
    {% endif %}
    {% endblock %}
 
-   {% block attributes %}
-   {% if attributes %}
-   .. rubric:: {{ _('Attributes') }}
-
-   .. autosummary::
-      :toctree:
-   {% for item in attributes %}
-      {%- if not item.startswith('_') %}
-      ~{{ name }}.{{ item }}
-      {%- endif -%}
-   {%- endfor %}
-   {% endif %}
-   {% endblock %}
 

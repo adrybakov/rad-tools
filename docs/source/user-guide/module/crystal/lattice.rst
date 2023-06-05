@@ -6,15 +6,20 @@ Lattice
 
 .. automodule:: radtools.crystal.lattice
 
-General 3D lattice
-==================
+3D lattice
+==========
 .. currentmodule:: radtools
 
-General lattice is describe by the class :py:class:`.Lattice`. 
+General lattice is describe by the class :py:class:`.Lattice`.
+
+Each Bravais lattice class is a child of :py:class:`.Lattice`, 
+thus all it`s method and attribute are available.
+
+For the full reference see :ref:`lattice-api`.
 
 
-Bravais lattices
-================
+3D Bravais lattices
+===================
 
 Bravais lattice notation follows Setyawan and Curtarolo [1]_.
 
