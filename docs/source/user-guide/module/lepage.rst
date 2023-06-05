@@ -85,8 +85,8 @@ If you came from go to: delete the axes with the biggest delta from ``axes`` lis
 Compute maximum :math:`\delta` if it is less then maximum delta, finish and return result.
 If not proceed with the consecutive checks for the system types.
 
-Step VII
---------
+Step VII (cubic)
+----------------
 
 Check for the cubic system. Cubic system has 
 9 even-order symmetry axis (in relative coordinates):
@@ -132,8 +132,8 @@ them in the matrix and compute its determinant :math:`\Delta`.
 
 Go to :ref:`step-vii`.
 
-Step VIII
----------
+Step VIII (hexagonal)
+---------------------
 
 Check for the hexagonal system. Hexagonal system has 
 7 even-order symmetry axis (in relative coordinates):
@@ -169,8 +169,8 @@ then set system type to "HEX".
 
 Go to :ref:`step-vii`.
 
-Step IX
--------
+Step IX (tetragonal)
+--------------------
 
 Check for the tetragonal system. Tetragonal system has 
 5 even-order symmetry axis (in relative coordinates):
@@ -208,8 +208,8 @@ and compute its determinant :math:`\Delta`.
 
 Go to :ref:`step-vii`.
 
-Step X
-------
+Step X (rhombohedral)
+---------------------
 
 Check for the rhombohedral system. Rhombohedral system has 
 3 even-order symmetry axis (in relative coordinates):
@@ -237,8 +237,8 @@ then set system type to "RHL".
 
 Go to :ref:`step-vii`.
 
-Step XI
--------
+Step XI (orthorhombic)
+----------------------
 
 Check for the orthorhombic system. Orthorhombic system has 
 3 even-order symmetry axis (in relative coordinates):
@@ -281,8 +281,8 @@ compute its determinant :math:`\Delta`.
 Go to :ref:`step-vii`.
 
 
-Step XII
---------
+Step XII (monoclinic)
+---------------------
 
 Check for the monoclinic system. Monoclinic system has 
 1 even-order symmetry axis (in relative coordinates 
@@ -313,8 +313,8 @@ two vectors and of twofold axis in a matrix and compute its determinant :math:`\
 
 Go to :ref:`step-vii`.
 
-Step XIII
----------
+Step XIII (trigonal)
+--------------------
 
 If all previous checks failed set system type to "TRI" and go to :ref:`step-vii`. 
 
