@@ -52,7 +52,7 @@ At the end all three parameters are multiplied by :math:`\pi`.
 ORCF\ :sub:`1`
 --------------
 
-:math:`\text{ORCF}_1: \dfrac{1}{a^2} > \dfrac{1}{b^2} + \dfrac{1}{c^2}`.
+:math:`\dfrac{1}{a^2} > \dfrac{1}{b^2} + \dfrac{1}{c^2}`.
 
 Predefined example: ``orcf1`` with 
 :math:`a = 0.7\pi`, :math:`b = 5\pi/4` and :math:`c = 5\pi/3`.
@@ -60,7 +60,7 @@ Predefined example: ``orcf1`` with
 ORCF\ :sub:`2`
 --------------
 
-:math:`\text{ORCF}_2: \dfrac{1}{a^2} < \dfrac{1}{b^2} + \dfrac{1}{c^2}`.
+:math:`\dfrac{1}{a^2} < \dfrac{1}{b^2} + \dfrac{1}{c^2}`.
 
 Predefined example: ``orcf2`` with 
 :math:`a = 1.2\pi`, :math:`b = 5\pi/4` and :math:`c = 5\pi/3`.
@@ -68,7 +68,7 @@ Predefined example: ``orcf2`` with
 ORCF\ :sub:`3`
 --------------
 
-:math:`\text{ORCF}_3: \dfrac{1}{a^2} = \dfrac{1}{b^2} + \dfrac{1}{c^2}`.
+:math:`\dfrac{1}{a^2} = \dfrac{1}{b^2} + \dfrac{1}{c^2}`.
 
 Predefined example: ``orcf3`` with 
 :math:`a = \pi`, :math:`b = 5\pi/4` and :math:`c = 5\pi/3`.

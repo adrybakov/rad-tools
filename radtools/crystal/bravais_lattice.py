@@ -1593,7 +1593,7 @@ class RHL(Lattice):
 
         self.conv_cell = self.cell
         if self.variation == "RHL1":
-            eta = (1 + 4 * cos(alpha / 180 * pi)) / (2 + 4 * cos(alpha / 180 * pi))
+            eta = (1 + 4 * cos(alpha * _toradians)) / (2 + 4 * cos(alpha * _toradians))
             nu = 3 / 4 - eta / 2
 
             self.points = {
@@ -1618,7 +1618,7 @@ class RHL(Lattice):
                 ["L", "P"],
             ]
         elif self.variation == "RHL2":
-            eta = 1 / (2 * tan(alpha / 180 * pi / 2) ** 2)
+            eta = 1 / (2 * tan(alpha * _toradians / 2) ** 2)
             nu = 3 / 4 - eta / 2
 
             self.points = {

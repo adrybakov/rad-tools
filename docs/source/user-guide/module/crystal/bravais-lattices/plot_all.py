@@ -18,6 +18,9 @@ def plot(output_path="."):
         "ORCF3": [25, 27, 23],
         "ORCI": [35, 32, 30],
         "ORCC": [22, 39, 33],
+        "HEX": [19, 35, 32],
+        "RHL1": [-41, 35, 19],
+        "RHL2": [14, 35, 30],
     }
     azim = {
         "CUB": [23, 23, 23],
@@ -32,6 +35,9 @@ def plot(output_path="."):
         "ORCF3": [62, 36, 38],
         "ORCI": [23, -12, 12],
         "ORCC": [57, 15, -40],
+        "HEX": [20, 23, 10],
+        "RHL1": [-13, 52, -19],
+        "RHL2": [-85, 52, -29],
     }
 
     wtps = {
@@ -91,6 +97,21 @@ def plot(output_path="."):
             ["primitive", "conventional"],
             ["wigner-seitz"],
         ],
+        "HEX": [
+            ["brillouin-kpath"],
+            ["primitive"],
+            ["wigner-seitz"],
+        ],
+        "RHL1": [
+            ["brillouin-kpath"],
+            ["primitive"],
+            ["wigner-seitz"],
+        ],
+        "RHL2": [
+            ["brillouin-kpath"],
+            ["primitive"],
+            ["wigner-seitz"],
+        ],
     }
     names = {
         "CUB": ["brillouin", "real", "wigner-seitz"],
@@ -105,6 +126,9 @@ def plot(output_path="."):
         "ORCF3": ["brillouin", "real", "wigner-seitz"],
         "ORCI": ["brillouin", "real", "wigner-seitz"],
         "ORCC": ["brillouin", "real", "wigner-seitz"],
+        "HEX": ["brillouin", "real", "wigner-seitz"],
+        "RHL1": ["brillouin", "real", "wigner-seitz"],
+        "RHL2": ["brillouin", "real", "wigner-seitz"],
     }
 
     for i, name in enumerate(names):

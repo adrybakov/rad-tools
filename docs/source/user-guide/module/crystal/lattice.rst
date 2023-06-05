@@ -97,7 +97,7 @@ Predefined examples: ``hex``.
 .. toctree::
     :maxdepth: 1
     
-    hex
+    bravais-lattices/hex/index
 
 Rhombohedral lattice system
 ---------------------------
@@ -107,7 +107,7 @@ Predefined examples: ``rhl1``, ``rhl2``
 .. toctree::
     :maxdepth: 1
     
-    rhl
+    bravais-lattices/rhl/index
 
 Monoclinic lattice system
 -------------------------
