@@ -284,7 +284,7 @@ def check_cub(angles: np.ndarray, axes: np.ndarray, eps):
 
     axes = np.array([i[0] for i in axes])
 
-    if angles.shape[0] >= 9:
+    if 9 <= angles.shape[0]:
         indices = get_permutation(angles.shape[0], 9)
         for index in indices:
             sub_angles = angles[np.ix_(index, index)]
@@ -322,7 +322,7 @@ def check_hex(angles: np.ndarray, eps):
         ]
     )
 
-    if 7 <= angles.shape[0] < 9:
+    if 7 <= angles.shape[0]:
         indices = get_permutation(angles.shape[0], 7)
         for index in indices:
             sub_angles = angles[np.ix_(index, index)]
@@ -350,7 +350,7 @@ def check_tet(angles: np.ndarray, axes: np.ndarray, eps, cell):
 
     axes = np.array([i[0] for i in axes])
 
-    if 5 <= angles.shape[0] < 9:
+    if 5 <= angles.shape[0]:
         indices = get_permutation(angles.shape[0], 5)
         for index in indices:
             sub_angles = angles[np.ix_(index, index)]
@@ -388,7 +388,7 @@ def check_rhl(angles: np.ndarray, eps):
         ]
     )
 
-    if 3 <= angles.shape[0] < 5:
+    if 3 <= angles.shape[0]:
         indices = get_permutation(angles.shape[0], 3)
         for index in indices:
             sub_angles = angles[np.ix_(index, index)]
@@ -411,7 +411,7 @@ def check_orc(angles: np.ndarray, axes: np.ndarray, eps):
     )
 
     axes = np.array([i[0] for i in axes])
-    if 3 <= angles.shape[0] < 5:
+    if 3 <= angles.shape[0]:
         indices = get_permutation(angles.shape[0], 3)
         for index in indices:
             sub_angles = angles[np.ix_(index, index)]
@@ -465,7 +465,7 @@ def get_perpendicular_shortest(v, cell, eps):
 
 def check_mcl(angles: np.ndarray, axes: np.ndarray, eps, cell):
     axes = np.array([i[0] for i in axes])
-    if 1 <= angles.shape[0] < 3:
+    if 1 <= angles.shape[0]:
         indices = get_permutation(angles.shape[0], 1)
         for index in indices:
             sub_axes = axes[index]
@@ -715,7 +715,7 @@ if __name__ == "__main__":
             90.0,
             90.0,
             119.99501387877993,
-            eps_rel=1e-4,
+            eps_rel=1e-3,
         )
     )
     # from radtools.crystal.bravais_lattice import lattice_example
