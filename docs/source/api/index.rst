@@ -23,8 +23,8 @@ In the examples across the documentation it is expected to be imported in that w
    :maxdepth: 2
 
    crystal/index
+   exchange/index
    dos
-   exchange
    io
    score
    routines

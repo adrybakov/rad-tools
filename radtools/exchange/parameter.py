@@ -124,7 +124,7 @@ class ExchangeParameter:
     @property
     def symm_matrix(self) -> np.ndarray:
         r"""
-        Symmetric part of exchange :py:attr:`matrix`.
+        Symmetric part of exchange :py:attr:`.matrix`.
 
         .. math::
 
@@ -136,7 +136,7 @@ class ExchangeParameter:
     @property
     def asymm_matrix(self) -> np.ndarray:
         """
-        Asymmetric part of exchange :py:attr:`matrix`.
+        Asymmetric part of exchange :py:attr:`.matrix`.
 
         .. math::
 
@@ -166,7 +166,7 @@ class ExchangeParameter:
     @property
     def iso_matrix(self) -> np.ndarray:
         r"""
-        Isotropic part of the exchange :py:attr:`matrix`.
+        Isotropic part of the exchange :py:attr:`.matrix`.
 
         Matrix form:
 
@@ -276,7 +276,7 @@ class ExchangeParameter:
     @property
     def dmi_matrix(self) -> np.ndarray:
         r"""
-        Asymmetric part of the exchange :py:attr:`matrix`.
+        Asymmetric part of the exchange :py:attr:`.matrix`.
 
         .. code-block:: python
 
