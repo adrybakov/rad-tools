@@ -17,7 +17,9 @@ for dirpath, dirnames, filenames in walk(join("radtools", "score")):
     break
 
 f_docs = []
-for dirpath, dirnames, filenames in walk(join("docs", "source", "user-guide")):
+for dirpath, dirnames, filenames in walk(
+    join("docs", "source", "user-guide", "scripts")
+):
     f_docs.extend(filenames)
     break
 
@@ -29,7 +31,7 @@ for i, filename in enumerate(f_scripts):
         filename = filename.split(".py")[0]
         if f"{filename}.rst" in f_docs:
             f_compare_docs.append(
-                join("docs", "source", "user-guide", f"{filename}.rst")
+                join("docs", "source", "user-guide", "scripts", f"{filename}.rst")
             )
             if f"{filename.replace('-','_')[4:]}.py" in f_scripts_core:
                 f_compare_scripts.append(
