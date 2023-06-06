@@ -4,7 +4,7 @@
 rad-extract-tb2j.py
 *******************
 
-Script for extracting of template-based model from 
+Script for extracting of template-based Hamiltonian from 
 |TB2J|_ results.
 
 .. versionchanged: 0.6 Renamed from ``tb2j-extractor.py``
@@ -37,9 +37,9 @@ Example is based on the files from
 There are two modes in which exchange summary can be printed: 
 
 * with the symmetry of the template and 
-* with the model filtered based on the template.
+* with the Hamiltonian filtered based on the template.
 
-In the first case the symmetry of the template is forced on the model and 
+In the first case the symmetry of the template is forced on the Hamiltonian and 
 exchange output is grouped based on the names provided in the template:
 
 .. code-block:: bash
@@ -52,7 +52,7 @@ exchange output is grouped based on the names provided in the template:
     :language: text
 
 In the second case exchange summary is printed for every bond in the 
-template file and no additional symmetry constrains are assumed on the model:
+template file and no additional symmetry constrains are assumed on the Hamiltonian:
 
 .. code-block:: bash
 
@@ -148,7 +148,7 @@ Decimals after the comma for the exchange values.
 
 -fs, --force-symmetry
 ---------------------
-Whether to force the symmetry of the template on the model.
+Whether to force the symmetry of the template on the Hamiltonian.
 
 .. code-block:: text
 

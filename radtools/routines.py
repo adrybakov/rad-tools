@@ -152,6 +152,8 @@ def volume(*args):
     r"""
     Computes volume.
 
+    .. versionadded:: 0.7
+
     Three type of arguments are expected:
 
     * One argument.
@@ -243,6 +245,8 @@ def winwait():
 def print_2D_array(array, fmt="5.2f", posneg=False):
     r"""
     Print 1D and 2D arrays in the terminal.
+
+    .. versionadded:: 0.7
 
     Parameters
     ----------
@@ -421,6 +425,8 @@ def angle(v1, v2, radians=False):
     r"""
     Angle between two vectors.
 
+    .. versionadded:: 0.7
+
     Parameters
     ----------
     v1 : (3,) |array_like|_
@@ -447,6 +453,8 @@ def angle(v1, v2, radians=False):
 def reciprocal_cell(cell):
     r"""
     Computes reciprocal cell.
+
+    .. versionadded:: 0.7
 
     Parameters
     ----------
@@ -482,6 +490,8 @@ def reciprocal_cell(cell):
 def cell_from_param(a=1, b=1, c=1, alpha=90, beta=90, gamma=90):
     r"""
     Return cell from lattice parameters.
+
+    .. versionadded:: 0.7
 
     Parameters
     ----------
@@ -538,6 +548,8 @@ def param_from_cell(cell):
     r"""
     Return lattice parameters from cell.
 
+    .. versionadded:: 0.7
+
     Parameters
     ----------
     cell : (3,3) |array_like|_
@@ -578,6 +590,8 @@ def param_from_cell(cell):
 def get_permutation(n, k):
     r"""
     Return array of index permutations
+
+    .. versionadded:: 0.7
 
     Parameters
     ----------

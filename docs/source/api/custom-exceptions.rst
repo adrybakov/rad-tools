@@ -4,6 +4,8 @@
 Custom Exceptions
 *****************
 
+.. versionadded:: 0.7
+
 .. currentmodule:: radtools
 
 NotationError
@@ -11,6 +13,6 @@ NotationError
 .. autosummary::
     :toctree: generated/
 
-    exchange.model.NotationError
+    exchange.hamiltonian.NotationError
     crystal.bravais_lattice.NotEnoughParameters
     crystal.bravais_lattice.CellTypeMismatch

@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 from radtools.crystal.atom import Atom
-from radtools.exchange.model import ExchangeHamiltonian, NotationError
+from radtools.exchange.hamiltonian import ExchangeHamiltonian, NotationError
 from radtools.exchange.parameter import ExchangeParameter
 from radtools.exchange.template import ExchangeTemplate
 

@@ -75,7 +75,7 @@ Check the :ref:`rad-make-template_arguments` section for more sorting options.
 
 Template specification
 ======================
-Template file helps to choose particular bonds for filtering of exchange model 
+Template file helps to choose particular bonds for filtering of exchange Hamiltonian 
 or for extracting model with grouped parameters 
 (i.e. :math:`J_1`, :math:`J_2`, ...).
 
@@ -162,7 +162,7 @@ including name and extension of the file.
 
 -R, --R-vector
 --------------
-R vectors for filtering the model.
+R vectors for filtering the exchange Hamiltonian.
 
 In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to). 
 Atom 1 is always located in (0, 0, 0) unit cell, while atom 2 is located in 
@@ -196,7 +196,7 @@ greater than maximum distance are excluded from the model.
 (>=) Minimum distance.
 
 All the bonds with the distance between atom 1 and atom 2 
-lower than minimum distance are excluded from the model.
+lower than minimum distance are excluded from the Hamiltonian.
 
 .. code-block:: text
 

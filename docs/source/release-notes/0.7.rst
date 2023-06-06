@@ -4,7 +4,7 @@
 Version 0.7
 ***********
 
-**Date:** 
+**Date:** 06 June 2023
 
 Whats new?
 ----------

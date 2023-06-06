@@ -5,13 +5,13 @@ Input-output from |TB2J|_.
 import numpy as np
 
 from radtools.crystal.atom import Atom
-from radtools.exchange.model import ExchangeHamiltonian
+from radtools.exchange.hamiltonian import ExchangeHamiltonian
 from radtools.exchange.parameter import ExchangeParameter
 
 
 def read_tb2j_model(filename, quiet=True) -> ExchangeHamiltonian:
     r"""
-    Read exchange model from |TB2J|_ output file.
+    Read exchange Hamiltonian from |TB2J|_ output file.
 
     .. versionchanged:: 0.7
 
@@ -40,7 +40,7 @@ def read_tb2j_model(filename, quiet=True) -> ExchangeHamiltonian:
     Returns
     -------
     model : :py:class:`.ExchangeHamiltonian`
-        Exchange model build from |TB2J|_ file.
+        Exchange Hamiltonian build from |TB2J|_ file.
     """
 
     major_sep = "=" * 90

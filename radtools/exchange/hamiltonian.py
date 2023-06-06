@@ -1,5 +1,5 @@
 r"""
-Exchange model.
+Exchange module.
 
 Write a tutorial with docstring here.
 """
@@ -33,7 +33,7 @@ class NotationError(ValueError):
         if hr_name is None:
             hr_name = name
         self.message = (
-            f"\n\nNotation`s interpretation is not set for the model ({hr_name}).\n"
+            f"\n\nNotation`s interpretation is not set for the Hamiltonian ({hr_name}).\n"
             + f"Set the notation first:\n"
             + f"    ExchangeHamiltonian.{name} = True  "
             + f"or  ExchangeHamiltonian.{name} = False\n\n"
@@ -65,7 +65,7 @@ class ExchangeHamiltonian:
     Parameters
     ----------
     crystal : :py:class:`.Crystal`, optional
-        Crystal on which the model is build.
+        Crystal on which the exchange Hamiltonian is build.
         By default it is orthonormal lattice
         (:py:class:`.CUB`, :math:`a = 1`) with no atoms.
     notation : str or tuple of bool, optional
@@ -371,10 +371,10 @@ class ExchangeHamiltonian:
         minus_sign: bool = None,
     ):
         r"""
-        Set the interpretation of the model`s notation.
+        Set the interpretation of the Hamiltonian`s notation.
 
         It is not changing the J values,
-        but rather indicate how to interpret the J values of the model.
+        but rather indicate how to interpret the J values of the Hamiltonian.
 
         Parameters
         ----------
@@ -407,19 +407,19 @@ class ExchangeHamiltonian:
     @property
     def double_counting(self) -> bool:
         r"""
-        Whether double counting is present in the model.
+        Whether double counting is present in the Hamiltonian.
 
-        Access this attribute to check the current notation of the model,
-        set this attribute to change the notation of the model.
+        Access this attribute to check the current notation of the Hamiltonian,
+        set this attribute to change the notation of the Hamiltonian.
 
         Raises
         ------
         :py:exc:`.NotationError`
-            If the interpretation of the model`s notation is not set.
+            If the interpretation of the Hamiltonian`s notation is not set.
 
         See Also
         --------
-        set_interpretation : to change the interpretation of the model`s notation
+        set_interpretation : to change the interpretation of the Hamiltonian`s notation
             without the modification of the parameters.
         """
 
@@ -446,17 +446,17 @@ class ExchangeHamiltonian:
         r"""
         Whether spin is normalized.
 
-        Access this attribute to check the current notation of the model,
-        set this attribute to change the notation of the model.
+        Access this attribute to check the current notation of the Hamiltonian,
+        set this attribute to change the notation of the Hamiltonian.
 
         Raises
         ------
         :py:exc:`.NotationError`
-            If the interpretation of the model`s notation is not set.
+            If the interpretation of the Hamiltonian`s notation is not set.
 
         See Also
         --------
-        set_interpretation : to change the interpretation of the model`s notation
+        set_interpretation : to change the interpretation of the Hamiltonian`s notation
             without the modification of the parameters.
         """
 
@@ -478,19 +478,19 @@ class ExchangeHamiltonian:
     @property
     def factor_one_half(self) -> bool:
         r"""
-        Whether factor 1/2 is present in the model.
+        Whether factor 1/2 is present in the Hamiltonian.
 
-        Access this attribute to check the current notation of the model,
-        set this attribute to change the notation of the model.
+        Access this attribute to check the current notation of the Hamiltonian,
+        set this attribute to change the notation of the Hamiltonian.
 
         Raises
         ------
         :py:exc:`.NotationError`
-            If the interpretation of the model`s notation is not set.
+            If the interpretation of the Hamiltonian`s notation is not set.
 
         See Also
         --------
-        set_interpretation : to change the interpretation of the model`s notation
+        set_interpretation : to change the interpretation of the Hamiltonian`s notation
             without the modification of the parameters.
         """
 
@@ -517,19 +517,19 @@ class ExchangeHamiltonian:
     @property
     def factor_two(self) -> bool:
         r"""
-        Whether factor 2 is present in the model.
+        Whether factor 2 is present in the Hamiltonian.
 
-        Access this attribute to check the current notation of the model,
-        set this attribute to change the notation of the model.
+        Access this attribute to check the current notation of the Hamiltonian,
+        set this attribute to change the notation of the Hamiltonian.
 
         Raises
         ------
         :py:exc:`.NotationError`
-            If the interpretation of the model`s notation is not set.
+            If the interpretation of the Hamiltonian`s notation is not set.
 
         See Also
         --------
-        set_interpretation : to change the interpretation of the model`s notation
+        set_interpretation : to change the interpretation of the Hamiltonian`s notation
             without the modification of the parameters.
         """
 
@@ -556,19 +556,19 @@ class ExchangeHamiltonian:
     @property
     def minus_sign(self) -> bool:
         r"""
-        Whether the minus sign is present in the model.
+        Whether the minus sign is present in the Hamiltonian.
 
-        Access this attribute to check the current notation of the model,
-        set this attribute to change the notation of the model.
+        Access this attribute to check the current notation of the Hamiltonian,
+        set this attribute to change the notation of the Hamiltonian.
 
         Raises
         ------
         :py:exc:`.NotationError`
-            If the interpretation of the model`s notation is not set.
+            If the interpretation of the Hamiltonian`s notation is not set.
 
         See Also
         --------
-        set_interpretation : to change the interpretation of the model`s notation
+        set_interpretation : to change the interpretation of the Hamiltonian`s notation
             without the modification of the parameters.
         """
 
@@ -600,7 +600,7 @@ class ExchangeHamiltonian:
     @property
     def crystal(self) -> Crystal:
         r"""
-        Crystal of the model.
+        Crystal of the Hamiltonian.
 
         Crystal, which define the structure.
         See :py:class:`.Crystal`.
@@ -618,9 +618,9 @@ class ExchangeHamiltonian:
     @property
     def cell_list(self):
         r"""
-        List of cells from the model.
+        List of cells from the Hamiltonian.
 
-        Return the list of R for all cell that are present in the model.
+        Return the list of R for all cell that are present in the Hamiltonian.
         Not ordered.
 
         Returns
@@ -687,7 +687,7 @@ class ExchangeHamiltonian:
 
     def add_bond(self, J: ExchangeParameter, atom1: Atom, atom2: Atom, R):
         r"""
-        Add one bond to the model.
+        Add one bond to the Hamiltonian.
 
         More straightforward syntax is advised:
 
@@ -738,7 +738,7 @@ class ExchangeHamiltonian:
 
     def remove_bond(self, atom1: Atom, atom2: Atom, R):
         r"""
-        Remove one bond from the model.
+        Remove one bond from the Hamiltonian.
 
         More straightforward syntax is advised:
 
@@ -788,7 +788,7 @@ class ExchangeHamiltonian:
 
     def add_atom(self, atom: Atom):
         r"""
-        Add atom to the model.
+        Add atom to the Hamiltonian.
 
         Parameters
         ----------
@@ -801,7 +801,7 @@ class ExchangeHamiltonian:
 
     def remove_atom(self, atom):
         r"""
-        Remove magnetic atom from the model.
+        Remove magnetic atom from the Hamiltonian.
 
         Note: this method will remove atom itself and all the
         bonds, which starts or ends in this atom, if atom is magnetic.
@@ -841,7 +841,7 @@ class ExchangeHamiltonian:
         min_distance : float or int, optional
             Distance for sorting, the condition is <<more or equal>>.
         template : list or :py:class:`.ExchangeTemplate`.
-            List of pairs, which will remain in the model. ::
+            List of pairs, which will remain in the Hamiltonian. ::
 
                 [(atom1, atom2, R), ...]
 
@@ -898,7 +898,7 @@ class ExchangeHamiltonian:
         self, max_distance=None, min_distance=None, template=None, R_vector=None
     ):
         r"""
-        Create filtered exchange model based on the given conditions.
+        Create filtered exchange Hamiltonian based on the given conditions.
 
         The result will be defined by logical conjugate of the conditions.
         Saying so the filtering will be performed for each given condition
@@ -914,7 +914,7 @@ class ExchangeHamiltonian:
         min_distance : float or int, optional
             Distance for sorting, the condition is <<more or equal>>.
         template : list or :py:class:`.ExchangeTemplate`
-            List of pairs, which will remain in the model. ::
+            List of pairs, which will remain in the Hamiltonian. ::
 
                 [(atom1, atom2, R), ...]
 
@@ -925,7 +925,7 @@ class ExchangeHamiltonian:
         Returns
         -------
         filtered_model : :py:class:`.ExchangeHamiltonian`
-            Exchange model after filtering.
+            Exchange Hamiltonian after filtering.
 
         See Also
         --------
@@ -949,7 +949,7 @@ class ExchangeHamiltonian:
 
     def force_symmetry(self, template):
         r"""
-        Force the model to have the symmetries of the template.
+        Force the Hamiltonian to have the symmetries of the template.
 
         Takes mean values of the parameters.
         For DMI interaction directions are kept the same,
@@ -996,7 +996,7 @@ class ExchangeHamiltonian:
 
     def forced_symmetry(self, template):
         r"""
-        Force the model to have the symmetries of the template.
+        Force the Hamiltonian to have the symmetries of the template.
 
         Takes mean values of the parameters.
         Respect the direction of the DMI vectors.
@@ -1011,7 +1011,7 @@ class ExchangeHamiltonian:
         Returns
         -------
         new_model : :py:class:`.ExchangeHamiltonian`
-            Exchange model with forced symmetry.
+            Exchange Hamiltonian with forced symmetry.
 
         See Also
         --------
@@ -1033,19 +1033,19 @@ class ExchangeHamiltonian:
         dmi=False,
     ):
         r"""
-        Return exchange model based on the template file in .txt format.
+        Return exchange Hamiltonian based on the template file in .txt format.
 
         Parameters
         ----------
         template : :py:class:`.ExchangeTemplate`
-            Template of the desired exchange model.
+            Template of the desired exchange Hamiltonian.
             (see :ref:`rad-make-template`)
         accuracy : int, default 4
             Accuracy for the exchange values
         force_symmetry: bool, default False
-            Whether to force the symmetry of the template exchange model.
+            Whether to force the symmetry of the template on the exchange Hamiltonian.
             If ``False`` then each individual bond is written, otherwise
-            exchange parameters of the template model are written.
+            exchange parameters of the template are written.
         isotropic : bool, default False
             Whether to output isotropic exchange.
         anisotropic : bool, default False
@@ -1170,7 +1170,7 @@ class ExchangeHamiltonian:
     # TODO Fix notation
     def ferromagnetic_energy(self, theta=0, phi=0):
         r"""
-        Compute energy of the model assuming ferromagnetic state.
+        Compute energy of the Hamiltonian assuming ferromagnetic state.
 
         With Hamiltonian of the form:
 
@@ -1194,7 +1194,7 @@ class ExchangeHamiltonian:
         Returns
         -------
         energy : float
-            Energy of ferromagnetic model with magnetization direction defined
+            Energy of ferromagnetic Hamiltonian with magnetization direction defined
             by ``theta`` and ``phi``. In the units of J values.
         """
 

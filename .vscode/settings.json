@@ -19,6 +19,9 @@
         "editor.defaultFormatter": "ms-python.black-formatter"
     },
     "cSpell.words": [
+        "adrybakov",
+        "Andrey",
+        "Angstrom",
         "Bravais",
         "lepage",
         "linalg",
@@ -26,9 +29,14 @@
         "matplotlib",
         "ndarray",
         "niggli",
+        "phonopy",
         "projwfc",
+        "pytest",
         "radtools",
+        "Rybakov",
+        "scipy",
         "termcolor",
+        "tqdm",
         "voronoi"
     ],
 }

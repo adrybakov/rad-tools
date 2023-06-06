@@ -80,7 +80,7 @@ Since "the exchange.out" file contains a lot of exchange bonds the pictures with
 all of them are not really useful. Lets plot the isotropic exchange picture 
 with some adjustments:
 
-    * Filter the model by maximum distance (:ref:`-md <rad-plot-tb2j_max-distance>`).
+    * Filter the exchange Hamiltonian by maximum distance (:ref:`-md <rad-plot-tb2j_max-distance>`).
     * Draw unit cell borders (:ref:`-dc <rad-plot-tb2j_draw-cells>`)
     * Scale the marks of atoms (:ref:`-sa <rad-plot-tb2j_scale-atoms>`)
     * Scale the data (:ref:`-sd <rad-plot-tb2j_scale-data>`)
@@ -98,7 +98,7 @@ with some adjustments:
 Filtering
 ---------
 
-For filtering the exchange model there are a few options available:
+For filtering the exchange Hamiltonian there are a few options available:
 
     * :ref:`--max_distance <rad-plot-tb2j_max-distance>`
     * :ref:`--min_distance <rad-plot-tb2j_min-distance>`
@@ -106,7 +106,7 @@ For filtering the exchange model there are a few options available:
     * :ref:`--R-vector <rad-plot-tb2j_R-vector>`
     * :ref:`--template <rad-plot-tb2j_template-file>`
 
-Here is an example of how to filter exchange model in order to show 
+Here is an example of how to filter exchange Hamiltonian in order to show 
 first exchange neighbour, using different options:
 :ref:`--max_distance <rad-plot-tb2j_max-distance>`
 :ref:`--R-vector <rad-plot-tb2j_R-vector>` or
@@ -142,12 +142,12 @@ The images should be the same:
 
         exchange_template.iso.png
 
-Modifying the model
--------------------
+Modifying the Hamiltonian
+-------------------------
 
 By default ``rad-plot-tb2j.py`` displays the bonds as it is in the model.
 :ref:`-fs <rad-plot-tb2j_force-symmetry>` argument helps
-to reproduce particular exchange model:
+to reproduce particular exchange Hamiltonian:
 
 .. code-block:: bash
 
@@ -265,7 +265,7 @@ presented in the model (after filtering) are drawn. (0, 0, 0) is red.
 
 -R, --R-vector
 --------------
-R vectors for filtering the model.
+R vectors for filtering the exchange Hamiltonian.
 
 In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to). 
 Atom 1 is always located in (0, 0, 0) unit cell, while atom 2 is located in 
@@ -384,7 +384,7 @@ Title is displayed in the picture.
 
 -fs, --force-symmetry
 ---------------------
-Force the exchange model to have the symmetry of the template.
+Force the exchange Hamiltonian to have the symmetry of the template.
 
 .. code-block:: text
 

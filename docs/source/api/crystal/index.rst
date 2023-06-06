@@ -4,6 +4,8 @@
 Crystal module
 **************
 
+.. versionadded:: 0.7
+
 Classes
 =======
 
