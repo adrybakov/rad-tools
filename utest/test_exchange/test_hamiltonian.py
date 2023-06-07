@@ -751,8 +751,15 @@ class TestExchangeHamiltonian:
         assert model.ferromagnetic_energy(theta=90) == -10
         assert model.ferromagnetic_energy(theta=90, phi=90) == -11
         assert model.ferromagnetic_energy(theta=90, phi=45) == -10.5
+        assert (
+            np.array([-6, -10, -11, -10.5])
+            - model.ferromagnetic_energy(theta=[0, 90, 90, 90], phi=[0, 0, 90, 45])
+            < 1e-5
+        ).all()
 
-        notations = np.transpose(np.indices((2,2,2,2,2)), (1,2,3,4,5,0)).reshape((32,5))
+        notations = np.transpose(
+            np.indices((2, 2, 2, 2, 2)), (1, 2, 3, 4, 5, 0)
+        ).reshape((32, 5))
         for new_notation in notations:
             model.notation = new_notation
             assert model.ferromagnetic_energy() == -6

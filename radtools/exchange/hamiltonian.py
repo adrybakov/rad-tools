@@ -50,7 +50,6 @@ class NotationError(ValueError):
         return self.message
 
 
-# TODO Write symmetry constrains
 class ExchangeHamiltonian:
     r"""
     Exchange Hamiltonian.
@@ -1266,6 +1265,22 @@ class ExchangeHamiltonian:
 
         return summary
 
+    def energy_matrix(self):
+        energy = np.zeros((3, 3), dtype=float)
+        factor = 1
+        if self.minus_sign:
+            factor *= -1
+        if self.factor_one_half:
+            factor /= 2
+        if self.factor_two:
+            factor *= 2
+        for atom1, atom2, R, J in self:
+            if self.spin_normalized:
+                energy += factor * J.matrix
+            else:
+                energy += factor * J.matrix * atom1.spin * atom2.spin
+        return energy
+
     def ferromagnetic_energy(self, theta=0, phi=0):
         r"""
         Compute energy of the Hamiltonian assuming ferromagnetic state.
@@ -1281,40 +1296,33 @@ class ExchangeHamiltonian:
 
         Parameters
         ----------
-        theta : float, default 0
-            Angle between z axis an direction of the magnetization.
-            :math:`0 < \theta < 180`
-        phi : float, default 0
-            angle between x axis an projection of direction of the
-            magnetization on xy plane.
-            :math:`0 < \phi < 360`
+        theta : float or (N,) |array_like|_, default 0
+            Angle between z axis and direction of the magnetization.
+            :math:`0^{\circ} \le \theta \le 180^{\circ}`.
+        phi : float or (N,) |array_like|_, default 0
+            angle between x axis and projection of
+            magnetization`s direction on xy plane.
+            :math:`0^{\circ} \le \phi < 360^{\circ}`.
 
         Returns
         -------
-        energy : float
+        energy : float or (N,) :numpy:`ndarray`
             Energy of ferromagnetic Hamiltonian with magnetization direction defined
             by ``theta`` and ``phi``. In the units of J values.
         """
 
-        theta = theta * _toradians
-        phi = phi * _toradians
-        energy = np.zeros((3, 3), dtype=float)
-        factor = 1
-        if self.minus_sign:
-            factor *= -1
-        if self.factor_one_half:
-            factor /= 2
-        if self.factor_two:
-            factor *= 2
-        for atom1, atom2, R, J in self:
-            if self.spin_normalized:
-                energy += factor * J.matrix
-            else:
-                energy += factor * J.matrix * atom1.spin * atom2.spin
+        theta = np.array(theta) * _toradians
+        phi = np.array(phi) * _toradians
+        if theta.shape == ():
+            theta = np.array([theta])
+        if phi.shape == ():
+            phi = np.array([phi])
         spin_vector = np.array(
-            [cos(phi) * sin(theta), sin(phi) * sin(theta), cos(theta)]
+            [np.cos(phi) * np.sin(theta), np.sin(phi) * np.sin(theta), np.cos(theta)]
         )
-        energy = spin_vector @ energy @ spin_vector
+        energy = np.einsum(
+            "ni,ij,jn->n", spin_vector.T, self.energy_matrix(), spin_vector
+        )
         return energy
 
     # OLD METHODS AND ATTRIBUTES, KEPT FOR BACKWARD COMPATIBILITY

@@ -12,6 +12,12 @@ ExchangeHamiltonian
 
     ExchangeHamiltonian
 
+Energy
+======
+
+.. autosummary::
+
+    ExchangeHamiltonian.ferromagnetic_energy
 
 Structure
 =========
