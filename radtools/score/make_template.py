@@ -97,7 +97,7 @@ def manager(
                 + "Name placeholder"
                 + "\n"
             )
-            for atom1, atom2, R in model.bonds:
+            for atom1, atom2, R, J in model:
                 file.write(
                     f"{atom1:4} {atom2:4} " + f"{R[0]:3.0f} {R[1]:3.0f} {R[2]:3.0f}\n"
                 )

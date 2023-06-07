@@ -75,12 +75,6 @@ class ExchangeHamiltonian:
     Attributes
     ----------
     crystal : :py:class:`.Crystal`
-    bonds : dict
-        Dictionary of bonds.
-
-        .. code-block:: python
-
-            {(Atom_1, Atom_2, R): J, ...}
     magnetic_atoms : list
     cell_list : list
     number_spins_in_unit_cell : int
@@ -104,7 +98,7 @@ class ExchangeHamiltonian:
             crystal = Crystal()
         self.crystal = crystal
 
-        self.bonds = {}
+        self._bonds = {}
 
         # Notation settings
         self._double_counting = None
@@ -114,6 +108,9 @@ class ExchangeHamiltonian:
         self._minus_sign = None
         if notation is not None:
             self.notation = notation
+
+    def __len__(self):
+        return self._bonds.__len__()
 
     # Notation attributes
     @property
@@ -646,7 +643,7 @@ class ExchangeHamiltonian:
         if isinstance(atom2, str):
             atom2 = self.crystal.get_atom(atom2)
         key = (atom1, atom2, R)
-        return key in self.bonds
+        return key in self._bonds
 
     def __getitem__(self, key) -> ExchangeParameter:
         atom1, atom2, R = key
@@ -655,7 +652,7 @@ class ExchangeHamiltonian:
         if isinstance(atom2, str):
             atom2 = self.crystal.get_atom(atom2)
         key = (atom1, atom2, R)
-        return self.bonds[key]
+        return self._bonds[key]
 
     def __getattr__(self, name):
         # Fix copy/deepcopy RecursionError
@@ -818,7 +815,7 @@ class ExchangeHamiltonian:
         elif atom2 not in self.crystal:
             self.add_atom(atom2)
 
-        self.bonds[(atom1, atom2, R)] = J
+        self._bonds[(atom1, atom2, R)] = J
 
     def __delitem__(self, key):
         self.remove_bond(*key)
@@ -875,7 +872,7 @@ class ExchangeHamiltonian:
             atom2 = self.crystal.get_atom(atom2)
 
         try:
-            del self.bonds[(atom1, atom2, R)]
+            del self._bonds[(atom1, atom2, R)]
         except KeyError:
             raise KeyError(
                 f"Bond ({atom2.fullname}, {atom2.fullname}, {R}) is not present in the model."
@@ -1031,8 +1028,7 @@ class ExchangeHamiltonian:
         Notes
         -----
         This method is not modifying the instance at which it is called.
-        It creates a new instance with merged :py:attr:`.bonds` and all the
-        other attributes will be copied (through deepcopy).
+        It creates a new instance (through deepcopy).
         """
 
         filtered_model = deepcopy(self)
@@ -1461,8 +1457,8 @@ class ExchangeHamiltonianIterator:
     def __init__(self, exchange_model: ExchangeHamiltonian) -> None:
         self._bonds = list(
             map(
-                lambda x: (x[0], x[1], x[2], exchange_model.bonds[x]),
-                exchange_model.bonds,
+                lambda x: (x[0], x[1], x[2], exchange_model._bonds[x]),
+                exchange_model._bonds,
             )
         )
         self._index = 0
