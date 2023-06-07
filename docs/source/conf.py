@@ -85,9 +85,11 @@ html_favicon = "img/favicon.png"
 
 if ".dev" in version:
     switcher_version = "dev"
+    github_version = "dev"
 else:
     major, minor, rest = version.split(".")[0:3]
     switcher_version = f"{major}.{minor}"
+    github_version = "stable"
 html_theme_options = {
     "collapse_navigation": True,
     "use_edit_page_button": True,
@@ -117,7 +119,7 @@ html_theme_options = {
         {
             "name": "PyPI",
             "url": "https://pypi.org/project/rad-tools/",
-            "icon": "fa-custom fa-pypi",
+            "icon": "fa-solid fa-box",
         },
     ],
 }
@@ -135,7 +137,7 @@ html_context = {
     "display_github": True,  # Integrate GitHub
     "github_user": "adrybakov",  # Username
     "github_repo": "rad-tools",  # Repo name
-    "github_version": "master",  # Version
+    "github_version": github_version,  # Version
     "doc_path": "docs/source",  # Path in the checkout to the docs root
     # "docsearch_disabled": False,
 }

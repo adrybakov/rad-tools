@@ -27,8 +27,8 @@ Major design change in the :py:mod:`.exchange`:
 * Introduce new interface design for the :py:class:`.ExchangeHamiltonian`.
 * Iteration over :py:class`.ExchangeHamiltonian` returns (atom1, atom2, R, J) instead of (atom1, atom2, R).
 
- 0.7.1
- -----
+0.7.1
+-----
 
 Write correct behaviour of :py:class:`.ExchangeHamiltonian` with the :py:attr:`.ExchangeHamiltonian.double_counting`:
 
