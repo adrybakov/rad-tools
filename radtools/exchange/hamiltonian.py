@@ -703,13 +703,15 @@ class ExchangeHamiltonian:
         Magnetic atoms of the model.
 
         Atoms with at least bond starting or finishing in it.
+
+        Atoms are ordered with respect to the :py:attr:`.Atom.index`.
         """
         result = set()
         for atom1, atom2, R, J in self:
             result.add(atom1)
             result.add(atom2)
 
-        return list(result)
+        return sorted(list(result), key=lambda x: x.index)
 
     @property
     def number_spins_in_unit_cell(self):
@@ -1261,22 +1263,6 @@ class ExchangeHamiltonian:
 
         return summary
 
-    def energy_matrix(self):
-        energy = np.zeros((3, 3), dtype=float)
-        factor = 1
-        if self.minus_sign:
-            factor *= -1
-        if self.factor_one_half:
-            factor /= 2
-        if self.factor_two:
-            factor *= 2
-        for atom1, atom2, R, J in self:
-            if self.spin_normalized:
-                energy += factor * J.matrix
-            else:
-                energy += factor * J.matrix * atom1.spin * atom2.spin
-        return energy
-
     def ferromagnetic_energy(self, theta=0, phi=0):
         r"""
         Compute energy of the Hamiltonian assuming ferromagnetic state.
@@ -1316,9 +1302,22 @@ class ExchangeHamiltonian:
         spin_vector = np.array(
             [np.cos(phi) * np.sin(theta), np.sin(phi) * np.sin(theta), np.cos(theta)]
         )
-        energy = np.einsum(
-            "ni,ij,jn->n", spin_vector.T, self.energy_matrix(), spin_vector
-        )
+
+        energy = np.zeros((3, 3), dtype=float)
+        factor = 1
+        if self.minus_sign:
+            factor *= -1
+        if self.factor_one_half:
+            factor /= 2
+        if self.factor_two:
+            factor *= 2
+        for atom1, atom2, R, J in self:
+            if self.spin_normalized:
+                energy += factor * J.matrix
+            else:
+                energy += factor * J.matrix * atom1.spin * atom2.spin
+
+        energy = np.einsum("ni,ij,jn->n", spin_vector.T, energy, spin_vector)
         return energy
 
     # OLD METHODS AND ATTRIBUTES, KEPT FOR BACKWARD COMPATIBILITY
