@@ -38,7 +38,7 @@ test:
 install:
 	@pip install .
 
-test-all: install test html doctest
+test-all: clean install test html doctest
 	@echo "Done"
 
 

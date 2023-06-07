@@ -644,7 +644,7 @@ class ExchangeHamiltonian:
         if isinstance(atom1, str):
             atom1 = self.crystal.get_atom(atom1)
         if isinstance(atom2, str):
-            atom1 = self.crystal.get_atom(atom2)
+            atom2 = self.crystal.get_atom(atom2)
         key = (atom1, atom2, R)
         return key in self.bonds
 
