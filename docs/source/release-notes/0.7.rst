@@ -23,7 +23,7 @@ Major design change in the :py:mod:`.exchange`:
 
 * Renamed :py:class:`ExchangeModel` to :py:class:`.ExchangeHamiltonian`
 * Move from the concept (atom1, atom2, R) -> bond to the concept (atom1, atom2, R) -> J.
-* Made class :py:class:`ExchangeParameter` from the :py:class:`Bond`.
+* Made class :py:class:`.ExchangeParameter` from the :py:class:`Bond`.
 * Introduce new interface design for the :py:class:`.ExchangeHamiltonian`.
 * Iteration over :py:class`.ExchangeHamiltonian` returns (atom1, atom2, R, J) instead of (atom1, atom2, R).
 
