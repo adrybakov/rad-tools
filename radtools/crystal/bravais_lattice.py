@@ -2516,33 +2516,33 @@ def bravais_lattice_from_cell(cell) -> Lattice:
 
     lattice_type = lepage(*param_from_cell(cell))
 
-    # if lattice_type == "CUB":
-    #     return CUB(cell=cell)
-    # if lattice_type == "FCC":
-    #     return FCC(cell=cell)
-    # if lattice_type == "BCC":
-    #     return BCC(cell=cell)
-    # if lattice_type == "TET":
-    #     return TET(cell=cell)
-    # if lattice_type == "BCT":
-    #     return BCT(cell=cell)
-    # if lattice_type == "ORC":
-    #     return ORC(cell=cell)
-    # if lattice_type == "ORCF":
-    #     return ORCF(cell=cell)
-    # if lattice_type == "ORCC":
-    #     return ORCC(cell=cell)
-    # if lattice_type == "ORCI":
-    #     return ORCI(cell=cell)
-    # if lattice_type == "HEX":
-    #     return HEX(cell=cell)
-    # if lattice_type == "RHL":
-    #     return RHL(cell=cell)
-    # if lattice_type == "MCL":
-    #     return MCL(cell=cell)
-    # if lattice_type == "MCLC":
-    #     return MCLC(cell=cell)
-    # return TRI(cell=cell)
+    if lattice_type == "CUB":
+        return CUB(cell=cell)
+    if lattice_type == "FCC":
+        return FCC(cell=cell)
+    if lattice_type == "BCC":
+        return BCC(cell=cell)
+    if lattice_type == "TET":
+        return TET(cell=cell)
+    if lattice_type == "BCT":
+        return BCT(cell=cell)
+    if lattice_type == "ORC":
+        return ORC(cell=cell)
+    if lattice_type == "ORCF":
+        return ORCF(cell=cell)
+    if lattice_type == "ORCC":
+        return ORCC(cell=cell)
+    if lattice_type == "ORCI":
+        return ORCI(cell=cell)
+    if lattice_type == "HEX":
+        return HEX(cell=cell)
+    if lattice_type == "RHL":
+        return RHL(cell=cell)
+    if lattice_type == "MCL":
+        return MCL(cell=cell)
+    if lattice_type == "MCLC":
+        return MCLC(cell=cell)
+    return TRI(cell=cell)
     return Lattice(cell)
 
 

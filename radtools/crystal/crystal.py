@@ -1,5 +1,7 @@
 from math import sqrt
 
+from typing import Union
+
 import numpy as np
 
 from radtools.crystal.atom import Atom
@@ -107,7 +109,11 @@ class Crystal:
     def __iter__(self):
         return CrystalIterator(self)
 
-    def __contains__(self, atom):
+    def __contains__(self, atom: Union[Atom, str]):
+        if isinstance(atom, str):
+            atom = self.get_atom(atom, return_all=True)
+            if isinstance(atom, list):
+                atom = atom[0]
         return atom in self.atoms
 
     def __getitem__(self, index) -> Atom:
@@ -117,7 +123,15 @@ class Crystal:
         # Fix copy/deepcopy RecursionError
         if name in ["__setstate__"]:
             raise AttributeError(name)
-        return getattr(self.lattice, name)
+        try:
+            index = None
+            if "_" in name:
+                index = int(name.split("_")[1])
+                name = name.split("_")[0]
+            atom = self.get_atom(name=name, index=index)
+            return atom
+        except ValueError:
+            return getattr(self.lattice, name)
 
     @property
     def lattice(self):
@@ -137,77 +151,114 @@ class Crystal:
         self._lattice = new_lattice
 
     def add_atom(self, new_atom: Atom):
-        if not isinstance(new_atom, Atom):
-            raise TypeError("New atom is not an Atom. " + f"Received {type(new_atom)}.")
-        if new_atom not in self.atoms:
-            try:
-                i = new_atom.index
-            except ValueError:
-                new_atom.index = len(self.atoms) + 1
-            self.atoms.append(new_atom)
-
-    def remove_atom(self, atom: Atom):
         r"""
-        Remove atom from the crystal.
+        Add atom to the crystall.
+
+        If ``new_atom```s literal and index are the same as of some atom of the crystal,
+        then ``new_atom`` is not added.
+
+        If index of ``new_atom`` is not defined, it is set.
 
         Parameters
         ----------
-        atom : :py:class:`.Atom`
-            Atom object.
+        new_atoms : :py:class:`.Atom`
+            New atom.
+
+        Raises
+        ------
+        TypeError
+            If ``new_atom`` is not an :py:class:`.Atom`.
+        ValueError
+            If the atom is already present in the crystal.
+        """
+        if not isinstance(new_atom, Atom):
+            raise TypeError("New atom is not an Atom. " + f"Received {type(new_atom)}.")
+        try:
+            i = new_atom.index
+        except ValueError:
+            new_atom.index = len(self.atoms) + 1
+        if new_atom not in self.atoms:
+            self.atoms.append(new_atom)
+        else:
+            raise ValueError("Atom is already in the crystal.")
+
+    def remove_atom(self, atom: Union[Atom, str]):
+        r"""
+        Remove atom from the crystal.
+
+        If type(``atom``) == ``str``, then all atoms with the name ``atom`` are removed.
+
+        Parameters
+        ----------
+        atom : :py:class:`.Atom` or str
+            :py:class`.Atom` object or atom`s name.
+            If name, then it has to be unique among atoms of the crystal.
         """
 
-        self.atoms.remove(atom)
+        if isinstance(atom, str):
+            atoms = self.get_atom(atom, return_all=True)
+        else:
+            atoms = [atom]
+        for atom in atoms:
+            self.atoms.remove(atom)
 
-    def get_atom(self, literal, index=None):
+    def get_atom(self, name, index=None, return_all=False):
         r"""
-        Return atom of the crystal.
-
-        Return all atoms with the same literal. If index is provided,
-        then return all atoms with literal and index.
+        Return atom object of the crystal.
 
         Notes
         -----
-        ``index`` is supposed to be a unique value,
+        :py:attr:`.index` in combination with :py:attr:`.name` is supposed to be a unique value,
         however it uniqueness is not strictly checked,
         pay attention in custom cases.
 
         Parameters
         ----------
-        literal : str
+        name : str
             Name of the atom. In general not unique.
         index : any, optional
             Index of the atom.
+        return_all : bool, default False
+            Whether to return the list of non-unique matches or raise an ``ValueError``.
 
         Returns
         -------
-        atom : :py:class:`.Atom` or list or None
-            If there is no atom in the crystal then return ``None``.
+        atom : :py:class:`.Atom` or list
             If only one atom is found, then :py:class:`.Atom` object is returned.
-            If several atoms are found then list of :py:class:`.Atom` objects is returned.
+            If several atoms are found and ``return_all`` is ``True``,
+            then list of :py:class:`.Atom` objects is returned.
+
+        Raises
+        ------
+        ValueError
+            If no match is found or the match is not unique and ``return_all`` is False.
         """
 
         atoms = []
 
         for atom in self:
-            if atom.literal == literal:
-                if index is None:
-                    atoms.append(atom)
-                elif atom.index == index:
+            if atom.name == name:
+                if index is None or atom.index == index:
                     atoms.append(atom)
         if len(atoms) == 0:
-            return None
+            raise ValueError(f"No match found for name = {name}, index = {index}")
         elif len(atoms) == 1:
             return atoms[0]
+        elif not return_all:
+            raise ValueError(
+                f"Multiple matches found for name = {name}, index = {index}"
+            )
         return atoms
 
-    def get_atom_coordinates(self, atom: Atom, R=(0, 0, 0)):
+    def get_atom_coordinates(self, atom: Union[Atom, str], R=(0, 0, 0)):
         r"""
         Getter for the atom coordinates.
 
         Parameters
         ----------
-        atom : :py:class:`.Atom`
-            Atom object.
+        atom : :py:class:`.Atom` or str
+            :py:class`.Atom` object or atom`s name.
+            If name, then it has to be unique among atoms of the crystal.
         R : (3,) |array_like|_, default (0, 0, 0)
             Radius vector of the unit cell for atom2 (i,j,k).
 
@@ -217,21 +268,26 @@ class Crystal:
             Coordinates of atom in the cell R in absolute coordinates.
         """
 
+        if isinstance(atom, str):
+            atom = self.get_atom(atom)
+
         if atom not in self.atoms:
             raise ValueError(f"There is no {atom} in the crystal.")
 
         return np.array(R) @ self.lattice.cell + atom.position
 
-    def get_vector(self, atom1, atom2, R=(0, 0, 0)):
+    def get_vector(self, atom1: Union[Atom, str], atom2: Union[Atom, str], R=(0, 0, 0)):
         r"""
         Getter for vector between the atom1 and atom2.
 
         Parameters
         ----------
-        atom1 : :py:class:`.Atom`
-            Atom object in (0, 0, 0) unit cell.
-        atom2 : :py:class:`.Atom`
-            Atom object in R unit cell.
+        atom1 : :py:class:`.Atom` or str
+            :py:class`.Atom` object or atom`s name in (0, 0, 0) unit cell.
+            If name, then it has to be unique among atoms of the crystal.
+        atom2 : :py:class:`.Atom` or str
+            :py:class`.Atom` object or atom`s name in ``R`` unit cell.
+            If name, then it has to be unique among atoms of the crystal.
         R : (3,) |array_like|_, default (0, 0, 0)
             Radius vector of the unit cell for atom2 (i,j,k).
 
@@ -241,21 +297,25 @@ class Crystal:
             Vector from atom1 in (0,0,0) cell to atom2 in R cell.
         """
 
-        atom1 = self.get_atom_coordinates(atom1)
-        atom2 = self.get_atom_coordinates(atom2, R)
+        coord1 = self.get_atom_coordinates(atom1)
+        coord2 = self.get_atom_coordinates(atom2, R)
 
-        return atom2 - atom1
+        return coord2 - coord1
 
-    def get_distance(self, atom1, atom2, R=(0, 0, 0)):
+    def get_distance(
+        self, atom1: Union[Atom, str], atom2: Union[Atom, str], R=(0, 0, 0)
+    ):
         r"""
         Getter for distance between the atom1 and atom2.
 
         Parameters
         ----------
-        atom1 : :py:class:`.Atom`
-            Atom object in (0, 0, 0) unit cell.
-        atom2 : :py:class:`.Atom`
-            Atom object in R unit cell.
+        atom1 : :py:class:`.Atom` or str
+            :py:class`.Atom` object or atom`s name in (0, 0, 0) unit cell.
+            If name, then it has to be unique among atoms of the crystal.
+        atom2 : :py:class:`.Atom` or str
+            :py:class`.Atom` object or atom`s name in ``R`` unit cell.
+            If name, then it has to be unique among atoms of the crystal.
         R : (3,) |array_like|_, default (0, 0, 0)
             Radius vector of the unit cell for atom2 (i,j,k).
 

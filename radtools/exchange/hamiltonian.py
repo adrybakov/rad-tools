@@ -14,6 +14,7 @@ from radtools.crystal.atom import Atom
 from radtools.crystal.crystal import Crystal
 from radtools.exchange.parameter import ExchangeParameter
 from radtools.exchange.template import ExchangeTemplate
+from radtools.routines import _toradians
 
 
 class NotationError(ValueError):
@@ -82,7 +83,6 @@ class ExchangeHamiltonian:
 
             {(Atom_1, Atom_2, R): J, ...}
     magnetic_atoms : list
-        List of magnetic atoms.
     cell_list : list
     number_spins_in_unit_cell : int
     notation : str
@@ -105,7 +105,6 @@ class ExchangeHamiltonian:
             crystal = Crystal()
         self.crystal = crystal
 
-        self.magnetic_atoms = []
         self.bonds = {}
 
         # Notation settings
@@ -427,6 +426,48 @@ class ExchangeHamiltonian:
             raise NotationError("double_counting", "double counting")
         return self._double_counting
 
+    def _ensure_double_counting(self):
+        r"""
+        Ensure double counting.
+
+        Check and fix if needed, that for each (atom1, atom2, R)
+        (atom2, atom1, -R) is present in the Hamiltonian.
+        """
+
+        bonds = list(self)
+        for atom1, atom2, (i, j, k), J in bonds:
+            if (atom2, atom1, (-i, -j, -k)) not in self:
+                self.add_bond(J.T, atom2, atom1, (-i, -j, -k))
+
+    def _ensure_no_double_counting(self):
+        r"""
+        Ensure that there is no double counting in the model.
+
+        If the bond is (atom1, atom2, (i,j,k)), then the bond is kept in the model
+        if one of the conditions is true:
+
+        * i > 0
+        * i = 0 and j > 0
+        * i = 0, j = 0 and k > 0
+        * i = 0, j = 0, k = 0 and atom1.index <= atom2.index
+        """
+
+        bonds = list(self)
+
+        for atom1, atom2, (i, j, k), J in bonds:
+            if (
+                i > 0
+                or (i == 0 and j > 0)
+                or (i == 0 and j == 0 and k > 0)
+                or (i == 0 and j == 0 and k == 0 and atom1.index <= atom2.index)
+            ):
+                if (atom2, atom1, (-i, -j, -k)) in self:
+                    self.remove_bond(atom2, atom1, (-i, -j, -k))
+            else:
+                if (atom2, atom1, (-i, -j, -k)) not in self:
+                    self.add_bond(J.T, atom2, atom1, (-i, -j, -k))
+                    self.remove_bond(atom1, atom2, (i, j, k))
+
     @double_counting.setter
     def double_counting(self, new_value: bool):
         if self._double_counting is not None:
@@ -436,9 +477,17 @@ class ExchangeHamiltonian:
             elif not self._double_counting and new_value:
                 factor = 0.5
             if factor != 1:
-                # TODO Think about bond`s filtering/addition
+                if new_value:
+                    self._ensure_double_counting()
+                else:
+                    self._ensure_no_double_counting()
                 for atom1, atom2, R, J in self:
                     self[atom1, atom2, R] = J * factor
+        else:
+            if new_value:
+                self._ensure_double_counting()
+            else:
+                self._ensure_no_double_counting()
         self._double_counting = bool(new_value)
 
     @property
@@ -592,10 +641,28 @@ class ExchangeHamiltonian:
         return ExchangeHamiltonianIterator(self)
 
     def __contains__(self, key):
+        atom1, atom2, R = key
+        if isinstance(atom1, str):
+            atom1 = self.crystal.get_atom(atom1)
+        if isinstance(atom2, str):
+            atom1 = self.crystal.get_atom(atom2)
+        key = (atom1, atom2, R)
         return key in self.bonds
 
     def __getitem__(self, key) -> ExchangeParameter:
+        atom1, atom2, R = key
+        if isinstance(atom1, str):
+            atom1 = self.crystal.get_atom(atom1)
+        if isinstance(atom2, str):
+            atom2 = self.crystal.get_atom(atom2)
+        key = (atom1, atom2, R)
         return self.bonds[key]
+
+    def __getattr__(self, name):
+        # Fix copy/deepcopy RecursionError
+        if name in ["__setstate__"]:
+            raise AttributeError(name)
+        return getattr(self.crystal, name)
 
     @property
     def crystal(self) -> Crystal:
@@ -633,6 +700,20 @@ class ExchangeHamiltonian:
         for atom1, atom2, R, J in self:
             cells.add(R)
         return np.array(list(cells))
+
+    @property
+    def magnetic_atoms(self):
+        r"""
+        Magnetic atoms of the model.
+
+        Atoms with at least bond starting or finishing in it.
+        """
+        result = set()
+        for atom1, atom2, R, J in self:
+            result.add(atom1)
+            result.add(atom2)
+
+        return list(result)
 
     @property
     def number_spins_in_unit_cell(self):
@@ -717,18 +798,25 @@ class ExchangeHamiltonian:
         ----------
         J : :py:class:`.ExchangeParameter`
             An instance of :py:class:`ExchangeParameter`.
-        atom1 : :py:class:`Atom`
+        atom1 : :py:class:`Atom` or str
             Atom object in (0, 0, 0) unit cell.
-        atom2 : :py:class:`Atom`
+            str works only if atom is already in the Hamiltonian.
+        atom2 : :py:class:`Atom` or str
             Atom object in R unit cell.
+            str works only if atom is already in the Hamiltonian.
         R : tuple of ints
             Vector of the unit cell for atom2.
             In the relative coordinates (i,j,k).
         """
 
-        if atom1 not in self.magnetic_atoms:
+        if isinstance(atom1, str):
+            atom1 = self.crystal.get_atom(atom1)
+        elif atom1 not in self.crystal:
             self.add_atom(atom1)
-        if atom2 not in self.magnetic_atoms:
+
+        if isinstance(atom2, str):
+            atom2 = self.crystal.get_atom(atom2)
+        elif atom2 not in self.crystal:
             self.add_atom(atom2)
 
         self.bonds[(atom1, atom2, R)] = J
@@ -781,14 +869,24 @@ class ExchangeHamiltonian:
             Radius vector of the unit cell for atom2 (i,j,k).
         """
 
+        if isinstance(atom1, str):
+            atom1 = self.crystal.get_atom(atom1)
+
+        if isinstance(atom2, str):
+            atom2 = self.crystal.get_atom(atom2)
+
         try:
             del self.bonds[(atom1, atom2, R)]
         except KeyError:
-            pass
+            raise KeyError(
+                f"Bond ({atom2.fullname}, {atom2.fullname}, {R}) is not present in the model."
+            )
 
     def add_atom(self, atom: Atom):
         r"""
         Add atom to the Hamiltonian.
+
+        see :py:meth:`.Crystal.add_atom`
 
         Parameters
         ----------
@@ -796,7 +894,6 @@ class ExchangeHamiltonian:
             Atom object.
         """
 
-        self.magnetic_atoms.append(atom)
         self.crystal.add_atom(atom)
 
     def remove_atom(self, atom):
@@ -812,9 +909,9 @@ class ExchangeHamiltonian:
             Atom object.
         """
 
+        if isinstance(atom, str):
+            atom = self.crystal.get_atom(atom)
         bonds_for_removal = []
-        if atom in self.magnetic_atoms:
-            self.magnetic_atoms.remove(atom)
         for atom1, atom2, R, J in self:
             if atom1 == atom or atom2 == atom:
                 bonds_for_removal.append((atom1, atom2, R))
@@ -883,11 +980,12 @@ class ExchangeHamiltonian:
 
             if R_vector is not None and R not in R_vector:
                 bonds_for_removal.add((atom1, atom2, R))
-            # Here literals, not objects are compared, because in general
-            # template only has information about literals and R.
+            # Here names, not objects are compared, because in general
+            # template only has information about names (or fullnames) and R.
             if (
                 template is not None
-                and (atom1.literal, atom2.literal, R) not in template
+                and (atom1.name, atom2.name, R) not in template
+                and (atom1.fullname, atom2.fullname, R) not in template
             ):
                 bonds_for_removal.add((atom1, atom2, R))
 
@@ -947,6 +1045,7 @@ class ExchangeHamiltonian:
         )
         return filtered_model
 
+    # TODO rewrite with new template logic (J1 through getattr)
     def force_symmetry(self, template):
         r"""
         Force the Hamiltonian to have the symmetries of the template.
@@ -977,8 +1076,8 @@ class ExchangeHamiltonian:
             symm_matrix = np.zeros((3, 3), dtype=float)
             dmi_module = 0
             for atom1, atom2, R in bonds:
-                # Here literals, not objects are obtained, because in general
-                # template only has information about literals and R.
+                # Here names, not objects are obtained, because in general
+                # template only has information about names and R.
                 J = self[self.crystal.get_atom(atom1), self.crystal.get_atom(atom2), R]
                 symm_matrix = symm_matrix + J.symm_matrix
                 dmi_module = dmi_module + J.dmi_module
@@ -1167,7 +1266,6 @@ class ExchangeHamiltonian:
 
         return summary
 
-    # TODO Fix notation
     def ferromagnetic_energy(self, theta=0, phi=0):
         r"""
         Compute energy of the Hamiltonian assuming ferromagnetic state.
@@ -1198,11 +1296,21 @@ class ExchangeHamiltonian:
             by ``theta`` and ``phi``. In the units of J values.
         """
 
-        theta = theta / 180 * pi
-        phi = phi / 180 * pi
+        theta = theta * _toradians
+        phi = phi * _toradians
         energy = np.zeros((3, 3), dtype=float)
+        factor = 1
+        if self.minus_sign:
+            factor *= -1
+        if self.factor_one_half:
+            factor /= 2
+        if self.factor_two:
+            factor *= 2
         for atom1, atom2, R, J in self:
-            energy -= J.matrix
+            if self.spin_normalized:
+                energy += factor * J.matrix
+            else:
+                energy += factor * J.matrix * atom1.spin * atom2.spin
         spin_vector = np.array(
             [cos(phi) * sin(theta), sin(phi) * sin(theta), cos(theta)]
         )
@@ -1360,3 +1468,21 @@ class ExchangeHamiltonianIterator:
 
     def __iter__(self):
         return self
+
+
+if __name__ == "__main__":
+    model = ExchangeHamiltonian()
+    Cr = Atom("Cr", (0, 0, 0), spin=3 / 2)
+    model[Cr, Cr, (1, 0, 0)] = ExchangeParameter(iso=1)
+    assert model[Cr, Cr, (1, 0, 0)].iso == 1
+
+    model.notation = "standard"
+    assert model[Cr, Cr, (1, 0, 0)].iso == 1
+    model.notation = "standard"
+    assert model[Cr, Cr, (1, 0, 0)].iso == 1
+
+    assert model.double_counting
+    model.double_counting = False
+    assert model[Cr, Cr, (1, 0, 0)].iso == 2
+    model.double_counting = True
+    assert model[Cr, Cr, (1, 0, 0)].iso == 1

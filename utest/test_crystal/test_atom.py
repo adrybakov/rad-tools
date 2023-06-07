@@ -7,7 +7,7 @@ from radtools import Atom
 def test_atom():
     atom = Atom()
     assert (atom.position == np.zeros(3)).all()
-    assert atom.literal == "X"
+    assert atom.name == "X"
     with pytest.raises(ValueError):
         a = atom.spin
     with pytest.raises(ValueError):

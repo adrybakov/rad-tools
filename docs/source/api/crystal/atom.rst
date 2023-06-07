@@ -16,7 +16,7 @@ Id attributes
 
 .. autosummary::
 
-    Atom.literal
+    Atom.name
     Atom.index
     Atom.type
     Atom.fullname

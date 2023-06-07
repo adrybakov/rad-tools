@@ -91,9 +91,9 @@ def read_tb2j_model(filename, quiet=True) -> ExchangeHamiltonian:
                     charge = float(line[4])
                 except IndexError:
                     charge = None
-                model.crystal.add_atom(
+                model.add_atom(
                     Atom(
-                        literal=line[0],
+                        name=line[0],
                         position=tuple(map(float, line[1:4])),
                         index=i,
                         magmom=magmom,
@@ -115,8 +115,10 @@ def read_tb2j_model(filename, quiet=True) -> ExchangeHamiltonian:
         while line and minor_sep not in line:
             line = file.readline()
         line = file.readline().translate(garbage).split()
-        atom1 = model.crystal.get_atom(line[0])
-        atom2 = model.crystal.get_atom(line[1])
+        # atom1 = model.crystal.get_atom(line[0])
+        # atom2 = model.crystal.get_atom(line[1])
+        atom1 = line[0]
+        atom2 = line[1]
         R = tuple(map(int, line[2:5]))
         distance = float(line[-1])
         iso = None
@@ -144,9 +146,9 @@ def read_tb2j_model(filename, quiet=True) -> ExchangeHamiltonian:
                 dmi = tuple(map(float, line.translate(garbage).split()[-3:]))
 
         # Adding info from the exchange block to the ExchangeHamiltonian structure
-        bond = ExchangeParameter(iso=iso, aniso=aniso, dmi=dmi)
-        model.add_bond(bond, atom1, atom2, R)
-        computed_distance = model.crystal.get_distance(atom1, atom2, R)
+        J = ExchangeParameter(iso=iso, aniso=aniso, dmi=dmi)
+        model.add_bond(J, atom1, atom2, R)
+        computed_distance = model.get_distance(atom1, atom2, R)
         if abs(computed_distance - distance) > 0.001 and not quiet:
             print(
                 f"\nComputed distance is a different from the read one:\n"

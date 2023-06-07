@@ -190,19 +190,19 @@ class TestExchangeHamiltonian:
         Cr3 = Atom("Cr3", (1, 3, 3))
         model = ExchangeHamiltonian()
         model.add_atom(Cr1)
+        assert model.number_spins_in_unit_cell == 0
+        model.add_bond(ExchangeParameter(iso=1), "Cr1", "Cr1", (1, 0, 0))
         assert model.number_spins_in_unit_cell == 1
         model.add_atom(Cr2)
-        assert model.number_spins_in_unit_cell == 2
+        assert model.number_spins_in_unit_cell == 1
         model.add_atom(Cr3)
-        assert model.number_spins_in_unit_cell == 3
-        model.remove_atom(Cr3)
-        Cr3 = Atom("Cr3", (4, 9, 1))
-        model.add_atom(Cr3)
+        assert model.number_spins_in_unit_cell == 1
+        model.add_bond(ExchangeParameter(iso=1), "Cr2", "Cr3", (0, 0, 0))
         assert model.number_spins_in_unit_cell == 3
         model.remove_atom(Cr1)
         assert model.number_spins_in_unit_cell == 2
         model.remove_atom(Cr2)
-        assert model.number_spins_in_unit_cell == 1
+        assert model.number_spins_in_unit_cell == 0
         model.remove_atom(Cr3)
         assert model.number_spins_in_unit_cell == 0
 
@@ -282,22 +282,24 @@ class TestExchangeHamiltonian:
         assert len(model.magnetic_atoms) == 0
         Cr1 = Atom("Cr1", (2, 5, 1))
         model.add_atom(Cr1)
-        assert len(model.magnetic_atoms) == 1
+        assert len(model.magnetic_atoms) == 0
+        assert len(model.crystal.atoms) == 1
         Cr2 = Atom("Cr2", (4, 2, 1))
         model.add_atom(Cr2)
-        assert len(model.magnetic_atoms) == 2
-        assert model.magnetic_atoms[0].position[0] == 2
-        assert model.magnetic_atoms[0].position[1] == 5
-        assert model.magnetic_atoms[0].position[2] == 1
-        assert model.magnetic_atoms[1].position[0] == 4
-        assert model.magnetic_atoms[1].position[1] == 2
-        assert model.magnetic_atoms[1].position[2] == 1
+        assert len(model.magnetic_atoms) == 0
+        assert len(model.crystal.atoms) == 2
+        assert model.crystal.get_atom("Cr1").position[0] == 2
+        assert model.crystal.get_atom("Cr1").position[1] == 5
+        assert model.crystal.get_atom("Cr1").position[2] == 1
+        assert model.crystal.get_atom("Cr2").position[0] == 4
+        assert model.crystal.get_atom("Cr2").position[1] == 2
+        assert model.crystal.get_atom("Cr2").position[2] == 1
         model.remove_atom(Cr2)
         Cr2 = Atom("Cr2", (4, 3, 1))
         model.add_atom(Cr2)
-        assert model.magnetic_atoms[1].position[0] == 4
-        assert model.magnetic_atoms[1].position[1] == 3
-        assert model.magnetic_atoms[1].position[2] == 1
+        assert model.crystal.get_atom("Cr2").position[0] == 4
+        assert model.crystal.get_atom("Cr2").position[1] == 3
+        assert model.crystal.get_atom("Cr2").position[2] == 1
 
     def test_remove_atom(self):
         model = ExchangeHamiltonian()
@@ -478,8 +480,8 @@ class TestExchangeHamiltonian:
         assert (Cr1, Cr2, (0, 0, 0)) in model
         assert (Cr1, Cr1, (1, 0, 0)) in model
         assert (Cr2, Cr2, (1, 0, 0)) in model
-        # In the template there are literals, not objects, because in general
-        # template only has information about literals and R.
+        # In the template there are names, not objects, because in general
+        # template only has information about names and R.
         filtered_model = model.filtered(template=[("Cr1", "Cr2", (0, 0, 0))])
         assert len(filtered_model.bonds) == 1
         assert (Cr1, Cr2, (0, 0, 0)) in model
@@ -626,14 +628,19 @@ class TestExchangeHamiltonian:
 
         model.notation = "standard"
         assert model[Cr, Cr, (1, 0, 0)].iso == 1
+        assert len(model.bonds) == 2
         model.notation = "standard"
         assert model[Cr, Cr, (1, 0, 0)].iso == 1
+        assert len(model.bonds) == 2
 
         assert model.double_counting
+        assert len(model.bonds) == 2
         model.double_counting = False
         assert model[Cr, Cr, (1, 0, 0)].iso == 2
+        assert len(model.bonds) == 1
         model.double_counting = True
         assert model[Cr, Cr, (1, 0, 0)].iso == 1
+        assert len(model.bonds) == 2
 
         assert not model.spin_normalized
         model.spin_normalized = True
@@ -721,12 +728,17 @@ class TestExchangeHamiltonian:
     def test_ferromagnetic_energy(self):
         model = ExchangeHamiltonian()
         model.cell = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-        Cr1 = Atom("Cr1", (1, 1, 1))
-        Cr2 = Atom("Cr2", (1, 1, 1))
-        Cr3 = Atom("Cr3", (1, 1, 1))
+        Cr1 = Atom("Cr1", (1, 1, 1), spin=2)
+        Cr2 = Atom("Cr2", (1, 1, 1), spin=2)
+        Cr3 = Atom("Cr3", (1, 1, 1), spin=2)
         model.add_bond(ExchangeParameter(iso=1), Cr1, Cr2, (0, 0, 0))
         model.add_bond(ExchangeParameter(iso=2), Cr1, Cr3, (0, -1, 0))
         model.add_bond(ExchangeParameter(iso=3), Cr2, Cr1, (0, 0, -3))
+        model.double_counting = False
+        model.minus_sign = True
+        model.factor_one_half = False
+        model.factor_two = False
+        model.spin_normalized = True
         assert model.ferromagnetic_energy() == -6
         assert model.ferromagnetic_energy(theta=23, phi=234) == -6
         model.add_bond(
@@ -739,3 +751,8 @@ class TestExchangeHamiltonian:
         assert model.ferromagnetic_energy(theta=90) == -10
         assert model.ferromagnetic_energy(theta=90, phi=90) == -11
         assert model.ferromagnetic_energy(theta=90, phi=45) == -10.5
+
+        notations = np.transpose(np.indices((2,2,2,2,2)), (1,2,3,4,5,0)).reshape((32,5))
+        for new_notation in notations:
+            model.notation = new_notation
+            assert model.ferromagnetic_energy() == -6

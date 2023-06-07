@@ -11,14 +11,14 @@ class Atom:
 
     Notes
     -----
-    "==" (and "!=") operation compare two atoms based on their literals and indexes.
+    "==" (and "!=") operation compare two atoms based on their names and indexes.
     If index of one atom is not define, then comparison raises ``ValueError``.
     For the check of the atom type use :py:attr:`Atom.type`.
-    In most cases :py:attr:`Atom.literal` = :py:attr:`Atom.type`.
+    In most cases :py:attr:`Atom.name` = :py:attr:`Atom.type`.
 
     Parameters
     ----------
-    literal : str, default X
+    name : str, default X
         Name of the atom.
     position : (3,) |array_like|_, default [0,0,0]
         Position of the atom in absolute coordinates.
@@ -34,12 +34,13 @@ class Atom:
         Charge of the atom.
     index : int, optional
         Custom index of an atom, used differently in different scenarios.
-        Meant to be unique, when an atom belongs to some group
+        Combination of :py:attr:`.name` and :py:attr:`.index`
+        is meant to be unique, when an atom belongs to some group
         (i.e. to :py:class:`.Crystal` or :py:class:`.ExchangeHamiltonian`).
 
     Attributes
     ----------
-    literal : str
+    name : str
     type : str
     index : int
     position : (3,) :numpy:`ndarray`
@@ -51,7 +52,7 @@ class Atom:
 
     def __init__(
         self,
-        literal="X",
+        name="X",
         position=None,
         spin=None,
         spin_vector=None,
@@ -59,7 +60,7 @@ class Atom:
         charge=None,
         index=None,
     ) -> None:
-        self._literal = "X"
+        self._name = "X"
         self._index = None
         self._type = None
         if position is None:
@@ -70,7 +71,7 @@ class Atom:
         self._magmom = None
         self._charge = None
 
-        self.literal = literal
+        self.name = name
         if spin is not None:
             self.spin = spin
         if spin_vector is not None:
@@ -83,7 +84,7 @@ class Atom:
             self.index = index
 
     def __str__(self):
-        return self.literal
+        return self.name
 
     def __format__(self, format_spec):
         return format(str(self), format_spec)
@@ -93,24 +94,24 @@ class Atom:
         if not isinstance(other, Atom):
             raise TypeError(
                 f"TypeError: unsupported operand type(s) "
-                + f"for =: '{other.__class__.__name__}' and 'Atom'"
+                + f"for ==: '{other.__class__.__name__}' and 'Atom'"
             )
-        return self.literal == other.literal and self.index == other.index
+        return self.name == other.name and self.index == other.index
 
     def __hash__(self):
-        return hash(str(self.literal) + str(self.index))
+        return hash(str(self.name) + str(self.index))
 
     # !=
     def __neq__(self, other):
         return not self == other
 
     @property
-    def literal(self):
-        return self._literal
+    def name(self):
+        return self._name
 
-    @literal.setter
-    def literal(self, new_literal):
-        self._literal = new_literal
+    @name.setter
+    def name(self, new_name):
+        self._name = new_name
         self._type = None
 
     @property
@@ -121,7 +122,7 @@ class Atom:
         if self._type is None:
             self._type = "X"
             for i in atom_types:
-                if i in self._literal:
+                if i in self._name:
                     self._type = i
                     break
         return self._type
@@ -246,8 +247,8 @@ class Atom:
 
     @property
     def fullname(self):
-        r"""Return fullname (literal + index) of an atom."""
+        r"""Return fullname (name + index) of an atom."""
         try:
-            return f"{self.literal}_{self.index}"
+            return f"{self.name}_{self.index}"
         except ValueError:
-            return self.literal
+            return self.name
