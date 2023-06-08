@@ -21,12 +21,20 @@ Id attributes
     Atom.type
     Atom.fullname
 
-Properties
-==========
+Spin
+====
 
 .. autosummary::
 
     Atom.spin
+    Atom.spin_direction
     Atom.spin_vector
+
+
+Other properties
+================
+
+.. autosummary::
+
     Atom.magmom
     Atom.charge
