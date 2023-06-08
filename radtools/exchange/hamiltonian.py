@@ -1299,7 +1299,7 @@ class ExchangeHamiltonian:
             theta = np.array([theta])
         if phi.shape == ():
             phi = np.array([phi])
-        spin_vector = np.array(
+        spin_direction = np.array(
             [np.cos(phi) * np.sin(theta), np.sin(phi) * np.sin(theta), np.cos(theta)]
         )
 
@@ -1317,7 +1317,7 @@ class ExchangeHamiltonian:
             else:
                 energy += factor * J.matrix * atom1.spin * atom2.spin
 
-        energy = np.einsum("ni,ij,jn->n", spin_vector.T, energy, spin_vector)
+        energy = np.einsum("ni,ij,jn->n", spin_direction.T, energy, spin_direction)
         return energy
 
     # OLD METHODS AND ATTRIBUTES, KEPT FOR BACKWARD COMPATIBILITY
