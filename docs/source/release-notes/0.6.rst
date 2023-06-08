@@ -23,16 +23,19 @@ Debugged :ref:`rad-plot-dos.py <rad-plot-dos>` on the real-world data.
 Add several new features to it.
 
 Remade the import structure of the package. 
-The main entry point is ``rad_tools``:
+The main entry point is ``radtools``:
 
 .. code-block:: console
 
-    import rad_tools as rad
+    import radtools as rad
 
 Only public methods and classes are imported into the main module.
 Absolute import for the internal usage is still possible.
 
 0.6.1
 -----
+Move to the usage of |termcolor|_ for colourful terminal output.
 
-Add :py:func:`.print_2D_array`. 
+0.6.2
+-----
+Change domain from rad-tools.adrybakov.com to rad-tools.org

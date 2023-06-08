@@ -3,24 +3,22 @@ import os
 import numpy as np
 import pytest
 
-from rad_tools.io import read_template
-from rad_tools.io.tb2j import *
+from radtools.io import read_template
+from radtools.io.tb2j import *
 
 
-class TestReadExchangeModel:
-    model = read_exchange_model(
+class TestReadExchangeHamiltonian:
+    model = read_tb2j_model(
         os.path.join("utest", "test_io", "resources", "exchange.out")
     )
 
     def test_empty_filename(self):
         with pytest.raises(TypeError):
-            model = read_exchange_model(None)
+            model = read_tb2j_model(None)
 
     def test_wrong_filename(self):
         with pytest.raises(FileNotFoundError):
-            model = read_exchange_model(
-                "Ah, music. " + "A magic beyond all we do here!"
-            )
+            model = read_tb2j_model("Ah, music. " + "A magic beyond all we do here!")
 
     def test_read_cell(self):
         cell_values = [
@@ -28,57 +26,27 @@ class TestReadExchangeModel:
             [0.000, 4.807, 0.000],
             [0.000, 0.000, 23.571],
         ]
-        assert (self.model.cell == cell_values).all()
+        assert (abs(self.model.cell - cell_values) < 1e-4).all()
 
-    def test_nonmagnetic_atoms(self):
-        assert len(self.model.nonmagnetic_atoms) == 4
-        assert (
-            np.around(
-                self.model.nonmagnetic_atoms["Br1"]
-                - np.array([0.25, 0.2500104, -0.00283399]),
-                4,
-            )
-            == np.zeros(3)
-        ).all()
-        assert (
-            np.around(
-                self.model.nonmagnetic_atoms["Br2"]
-                - np.array([0.75, 0.7500312, 0.23917526]),
-                4,
-            )
-            == np.zeros(3)
-        ).all()
-        assert (
-            np.around(
-                self.model.nonmagnetic_atoms["S1"]
-                - np.array([0.75, 0.7500312, 0.09346231]),
-                4,
-            )
-            == np.zeros(3)
-        ).all()
-        assert (
-            np.around(
-                self.model.nonmagnetic_atoms["S2"]
-                - np.array([0.25, 0.2500104, 0.14287896]),
-                4,
-            )
-            == np.zeros(3)
-        ).all()
-
-    def test_magnetic_atoms(self):
+    @pytest.mark.parametrize(
+        "atom, position",
+        [
+            ("Cr1", [2.6910, 1.2018, 1.7371]),
+            ("Cr2", [0.8970, 3.6054, 3.8336]),
+            ("Br1", [0.8970, 1.2018, -0.0668]),
+            ("Br2", [2.6910, 3.6054, 5.6376]),
+            ("S1", [2.6910, 3.6054, 2.2030]),
+            ("S2", [0.8970, 1.2018, 3.3678]),
+        ],
+        ids=["Cr1", "Cr2", "Br1", "Br2", "S1", "S2"],
+    )
+    def test_atoms(self, atom, position):
+        assert len(self.model.crystal.atoms) - len(self.model.magnetic_atoms) == 4
+        assert len(self.model.crystal.atoms) == 6
         assert len(self.model.magnetic_atoms) == 2
         assert (
             np.around(
-                self.model.magnetic_atoms["Cr1"]
-                - np.array([0.75, 0.2500104, 0.07369649]),
-                4,
-            )
-            == np.zeros(3)
-        ).all()
-        assert (
-            np.around(
-                self.model.magnetic_atoms["Cr2"]
-                - np.array([0.25, 0.7500312, 0.16264053]),
+                self.model.crystal.get_atom(atom).position - np.array(position),
                 4,
             )
             == np.zeros(3)
@@ -171,6 +139,8 @@ class TestReadExchangeModel:
         ],
     )
     def test_read_exchange_examples(self, atom1, atom2, R, iso, aniso, dmi, distance):
+        atom1 = self.model.crystal.get_atom(atom1)
+        atom2 = self.model.crystal.get_atom(atom2)
         assert round(self.model[(atom1, atom2, R)].iso, 4) == iso
         assert round(self.model.get_distance(atom1, atom2, R), 2) == round(distance, 2)
         for i in range(0, 3):
@@ -314,3 +284,10 @@ class TestReadExchangeModel:
             R_vector=R_vector, max_distance=max_distance
         )
         assert len(filtered_model.bonds) == elements_number
+
+    def test_notation(self):
+        assert self.model.double_counting == True
+        assert self.model.spin_normalized == True
+        assert self.model.factor_one_half == False
+        assert self.model.factor_two == False
+        assert self.model.minus_sign == True

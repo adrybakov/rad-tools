@@ -7,7 +7,7 @@ Various scripts for condense matter calculations and post-processing.
     :target: https://badge.fury.io/py/rad-tools
     
 .. image:: https://readthedocs.org/projects/rad-tools/badge/?version=stable
-    :target: https://rad-tools.adrybakov.com/en/stable/?badge=stable
+    :target: https://rad-tools.org/en/stable/?badge=stable
     :alt: Documentation Status
    
 .. image:: https://static.pepy.tech/personalized-badge/rad-tools?period=total&units=international_system&left_color=black&right_color=blue&left_text=Downloads
@@ -30,8 +30,8 @@ It is expected to be used in two ways:
 
 * Via scripts (i.e. usage from command line)
 
-Documentations is available 
-`here. <https://rad-tools.adrybakov.com>`_
+For the detailed description check
+`documentation. <https://rad-tools.org>`_
 
 Installation
 ============
@@ -40,8 +40,10 @@ Requirement for RAD-tools installation are:
 
 * Python itself (>=3.6)
 * NumPy
+* SciPy
 * matplotlib
 * tqdm
+* termcolor
 
 RAD-tools can be installed with ``pip`` or from source.
 
@@ -63,13 +65,13 @@ Installing from source
 
    git clone git@github.com:adrybakov/rad-tools.git
 
-Change the directory:
+* Change the directory:
 
 .. code-block:: python
 
    cd rad-tools
 
-To install RAD-tools, run (you may need to use ``pip3``):
+* To install RAD-tools, run (you may need to use ``pip3``):
 
 .. code-block:: console
 
@@ -82,7 +84,7 @@ which requires pytest (requires Python 3.7+) to be installed:
 
    make test
 
-To install RAD-tools, run (you may need to use ``pip3``):
+To install pytest, run (you may need to use ``pip3``):
 
 .. code-block:: console
 

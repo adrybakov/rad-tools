@@ -1,10 +1,10 @@
-.. module:: rad_tools
+.. module:: radtools
 
 .. _api:
 
-*****************
-API documentation
-*****************
+*************
+API reference
+*************
 
 :Release: |version|
 
@@ -14,7 +14,7 @@ The main interface to the package may be imported as
 
 .. code-block:: python
 
-   import rad_tools as rad
+   import radtools as rad
 
 In the examples across the documentation it is expected to be imported in that way.
 
@@ -22,11 +22,12 @@ In the examples across the documentation it is expected to be imported in that w
 .. toctree:: 
    :maxdepth: 2
 
+   crystal/index
+   exchange/index
    dos
-   exchange
-   kpoints
    io
    score
    routines
+   custom-exceptions
 
 

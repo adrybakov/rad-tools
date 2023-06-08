@@ -1,21 +1,20 @@
-.. _rad-tools_io:
+.. _api_io:
 
 ************
 Input-output
 ************
 
-.. automodule:: rad_tools.io
+.. automodule:: radtools.io
 
-.. currentmodule:: rad_tools
+.. currentmodule:: radtools
 
 Routine for external inputs
 ===========================
 
 .. autosummary:: 
     :toctree: generated/
-    :template: function.rst
 
-    read_exchange_model
+    read_tb2j_model
 
 Routine for internal inputs
 ===========================

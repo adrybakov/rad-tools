@@ -1,0 +1,82 @@
+.. _release-notes_0.7:
+
+***********
+Version 0.7
+***********
+
+**Date:** 06 June 2023
+
+Whats new?
+----------
+Major change: name of the package for pip installation is kept the 
+same: "rad-tools". All imports in python code moved to "radtools".
+
+New module, which affected other modules as well: :ref:`rad-tools_crystal`.
+
+
+
+Add :py:func:`.print_2D_array`. 
+
+Rename :py:func:`.read_exchange_model` to :py:func:`.read_tb2j_model`.
+
+Major design change in the :py:mod:`.exchange`:
+
+* Renamed :py:class:`ExchangeModel` to :py:class:`.ExchangeHamiltonian`
+* Move from the concept (atom1, atom2, R) -> bond to the concept (atom1, atom2, R) -> J.
+* Made class :py:class:`.ExchangeParameter` from the :py:class:`Bond`.
+* Introduce new interface design for the :py:class:`.ExchangeHamiltonian`.
+* Iteration over :py:class`.ExchangeHamiltonian` returns (atom1, atom2, R, J) instead of (atom1, atom2, R).
+
+0.7.1
+-----
+
+Write correct behaviour of :py:class:`.ExchangeHamiltonian` with the :py:attr:`.ExchangeHamiltonian.double_counting`:
+
+.. doctest::
+
+    >>> import radtools as rad
+    >>> m = rad.ExchangeHamiltonian()
+    >>> m.add_atom(rad.Atom("Cr", (0,0,0), spin=3/2))
+    >>> m.add_bond(rad.ExchangeParameter(iso=1), "Cr", "Cr", (1,0,0))
+    >>> # First time - only setting interpretation, no modification of values
+    >>> m.notation = "standard"
+    >>> m["Cr", "Cr", (1,0,0)].iso 
+    1.0
+    >>> m["Cr", "Cr", (-1,0,0)].iso 
+    1.0
+    >>> m.double_counting
+    True
+    >>> m.double_counting = False
+    >>> m["Cr", "Cr", (1,0,0)].iso 
+    2.0
+    >>> ("Cr", "Cr", (1,0,0)) in m
+    True
+    >>> ("Cr", "Cr", (-1,0,0)) in m
+    False
+    >>> m.double_counting = True
+    >>> m["Cr", "Cr", (1,0,0)].iso 
+    1.0
+    >>> ("Cr", "Cr", (-1,0,0)) in m
+    True
+
+
+Add attribute access to the atoms through atom names to the :py:class:`.Crystal`:
+
+.. doctest::
+
+    >>> import radtools as rad
+    >>> c = rad.Crystal()
+    >>> c.add_atom(rad.Atom("Cr", index=1))
+    >>> c.Cr.fullname
+    'Cr_1'
+    >>> c.Cr_1.fullname
+    'Cr_1'
+    >>> c.add_atom(rad.Atom("Cr", index=2))
+    >>> c.Cr_1.fullname
+    'Cr_1'
+    >>> c.Cr_2.fullname
+    'Cr_2'
+    >>> # c.Cr
+    >>> # It will raise Attribute error, since after addition 
+    >>> # of the second atom with the same name 
+    >>> # information about the index is needed to identify the atom object.

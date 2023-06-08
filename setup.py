@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-from rad_tools import __version__
+from radtools import __version__
 
 __version__ = __version__
 
@@ -17,7 +17,7 @@ setup(
     author="Andrey Rybakov",
     author_email="rybakov.ad@icloud.com",
     license="MIT license",
-    url="https://rad-tools.adrybakov.com/en/stable/",
+    url="https://rad-tools.org/en/stable/",
     download_url="https://github.com/adrybakov/rad-tools.git",
     packages=find_packages(),
     scripts=[
@@ -29,7 +29,7 @@ setup(
         "scripts/rad-identify-wannier-centres.py",
         "scripts/compute-energies.py",
     ],
-    install_requires=["numpy", "matplotlib", "tqdm", "scipy"],
+    install_requires=["numpy", "matplotlib", "scipy", "tqdm", "termcolor"],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Programming Language :: Python :: 3",

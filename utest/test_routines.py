@@ -1,66 +1,11 @@
-from os import getcwd, rmdir
-from os.path import isdir, join
+from math import pi, sqrt
 
+import numpy as np
 import pytest
 
-from rad_tools.routines import (
-    BLACK,
-    RESET,
-    RED,
-    GREEN,
-    YELLOW,
-    BLUE,
-    MAGENTA,
-    CYAN,
-    WHITE,
-    WARNING,
-    OK,
-    ERROR,
-    get_256_colours,
-    atom_mark_to_latex,
-    rot_angle,
-    absolute_to_relative,
-)
-
-
-def test_terminal_colours():
-    print("\n Please check that the following colours " "are displayed correctly:\n")
-    print(
-        f"{BLACK}BLACK{RESET}",
-        f"{RED}RED{RESET}",
-        f"{GREEN}GREEN{RESET}",
-        f"{YELLOW}YELLOW{RESET}",
-        f"{BLUE}BLUE{RESET}",
-        f"{MAGENTA}MAGENTA{RESET}",
-        f"{CYAN}CYAN{RESET}",
-        f"{WHITE}WHITE{RESET}",
-        sep="\n",
-    )
-    assert WARNING == YELLOW
-    assert OK == GREEN
-    assert ERROR == RED
-
-
-def test_get_256_colours():
-    print("\n Please check that the following colour's table " "looks beautiful:\n")
-    for i in range(0, 16):
-        for j in range(0, 16):
-            print(
-                f"{get_256_colours(16 * i + j)}" f"{16 * i + j:3}" f"{RESET}", end=" "
-            )
-        print()
-    with pytest.raises(ValueError):
-        get_256_colours(345)
-    with pytest.raises(ValueError):
-        get_256_colours(256)
-    with pytest.raises(ValueError):
-        get_256_colours(34.5)
-    with pytest.raises(ValueError):
-        get_256_colours(-45)
-    with pytest.raises(ValueError):
-        get_256_colours("sadfasd")
-    for i in range(0, 256):
-        assert get_256_colours(i) == f"\033[38:5:{i}m"
+from radtools.routines import (absolute_to_relative, angle, atom_mark_to_latex,
+                               cell_from_param, get_permutation,
+                               reciprocal_cell, rot_angle, volume)
 
 
 @pytest.mark.parametrize(
@@ -125,5 +70,59 @@ class TestRotAngle:
     ],
 )
 def test_absolute_to_relative(cell, absolute, relative):
-    new_relative = absolute_to_relative(cell, *tuple(absolute))
+    new_relative = absolute_to_relative(cell, absolute)
     assert (new_relative == relative).all()
+
+
+def test_angle():
+    tol_angle = 1e-5
+    assert abs(angle([1, 0, 0], [0, 1, 0]) - 90) < tol_angle
+    assert abs(angle([1, 0, 0], [0, 0, 1]) - 90) < tol_angle
+    assert abs(angle([0, 1, 0], [1, 0, 0]) - 90) < tol_angle
+    assert abs(angle([0, 1, 0], [0, 0, 1]) - 90) < tol_angle
+    assert abs(angle([0, 0, 1], [1, 0, 0]) - 90) < tol_angle
+    assert abs(angle([0, 0, 1], [0, 1, 0]) - 90) < tol_angle
+    assert abs(angle([1, 1, 0], [0, 0, 1]) - 90) < tol_angle
+    assert abs(angle([1, 0, 0], [1, 1, 0]) - 45) < tol_angle
+    assert abs(angle([1, 0, 0], [1, sqrt(3), 0]) - 60) < tol_angle
+    assert abs(angle([1, 0, 0], [sqrt(3), 1, 0]) - 30) < tol_angle
+    assert abs(angle([1, 1, 0], [0, 1, 1]) - 60) < tol_angle
+    assert abs(angle([1, 1, 0], [3, 1, 1]) - 31.48215) < tol_angle
+    assert abs(angle([3, 1, 1], [-3, -1, -1]) - 180) < tol_angle
+    assert abs(angle([3, 1, 1], [3, 1, 1])) < tol_angle
+
+
+@pytest.mark.parametrize(
+    "args, result, eps", [((4, 4.472, 4.583, 79.03, 64.13, 64.15), 66.3840797, 1e-8)]
+)
+def test_volume(args, result, eps):
+    assert volume(*args) - result < eps
+
+
+@pytest.mark.parametrize(
+    "cell, rec_cell",
+    [
+        (
+            [[1, 0, 0], [0, 2, 0], [0, 0, 3]],
+            [[2 * pi, 0, 0], [0, pi, 0], [0, 0, 2 / 3 * pi]],
+        )
+    ],
+)
+def test_reciprocal_cell(cell, rec_cell):
+    rcell = reciprocal_cell(cell)
+    assert (rcell - np.array(rec_cell) < 1e-10).all()
+
+
+@pytest.mark.parametrize(
+    "a, b, c, alpha, beta, gamma, cell",
+    [(1, 1, 1, 90, 90, 90, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])],
+)
+def test_cell_from_param(a, b, c, alpha, beta, gamma, cell):
+    assert (cell_from_param(a, b, c, alpha, beta, gamma) - np.array(cell) < 1e-8).all()
+
+
+@pytest.mark.parametrize(
+    "n, k, shape", [(10, 9, (10, 9)), (1, 1, (1, 1)), (11, 9, (55, 9))]
+)
+def test_get_permutation(n, k, shape):
+    assert np.array(get_permutation(n, k)).shape == shape

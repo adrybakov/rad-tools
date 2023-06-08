@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from rad_tools.io.internal import *
+from radtools.io.internal import *
 
 
 class ReadTemplate:

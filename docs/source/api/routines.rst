@@ -1,20 +1,21 @@
-.. _rad-tools_routines:
+.. _api_routines:
 
 **********************
 Collection of routines
 **********************
 
-.. automodule:: rad_tools.routines
+.. automodule:: radtools.routines
 
-.. currentmodule:: rad_tools
+.. currentmodule:: radtools
 
 
 .. autosummary::
     :toctree: generated/
 
-    cprint
-    winwait
-    get_named_colours
-    get_256_colours
-    absolute_to_relative
     print_2D_array
+    volume
+    angle
+    absolute_to_relative
+    get_permutation
+    cell_from_param
+    reciprocal_cell
