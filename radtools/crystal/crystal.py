@@ -116,6 +116,9 @@ class Crystal:
                 atom = atom[0]
         return atom in self.atoms
 
+    def __len__(self):
+        return self.atoms.__len__()
+
     def __getitem__(self, index) -> Atom:
         return self.atoms[index]
 

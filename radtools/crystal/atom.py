@@ -231,6 +231,8 @@ class Atom:
         .. code-block:: python
 
             magmom = [m_x, m_y, m_z]
+
+        units - :math:`\mu_B`
         """
 
         if self._magmom is None:
