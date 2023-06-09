@@ -1,4 +1,9 @@
-from rad_tools import ExchangeModel, Bond, read_exchange_model, print_2D_array
+from radtools.exchange.hamiltonian import ExchangeHamiltonian
+from radtools.exchange.parameter import ExchangeParameter
+from radtools.io.tb2j import read_tb2j_model
+from radtools.routines import print_2D_array
+from radtools.crystal.atom import Atom
+
 from scipy.spatial.transform import Rotation
 import numpy as np
 from math import sqrt, pi
@@ -8,12 +13,23 @@ import matplotlib.pyplot as plt
 verbose = False
 
 
-def prepare_dicts(model: ExchangeModel, Q, n, S, k):
+class MagnonDispersion:
+    def __init__():
+        pass
+
+
+def input_from_ham(model: ExchangeHamiltonian):
+    r"""
+    Input from Exchange model.
+    """
+
+
+def prepare_dicts(model: ExchangeHamiltonian, Q, n, S, k):
     r"""
 
     Parameters
     ----------
-    model : :py:class:`.ExchangeModel`
+    model : :py:class:`.ExchangeHamiltonian`
     Q : array
         Q-vector of incommensurate rotation.
         In relative coordinates with respect to the reciprocal lattice vectors.
@@ -29,13 +45,17 @@ def prepare_dicts(model: ExchangeModel, Q, n, S, k):
     Q = np.array(Q)
     Q = Q[0] * model.b1 + Q[1] * model.b2 + Q[2] * model.b3
     k = k[0] * model.b1 + k[1] * model.b2 + k[2] * model.b3
+
     n = np.array(n)
+
     for i in range(0, len(S)):
         S[i] = np.array(S[i])
+
     J = {}
     d = {}
     indexing = {}
     magnetic_atoms = [atom for atom in model.magnetic_atoms]
+
     for i, atom in enumerate(magnetic_atoms):
         indexing[atom] = i
 
@@ -43,9 +63,9 @@ def prepare_dicts(model: ExchangeModel, Q, n, S, k):
     d = []
     ij = []
 
-    for atom1, atom2, R in model:
+    for atom1, atom2, R, param in model:
         i, j = indexing[atom1], indexing[atom2]
-        J.append(np.array(model[(atom1, atom2, R)].matrix, dtype=complex))
+        J.append(np.array(param.matrix, dtype=complex))
         d.append(np.array(model.get_bond_vector(atom1, atom1, R)))
         ij.append((i, j))
 
@@ -138,19 +158,19 @@ def prepare_dicts(model: ExchangeModel, Q, n, S, k):
 
 
 if __name__ == "__main__":
-    model = ExchangeModel()
-    model.add_atom("Fe", 0, 0, 0)
+    model = ExchangeHamiltonian()
+    model.add_atom(Atom("Fe", (0, 0, 0)))
     # model.add_atom("Fe1", 0.75, 0.25, 0)
     # model.add_atom("Fe2", 0.25, 0.75, 0)
-    bond1 = Bond(iso=1)
+    bond1 = ExchangeParameter(iso=1)
     model.add_bond(bond1, "Fe", "Fe", (1, 0, 0))
     model.add_bond(bond1, "Fe", "Fe", (-1, 0, 0))
     model.add_bond(bond1, "Fe", "Fe", (0, 1, 0))
     model.add_bond(bond1, "Fe", "Fe", (0, -1, 0))
     model.add_bond(bond1, "Fe", "Fe", (0, 0, 1))
     model.add_bond(bond1, "Fe", "Fe", (0, 0, -1))
-    bond2 = Bond(iso=1)
-    bond3 = Bond(iso=1, aniso=np.diag([0, 0.1, 0.5]))
+    bond2 = ExchangeParameter(iso=1)
+    bond3 = ExchangeParameter(iso=1, aniso=np.diag([0, 0.1, 0.5]))
     # model.add_bond(bond1, "Fe1", "Fe1", (1, 0, 0))
     # model.add_bond(bond1, "Fe1", "Fe1", (-1, 0, 0))
     # model.add_bond(bond1, "Fe2", "Fe2", (1, 0, 0))
@@ -170,12 +190,12 @@ if __name__ == "__main__":
     # model.add_bond(bond3, "Fe1", "Fe1", (0, -1, 0))
     # model.add_bond(bond3, "Fe2", "Fe2", (0, 1, 0))
     # model.add_bond(bond3, "Fe2", "Fe2", (0, -1, 0))
-    # # model = read_exchange_model(
-    # #     "/Volumes/work-backup/projects (closed)/2022 Nanoletters CrSBr/Calculations/UniaxialA/100.3/TB2J_results/exchange.out"
-    # # )
-    # # model = read_exchange_model(
-    # #     "/Users/rybakov.ad/Projects/rad-tools/debug/niI2_v2/exchange.out"
-    # # )
+    # model = read_exchange_model(
+    #     "/Volumes/work-backup/projects (closed)/2022 Nanoletters CrSBr/Calculations/UniaxialA/100.3/TB2J_results/exchange.out"
+    # )
+    model = read_tb2j_model(
+        "/Users/rybakov.ad/Projects/rad-tools/debug/niI2_v2/exchange.out"
+    )
 
     # print(model.magnetic_atoms)
     kpoints = np.linspace(0, 0.5, 100)
