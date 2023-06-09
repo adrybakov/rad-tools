@@ -9,6 +9,20 @@ from math import pi
 from multiprocessing import Pool
 
 
+def compute_chunk(array):
+    m_i = array[0, 0]
+    r_i = array[0, 1]
+    r_ij = array[1:, 1] - r_i
+    r_ij_norm = np.linalg.norm(r_ij, axis=1)
+    r_ij_norm_5 = (r_ij.T / r_ij_norm**5).T
+    first_term = np.sum(
+        r_ij_norm_5.T * np.diag(array[1:, 0] @ r_ij.T),
+        axis=1,
+    )
+    second_term = np.sum((array[1:, 0].T) / r_ij_norm**3, axis=1)
+    return m_i @ (-3 * first_term + second_term)
+
+
 def dipole_dipole_energy(crystal: Crystal, na, nb, nc, nproc=1):
     r"""
     Computes dipole-dipole energy.
@@ -63,30 +77,23 @@ def dipole_dipole_energy(crystal: Crystal, na, nb, nc, nproc=1):
     else:
         pool_size = len(magnetic_centres) // nproc + 1
 
-        def compute_chunk(array):
-            m_i = magnetic_centres[0, 0]
-            r_i = magnetic_centres[0, 1]
-            r_ij = magnetic_centres[1:, 1] - r_i
-            r_ij_norm = np.linalg.norm(r_ij, axis=1)
-            r_ij_norm_5 = (r_ij.T / r_ij_norm**5).T
-            first_term = np.sum(
-                r_ij_norm_5.T * np.diag(magnetic_centres[1:, 0] @ r_ij.T),
-                axis=1,
-            )
-            second_term = np.sum((magnetic_centres[1:, 0].T) / r_ij_norm**3, axis=1)
-            return (m_i @ (-3 * first_term + second_term)) / na / nb / nc / n_mag
-
         with Pool(nproc) as p:
-            energy = np.sum(
-                list(
-                    p.map(
-                        compute_chunk,
-                        [
-                            magnetic_atoms[i * pool_size : (i + 1) * pool_size]
-                            for i in range(pool_size)
-                        ],
+            energy = (
+                np.sum(
+                    list(
+                        p.map(
+                            compute_chunk,
+                            [
+                                magnetic_atoms[i * pool_size : (i + 1) * pool_size]
+                                for i in range(pool_size)
+                            ],
+                        )
                     )
                 )
+                / na
+                / nb
+                / nc
+                / n_mag
             )
 
     return energy * constant
