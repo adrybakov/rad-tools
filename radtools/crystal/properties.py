@@ -13,7 +13,7 @@ def compute_chunk(data):
     array, end_index = data
     end_index = min(len(array), end_index)
     energy = 0
-    for i in tqdm(range(0, end_index)):
+    for i in range(0, end_index):
         m_i = array[i, 0]
         r_i = array[i, 1]
         r_ij = array[i + 1 :, 1] - r_i
@@ -89,7 +89,7 @@ def dipole_dipole_energy(crystal: Crystal, na, nb, nc, nproc=1):
                         p.map(
                             compute_chunk,
                             [
-                                (magnetic_centres[i * pool_size :], (i + 1) * pool_size)
+                                (magnetic_centres[i * pool_size :], pool_size)
                                 for i in range(nproc)
                             ],
                         )
