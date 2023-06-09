@@ -6,14 +6,16 @@ import numpy as np
 from tqdm import tqdm
 from math import pi
 
-from multiprocessing import Pool
+from multiprocessing import Pool, shared_memory
 
 
 def compute_chunk(data):
-    array, end_index = data
-    end_index = min(len(array), end_index)
+    i, pool_size, buffer, shape, dtype = data
+    buffer = shared_memory.SharedMemory(name=buffer)
+    array = np.ndarray(shape, dtype=dtype, buffer=buffer.buf)[i * pool_size :]
+    end_index = min(len(array), pool_size)
     energy = 0
-    for i in tqdm(range(0, end_index)):
+    for i in range(0, end_index):
         m_i = array[i, 0]
         r_i = array[i, 1]
         r_ij = array[i + 1 :, 1] - r_i
@@ -81,6 +83,14 @@ def dipole_dipole_energy(crystal: Crystal, na, nb, nc, nproc=1):
             energy += (m_i @ (-3 * first_term + second_term)) / na / nb / nc / n_mag
     else:
         pool_size = len(magnetic_centres) // nproc + 1
+        print(magnetic_centres.shape)
+        shm = shared_memory.SharedMemory(create=True, size=magnetic_centres.nbytes)
+        b = np.ndarray(
+            magnetic_centres.shape, dtype=magnetic_centres.dtype, buffer=shm.buf
+        )
+        b[:] = magnetic_centres[:]
+        print(b.shape, b.dtype)
+        buffer_name = shm.name
 
         with Pool(nproc) as p:
             energy = (
@@ -89,7 +99,7 @@ def dipole_dipole_energy(crystal: Crystal, na, nb, nc, nproc=1):
                         p.map(
                             compute_chunk,
                             [
-                                (magnetic_centres[i * pool_size :], (i + 1) * pool_size)
+                                (i, pool_size, buffer_name, b.shape, b.dtype)
                                 for i in range(nproc)
                             ],
                         )
@@ -133,9 +143,9 @@ if __name__ == "__main__":
     from time import time
 
     start_time = time()
-    z = dipole_dipole_energy(crystal, 30, 30, 1)
+    z = dipole_dipole_energy(crystal, 20, 20, 1)
     print(z, time() - start_time, sep="\n")
-    z = dipole_dipole_energy(crystal, 30, 30, 1, 72)
+    z = dipole_dipole_energy(crystal, 20, 20, 1, 10)
     print(z, time() - start_time, sep="\n")
     # z = dipole_dipole_energy(crystal, 10, 10, 1)
     # crystal.Cr1.magmom = [0, 3, 0]
