@@ -150,9 +150,7 @@ class Atom:
         r"""
         Spin value of the atom.
 
-        .. code-block:: python
-
-            Independent of :py:attr:`.Atom.spin_direction`.
+        Independent of :py:attr:`.Atom.spin_direction`.
         """
 
         if self._spin is None:
@@ -167,8 +165,6 @@ class Atom:
     def spin_direction(self):
         r"""
         Classical spin direction of the atom.
-
-        If :py:attr:`spin` is set:
 
         .. math::
 
@@ -196,8 +192,6 @@ class Atom:
     def spin_vector(self):
         r"""
         Classical spin vector of the atom.
-
-        If :py:attr:`spin` is set:
 
         .. math::
 
