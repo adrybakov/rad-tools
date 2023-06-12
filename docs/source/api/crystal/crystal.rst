@@ -56,3 +56,11 @@ Defining the type
 
     Crystal.identify
     Crystal.find_primitive_cell
+
+Energy properties
+=================
+
+.. autosummary::
+
+    Crystal.mag_dipdip_energy
+    Crystal.converge_mag_dipdip_energy
