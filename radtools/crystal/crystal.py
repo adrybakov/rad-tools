@@ -359,7 +359,7 @@ class Crystal:
 
         .. math::
 
-            E = \frac{\mu_0}{4\pi}\sum_{i\nej}\left(3(\vec{m_i} \cdot \ver{r_ij})(\vec{m_j} \cdot \ver{r_ij}) - (\vec{m_i}\cdot\vec{m_j})\right)
+            E = \frac{\mu_0}{4\pi}\sum_{i > j}\left(3(\vec{m_i} \cdot \vec{r_{ij}})(\vec{m_j} \cdot \vec{r_{ij}}) - (\vec{m_i}\cdot\vec{m_j})\right)
 
         Parameters
         ----------
@@ -467,11 +467,11 @@ class Crystal:
         energy1 = dipole_dipole_energy(mc1, progress_bar=progress_bar, normalize=False)
         energies = [(start, energy1 / len(mc1))]
         if verbose:
-            n_digits = abs(floor(log10(abs(eps)))) + 1   
+            n_digits = abs(floor(log10(abs(eps)))) + 1
             print(
-                    f"Size: ({na}, {nb}, {nc}) \n"
-                    + f"Energy : {energy1 /len(mc1):<{n_digits+4}.{n_digits}f}"
-                )
+                f"Size: ({na}, {nb}, {nc}) \n"
+                + f"Energy : {energy1 /len(mc1):<{n_digits+4}.{n_digits}f}"
+            )
 
         if da == 0 and db == 0 and dc == 0:
             return energies
