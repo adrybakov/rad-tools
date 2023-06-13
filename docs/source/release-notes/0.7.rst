@@ -80,3 +80,8 @@ Add attribute access to the atoms through atom names to the :py:class:`.Crystal`
     >>> # It will raise Attribute error, since after addition 
     >>> # of the second atom with the same name 
     >>> # information about the index is needed to identify the atom object.
+
+0.7.2
+-----
+
+Add magnetic dipole-dipole energy calculator to the :ref:`crystal-api`.
