@@ -476,10 +476,13 @@ class Crystal:
         energy1 = dipole_dipole_energy(mc1, progress_bar=progress_bar, normalize=False)
         energies = [(start, energy1 / len(mc1))]
         if verbose:
-            n_digits = abs(floor(log10(abs(eps)))) + 1
+            n_digits = abs(floor(log10(abs(eps)))) + 2
             print(
-                f"Size: ({na}, {nb}, {nc}) \n"
-                + f"Energy : {energy1 /len(mc1):<{n_digits+4}.{n_digits}f}"
+                f"{'Size':^{6+len(str(na))+len(str(nb))+len(str(nc))}} {'Energy':^{n_digits+4}} {'Difference':^{n_digits+4}}"
+            )
+            print(
+                f"({na}, {nb}, {nc}) "
+                + f"{energy1 /len(mc1):<{n_digits+4}.{n_digits}f}"
             )
 
         if da == 0 and db == 0 and dc == 0:
@@ -515,18 +518,18 @@ class Crystal:
                 mc1, mc2, progress_bar=progress_bar, normalize=False
             )
             new_energy = energy1 + energy_inter + energy2
-            difference = abs(energy1 - new_energy) / (len(mc2) + len(mc1))
 
             energy1 = new_energy
             nc += dc
             nb += db
             na += da
             energies.append(((na, nb, nc), energy1 / (len(mc2) + len(mc1))))
+            difference = abs(energies[-2][1] - energies[-1][1])
             if verbose:
                 print(
-                    f"Size: ({na}, {nb}, {nc}) \n"
-                    + f"Energy : {energy1 / (len(mc2) +len(mc1)):<{n_digits+4}.{n_digits}f}\n"
-                    + f"Difference : {difference:<{n_digits+4}.{n_digits}f}"
+                    f"({na}, {nb}, {nc}) "
+                    + f"{energy1 / (len(mc2) +len(mc1)):<{n_digits+4}.{n_digits}f} "
+                    + f"{difference:<{n_digits+4}.{n_digits}f}"
                 )
 
             mc1 = np.concatenate((mc1, mc2))
@@ -578,7 +581,7 @@ if __name__ == "__main__":
     z20 = crystal.mag_dipdip_energy(20, 20, 1)
     print(z10, z15, z20, sep="\n")
     energies = crystal.converge_mag_dipdip_energy(
-        (10, 10, 1), (5, 5, 0), eps=0.01, verbose=1
+        (10, 10, 1), (5, 5, 0), eps=0.001, verbose=1, progress_bar=False
     )
     for e in energies:
         print(f"{e[0]} ({e[1]})<------")
