@@ -359,7 +359,7 @@ class Crystal:
 
         .. math::
 
-            E = \frac{\mu_0}{4\pi}\sum_{i > j}\left(3(\vec{m_i} \cdot \vec{r_{ij}})(\vec{m_j} \cdot \vec{r_{ij}}) - (\vec{m_i}\cdot\vec{m_j})\right)
+            E = -\frac{\mu_0}{4\pi}\sum_{i > j}\left(3(\vec{m_i} \cdot \vec{r_{ij}})(\vec{m_j} \cdot \vec{r_{ij}}) - (\vec{m_i}\cdot\vec{m_j})\right)
 
         Parameters
         ----------
@@ -376,6 +376,10 @@ class Crystal:
         -------
         energy : float
             Dipole-dipole energy in meV.
+
+        See Also
+        --------
+        dipole_dipole_energy
         """
 
         translations = (
@@ -437,6 +441,11 @@ class Crystal:
             .. code-block:: python
 
                 energies = [((na, nb, nc), energy), ...]
+
+        See Also
+        --------
+        dipole_dipole_energy
+        dipole_dipole_interaction
         """
 
         na, nb, nc = start

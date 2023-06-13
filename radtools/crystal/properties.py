@@ -16,7 +16,7 @@ def dipole_dipole_energy(magnetic_centres, progress_bar=True, normalize=True):
 
     .. math::
 
-        E = \frac{\mu_0}{4\pi}\sum_{i > j}\frac{1}{\vert r_{ij}\vert^3}\left(3(\vec{m_i} \cdot \vec{r_{ij}})(\vec{m_j} \cdot \vec{r_{ij}}) - (\vec{m_i}\cdot\vec{m_j})\right)
+        E = -\frac{\mu_0}{4\pi}\sum_{i > j}\frac{1}{\vert r_{ij}\vert^3}\left(3(\vec{m_i} \cdot \vec{r_{ij}})(\vec{m_j} \cdot \vec{r_{ij}}) - (\vec{m_i}\cdot\vec{m_j})\right)
 
     Parameters
     ----------
@@ -39,6 +39,8 @@ def dipole_dipole_energy(magnetic_centres, progress_bar=True, normalize=True):
     --------
     dipole_dipole_interaction : between two sets of magnetic centres.
     """
+
+    magnetic_centres = np.array(magnetic_centres)
 
     energy = 0
     if progress_bar:
@@ -78,7 +80,7 @@ def dipole_dipole_interaction(
 
     .. math::
 
-        E = \frac{\mu_0}{4\pi}\sum_{i \in mc_1, j \in mc_2}\frac{1}{\vert r_{ij}\vert^3}\left(3(\vec{m_i} \cdot \vec{r_{ij}})(\vec{m_j} \cdot \vec{r_{ij}}) - (\vec{m_i}\cdot\vec{m_j})\right)
+        E = -\frac{\mu_0}{4\pi}\sum_{i \in mc_1, j \in mc_2}\frac{1}{\vert r_{ij}\vert^3}\left(3(\vec{m_i} \cdot \vec{r_{ij}})(\vec{m_j} \cdot \vec{r_{ij}}) - (\vec{m_i}\cdot\vec{m_j})\right)
 
     Parameters
     ----------
@@ -107,6 +109,8 @@ def dipole_dipole_interaction(
     dipole_dipole_energy : within one set of magnetic centres.
     """
 
+    magnetic_centres1 = np.array(magnetic_centres1)
+    magnetic_centres2 = np.array(magnetic_centres2)
     energy = 0
     if progress_bar:
         for_range = tqdm(range(len(magnetic_centres2) - 1))
@@ -135,63 +139,6 @@ def dipole_dipole_interaction(
 
 
 if __name__ == "__main__":
-    from radtools.crystal.atom import Atom
-    from radtools.crystal.crystal import Crystal
-
-    crystal = Crystal()
-    crystal.cell = [
-        [3.513012, 0.000000000, 0.000000000],
-        [0.000000000, 4.752699, 0.000000000],
-        [0.000000000, 0.000000000, 23.5428674],
-    ]
-
-    Cr1 = Atom(
-        "Cr1",
-        np.array((0.2500000000, 0.7500000000, 0.1616620796)) @ crystal.cell,
+    dipole_dipole_energy(
+        [[[1, 0, 0], [0, 0, 0]], [[1, 0, 0], [1, 0, 0]]], progress_bar=False
     )
-    Cr2 = Atom(
-        "Cr2",
-        np.array((0.7500000000, 0.2500000000, 0.0737774367)) @ crystal.cell,
-    )
-
-    crystal.add_atom(Cr1)
-    crystal.add_atom(Cr2)
-
-    crystal.Cr1.magmom = [0, 0, 3]
-    crystal.Cr2.magmom = [0, 0, 3]
-
-    z10 = crystal.mag_dipdip_energy(10, 10, 1)
-    z15 = crystal.mag_dipdip_energy(15, 15, 1)
-    energies = crystal.converge_mag_dipdip_energy((10, 10, 1), (5, 5, 0), eps=0.1)
-    for e in energies:
-        print(f"{e[0]} ({e[1]})<------")
-
-    print(z10, z15, sep="\n")
-    # crystal.Cr1.magmom = [0, 3, 0]
-    # crystal.Cr2.magmom = [0, 3, 0]
-    # y = crystal.mag_dipdip_energy(10, 10, 1)
-    # crystal.Cr1.magmom = [3, 0, 0]
-    # crystal.Cr2.magmom = [3, 0, 0]
-    # x = crystal.mag_dipdip_energy(10, 10, 1)
-
-    # print("x = ", x)
-    # print("y = ", y)
-    # print("z = ", z)
-    # print("x - y = ", x - y)
-    # print("z - y = ", z - y)
-    # print("rel = ", (x - y) / (z - y))
-
-    # print("Previous:")
-    # print("x = -0.026982064971")
-    # print("y = -0.016608788855")
-    # print("z = 0.043590853826")
-    # print("x - y = -0.010373276115")
-    # print("z - y = 0.060199642681")
-    # print("rel = ", -0.010373276115 / 0.060199642681)
-    # print("Previous 10:")
-    # print("x = -0.020418832737")
-    # print("y = -0.012159728056")
-    # print("z = 0.032578560794")
-    # print("x - y = -0.008259104681")
-    # print("z - y = 0.04473828885")
-    # print("rel = ", -0.008259104681 / 0.04473828885)
