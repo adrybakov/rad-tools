@@ -629,7 +629,7 @@ def plot_projected(
                 )
                 ax.fill_between(
                     pdos.energy,
-                    np.sum(pdos[:i], axis=0)[1],
+                    -np.sum(pdos[:i], axis=0)[1],
                     -np.sum(pdos[: i + 1], axis=0)[1],
                     lw=0,
                     color=colours[i % len(colours)],

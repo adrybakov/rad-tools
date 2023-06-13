@@ -91,3 +91,9 @@ Add magnetic dipole-dipole energy calculator to the :ref:`crystal-api`.
 
 Bugfix in convergence of magnetic dipole-dipole energy (:py:attr:`.Crystal.converge_mag_dipdip_energy`).
 Energy difference between steps was not calculated correctly (overestimated). 
+
+0.7.4
+-----
+
+Bugfix in the :ref:`rad-plot-dos`: For spin-polarized PDOS :ref:rad-plot-dos_relative` Arguments
+was causing problems with overlapping colours. It is fixed.
