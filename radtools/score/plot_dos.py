@@ -9,7 +9,7 @@ from termcolor import cprint
 from tqdm import tqdm
 
 from radtools.dos.dos import DOSQE
-from radtools.dos.pdos import PDOS, plot_projected
+from radtools.dos.pdos import PDOS, plot_projected, COLOURS
 
 
 def detect_seednames(input_path):
@@ -59,6 +59,7 @@ def plot_orbital_resolved(
     save_pickle=False,
     save_txt=False,
     background_total=False,
+    colours=COLOURS,
 ):
     cprint("Orbital-resolved PDOS:", "green")
     local_output = join(output_root, "orbital-resolved")
@@ -115,8 +116,9 @@ def plot_orbital_resolved(
                     normalize=normalize,
                     interactive=interactive,
                     save_pickle=save_pickle,
+                    colours=colours,
                 )
-    print(f"  Results are in {abspath(local_output)}")
+    cprint(f"Results are in {abspath(local_output)}", "blue")
 
 
 def plot_atom_resolved(
@@ -132,6 +134,7 @@ def plot_atom_resolved(
     save_pickle=False,
     save_txt=False,
     background_total=False,
+    colours=COLOURS,
 ):
     cprint("Orbital's contribution for each atom.", "green")
     local_output = join(output_root, "atom-resolved")
@@ -188,8 +191,9 @@ def plot_atom_resolved(
                 normalize=normalize,
                 interactive=interactive,
                 save_pickle=save_pickle,
+                colours=colours,
             )
-    print(f"  Results are in {abspath(local_output)}")
+    cprint(f"Results are in {abspath(local_output)}", "blue")
 
 
 def plot_atom_to_total(
@@ -205,6 +209,7 @@ def plot_atom_to_total(
     save_pickle=False,
     save_txt=False,
     background_total=False,
+    colours=COLOURS,
 ):
     cprint("Atom's contributions into total PDOS:", "green")
     projectors = []
@@ -262,8 +267,9 @@ def plot_atom_to_total(
         normalize=normalize,
         interactive=interactive,
         save_pickle=save_pickle,
+        colours=colours,
     )
-    print(f"  Result is in {abspath(output_root)}")
+    cprint(f"Result is in {abspath(output_root)}", "blue")
 
 
 def plot_custom(
@@ -279,15 +285,15 @@ def plot_custom(
     save_pickle=False,
     save_txt=False,
     background_total=False,
+    colours=COLOURS,
 ):
     cprint("Plotting custom plot", "green")
-    data = custom.split("|")
-    print("Lines to be plotted:")
+    print("Input is understood as:")
     projectors = []
     pdos = []
-    for entry in data:
+    for entry in custom:
         projectors.append(entry)
-        cprint(f"For the line {entry} the following is understood:", "green")
+        cprint(f'"{entry}":', "green")
         entry = entry.replace(" ", "").replace(")", "")
         tmp = entry.split("(")[0]
         atom = tmp.split("#")[0]
@@ -297,9 +303,13 @@ def plot_custom(
         else:
             atom_numbers = dos.atom_numbers(atom)
 
-        print(f"  * The following atom`s numbers are summed:")
-        for number in atom_numbers:
-            print(f"      {number}")
+        print(f"  * PDOS is summed among the following atoms:", end="\n      ")
+        for i, number in enumerate(atom_numbers):
+            print(f"{atom}#{number}", end="")
+            if i != len(atom_numbers) - 1:
+                print(end=", ")
+            else:
+                print()
 
         tmp = entry.split("(")[1].split(",")
         wfcs = []
@@ -315,9 +325,16 @@ def plot_custom(
                     if name == wfc:
                         wfcs.append((wfc, number))
 
-        print("  * For each atom`s number the following projections are summed:")
-        for name, number in wfcs:
-            print(f"      {name}#{number}")
+        print(
+            "  * For each atom PDOS is summed among the following projections:",
+            end="\n      ",
+        )
+        for i, (name, number) in enumerate(wfcs):
+            print(f"{name}#{number}", end="")
+            if i != len(wfcs) - 1:
+                print(end=", ")
+            else:
+                print()
 
         tmp = None
         for name, number in wfcs:
@@ -370,8 +387,9 @@ def plot_custom(
         normalize=normalize,
         interactive=interactive,
         save_pickle=save_pickle,
+        colours=colours,
     )
-    print(f"  Result is in {abspath(join(output_root, f'{output_name}.png'))}")
+    cprint(f"Result is in {abspath(join(output_root, f'{output_name}.png'))}", "blue")
 
 
 def manager(
@@ -390,6 +408,7 @@ def manager(
     save_txt=False,
     background_total=False,
     custom=None,
+    colours=None,
 ):
     r"""
     ``rad-plot-dos.py`` script.
@@ -399,6 +418,8 @@ def manager(
     Parameters of the function directly
     correspond to the arguments of the script.
     """
+    if colours is None:
+        colours = COLOURS
     makedirs(output_path, exist_ok=True)
 
     suffix = ""
@@ -416,7 +437,7 @@ def manager(
         seednames = detect_seednames(input_path)
         print(f"Following DOS seednames (filpdos) are detected:")
         for item in seednames:
-            cprint(f"   * {item}", "green")
+            cprint(f"   * {item}", "green", attrs=["bold"])
     else:
         seednames = [seedname]
 
@@ -424,7 +445,8 @@ def manager(
     for s_i, seedname in enumerate(seednames):
         cprint(
             f"({s_i + 1}/{len(seednames)}) Start to work with {seedname} seedname",
-            "green",
+            "yellow",
+            attrs=["bold"],
         )
         # Preparations
         output_root = join(output_path, f"{seedname}{suffix}")
@@ -434,7 +456,7 @@ def manager(
         dos = DOSQE(seedname, input_path, energy_window=energy_window, efermi=efermi)
         print(f"{dos.casename} case detected.")
         for atom in dos.atoms:
-            print(f"    {len(dos.atom_numbers(atom))} of {atom} detected")
+            print(f"  {len(dos.atom_numbers(atom))} {atom} detected")
 
         if custom is None:
             # Plot PDOS vs DOS
@@ -447,7 +469,7 @@ def manager(
                 ylim=dos_window,
                 save_pickle=save_pickle,
             )
-            print(f"  Result is in {join(output_root, 'pdos-vs-dos')}")
+            cprint(f"Result is in {join(output_root, 'pdos-vs-dos')}", "blue")
 
             # Plot PDOS for each atom/wfc
             plot_orbital_resolved(
@@ -463,6 +485,7 @@ def manager(
                 save_pickle=save_pickle,
                 save_txt=save_txt,
                 background_total=background_total,
+                colours=colours,
             )
 
             # Plot wfc contribution into each atom
@@ -479,6 +502,7 @@ def manager(
                 save_pickle=save_pickle,
                 save_txt=save_txt,
                 background_total=background_total,
+                colours=colours,
             )
 
             # Plot atom contributions into total PDOS
@@ -495,6 +519,7 @@ def manager(
                 save_pickle=save_pickle,
                 save_txt=save_txt,
                 background_total=background_total,
+                colours=colours,
             )
         else:
             plot_custom(
@@ -510,6 +535,7 @@ def manager(
                 save_pickle=save_pickle,
                 save_txt=save_txt,
                 background_total=background_total,
+                colours=colours,
             )
 
 
@@ -630,7 +656,17 @@ def create_parser():
         type=str,
         metavar="description",
         default=None,
+        nargs="*",
         help="Custom PDOS plot. See docs for info.",
+    )
+    parser.add_argument(
+        "-cl",
+        "--colours",
+        type=str,
+        metavar="colours",
+        default=None,
+        nargs="*",
+        help="Colours for the relative and custom plots.",
     )
 
     return parser

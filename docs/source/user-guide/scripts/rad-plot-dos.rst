@@ -339,3 +339,31 @@ local density of states in all background data
     default : False
 
 .. versionadded:: 0.5.21
+
+
+.. _rad-plot-dos_custom:
+
+--custom
+--------
+Custom PDOS plot. See :ref:`rad-plot-dos_custom-docs` for info.
+
+.. code-block:: text
+
+    default : None
+    nargs : any
+
+.. versionadded:: 0.7.5
+
+
+.. _rad-plot-dos_custom:
+
+-cl, --colours
+--------------
+Colours for the relative and custom plots.
+
+.. code-block:: text
+
+    default : None
+    nargs : any
+
+.. versionadded:: 0.7.5

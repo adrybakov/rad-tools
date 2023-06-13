@@ -9,6 +9,19 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+COLOURS = [
+    "#00FFFF",
+    "#FF9720",
+    "#CD00FF",
+    "#FFFF2B",
+    "#00B9FF",
+    "#FF163D",
+    "#79FF35",
+    "#FF0BEA",
+    "#0200FF",
+]
+
+
 class PDOS:
     r"""
     Partial density of states, projected on arbitrary projections.
@@ -498,8 +511,9 @@ class PDOSQE(PDOS):
             projectors = self._projectors[projectors_group]
         elif re.fullmatch(self._pattern, projectors_group):
             l, j = projectors_group.split("_j")
-            m_j = range(1, 1 + int(2 * float(j) + 1))
-            projectors = [f"{l} ($m_j = {i}$)" for i in m_j]
+            m_j = range(0, int(2 * float(j) + 1))
+            projectors = [f"{l} ($m_J = {i - float(j):>4.1f}$)" for i in m_j]
+            projectors_group = f"{l} (J = {j})"
         else:
             raise ValueError(
                 "Projectors can not be assigned automatically, "
@@ -520,6 +534,7 @@ def plot_projected(
     normalize=False,
     interactive=False,
     save_pickle=False,
+    colours=COLOURS,
 ):
     r"""
     Plot PDOS.
@@ -547,19 +562,10 @@ def plot_projected(
     save_pickle : bool, default False
         Whether to save figure as a .pickle file.
         Helps for custom modification of particular figures.
+    colours : list
+        List of colours to be used. values are passed directly to matplotlib
     """
 
-    colours = [
-        "#0000FF",
-        "#FF0000",
-        "#00FF00",
-        "#FF00FF",
-        "#00FFFF",
-        "#3E3847",
-        "#FFD600",
-        "#366B35",
-        "#FF6F00",
-    ]
     n = len(pdos.projectors)
     pdos = pdos.squeezed()
 
@@ -573,9 +579,9 @@ def plot_projected(
 
     def set_up_axis(ax, i):
         if normalize:
-            ax.set_ylabel("PDOS / LDOS", fontsize=12)
+            ax.set_ylabel("PDOS / LDOS", fontsize=15)
         else:
-            ax.set_ylabel("DOS, states/eV", fontsize=12)
+            ax.set_ylabel("DOS, states/eV", fontsize=15)
         if i == n - 1:
             ax.set_xlabel("E, ev", fontsize=15)
         else:
@@ -621,18 +627,18 @@ def plot_projected(
                 if i == 0:
                     ax.plot(
                         pdos.energy,
-                        pdos.ldos[0],
+                        np.where(pdos.ldos[0] > 1e-5, pdos.ldos[0], None),
                         "-",
-                        lw=0.5,
+                        lw=1,
                         color="blue",
                         alpha=0.8,
                         label=f"{pdos.projectors_group} (up)",
                     )
                     ax.plot(
                         pdos.energy,
-                        -pdos.ldos[1],
+                        np.where(pdos.ldos[1] > 1e-5, -pdos.ldos[1], None),
                         "-",
-                        lw=0.5,
+                        lw=1,
                         color="red",
                         alpha=0.8,
                         label=f"{pdos.projectors_group} (down)",
@@ -643,8 +649,8 @@ def plot_projected(
                     np.sum(pdos[: i + 1], axis=0)[0],
                     lw=0,
                     color=colours[i % len(colours)],
-                    alpha=0.3,
-                    label=f"{projector} (up)",
+                    # alpha=0.5,
+                    label=f"{projector}",
                 )
                 ax.fill_between(
                     pdos.energy,
@@ -652,8 +658,7 @@ def plot_projected(
                     -np.sum(pdos[: i + 1], axis=0)[1],
                     lw=0,
                     color=colours[i % len(colours)],
-                    alpha=0.3,
-                    label=f"{projector} (down)",
+                    # alpha=0.5,
                 )
             else:
                 ax.fill_between(
@@ -662,7 +667,7 @@ def plot_projected(
                     pdos.ldos[0],
                     lw=0,
                     color="blue",
-                    alpha=0.3,
+                    alpha=0.2,
                     label=f"{pdos.projectors_group} (up)",
                 )
                 ax.fill_between(
@@ -671,7 +676,7 @@ def plot_projected(
                     -pdos.ldos[1],
                     lw=0,
                     color="red",
-                    alpha=0.3,
+                    alpha=0.2,
                     label=f"{pdos.projectors_group} (down)",
                 )
 
@@ -679,7 +684,7 @@ def plot_projected(
                     pdos.energy,
                     pdos[projector][0],
                     "-",
-                    lw=0.5,
+                    lw=0.8,
                     color="blue",
                     alpha=0.8,
                     label=f"{projector} (up)",
@@ -688,7 +693,7 @@ def plot_projected(
                     pdos.energy,
                     -pdos[projector][1],
                     "-",
-                    lw=0.5,
+                    lw=0.8,
                     color="red",
                     alpha=0.8,
                     label=f"{projector} (down)",
@@ -698,9 +703,9 @@ def plot_projected(
                 if i == 0:
                     ax.plot(
                         pdos.energy,
-                        pdos.ldos,
+                        np.where(pdos.ldos > 1e-5, pdos.ldos, None),
                         "-",
-                        lw=0.5,
+                        lw=1,
                         color="black",
                         alpha=0.8,
                         label=pdos.projectors_group,
@@ -711,7 +716,7 @@ def plot_projected(
                     np.sum(pdos[: i + 1], axis=0),
                     lw=0,
                     color=colours[i % len(colours)],
-                    alpha=0.3,
+                    # alpha=0.5,
                     label=projector,
                 )
 
@@ -729,15 +734,20 @@ def plot_projected(
                     pdos.energy,
                     pdos[projector],
                     "-",
-                    lw=0.5,
+                    lw=0.8,
                     color="black",
                     alpha=0.8,
                     label=projector,
                 )
         if interactive:
-            ax.legend(loc=(1.025, 0.2), bbox_transform=ax.transAxes, draggable=True)
+            ax.legend(
+                loc=(1.025, 0.2),
+                bbox_transform=ax.transAxes,
+                draggable=True,
+                fontsize=12,
+            )
         else:
-            ax.legend(loc=(1.025, 0.2), bbox_transform=ax.transAxes)
+            ax.legend(loc=(1.025, 0.2), bbox_transform=ax.transAxes, fontsize=12)
 
     if interactive:
         plt.show()
