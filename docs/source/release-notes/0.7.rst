@@ -85,3 +85,9 @@ Add attribute access to the atoms through atom names to the :py:class:`.Crystal`
 -----
 
 Add magnetic dipole-dipole energy calculator to the :ref:`crystal-api`.
+
+0.7.3
+-----
+
+Bugfix in convergence of magnetic dipole-dipole energy (:py:attr:`.Crystal.converge_mag_dipdip_energy`).
+Energy difference between steps was not calculated correctly (overestimated). 
