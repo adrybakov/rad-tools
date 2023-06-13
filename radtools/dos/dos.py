@@ -272,6 +272,7 @@ class DOSQE:
         ----------
         squeeze : bool, default False
             Whether to sum over k points. Ignored if DOS is not k resolved.
+        Whether to fix updown in the noncollinear, non spin-orbit case.
 
         Returns
         -------
@@ -309,7 +310,7 @@ class DOSQE:
             ]
         return dos[1][self.energy_window[0] : self.energy_window[1]]
 
-    def total_pdos(self, squeeze=False, fix_updown=False):
+    def total_pdos(self, squeeze=False):
         r"""
         Total partial density of states.
 
@@ -359,10 +360,7 @@ class DOSQE:
                     :, :, self.energy_window[0] : self.energy_window[1]
                 ]
             total_pdos = dos[2:4][:, self.energy_window[0] : self.energy_window[1]]
-            if fix_updown:
-                return np.array([total_pdos, total_pdos])
-            else:
-                return total_pdos
+            return total_pdos
 
         if self.k_resolved:
             if squeeze:
@@ -639,7 +637,7 @@ class DOSQE:
                 lw=0,
                 color="grey",
                 alpha=0.3,
-                label="-DOS",
+                label="$-$DOS",
             )
 
             ax.plot(

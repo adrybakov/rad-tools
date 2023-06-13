@@ -160,7 +160,7 @@ def plot_atom_resolved(
                 pdos = PDOS(
                     energy=dos.energy,
                     pdos=pdos,
-                    ldos=dos.total_pdos(fix_updown=True),
+                    ldos=dos.total_pdos(),
                     projectors_group=atom_name,
                     projectors=projectors,
                     spin_pol=dos.case in [2, 3],
@@ -235,7 +235,7 @@ def plot_atom_to_total(
         pdos = PDOS(
             energy=dos.energy,
             pdos=pdos,
-            ldos=dos.total_pdos(fix_updown=True),
+            ldos=dos.total_pdos(),
             projectors_group="Total PDOS",
             projectors=projectors,
             spin_pol=dos.case in [2, 3],
@@ -310,20 +310,22 @@ def plot_custom(
                 print(end=", ")
             else:
                 print()
-
-        tmp = entry.split("(")[1].split(",")
-        wfcs = []
-        for i in tmp:
-            wfc = i.split("#")[0]
-            if "#" in i:
-                tmp_numbers = list(map(int, i.split("#")[1:]))
-                for number in tmp_numbers:
-                    wfcs.append((wfc, number))
-            else:
-                wfc_list = dos.wfcs(atom)
-                for name, number in wfc_list:
-                    if name == wfc:
+        if "(" in tmp:
+            tmp = entry.split("(")[1].split(",")
+            wfcs = []
+            for i in tmp:
+                wfc = i.split("#")[0]
+                if "#" in i:
+                    tmp_numbers = list(map(int, i.split("#")[1:]))
+                    for number in tmp_numbers:
                         wfcs.append((wfc, number))
+                else:
+                    wfc_list = dos.wfcs(atom)
+                    for name, number in wfc_list:
+                        if name == wfc:
+                            wfcs.append((wfc, number))
+        else:
+            wfcs = dos.wfcs(atom)
 
         print(
             "  * For each atom PDOS is summed among the following projections:",
@@ -353,7 +355,7 @@ def plot_custom(
         pdos = PDOS(
             energy=dos.energy,
             pdos=pdos,
-            ldos=dos.total_pdos(fix_updown=True),
+            ldos=dos.total_pdos(),
             projectors_group="Total PDOS",
             projectors=projectors,
             spin_pol=dos.case in [2, 3],
