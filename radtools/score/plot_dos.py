@@ -3,7 +3,7 @@
 import re
 from argparse import ArgumentParser
 from os import makedirs, walk
-from os.path import abspath, join
+from os.path import abspath, join, isfile
 
 from termcolor import cprint
 from tqdm import tqdm
@@ -46,6 +46,334 @@ def detect_seednames(input_path):
     return seednames
 
 
+def plot_orbital_resolved(
+    dos,
+    output_root=".",
+    energy_window=None,
+    dos_window=None,
+    efermi=0.0,
+    separate=False,
+    relative=False,
+    normalize=False,
+    interactive=False,
+    save_pickle=False,
+    save_txt=False,
+    background_total=False,
+):
+    cprint("Orbital-resolved PDOS:", "green")
+    local_output = join(output_root, "orbital-resolved")
+    makedirs(local_output, exist_ok=True)
+    data = {}
+    for atom, atom_number, wfc, wfc_number in dos:
+        if atom not in data:
+            data[atom] = []
+        data[atom].append((wfc, wfc_number))
+
+    # Avoid repetitions
+    for atom in data:
+        data[atom] = list(set(data[atom]))
+
+    for atom in data:
+        for wfc, wfc_number in data[atom]:
+            if separate:
+                atom_numbers = dos.atom_numbers(atom)
+            else:
+                atom_numbers = [None]
+
+            for atom_number in tqdm(atom_numbers, desc=f"  {atom} {wfc} #{wfc_number}"):
+                if separate:
+                    atom_name = f"{atom}#{atom_number}"
+                else:
+                    atom_name = atom
+
+                if efermi == 0:
+                    title = f"PDOS for {atom_name} ({wfc} #{wfc_number}) (0 is 0)"
+                else:
+                    title = f"PDOS for {atom_name} ({wfc} #{wfc_number}) (0 is Fermi energy)"
+
+                pdos = dos.pdos(
+                    atom=atom,
+                    wfc=wfc,
+                    wfc_number=wfc_number,
+                    atom_numbers=atom_number,
+                    background_total=background_total,
+                )
+                if background_total:
+                    pdos.projectors_group = "Total PDOS"
+                if save_txt:
+                    pdos.dump_txt(
+                        join(local_output, f"{atom_name}_{wfc}#{wfc_number}.txt")
+                    )
+                plot_projected(
+                    pdos=pdos,
+                    efermi=efermi,
+                    output_name=join(local_output, f"{atom_name}_{wfc}#{wfc_number}"),
+                    title=title,
+                    xlim=energy_window,
+                    ylim=dos_window,
+                    relative=relative,
+                    normalize=normalize,
+                    interactive=interactive,
+                    save_pickle=save_pickle,
+                )
+    print(f"  Results are in {abspath(local_output)}")
+
+
+def plot_atom_resolved(
+    dos,
+    output_root=".",
+    energy_window=None,
+    dos_window=None,
+    efermi=0.0,
+    separate=False,
+    relative=False,
+    normalize=False,
+    interactive=False,
+    save_pickle=False,
+    save_txt=False,
+    background_total=False,
+):
+    cprint("Orbital's contribution for each atom.", "green")
+    local_output = join(output_root, "atom-resolved")
+    makedirs(local_output, exist_ok=True)
+
+    for atom in dos.atoms:
+        if separate:
+            atom_numbers = dos.atom_numbers(atom)
+        else:
+            atom_numbers = [None]
+        for atom_number in tqdm(atom_numbers, desc=f"  {atom}"):
+            if separate:
+                atom_name = f"{atom}#{atom_number}"
+            else:
+                atom_name = atom
+            projectors = []
+            pdos = []
+            for wfc, wfc_number in dos.wfcs(atom, atom_number):
+                projectors.append(f"{wfc} #{wfc_number}")
+                pdos.append(dos.pdos(atom, wfc, wfc_number, atom_number).ldos)
+
+            if background_total:
+                pdos = PDOS(
+                    energy=dos.energy,
+                    pdos=pdos,
+                    ldos=dos.total_pdos(fix_updown=True),
+                    projectors_group=atom_name,
+                    projectors=projectors,
+                    spin_pol=dos.case in [2, 3],
+                )
+                pdos.projectors_group = "Total PDOS"
+            else:
+                pdos = PDOS(
+                    energy=dos.energy,
+                    pdos=pdos,
+                    projectors_group=atom_name,
+                    projectors=projectors,
+                    spin_pol=dos.case in [2, 3],
+                )
+            if efermi == 0:
+                title = f"PDOS for {atom_name} (0 is 0)"
+            else:
+                title = f"PDOS for {atom_name} (0 is Fermi energy)"
+            if save_txt:
+                pdos.dump_txt(join(local_output, f"{atom_name}.txt"))
+            plot_projected(
+                pdos=pdos,
+                efermi=efermi,
+                output_name=join(local_output, atom_name),
+                title=title,
+                xlim=energy_window,
+                ylim=dos_window,
+                relative=relative,
+                normalize=normalize,
+                interactive=interactive,
+                save_pickle=save_pickle,
+            )
+    print(f"  Results are in {abspath(local_output)}")
+
+
+def plot_atom_to_total(
+    dos,
+    output_root=".",
+    energy_window=None,
+    dos_window=None,
+    efermi=0.0,
+    separate=False,
+    relative=False,
+    normalize=False,
+    interactive=False,
+    save_pickle=False,
+    save_txt=False,
+    background_total=False,
+):
+    cprint("Atom's contributions into total PDOS:", "green")
+    projectors = []
+    pdos = []
+    for atom in dos.atoms:
+        if separate:
+            atom_numbers = dos.atom_numbers(atom)
+        else:
+            atom_numbers = [None]
+        for atom_number in atom_numbers:
+            if separate:
+                atom_name = f"{atom}#{atom_number}"
+            else:
+                atom_name = atom
+            projectors.append(atom_name)
+            for i, (wfc, wfc_number) in enumerate(dos.wfcs(atom, atom_number)):
+                if i == 0:
+                    ldos = dos.pdos(atom, wfc, wfc_number, atom_number).ldos
+                else:
+                    ldos += dos.pdos(atom, wfc, wfc_number, atom_number).ldos
+            pdos.append(ldos)
+    if background_total:
+        pdos = PDOS(
+            energy=dos.energy,
+            pdos=pdos,
+            ldos=dos.total_pdos(fix_updown=True),
+            projectors_group="Total PDOS",
+            projectors=projectors,
+            spin_pol=dos.case in [2, 3],
+        )
+        pdos.projectors_group = "Total PDOS"
+    else:
+        pdos = PDOS(
+            energy=dos.energy,
+            pdos=pdos,
+            projectors_group="Total PDOS",
+            projectors=projectors,
+            spin_pol=dos.case in [2, 3],
+        )
+
+    if efermi == 0:
+        title = f"Atom contribution in PDOS (0 is 0)"
+    else:
+        title = f"Atom contribution in PDOS (0 is Fermi energy)"
+    if save_txt:
+        pdos.dump_txt(join(output_root, "atomic-contributions.txt"))
+    plot_projected(
+        pdos=pdos,
+        efermi=efermi,
+        output_name=join(output_root, "atomic-contributions"),
+        title=title,
+        xlim=energy_window,
+        ylim=dos_window,
+        relative=relative,
+        normalize=normalize,
+        interactive=interactive,
+        save_pickle=save_pickle,
+    )
+    print(f"  Result is in {abspath(output_root)}")
+
+
+def plot_custom(
+    dos,
+    custom,
+    output_root=".",
+    energy_window=None,
+    dos_window=None,
+    efermi=0.0,
+    relative=False,
+    normalize=False,
+    interactive=False,
+    save_pickle=False,
+    save_txt=False,
+    background_total=False,
+):
+    cprint("Plotting custom plot", "green")
+    data = custom.split("|")
+    print("Lines to be plotted:")
+    projectors = []
+    pdos = []
+    for entry in data:
+        projectors.append(entry)
+        cprint(f"For the line {entry} the following is understood:", "green")
+        entry = entry.replace(" ", "").replace(")", "")
+        tmp = entry.split("(")[0]
+        atom = tmp.split("#")[0]
+        print(f"  * Atom type is {atom}")
+        if "#" in tmp:
+            atom_numbers = list(map(int, tmp.split("#")[1:]))
+        else:
+            atom_numbers = dos.atom_numbers(atom)
+
+        print(f"  * The following atom`s numbers are summed:")
+        for number in atom_numbers:
+            print(f"      {number}")
+
+        tmp = entry.split("(")[1].split(",")
+        wfcs = []
+        for i in tmp:
+            wfc = i.split("#")[0]
+            if "#" in i:
+                tmp_numbers = list(map(int, i.split("#")[1:]))
+                for number in tmp_numbers:
+                    wfcs.append((wfc, number))
+            else:
+                wfc_list = dos.wfcs(atom)
+                for name, number in wfc_list:
+                    if name == wfc:
+                        wfcs.append((wfc, number))
+
+        print("  * For each atom`s number the following projections are summed:")
+        for name, number in wfcs:
+            print(f"      {name}#{number}")
+
+        tmp = None
+        for name, number in wfcs:
+            if tmp is None:
+                tmp = dos.pdos(
+                    atom=atom, wfc=name, wfc_number=number, atom_numbers=atom_numbers
+                ).ldos
+            else:
+                tmp += dos.pdos(
+                    atom=atom, wfc=name, wfc_number=number, atom_numbers=atom_numbers
+                ).ldos
+
+        pdos.append(tmp)
+
+    if background_total:
+        pdos = PDOS(
+            energy=dos.energy,
+            pdos=pdos,
+            ldos=dos.total_pdos(fix_updown=True),
+            projectors_group="Total PDOS",
+            projectors=projectors,
+            spin_pol=dos.case in [2, 3],
+        )
+    else:
+        pdos = PDOS(
+            energy=dos.energy,
+            pdos=pdos,
+            projectors_group="Total (sum)",
+            projectors=projectors,
+            spin_pol=dos.case in [2, 3],
+        )
+
+    if isfile(join(output_root, "custom.png")):
+        i = 1
+        while isfile(join(output_root, f"custom{i}.png")):
+            i += 1
+        output_name = f"custom{i}"
+    else:
+        output_name = "custom"
+
+    if save_txt:
+        pdos.dump_txt(join(output_root, f"{output_name}.txt"))
+    plot_projected(
+        pdos=pdos,
+        efermi=efermi,
+        output_name=join(output_root, output_name),
+        xlim=energy_window,
+        ylim=dos_window,
+        relative=relative,
+        normalize=normalize,
+        interactive=interactive,
+        save_pickle=save_pickle,
+    )
+    print(f"  Result is in {abspath(join(output_root, f'{output_name}.png'))}")
+
+
 def manager(
     input_path,
     seedname=None,
@@ -61,6 +389,7 @@ def manager(
     save_pickle=False,
     save_txt=False,
     background_total=False,
+    custom=None,
 ):
     r"""
     ``rad-plot-dos.py`` script.
@@ -107,199 +436,81 @@ def manager(
         for atom in dos.atoms:
             print(f"    {len(dos.atom_numbers(atom))} of {atom} detected")
 
-        # Plot PDOS vs DOS
-        cprint("Total DOS vs total PDOS", "green")
-        dos.plot_pdos_tot(
-            output_name=join(output_root, "pdos-vs-dos"),
-            interactive=interactive,
-            efermi=efermi,
-            xlim=energy_window,
-            ylim=dos_window,
-            save_pickle=save_pickle,
-        )
-        print(f"  Result is in {join(output_root, 'pdos-vs-dos')}")
-
-        # Plot PDOS for each atom/wfc
-        cprint("Orbital-resolved PDOS:", "green")
-        local_output = join(output_root, "orbital-resolved")
-        makedirs(local_output, exist_ok=True)
-        data = {}
-        for atom, atom_number, wfc, wfc_number in dos:
-            if atom not in data:
-                data[atom] = []
-            data[atom].append((wfc, wfc_number))
-
-        # Avoid repetitions
-        for atom in data:
-            data[atom] = list(set(data[atom]))
-
-        for atom in data:
-            for wfc, wfc_number in data[atom]:
-                if separate:
-                    atom_numbers = dos.atom_numbers(atom)
-                else:
-                    atom_numbers = [None]
-
-                for atom_number in tqdm(
-                    atom_numbers, desc=f"  {atom} {wfc} #{wfc_number}"
-                ):
-                    if separate:
-                        atom_name = f"{atom}#{atom_number}"
-                    else:
-                        atom_name = atom
-
-                    if efermi == 0:
-                        title = f"PDOS for {atom_name} ({wfc} #{wfc_number}) (0 is 0)"
-                    else:
-                        title = f"PDOS for {atom_name} ({wfc} #{wfc_number}) (0 is Fermi energy)"
-
-                    pdos = dos.pdos(
-                        atom=atom,
-                        wfc=wfc,
-                        wfc_number=wfc_number,
-                        atom_numbers=atom_number,
-                        background_total=background_total,
-                    )
-                    if background_total:
-                        pdos.projectors_group = "Total PDOS"
-                    if save_txt:
-                        pdos.dump_txt(
-                            join(local_output, f"{atom_name}_{wfc}#{wfc_number}.txt")
-                        )
-                    plot_projected(
-                        pdos=pdos,
-                        efermi=efermi,
-                        output_name=join(
-                            local_output, f"{atom_name}_{wfc}#{wfc_number}"
-                        ),
-                        title=title,
-                        xlim=energy_window,
-                        ylim=dos_window,
-                        relative=relative,
-                        normalize=normalize,
-                        interactive=interactive,
-                        save_pickle=save_pickle,
-                    )
-        print(f"  Results are in {abspath(local_output)}")
-
-        # Plot wfc contribution into each atom
-        cprint("Orbital's contribution for each atom.", "green")
-        local_output = join(output_root, "atom-resolved")
-        makedirs(local_output, exist_ok=True)
-
-        for atom in dos.atoms:
-            if separate:
-                atom_numbers = dos.atom_numbers(atom)
-            else:
-                atom_numbers = [None]
-            for atom_number in tqdm(atom_numbers, desc=f"  {atom}"):
-                if separate:
-                    atom_name = f"{atom}#{atom_number}"
-                else:
-                    atom_name = atom
-                projectors = []
-                pdos = []
-                for wfc, wfc_number in dos.wfcs(atom, atom_number):
-                    projectors.append(f"{wfc} #{wfc_number}")
-                    pdos.append(dos.pdos(atom, wfc, wfc_number, atom_number).ldos)
-
-                if background_total:
-                    pdos = PDOS(
-                        energy=dos.energy,
-                        pdos=pdos,
-                        ldos=dos.total_pdos(fix_updown=True),
-                        projectors_group=atom_name,
-                        projectors=projectors,
-                        spin_pol=dos.case in [2, 3],
-                    )
-                    pdos.projectors_group = "Total PDOS"
-                else:
-                    pdos = PDOS(
-                        energy=dos.energy,
-                        pdos=pdos,
-                        projectors_group=atom_name,
-                        projectors=projectors,
-                        spin_pol=dos.case in [2, 3],
-                    )
-                if efermi == 0:
-                    title = f"PDOS for {atom_name} (0 is 0)"
-                else:
-                    title = f"PDOS for {atom_name} (0 is Fermi energy)"
-                if save_txt:
-                    pdos.dump_txt(join(local_output, f"{atom_name}.txt"))
-                plot_projected(
-                    pdos=pdos,
-                    efermi=efermi,
-                    output_name=join(local_output, atom_name),
-                    title=title,
-                    xlim=energy_window,
-                    ylim=dos_window,
-                    relative=relative,
-                    normalize=normalize,
-                    interactive=interactive,
-                    save_pickle=save_pickle,
-                )
-        print(f"  Results are in {abspath(local_output)}")
-
-        # Plot atom contributions into total PDOS
-        cprint("Atom's contributions into total PDOS:", "green")
-        projectors = []
-        pdos = []
-        for atom in dos.atoms:
-            if separate:
-                atom_numbers = dos.atom_numbers(atom)
-            else:
-                atom_numbers = [None]
-            for atom_number in atom_numbers:
-                if separate:
-                    atom_name = f"{atom}#{atom_number}"
-                else:
-                    atom_name = atom
-                projectors.append(atom_name)
-                for i, (wfc, wfc_number) in enumerate(dos.wfcs(atom, atom_number)):
-                    if i == 0:
-                        ldos = dos.pdos(atom, wfc, wfc_number, atom_number).ldos
-                    else:
-                        ldos += dos.pdos(atom, wfc, wfc_number, atom_number).ldos
-                pdos.append(ldos)
-        if background_total:
-            pdos = PDOS(
-                energy=dos.energy,
-                pdos=pdos,
-                ldos=dos.total_pdos(fix_updown=True),
-                projectors_group="Total PDOS",
-                projectors=projectors,
-                spin_pol=dos.case in [2, 3],
+        if custom is None:
+            # Plot PDOS vs DOS
+            cprint("Total DOS vs total PDOS", "green")
+            dos.plot_pdos_tot(
+                output_name=join(output_root, "pdos-vs-dos"),
+                interactive=interactive,
+                efermi=efermi,
+                xlim=energy_window,
+                ylim=dos_window,
+                save_pickle=save_pickle,
             )
-            pdos.projectors_group = "Total PDOS"
-        else:
-            pdos = PDOS(
-                energy=dos.energy,
-                pdos=pdos,
-                projectors_group="Total PDOS",
-                projectors=projectors,
-                spin_pol=dos.case in [2, 3],
+            print(f"  Result is in {join(output_root, 'pdos-vs-dos')}")
+
+            # Plot PDOS for each atom/wfc
+            plot_orbital_resolved(
+                dos=dos,
+                output_root=output_root,
+                energy_window=energy_window,
+                dos_window=dos_window,
+                efermi=efermi,
+                separate=separate,
+                relative=relative,
+                normalize=normalize,
+                interactive=interactive,
+                save_pickle=save_pickle,
+                save_txt=save_txt,
+                background_total=background_total,
             )
 
-        if efermi == 0:
-            title = f"Atom contribution in PDOS (0 is 0)"
+            # Plot wfc contribution into each atom
+            plot_atom_resolved(
+                dos=dos,
+                output_root=output_root,
+                energy_window=energy_window,
+                dos_window=dos_window,
+                efermi=efermi,
+                separate=separate,
+                relative=relative,
+                normalize=normalize,
+                interactive=interactive,
+                save_pickle=save_pickle,
+                save_txt=save_txt,
+                background_total=background_total,
+            )
+
+            # Plot atom contributions into total PDOS
+            plot_atom_to_total(
+                dos=dos,
+                output_root=output_root,
+                energy_window=energy_window,
+                dos_window=dos_window,
+                efermi=efermi,
+                separate=separate,
+                relative=relative,
+                normalize=normalize,
+                interactive=interactive,
+                save_pickle=save_pickle,
+                save_txt=save_txt,
+                background_total=background_total,
+            )
         else:
-            title = f"Atom contribution in PDOS (0 is Fermi energy)"
-        if save_txt:
-            pdos.dump_txt(join(output_root, "atomic-contributions.txt"))
-        plot_projected(
-            pdos=pdos,
-            efermi=efermi,
-            output_name=join(output_root, "atomic-contributions"),
-            title=title,
-            xlim=energy_window,
-            ylim=dos_window,
-            relative=relative,
-            normalize=normalize,
-            interactive=interactive,
-            save_pickle=save_pickle,
-        )
-        print(f"  Result is in {abspath(local_output)}")
+            plot_custom(
+                dos=dos,
+                custom=custom,
+                output_root=output_root,
+                energy_window=energy_window,
+                dos_window=dos_window,
+                efermi=efermi,
+                relative=relative,
+                normalize=normalize,
+                interactive=interactive,
+                save_pickle=save_pickle,
+                save_txt=save_txt,
+                background_total=background_total,
+            )
 
 
 def create_parser():
@@ -413,6 +624,13 @@ def create_parser():
         action="store_true",
         default=False,
         help="Whether to use total PDOS as the background for all plots.",
+    )
+    parser.add_argument(
+        "--custom",
+        type=str,
+        metavar="description",
+        default=None,
+        help="Custom PDOS plot. See docs for info.",
     )
 
     return parser

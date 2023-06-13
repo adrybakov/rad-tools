@@ -618,6 +618,25 @@ def plot_projected(
             set_up_axis(ax, i)
         if pdos.spin_pol:
             if relative:
+                if i == 0:
+                    ax.plot(
+                        pdos.energy,
+                        pdos.ldos[0],
+                        "-",
+                        lw=0.5,
+                        color="blue",
+                        alpha=0.8,
+                        label=f"{pdos.projectors_group} (up)",
+                    )
+                    ax.plot(
+                        pdos.energy,
+                        -pdos.ldos[1],
+                        "-",
+                        lw=0.5,
+                        color="red",
+                        alpha=0.8,
+                        label=f"{pdos.projectors_group} (down)",
+                    )
                 ax.fill_between(
                     pdos.energy,
                     np.sum(pdos[:i], axis=0)[0],
@@ -676,6 +695,16 @@ def plot_projected(
                 )
         else:
             if relative:
+                if i == 0:
+                    ax.plot(
+                        pdos.energy,
+                        pdos.ldos,
+                        "-",
+                        lw=0.5,
+                        color="black",
+                        alpha=0.8,
+                        label=pdos.projectors_group,
+                    )
                 ax.fill_between(
                     pdos.energy,
                     np.sum(pdos[:i], axis=0),
@@ -685,6 +714,7 @@ def plot_projected(
                     alpha=0.3,
                     label=projector,
                 )
+
             else:
                 ax.fill_between(
                     pdos.energy,
