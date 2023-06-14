@@ -22,7 +22,7 @@ PDOS is summed and divided by the number of k points.
 
 K-resolved PDOS are handled by summing over kpoints (and dividing by the number of kpoints).
 
-There is two ways to use this script:
+There are two ways to use this script:
 
 * :ref:`rad-plot-dos_predefined-plots`
 * :ref:`rad-plot-dos_custom-plots`
