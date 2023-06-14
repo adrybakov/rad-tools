@@ -80,3 +80,44 @@ Add attribute access to the atoms through atom names to the :py:class:`.Crystal`
     >>> # It will raise Attribute error, since after addition 
     >>> # of the second atom with the same name 
     >>> # information about the index is needed to identify the atom object.
+
+0.7.2
+-----
+
+Add magnetic dipole-dipole energy calculator to the :ref:`crystal-api`.
+
+0.7.3
+-----
+
+Bugfix in convergence of magnetic dipole-dipole energy (:py:attr:`.Crystal.converge_mag_dipdip_energy`).
+Energy difference between steps was not calculated correctly (overestimated). 
+
+0.7.4
+-----
+
+Bugfix in the :ref:`rad-plot-dos`: For spin-polarized PDOS :ref:rad-plot-dos_relative` Arguments
+was causing problems with overlapping colours. It is fixed.
+
+0.7.5
+-----
+Add :ref:`rad-plot-dos_custom-plots` and :ref:`rad-plot-dos_colours` to the :ref:`rad-plot-dos`. 
+
+0.7.6
+-----
+Add summing over atom types to the :ref:`rad-plot-dos_custom-plots`. 
+
+0.7.7
+-----
+Add the option for removing background label to :ref:`rad-plot-dos_custom-plots`. 
+
+0.7.8
+-----
+Add fontsize options to :ref:`rad-plot-dos_custom-plots`. 
+
+0.7.9
+-----
+Bugfix in :ref:`rad-plot-dos`. 
+
+0.7.10
+------
+Changes in :ref:`rad-make-template`. Now bonds are grouped by distances by default.

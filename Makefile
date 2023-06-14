@@ -100,20 +100,39 @@ help:
 	@echo "    check-script-names - check consistency of argument names in scripts"
 	@echo "\x1b[0m"
 
-examples:
-	@pip3 install . --upgrade
+example-plot-dos:
+	-@rm -r docs/examples/rad-plot-dos/style-examples/*
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -n
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -bt
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -n -bt
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -r
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -r -n
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -r -bt
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -r -n -bt
 	@rad-identify-wannier-centres.py docs/examples/rad-identify-wannier-centres/example_centres.xyz > docs/examples/rad-identify-wannier-centres/console_output.txt
+
+example-identify-wannier-centres:
 	@rad-identify-wannier-centres.py docs/examples/rad-identify-wannier-centres/example_centres.xyz --span 0.11 --output-name example_centres.xyz_bigger_span
+
+example-make-template:
 	@rad-make-template.py -on docs/examples/rad-make-template/template_demo
 	@rad-make-template.py -if docs/examples/rad-make-template/exchange.out -on docs/examples/rad-make-template/full_template
 	@rad-make-template.py -if docs/examples/rad-make-template/exchange.out -on docs/examples/rad-make-template/filtered_template -maxd 8
+
+example-plot-tb2j:
 	@rad-plot-tb2j.py -if docs/examples/rad-plot-tb2j/exchange.out -op docs/examples/rad-plot-tb2j/
 	@rad-plot-tb2j.py -if docs/examples/rad-plot-tb2j/exchange.out -op docs/examples/rad-plot-tb2j/  -on exchange_filtered -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange"
 	@rad-plot-tb2j.py -if docs/examples/rad-plot-tb2j/exchange.out -op docs/examples/rad-plot-tb2j/  -on exchange_template -wtp iso -tf docs/examples/rad-plot-tb2j/template.txt -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange"
 	@rad-plot-tb2j.py -if docs/examples/rad-plot-tb2j/exchange.out -op docs/examples/rad-plot-tb2j/  -on exchange_forced_symmetry -tf docs/examples/rad-plot-tb2j/template.txt -fs -dc -sa 1.2 -sd 1.2 -t "Forced symmetry exchange"
 	@rad-plot-tb2j.py -if docs/examples/rad-plot-tb2j/exchange.out -op docs/examples/rad-plot-tb2j/  -on exchange_R -wtp iso -R 1 0 0 1 1 0 0 1 0 -1 0 0 -1 -1 0 0 -1 0 -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange"
+	
+example-extract-tb2j:
 	@rad-extract-tb2j.py -if docs/examples/rad-extract-tb2j/exchange.out -tf docs/examples/rad-extract-tb2j/template.txt -op docs/examples/rad-extract-tb2j/ -on summary_forced_symmetry -all -fs
 	@rad-extract-tb2j.py -if docs/examples/rad-extract-tb2j/exchange.out -tf docs/examples/rad-extract-tb2j/template.txt -op docs/examples/rad-extract-tb2j/ -on summary -all
+
+examples: install example-plot-dos example-identify-wannier-centres example-make-template example-plot-tb2j example-extract-tb2j
+	@echo "Done"
 
 pictures:
 	@python3 docs/source/user-guide/module/crystal/bravais-lattices/plot_all.py -op docs/source/user-guide/module/crystal/bravais-lattices/

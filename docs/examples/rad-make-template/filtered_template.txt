@@ -1,27 +1,31 @@
 Template is created based on the file: docs/examples/rad-make-template/exchange.out
-on 7 June 2023 at 19:56:48 by rad-tools 0.7.0
+on 14 June 2023 at 17:25:43 by rad-tools 0.7.10.dev
 
 ====================
 Neighbors template:
 i j R_a R_b R_c
 --------------------
-Name placeholder
+J1 $J_{1}$
+Ni1  Ni1    0  -1   0
+Ni1  Ni1    0   1   0
 Ni1  Ni1   -1   0   0
 Ni1  Ni1    1   0   0
 Ni1  Ni1   -1  -1   0
-Ni1  Ni1    0  -1   0
-Ni1  Ni1    0   1   0
 Ni1  Ni1    1   1   0
-Ni1  Ni1   -2  -1   0
+--------------------
+J2 $J_{2}$
 Ni1  Ni1   -1   1   0
 Ni1  Ni1    1  -1   0
-Ni1  Ni1    2   1   0
 Ni1  Ni1   -1  -2   0
 Ni1  Ni1    1   2   0
+Ni1  Ni1   -2  -1   0
+Ni1  Ni1    2   1   0
+--------------------
+J3 $J_{3}$
+Ni1  Ni1    0  -2   0
+Ni1  Ni1    0   2   0
 Ni1  Ni1   -2   0   0
 Ni1  Ni1    2   0   0
 Ni1  Ni1   -2  -2   0
-Ni1  Ni1    0  -2   0
-Ni1  Ni1    0   2   0
 Ni1  Ni1    2   2   0
 ====================

@@ -1,4 +1,4 @@
-from math import sqrt
+from math import sqrt, floor, log10
 
 from typing import Union
 
@@ -8,6 +8,7 @@ from radtools.crystal.atom import Atom
 from radtools.crystal.lattice import Lattice
 from radtools.crystal.bravais_lattice import bravais_lattice_from_cell
 from radtools.routines import absolute_to_relative
+from radtools.crystal.properties import dipole_dipole_energy, dipole_dipole_interaction
 
 
 class Crystal:
@@ -115,6 +116,9 @@ class Crystal:
             if isinstance(atom, list):
                 atom = atom[0]
         return atom in self.atoms
+
+    def __len__(self):
+        return self.atoms.__len__()
 
     def __getitem__(self, index) -> Atom:
         return self.atoms[index]
@@ -349,6 +353,189 @@ class Crystal:
 
         self.lattice = bravais_lattice_from_cell(self.lattice.cell)
 
+    def mag_dipdip_energy(self, na, nb, nc, progress_bar=True):
+        r"""
+        Computes magnetic dipole-dipole energy.
+
+        .. math::
+
+            E = -\frac{\mu_0}{4\pi}\sum_{i > j}\left(3(\vec{m_i} \cdot \vec{r_{ij}})(\vec{m_j} \cdot \vec{r_{ij}}) - (\vec{m_i}\cdot\vec{m_j})\right)
+
+        Parameters
+        ----------
+        na : int
+            Translations along :py:attr:`.Crystal.a1`.
+        nb : int
+            Translations along :py:attr:`.Crystal.a2`.
+        nc : int
+            Translations along :py:attr:`.Crystal.a3`.
+        progress_bar : bool, default True
+            Whether to show progressbar.
+
+        Returns
+        -------
+        energy : float
+            Dipole-dipole energy in meV.
+
+        See Also
+        --------
+        dipole_dipole_energy
+        """
+
+        translations = (
+            np.transpose(np.indices((na, nb, nc)), (1, 2, 3, 0)).reshape(
+                (na * nb * nc, 3)
+            )
+            @ self.cell
+        )
+        n_t = len(translations)
+
+        magnetic_atoms = []
+        for atom in self:
+            try:
+                tmp = atom.magmom
+                magnetic_atoms.append(atom)
+            except ValueError:
+                pass
+
+        magnetic_centres = np.zeros((n_t * len(magnetic_atoms), 2, 3), dtype=float)
+        for a_i, atom in enumerate(magnetic_atoms):
+            magnetic_centres[a_i * n_t : (a_i + 1) * n_t, 0] = np.tile(
+                atom.magmom, (n_t, 1)
+            )
+            magnetic_centres[a_i * n_t : (a_i + 1) * n_t, 1] = (
+                translations + atom.position
+            )
+
+        return dipole_dipole_energy(magnetic_centres, progress_bar=progress_bar)
+
+    def converge_mag_dipdip_energy(
+        self,
+        start=(10, 10, 10),
+        step=(10, 10, 10),
+        eps=10e-3,
+        progress_bar=True,
+        verbose=False,
+    ):
+        r"""
+        Converge magnetic dipole-dipole energy.
+
+        Parameters
+        ----------
+        start : tuple of 3 int, default (10, 10, 10)
+            (na, nb, nc) starting values.
+        step : tuple of 3 int, default (10, 10, 10)
+            (na, nb, nc) step values. If 0, then no step is applied.
+        eps : float, default 1e-3
+            Convergence parameter.
+        progress_bar : bool, default False
+            Whether to show progressbar.
+        verbose : bool, default False
+            Whether to print information about each step.
+
+        Returns
+        -------
+        energies : list
+            List of (na,nb,nc) and energies for each step.
+
+            .. code-block:: python
+
+                energies = [((na, nb, nc), energy), ...]
+
+        See Also
+        --------
+        dipole_dipole_energy
+        dipole_dipole_interaction
+        """
+
+        na, nb, nc = start
+        da, db, dc = step
+
+        translations = (
+            np.transpose(np.indices((na, nb, nc)), (1, 2, 3, 0)).reshape(
+                (na * nb * nc, 3)
+            )
+            @ self.cell
+        )
+
+        magnetic_atoms = []
+        for atom in self:
+            try:
+                tmp = atom.magmom
+                magnetic_atoms.append(atom)
+            except ValueError:
+                pass
+        n_atoms = len(magnetic_atoms)
+
+        n_t = len(translations)
+        mc1 = np.zeros((n_t * n_atoms, 2, 3), dtype=float)
+        for a_i, atom in enumerate(magnetic_atoms):
+            mc1[a_i * n_t : (a_i + 1) * n_t, 0] = np.tile(atom.magmom, (n_t, 1))
+            mc1[a_i * n_t : (a_i + 1) * n_t, 1] = translations + atom.position
+
+        energy1 = dipole_dipole_energy(mc1, progress_bar=progress_bar, normalize=False)
+        energies = [(start, energy1 / len(mc1))]
+        if verbose:
+            n_digits = abs(floor(log10(abs(eps)))) + 2
+            print(
+                f"{'Size':^{6+len(str(na))+len(str(nb))+len(str(nc))}} {'Energy':^{n_digits+4}} {'Difference':^{n_digits+4}}"
+            )
+            print(
+                f"({na}, {nb}, {nc}) "
+                + f"{energy1 /len(mc1):<{n_digits+4}.{n_digits}f}"
+            )
+
+        if da == 0 and db == 0 and dc == 0:
+            return energies
+
+        difference = 10 * eps
+        while difference > eps:
+            translations = []
+            if dc != 0:
+                for k in range(nc, nc + dc):
+                    for j in range(0, nb + db):
+                        for i in range(0, na + da):
+                            translations.append((i, j, k))
+            for k in range(0, nc):
+                if db != 0:
+                    for j in range(nb, nb + db):
+                        for i in range(0, na + da):
+                            translations.append((i, j, k))
+                for j in range(0, nb):
+                    for i in range(na, na + da):
+                        translations.append((i, j, k))
+            translations = np.array(translations) @ self.cell
+
+            n_t = len(translations)
+            mc2 = np.zeros((n_t * n_atoms, 2, 3), dtype=float)
+            for a_i, atom in enumerate(magnetic_atoms):
+                mc2[a_i * n_t : (a_i + 1) * n_t, 0] = np.tile(atom.magmom, (n_t, 1))
+                mc2[a_i * n_t : (a_i + 1) * n_t, 1] = translations + atom.position
+            energy2 = dipole_dipole_energy(
+                mc2, progress_bar=progress_bar, normalize=False
+            )
+            energy_inter = dipole_dipole_interaction(
+                mc1, mc2, progress_bar=progress_bar, normalize=False
+            )
+            new_energy = energy1 + energy_inter + energy2
+
+            energy1 = new_energy
+            nc += dc
+            nb += db
+            na += da
+            energies.append(((na, nb, nc), energy1 / (len(mc2) + len(mc1))))
+            difference = abs(energies[-2][1] - energies[-1][1])
+            if verbose:
+                print(
+                    f"({na}, {nb}, {nc}) "
+                    + f"{energy1 / (len(mc2) +len(mc1)):<{n_digits+4}.{n_digits}f} "
+                    + f"{difference:<{n_digits+4}.{n_digits}f}"
+                )
+
+            mc1 = np.concatenate((mc1, mc2))
+
+        return energies
+
 
 class CrystalIterator:
     def __init__(self, crystal: Crystal) -> None:
@@ -367,9 +554,34 @@ class CrystalIterator:
 
 
 if __name__ == "__main__":
-    l = Lattice([[2, 0, 0], [0, 3, 0], [0, 0, 1]])
-    c = Crystal(l)
-    c.identify()
-    c.plot("primitive")
-    c.plot("brillouin_kpath")
-    c.show()
+    crystal = Crystal()
+    crystal.cell = [
+        [3.513012, 0.000000000, 0.000000000],
+        [0.000000000, 4.752699, 0.000000000],
+        [0.000000000, 0.000000000, 23.5428674],
+    ]
+
+    Cr1 = Atom(
+        "Cr1",
+        np.array((0.2500000000, 0.7500000000, 0.1616620796)) @ crystal.cell,
+    )
+    Cr2 = Atom(
+        "Cr2",
+        np.array((0.7500000000, 0.2500000000, 0.0737774367)) @ crystal.cell,
+    )
+
+    crystal.add_atom(Cr1)
+    crystal.add_atom(Cr2)
+
+    crystal.Cr1.magmom = [0, 0, 3]
+    crystal.Cr2.magmom = [0, 0, 3]
+
+    z10 = crystal.mag_dipdip_energy(10, 10, 1)
+    z15 = crystal.mag_dipdip_energy(15, 15, 1)
+    z20 = crystal.mag_dipdip_energy(20, 20, 1)
+    print(z10, z15, z20, sep="\n")
+    energies = crystal.converge_mag_dipdip_energy(
+        (10, 10, 1), (5, 5, 0), eps=0.001, verbose=1, progress_bar=False
+    )
+    for e in energies:
+        print(f"{e[0]} ({e[1]})<------")

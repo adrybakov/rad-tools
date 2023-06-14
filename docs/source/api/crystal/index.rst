@@ -55,3 +55,11 @@ Bravais lattice generation
     lattice_example
     bravais_lattice_from_param
     bravais_lattice_from_cell
+
+Properties
+==========
+
+.. autosummary::
+
+    dipole_dipole_energy
+    dipole_dipole_interaction

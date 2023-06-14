@@ -235,12 +235,12 @@ class TestExchangeHamiltonian:
         model.add_bond(bond12, Cr1, Cr2, (0, 0, 0))
         model.add_bond(bond23, Cr2, Cr3, (0, 0, 0))
         model.add_bond(bond31, Cr3, Cr1, (0, 0, 0))
-        assert len(model.bonds) == 3
+        assert len(model) == 3
         assert (Cr1, Cr2, (0, 0, 0)) in model
         assert (Cr2, Cr3, (0, 0, 0)) in model
         assert (Cr3, Cr1, (0, 0, 0)) in model
         model.add_bond(bond13, Cr1, Cr3, (0, 0, 0))
-        assert len(model.bonds) == 4
+        assert len(model) == 4
         assert (Cr1, Cr2, (0, 0, 0)) in model
         assert (Cr2, Cr3, (0, 0, 0)) in model
         assert (Cr3, Cr1, (0, 0, 0)) in model
@@ -259,19 +259,19 @@ class TestExchangeHamiltonian:
         model.add_bond(bond23, Cr2, Cr3, (0, 0, 0))
         model.add_bond(bond31, Cr3, Cr1, (0, 0, 0))
         model.add_bond(bond13, Cr1, Cr3, (0, 0, 0))
-        assert len(model.bonds) == 4
+        assert len(model) == 4
         assert (Cr1, Cr2, (0, 0, 0)) in model
         assert (Cr2, Cr3, (0, 0, 0)) in model
         assert (Cr3, Cr1, (0, 0, 0)) in model
         assert (Cr1, Cr3, (0, 0, 0)) in model
         model.remove_bond(Cr1, Cr2, (0, 0, 0))
-        assert len(model.bonds) == 3
+        assert len(model) == 3
         assert (Cr1, Cr2, (0, 0, 0)) not in model
         assert (Cr2, Cr3, (0, 0, 0)) in model
         assert (Cr3, Cr1, (0, 0, 0)) in model
         assert (Cr1, Cr3, (0, 0, 0)) in model
         model.remove_bond(Cr3, Cr1, (0, 0, 0))
-        assert len(model.bonds) == 2
+        assert len(model) == 2
         assert (Cr1, Cr2, (0, 0, 0)) not in model
         assert (Cr2, Cr3, (0, 0, 0)) in model
         assert (Cr3, Cr1, (0, 0, 0)) not in model
@@ -314,7 +314,7 @@ class TestExchangeHamiltonian:
         model.add_bond(bond23, Cr2, Cr3, (0, 0, 0))
         model.add_bond(bond31, Cr3, Cr1, (0, 0, 0))
         model.add_bond(bond13, Cr1, Cr3, (0, 0, 0))
-        assert len(model.bonds) == 4
+        assert len(model) == 4
         assert (Cr1, Cr2, (0, 0, 0)) in model
         assert (Cr2, Cr3, (0, 0, 0)) in model
         assert (Cr3, Cr1, (0, 0, 0)) in model
@@ -322,7 +322,7 @@ class TestExchangeHamiltonian:
         assert len(model.magnetic_atoms) == 3
         model.remove_atom(Cr1)
         assert len(model.magnetic_atoms) == 2
-        assert len(model.bonds) == 1
+        assert len(model) == 1
         assert (Cr1, Cr2, (0, 0, 0)) not in model
         assert (Cr2, Cr3, (0, 0, 0)) in model
         assert (Cr3, Cr1, (0, 0, 0)) not in model
@@ -427,7 +427,7 @@ class TestExchangeHamiltonian:
         ]
         for iso, atom1, atom2, R in bonds:
             model.add_bond(ExchangeParameter(iso=iso), atom1, atom2, R)
-        assert len(model.bonds) == 12
+        assert len(model) == 12
         assert (Cr1, Cr2, (0, 0, 0)) in model
         assert (Cr2, Cr1, (0, 0, 0)) in model
         assert (Cr1, Cr1, (1, 0, 0)) in model
@@ -441,7 +441,7 @@ class TestExchangeHamiltonian:
         assert (Cr2, Cr1, (2, 2, 0)) in model
         assert (Cr1, Cr2, (-2, -2, 0)) in model
         filtered_model = model.filtered(max_distance=1)
-        assert len(filtered_model.bonds) == 6
+        assert len(filtered_model) == 6
         assert (Cr1, Cr2, (0, 0, 0)) in model
         assert (Cr2, Cr1, (0, 0, 0)) in model
         assert (Cr1, Cr1, (1, 0, 0)) in model
@@ -449,7 +449,7 @@ class TestExchangeHamiltonian:
         assert (Cr2, Cr2, (1, 0, 0)) in model
         assert (Cr2, Cr2, (-1, 0, 0)) in model
         filtered_model = model.filtered(min_distance=1)
-        assert len(filtered_model.bonds) == 10
+        assert len(filtered_model) == 10
         assert (Cr1, Cr1, (1, 0, 0)) in model
         assert (Cr1, Cr1, (-1, 0, 0)) in model
         assert (Cr2, Cr2, (1, 0, 0)) in model
@@ -461,7 +461,7 @@ class TestExchangeHamiltonian:
         assert (Cr2, Cr1, (2, 2, 0)) in model
         assert (Cr1, Cr2, (-2, -2, 0)) in model
         filtered_model = model.filtered(min_distance=1, max_distance=2)
-        assert len(filtered_model.bonds) == 8
+        assert len(filtered_model) == 8
         assert (Cr1, Cr1, (1, 0, 0)) in model
         assert (Cr1, Cr1, (-1, 0, 0)) in model
         assert (Cr2, Cr2, (1, 0, 0)) in model
@@ -471,11 +471,11 @@ class TestExchangeHamiltonian:
         assert (Cr2, Cr2, (0, 2, 0)) in model
         assert (Cr2, Cr2, (0, -2, 0)) in model
         filtered_model = model.filtered(R_vector=(0, 0, 0))
-        assert len(filtered_model.bonds) == 2
+        assert len(filtered_model) == 2
         assert (Cr2, Cr1, (0, 0, 0)) in model
         assert (Cr1, Cr2, (0, 0, 0)) in model
         filtered_model = model.filtered(R_vector=[(0, 0, 0), (1, 0, 0)])
-        assert len(filtered_model.bonds) == 4
+        assert len(filtered_model) == 4
         assert (Cr2, Cr1, (0, 0, 0)) in model
         assert (Cr1, Cr2, (0, 0, 0)) in model
         assert (Cr1, Cr1, (1, 0, 0)) in model
@@ -483,12 +483,12 @@ class TestExchangeHamiltonian:
         # In the template there are names, not objects, because in general
         # template only has information about names and R.
         filtered_model = model.filtered(template=[("Cr1", "Cr2", (0, 0, 0))])
-        assert len(filtered_model.bonds) == 1
+        assert len(filtered_model) == 1
         assert (Cr1, Cr2, (0, 0, 0)) in model
         filtered_model = model.filtered(
             template=[("Cr1", "Cr2", (0, 0, 0))], R_vector=[(0, 0, 0), (1, 0, 0)]
         )
-        assert len(filtered_model.bonds) == 1
+        assert len(filtered_model) == 1
 
     def test_force_symmetry(self):
         template1 = ExchangeTemplate()
@@ -531,7 +531,7 @@ class TestExchangeHamiltonian:
         }
 
         model.force_symmetry(template=template1)
-        assert len(model.bonds) == 6
+        assert len(model) == 6
         assert (
             model[(Cr1, Cr2, (0, 0, 0))].matrix
             == np.array([[2.5, 2, 3], [4, 6.5, 6], [7, 8, 10.5]])
@@ -560,7 +560,7 @@ class TestExchangeHamiltonian:
         for matrix, atom1, atom2, R in bonds:
             model.add_bond(ExchangeParameter(matrix=matrix), atom1, atom2, R)
         model.force_symmetry(template=template2)
-        assert len(model.bonds) == 5
+        assert len(model) == 5
         assert (
             model[(Cr1, Cr2, (0, 0, 0))].matrix
             == np.array([[2.5, 2, 3], [4, 6.5, 6], [7, 8, 10.5]])
@@ -587,7 +587,7 @@ class TestExchangeHamiltonian:
         for matrix, atom1, atom2, R in bonds:
             model.add_bond(ExchangeParameter(matrix=matrix), atom1, atom2, R)
         model.force_symmetry(template=template3)
-        assert len(model.bonds) == 4
+        assert len(model) == 4
         assert (
             model[(Cr1, Cr2, (0, 0, 0))].matrix
             == np.array([[2.5, 2, 3], [4, 6.5, 6], [7, 8, 10.5]])
@@ -628,19 +628,19 @@ class TestExchangeHamiltonian:
 
         model.notation = "standard"
         assert model[Cr, Cr, (1, 0, 0)].iso == 1
-        assert len(model.bonds) == 2
+        assert len(model) == 2
         model.notation = "standard"
         assert model[Cr, Cr, (1, 0, 0)].iso == 1
-        assert len(model.bonds) == 2
+        assert len(model) == 2
 
         assert model.double_counting
-        assert len(model.bonds) == 2
+        assert len(model) == 2
         model.double_counting = False
         assert model[Cr, Cr, (1, 0, 0)].iso == 2
-        assert len(model.bonds) == 1
+        assert len(model) == 1
         model.double_counting = True
         assert model[Cr, Cr, (1, 0, 0)].iso == 1
-        assert len(model.bonds) == 2
+        assert len(model) == 2
 
         assert not model.spin_normalized
         model.spin_normalized = True
@@ -763,3 +763,15 @@ class TestExchangeHamiltonian:
         for new_notation in notations:
             model.notation = new_notation
             assert model.ferromagnetic_energy() == -6
+
+    def test_interface(self):
+        model = ExchangeHamiltonian()
+        model.add_atom(Atom("Cr"))
+        assert model.Cr.name == "Cr"
+        assert model.Cr.fullname == "Cr_1"
+
+        model.add_atom(Atom("Cr"))
+        assert model.Cr_1.name == "Cr"
+        assert model.Cr_1.fullname == "Cr_1"
+        assert model.Cr_2.name == "Cr"
+        assert model.Cr_2.fullname == "Cr_2"

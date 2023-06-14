@@ -19,6 +19,7 @@ def manager(
     min_distance=None,
     distance=None,
     verbose=False,
+    eps=1e-3,
 ):
     r"""
     ``rad-make-template.py`` script.
@@ -94,15 +95,40 @@ def manager(
                 + "i j R_a R_b R_c\n"
                 + "-" * 20
                 + "\n"
-                + "Name placeholder"
-                + "\n"
             )
-            for atom1, atom2, R in model.bonds:
-                file.write(
-                    f"{atom1:4} {atom2:4} " + f"{R[0]:3.0f} {R[1]:3.0f} {R[2]:3.0f}\n"
+            data = []
+            for atom1, atom2, R, J in model:
+                data.append(
+                    (atom1, atom2, R, model.crystal.get_distance(atom1, atom2, R))
                 )
+
+            data.sort(key=lambda x: x[3])
+            j = 1
+            file.write(f"J{j} " + "$J_{" + f"{j}" + "}$\n")
+            file.write(
+                f"{data[0][0]:4} {data[0][1]:4} "
+                + f"{data[0][2][0]:3.0f} {data[0][2][1]:3.0f} {data[0][2][2]:3.0f}\n"
+            )
+            for i, (atom1, atom2, R, distance) in enumerate(data[1:]):
+                if abs(distance - data[i][3]) < eps:
+                    file.write(
+                        f"{atom1:4} {atom2:4} "
+                        + f"{R[0]:3.0f} {R[1]:3.0f} {R[2]:3.0f}\n"
+                    )
+                else:
+                    j += 1
+                    file.write("-" * 20 + "\n")
+                    file.write(f"J{j} " + "$J_{" + f"{j}" + "}$\n")
+                    file.write(
+                        f"{atom1:4} {atom2:4} "
+                        + f"{R[0]:3.0f} {R[1]:3.0f} {R[2]:3.0f}\n"
+                    )
+
             file.write("=" * 20 + "\n")
-    cprint(f"Template draft is in " + f"{abspath(output_name)}.txt", "green")
+    cprint(
+        f"Template draft is in " + f"{abspath(output_name)}.txt, grouped by distance",
+        "green",
+    )
     cprint(f"Do not forget to correct the template draft to your needs!", "yellow")
 
 
@@ -167,6 +193,13 @@ def create_parser():
         action="store_true",
         default=False,
         help="Verbose output, propagates to the called methods.",
+    )
+    parser.add_argument(
+        "--eps",
+        type=float,
+        default=1e-3,
+        metavar="value",
+        help="Epsilon for the distance comparison.",
     )
 
     return parser

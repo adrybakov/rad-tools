@@ -191,14 +191,14 @@ class TestReadExchangeHamiltonian:
     )
     def test_filter_by_max_distance(self, max_distance, elements_number):
         filtered_model = self.model.filtered(max_distance=max_distance)
-        assert len(filtered_model.bonds) == elements_number
+        assert len(filtered_model) == elements_number
 
     @pytest.mark.parametrize(
         "min_distance, elements_number", [(0, 72), (6, 48), (9.6, 4), (10, 0)]
     )
     def test_filter_by_min_distance(self, min_distance, elements_number):
         filtered_model = self.model.filtered(min_distance=min_distance)
-        assert len(filtered_model.bonds) == elements_number
+        assert len(filtered_model) == elements_number
 
     @pytest.mark.parametrize(
         "R_vector, elements_number",
@@ -212,16 +212,16 @@ class TestReadExchangeHamiltonian:
     )
     def test_filter_by_R_vector(self, R_vector, elements_number):
         filtered_model = self.model.filtered(R_vector=R_vector)
-        assert len(filtered_model.bonds) == elements_number
+        assert len(filtered_model) == elements_number
 
     def test_filter_by_template(self):
         filtered_model = self.model.filtered(template=self.template)
-        assert len(filtered_model.bonds) == 16
+        assert len(filtered_model) == 16
         template = read_template(
             os.path.join("utest", "test_io", "resources", "template.txt")
         )
         filtered_model = self.model.filtered(template=template)
-        assert len(filtered_model.bonds) == 16
+        assert len(filtered_model) == 16
 
     @pytest.mark.parametrize(
         "min_distance, max_distance, elements_number",
@@ -233,7 +233,7 @@ class TestReadExchangeHamiltonian:
         filtered_model = self.model.filtered(
             max_distance=max_distance, min_distance=min_distance
         )
-        assert len(filtered_model.bonds) == elements_number
+        assert len(filtered_model) == elements_number
 
     @pytest.mark.parametrize(
         "max_distance, elements_number",
@@ -243,7 +243,7 @@ class TestReadExchangeHamiltonian:
         filtered_model = self.model.filtered(
             max_distance=max_distance, template=self.template
         )
-        assert len(filtered_model.bonds) == elements_number
+        assert len(filtered_model) == elements_number
 
     @pytest.mark.parametrize(
         "min_distance, elements_number", [(0, 16), (3.6, 12), (6, 0), (9.6, 0), (10, 0)]
@@ -252,7 +252,7 @@ class TestReadExchangeHamiltonian:
         filtered_model = self.model.filtered(
             min_distance=min_distance, template=self.template
         )
-        assert len(filtered_model.bonds) == elements_number
+        assert len(filtered_model) == elements_number
 
     @pytest.mark.parametrize(
         "R_vector, elements_number",
@@ -266,7 +266,7 @@ class TestReadExchangeHamiltonian:
     )
     def test_filter_by_R_vector_and_template(self, R_vector, elements_number):
         filtered_model = self.model.filtered(R_vector=R_vector, template=self.template)
-        assert len(filtered_model.bonds) == elements_number
+        assert len(filtered_model) == elements_number
 
     @pytest.mark.parametrize(
         "max_distance, R_vector, elements_number",
@@ -283,7 +283,7 @@ class TestReadExchangeHamiltonian:
         filtered_model = self.model.filtered(
             R_vector=R_vector, max_distance=max_distance
         )
-        assert len(filtered_model.bonds) == elements_number
+        assert len(filtered_model) == elements_number
 
     def test_notation(self):
         assert self.model.double_counting == True
