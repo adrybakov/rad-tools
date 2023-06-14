@@ -535,6 +535,7 @@ def plot_projected(
     interactive=False,
     save_pickle=False,
     colours=COLOURS,
+    total_label="default",
 ):
     r"""
     Plot PDOS.
@@ -564,6 +565,8 @@ def plot_projected(
         Helps for custom modification of particular figures.
     colours : list
         List of colours to be used. values are passed directly to matplotlib
+    total_label : str or ``None``, default "default"
+        Label for the total data. If None , then the label is not added
     """
 
     n = len(pdos.projectors)
@@ -623,6 +626,15 @@ def plot_projected(
             ax = axs[i]
             set_up_axis(ax, i)
         if pdos.spin_pol:
+            if total_label == "default":
+                label_up = f"{pdos.projectors_group} (up)"
+                label_down = f"{pdos.projectors_group} (down)"
+            elif total_label is None:
+                label_up = None
+                label_down = None
+            else:
+                label_up = f"{total_label} (up)"
+                label_down = f"{total_label} (down)"
             if relative:
                 if i == 0:
                     ax.plot(
@@ -632,7 +644,7 @@ def plot_projected(
                         lw=1,
                         color="blue",
                         alpha=0.8,
-                        label=f"{pdos.projectors_group} (up)",
+                        label=label_up,
                     )
                     ax.plot(
                         pdos.energy,
@@ -641,7 +653,7 @@ def plot_projected(
                         lw=1,
                         color="red",
                         alpha=0.8,
-                        label=f"{pdos.projectors_group} (down)",
+                        label=label_down,
                     )
                 ax.fill_between(
                     pdos.energy,
@@ -668,7 +680,7 @@ def plot_projected(
                     lw=0,
                     color="blue",
                     alpha=0.2,
-                    label=f"{pdos.projectors_group} (up)",
+                    label=label_up,
                 )
                 ax.fill_between(
                     pdos.energy,
@@ -677,7 +689,7 @@ def plot_projected(
                     lw=0,
                     color="red",
                     alpha=0.2,
-                    label=f"{pdos.projectors_group} (down)",
+                    label=label_down,
                 )
 
                 ax.plot(
@@ -699,6 +711,8 @@ def plot_projected(
                     label=f"{projector} (down)",
                 )
         else:
+            if total_label == "default":
+                total_label = pdos.projectors_group
             if relative:
                 if i == 0:
                     ax.plot(
@@ -708,7 +722,7 @@ def plot_projected(
                         lw=1,
                         color="black",
                         alpha=0.8,
-                        label=pdos.projectors_group,
+                        label=total_label,
                     )
                 ax.fill_between(
                     pdos.energy,
@@ -728,7 +742,7 @@ def plot_projected(
                     lw=0,
                     color="black",
                     alpha=0.3,
-                    label=pdos.projectors_group,
+                    label=total_label,
                 )
                 ax.plot(
                     pdos.energy,

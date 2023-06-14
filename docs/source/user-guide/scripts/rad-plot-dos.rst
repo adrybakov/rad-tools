@@ -53,7 +53,7 @@ There are two main plot style:
 
     Default style
 
-* :ref:`Relative <rad-plot-dos_relative>`
+* Relative :ref:`rad-plot-dos_relative`
     PDOS of all projectors appear on the same plot, 
     PDOS of each projector starts at the end of the previous projector`s PDOS.
 
@@ -66,7 +66,7 @@ There are two main plot style:
 
 Each of these styles could be modified by the following "substyles":
 
-* :ref:`Normalized <rad-plot-dos_normalize>`
+* Normalized  :ref:`rad-plot-dos_normalize`
     PDOS of each projector is normalized with respect to the local DOS. 
     Local DOS could be the sum of all PDOS, as well as total PDOS
     (see :ref:`rad-plot-dos_background-total`).
@@ -83,7 +83,7 @@ Each of these styles could be modified by the following "substyles":
 
     With relative style
 
-* :ref:`Total as a background <rad-plot-dos_background-total>`
+* Total as a background :ref:`rad-plot-dos_background-total`
     Total PDOS is used as the background values instead 
     of the sum of the PDOS from the plot (which is used by default).
 
@@ -201,7 +201,11 @@ Output formats
 Custom plots
 ============
 
-:ref:`rad-plot-dos_labels` allows to provide custom labels for the plot.
+.. hint::
+    :ref:`rad-plot-dos_labels` allows to provide custom labels for the plot.
+    Amount of labels have to be the same as the amount of custom strings, or one more.
+    If one more, then first one is interpreted as the label for the background 
+    (Use "None" to switch it off).
 
 Custom plots allows the user to create plots with the hand-picked PDOS.
 
@@ -241,7 +245,7 @@ The following rules apply to the construction of the input string:
 * Spaces are ignored.
     Feel free to add as many spaces as you wish. Keep in mind that input string serves 
     as a label in the plot as is.
-* Entries for different :color1:`atom_type`are separated by ";"
+* Entries for different :color1:`atom_type` are separated by ";"
     Each ";" has to preceded and followed by the entry.
 
 The format of the string:

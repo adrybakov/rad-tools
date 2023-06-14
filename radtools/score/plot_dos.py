@@ -292,10 +292,24 @@ def plot_custom(
     print("Input is understood as:")
     projectors = []
     pdos = []
-    if labels is not None and len(labels) != len(custom):
+    if (
+        labels is not None
+        and len(labels) != len(custom)
+        and len(labels) != len(custom) + 1
+    ):
         raise ValueError(
-            f"Got {len(labels)} labels, but {len(custom)} PDOS, have to be the same."
+            f"Got {len(labels)} labels, but {len(custom)} PDOS, have to be the same or n custom, n+1 labels."
         )
+    if len(labels) == len(custom) + 1:
+        if labels[0].lower() == "none":
+            total_label = None
+        elif labels[0].lower() == "default":
+            total_label = "default"
+        else:
+            total_label = labels[0]
+        labels = labels[1:]
+    else:
+        total_label = "default"
     for i_e, entry in enumerate(custom):
         if labels is not None:
             projectors.append(labels[i_e])
@@ -410,6 +424,7 @@ def plot_custom(
         interactive=interactive,
         save_pickle=save_pickle,
         colours=colours,
+        total_label=total_label,
     )
     cprint(f"Result is in {abspath(join(output_root, f'{output_name}.png'))}", "blue")
 
