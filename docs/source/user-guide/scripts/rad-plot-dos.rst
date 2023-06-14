@@ -201,6 +201,8 @@ Output formats
 Custom plots
 ============
 
+:ref:`rad-plot-dos_labels` allows to provide custom labels for the plot.
+
 Custom plots allows the user to create plots with the hand-picked PDOS.
 
 In order to get custom plot one have to provide :ref:`rad-plot-dos_custom` argument.
@@ -593,3 +595,18 @@ the values of the :ref:`rad-plot-dos_custom`.
     nargs : any
 
 .. versionadded:: 0.7.5
+
+
+.. _rad-plot-dos_labels:
+
+-lbs, --labels
+--------------
+Labels for the custom plots.
+
+
+.. code-block:: text
+
+    default : None
+    nargs : any
+
+.. versionadded:: 0.7.6
