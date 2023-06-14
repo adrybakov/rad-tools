@@ -102,6 +102,15 @@ help:
 
 examples:
 	@pip3 install . --upgrade
+	-@rm -r docs/examples/rad-plot-dos/style-examples/*
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -n
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -bt
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -n -bt
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -r
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -r -n
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -r -bt
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -r -n -bt
 	@rad-identify-wannier-centres.py docs/examples/rad-identify-wannier-centres/example_centres.xyz > docs/examples/rad-identify-wannier-centres/console_output.txt
 	@rad-identify-wannier-centres.py docs/examples/rad-identify-wannier-centres/example_centres.xyz --span 0.11 --output-name example_centres.xyz_bigger_span
 	@rad-make-template.py -on docs/examples/rad-make-template/template_demo

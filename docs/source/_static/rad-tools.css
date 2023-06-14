@@ -150,3 +150,20 @@ html[data-theme=dark] .sd-card .sd-card-footer {
     url("https://rad-tools.org/en/stable/_static/CustomLogoFont.ttf") format("truetype"),
     url("https://rad-tools.org/en/stable/_static/CustomLogoFont.svg#filename") format("svg");
 }
+
+
+.color1 {
+  color: #E08B4E;
+}
+
+.color2 {
+  color: #E33CF2;
+}
+
+.color3 {
+  color: #2AA9FF;
+}
+
+.color4 {
+  color: #06C925;
+}

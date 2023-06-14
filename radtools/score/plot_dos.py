@@ -310,7 +310,7 @@ def plot_custom(
                 print(end=", ")
             else:
                 print()
-        if "(" in tmp:
+        if "(" in entry:
             tmp = entry.split("(")[1].split(",")
             wfcs = []
             for i in tmp:
@@ -662,7 +662,7 @@ def create_parser():
         help="Custom PDOS plot. See docs for info.",
     )
     parser.add_argument(
-        "-cl",
+        "-cls",
         "--colours",
         type=str,
         metavar="colours",
