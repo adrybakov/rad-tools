@@ -649,7 +649,7 @@ Fontsize of the legend.
 
 .. _rad-plot-dos_title-fontsize:
 
--lfs, --title-fontsize
+-tfs, --title-fontsize
 ----------------------
 Fontsize of the title.
 

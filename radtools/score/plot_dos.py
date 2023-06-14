@@ -759,20 +759,20 @@ def create_parser():
         help="Labels for the custom plots.",
     )
     parser.add_argument(
-        "-lfs",
-        "--legend-fontsize",
-        type=int,
-        default=12,
-        metavar="fontsize",
-        help="Fontsize of the legend.",
-    )
-    parser.add_argument(
         "-alfs",
         "--axes-labels-fontsize",
         type=int,
         default=14,
         metavar="fontsize",
         help="Fontsize of the labes of the axes.",
+    )
+    parser.add_argument(
+        "-lfs",
+        "--legend-fontsize",
+        type=int,
+        default=12,
+        metavar="fontsize",
+        help="Fontsize of the legend.",
     )
     parser.add_argument(
         "-tfs",
