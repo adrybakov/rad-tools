@@ -286,70 +286,90 @@ def plot_custom(
     save_txt=False,
     background_total=False,
     colours=COLOURS,
+    labels=None,
 ):
     cprint("Plotting custom plot", "green")
     print("Input is understood as:")
     projectors = []
     pdos = []
-    for entry in custom:
-        projectors.append(entry)
+    if labels is not None and len(labels) != len(custom):
+        raise ValueError(
+            f"Got {len(labels)} labels, but {len(custom)} PDOS, have to be the same."
+        )
+    for i_e, entry in enumerate(custom):
+        if labels is not None:
+            projectors.append(labels[i_e])
+        else:
+            projectors.append(entry)
         cprint(f'"{entry}":', "green")
         entry = entry.replace(" ", "").replace(")", "")
-        tmp = entry.split("(")[0]
-        atom = tmp.split("#")[0]
-        print(f"  * Atom type is {atom}")
-        if "#" in tmp:
-            atom_numbers = list(map(int, tmp.split("#")[1:]))
-        else:
-            atom_numbers = dos.atom_numbers(atom)
-
-        print(f"  * PDOS is summed among the following atoms:", end="\n      ")
-        for i, number in enumerate(atom_numbers):
-            print(f"{atom}#{number}", end="")
-            if i != len(atom_numbers) - 1:
-                print(end=", ")
+        subentries = entry.split(";")
+        pdos_element = None
+        for subentry in subentries:
+            atom_part = subentry.split("(")[0]
+            atom = atom_part.split("#")[0]
+            if "#" in subentry:
+                atom_numbers = list(map(int, atom_part.split("#")[1:]))
             else:
-                print()
-        if "(" in entry:
-            tmp = entry.split("(")[1].split(",")
-            wfcs = []
-            for i in tmp:
-                wfc = i.split("#")[0]
-                if "#" in i:
-                    tmp_numbers = list(map(int, i.split("#")[1:]))
-                    for number in tmp_numbers:
-                        wfcs.append((wfc, number))
+                atom_numbers = dos.atom_numbers(atom)
+
+            cprint(
+                f"  * PDOS is summed among the following {atom} atoms:",
+                "green",
+                end="\n      ",
+            )
+            for i, number in enumerate(atom_numbers):
+                print(f"{atom}#{number}", end="")
+                if i != len(atom_numbers) - 1:
+                    print(end=", ")
                 else:
-                    wfc_list = dos.wfcs(atom)
-                    for name, number in wfc_list:
-                        if name == wfc:
+                    print()
+
+            if "(" in subentry:
+                wfc_parts = subentry.split("(")[1].split(",")
+                wfcs = []
+                for wfc_part in wfc_parts:
+                    wfc = wfc_part.split("#")[0]
+                    if "#" in wfc_part:
+                        wfc_numbers = list(map(int, wfc_part.split("#")[1:]))
+                        for number in wfc_numbers:
                             wfcs.append((wfc, number))
-        else:
-            wfcs = dos.wfcs(atom)
-
-        print(
-            "  * For each atom PDOS is summed among the following projections:",
-            end="\n      ",
-        )
-        for i, (name, number) in enumerate(wfcs):
-            print(f"{name}#{number}", end="")
-            if i != len(wfcs) - 1:
-                print(end=", ")
+                    else:
+                        wfc_list = dos.wfcs(atom)
+                        for name, number in wfc_list:
+                            if name == wfc:
+                                wfcs.append((wfc, number))
             else:
-                print()
+                wfcs = dos.wfcs(atom)
 
-        tmp = None
-        for name, number in wfcs:
-            if tmp is None:
-                tmp = dos.pdos(
-                    atom=atom, wfc=name, wfc_number=number, atom_numbers=atom_numbers
-                ).ldos
-            else:
-                tmp += dos.pdos(
-                    atom=atom, wfc=name, wfc_number=number, atom_numbers=atom_numbers
-                ).ldos
+            print(
+                f"  * For each {atom} atom PDOS is summed among the following projections:",
+                end="\n      ",
+            )
+            for i, (name, number) in enumerate(wfcs):
+                print(f"{name}#{number}", end="")
+                if i != len(wfcs) - 1:
+                    print(end=", ")
+                else:
+                    print()
 
-        pdos.append(tmp)
+            for name, number in wfcs:
+                if pdos_element is None:
+                    pdos_element = dos.pdos(
+                        atom=atom,
+                        wfc=name,
+                        wfc_number=number,
+                        atom_numbers=atom_numbers,
+                    ).ldos
+                else:
+                    pdos_element += dos.pdos(
+                        atom=atom,
+                        wfc=name,
+                        wfc_number=number,
+                        atom_numbers=atom_numbers,
+                    ).ldos
+
+        pdos.append(pdos_element)
 
     if background_total:
         pdos = PDOS(
@@ -411,6 +431,7 @@ def manager(
     background_total=False,
     custom=None,
     colours=None,
+    labels=None,
 ):
     r"""
     ``rad-plot-dos.py`` script.
@@ -538,6 +559,7 @@ def manager(
                 save_txt=save_txt,
                 background_total=background_total,
                 colours=colours,
+                labels=labels,
             )
 
 
@@ -669,6 +691,15 @@ def create_parser():
         default=None,
         nargs="*",
         help="Colours for the relative and custom plots.",
+    )
+    parser.add_argument(
+        "-lbs",
+        "--labels",
+        type=str,
+        metavar="labels",
+        default=None,
+        nargs="*",
+        help="Labels for the custom plots.",
     )
 
     return parser

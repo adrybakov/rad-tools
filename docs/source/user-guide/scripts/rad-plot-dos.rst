@@ -239,12 +239,14 @@ The following rules apply to the construction of the input string:
 * Spaces are ignored.
     Feel free to add as many space as you wish. Keep in mind that input string serves 
     as a label in the plot as is.
+* Entries for different :color1:`atom_type`are separated by ";"
+    Each ";" has to preceded and followed by the entry.
 
 The format of the string:
 
 :color1:`atom_type`\#\ :color2:`n1`\#\ :color2:`n2`... 
 (:color3:`projector_type1`\#\ :color4:`m1`\#\ :color4:`m2`, 
-:color3:`projector_type2`:color4:`\#\ k1`\#\ :color4:`k2`, ...)
+:color3:`projector_type2`:color4:`\#\ k1`\#\ :color4:`k2`, ...); ...
 
 Here is an example of the set of PDOS file from |projwfc|_ output:
 
@@ -274,6 +276,8 @@ Here are few examples of the input strings:
     Equivalent to: ":color1:`Ni`\#\ :color2:`1"` or 
     ":color1:`Ni` \(\ :color3:`s`, :color3:`p`, :color3:`d`)" or 
     ":color1:`N   i`"
+* ":color1:`Ni`; :color1:`I`" 
+    Sums over all projectors of Ni and I: 1-8. 
 * ":color1:`Ni` \(\ :color3:`s`\#\ :color4:`1`, :color3:`d`)"
     Sums over one s and d projector of Ni: 1, 3
 * ":color1:`I`"
