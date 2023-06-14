@@ -122,7 +122,11 @@ with the :ref:`rad-plot-dos_colours` parameter.
 :ref:`rad-plot-dos_energy-window` and :ref:`rad-plot-dos_dos-window` allows to specify 
 energy and states/eV windows.
 
+Interactive plot
+----------------
 
+:ref:`rad-plot-dos_interactive` opens each plot in an interactive matplotlib window.
+It allows one to modify the range and appearance of the plot (to drag the legend).
 
 Output remarks
 --------------

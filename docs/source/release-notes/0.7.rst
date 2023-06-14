@@ -97,3 +97,7 @@ Energy difference between steps was not calculated correctly (overestimated).
 
 Bugfix in the :ref:`rad-plot-dos`: For spin-polarized PDOS :ref:rad-plot-dos_relative` Arguments
 was causing problems with overlapping colours. It is fixed.
+
+0.7.5
+-----
+Add :ref:`rad-plot-dos_custom-plots` and :ref:`rad-plot-dos_colours` to the :ref:`rad-plot-dos`. 
