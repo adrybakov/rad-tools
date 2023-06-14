@@ -60,6 +60,9 @@ def plot_orbital_resolved(
     save_txt=False,
     background_total=False,
     colours=COLOURS,
+    legend_fontsize=12,
+    axes_labels_fontsize=14,
+    title_fontsize=18,
 ):
     cprint("Orbital-resolved PDOS:", "green")
     local_output = join(output_root, "orbital-resolved")
@@ -117,6 +120,9 @@ def plot_orbital_resolved(
                     interactive=interactive,
                     save_pickle=save_pickle,
                     colours=colours,
+                    legend_fontsize=legend_fontsize,
+                    axes_labels_fontsize=axes_labels_fontsize,
+                    title_fontsize=title_fontsize,
                 )
     cprint(f"Results are in {abspath(local_output)}", "blue")
 
@@ -135,6 +141,9 @@ def plot_atom_resolved(
     save_txt=False,
     background_total=False,
     colours=COLOURS,
+    legend_fontsize=12,
+    axes_labels_fontsize=14,
+    title_fontsize=18,
 ):
     cprint("Orbital's contribution for each atom.", "green")
     local_output = join(output_root, "atom-resolved")
@@ -192,6 +201,9 @@ def plot_atom_resolved(
                 interactive=interactive,
                 save_pickle=save_pickle,
                 colours=colours,
+                legend_fontsize=legend_fontsize,
+                axes_labels_fontsize=axes_labels_fontsize,
+                title_fontsize=title_fontsize,
             )
     cprint(f"Results are in {abspath(local_output)}", "blue")
 
@@ -210,6 +222,9 @@ def plot_atom_to_total(
     save_txt=False,
     background_total=False,
     colours=COLOURS,
+    legend_fontsize=12,
+    axes_labels_fontsize=14,
+    title_fontsize=18,
 ):
     cprint("Atom's contributions into total PDOS:", "green")
     projectors = []
@@ -268,6 +283,9 @@ def plot_atom_to_total(
         interactive=interactive,
         save_pickle=save_pickle,
         colours=colours,
+        legend_fontsize=legend_fontsize,
+        axes_labels_fontsize=axes_labels_fontsize,
+        title_fontsize=title_fontsize,
     )
     cprint(f"Result is in {abspath(output_root)}", "blue")
 
@@ -287,6 +305,9 @@ def plot_custom(
     background_total=False,
     colours=COLOURS,
     labels=None,
+    legend_fontsize=12,
+    axes_labels_fontsize=14,
+    title_fontsize=18,
 ):
     cprint("Plotting custom plot", "green")
     print("Input is understood as:")
@@ -425,6 +446,9 @@ def plot_custom(
         save_pickle=save_pickle,
         colours=colours,
         total_label=total_label,
+        legend_fontsize=legend_fontsize,
+        axes_labels_fontsize=axes_labels_fontsize,
+        title_fontsize=title_fontsize,
     )
     cprint(f"Result is in {abspath(join(output_root, f'{output_name}.png'))}", "blue")
 
@@ -447,6 +471,9 @@ def manager(
     custom=None,
     colours=None,
     labels=None,
+    legend_fontsize=12,
+    axes_labels_fontsize=14,
+    title_fontsize=18,
 ):
     r"""
     ``rad-plot-dos.py`` script.
@@ -506,6 +533,9 @@ def manager(
                 xlim=energy_window,
                 ylim=dos_window,
                 save_pickle=save_pickle,
+                legend_fontsize=legend_fontsize,
+                axes_labels_fontsize=axes_labels_fontsize,
+                title_fontsize=title_fontsize,
             )
             cprint(f"Result is in {join(output_root, 'pdos-vs-dos')}", "blue")
 
@@ -524,6 +554,9 @@ def manager(
                 save_txt=save_txt,
                 background_total=background_total,
                 colours=colours,
+                legend_fontsize=legend_fontsize,
+                axes_labels_fontsize=axes_labels_fontsize,
+                title_fontsize=title_fontsize,
             )
 
             # Plot wfc contribution into each atom
@@ -541,6 +574,9 @@ def manager(
                 save_txt=save_txt,
                 background_total=background_total,
                 colours=colours,
+                legend_fontsize=legend_fontsize,
+                axes_labels_fontsize=axes_labels_fontsize,
+                title_fontsize=title_fontsize,
             )
 
             # Plot atom contributions into total PDOS
@@ -558,6 +594,9 @@ def manager(
                 save_txt=save_txt,
                 background_total=background_total,
                 colours=colours,
+                legend_fontsize=legend_fontsize,
+                axes_labels_fontsize=axes_labels_fontsize,
+                title_fontsize=title_fontsize,
             )
         else:
             plot_custom(
@@ -575,6 +614,9 @@ def manager(
                 background_total=background_total,
                 colours=colours,
                 labels=labels,
+                legend_fontsize=legend_fontsize,
+                axes_labels_fontsize=axes_labels_fontsize,
+                title_fontsize=title_fontsize,
             )
 
 
@@ -715,6 +757,30 @@ def create_parser():
         default=None,
         nargs="*",
         help="Labels for the custom plots.",
+    )
+    parser.add_argument(
+        "-lfs",
+        "--legend-fontsize",
+        type=int,
+        default=12,
+        metavar="fontsize",
+        help="Fontsize of the legend.",
+    )
+    parser.add_argument(
+        "-alfs",
+        "--axes-labels-fontsize",
+        type=int,
+        default=14,
+        metavar="fontsize",
+        help="Fontsize of the labes of the axes.",
+    )
+    parser.add_argument(
+        "-tfs",
+        "--title-fontsize",
+        type=int,
+        default=18,
+        metavar="fontsize",
+        help="Fontsize of the title.",
     )
 
     return parser

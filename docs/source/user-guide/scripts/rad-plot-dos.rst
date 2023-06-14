@@ -122,6 +122,9 @@ with the :ref:`rad-plot-dos_colours` parameter.
 :ref:`rad-plot-dos_energy-window` and :ref:`rad-plot-dos_dos-window` allows to specify 
 energy and states/eV windows.
 
+:ref`rad-plot-dos_axes-labels-fontsize`, :ref`rad-plot-dos_legend-fontsize` 
+and :ref`rad-plot-dos_title-fontsize` provide control of the fontsizes.
+
 Interactive plot
 ----------------
 
@@ -614,3 +617,45 @@ Labels for the custom plots.
     nargs : any
 
 .. versionadded:: 0.7.6
+
+
+.. _rad-plot-dos_axes-labels-fontsize:
+
+-alfs, --axes-labels-fontsize
+-----------------------------
+Fontsize of the labes of the axes.
+
+.. code-block:: text
+
+    default : 14
+    type : int
+
+.. versionadded:: 0.7.8
+
+
+.. _rad-plot-dos_legend-fontsize:
+
+-lfs, --legend-fontsize
+-----------------------
+Fontsize of the legend.
+
+.. code-block:: text
+
+    default : 12
+    type : int
+
+.. versionadded:: 0.7.8
+
+
+.. _rad-plot-dos_title-fontsize:
+
+-lfs, --title-fontsize
+----------------------
+Fontsize of the title.
+
+.. code-block:: text
+
+    default : 18
+    type : int
+
+.. versionadded:: 0.7.8

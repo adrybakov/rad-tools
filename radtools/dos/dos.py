@@ -518,6 +518,9 @@ class DOSQE:
         xlim=None,
         ylim=None,
         save_pickle=False,
+        axes_label_fontsize=18,
+        legend_fontsize=12,
+        title_fontsize=18,
     ):
         r"""
         Plot total DOS vs total PDOS.
@@ -537,20 +540,26 @@ class DOSQE:
         save_pickle : bool, default False
             Whether to save figure as a .pickle file.
             Helps for custom modification of particular figures.
+        axes_label_fontsize : int, default 18
+            Fontsize of the axes labels.
+        legend_fontsize : int, default 12
+            Fontsize of the legend.
+        title_fontsize : int, default 18
+            Title fontsize.
         """
         fig, ax = plt.subplots(figsize=(8, 4))
 
-        ax.set_xlabel("Energy, eV", fontsize=18)
-        ax.set_ylabel("DOS, states/eV", fontsize=18)
+        ax.set_xlabel("Energy, eV", fontsize=axes_label_fontsize)
+        ax.set_ylabel("DOS, states/eV", fontsize=axes_label_fontsize)
         if xlim is None:
             xlim = (np.amin(self.energy), np.amax(self.energy))
         ax.set_xlim(*tuple(xlim))
         if ylim is not None:
             ax.set_ylim(*tuple(ylim))
         if efermi != 0:
-            ax.set_title(f"DOS vs PDOS (0 is Fermi energy)", fontsize=18)
+            ax.set_title(f"DOS vs PDOS (0 is Fermi energy)", fontsize=title_fontsize)
         else:
-            ax.set_title(f"DOS vs PDOS (0 is 0)", fontsize=18)
+            ax.set_title(f"DOS vs PDOS (0 is 0)", fontsize=title_fontsize)
         ax.vlines(
             0,
             0,
@@ -661,9 +670,11 @@ class DOSQE:
             ncol = 1
 
             if interactive:
-                ax.legend(loc="best", ncol=ncol, draggable=True)
+                ax.legend(
+                    loc="best", ncol=ncol, draggable=True, fontsize=legend_fontsize
+                )
             else:
-                ax.legend(loc="best", ncol=ncol)
+                ax.legend(loc="best", ncol=ncol, fontsize=legend_fontsize)
 
         if interactive:
             plt.show()

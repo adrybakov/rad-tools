@@ -536,6 +536,9 @@ def plot_projected(
     save_pickle=False,
     colours=COLOURS,
     total_label="default",
+    axes_label_fontsize=14,
+    legend_fontsize=12,
+    title_fontsize=18,
 ):
     r"""
     Plot PDOS.
@@ -567,6 +570,12 @@ def plot_projected(
         List of colours to be used. values are passed directly to matplotlib
     total_label : str or ``None``, default "default"
         Label for the total data. If None , then the label is not added
+    axes_label_fontsize : int, default 14
+        Fontsize of the axes labels.
+    legend_fontsize : int, default 12
+        Fontsize of the legend.
+    title_fontsize : int, default 18
+        Fontsize of the title
     """
 
     n = len(pdos.projectors)
@@ -582,11 +591,11 @@ def plot_projected(
 
     def set_up_axis(ax, i):
         if normalize:
-            ax.set_ylabel("PDOS / LDOS", fontsize=15)
+            ax.set_ylabel("PDOS / LDOS", fontsize=axes_label_fontsize)
         else:
-            ax.set_ylabel("DOS, states/eV", fontsize=15)
+            ax.set_ylabel("DOS, states/eV", fontsize=axes_label_fontsize)
         if i == n - 1:
-            ax.set_xlabel("E, ev", fontsize=15)
+            ax.set_xlabel("E, ev", fontsize=axes_label_fontsize)
         else:
             ax.axes.get_xaxis().set_visible(False)
         if ylim is not None:
@@ -605,7 +614,7 @@ def plot_projected(
             linestyles="dashed",
         )
         if title is not None and (i == 0 or relative):
-            ax.set_title(title)
+            ax.set_title(title, fontsize=title_fontsize)
 
     if normalize:
         pdos = pdos.normalized()
@@ -758,15 +767,17 @@ def plot_projected(
                 loc=(1.025, 0.2),
                 bbox_transform=ax.transAxes,
                 draggable=True,
-                fontsize=12,
+                fontsize=legend_fontsize,
             )
         else:
-            ax.legend(loc=(1.025, 0.2), bbox_transform=ax.transAxes, fontsize=12)
+            ax.legend(
+                loc=(1.025, 0.2), bbox_transform=ax.transAxes, fontsize=legend_fontsize
+            )
 
     if interactive:
         plt.show()
     else:
-        plt.savefig(f"{output_name}.png", dpi=400, bbox_inches="tight")
+        plt.savefig(f"{output_name}.png", dpi=600, bbox_inches="tight")
         if save_pickle:
             import pickle
 
