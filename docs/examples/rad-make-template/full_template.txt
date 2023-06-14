@@ -1,123 +1,173 @@
 Template is created based on the file: docs/examples/rad-make-template/exchange.out
-on 14 June 2023 at 2:47:42 by rad-tools 0.7.5.dev
+on 14 June 2023 at 17:25:42 by rad-tools 0.7.10.dev
 
 ====================
 Neighbors template:
 i j R_a R_b R_c
 --------------------
-Name placeholder
+J1 $J_{1}$
+Ni1  Ni1    0  -1   0
+Ni1  Ni1    0   1   0
 Ni1  Ni1   -1   0   0
 Ni1  Ni1    1   0   0
 Ni1  Ni1   -1  -1   0
-Ni1  Ni1    0  -1   0
-Ni1  Ni1    0   1   0
 Ni1  Ni1    1   1   0
-Ni1  Ni1   -2  -1   0
+--------------------
+J2 $J_{2}$
 Ni1  Ni1   -1   1   0
 Ni1  Ni1    1  -1   0
-Ni1  Ni1    2   1   0
 Ni1  Ni1   -1  -2   0
 Ni1  Ni1    1   2   0
+Ni1  Ni1   -2  -1   0
+Ni1  Ni1    2   1   0
+--------------------
+J3 $J_{3}$
+Ni1  Ni1    0  -2   0
+Ni1  Ni1    0   2   0
 Ni1  Ni1   -2   0   0
 Ni1  Ni1    2   0   0
 Ni1  Ni1   -2  -2   0
-Ni1  Ni1    0  -2   0
-Ni1  Ni1    0   2   0
 Ni1  Ni1    2   2   0
-Ni1  Ni1   -3  -1   0
-Ni1  Ni1   -2   1   0
-Ni1  Ni1    2  -1   0
-Ni1  Ni1    3   1   0
-Ni1  Ni1   -3  -2   0
+--------------------
+J4 $J_{4}$
 Ni1  Ni1   -1   2   0
 Ni1  Ni1    1  -2   0
-Ni1  Ni1    3   2   0
-Ni1  Ni1   -2  -3   0
 Ni1  Ni1   -1  -3   0
 Ni1  Ni1    1   3   0
+Ni1  Ni1   -2   1   0
+Ni1  Ni1    2  -1   0
+Ni1  Ni1   -2  -3   0
 Ni1  Ni1    2   3   0
+Ni1  Ni1   -3  -1   0
+Ni1  Ni1    3   1   0
+Ni1  Ni1   -3  -2   0
+Ni1  Ni1    3   2   0
+--------------------
+J5 $J_{5}$
+Ni1  Ni1    0  -3   0
+Ni1  Ni1    0   3   0
+--------------------
+J6 $J_{6}$
 Ni1  Ni1   -3   0   0
 Ni1  Ni1    3   0   0
 Ni1  Ni1   -3  -3   0
-Ni1  Ni1    0  -3   0
-Ni1  Ni1    0   3   0
 Ni1  Ni1    3   3   0
-Ni1  Ni1   -4  -2   0
+--------------------
+J7 $J_{7}$
 Ni1  Ni1   -2   2   0
 Ni1  Ni1    2  -2   0
-Ni1  Ni1    4   2   0
 Ni1  Ni1   -2  -4   0
 Ni1  Ni1    2   4   0
-Ni1  Ni1   -4  -1   0
-Ni1  Ni1   -3   1   0
-Ni1  Ni1    3  -1   0
-Ni1  Ni1    4   1   0
-Ni1  Ni1   -4  -3   0
+--------------------
+J8 $J_{8}$
+Ni1  Ni1   -4  -2   0
+Ni1  Ni1    4   2   0
+--------------------
+J9 $J_{9}$
 Ni1  Ni1   -1   3   0
 Ni1  Ni1    1  -3   0
-Ni1  Ni1    4   3   0
-Ni1  Ni1   -3  -4   0
 Ni1  Ni1   -1  -4   0
 Ni1  Ni1    1   4   0
+Ni1  Ni1   -3   1   0
+Ni1  Ni1    3  -1   0
+Ni1  Ni1   -3  -4   0
 Ni1  Ni1    3   4   0
+Ni1  Ni1   -4  -1   0
+Ni1  Ni1    4   1   0
+Ni1  Ni1   -4  -3   0
+Ni1  Ni1    4   3   0
+--------------------
+J10 $J_{10}$
+Ni1  Ni1    0  -4   0
+Ni1  Ni1    0   4   0
+--------------------
+J11 $J_{11}$
 Ni1  Ni1   -4   0   0
 Ni1  Ni1    4   0   0
 Ni1  Ni1   -4  -4   0
-Ni1  Ni1    0  -4   0
-Ni1  Ni1    0   4   0
 Ni1  Ni1    4   4   0
-Ni1  Ni1   -5  -2   0
-Ni1  Ni1   -3   2   0
-Ni1  Ni1    3  -2   0
-Ni1  Ni1    5   2   0
-Ni1  Ni1   -5  -3   0
+--------------------
+J12 $J_{12}$
 Ni1  Ni1   -2   3   0
 Ni1  Ni1    2  -3   0
-Ni1  Ni1    5   3   0
-Ni1  Ni1   -3  -5   0
 Ni1  Ni1   -2  -5   0
 Ni1  Ni1    2   5   0
+Ni1  Ni1   -3   2   0
+Ni1  Ni1    3  -2   0
+Ni1  Ni1   -3  -5   0
 Ni1  Ni1    3   5   0
-Ni1  Ni1   -5  -1   0
+--------------------
+J13 $J_{13}$
+Ni1  Ni1   -5  -2   0
+Ni1  Ni1    5   2   0
+Ni1  Ni1   -5  -3   0
+Ni1  Ni1    5   3   0
+--------------------
+J14 $J_{14}$
+Ni1  Ni1   -1   4   0
+Ni1  Ni1    1  -4   0
+Ni1  Ni1   -1  -5   0
+Ni1  Ni1    1   5   0
+--------------------
+J15 $J_{15}$
 Ni1  Ni1   -4   1   0
 Ni1  Ni1    4  -1   0
+Ni1  Ni1   -4  -5   0
+Ni1  Ni1    4   5   0
+Ni1  Ni1   -5  -1   0
 Ni1  Ni1    5   1   0
 Ni1  Ni1   -5  -4   0
 Ni1  Ni1    5   4   0
-Ni1  Ni1   -1   4   0
-Ni1  Ni1    1  -4   0
-Ni1  Ni1   -4  -5   0
-Ni1  Ni1   -1  -5   0
-Ni1  Ni1    1   5   0
-Ni1  Ni1    4   5   0
+--------------------
+J16 $J_{16}$
+Ni1  Ni1    0  -5   0
+Ni1  Ni1    0   5   0
+--------------------
+J17 $J_{17}$
 Ni1  Ni1   -5   0   0
 Ni1  Ni1    5   0   0
 Ni1  Ni1   -5  -5   0
-Ni1  Ni1    0  -5   0
-Ni1  Ni1    0   5   0
 Ni1  Ni1    5   5   0
+--------------------
+J18 $J_{18}$
 Ni1  Ni1   -3   3   0
 Ni1  Ni1    3  -3   0
-Ni1  Ni1   -4   2   0
-Ni1  Ni1    4  -2   0
+--------------------
+J19 $J_{19}$
 Ni1  Ni1   -2   4   0
 Ni1  Ni1    2  -4   0
-Ni1  Ni1   -5   1   0
-Ni1  Ni1    5  -1   0
+Ni1  Ni1   -4   2   0
+Ni1  Ni1    4  -2   0
+--------------------
+J20 $J_{20}$
 Ni1  Ni1   -1   5   0
 Ni1  Ni1    1  -5   0
-Ni1  Ni1   -4   3   0
-Ni1  Ni1    4  -3   0
+--------------------
+J21 $J_{21}$
+Ni1  Ni1   -5   1   0
+Ni1  Ni1    5  -1   0
+--------------------
+J22 $J_{22}$
 Ni1  Ni1   -3   4   0
 Ni1  Ni1    3  -4   0
-Ni1  Ni1   -5   2   0
-Ni1  Ni1    5  -2   0
+Ni1  Ni1   -4   3   0
+Ni1  Ni1    4  -3   0
+--------------------
+J23 $J_{23}$
 Ni1  Ni1   -2   5   0
 Ni1  Ni1    2  -5   0
+--------------------
+J24 $J_{24}$
+Ni1  Ni1   -5   2   0
+Ni1  Ni1    5  -2   0
+--------------------
+J25 $J_{25}$
 Ni1  Ni1   -4   4   0
 Ni1  Ni1    4  -4   0
-Ni1  Ni1   -5   3   0
-Ni1  Ni1    5  -3   0
+--------------------
+J26 $J_{26}$
 Ni1  Ni1   -3   5   0
 Ni1  Ni1    3  -5   0
+Ni1  Ni1   -5   3   0
+Ni1  Ni1    5  -3   0
 ====================

@@ -117,3 +117,7 @@ Add fontsize options to :ref:`rad-plot-dos_custom-plots`.
 0.7.9
 -----
 Bugfix in :ref:`rad-plot-dos`. 
+
+0.7.10
+------
+Changes in :ref:`rad-make-template`. Now bonds are grouped by distances by default.

@@ -16,8 +16,8 @@ Several filtering options are supported for the case of TB2J-based template file
 
 .. important::
 
-    When template file is made on the base of TB2J file it is still necessary 
-    to group bonds into neighbors and add names manually.
+    When template file is made on the base of TB2J file it is grouped by distance.
+    you can control the eps for distance comparison via :ref:`rad-make-template_eps`.
 
 
 Usage example
@@ -61,13 +61,8 @@ with the distance <= 8 Angstroms.
    .. literalinclude:: /../examples/rad-make-template/filtered_template.txt
     :language: text
 
-For further usage of the template it is necessary to introduce 
-grouping with respect to some exchange model:
-
-.. dropdown:: filtered_template_grouped.txt
-
-   .. literalinclude:: /../examples/rad-make-template/filtered_template_grouped.txt
-    :language: text
+For further usage of the template it is necessary to check if the 
+groups are assigned correctly and regroup if necessary.
 
 Check the :ref:`rad-make-template_arguments` section for more sorting options.
 
@@ -228,3 +223,15 @@ Verbose output, propagates to the called methods.
 .. code-block:: text
 
     default : False
+
+
+.. _rad-make-template_eps:
+
+--eps
+-----
+Epsilon for the distance comparison.
+
+.. code-block:: text
+
+    default 0.001
+
