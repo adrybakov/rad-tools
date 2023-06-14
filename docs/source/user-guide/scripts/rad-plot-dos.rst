@@ -22,7 +22,7 @@ PDOS is summed and divided by the number of k points.
 
 K-resolved PDOS are handled by summing over kpoints (and dividing by the number of kpoints).
 
-There is two ways to use this script:
+There are two ways to use this script:
 
 * :ref:`rad-plot-dos_predefined-plots`
 * :ref:`rad-plot-dos_custom-plots`
@@ -75,7 +75,7 @@ Each of these styles could be modified by the following "substyles":
     :align: center
     :target: ../../../../../_images/custom2.png
 
-    With defautlt style
+    With default style
 
 .. figure:: /../examples/rad-plot-dos/style-examples/csp-relative-normalized/custom.png
     :align: center
@@ -91,7 +91,7 @@ Each of these styles could be modified by the following "substyles":
     :align: center
     :target: ../../../../../_images/custom4.png
 
-    With defautlt style
+    With default style
 
 .. figure:: /../examples/rad-plot-dos/style-examples/csp-relative-vstotal/custom.png
     :align: center
@@ -105,7 +105,7 @@ Each of these styles could be modified by the following "substyles":
     :align: center
     :target: ../../../../../_images/custom6.png
 
-    With defautlt style
+    With default style
 
 .. figure:: /../examples/rad-plot-dos/style-examples/csp-relative-normalized-vstotal/custom.png
     :align: center
@@ -231,13 +231,13 @@ The following rules apply to the construction of the input string:
     If projectors are not specified, then the sum is carried out 
     over all projectors for each atom.
 * Projectors are separated by commas.
-    Each comma has to be followed by the projector.
+    Each comma has to be preceded and followed by the projector.
 * Projector numbers (:color4:`m1`, :color4:`m2`, :color4:`k2`, :color4:`k2`) are optional.
     Each projector number is preceded by exactly one "#" symbol.
     If no numbers are provided for :color3:`projector_type`, then the sum is carried out
     over all projectors of the type :color3:`projector_type` for each atom.
 * Spaces are ignored.
-    Feel free to add as many space as you wish. Keep in mind that input string serves 
+    Feel free to add as many spaces as you wish. Keep in mind that input string serves 
     as a label in the plot as is.
 * Entries for different :color1:`atom_type`are separated by ";"
     Each ";" has to preceded and followed by the entry.
