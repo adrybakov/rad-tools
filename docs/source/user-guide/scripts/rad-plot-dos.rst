@@ -75,7 +75,7 @@ Each of these styles could be modified by the following "substyles":
     :align: center
     :target: ../../../../../_images/custom2.png
 
-    With defautlt style
+    With default style
 
 .. figure:: /../examples/rad-plot-dos/style-examples/csp-relative-normalized/custom.png
     :align: center
@@ -91,7 +91,7 @@ Each of these styles could be modified by the following "substyles":
     :align: center
     :target: ../../../../../_images/custom4.png
 
-    With defautlt style
+    With default style
 
 .. figure:: /../examples/rad-plot-dos/style-examples/csp-relative-vstotal/custom.png
     :align: center
@@ -105,7 +105,7 @@ Each of these styles could be modified by the following "substyles":
     :align: center
     :target: ../../../../../_images/custom6.png
 
-    With defautlt style
+    With default style
 
 .. figure:: /../examples/rad-plot-dos/style-examples/csp-relative-normalized-vstotal/custom.png
     :align: center
