@@ -17,6 +17,7 @@ __all__ = [
     "get_permutation",
     "cell_from_param",
     "reciprocal_cell",
+    "span_orthonormal_set",
 ]
 
 RED = "#FF4D67"
@@ -627,3 +628,38 @@ def get_permutation(n, k):
             result = new_result
             k += 1
         return result
+
+
+def span_orthonormal_set(vec):
+    r"""
+    Span orthonormal set of vectors.
+
+    Parameters
+    ----------
+    vec : (3,) |array_like|_
+        Vector, which serves as :math:`e_3`
+
+    Returns
+    -------
+    e1 : (3,) :numpy:`ndarray`
+    e2 : (3,) :numpy:`ndarray`
+    e3 : (3,) :numpy:`ndarray`
+    """
+
+    e3 = np.array(vec) / np.linalg.norm(vec)
+    x, y, z = e3
+    if x != 0:
+        ny = 0
+        nz = x / sqrt(x**2 + z**2)
+        nx = -nz * z / x
+    elif y != 0:
+        nz = 0
+        nx = y / sqrt(x**2 + y**2)
+        ny = -nx * x / y
+    else:
+        nx = 0
+        ny = z / sqrt(y**2 + z**2)
+        nz = -ny * y / z
+    e2 = np.array([nx, ny, nz])
+    e1 = np.cross(e2, e3)
+    return e1, e2, e3

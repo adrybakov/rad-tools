@@ -12,6 +12,7 @@ from radtools.routines import (
     reciprocal_cell,
     rot_angle,
     volume,
+    span_orthonormal_set,
 )
 
 
@@ -133,3 +134,19 @@ def test_cell_from_param(a, b, c, alpha, beta, gamma, cell):
 )
 def test_get_permutation(n, k, shape):
     assert np.array(get_permutation(n, k)).shape == shape
+
+
+@pytest.mark.parametrize(
+    "e1,e2,e3",
+    [
+        ([1, 0, 0], [0, 1, 0], [0, 0, 1]),
+        ([0, 0, 1], [1, 0, 0], [0, 1, 0]),
+        ([0, 1, 0], [0, 0, 1], [1, 0, 0]),
+    ],
+)
+def test_span_orthonormal_set(e1, e2, e3):
+    e1p, e2p, e3p = span_ortonormal_set(e3)
+    print(e1p, e2p, e3p)
+    assert (e3p == np.array(e3)).all()
+    assert (e1p == np.array(e1)).all()
+    assert (e2p == np.array(e2)).all()

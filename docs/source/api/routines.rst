@@ -19,3 +19,4 @@ Collection of routines
     get_permutation
     cell_from_param
     reciprocal_cell
+    span_orthonormal_set
