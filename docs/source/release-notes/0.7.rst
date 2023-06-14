@@ -101,3 +101,7 @@ was causing problems with overlapping colours. It is fixed.
 0.7.5
 -----
 Add :ref:`rad-plot-dos_custom-plots` and :ref:`rad-plot-dos_colours` to the :ref:`rad-plot-dos`. 
+
+0.7.6
+-----
+Add summing over atom types to the :ref:`rad-plot-dos_custom-plots`. 
