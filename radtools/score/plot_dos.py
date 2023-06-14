@@ -321,7 +321,7 @@ def plot_custom(
         raise ValueError(
             f"Got {len(labels)} labels, but {len(custom)} PDOS, have to be the same or n custom, n+1 labels."
         )
-    if len(labels) == len(custom) + 1:
+    if labels is not None and len(labels) == len(custom) + 1:
         if labels[0].lower() == "none":
             total_label = None
         elif labels[0].lower() == "default":

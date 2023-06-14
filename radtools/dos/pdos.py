@@ -536,7 +536,7 @@ def plot_projected(
     save_pickle=False,
     colours=COLOURS,
     total_label="default",
-    axes_label_fontsize=14,
+    axes_labels_fontsize=14,
     legend_fontsize=12,
     title_fontsize=18,
 ):
@@ -591,11 +591,11 @@ def plot_projected(
 
     def set_up_axis(ax, i):
         if normalize:
-            ax.set_ylabel("PDOS / LDOS", fontsize=axes_label_fontsize)
+            ax.set_ylabel("PDOS / LDOS", fontsize=axes_labels_fontsize)
         else:
-            ax.set_ylabel("DOS, states/eV", fontsize=axes_label_fontsize)
+            ax.set_ylabel("DOS, states/eV", fontsize=axes_labels_fontsize)
         if i == n - 1:
-            ax.set_xlabel("E, ev", fontsize=axes_label_fontsize)
+            ax.set_xlabel("E, ev", fontsize=axes_labels_fontsize)
         else:
             ax.axes.get_xaxis().set_visible(False)
         if ylim is not None:
