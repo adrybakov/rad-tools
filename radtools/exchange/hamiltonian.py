@@ -1320,6 +1320,36 @@ class ExchangeHamiltonian:
         energy = np.einsum("ni,ij,jn->n", spin_direction.T, energy, spin_direction)
         return energy
 
+    def input_for_magnons(self):
+        r"""
+        Input from Exchange model.
+
+        This function prepare the list of exchange parameters to
+        be used as an input for magnon dispersion calculation.
+
+        Returns
+        -------
+        Jij : list
+        i : list
+        j : list
+        dij : list
+        """
+
+        self.notation = "SpinW"
+        Jij = []
+        i = []
+        j = []
+        dij = []
+        magnetic_atoms = self.magnetic_atoms
+        atom_index = dict([(atom, i) for i, atom in enumerate(magnetic_atoms)])
+        for atom1, atom2, R, J in self:
+            Jij.append(J.matrix)
+            i.append(atom_index[atom1])
+            j.append(atom_index[atom2])
+            dij.append(self.crystal.get_vector(atom1, atom1, R))
+
+        return Jij, i, j, dij
+
     # OLD METHODS AND ATTRIBUTES, KEPT FOR BACKWARD COMPATIBILITY
 
     @property
