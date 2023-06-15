@@ -60,6 +60,7 @@ Properties
 ==========
 
 .. autosummary::
+    :toctree: generated/
 
     dipole_dipole_energy
     dipole_dipole_interaction
