@@ -121,3 +121,7 @@ Bugfix in :ref:`rad-plot-dos`.
 0.7.10
 ------
 Changes in :ref:`rad-make-template`. Now bonds are grouped by distances by default.
+
+0.7.11
+------
+Bugfix in :py:func:`.plot_2D_array`.

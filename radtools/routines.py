@@ -353,7 +353,7 @@ def print_2D_array(array, fmt="5.2f", posneg=False):
     """
 
     array = np.array(array)
-    if array.shape[0] != 0 and array.shape[1] != 0:
+    if array.shape[0] != 0 or array.shape[1] != 0:
         if len(array.shape) == 1:
             array = np.array([array])
         N = len(array)
