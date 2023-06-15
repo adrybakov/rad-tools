@@ -8,11 +8,27 @@ Custom Exceptions
 
 .. currentmodule:: radtools
 
-NotationError
-=============
+ExchangeHamiltonian Exceptions
+==============================
 .. autosummary::
     :toctree: generated/
 
     exchange.hamiltonian.NotationError
+
+Bravais Lattice Exceptions
+==========================
+
+.. autosummary::
+    :toctree: generated/
+
     crystal.bravais_lattice.NotEnoughParameters
     crystal.bravais_lattice.CellTypeMismatch
+
+Diagonalization Exceptions
+==========================
+
+.. auttosummary::
+    :toctree: generated/
+
+    magnons.diagonalization.ColpaFailed
+
