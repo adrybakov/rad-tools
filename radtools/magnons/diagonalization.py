@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.linalg import LinAlgError
 
 
 class ColpaFailed(Exception):
@@ -23,10 +24,15 @@ def solve_via_colpa(h):
 
     Returns
     -------
-    omegas : (2N,) :numpy:`ndarray`
-        Eigenvalues first N eigenvalues are the same as second N.
-    U : (2N, 2N) : :numpy:`ndarray`
-        Eigenvectors.
+    omega : (2N,) :numpy:`ndarray`
+        The eigenvalues, each repeated according to its multiplicity.
+        The eigenvalues are sorted in descending order.
+        See: :numpy:`linalg.eig` for more details.
+
+    U : (2N, 2N) :numpy:`ndarray`
+        The normalized (unit “length”) eigenvectors, such that the column
+        U[:,i] is the eigenvector corresponding to the eigenvalue omega[i].
+        See: :numpy:`linalg.eig` for more details.
 
     References
     ----------
@@ -38,13 +44,18 @@ def solve_via_colpa(h):
 
     try:
         K = np.linalg.cholesky(h)
-    except:
+    except LinAlgError:
         raise ColpaFailed
 
     N = len(h) // 2
-    g = np.eye(2 * N)
-    for i in range(N, 2 * N):
-        g[i][i] = -1
+    g = np.diag(np.concatenate((np.ones(N), -np.ones(N))))
 
     omegas, U = np.linalg.eig(K @ g @ np.conjugate(K).T)
-    return g @ omegas, U
+
+    # sort with respect to omegas, in descending order
+    U = np.concatenate((omegas[:, None], U.T), axis=1).T
+    U = U[:, np.argsort(U[0])]
+    omegas = U[0, ::-1]
+    U = U[1:, ::-1]
+
+    return omegas, U

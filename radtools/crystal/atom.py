@@ -176,9 +176,9 @@ class Atom:
     @spin_direction.setter
     def spin_direction(self, new_spin_direction):
         try:
-            new_spin_direction = np.array(new_spin_direction)
+            new_spin_direction = np.array(new_spin_direction, dtype=float)
             new_spin_direction /= np.linalg.norm(new_spin_direction)
-        except:
+        except BufferError:
             raise ValueError(
                 f"New spin direction is not array-like, new_spin_direction = {new_spin_direction}"
             )
@@ -203,7 +203,7 @@ class Atom:
     @spin_vector.setter
     def spin_vector(self, new_spin_vector):
         try:
-            new_spin_vector = np.array(new_spin_vector)
+            new_spin_vector = np.array(new_spin_vector, dtype=float)
         except:
             raise ValueError(
                 f"New spin vector is not array-like, new_spin_direction = {new_spin_vector}"

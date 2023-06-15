@@ -135,14 +135,10 @@ class MagnonDispersion:
         right = np.concatenate((2 * B, 2 * np.conjugate(A_2) - 2 * C), axis=0)
         h = np.concatenate((left, right), axis=1)
 
-        print_2D_array(h)
-
         # Diagonalize h matrix via Colpa
         try:
             omegas, U = solve_via_colpa(h)
             omegas = omegas.real[: self.N]
-            print(omegas.shape)
-            print_2D_array(omegas)
         except ColpaFailed:
             if return_none:
                 omegas = np.array([None] * self.N)
@@ -190,9 +186,11 @@ if __name__ == "__main__":
     model = read_tb2j_model(
         "/Volumes/work-backup/projects (closed)/2022 Nanoletters CrSBr/Calculations/UniaxialA/100.3/TB2J_results/exchange.out"
     )
-    model.filter(max_distance=5)
-    model.crystal.get_atom("Cr1").spin_vector = [0, 0, 3 / 2]
-    model.crystal.get_atom("Cr2").spin_vector = [0, 0, 3 / 2]
+    # model.filter(max_distance=5)
+    model.crystal.get_atom("Cr1").spin_direction = [0, 0.7, 1]
+    model.crystal.get_atom("Cr2").spin_direction = [0, 0.7, 1]
+    model.crystal.get_atom("Cr1").spin = 3.2857 / 2
+    model.crystal.get_atom("Cr2").spin = 3.2857 / 2
 
     # model = read_tb2j_model(
     #     "/Users/rybakov.ad/Projects/rad-tools/debug/niI2_v2/exchange.out"
@@ -200,32 +198,30 @@ if __name__ == "__main__":
     # model.crystal.get_atom("Ni1").spin_vector = [0, 0, 1]
 
     dispersion = MagnonDispersion(model, [0, 0, 0], [0, 0, 1])
-    print(dispersion.omega([0.45, 0, 0], return_none=True))
-    print(dispersion.omega([0.5, 0, 0], return_none=True))
 
-    # kpoints = np.linspace(0, 0.5, 100)
-    # omegas = []
+    kpoints = np.linspace(0, 0.5, 100)
+    omegas = []
+    print(dispersion.omega([0, 0, 0], return_none=True))
 
-    # def plot_graph(kpoints, omegas, model, Q, n):
-    #     dispersion = MagnonDispersion(model, Q, n)
-    #     for i in kpoints:
-    #         omegas.append(dispersion.omega([i, 0, 0], return_none=True))
-    #     for i in kpoints:
-    #         omegas.append(dispersion.omega([0.5, i, 0], return_none=True))
-    #     for i in kpoints:
-    #         omegas.append(dispersion.omega([(0.5 - i), 0.5, 0], return_none=True))
-    #     for i in kpoints:
-    #         omegas.append(dispersion.omega([0, (0.5 - i), 0], return_none=True))
-    #     omegas = np.array(omegas).T
+    def plot_graph(kpoints, omegas, model, Q, n):
+        for i in kpoints:
+            omegas.append(dispersion.omega([i, 0, 0], return_none=True))
+        for i in kpoints:
+            omegas.append(dispersion.omega([0.5, i, 0], return_none=True))
+        for i in kpoints:
+            omegas.append(dispersion.omega([(0.5 - i), 0.5, 0], return_none=True))
+        for i in kpoints:
+            omegas.append(dispersion.omega([0, (0.5 - i), 0], return_none=True))
+        omegas = np.array(omegas).T
 
-    #     fig, ax = plt.subplots()
-    #     kpoints = np.concatenate((kpoints, 0.5 + kpoints, 1 + kpoints, 1.5 + kpoints))
+        fig, ax = plt.subplots()
+        kpoints = np.concatenate((kpoints, 0.5 + kpoints, 1 + kpoints, 1.5 + kpoints))
 
-    #     for i in range(len(omegas)):
-    #         ax.plot(kpoints, omegas[i].real, label=f"{i+1}")
-    #     ax.set_xlabel(R"k, $0 \rightarrow \pi$")
-    #     ax.set_ylabel("E, meV")
-    #     ax.legend()
-    #     plt.savefig("test.png", dpi=400, bbox_inches="tight")
+        for i in range(len(omegas)):
+            ax.plot(kpoints, omegas[i].real, label=f"{i+1}")
+        ax.set_xlabel(R"k, $0 \rightarrow \pi$")
+        ax.set_ylabel("E, meV")
+        ax.legend()
+        plt.savefig("test.png", dpi=400, bbox_inches="tight")
 
-    # plot_graph(kpoints, omegas, model, [0, 0, 0], [0, 0, 1])
+    plot_graph(kpoints, omegas, model, [0, 0, 0], [0, 0, 1])
