@@ -5,7 +5,6 @@ Write a tutorial with docstring here.
 """
 
 from copy import deepcopy
-from math import cos, pi, sin
 from typing import Iterable, Tuple
 
 import numpy as np
@@ -1335,7 +1334,6 @@ class ExchangeHamiltonian:
         dij : list
         """
 
-        self.notation = "SpinW"
         Jij = []
         i = []
         j = []
