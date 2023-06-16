@@ -6,6 +6,8 @@ Crystal
 
 .. versionadded:: 0.7
 
+For the full reference see :ref:`api_crystal-module`
+
 .. currentmodule:: radtools
 
 Crystal is a base class, which store the structure. 

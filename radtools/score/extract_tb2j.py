@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 from calendar import month_name
 from datetime import datetime
 from os import makedirs
-from os.path import abspath, join
+from os.path import abspath, split
 
 from termcolor import cprint
 
@@ -14,7 +14,6 @@ from radtools.io.tb2j import read_tb2j_model
 def manager(
     input_filename,
     template_file,
-    output_path=".",
     output_name=None,
     decimals=4,
     force_symmetry=False,
@@ -26,7 +25,7 @@ def manager(
     verbose=False,
 ):
     r"""
-    ``rad-extract-tb2j.py`` script.
+    :ref:`rad-extract-tb2j` script.
 
     Full documentation on the behaviour is available in the
     :ref:`User Guide <rad-extract-tb2j>`.
@@ -34,11 +33,10 @@ def manager(
     correspond to the arguments of the script.
     """
 
-    try:
-        makedirs(output_path)
-    except FileExistsError:
-        pass
+    # Create the output directory if it does not exist
+    makedirs(split(output_name)[0], exist_ok=True)
 
+    # Get current date and time
     cd = datetime.now()
 
     if all:
@@ -47,8 +45,11 @@ def manager(
         matrix = True
         dmi = True
 
+    # Read the model and the template
     model = read_tb2j_model(input_filename, quiet=not verbose)
     template = read_template(template_file)
+
+    # Get the summary of the model
     summary_txt = model.summary_as_txt(
         template=template,
         decimals=decimals,
@@ -59,8 +60,9 @@ def manager(
         dmi=dmi,
     )
 
+    # Write the summary to the file
     if output_name is not None:
-        with open(join(output_path, output_name + ".txt"), "w") as out_file:
+        with open(output_name, "w") as out_file:
             out_file.write(
                 f"Exchange values are extracted from: {input_filename}\n"
                 + f"on {cd.day} {month_name[cd.month]} {cd.year}"
@@ -68,10 +70,10 @@ def manager(
             )
             out_file.write(summary_txt)
         cprint(
-            f"Extracted exchange info is in "
-            + f"{abspath(join(output_path, output_name + '.txt'))}",
+            f"Extracted exchange info is in " + f"{abspath(output_name)}",
             "green",
         )
+    # Print the summary to the terminal
     else:
         print(f"{summary_txt}")
 
@@ -98,14 +100,6 @@ def create_parser():
         required=True,
         help="Relative or absolute path to the template file, "
         + "including the name and extension of the file.",
-    )
-    parser.add_argument(
-        "-op",
-        "--output-path",
-        metavar="path",
-        type=str,
-        default=".",
-        help="Relative or absolute path to the folder for saving outputs.",
     )
     parser.add_argument(
         "-on",

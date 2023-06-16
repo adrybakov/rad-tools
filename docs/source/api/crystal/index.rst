@@ -1,3 +1,5 @@
+.. _api_crystal-module:
+
 .. currentmodule:: radtools
 
 **************
@@ -5,6 +7,10 @@ Crystal module
 **************
 
 .. versionadded:: 0.7
+
+.. automodule:: radtools.crystal
+
+.. currentmodule:: radtools
 
 Classes
 =======

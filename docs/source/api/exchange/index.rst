@@ -4,6 +4,10 @@
 Exchange module
 ***************
 
+.. automodule:: radtools.exchange
+
+.. currentmodule:: radtools
+
 
 Classes
 =======

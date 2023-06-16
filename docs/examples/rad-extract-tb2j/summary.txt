@@ -1,5 +1,5 @@
 Exchange values are extracted from: docs/examples/rad-extract-tb2j/exchange.out
-on 14 June 2023 at 2:48:15 by rad-tools 0.7.5.dev
+on 16 June 2023 at 17:7:47 by rad-tools 0.7.10
 
 Ni1 Ni1 (-1,  0,  0)
     Isotropic: 0.1261

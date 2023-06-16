@@ -136,7 +136,7 @@ Name for the template output file.
 
 .. code-block:: text
 
-    default : template
+    default : template.txt
 
 See also: :ref:`example <output-notes>`.
 

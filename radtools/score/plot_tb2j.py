@@ -30,7 +30,7 @@ def manager(
     verbose=False,
 ):
     r"""
-    ``rad-plot-tb2j.py`` script.
+    :ref:`rad-plot-tb2j` script.
 
     Full documentation on the behaviour is available in the
     :ref:`User Guide <rad-plot-tb2j>`.
@@ -38,6 +38,10 @@ def manager(
     correspond to the arguments of the script.
     """
 
+    # Create the output directory if it does not exist
+    makedirs(output_path, exist_ok=True)
+
+    # Check input parameters for consistency
     if force_symmetry and template_file is None:
         raise ValueError("--force-symmetry option requires a template file.")
 
@@ -45,26 +49,25 @@ def manager(
         min_distance = distance
         max_distance = distance
 
-    try:
-        makedirs(output_path)
-    except FileExistsError:
-        pass
-
+    # Translate sequence of numbers to R vectors
     if R_vector is not None:
         R_vector = np.array(R_vector[: len(R_vector) // 3 * 3], dtype=int).reshape(
             (len(R_vector) // 3, 3)
         )
         R_vector = list(map(tuple, R_vector.tolist()))
 
+    # Read the model
     model = read_tb2j_model(input_filename, quiet=not verbose)
+
+    # Force symmetry of the template 
     if template_file is not None:
         template = read_template(template_file)
     else:
         template = None
-
     if force_symmetry:
         model.force_symmetry(template=template)
 
+    # Filter the model
     model.filter(
         min_distance=min_distance,
         max_distance=max_distance,

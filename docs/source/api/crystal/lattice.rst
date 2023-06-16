@@ -1,4 +1,4 @@
-.. _lattice-api:
+.. _api_lattice:
 
 *******
 Lattice

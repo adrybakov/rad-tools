@@ -7,9 +7,15 @@ from math import acos, cos, floor, log10, sqrt
 import numpy as np
 from termcolor import cprint
 
-from radtools.routines import (cell_from_param, get_permutation,
-                               print_2D_array, reciprocal_cell, todegrees,
-                               toradians, volume)
+from radtools.routines import (
+    cell_from_param,
+    get_permutation,
+    print_2d_array,
+    reciprocal_cell,
+    todegrees,
+    toradians,
+    volume,
+)
 
 __all__ = ["niggli", "lepage"]
 
@@ -553,9 +559,9 @@ def lepage(
     rcell = reciprocal_cell(cell)
     if very_verbose:
         print("Cell:")
-        print_2D_array(cell, fmt=f"{4+decimals}.{1+decimals}f")
+        print_2d_array(cell, fmt=f"{4+decimals}.{1+decimals}f")
         print("Reciprocal cell:")
-        print_2D_array(rcell, fmt=f"{4+decimals}.{1+decimals}f")
+        print_2d_array(rcell, fmt=f"{4+decimals}.{1+decimals}f")
 
     # Find all axes with twins
     miller_indices = (np.indices((5, 5, 5)) - 2).transpose((1, 2, 3, 0)).reshape(125, 3)
@@ -649,7 +655,7 @@ def lepage(
                     + f"{ax[-1]:{4+decimals}.{1+decimals}f}"
                 )
             print("Angles:")
-            print_2D_array(angles, fmt=f"{4+decimals}.{1+decimals}f")
+            print_2d_array(angles, fmt=f"{4+decimals}.{1+decimals}f")
 
         continue_search = True
         n = len(axes)

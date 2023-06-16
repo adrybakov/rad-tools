@@ -96,24 +96,6 @@ including the name and extension of the file.
 See also: :ref:`template <rad-make-template>`
 
 
-.. _rad-extract-tb2j_output-path:
-
--op, --output-path
-------------------
-Relative or absolute path to the folder for saving outputs.
-
-If the folder does not exist then it is created from the specified path.
-The creation is applied recursively to the path, starting from the right
-until the existing folder is reached.
-
-.. code-block:: text
-
-    default : current directory (".")
-    type : str
-
-See also: :ref:`example <output-notes>`.
-
-
 .. _rad-extract-tb2j_output-name:
 
 -on, --output-name

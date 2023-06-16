@@ -1,5 +1,5 @@
 r"""
-Crystal module.
+Crystal module describes the structure and its properties.
 """
 
 from .atom import Atom

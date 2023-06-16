@@ -12,7 +12,7 @@ import numpy as np
 from termcolor import cprint, colored
 
 __all__ = [
-    "print_2D_array",
+    "print_2d_array",
     "volume",
     "angle",
     "absolute_to_relative",
@@ -251,11 +251,13 @@ def winwait():
         input()
 
 
-def print_2D_array(array, fmt=".2f", highlight=False, print_result=True):
+def print_2d_array(array, fmt=".2f", highlight=False, print_result=True):
     r"""
     Print 1D and 2D arrays in the terminal.
 
     .. versionadded:: 0.7
+
+    .. versionchanged:: 0.7.11 Renamed from ``print_2D_array``
 
     Parameters
     ----------
@@ -277,117 +279,6 @@ def print_2D_array(array, fmt=".2f", highlight=False, print_result=True):
     string : str
         String representation of the array.
         Returned only if ``print_result`` is False.
-
-    Examples
-    --------
-    Real-valued array:
-
-    .. doctest::
-
-        >>> import radtools as rad
-        >>> array = [[1, 2], [3, 4], [5, 6]]
-        >>> rad.print_2D_array(array)
-        ┌──────┬──────┐
-        │ 1.00 │ 2.00 │
-        ├──────┼──────┤
-        │ 3.00 │ 4.00 │
-        ├──────┼──────┤
-        │ 5.00 │ 6.00 │
-        └──────┴──────┘
-
-    Custom formatting:
-
-    .. doctest::
-
-        >>> import radtools as rad
-        >>> rad.print_2D_array(array, fmt="10.2f")
-        ┌────────────┬────────────┐
-        │       1.00 │       2.00 │
-        ├────────────┼────────────┤
-        │       3.00 │       4.00 │
-        ├────────────┼────────────┤
-        │       5.00 │       6.00 │
-        └────────────┴────────────┘
-        >>> rad.print_2D_array(array, fmt=".2f")
-        ┌──────┬──────┐
-        │ 1.00 │ 2.00 │
-        ├──────┼──────┤
-        │ 3.00 │ 4.00 │
-        ├──────┼──────┤
-        │ 5.00 │ 6.00 │
-        └──────┴──────┘
-
-    Scientific notation:
-
-    .. doctest::
-
-        >>> import radtools as rad
-        >>> array = [[1, 2], [3, 4], [52414345345, 6]]
-        >>> rad.print_2D_array(array, fmt="10.2E")
-        ┌────────────┬────────────┐
-        │   1.00E+00 │   2.00E+00 │
-        ├────────────┼────────────┤
-        │   3.00E+00 │   4.00E+00 │
-        ├────────────┼────────────┤
-        │   5.24E+10 │   6.00E+00 │
-        └────────────┴────────────┘
-
-    Complex values:
-
-    .. doctest::
-
-        >>> import radtools as rad
-        >>> array = [[1, 2 + 1j], [3, 4], [52, 6]]
-        >>> rad.print_2D_array(array)
-        ┌───────┬────────────────┐
-        │  1.00 │  2.00 + i1.00  │
-        ├───────┼────────────────┤
-        │  3.00 │  4.00          │
-        ├───────┼────────────────┤
-        │ 52.00 │  6.00          │
-        └───────┴────────────────┘
-        >>> rad.print_2D_array(array, fmt="4.2E")
-        ┌──────────┬──────────────────────┐
-        │ 1.00E+00 │ 2.00E+00 + i1.00E+00 │
-        ├──────────┼──────────────────────┤
-        │ 3.00E+00 │ 4.00E+00             │
-        ├──────────┼──────────────────────┤
-        │ 5.20E+01 │ 6.00E+00             │
-        └──────────┴──────────────────────┘
-        >>> array = [[1, 2 - 1j], [3, 4], [52, 6]]
-        >>> rad.print_2D_array(array)
-        ┌───────┬────────────────┐
-        │  1.00 │  2.00 - i1.00  │
-        ├───────┼────────────────┤
-        │  3.00 │  4.00          │
-        ├───────┼────────────────┤
-        │ 52.00 │  6.00          │
-        └───────┴────────────────┘
-
-    Complex values with real part equal to zero:
-
-    .. doctest::
-
-        >>> import radtools as rad
-        >>> array = [[1, 1j], [3, 4], [52, 6]]
-        >>> rad.print_2D_array(array)
-        ┌───────┬────────────────┐
-        │  1.00 │       + i1.00  │
-        ├───────┼────────────────┤
-        │  3.00 │  4.00          │
-        ├───────┼────────────────┤
-        │ 52.00 │  6.00          │
-        └───────┴────────────────┘
-
-    Empty arrays:
-
-    .. doctest::
-
-        >>> import radtools as rad
-        >>> rad.print_2D_array([])
-        None
-        >>> rad.print_2D_array([[]])
-        None
     """
 
     array = np.array(array)
@@ -738,19 +629,19 @@ def get_permutation(n, k):
 
 
 if __name__ == "__main__":
-    print_2D_array([[1, 2], [3, 4], [5, 6]])
-    print_2D_array([[1, 2], [3, 4], [5, 6]], fmt="10.2f")
-    print_2D_array([[1, 2], [3, 4], [5, 6]], fmt=".2f")
-    print_2D_array([[1, 2], [3, 4], [52414345345, 6]], fmt="10.2E")
-    print_2D_array([[1, 2 + 1j], [3, 4], [52, 6]])
-    print_2D_array([[1, 2 - 1j], [3, 4], [52, 6]])
-    print_2D_array([[1, -1j], [3, 4], [52, 6]])
-    print_2D_array([])
+    print_2d_array([[1, 2], [3, 4], [5, 6]])
+    print_2d_array([[1, 2], [3, 4], [5, 6]], fmt="10.2f")
+    print_2d_array([[1, 2], [3, 4], [5, 6]], fmt=".2f")
+    print_2d_array([[1, 2], [3, 4], [52414345345, 6]], fmt="10.2E")
+    print_2d_array([[1, 2 + 1j], [3, 4], [52, 6]])
+    print_2d_array([[1, 2 - 1j], [3, 4], [52, 6]])
+    print_2d_array([[1, -1j], [3, 4], [52, 6]])
+    print_2d_array([])
 
-    print_2D_array([[1, 2], [3, 4], [5, 6]], highlight=True)
-    print_2D_array([[1, 2], [3, 4], [5, 6]], fmt="10.2f", highlight=True)
-    print_2D_array([[1, 2], [3, 4], [5, 6]], fmt=".2f", highlight=True)
-    print_2D_array([[1, 2], [3, 4], [52414345345, 6]], fmt="10.2E", highlight=True)
-    print_2D_array([[1, 2 + 1j], [3, 4], [52, 6]], highlight=True)
-    print_2D_array([[1, 2 - 1j], [3, 4], [52, 6]], highlight=True)
-    print_2D_array([[1, -1j], [3, 4], [52, 6]], highlight=True)
+    print_2d_array([[1, 2], [3, 4], [5, 6]], highlight=True)
+    print_2d_array([[1, 2], [3, 4], [5, 6]], fmt="10.2f", highlight=True)
+    print_2d_array([[1, 2], [3, 4], [5, 6]], fmt=".2f", highlight=True)
+    print_2d_array([[1, 2], [3, 4], [52414345345, 6]], fmt="10.2E", highlight=True)
+    print_2d_array([[1, 2 + 1j], [3, 4], [52, 6]], highlight=True)
+    print_2d_array([[1, 2 - 1j], [3, 4], [52, 6]], highlight=True)
+    print_2d_array([[1, -1j], [3, 4], [52, 6]], highlight=True)
