@@ -1,4 +1,4 @@
-atom_types = (
+ATOM_TYPES = (
     "H",
     "He",
     "Li",

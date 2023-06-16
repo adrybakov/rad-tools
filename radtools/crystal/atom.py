@@ -4,7 +4,7 @@ from typing import Iterable
 
 import numpy as np
 
-from radtools.crystal.atom_types import atom_types
+from radtools.crystal.atom_types import ATOM_TYPES
 
 
 class Atom:
@@ -51,29 +51,40 @@ class Atom:
         charge=None,
         index=None,
     ) -> None:
+        # Set name
         self._name = "X"
+        self.name = name
+
+        # Set index
         self._index = None
-        self._type = None
+        if index is not None:
+            self.index = index
+
+        # Set position
         if position is None:
             position = (0, 0, 0)
         self.position = np.array(position)
+
+        # Set magmom
         self._magmom = None
+        if magmom is not None:
+            self.magmom = magmom
+
+        # Set charge
         self._charge = None
+        if charge is not None:
+            self.charge = charge
+
+        # Set spin
         self._spin = None
         self._spin_direction = [0, 0, 1]
-
-        self.name = name
-
         if isinstance(spin, Iterable):
             self.spin_vector = spin
         else:
             self.spin = spin
-        if magmom is not None:
-            self.magmom = magmom
-        if charge is not None:
-            self.charge = charge
-        if index is not None:
-            self.index = index
+
+        # Set type placeholder
+        self._type = None
 
     def __str__(self):
         return self.name
@@ -112,6 +123,7 @@ class Atom:
     @name.setter
     def name(self, new_name):
         self._name = new_name
+        # Reset type
         self._type = None
 
     @property
@@ -126,7 +138,7 @@ class Atom:
         """
         if self._type is None:
             self._type = "X"
-            for i in atom_types:
+            for i in ATOM_TYPES:
                 if i.lower() in self._name.lower():
                     self._type = i
                     if len(i) == 2:
@@ -181,7 +193,7 @@ class Atom:
 
     @spin.setter
     def spin(self, new_spin):
-        self._spin = new_spin
+        self._spin = float(new_spin)
 
     @property
     def spin_direction(self):
@@ -208,7 +220,7 @@ class Atom:
     @spin_direction.setter
     def spin_direction(self, new_spin_direction):
         try:
-            new_spin_direction = np.array(new_spin_direction)
+            new_spin_direction = np.array(new_spin_direction, dtype=float)
             new_spin_direction /= np.linalg.norm(new_spin_direction)
         except:
             raise ValueError(
@@ -245,7 +257,7 @@ class Atom:
     @spin_vector.setter
     def spin_vector(self, new_spin_vector):
         try:
-            new_spin_vector = np.array(new_spin_vector)
+            new_spin_vector = np.array(new_spin_vector, dtype=float)
         except:
             raise ValueError(
                 f"New spin vector is not array-like, new_spin_direction = {new_spin_vector}"
@@ -285,7 +297,7 @@ class Atom:
     @magmom.setter
     def magmom(self, new_magmom):
         try:
-            new_magmom = np.array(new_magmom)
+            new_magmom = np.array(new_magmom, dtype=float)
         except:
             raise ValueError(
                 f"New magnetic moment value is not array-like, new_magmom = {new_magmom}"
@@ -313,12 +325,14 @@ class Atom:
 
     @charge.setter
     def charge(self, new_charge):
-        self._charge = new_charge
+        self._charge = float(new_charge)
 
     @property
     def fullname(self):
         r"""
-        Fullname (name + index) of an atom.
+        Fullname (name_index) of an atom.
+
+        If index is not defined, then only name is returned.
 
         Returns
         -------
