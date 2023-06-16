@@ -7,15 +7,9 @@ from math import acos, cos, floor, log10, sqrt
 import numpy as np
 from termcolor import cprint
 
-from radtools.routines import (
-    _todegrees,
-    _toradians,
-    cell_from_param,
-    get_permutation,
-    print_2D_array,
-    reciprocal_cell,
-    volume,
-)
+from radtools.routines import (cell_from_param, get_permutation,
+                               print_2D_array, reciprocal_cell, todegrees,
+                               toradians, volume)
 
 __all__ = ["niggli", "lepage"]
 
@@ -91,16 +85,16 @@ def niggli(
     .. doctest::
 
         >>> import radtools as rad
-        >>> from radtools.routines import _todegrees
+        >>> from radtools.routines import todegrees
         >>> from math import acos, sqrt
         >>> a = 3
         >>> b = sqrt(27)
         >>> c = 2
         >>> print(f"{a} {b:.3f} {c}")
         3 5.196 2
-        >>> alpha = acos(-5 / 2 / b / c) * _todegrees
-        >>> beta = acos(-4 / 2 / a / c) * _todegrees
-        >>> gamma = acos(-22 / 2 / a / b) * _todegrees
+        >>> alpha = acos(-5 / 2 / b / c) * todegrees
+        >>> beta = acos(-4 / 2 / a / c) * todegrees
+        >>> gamma = acos(-22 / 2 / a / b) * todegrees
         >>> print(f"{alpha:.2f} {beta:.2f} {gamma:.2f}")
         103.92 109.47 134.88
         >>> niggli_matrix_form = rad.niggli(a, b, c, alpha, beta, gamma, verbose=True)
@@ -131,9 +125,9 @@ def niggli(
     A = a**2
     B = b**2
     C = c**2
-    xi = 2 * b * c * cos(alpha * _toradians)
-    eta = 2 * a * c * cos(beta * _toradians)
-    zeta = 2 * a * b * cos(gamma * _toradians)
+    xi = 2 * b * c * cos(alpha * toradians)
+    eta = 2 * a * c * cos(beta * toradians)
+    zeta = 2 * a * b * cos(gamma * toradians)
     N = (
         max(
             len(str(A).split(".")[0]),
@@ -258,9 +252,9 @@ def niggli(
         a = sqrt(A)
         b = sqrt(B)
         c = sqrt(C)
-        alpha = acos(xi / 2 / b / c) * _todegrees
-        beta = acos(eta / 2 / a / c) * _todegrees
-        gamma = acos(zeta / 2 / a / b) * _todegrees
+        alpha = acos(xi / 2 / b / c) * todegrees
+        beta = acos(eta / 2 / a / c) * todegrees
+        gamma = acos(zeta / 2 / a / b) * todegrees
         return a, b, c, alpha, beta, gamma
     return np.array([[A, B, C], [xi / 2, eta / 2, zeta / 2]])
 
@@ -573,7 +567,7 @@ def lepage(
                 tau = h @ rcell
                 delta = (
                     np.arctan(np.linalg.norm(np.cross(t, tau)) / abs(t @ tau))
-                    * _todegrees
+                    * todegrees
                 )
                 if delta < limit:
                     axes.append([U, t / np.linalg.norm(t), abs(U @ h), delta])
@@ -618,7 +612,7 @@ def lepage(
         for j in range(i, n):
             angles[i][j] = (
                 acos(abs(np.clip(np.array(axes[i][1]) @ np.array(axes[j][1]), -1, 1)))
-                * _todegrees
+                * todegrees
             )
     angles += angles.T
 

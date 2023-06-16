@@ -3,13 +3,13 @@
 import re
 from argparse import ArgumentParser
 from os import makedirs, walk
-from os.path import abspath, join, isfile
+from os.path import abspath, isfile, join
 
 from termcolor import cprint
 from tqdm import tqdm
 
 from radtools.dos.dos import DOSQE
-from radtools.dos.pdos import PDOS, plot_projected, COLOURS
+from radtools.dos.pdos import COLOURS, PDOS, plot_projected
 
 
 def detect_seednames(input_path):

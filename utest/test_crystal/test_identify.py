@@ -5,16 +5,16 @@ import pytest
 
 from radtools.crystal.bravais_lattice import Lattice, lattice_example
 from radtools.crystal.identify import lepage, niggli
-from radtools.routines import _todegrees
+from radtools.routines import todegrees
 
 
 def test_niggli():
     a = 3
     b = sqrt(27)
     c = 2
-    alpha = acos(-5 / 2 / sqrt(27) / 2) * _todegrees
-    beta = acos(-4 / 2 / 3 / 2) * _todegrees
-    gamma = acos(-22 / 2 / 3 / sqrt(27)) * _todegrees
+    alpha = acos(-5 / 2 / sqrt(27) / 2) * todegrees
+    beta = acos(-4 / 2 / 3 / 2) * todegrees
+    gamma = acos(-22 / 2 / 3 / sqrt(27)) * todegrees
     assert (
         np.array([[4, 9, 9], [9 / 2, 3 / 2, 2]]) - niggli(a, b, c, alpha, beta, gamma)
         < 1e-5

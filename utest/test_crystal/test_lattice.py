@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 from radtools.crystal.lattice import *
-from radtools.routines import _todegrees
+from radtools.routines import todegrees
 
 
 class TestLattice:

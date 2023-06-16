@@ -23,12 +23,3 @@ Bravais Lattice Exceptions
 
     crystal.bravais_lattice.NotEnoughParameters
     crystal.bravais_lattice.CellTypeMismatch
-
-Diagonalization Exceptions
-==========================
-
-.. auttosummary::
-    :toctree: generated/
-
-    magnons.diagonalization.ColpaFailed
-

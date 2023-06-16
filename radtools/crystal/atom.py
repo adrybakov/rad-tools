@@ -1,10 +1,10 @@
 r"""Atom class"""
 
+from typing import Iterable
+
 import numpy as np
 
 from radtools.crystal.atom_types import atom_types
-
-from typing import Iterable
 
 
 class Atom:

@@ -1,14 +1,14 @@
-from math import sqrt, floor, log10
-
+from math import floor, log10, sqrt
 from typing import Union
 
 import numpy as np
 
 from radtools.crystal.atom import Atom
-from radtools.crystal.lattice import Lattice
 from radtools.crystal.bravais_lattice import bravais_lattice_from_cell
+from radtools.crystal.lattice import Lattice
+from radtools.crystal.properties import (dipole_dipole_energy,
+                                         dipole_dipole_interaction)
 from radtools.routines import absolute_to_relative
-from radtools.crystal.properties import dipole_dipole_energy, dipole_dipole_interaction
 
 
 class Crystal:

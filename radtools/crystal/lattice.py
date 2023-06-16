@@ -12,12 +12,7 @@ from mpl_toolkits.mplot3d import Axes3D, proj3d
 from scipy.spatial import Voronoi
 
 from radtools.crystal.identify import lepage
-from radtools.routines import (
-    angle,
-    cell_from_param,
-    reciprocal_cell,
-    volume,
-)
+from radtools.routines import angle, cell_from_param, reciprocal_cell, volume
 
 __all__ = ["Lattice"]
 

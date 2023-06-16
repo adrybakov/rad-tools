@@ -8,7 +8,6 @@ from copy import deepcopy
 import matplotlib.pyplot as plt
 import numpy as np
 
-
 COLOURS = [
     "#00FFFF",
     "#FF9720",

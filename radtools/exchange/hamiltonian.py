@@ -14,7 +14,7 @@ from radtools.crystal.atom import Atom
 from radtools.crystal.crystal import Crystal
 from radtools.exchange.parameter import ExchangeParameter
 from radtools.exchange.template import ExchangeTemplate
-from radtools.routines import _toradians
+from radtools.routines import toradians
 
 
 class NotationError(ValueError):
@@ -1293,8 +1293,8 @@ class ExchangeHamiltonian:
             by ``theta`` and ``phi``. In the units of J values.
         """
 
-        theta = np.array(theta) * _toradians
-        phi = np.array(phi) * _toradians
+        theta = np.array(theta) * toradians
+        phi = np.array(phi) * toradians
         if theta.shape == ():
             theta = np.array([theta])
         if phi.shape == ():
