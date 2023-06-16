@@ -22,11 +22,10 @@ Energy
 Structure
 =========
 
-.. hint::
-    .. hint:: 
-        All properties and methods of :ref:`api_crystal` are accessible directly from the hamiltonian instance.
-        As a consequence all properties and methods of :ref:`api_lattice` are accessible directly from the hamiltonian instance.
-        Unless they are defined directly for the :py:class:`.ExchangeHamiltonian` and listed here.
+.. hint:: 
+    All properties and methods of :ref:`api_crystal` are accessible directly from the hamiltonian instance.
+    As a consequence all properties and methods of :ref:`api_lattice` are accessible directly from the hamiltonian instance.
+    Unless they are defined directly for the :py:class:`.ExchangeHamiltonian` and listed here.
 
 .. autosummary::
 
