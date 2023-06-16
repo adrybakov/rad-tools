@@ -145,7 +145,7 @@ def test_get_permutation(n, k, shape):
     ],
 )
 def test_span_orthonormal_set(e1, e2, e3):
-    e1p, e2p, e3p = span_ortonormal_set(e3)
+    e1p, e2p, e3p = span_orthonormal_set(e3)
     print(e1p, e2p, e3p)
     assert (e3p == np.array(e3)).all()
     assert (e1p == np.array(e1)).all()
