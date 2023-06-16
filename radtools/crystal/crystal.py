@@ -65,6 +65,12 @@ class Crystal:
         attribute of the lattice is that change of the crystal`s cell
         leads to the computation of the atom coordinate.
 
+        Returns
+        -------
+        cell : (3, 3) :numpy:`ndarray`
+            Cell of the crystal`s lattice.
+
+
         Examples
         --------
 
@@ -141,6 +147,11 @@ class Crystal:
         Lattice of the crystal.
 
         See :ref:`rad-tools_lattice` for details.
+
+        Returns
+        -------
+        lattice : :py:class:`.Lattice`
+            Lattice of the crystal.
         """
         return self._lattice
 

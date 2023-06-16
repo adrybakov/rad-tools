@@ -101,6 +101,11 @@ class Atom:
     def name(self):
         r"""
         Name of the atom.
+
+        Returns
+        -------
+        name : str
+            Name of the atom.
         """
         return self._name
 
@@ -113,6 +118,11 @@ class Atom:
     def type(self):
         r"""
         Type of an atom (i.e. Cr, Ni, ...).
+
+        Returns
+        -------
+        type : str
+            Type of the atom.
         """
         if self._type is None:
             self._type = "X"
@@ -127,6 +137,16 @@ class Atom:
     def index(self):
         r"""
         Index of an atom, meant to be unique for some group of atoms.
+
+        Returns
+        -------
+        index : int
+            Index of the atom.
+
+        Raises
+        ------
+        ValueError
+            If index is not defined for the atom.
         """
 
         if self._index is None:
@@ -143,6 +163,16 @@ class Atom:
         Spin value of the atom.
 
         Independent of :py:attr:`.Atom.spin_direction`.
+
+        Returns
+        -------
+        spin : float
+            Spin value of the atom.
+
+        Raises
+        ------
+        ValueError
+            If spin is not defined for the atom.
         """
 
         if self._spin is None:
@@ -161,6 +191,16 @@ class Atom:
         .. math::
 
             \vec{n} = (n_x, n_y, n_z), \vert \vec{n}\vert = 1
+
+        Returns
+        -------
+        spin_direction : (3,) :numpy:`ndarray`
+            Classical spin direction of the atom.
+
+        Raises
+        ------
+        ValueError
+            If spin direction is not defined for the atom.
         """
 
         return self._spin_direction
@@ -188,6 +228,16 @@ class Atom:
         .. math::
 
             \vec{S} = (S_x, S_y, S_z), \vert \vec{S}\vert = S
+
+        Returns
+        -------
+        spin_vector : (3,) :numpy:`ndarray`
+            Classical spin vector of the atom.
+
+        Raises
+        ------
+        ValueError
+            If :py:attr:`spin` or :py:meth:`spin_direction` is not defined for the atom.
         """
 
         return self.spin_direction * self.spin
@@ -219,6 +269,11 @@ class Atom:
             magmom = [m_x, m_y, m_z]
 
         units - :math:`\mu_B`
+
+        Returns
+        -------
+        magmom : (3,) :numpy:`ndarray`
+            Magnetic moment of the atom.
         """
 
         if self._magmom is None:
@@ -245,6 +300,11 @@ class Atom:
     def charge(self):
         r"""
         Charge of the atom.
+
+        Returns
+        -------
+        charge : float
+            Charge of the atom.
         """
 
         if self._charge is None:
@@ -257,7 +317,19 @@ class Atom:
 
     @property
     def fullname(self):
-        r"""Return fullname (name + index) of an atom."""
+        r"""
+        Fullname (name + index) of an atom.
+
+        Returns
+        -------
+        fullname : str
+            Fullname of the atom.
+
+        Raises
+        ------
+        ValueError
+            If index is not defined for the atom.
+        """
         try:
             return f"{self.name}_{self.index}"
         except ValueError:

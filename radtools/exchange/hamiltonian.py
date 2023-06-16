@@ -1289,14 +1289,10 @@ class ExchangeHamiltonian:
         r"""
         Compute energy of the Hamiltonian assuming ferromagnetic state.
 
-        With Hamiltonian of the form:
-
-        .. math::
-
-            \hat{H} = - \sum_{i,j} \vec{S}_i J_{ij} \vec{S}_j
-
-        where spin vectors are normalized to 1 and :math:`J_{ij}` is the
-        exchange matrix.
+        Notes
+        -----
+        Notation of the Hamiltonian nas to be known.
+        See :py:meth:`.set_interpretation` and :py:attr:`.notation`.
 
         Parameters
         ----------

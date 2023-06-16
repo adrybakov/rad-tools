@@ -703,6 +703,11 @@ class BCT(Lattice):
         Two variations of the Lattice.
 
         :math:`\text{BCT}_1: c < a` and :math:`\text{BCT}_2: c > a`
+
+        Returns
+        -------
+        variation : str
+            Variation of the lattice. "BCT1" or "BCT2".
         """
         if self.conv_a > self.conv_c:
             return "BCT1"
@@ -1062,6 +1067,11 @@ class ORCF(Lattice):
         :math:`\text{ORCF}_1: \dfrac{1}{a^2} > \dfrac{1}{b^2} + \dfrac{1}{c^2}`,
         :math:`\text{ORCF}_2: \dfrac{1}{a^2} < \dfrac{1}{b^2} + \dfrac{1}{c^2}`,
         :math:`\text{ORCF}_3: \dfrac{1}{a^2} = \dfrac{1}{b^2} + \dfrac{1}{c^2}`,
+
+        Returns
+        -------
+        variation : str
+            Variation of the lattice. "ORCF1", "ORCF2" or "ORCF3".
         """
 
         expresion = 1 / self.conv_a**2 - 1 / self.conv_b**2 - 1 / self.conv_c**2
@@ -1649,6 +1659,11 @@ class RHL(Lattice):
 
         :math:`\text{RHL}_1 \alpha < 90^{\circ}`,
         :math:`\text{RHL}_2 \alpha > 90^{\circ}`
+
+        Returns
+        -------
+        variation : str
+            Variation of the lattice. Either "RHL1" or "RHL2".
         """
         if self.conv_alpha < 90:
             return "RHL1"
@@ -2211,6 +2226,12 @@ class MCLC(Lattice):
         :math:`\text{MCLC}_3: k_{\gamma} < 90^{\circ}, \dfrac{b\cos(\alpha)}{c} + \dfrac{b^2\sin(\alpha)^2}{a^2} < 1`
         :math:`\text{MCLC}_4: k_{\gamma} < 90^{\circ}, \dfrac{b\cos(\alpha)}{c} + \dfrac{b^2\sin(\alpha)^2}{a^2} = 1`
         :math:`\text{MCLC}_5: k_{\gamma} < 90^{\circ}, \dfrac{b\cos(\alpha)}{c} + \dfrac{b^2\sin(\alpha)^2}{a^2} > 1`
+
+        Returns
+        -------
+        variation : str
+            Variation of the lattice.
+            Either "MCLC1", "MCLC2", "MCLC3", "MCLC4" or "MCLC5".
         """
 
         if np.abs(self.k_gamma - 90) <= 10 * np.finfo(float).eps:
@@ -2387,6 +2408,12 @@ class TRI(Lattice):
         :math:`\text{TRI}_{2a} k_{\alpha} > 90^{\circ}, k_{\beta} > 90^{\circ}, k_{\gamma} = 90^{\circ}`
 
         :math:`\text{TRI}_{2b} k_{\alpha} < 90^{\circ}, k_{\beta} < 90^{\circ}, k_{\gamma} = 90^{\circ}`
+
+        Returns
+        -------
+        variation : str
+            Variation of the lattice.
+            Either "TRI1a", "TRI1b", "TRI2a" or "TRI2b".
         """
         if self.k_gamma == 90:
             if self.k_alpha > 90 and self.k_beta > 90:
@@ -2403,7 +2430,7 @@ class TRI(Lattice):
 
 def bravais_lattice_from_param(a, b, c, alpha, beta, gamma) -> Lattice:
     r"""
-    Return Bravais lattice.
+    Create Bravais lattice from lattice parameters.
 
     Orientation is default as described in [1]_.
 
@@ -2426,7 +2453,8 @@ def bravais_lattice_from_param(a, b, c, alpha, beta, gamma) -> Lattice:
 
     Returns
     -------
-    bravais_lattice
+    bravais_lattice : Lattice
+        Bravais lattice.
 
     References
     ----------
@@ -2488,7 +2516,7 @@ def bravais_lattice_from_param(a, b, c, alpha, beta, gamma) -> Lattice:
 
 def bravais_lattice_from_cell(cell) -> Lattice:
     r"""
-    Return Bravais lattice.
+    Create Bravais lattice from cell matrix.
 
     Orientation of the cell is respected, however the lattice vectors are renamed
     with respect to [1]_.
@@ -2509,7 +2537,8 @@ def bravais_lattice_from_cell(cell) -> Lattice:
 
     Returns
     -------
-    bravais_lattice
+    bravais_lattice : Lattice
+        Bravais lattice.
 
     References
     ----------
@@ -2565,7 +2594,7 @@ def lattice_example(
 
     Returns
     -------
-    lattice
+    lattice : Lattice or list   
         Child of the :py:class:`.Lattice` class is returned.
         If no math found a list with available examples is returned.
     """
