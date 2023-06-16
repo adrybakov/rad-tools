@@ -13,7 +13,7 @@ from radtools.crystal.atom import Atom
 from radtools.crystal.crystal import Crystal
 from radtools.exchange.parameter import ExchangeParameter
 from radtools.exchange.template import ExchangeTemplate
-from radtools.routines import toradians
+from radtools.routines import toradians, print_2d_array
 
 
 class NotationError(ValueError):
@@ -72,16 +72,7 @@ class ExchangeHamiltonian:
     Attributes
     ----------
     crystal : :py:class:`.Crystal`
-    magnetic_atoms : list
-    cell_list : list
-    number_spins_in_unit_cell : int
-    notation : str
-    space_dimensions : tuple of floats
-    double_counting : bool
-    spin_normalized : bool
-    factor_one_half : bool
-    factor_two : bool
-    minus_sign : bool
+        Crystal on which the ExchangeHamiltonian is build.
     """
 
     def __init__(self, crystal: Crystal = None, notation=None) -> None:
@@ -402,6 +393,11 @@ class ExchangeHamiltonian:
         Access this attribute to check the current notation of the Hamiltonian,
         set this attribute to change the notation of the Hamiltonian.
 
+        Returns
+        -------
+        double_counting : bool
+            ``True`` if double counting is present, ``False`` otherwise.
+
         Raises
         ------
         :py:exc:`.NotationError`
@@ -489,6 +485,11 @@ class ExchangeHamiltonian:
         Access this attribute to check the current notation of the Hamiltonian,
         set this attribute to change the notation of the Hamiltonian.
 
+        Returns
+        -------
+        spin_normalized : bool
+            ``True`` if spin is normalized, ``False`` otherwise.
+
         Raises
         ------
         :py:exc:`.NotationError`
@@ -522,6 +523,11 @@ class ExchangeHamiltonian:
 
         Access this attribute to check the current notation of the Hamiltonian,
         set this attribute to change the notation of the Hamiltonian.
+
+        Returns
+        -------
+        factor_one_half : bool
+            ``True`` if factor 1/2 is present, ``False`` otherwise.
 
         Raises
         ------
@@ -562,6 +568,11 @@ class ExchangeHamiltonian:
         Access this attribute to check the current notation of the Hamiltonian,
         set this attribute to change the notation of the Hamiltonian.
 
+        Returns
+        -------
+        factor_two : bool
+            ``True`` if factor 2 is present, ``False`` otherwise.
+
         Raises
         ------
         :py:exc:`.NotationError`
@@ -600,6 +611,11 @@ class ExchangeHamiltonian:
 
         Access this attribute to check the current notation of the Hamiltonian,
         set this attribute to change the notation of the Hamiltonian.
+
+        Returns
+        -------
+        minus_sign : bool
+            ``True`` if minus sign is present, ``False`` otherwise.
 
         Raises
         ------
@@ -662,6 +678,11 @@ class ExchangeHamiltonian:
 
         Crystal, which define the structure.
         See :py:class:`.Crystal`.
+
+        Returns
+        -------
+        crystal : :py:class:`.Crystal`
+            Crystal of the Hamiltonian.
         """
         return self._crystal
 
@@ -700,6 +721,11 @@ class ExchangeHamiltonian:
         Atoms with at least bond starting or finishing in it.
 
         Atoms are ordered with respect to the :py:attr:`.Atom.index`.
+
+        Returns
+        -------
+        magnetic_atoms : list of :py:class:`.Atom`
+            List of magnetic atoms.
         """
         result = set()
         for atom1, atom2, R, J in self:
@@ -712,6 +738,11 @@ class ExchangeHamiltonian:
     def number_spins_in_unit_cell(self):
         r"""
         Number of spins (or magnetic atoms) in the unit cell.
+
+        Returns
+        -------
+        number_spins_in_unit_cell : int
+            Number of spins (or magnetic atoms) in the unit cell.
         """
 
         return len(self.magnetic_atoms)
@@ -1176,28 +1207,26 @@ class ExchangeHamiltonian:
                     if anisotropic:
                         summary += (
                             f"    Anisotropic:\n"
-                            + f"        {J.aniso[0][0]:{decimals+3}.{decimals}f}  "
-                            + f"{J.aniso[0][1]:{decimals+3}.{decimals}f}  "
-                            + f"{J.aniso[0][2]:{decimals+3}.{decimals}f}\n"
-                            + f"        {J.aniso[1][0]:{decimals+3}.{decimals}f}  "
-                            + f"{J.aniso[1][1]:{decimals+3}.{decimals}f}  "
-                            + f"{J.aniso[1][2]:{decimals+3}.{decimals}f}\n"
-                            + f"        {J.aniso[2][0]:{decimals+3}.{decimals}f}  "
-                            + f"{J.aniso[2][1]:{decimals+3}.{decimals}f}  "
-                            + f"{J.aniso[2][2]:{decimals+3}.{decimals}f}\n"
+                            + print_2d_array(
+                                J.aniso,
+                                fmt=f"{decimals+3}.{decimals}f",
+                                borders=False,
+                                shift=7,
+                                print_result=False,
+                            )
+                            + "\n"
                         )
                     if matrix:
                         summary += (
                             f"    Matrix:\n"
-                            + f"        {J.matrix[0][0]:{decimals+3}.{decimals}f}  "
-                            + f"{J.matrix[0][1]:{decimals+3}.{decimals}f}  "
-                            + f"{J.matrix[0][2]:{decimals+3}.{decimals}f}\n"
-                            + f"        {J.matrix[1][0]:{decimals+3}.{decimals}f}  "
-                            + f"{J.matrix[1][1]:{decimals+3}.{decimals}f}  "
-                            + f"{J.matrix[1][2]:{decimals+3}.{decimals}f}\n"
-                            + f"        {J.matrix[2][0]:{decimals+3}.{decimals}f}  "
-                            + f"{J.matrix[2][1]:{decimals+3}.{decimals}f}  "
-                            + f"{J.matrix[2][2]:{decimals+3}.{decimals}f}\n"
+                            + print_2d_array(
+                                J.matrix,
+                                fmt=f"{decimals+3}.{decimals}f",
+                                borders=False,
+                                shift=7,
+                                print_result=False,
+                            )
+                            + "\n"
                         )
                     if dmi:
                         summary += (
@@ -1217,28 +1246,26 @@ class ExchangeHamiltonian:
                         if anisotropic:
                             summary += (
                                 f"    Anisotropic:\n"
-                                + f"        {J.aniso[0][0]:{decimals+3}.{decimals}f}  "
-                                + f"{J.aniso[0][1]:{decimals+3}.{decimals}f}  "
-                                + f"{J.aniso[0][2]:{decimals+3}.{decimals}f}\n"
-                                + f"        {J.aniso[1][0]:{decimals+3}.{decimals}f}  "
-                                + f"{J.aniso[1][1]:{decimals+3}.{decimals}f}  "
-                                + f"{J.aniso[1][2]:{decimals+3}.{decimals}f}\n"
-                                + f"        {J.aniso[2][0]:{decimals+3}.{decimals}f}  "
-                                + f"{J.aniso[2][1]:{decimals+3}.{decimals}f}  "
-                                + f"{J.aniso[2][2]:{decimals+3}.{decimals}f}\n"
+                                + print_2d_array(
+                                    J.aniso,
+                                    fmt=f"{decimals+3}.{decimals}f",
+                                    borders=False,
+                                    shift=7,
+                                    print_result=False,
+                                )
+                                + "\n"
                             )
                         if matrix:
                             summary += (
                                 f"    Matrix:\n"
-                                + f"        {J.matrix[0][0]:{decimals+3}.{decimals}f}  "
-                                + f"{J.matrix[0][1]:{decimals+3}.{decimals}f}  "
-                                + f"{J.matrix[0][2]:{decimals+3}.{decimals}f}\n"
-                                + f"        {J.matrix[1][0]:{decimals+3}.{decimals}f}  "
-                                + f"{J.matrix[1][1]:{decimals+3}.{decimals}f}  "
-                                + f"{J.matrix[1][2]:{decimals+3}.{decimals}f}\n"
-                                + f"        {J.matrix[2][0]:{decimals+3}.{decimals}f}  "
-                                + f"{J.matrix[2][1]:{decimals+3}.{decimals}f}  "
-                                + f"{J.matrix[2][2]:{decimals+3}.{decimals}f}\n"
+                                + print_2d_array(
+                                    J.matrix,
+                                    fmt=f"{decimals+3}.{decimals}f",
+                                    borders=False,
+                                    shift=7,
+                                    print_result=False,
+                                )
+                                + "\n"
                             )
                         if dmi:
                             summary += (
