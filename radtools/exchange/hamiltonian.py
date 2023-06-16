@@ -5,7 +5,6 @@ Write a tutorial with docstring here.
 """
 
 from copy import deepcopy
-from math import cos, pi, sin
 from typing import Iterable, Tuple
 
 import numpy as np
@@ -19,25 +18,20 @@ from radtools.routines import toradians
 
 class NotationError(ValueError):
     r"""
-    Errors with ExchangeHamiltonian notation.
+    Raised when the notation (or individual property) is not defined.
 
-    Typically called when the notation is not defined
-    and gives a summary of the notation (or individual property) and how to set it.
+    Gives a summary of the notation (or individual property) and how to set it.
 
     Parameters
     ----------
     name : str
         Name of the corresponding attribute.
-    hr_name : str, optional
-        Human-readable name of the property.
 
     """
 
-    def __init__(self, name, hr_name=None):
-        if hr_name is None:
-            hr_name = name
+    def __init__(self, name):
         self.message = (
-            f"\n\nNotation`s interpretation is not set for the Hamiltonian ({hr_name}).\n"
+            f"\n\nNotation`s interpretation is not set for the property {name}.\n"
             + f"Set the notation first:\n"
             + f"    ExchangeHamiltonian.{name} = True  "
             + f"or  ExchangeHamiltonian.{name} = False\n\n"
@@ -420,7 +414,7 @@ class ExchangeHamiltonian:
         """
 
         if self._double_counting is None:
-            raise NotationError("double_counting", "double counting")
+            raise NotationError("double_counting")
         return self._double_counting
 
     def _ensure_double_counting(self):
@@ -507,7 +501,7 @@ class ExchangeHamiltonian:
         """
 
         if self._spin_normalized is None:
-            raise NotationError("spin_normalized", "spin normalized")
+            raise NotationError("spin_normalized")
         return self._spin_normalized
 
     @spin_normalized.setter
@@ -541,7 +535,7 @@ class ExchangeHamiltonian:
         """
 
         if self._factor_one_half is None:
-            raise NotationError("factor_one_half", "factor 1/2")
+            raise NotationError("factor_one_half")
         return self._factor_one_half
 
     @factor_one_half.setter
@@ -580,7 +574,7 @@ class ExchangeHamiltonian:
         """
 
         if self._factor_two is None:
-            raise NotationError("factor_two", "factor 2")
+            raise NotationError("factor_two")
         return self._factor_two
 
     @factor_two.setter
@@ -619,7 +613,7 @@ class ExchangeHamiltonian:
         """
 
         if self._minus_sign is None:
-            raise NotationError("minus_sign", "minus sign")
+            raise NotationError("minus_sign")
         return self._minus_sign
 
     @minus_sign.setter
