@@ -120,14 +120,14 @@ def absolute_to_relative(cell, absolute):
 
     Parameters
     ----------
-    cell : 3 x 3 |array_like|_
+    cell : (3, 3) |array_like|_
         Lattice vectors.
     absolute : (3,) |array_like|_
         Absolute coordinates.
 
     Returns
     -------
-    relative : 1 x 3 :numpy:`ndarray`
+    relative : (3,) :numpy:`ndarray`
         Relative coordinates.
     """
 
@@ -206,7 +206,7 @@ def volume(*args):
 
     Returns
     -------
-    volume: float
+    volume : float
         Volume of corresponding region in space.
     """
 
@@ -266,6 +266,9 @@ def print_2D_array(array, fmt=".2f", highlight=False, print_result=True):
     highlight : bool, default False
         Whether to highlight positive and negative values.
         Only works for real-valued arrays.
+
+        .. versionchanged:: 0.7.11 Renamed from ``posneg``
+
     print_result : bool, default True
         Whether to print the result or return it as a string.
 
@@ -564,21 +567,21 @@ def reciprocal_cell(cell):
 
     Parameters
     ----------
-    cell : (3,3) |array_like|_
+    cell : (3, 3) |array_like|_
         Cell matrix, rows are interpreted as vectors.
 
     Returns
     -------
-    reciprocal_cell : (3,3) :numpy:`ndarray`
+    reciprocal_cell : (3, 3) :numpy:`ndarray`
         Reciprocal cell matrix, rows are interpreted as vectors.
         :math:`cell = (\vec{v}_1, \vec{v}_2, \vec{v}_3)`, where
 
         .. math::
 
             \begin{matrix}
-                \vec{b}_1 = \frac{2\pi}{V}\vec{a}_2\times\vec{a}_3 \\
-                \vec{b}_2 = \frac{2\pi}{V}\vec{a}_3\times\vec{a}_1 \\
-                \vec{b}_3 = \frac{2\pi}{V}\vec{a}_1\times\vec{a}_2 \\
+                \vec{b}_1 = \dfrac{2\pi}{V}\vec{a}_2\times\vec{a}_3 \\
+                \vec{b}_2 = \dfrac{2\pi}{V}\vec{a}_3\times\vec{a}_1 \\
+                \vec{b}_3 = \dfrac{2\pi}{V}\vec{a}_1\times\vec{a}_2 \\
             \end{matrix}
 
     """
@@ -616,7 +619,7 @@ def cell_from_param(a=1, b=1, c=1, alpha=90, beta=90, gamma=90):
 
     Returns
     -------
-    cell : (3,3) :numpy:`ndarray`
+    cell : (3, 3) :numpy:`ndarray`
         Cell matrix.
 
         .. code-block:: python
@@ -701,18 +704,18 @@ def get_permutation(n, k):
     Parameters
     ----------
     n : int
-        Amount of index to be used:
+        Length of the array to be permuted.
 
         .. code-block::
 
             range(0, n)
     k : int
-        Length of the permuted arrays.
+        Length of the permutation.
 
     Returns
     -------
     permutations : list
-        List of permutations. If N permutations found,
+        List of permutations. If N permutations are found,
         the it is a list of N lists of length k.
 
     """

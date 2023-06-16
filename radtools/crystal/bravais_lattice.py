@@ -33,7 +33,9 @@ __all__ = [
 
 class NotEnoughParameters(Exception):
     r"""
-    Class for the errors with Bravais lattice creation.
+    Raised if one tries to create a Bravais lattice without enough parameters.
+
+    Gives a summary of required parameters for the Bravais lattice type.
 
     Parameters
     ----------
@@ -54,7 +56,7 @@ class NotEnoughParameters(Exception):
                 self.message += ", "
         self.message += "\nGot:\n"
         for i, param in enumerate(parameters):
-            self.message += f"    {param[0]}" + f" = {param[1]}"
+            self.message += f"    {param[0]} = {param[1]}"
             if i != len(parameters) - 1:
                 self.message += ", "
 
@@ -64,7 +66,8 @@ class NotEnoughParameters(Exception):
 
 class CellTypeMismatch(Exception):
     r"""
-    Class for the errors with Bravais lattice creation.
+    Raised when one tries to create a Bravais lattice with a cell (or set of parameters)
+    which does not match desired Bravais lattice type.
 
     Parameters
     ----------
@@ -124,7 +127,9 @@ class CellTypeMismatch(Exception):
         )
         if correct_lattice_type is None:
             correct_lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
-        self.message += f"Lattice type from parameters: '{correct_lattice_type}'"
+        self.message += (
+            f"Lattice type defined from parameters: '{correct_lattice_type}'"
+        )
 
     def __str__(self):
         return self.message

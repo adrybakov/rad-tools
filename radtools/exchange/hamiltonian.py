@@ -19,7 +19,10 @@ from radtools.routines import toradians
 
 class NotationError(ValueError):
     r"""
-    Class for the errors with the exchange Hamiltonian notation.
+    Errors with ExchangeHamiltonian notation.
+
+    Typically called when the notation is not defined
+    and gives a summary of the notation (or individual property) and how to set it.
 
     Parameters
     ----------
@@ -291,38 +294,36 @@ class ExchangeHamiltonian:
         minus_sign
         set_interpretation
         """
-        if self._double_counting is None:
-            raise NotationError("double_counting", "double counting")
-        if self._spin_normalized is None:
-            raise NotationError("spin_normalized", "spin normalized")
-        if self._factor_one_half is None:
-            raise NotationError("factor_one_half", "factor 1/2")
-        if self._factor_two is None:
-            raise NotationError("factor_two", "factor 2")
-        if self._minus_sign is None:
-            raise NotationError("minus_sign", "minus sign")
+
         text_result = "H = "
-        if self._minus_sign:
+        if self.minus_sign:
             text_result += "-"
-        if self._factor_one_half and not self._factor_two:
+
+        if self.factor_one_half and not self._factor_two:
             text_result += "1/2 "
         if self._factor_two and not self.factor_one_half:
             text_result += "2 "
+
         text_result += "sum_{"
-        if self._double_counting:
+        if self.double_counting:
             text_result += "i,j} "
         else:
             text_result += "i>=j} "
+
         text_result += "S_i J_ij S_j\n"
-        if self._double_counting:
+
+        if self.double_counting:
             text_result += "Double counting is present.\n"
         else:
             text_result += "No double counting.\n"
-        if self._spin_normalized:
+
+        if self.spin_normalized:
             text_result += "Spin vectors are normalized to 1."
         else:
             text_result += "Spin vectors are not normalized."
+
         print(text_result)
+
         return (
             self.double_counting,
             self.spin_normalized,
