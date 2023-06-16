@@ -6,8 +6,7 @@ import numpy as np
 from radtools.crystal.atom import Atom
 from radtools.crystal.bravais_lattice import bravais_lattice_from_cell
 from radtools.crystal.lattice import Lattice
-from radtools.crystal.properties import (dipole_dipole_energy,
-                                         dipole_dipole_interaction)
+from radtools.crystal.properties import dipole_dipole_energy, dipole_dipole_interaction
 from radtools.routines import absolute_to_relative
 
 
@@ -42,7 +41,6 @@ class Crystal:
 
     Attributes
     ----------
-    lattice : :py:class:`.Lattice`
     atoms : list
         List of atoms of the crystal.
     """

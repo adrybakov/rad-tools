@@ -13,6 +13,7 @@ Module guide
 .. toctree::
     :caption: Modules
     :maxdepth: 2
+    
     crystal/index
     routines
     io/index

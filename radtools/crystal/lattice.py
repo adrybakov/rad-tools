@@ -116,8 +116,6 @@ class Lattice:
 
     Attributes
     ----------
-    path : list
-        K-path.
     kpoints : dist
         Dictionary of the high symmetry points.
         Coordinates are given in relative coordinates.
@@ -125,10 +123,6 @@ class Lattice:
         .. code-block:: python
 
             kpoints = {"Name" : [k_x, k_y, k_z], ...}
-
-    pearson_symbol : str
-    crystal_family : str
-    centring_type : str
     """
 
     _pearson_symbol = None

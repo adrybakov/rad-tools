@@ -38,16 +38,8 @@ class Atom:
 
     Attributes
     ----------
-    name : str
-    type : str
-    index : int
     position : (3,) :numpy:`ndarray`
         Position of the atom in absolute coordinates.
-    spin : float
-    spin_direction : (3,) :numpy:`ndarray`
-    spin_vector : (3,) :numpy:`ndarray`
-    magmom : (3,) :numpy:`ndarray`
-    charge : float
     """
 
     def __init__(
