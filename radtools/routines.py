@@ -251,7 +251,9 @@ def winwait():
         input()
 
 
-def print_2d_array(array, fmt=".2f", highlight=False, print_result=True):
+def print_2d_array(
+    array, fmt=".2f", highlight=False, print_result=True, borders=True, shift=0
+):
     r"""
     Print 1D and 2D arrays in the terminal.
 
@@ -273,6 +275,15 @@ def print_2d_array(array, fmt=".2f", highlight=False, print_result=True):
 
     print_result : bool, default True
         Whether to print the result or return it as a string.
+    borders : bool, default True
+        Whether to print borders around the array.
+
+        .. versionadded:: 0.7.11
+
+    shift : int, default 0
+        Shifts the array to the right by ``shift`` columns.
+
+        .. versionadded:: 0.7.11
 
     Returns
     -------
@@ -365,43 +376,52 @@ def print_2d_array(array, fmt=".2f", highlight=False, print_result=True):
 
         string = ""
         for i in range(0, N):
-            substring = "│"
+            substring = " " * shift
+            if borders:
+                substring += "│"
+
             for j in range(0, M):
                 # Print complex values
                 if np.iscomplex(array[:, j]).any():
                     # Print complex part if it is non-zero
-                    substring += " " + print_complex(array[i][j], fmt, highlight) + " │"
+                    substring += " " + print_complex(array[i][j], fmt, highlight)
                 # Print real values
                 else:
                     # Highlight positive and negative values with colours
-                    substring += (
-                        " " + print_number(array[i][j].real, fmt, highlight) + " │"
-                    )
+                    substring += " " + print_number(array[i][j].real, fmt, highlight)
+                if borders:
+                    substring += " │"
             substring += "\n"
 
-            # Header of the table
-            if i == 0:
-                symbol_start = "┌"
-                symbol_middle = "┬"
-                symbol_end = "┐"
-                substring = (
-                    print_border(symbol_start, symbol_middle, symbol_end, n) + substring
-                )
+            if borders:
+                # Header of the table
+                if i == 0:
+                    symbol_start = "┌"
+                    symbol_middle = "┬"
+                    symbol_end = "┐"
+                    substring = (
+                        " " * shift
+                        + print_border(symbol_start, symbol_middle, symbol_end, n)
+                        + substring
+                    )
 
-            # Footer of the table
-            if i == N - 1:
-                symbol_start = "└"
-                symbol_middle = "┴"
-                symbol_end = "┘"
-                substring += print_border(symbol_start, symbol_middle, symbol_end, n)[
-                    :-1
-                ]
-            # Middle of the table
-            else:
-                symbol_start = "├"
-                symbol_middle = "┼"
-                symbol_end = "┤"
-                substring += print_border(symbol_start, symbol_middle, symbol_end, n)
+                # Footer of the table
+                if i == N - 1:
+                    symbol_start = "└"
+                    symbol_middle = "┴"
+                    symbol_end = "┘"
+                    substring += (
+                        " " * shift
+                        + print_border(symbol_start, symbol_middle, symbol_end, n)[:-1]
+                    )
+                # Middle of the table
+                else:
+                    symbol_start = "├"
+                    symbol_middle = "┼"
+                    symbol_end = "┤"
+                    substring += " " * shift + print_border(
+                        symbol_start, symbol_middle, symbol_end, n
+                    )
 
             string += substring
         if print_result:
@@ -645,3 +665,16 @@ if __name__ == "__main__":
     print_2d_array([[1, 2 + 1j], [3, 4], [52, 6]], highlight=True)
     print_2d_array([[1, 2 - 1j], [3, 4], [52, 6]], highlight=True)
     print_2d_array([[1, -1j], [3, 4], [52, 6]], highlight=True)
+
+    print_2d_array([[1, 2], [3, 4], [5, 6]], highlight=True, borders=False)
+    print_2d_array([[1, 2], [3, 4], [5, 6]], fmt="10.2f", highlight=True, borders=False)
+    print_2d_array([[1, 2], [3, 4], [5, 6]], fmt=".2f", highlight=True, borders=False)
+    print_2d_array(
+        [[1, 2], [3, 4], [52414345345, 6]], fmt="10.2E", highlight=True, borders=False
+    )
+    print_2d_array([[1, 2 + 1j], [3, 4], [52, 6]], highlight=True, borders=False)
+    print_2d_array([[1, 2 - 1j], [3, 4], [52, 6]], highlight=True, borders=False)
+    print_2d_array([[1, -1j], [3, 4], [52, 6]], highlight=True, borders=False)
+
+    print_2d_array([[1, 2], [3, 4], [5, 6]], highlight=True, borders=False, shift=8)
+    print_2d_array([[1, 2], [3, 4], [5, 6]], highlight=True, shift=8)
