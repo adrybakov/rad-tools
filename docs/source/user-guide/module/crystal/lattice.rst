@@ -6,6 +6,8 @@
 Lattice
 *******
 
+For the full reference see :ref:`api_lattice`
+
 3D lattice
 ==========
 

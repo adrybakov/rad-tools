@@ -6,6 +6,9 @@ ExchangeParameter
 
 .. currentmodule:: radtools
 
+Class
+=====
+
 .. autosummary::
     :toctree: generated/
 

@@ -6,6 +6,8 @@ ExchangeHamiltonian
 
 .. currentmodule:: radtools
  
+Class
+=====
 
 .. autosummary::
     :toctree: generated/

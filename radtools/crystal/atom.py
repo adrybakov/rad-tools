@@ -35,11 +35,6 @@ class Atom:
         Combination of :py:attr:`.name` and :py:attr:`.index`
         is meant to be unique, when an atom belongs to some group
         (i.e. to :py:class:`.Crystal` or :py:class:`.ExchangeHamiltonian`).
-
-    Attributes
-    ----------
-    position : (3,) :numpy:`ndarray`
-        Position of the atom in absolute coordinates.
     """
 
     def __init__(
@@ -61,9 +56,9 @@ class Atom:
             self.index = index
 
         # Set position
-        if position is None:
-            position = (0, 0, 0)
-        self.position = np.array(position)
+        self._position = np.array([0, 0, 0])
+        if position is not None:
+            self.position = np.array(position)
 
         # Set magmom
         self._magmom = None
@@ -80,7 +75,7 @@ class Atom:
         self._spin_direction = [0, 0, 1]
         if isinstance(spin, Iterable):
             self.spin_vector = spin
-        else:
+        elif spin is not None:
             self.spin = spin
 
         # Set type placeholder
@@ -107,6 +102,32 @@ class Atom:
     # !=
     def __neq__(self, other):
         return not self == other
+
+    @property
+    def position(self):
+        r"""
+        Position of the atom.
+
+        Returns
+        -------
+        position : (3,) :numpy:`ndarray`
+            Position of the atom in absolute coordinates.
+        """
+        return self._position
+
+    @position.setter
+    def position(self, new_position):
+        try:
+            new_position = np.array(new_position, dtype=float)
+        except:
+            raise ValueError(
+                f"New position is not array-like, new_position = {new_position}"
+            )
+        if new_position.shape != (3,):
+            raise ValueError(
+                f"New position has to be a 3 x 1 vector, shape: {new_position.shape}"
+            )
+        self._position = new_position
 
     @property
     def name(self):

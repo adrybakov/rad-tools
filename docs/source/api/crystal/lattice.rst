@@ -6,7 +6,8 @@ Lattice
 
 .. currentmodule:: radtools
 
-
+Class
+=====
 
 .. autosummary::
     :toctree: generated/
