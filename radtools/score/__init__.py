@@ -1,39 +1,40 @@
 r"""
-Most of the scripts are moved to the library and could be called through 
-the corresponding function, which results in the behaviour 
-analogous to the command line interface. The common logic for the name: 
-If script is called "rad-script-name", then the function is called "script-name".
+Script interface to the radtools package.
 
-.. hint::
-    Long names of the arguments have to be used, i.e. ``input_path``, not ``ip``.
+The behaviour of the command line interface is defined by the
+functions in this module.  
+
+The functions are called with the same names as the scripts,
+but the prefix "rad-" is removed and "-" are substituted by "_". 
+Function`s arguments directly correspond to the full names of the
+arguments of the script (i.e. the argument :ref:`rad-extract-tb2j_input-filename` 
+of the script :ref:`rad-extract-tb2j` is passed to the function :py:func:`.extract_tb2j` as the
+argument ``input_filename``). 
+
+Full documentation on the behaviour is available in the 
+:ref:`scripts-guide`.
+
 
 .. admonition:: Example
 
-    Identifying Wannier centres from the file "seedname_centres.xyz"
-    with increased span of 0.2, saving the result in the file 
+    Identification of Wannier centres from the file "seedname_centres.xyz"
+    with increased span of 0.2, saving the result in the file
     "identified_centres" of the current directory:
 
-    .. code-block:: python
+    .. code-block:: bash
 
-        from radtools import identify_wannier_centres
-        
-        identify_wannier_centres("seedname_centres.xyz", 
-            span = 0.2, 
-            output_path = ".", 
-            output_name="identified_centres",
-            no_colour=False)
+        rad-identify-wannier-centres seedname_centres.xyz -s 0.2 -op . -on identified_centres
 
-    Makings template based on the "exchange.out" TB2J file, 
-    filtering by maximum distance of 5, saving the output in 
-    the file "template.txt" of the current folder:
+    The same result could be achieved by calling the function
+    :py:func:`.identify_wannier_centres`:
 
     .. code-block:: python
 
-        from radtools import make_template
-        
-        make_template(output_name="template",
-            input_filename="exchange.out",
-            max_distance=5)
+        from radtools import identify_wannier_centres  
+        identify_wannier_centres("seedname_centres.xyz",
+            span = 0.2,
+            output_path = ".",
+            output_name="identified_centres")
 """
 
 from .extract_tb2j import manager as extract_tb2j

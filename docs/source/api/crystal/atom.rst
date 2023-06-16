@@ -1,4 +1,4 @@
-.. _atom-api:
+.. _api_atom:
 
 ****
 Atom

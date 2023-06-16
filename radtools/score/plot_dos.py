@@ -3,13 +3,13 @@
 import re
 from argparse import ArgumentParser
 from os import makedirs, walk
-from os.path import abspath, join, isfile
+from os.path import abspath, isfile, join
 
 from termcolor import cprint
 from tqdm import tqdm
 
-from radtools.dos.dos import DOSQE
-from radtools.dos.pdos import PDOS, plot_projected, COLOURS
+from radtools.dos.dos import DOSQE, PATTERN
+from radtools.dos.pdos import COLOURS, PDOS, plot_projected
 
 
 def detect_seednames(input_path):
@@ -27,8 +27,6 @@ def detect_seednames(input_path):
         List of seednames found in ``input_path``.
     """
 
-    pattern = ".pdos_atm#[0-9]*\\([a-zA-Z]*\\)_wfc#[0-9]*\\([spdf_0-9j.]*\\)"
-
     # Get list of files in the folder
     files = []
     for dirpath, dirnames, filenames in walk(input_path):
@@ -39,8 +37,8 @@ def detect_seednames(input_path):
     for file in files:
         if ".pdos_tot" in file and ".pdos_tot" == file[-9:]:
             seednames.add(file[:-9])
-        elif re.match(f".*{pattern}$", file):
-            seednames.add(re.split(f"{pattern}$", file)[0])
+        elif re.match(f".*{PATTERN}$", file):
+            seednames.add(re.split(f"{PATTERN}$", file)[0])
     seednames = list(seednames)
 
     return seednames
@@ -476,16 +474,19 @@ def manager(
     title_fontsize=18,
 ):
     r"""
-    ``rad-plot-dos.py`` script.
+    :ref:`rad-plot-dos` script.
 
     Full documentation on the behaviour is available in the
     :ref:`User Guide <rad-plot-dos>`.
     Parameters of the function directly
     correspond to the arguments of the script.
     """
+
+    # Create the output directory if it does not exist
+    makedirs(output_path, exist_ok=True)
+
     if colours is None:
         colours = COLOURS
-    makedirs(output_path, exist_ok=True)
 
     suffix = ""
     if relative:
@@ -523,6 +524,7 @@ def manager(
         for atom in dos.atoms:
             print(f"  {len(dos.atom_numbers(atom))} {atom} detected")
 
+        # Plot predefined plots
         if custom is None:
             # Plot PDOS vs DOS
             cprint("Total DOS vs total PDOS", "green")
@@ -598,6 +600,7 @@ def manager(
                 axes_labels_fontsize=axes_labels_fontsize,
                 title_fontsize=title_fontsize,
             )
+        # Plot custom plot
         else:
             plot_custom(
                 dos=dos,

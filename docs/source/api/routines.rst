@@ -12,7 +12,7 @@ Collection of routines
 .. autosummary::
     :toctree: generated/
 
-    print_2D_array
+    print_2d_array
     volume
     angle
     absolute_to_relative

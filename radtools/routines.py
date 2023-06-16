@@ -1,16 +1,18 @@
 r"""
 Collection of small routines and constants, 
-which may be used across the whole package.
+which are used across the whole package.
+
+It's purpose is to serve as an "other" folder.
 """
 
 import sys
 from math import asin, cos, pi, sin, sqrt
 
 import numpy as np
-from termcolor import cprint
+from termcolor import cprint, colored
 
 __all__ = [
-    "print_2D_array",
+    "print_2d_array",
     "volume",
     "angle",
     "absolute_to_relative",
@@ -25,11 +27,10 @@ ORANGE = "#F7CB3D"
 BLUE = "#274DD1"
 PURPLE = "#DC5CFF"
 
-TOLERANCE = 1e-4
-TOL_BASE = 4
-
-_todegrees = 180 / pi
-_toradians = pi / 180
+# Constants are usually defined in uppercase
+# but these two are intentionally defined in lowercase
+todegrees = 180 / pi
+toradians = pi / 180
 
 
 def atom_mark_to_latex(mark):
@@ -119,33 +120,38 @@ def absolute_to_relative(cell, absolute):
 
     Parameters
     ----------
-    cell : 3 x 3 array
+    cell : (3, 3) |array_like|_
         Lattice vectors.
     absolute : (3,) |array_like|_
         Absolute coordinates.
 
     Returns
     -------
-    relative : 1 x 3 array
+    relative : (3,) :numpy:`ndarray`
         Relative coordinates.
     """
 
-    a = np.array(cell[0], dtype=float)
-    b = np.array(cell[1], dtype=float)
-    c = np.array(cell[2], dtype=float)
+    # Three vectors of the cell
+    v1 = np.array(cell[0], dtype=float)
+    v2 = np.array(cell[1], dtype=float)
+    v3 = np.array(cell[2], dtype=float)
+
     v = np.array(absolute, dtype=float)
     if (v == np.zeros(3)).all():
         return np.zeros(3)
-    B = np.array([np.dot(a, v), np.dot(b, v), np.dot(c, v)])
+
+    # Compose system of linear equations
+    B = np.array([np.dot(v1, v), np.dot(v2, v), np.dot(v3, v)])
     A = np.array(
         [
-            [np.dot(a, a), np.dot(a, b), np.dot(a, c)],
-            [np.dot(b, a), np.dot(b, b), np.dot(b, c)],
-            [np.dot(c, a), np.dot(c, b), np.dot(c, c)],
+            [np.dot(v1, v1), np.dot(v1, v2), np.dot(v1, v3)],
+            [np.dot(v2, v1), np.dot(v2, v2), np.dot(v2, v3)],
+            [np.dot(v3, v1), np.dot(v3, v2), np.dot(v3, v3)],
         ]
     )
-    relative = np.linalg.solve(A, B)
-    return relative
+
+    # Solve and return
+    return np.linalg.solve(A, B)
 
 
 def volume(*args):
@@ -173,7 +179,7 @@ def volume(*args):
         Volume is computed as:
 
         .. math::
-            V = abc\sqrt(1+2\cos(\alpha)\cos(\beta)\cos(\gamma)-\cos^2(\alpha)-\cos^2(\beta)-\cos^2(\gamma))
+            V = abc\sqrt{1+2\cos(\alpha)\cos(\beta)\cos(\gamma)-\cos^2(\alpha)-\cos^2(\beta)-\cos^2(\gamma)}
 
     Parameters
     ----------
@@ -200,18 +206,19 @@ def volume(*args):
 
     Returns
     -------
-    volume: float
+    volume : float
         Volume of corresponding region in space.
     """
+
     if len(args) == 1:
         v1, v2, v3 = np.array(args[0])
     elif len(args) == 3:
         v1, v2, v3 = np.array(args)
     elif len(args) == 6:
         a, b, c, alpha, beta, gamma = args
-        alpha = alpha * _toradians
-        beta = beta * _toradians
-        gamma = gamma * _toradians
+        alpha = alpha * toradians
+        beta = beta * toradians
+        gamma = gamma * toradians
         return (
             a
             * b
@@ -236,189 +243,197 @@ def volume(*args):
 def winwait():
     r"""
     Add "Press Enter to continue" behaviour to Windows.
+
+    Its a hotfix for Window`s terminal behaviour.
     """
     if sys.platform == "win32":
         cprint("Press Enter to continue", "green")
         input()
 
 
-def print_2D_array(array, fmt="5.2f", posneg=False):
+def print_2d_array(
+    array, fmt=".2f", highlight=False, print_result=True, borders=True, shift=0
+):
     r"""
     Print 1D and 2D arrays in the terminal.
 
     .. versionadded:: 0.7
 
+    .. versionchanged:: 0.7.11 Renamed from ``print_2D_array``
+
     Parameters
     ----------
     array : (N,) or (N, M) |array_like|_
-        Array to be printed. Passed to :numpy:`array`\ () before any action on it.
+        Array to be printed.
     fmt : str
         Format string.
-    posneg : bool, default False
+    highlight : bool, default False
         Whether to highlight positive and negative values.
         Only works for real-valued arrays.
 
+        .. versionchanged:: 0.7.11 Renamed from ``posneg``
+
+    print_result : bool, default True
+        Whether to print the result or return it as a string.
+    borders : bool, default True
+        Whether to print borders around the array.
+
+        .. versionadded:: 0.7.11
+
+    shift : int, default 0
+        Shifts the array to the right by ``shift`` columns.
+
+        .. versionadded:: 0.7.11
+
     Returns
     -------
-    string : String with the array, ready to be printed.
-
-    Examples
-    --------
-    Real-valued array:
-
-    .. doctest::
-
-        >>> import radtools as rad
-        >>> array = [[1, 2], [3, 4], [5, 6]]
-        >>> rad.print_2D_array(array)
-        ┌───────┬───────┐
-        │  1.00 │  2.00 │
-        ├───────┼───────┤
-        │  3.00 │  4.00 │
-        ├───────┼───────┤
-        │  5.00 │  6.00 │
-        └───────┴───────┘
-
-    Custom formatting:
-
-    .. doctest::
-
-        >>> import radtools as rad
-        >>> rad.print_2D_array(array, fmt="10.2f")
-        ┌────────────┬────────────┐
-        │       1.00 │       2.00 │
-        ├────────────┼────────────┤
-        │       3.00 │       4.00 │
-        ├────────────┼────────────┤
-        │       5.00 │       6.00 │
-        └────────────┴────────────┘
-
-    Scientific notation:
-
-    .. doctest::
-
-        >>> import radtools as rad
-        >>> array = [[1, 2], [3, 4], [52414345345, 6]]
-        >>> rad.print_2D_array(array, fmt="10.2E")
-        ┌────────────┬────────────┐
-        │   1.00E+00 │   2.00E+00 │
-        ├────────────┼────────────┤
-        │   3.00E+00 │   4.00E+00 │
-        ├────────────┼────────────┤
-        │   5.24E+10 │   6.00E+00 │
-        └────────────┴────────────┘
-
-    Complex values:
-
-    .. doctest::
-
-        >>> import radtools as rad
-        >>> array = [[1, 2 + 1j], [3, 4], [52, 6]]
-        >>> rad.print_2D_array(array)
-        ┌────────────────┬────────────────┐
-        │  1.00          │  2.00 + i1.00  │
-        ├────────────────┼────────────────┤
-        │  3.00          │  4.00          │
-        ├────────────────┼────────────────┤
-        │ 52.00          │  6.00          │
-        └────────────────┴────────────────┘
-        >>> rad.print_2D_array(array, fmt="4.2E")
-        ┌──────────────────────┬──────────────────────┐
-        │ 1.00E+00             │ 2.00E+00 + i1.00E+00 │
-        ├──────────────────────┼──────────────────────┤
-        │ 3.00E+00             │ 4.00E+00             │
-        ├──────────────────────┼──────────────────────┤
-        │ 5.20E+01             │ 6.00E+00             │
-        └──────────────────────┴──────────────────────┘
-        >>> array = [[1, 2 - 1j], [3, 4], [52, 6]]
-        >>> rad.print_2D_array(array)
-        ┌────────────────┬────────────────┐
-        │  1.00          │  2.00 - i1.00  │
-        ├────────────────┼────────────────┤
-        │  3.00          │  4.00          │
-        ├────────────────┼────────────────┤
-        │ 52.00          │  6.00          │
-        └────────────────┴────────────────┘
-
-    Empty arrays:
-
-    .. doctest::
-
-        >>> import radtools as rad
-        >>> rad.print_2D_array([])
-        None
-        >>> rad.print_2D_array([[]])
-        None
+    string : str
+        String representation of the array.
+        Returned only if ``print_result`` is False.
     """
 
     array = np.array(array)
-    if array.shape[0] != 0 and array.shape[1] != 0:
+    if (len(array.shape) == 1 and array.shape[0] != 0) or (
+        len(array.shape) == 2 and array.shape[1] != 0
+    ):
+        # Convert 1D array to 2D array
         if len(array.shape) == 1:
             array = np.array([array])
+
+        # Array dimensions
         N = len(array)
         M = len(array[0])
+
+        # Find the longest number, used for string formatting
         n = max(
             len(f"{np.amax(array.real):{fmt}}"), len(f"{np.amin(array.real):{fmt}}")
         )
         n = max(
             n, len(f"{np.amax(array.imag):{fmt}}"), len(f"{np.amin(array.imag):{fmt}}")
         )
-        if "E" in fmt or "e" in fmt:
-            n = int(fmt.split(".")[0])
-        else:
-            n = max(n, int(fmt.split(".")[0]))
-        fmt = f"{n}.{fmt.split('.')[1]}"
-        complex_values = not np.isreal(array).all()
-        if complex_values:
-            nn = 2 * n + 6
-            if "E" in fmt or "e" in fmt:
-                nn += 8
-        else:
-            nn = n + 2
-        print("┌" + (M - 1) * f"{nn*'─'}┬" + f"{nn*'─'}┐")
-        for i in range(0, N):
-            print("│", end="")
-            for j in range(0, M):
-                if complex_values:
-                    if np.iscomplex(array[i][j]):
-                        if array.imag[i][j] >= 0:
-                            sign = "+"
-                        else:
-                            sign = "-"
-                        print(
-                            f" {array.real[i][j]:{fmt}} {sign} i{abs(array.imag[i][j]):<{fmt}} │",
-                            end="",
-                        )
-                    elif "E" in fmt or "e" in fmt:
-                        print(
-                            f" {array.real[i][j]:{fmt}}{(n + 8)*' '} │",
-                            end="",
-                        )
-                    else:
-                        print(
-                            f" {array.real[i][j]:{fmt}}{(n + 4)*' '} │",
-                            end="",
-                        )
-                else:
-                    if posneg:
-                        if array.real[i][j] > 0:
-                            cprint(f" {array.real[i][j]:{fmt}}", "red", end="")
-                            print(" │", end="")
-                        elif array.real[i][j] < 0:
-                            cprint(f" {array.real[i][j]:{fmt}}", "blue", end="")
-                            print(" │", end="")
-                        else:
-                            cprint(f" {array.real[i][j]:{fmt}}", "green", end="")
-                            print(" │", end="")
-                    else:
-                        print(f" {array.real[i][j]:{fmt}} │", end="")
-            print()
-            if i != N - 1:
-                print("├" + (M - 1) * f"{nn*'─'}┼" + f"{nn*'─'}┤")
 
-        print("└" + (M - 1) * f"{nn*'─'}┴" + f"{nn*'─'}┘")
+        # Check if input fmt exceeds the longest number
+        try:
+            n = max(n, int(fmt.split(".")[0]))
+        except ValueError:
+            pass
+
+        fmt = f"{n}.{fmt.split('.')[1]}"
+
+        def print_number(number, fmt, highlight=False, condition=None):
+            if condition is None:
+                condition = number
+            string = ""
+            # Highlight positive and negative values with colours
+            if highlight:
+                if condition > 0:
+                    string += colored(f"{number:{fmt}}", "red", attrs=["bold"])
+                elif condition < 0:
+                    string += colored(f"{number:{fmt}}", "blue", attrs=["bold"])
+                else:
+                    string += colored(f"{number:{fmt}}", "green", attrs=["bold"])
+            # Print without colours
+            else:
+                string += f"{number:{fmt}}"
+            return string
+
+        def print_complex(number, fmt, highlight):
+            string = ""
+            if number.real != 0:
+                string += print_number(number.real, fmt, highlight)
+            else:
+                string += " " * len(print_number(number.real, fmt))
+
+            if number.imag > 0:
+                sign = "+"
+            else:
+                sign = "-"
+
+            if number.imag != 0:
+                string += f" {sign} i"
+                string += print_number(
+                    abs(number.imag), f"<{fmt}", highlight, condition=number.imag
+                )
+            else:
+                string += " " * (
+                    len(print_number(abs(number.imag), fmt, condition=number.imag)) + 4
+                )
+            return string
+
+        def print_border(symbol_start, symbol_middle, symbol_end, n):
+            string = symbol_start
+            for j in range(0, M):
+                # If at least one complex value is present in the column
+                if np.iscomplex(array[:, j]).any():
+                    string += f"{(2*n + 6)*'─'}"
+                else:
+                    string += f"{(n + 2)*'─'}"
+                if j == M - 1:
+                    string += symbol_end + "\n"
+                else:
+                    string += symbol_middle
+            return string
+
+        string = ""
+        for i in range(0, N):
+            substring = " " * shift
+            if borders:
+                substring += "│"
+
+            for j in range(0, M):
+                # Print complex values
+                if np.iscomplex(array[:, j]).any():
+                    # Print complex part if it is non-zero
+                    substring += " " + print_complex(array[i][j], fmt, highlight)
+                # Print real values
+                else:
+                    # Highlight positive and negative values with colours
+                    substring += " " + print_number(array[i][j].real, fmt, highlight)
+                if borders:
+                    substring += " │"
+            if i != N - 1 or borders:
+                substring += "\n"
+
+            if borders:
+                # Header of the table
+                if i == 0:
+                    symbol_start = "┌"
+                    symbol_middle = "┬"
+                    symbol_end = "┐"
+                    substring = (
+                        " " * shift
+                        + print_border(symbol_start, symbol_middle, symbol_end, n)
+                        + substring
+                    )
+
+                # Footer of the table
+                if i == N - 1:
+                    symbol_start = "└"
+                    symbol_middle = "┴"
+                    symbol_end = "┘"
+                    substring += (
+                        " " * shift
+                        + print_border(symbol_start, symbol_middle, symbol_end, n)[:-1]
+                    )
+                # Middle of the table
+                else:
+                    symbol_start = "├"
+                    symbol_middle = "┼"
+                    symbol_end = "┤"
+                    substring += " " * shift + print_border(
+                        symbol_start, symbol_middle, symbol_end, n
+                    )
+
+            string += substring
+        if print_result:
+            print(string)
+        else:
+            return string
     else:
-        print("None")
+        if print_result:
+            print(None)
+        else:
+            return None
 
 
 def angle(v1, v2, radians=False):
@@ -426,6 +441,10 @@ def angle(v1, v2, radians=False):
     Angle between two vectors.
 
     .. versionadded:: 0.7
+
+    .. math::
+
+        \alpha = \dfrac{(\vec{v_1} \cdot \vec{v_2})}{\vert\vec{v_1}\vert\cdot\vert\vec{v_2}\vert}
 
     Parameters
     ----------
@@ -442,12 +461,14 @@ def angle(v1, v2, radians=False):
         Angle in degrees or radians (see ``radians``).
     """
 
+    # Normalize vectors
     v1 = np.array(v1) / np.linalg.norm(v1)
     v2 = np.array(v2) / np.linalg.norm(v2)
+
     alpha = np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0))
     if radians:
         return alpha
-    return alpha * _todegrees
+    return alpha * todegrees
 
 
 def reciprocal_cell(cell):
@@ -458,21 +479,21 @@ def reciprocal_cell(cell):
 
     Parameters
     ----------
-    cell : (3,3) |array_like|_
+    cell : (3, 3) |array_like|_
         Cell matrix, rows are interpreted as vectors.
 
     Returns
     -------
-    reciprocal_cell : (3,3) :numpy:`ndarray`
+    reciprocal_cell : (3, 3) :numpy:`ndarray`
         Reciprocal cell matrix, rows are interpreted as vectors.
         :math:`cell = (\vec{v}_1, \vec{v}_2, \vec{v}_3)`, where
 
         .. math::
 
             \begin{matrix}
-                \vec{b}_1 = \frac{2\pi}{V}\vec{a}_2\times\vec{a}_3 \\
-                \vec{b}_2 = \frac{2\pi}{V}\vec{a}_3\times\vec{a}_1 \\
-                \vec{b}_3 = \frac{2\pi}{V}\vec{a}_1\times\vec{a}_2 \\
+                \vec{b}_1 = \dfrac{2\pi}{V}\vec{a}_2\times\vec{a}_3 \\
+                \vec{b}_2 = \dfrac{2\pi}{V}\vec{a}_3\times\vec{a}_1 \\
+                \vec{b}_3 = \dfrac{2\pi}{V}\vec{a}_1\times\vec{a}_2 \\
             \end{matrix}
 
     """
@@ -510,7 +531,7 @@ def cell_from_param(a=1, b=1, c=1, alpha=90, beta=90, gamma=90):
 
     Returns
     -------
-    cell : (3,3) :numpy:`ndarray`
+    cell : (3, 3) :numpy:`ndarray`
         Cell matrix.
 
         .. code-block:: python
@@ -519,10 +540,9 @@ def cell_from_param(a=1, b=1, c=1, alpha=90, beta=90, gamma=90):
                     [a2_x, a2_y, a2_z],
                     [a3_x, a3_y, a3_z]]
     """
-
-    alpha = alpha * _toradians
-    beta = beta * _toradians
-    gamma = gamma * _toradians
+    alpha = alpha * toradians
+    beta = beta * toradians
+    gamma = gamma * toradians
     return np.array(
         [
             [a, 0, 0],
@@ -596,18 +616,18 @@ def get_permutation(n, k):
     Parameters
     ----------
     n : int
-        Amount of index to be used:
+        Length of the array to be permuted.
 
         .. code-block::
 
             range(0, n)
     k : int
-        Length of the permuted arrays.
+        Length of the permutation.
 
     Returns
     -------
     permutations : list
-        List of permutations. If N permutations found,
+        List of permutations. If N permutations are found,
         the it is a list of N lists of length k.
 
     """
@@ -627,3 +647,35 @@ def get_permutation(n, k):
             result = new_result
             k += 1
         return result
+
+
+if __name__ == "__main__":
+    print_2d_array([[1, 2], [3, 4], [5, 6]])
+    print_2d_array([[1, 2], [3, 4], [5, 6]], fmt="10.2f")
+    print_2d_array([[1, 2], [3, 4], [5, 6]], fmt=".2f")
+    print_2d_array([[1, 2], [3, 4], [52414345345, 6]], fmt="10.2E")
+    print_2d_array([[1, 2 + 1j], [3, 4], [52, 6]])
+    print_2d_array([[1, 2 - 1j], [3, 4], [52, 6]])
+    print_2d_array([[1, -1j], [3, 4], [52, 6]])
+    print_2d_array([])
+
+    print_2d_array([[1, 2], [3, 4], [5, 6]], highlight=True)
+    print_2d_array([[1, 2], [3, 4], [5, 6]], fmt="10.2f", highlight=True)
+    print_2d_array([[1, 2], [3, 4], [5, 6]], fmt=".2f", highlight=True)
+    print_2d_array([[1, 2], [3, 4], [52414345345, 6]], fmt="10.2E", highlight=True)
+    print_2d_array([[1, 2 + 1j], [3, 4], [52, 6]], highlight=True)
+    print_2d_array([[1, 2 - 1j], [3, 4], [52, 6]], highlight=True)
+    print_2d_array([[1, -1j], [3, 4], [52, 6]], highlight=True)
+
+    print_2d_array([[1, 2], [3, 4], [5, 6]], highlight=True, borders=False)
+    print_2d_array([[1, 2], [3, 4], [5, 6]], fmt="10.2f", highlight=True, borders=False)
+    print_2d_array([[1, 2], [3, 4], [5, 6]], fmt=".2f", highlight=True, borders=False)
+    print_2d_array(
+        [[1, 2], [3, 4], [52414345345, 6]], fmt="10.2E", highlight=True, borders=False
+    )
+    print_2d_array([[1, 2 + 1j], [3, 4], [52, 6]], highlight=True, borders=False)
+    print_2d_array([[1, 2 - 1j], [3, 4], [52, 6]], highlight=True, borders=False)
+    print_2d_array([[1, -1j], [3, 4], [52, 6]], highlight=True, borders=False)
+
+    print_2d_array([[1, 2], [3, 4], [5, 6]], highlight=True, borders=False, shift=8)
+    print_2d_array([[1, 2], [3, 4], [5, 6]], highlight=True, shift=8)

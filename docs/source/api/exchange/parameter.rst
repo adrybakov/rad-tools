@@ -1,4 +1,4 @@
-.. _parameter-api:
+.. _api_parameter:
 
 *****************
 ExchangeParameter

@@ -167,3 +167,15 @@ html[data-theme=dark] .sd-card .sd-card-footer {
 .color4 {
   color: #06C925;
 }
+
+.custom-header {
+  background-color: var(--pst-color-surface);
+  margin-bottom: 0.1rem;
+  margin-top: 0.2rem;
+  font-weight: bold;
+  word-break: break-word;
+  padding-left: 0.5em;
+  padding-right: 5px;
+  box-sizing: border-box;
+  display: block;
+}

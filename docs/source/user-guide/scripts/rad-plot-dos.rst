@@ -53,7 +53,7 @@ There are two main plot style:
 
     Default style
 
-* Relative :ref:`rad-plot-dos_relative`
+* Relative (:ref:`rad-plot-dos_relative`)
     PDOS of all projectors appear on the same plot, 
     PDOS of each projector starts at the end of the previous projector`s PDOS.
 
@@ -66,7 +66,7 @@ There are two main plot style:
 
 Each of these styles could be modified by the following "substyles":
 
-* Normalized  :ref:`rad-plot-dos_normalize`
+* Normalized  (:ref:`rad-plot-dos_normalize`)
     PDOS of each projector is normalized with respect to the local DOS. 
     Local DOS could be the sum of all PDOS, as well as total PDOS
     (see :ref:`rad-plot-dos_background-total`).
@@ -83,7 +83,7 @@ Each of these styles could be modified by the following "substyles":
 
     With relative style
 
-* Total as a background :ref:`rad-plot-dos_background-total`
+* Total as a background (:ref:`rad-plot-dos_background-total`)
     Total PDOS is used as the background values instead 
     of the sum of the PDOS from the plot (which is used by default).
 

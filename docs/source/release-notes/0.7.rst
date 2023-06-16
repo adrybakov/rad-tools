@@ -15,7 +15,7 @@ New module, which affected other modules as well: :ref:`rad-tools_crystal`.
 
 
 
-Add :py:func:`.print_2D_array`. 
+Add :py:func:`.print_2d_array`. 
 
 Rename :py:func:`.read_exchange_model` to :py:func:`.read_tb2j_model`.
 
@@ -84,7 +84,7 @@ Add attribute access to the atoms through atom names to the :py:class:`.Crystal`
 0.7.2
 -----
 
-Add magnetic dipole-dipole energy calculator to the :ref:`crystal-api`.
+Add magnetic dipole-dipole energy calculator to the :ref:`api_crystal`.
 
 0.7.3
 -----
@@ -121,3 +121,9 @@ Bugfix in :ref:`rad-plot-dos`.
 0.7.10
 ------
 Changes in :ref:`rad-make-template`. Now bonds are grouped by distances by default.
+
+0.7.11
+------
+Bugfix in :py:func:`.print_2d_array`. Refractor the whole module. Extend documentation.
+Add ``shift`` and ``borders`` options to :py:func:`.print_2d_array`.
+Bugfix in ``dos.py``.

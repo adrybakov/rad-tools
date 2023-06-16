@@ -1,4 +1,4 @@
-.. _crystal-api:
+.. _api_crystal:
 
 *******
 Crystal
@@ -15,7 +15,7 @@ Properties
 ==========
 
 .. hint:: 
-    All properties and methods of :ref:`lattice-api` are accessible directly from the crystal instance.
+    All properties and methods of :ref:`api_lattice` are accessible directly from the crystal instance.
     Unless they are defined directly for the :py:class:`.Crystal` and listed here.
     The following interfaces are identical:
 

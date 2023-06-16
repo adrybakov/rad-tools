@@ -9,6 +9,7 @@ def read_template(filename):
     r"""
     Read template from the template file.
 
+    See :ref:`template-draft` for the description of the template file format.
 
     Parameters
     ----------

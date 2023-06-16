@@ -12,12 +12,7 @@ from mpl_toolkits.mplot3d import Axes3D, proj3d
 from scipy.spatial import Voronoi
 
 from radtools.crystal.identify import lepage
-from radtools.routines import (
-    angle,
-    cell_from_param,
-    reciprocal_cell,
-    volume,
-)
+from radtools.routines import angle, cell_from_param, reciprocal_cell, volume
 
 __all__ = ["Lattice"]
 
@@ -98,7 +93,7 @@ class Lattice:
 
     Parameters
     ----------
-    cell : (3,3) |array_like|_
+    cell : (3, 3) |array_like|_
         Unit cell, rows are vectors, columns are coordinates.
     a1 : (3,) |array_like|_
         First vector of unit cell (cell[0]).
@@ -121,8 +116,6 @@ class Lattice:
 
     Attributes
     ----------
-    path : list
-        K-path.
     kpoints : dist
         Dictionary of the high symmetry points.
         Coordinates are given in relative coordinates.
@@ -130,10 +123,6 @@ class Lattice:
         .. code-block:: python
 
             kpoints = {"Name" : [k_x, k_y, k_z], ...}
-
-    pearson_symbol : str
-    crystal_family : str
-    centring_type : str
     """
 
     _pearson_symbol = None
@@ -211,6 +200,14 @@ class Lattice:
 
     @property
     def cell(self):
+        r"""
+        Unit cell of the lattice.
+
+        Returns
+        -------
+        cell : (3, 3) :numpy:`ndarray`
+            Unit cell, rows are vectors, columns are coordinates.
+        """
         if self._cell is None:
             raise AttributeError(f"Cell is not defined for lattice {self}")
         return self._cell
@@ -231,6 +228,11 @@ class Lattice:
         K-point path.
 
         Manage default path for the predefined lattices and custom user-defined path.
+
+        Returns
+        -------
+        path : list of str
+            List of the high symmetry points.
         """
         if self._path is None and self._default_path is None:
             return []
@@ -310,6 +312,11 @@ class Lattice:
     def a1(self):
         r"""
         First lattice vector :math:`\vec{a}_1`.
+
+        Returns
+        -------
+        a1 : (3,) :numpy:`ndarray`
+            First lattice vector :math:`\vec{a}_1`.
         """
         return self.cell[0]
 
@@ -317,6 +324,11 @@ class Lattice:
     def a2(self):
         r"""
         Second lattice vector :math:`\vec{a}_2`.
+
+        Returns
+        -------
+        a2 : (3,) :numpy:`ndarray`
+            Second lattice vector :math:`\vec{a}_2`.
         """
         return self.cell[1]
 
@@ -324,6 +336,11 @@ class Lattice:
     def a3(self):
         r"""
         Third lattice vector :math:`\vec{a}_3`.
+
+        Returns
+        -------
+        a3 : (3,) :numpy:`ndarray`
+            Third lattice vector :math:`\vec{a}_3`.
         """
         return self.cell[2]
 
@@ -331,6 +348,10 @@ class Lattice:
     def a(self):
         r"""
         Length of the first lattice vector :math:`\vert\vec{a}_1\vert`.
+
+        Returns
+        -------
+        a : float
         """
 
         return np.linalg.norm(self.cell[0])
@@ -339,6 +360,10 @@ class Lattice:
     def b(self):
         r"""
         Length of the second lattice vector :math:`\vert\vec{a}_2\vert`.
+
+        Returns
+        -------
+        b : float
         """
 
         return np.linalg.norm(self.cell[1])
@@ -347,6 +372,10 @@ class Lattice:
     def c(self):
         r"""
         Length of the third lattice vector :math:`\vert\vec{a}_3\vert`.
+
+        Returns
+        -------
+        c : float
         """
 
         return np.linalg.norm(self.cell[2])
@@ -412,6 +441,11 @@ class Lattice:
     def unit_cell_volume(self):
         r"""
         Volume of the unit cell.
+
+        Returns
+        -------
+        volume : float
+            Unit cell volume.
         """
 
         return volume(self.a1, self.a2, self.a3)
@@ -420,6 +454,11 @@ class Lattice:
     def reciprocal_cell(self):
         r"""
         Reciprocal cell. Always primitive.
+
+        Returns
+        -------
+        reciprocal_cell : (3, 3) :numpy:`ndarray`
+            Reciprocal cell, rows are vectors, columns are coordinates.
         """
 
         return reciprocal_cell(self.cell)
@@ -434,6 +473,11 @@ class Lattice:
             \vec{b}_1 = \frac{2\pi}{V}\vec{a}_2\times\vec{a}_3
 
         where :math:`V = \vec{a}_1\cdot(\vec{a}_2\times\vec{a}_3)`
+
+        Returns
+        -------
+        b1 : (3,) :numpy:`ndarray`
+            First reciprocal lattice vector :math:`\vec{b}_1`.
         """
 
         return self.reciprocal_cell[0]
@@ -448,6 +492,11 @@ class Lattice:
             \vec{b}_2 = \frac{2\pi}{V}\vec{a}_3\times\vec{a}_1
 
         where :math:`V = \vec{a}_1\cdot(\vec{a}_2\times\vec{a}_3)`
+
+        Returns
+        -------
+        b2 : (3,) :numpy:`ndarray`
+            Second reciprocal lattice vector :math:`\vec{b}_2`.
         """
 
         return self.reciprocal_cell[1]
@@ -462,6 +511,11 @@ class Lattice:
             \vec{b}_3 = \frac{2\pi}{V}\vec{a}_1\times\vec{a}_2
 
         where :math:`V = \vec{a}_1\cdot(\vec{a}_2\times\vec{a}_3)`
+
+        Returns
+        -------
+        b3 : (3,) :numpy:`ndarray`
+            Third reciprocal lattice vector :math:`\vec{b}_3`.
         """
 
         return self.reciprocal_cell[2]
@@ -470,6 +524,10 @@ class Lattice:
     def k_a(self):
         r"""
         Length of the first reciprocal lattice vector :math:`\vert\vec{b}_1\vert`.
+
+        Returns
+        -------
+        k_a : float
         """
 
         return np.linalg.norm(self.b1)
@@ -478,6 +536,10 @@ class Lattice:
     def k_b(self):
         r"""
         Length of the second reciprocal lattice vector :math:`\vert\vec{b}_2\vert`.
+
+        Returns
+        -------
+        k_b : float
         """
 
         return np.linalg.norm(self.b2)
@@ -486,6 +548,10 @@ class Lattice:
     def k_c(self):
         r"""
         Length of the third reciprocal lattice vector :math:`\vert\vec{b}_3\vert`.
+
+        Returns
+        -------
+        k_c : float
         """
 
         return np.linalg.norm(self.b3)
@@ -494,6 +560,11 @@ class Lattice:
     def k_alpha(self):
         r"""
         Angle between second and third reciprocal lattice vector.
+
+        Returns
+        -------
+        angle : float
+            In degrees.
         """
 
         return angle(self.b2, self.b3)
@@ -502,6 +573,11 @@ class Lattice:
     def k_beta(self):
         r"""
         Angle between first and third reciprocal lattice vector.
+
+        Returns
+        -------
+        angle : float
+            In degrees.
         """
 
         return angle(self.b1, self.b3)
@@ -510,6 +586,11 @@ class Lattice:
     def k_gamma(self):
         r"""
         Angle between first and second reciprocal lattice vector.
+
+        Returns
+        -------
+        angle : float
+            In degrees.
         """
 
         return angle(self.b1, self.b2)
@@ -522,6 +603,11 @@ class Lattice:
         .. math::
 
             V = \vec{b}_1\cdot(\vec{b}_2\times\vec{b}_3)
+
+        Returns
+        -------
+        volume : float
+            Volume of the reciprocal cell.
         """
 
         return volume(self.b1, self.b2, self.b3)
@@ -537,6 +623,11 @@ class Lattice:
 
         For the variation of each Bravais lattice type see
         corresponding ``variation`` attribute.
+
+        Returns
+        -------
+        variation : str
+            Variation of the lattice.
 
         Examples
         --------
@@ -582,6 +673,9 @@ class Lattice:
         return self.__class__.__name__
 
     def identify(self):
+        r"""
+        Identify the Bravais lattice type.
+        """
         return lepage(self.a, self.b, self.c, self.alpha, self.beta, self.gamma)
 
     def lattice_points(self, relative=False, reciprocal=False, normalize=False):
@@ -596,6 +690,11 @@ class Lattice:
             Whether to use reciprocal or real cell.
         normalize : bool, default False
             Whether to normalize corresponding vectors to have the volume equal to one.
+
+        Returns
+        -------
+        lattice_points : (N, 3) :numpy:`ndarray`
+            N lattice points. Each element is a vector :math:`v = (v_x, v_y, v_z)`.
         """
 
         if reciprocal:

@@ -1,4 +1,4 @@
-.. _template-api:
+.. _api_template:
 
 ****************
 ExchangeTemplate

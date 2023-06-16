@@ -1,14 +1,13 @@
-from math import sqrt, floor, log10
-
+from math import floor, log10, sqrt
 from typing import Union
 
 import numpy as np
 
 from radtools.crystal.atom import Atom
-from radtools.crystal.lattice import Lattice
 from radtools.crystal.bravais_lattice import bravais_lattice_from_cell
-from radtools.routines import absolute_to_relative
+from radtools.crystal.lattice import Lattice
 from radtools.crystal.properties import dipole_dipole_energy, dipole_dipole_interaction
+from radtools.routines import absolute_to_relative
 
 
 class Crystal:
@@ -42,7 +41,6 @@ class Crystal:
 
     Attributes
     ----------
-    lattice : :py:class:`.Lattice`
     atoms : list
         List of atoms of the crystal.
     """
@@ -66,6 +64,12 @@ class Crystal:
         Main difference of the cell attribute of the crystal from the cell
         attribute of the lattice is that change of the crystal`s cell
         leads to the computation of the atom coordinate.
+
+        Returns
+        -------
+        cell : (3, 3) :numpy:`ndarray`
+            Cell of the crystal`s lattice.
+
 
         Examples
         --------
@@ -143,6 +147,11 @@ class Crystal:
         Lattice of the crystal.
 
         See :ref:`rad-tools_lattice` for details.
+
+        Returns
+        -------
+        lattice : :py:class:`.Lattice`
+            Lattice of the crystal.
         """
         return self._lattice
 

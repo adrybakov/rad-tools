@@ -10,6 +10,8 @@ import numpy as np
 
 from radtools.dos.pdos import PDOSQE
 
+PATTERN = ".pdos_atm#[0-9]*\\([a-zA-Z0-9]*\\)_wfc#[0-9]*\\([spdf_0-9j.]*\\)"
+
 
 class DOSQE:
     r"""
@@ -124,6 +126,7 @@ class DOSQE:
             ):
                 self._case = 2
             if self._case == 1:
+                # pattern is intentionally different from PATTERN
                 pattern = ".pdos_atm#[0-9]*\\([a-zA-Z]*\\)_wfc#[0-9]*\\([spdf.]*\\)"
                 filename = self.filenames[0]
                 if not re.fullmatch(
@@ -188,8 +191,6 @@ class DOSQE:
         List of filenames (without "seedname".pdos_tot).
         """
         if self._filenames is None:
-            pattern = ".pdos_atm#[0-9]*\\([a-zA-Z0-9]*\\)_wfc#[0-9]*\\([spdf_0-9j.]*\\)"
-
             # Get list of files in the folder
             all_filenames = []
             for dirpath, dirnames, filenames in walk(self._input_path):
@@ -200,7 +201,7 @@ class DOSQE:
             # Search
             for filename in all_filenames:
                 if re.fullmatch(
-                    f"{re.escape(self.seedname)}{pattern}",
+                    f"{re.escape(self.seedname)}{PATTERN}",
                     filename,
                 ):
                     self._filenames.append(filename)
@@ -518,7 +519,7 @@ class DOSQE:
         xlim=None,
         ylim=None,
         save_pickle=False,
-        axes_label_fontsize=18,
+        axes_labels_fontsize=18,
         legend_fontsize=12,
         title_fontsize=18,
     ):
@@ -549,8 +550,8 @@ class DOSQE:
         """
         fig, ax = plt.subplots(figsize=(8, 4))
 
-        ax.set_xlabel("Energy, eV", fontsize=axes_label_fontsize)
-        ax.set_ylabel("DOS, states/eV", fontsize=axes_label_fontsize)
+        ax.set_xlabel("Energy, eV", fontsize=axes_labels_fontsize)
+        ax.set_ylabel("DOS, states/eV", fontsize=axes_labels_fontsize)
         if xlim is None:
             xlim = (np.amin(self.energy), np.amax(self.energy))
         ax.set_xlim(*tuple(xlim))
