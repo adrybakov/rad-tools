@@ -519,7 +519,7 @@ class DOSQE:
         xlim=None,
         ylim=None,
         save_pickle=False,
-        axes_label_fontsize=18,
+        axes_labels_fontsize=18,
         legend_fontsize=12,
         title_fontsize=18,
     ):
@@ -550,8 +550,8 @@ class DOSQE:
         """
         fig, ax = plt.subplots(figsize=(8, 4))
 
-        ax.set_xlabel("Energy, eV", fontsize=axes_label_fontsize)
-        ax.set_ylabel("DOS, states/eV", fontsize=axes_label_fontsize)
+        ax.set_xlabel("Energy, eV", fontsize=axes_labels_fontsize)
+        ax.set_ylabel("DOS, states/eV", fontsize=axes_labels_fontsize)
         if xlim is None:
             xlim = (np.amin(self.energy), np.amax(self.energy))
         ax.set_xlim(*tuple(xlim))
