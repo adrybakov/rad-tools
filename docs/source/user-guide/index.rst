@@ -19,6 +19,12 @@ RAD-tools user guide
     scripts/index
     module/index
 
+.. toctree::
+    :caption: Library
+    :maxdepth: 1
+
+    library/lepage
+
 .. div:: logo-custom-text
     
    There are no more guides. You are now guideless. Good luck.

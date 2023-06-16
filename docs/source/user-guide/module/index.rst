@@ -4,14 +4,11 @@
 Module guide
 ************
 
-.. toctree::
-    :caption: Algorithms
-    :maxdepth: 2
-
-    lepage
+Module guide roughly follows the structure of the package. 
+It describes the the main modules of the package and their functionality, 
+providing extensive examples of usage.
 
 .. toctree::
-    :caption: Modules
     :maxdepth: 2
     
     crystal/index
