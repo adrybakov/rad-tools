@@ -68,6 +68,32 @@ Custom formatting
     │ 5.00 │ 6.00 │
     └──────┴──────┘
 
+No borders
+----------
+
+.. doctest::
+
+    >>> import radtools as rad
+    >>> rad.print_2d_array(array, borders=False)
+     1.00 2.00
+     3.00 4.00
+     5.00 6.00
+
+Shift
+-----
+
+.. doctest::
+
+    >>> import radtools as rad
+    >>> rad.print_2d_array(array, shift=3)
+       ┌──────┬──────┐
+       │ 1.00 │ 2.00 │
+       ├──────┼──────┤
+       │ 3.00 │ 4.00 │
+       ├──────┼──────┤
+       │ 5.00 │ 6.00 │
+       └──────┴──────┘
+
 Scientific notation
 -------------------
 
@@ -143,3 +169,4 @@ Empty arrays
     None
     >>> rad.print_2d_array([[]])
     None
+
