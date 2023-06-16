@@ -391,7 +391,8 @@ def print_2d_array(
                     substring += " " + print_number(array[i][j].real, fmt, highlight)
                 if borders:
                     substring += " │"
-            substring += "\n"
+            if i != N - 1 or borders:
+                substring += "\n"
 
             if borders:
                 # Header of the table
