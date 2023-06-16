@@ -2,12 +2,14 @@ r"""
 Exchange parameter class.
 """
 
-# SElf is introduced in python 3.11, it is too fresh for my taste
+# SELF is introduced in python 3.11, it is too fresh for my taste
 from typing import TypeVar, Union
 
 Self = TypeVar("Self", bound="ExchangeParameter")
 
 import numpy as np
+
+from radtools.routines import print_2d_array
 
 
 class ExchangeParameter:
@@ -16,8 +18,9 @@ class ExchangeParameter:
 
     Basically it is a wrapper around :numpy:`ndarray`
     with predefined exchange-specific attributes.
-    Thus, it any attribute/method of :numpy:`ndarray`
-    acts on :py:attr:`.matrix`.
+    Any function, which work on :numpy:`ndarray` should work on
+    :py:class:`.ExchangeParameter` as well. It will act on the
+    :py:attr:`.matrix` attribute.
 
     If ``matrix`` is specified then ``iso``, ``aniso`` and ``dmi`` are
     ignored and derived from ``matrix``. If ``matrix`` is not specified
@@ -34,21 +37,6 @@ class ExchangeParameter:
         Dzyaroshinsky-Moria interaction vector :math:`(D_x, D_y, D_z)`.
     matrix : (3, 3) |array_like|_, optional
         Exchange matrix.
-
-    Attributes
-    ----------
-    matrix : 3 x 3 :numpy:`ndarray`
-    T
-    symm_matrix : (3, 3) :numpy:`ndarray`
-    asymm_matrix : (3, 3) :numpy:`ndarray`
-    iso : float
-    iso_matrix : (3, 3) :numpy:`ndarray`
-    aniso : (3, 3) :numpy:`ndarray`
-    aniso_diagonal : (3,) :numpy:`ndarray`
-    aniso_diagonal_matrix : (3, 3) :numpy:`ndarray`
-    dmi : (3,) :numpy:`ndarray`
-    dmi_matrix : (3, 3) :numpy:`ndarray`
-    dmi_module : float
     """
 
     def __init__(self, matrix=None, iso=None, aniso=None, dmi=None) -> None:
@@ -67,24 +55,14 @@ class ExchangeParameter:
         else:
             self.matrix = matrix
 
-    # # Try to call for the attribute of numpy.ndarray
-    # def __getattr__(self, name):
-    #     if name[:2] == "__":
-    #         raise AttributeError(name)
-    #     return getattr(self.matrix, name)
-
     def __format__(self, fmt):
         return self.__str__(fmt=fmt)
 
-    def __str__(self, fmt=""):
-        return (
-            f"{self.matrix[0][0]:{fmt}} {self.matrix[0][1]:{fmt}} {self.matrix[0][2]:{fmt}}\n"
-            + f"{self.matrix[1][0]:{fmt}} {self.matrix[1][1]:{fmt}} {self.matrix[1][2]:{fmt}}\n"
-            + f"{self.matrix[2][0]:{fmt}} {self.matrix[2][1]:{fmt}} {self.matrix[2][2]:{fmt}}"
-        )
+    def __str__(self, fmt=".4f"):
+        return print_2d_array(self.matrix, fmt=fmt, print_result=False, borders=False)
 
     def __repr__(self):
-        return str(self)
+        return f"ExchangeParameter({self.matrix.__repr__()})"
 
     @property
     def __array_interface__(self):
@@ -94,6 +72,15 @@ class ExchangeParameter:
     def T(self):
         r"""
         Transposes a matrix of the exchange parameter.
+
+        It returns new instance of the :py:class`.ExchangeParameter`
+        with transposed matrix.
+
+        Returns
+        -------
+        ExchangeParameter : :py:class`.ExchangeParameter`
+            New instance of the :py:class`.ExchangeParameter`
+            with transposed matrix.
         """
         return ExchangeParameter(matrix=self.matrix.T)
 
@@ -107,6 +94,11 @@ class ExchangeParameter:
             [[J_xx, J_xy, J_xz],
              [J_yx, J_yy, J_yz],
              [J_zx, J_zy, J_zz]]
+
+        Returns
+        -------
+        matrix : (3, 3) :numpy:`ndarray`
+            Full exchange matrix.
         """
 
         return self._matrix
@@ -129,6 +121,11 @@ class ExchangeParameter:
         .. math::
 
             J_{symm} = \dfrac{J + J^T}{2}
+
+        Returns
+        -------
+        symm_matrix : (3, 3) :numpy:`ndarray`
+            Symmetric part of exchange matrix.
         """
 
         return (self.matrix + self.matrix.T) / 2
@@ -141,6 +138,11 @@ class ExchangeParameter:
         .. math::
 
             J_{asymm} = \dfrac{J - J^T}{2}
+
+        Returns
+        -------
+        asymm_matrix : (3, 3) :numpy:`ndarray`
+            Asymmetric part of exchange matrix.
         """
 
         return (self.matrix - self.matrix.T) / 2
@@ -154,6 +156,11 @@ class ExchangeParameter:
 
         .. math::
             J_{iso} = \dfrac{1}{3}Tr(\mathbf{J})
+
+        Returns
+        -------
+        iso : float
+            Value of isotropic exchange parameter.
         """
 
         return np.trace(self.symm_matrix) / 3
@@ -175,6 +182,11 @@ class ExchangeParameter:
             [[J, 0, 0],
              [0, J, 0],
              [0, 0, J]]
+
+        Returns
+        -------
+        iso_matrix : (3, 3) :numpy:`ndarray`
+            Isotropic part of the exchange matrix.
         """
 
         return self.iso * np.identity(3, dtype=float)
@@ -197,6 +209,11 @@ class ExchangeParameter:
             \cdot \mathbf{I}
 
         where :math:`\mathbf{I}` is a :math:`3\times3` identity matrix.
+
+        Returns
+        -------
+        aniso : (3, 3) :numpy:`ndarray`
+            Matrix of symmetric anisotropic exchange.
         """
 
         return self.symm_matrix - self.iso * np.identity(3, dtype=float)
@@ -221,6 +238,11 @@ class ExchangeParameter:
         .. code-block:: python
 
             [J_xx, J_yy, J_zz]
+
+        Returns
+        -------
+        aniso_diagonal : (3,) :numpy:`ndarray`
+            Diagonal part of the symmetric anisotropic exchange.
         """
 
         return np.diag(self.aniso)
@@ -235,6 +257,11 @@ class ExchangeParameter:
             [[J_xx, 0, 0],
              [0, J_yy, 0],
              [0, 0, J_zz]]
+
+        Returns
+        -------
+        aniso_diagonal_matrix : (3, 3) :numpy:`ndarray`
+            Diagonal part of the symmetric anisotropic exchange in matrix form.
         """
 
         return np.diag(np.diag(self.aniso))
@@ -247,6 +274,11 @@ class ExchangeParameter:
         .. code-block:: python
 
             [D_x, D_y, D_z]
+
+        Returns
+        -------
+        dmi : (3,) :numpy:`ndarray`
+            Dzyaroshinsky-Moria interaction vector.
         """
 
         return np.array(
@@ -283,6 +315,11 @@ class ExchangeParameter:
             [[0, D_z, -D_y],
              [-D_z, 0, D_x],
              [D_y, -D_x, 0]]
+
+        Returns
+        -------
+        dmi_matrix : (3, 3) :numpy:`ndarray`
+            Asymmetric part of the exchange matrix.
         """
 
         return self.asymm_matrix
@@ -291,6 +328,12 @@ class ExchangeParameter:
     def dmi_module(self) -> float:
         r"""
         Length of the DMI vector in the units of exchange interaction.
+
+        Returns
+        -------
+        dmi_module : float
+            Length of the DMI vector in the units of exchange interaction.
+
         """
 
         return np.linalg.norm(self.dmi)
@@ -302,6 +345,11 @@ class ExchangeParameter:
 
         .. math::
             \frac{\vert DMI\vert}{\vert J\vert}
+
+        Returns
+        -------
+        rel_dmi : float
+            Relative value of DMI.
         """
 
         return self.dmi_module / abs(self.iso)
