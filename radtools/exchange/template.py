@@ -7,7 +7,7 @@ Write a tutorial with docstring here.
 
 class ExchangeTemplate:
     r"""
-    Store a template for sorting the exchange from |TB2J|_ file.
+    Store a template for the :py:class:`.ExchangeHamiltonian`.
 
     In addition stores the technical details for plotting,
     orbital decomposition, etc.

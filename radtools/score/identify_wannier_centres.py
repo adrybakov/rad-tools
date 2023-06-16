@@ -9,7 +9,7 @@ from termcolor import cprint
 
 def manager(filename, span, output_path, output_name):
     r"""
-    ``rad-identify-wannier-centres.py`` script.
+    :ref:`rad-identify-wannier-centres` script.
 
     Full documentation on the behaviour is available in the
     :ref:`User Guide <rad-identify-wannier-centres>`.
@@ -17,18 +17,27 @@ def manager(filename, span, output_path, output_name):
     correspond to the arguments of the script.
     """
 
+    # Get the output path and the output name from the input filename
+    # if they are not specified
     head, tail = split(filename)
     if output_path is None:
         output_path = head
     if output_name is None:
         output_name = tail + "_identified"
+
+    # Set the default separation tolerance for the span
     separation_tolerance = 10e-8
 
     # Read atoms and centres
     atom_counter = {}
     with open(filename, "r") as file:
+        # Read the number of atoms and centres
         n = int(file.readline())
+
+        # Read the file stats
         file_stats = file.readline()
+
+        # Read the atoms and centres
         centres = []
         atoms = []
         for _ in range(0, n):
@@ -47,14 +56,17 @@ def manager(filename, span, output_path, output_name):
                     ]
                 )
 
-    # Identify centres localization
+    # Identify the centres by the closest atom
     for centre in centres:
         min_span = 10000
         name = "None"
+
+        # Find the closest atom
         for atom, a_coord in atoms:
             if np.linalg.norm((centre[1] - a_coord)) < min_span:
                 min_span = np.linalg.norm((centre[1] - a_coord))
                 name = atom
+
         if min_span - span > separation_tolerance:
             cprint(
                 f"Centre {centre} unidentified, " + "try to increase span",

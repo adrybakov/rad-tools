@@ -1,8 +1,8 @@
 .. _api_score:
 
-******************
-Script's scenarios
-******************
+****************
+Script interface
+****************
 
 .. automodule:: radtools.score
 

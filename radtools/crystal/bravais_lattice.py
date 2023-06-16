@@ -2,13 +2,13 @@ r"""
 Bravais lattices.
 """
 
-from math import cos, pi, sin, sqrt, tan, floor, log10
+from math import cos, floor, log10, pi, sin, sqrt, tan
 
 import numpy as np
 
-from radtools.crystal.lattice import Lattice
 from radtools.crystal.identify import lepage
-from radtools.routines import _toradians, param_from_cell, volume
+from radtools.crystal.lattice import Lattice
+from radtools.routines import param_from_cell, toradians, volume
 
 __all__ = [
     "CUB",
@@ -33,7 +33,9 @@ __all__ = [
 
 class NotEnoughParameters(Exception):
     r"""
-    Class for the errors with Bravais lattice creation.
+    Raised if one tries to create a Bravais lattice without enough parameters.
+
+    Gives a summary of required parameters for the Bravais lattice type.
 
     Parameters
     ----------
@@ -54,7 +56,7 @@ class NotEnoughParameters(Exception):
                 self.message += ", "
         self.message += "\nGot:\n"
         for i, param in enumerate(parameters):
-            self.message += f"    {param[0]}" + f" = {param[1]}"
+            self.message += f"    {param[0]} = {param[1]}"
             if i != len(parameters) - 1:
                 self.message += ", "
 
@@ -64,7 +66,8 @@ class NotEnoughParameters(Exception):
 
 class CellTypeMismatch(Exception):
     r"""
-    Class for the errors with Bravais lattice creation.
+    Raised when one tries to create a Bravais lattice with a cell (or set of parameters)
+    which does not match desired Bravais lattice type.
 
     Parameters
     ----------
@@ -124,7 +127,9 @@ class CellTypeMismatch(Exception):
         )
         if correct_lattice_type is None:
             correct_lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
-        self.message += f"Lattice type from parameters: '{correct_lattice_type}'"
+        self.message += (
+            f"Lattice type defined from parameters: '{correct_lattice_type}'"
+        )
 
     def __str__(self):
         return self.message
@@ -698,6 +703,11 @@ class BCT(Lattice):
         Two variations of the Lattice.
 
         :math:`\text{BCT}_1: c < a` and :math:`\text{BCT}_2: c > a`
+
+        Returns
+        -------
+        variation : str
+            Variation of the lattice. "BCT1" or "BCT2".
         """
         if self.conv_a > self.conv_c:
             return "BCT1"
@@ -1057,6 +1067,11 @@ class ORCF(Lattice):
         :math:`\text{ORCF}_1: \dfrac{1}{a^2} > \dfrac{1}{b^2} + \dfrac{1}{c^2}`,
         :math:`\text{ORCF}_2: \dfrac{1}{a^2} < \dfrac{1}{b^2} + \dfrac{1}{c^2}`,
         :math:`\text{ORCF}_3: \dfrac{1}{a^2} = \dfrac{1}{b^2} + \dfrac{1}{c^2}`,
+
+        Returns
+        -------
+        variation : str
+            Variation of the lattice. "ORCF1", "ORCF2" or "ORCF3".
         """
 
         expresion = 1 / self.conv_a**2 - 1 / self.conv_b**2 - 1 / self.conv_c**2
@@ -1596,7 +1611,7 @@ class RHL(Lattice):
 
         self.conv_cell = self.cell
         if self.variation == "RHL1":
-            eta = (1 + 4 * cos(alpha * _toradians)) / (2 + 4 * cos(alpha * _toradians))
+            eta = (1 + 4 * cos(alpha * toradians)) / (2 + 4 * cos(alpha * toradians))
             nu = 3 / 4 - eta / 2
 
             self.points = {
@@ -1621,7 +1636,7 @@ class RHL(Lattice):
                 ["L", "P"],
             ]
         elif self.variation == "RHL2":
-            eta = 1 / (2 * tan(alpha * _toradians / 2) ** 2)
+            eta = 1 / (2 * tan(alpha * toradians / 2) ** 2)
             nu = 3 / 4 - eta / 2
 
             self.points = {
@@ -1644,6 +1659,11 @@ class RHL(Lattice):
 
         :math:`\text{RHL}_1 \alpha < 90^{\circ}`,
         :math:`\text{RHL}_2 \alpha > 90^{\circ}`
+
+        Returns
+        -------
+        variation : str
+            Variation of the lattice. Either "RHL1" or "RHL2".
         """
         if self.conv_alpha < 90:
             return "RHL1"
@@ -1742,16 +1762,16 @@ class MCL(Lattice):
             eps = eps_rel * volume(cell) ** (1 / 3.0)
 
             # beta != 90
-            if cos(beta * _toradians) + eps < 0 or 0 < cos(beta * _toradians) - eps:
+            if cos(beta * toradians) + eps < 0 or 0 < cos(beta * toradians) - eps:
                 cell = [cell[1], cell[2], cell[0]]
                 a, b, c, alpha, beta, gamma = param_from_cell(cell)
             # gamma != 90
-            elif cos(gamma * _toradians) + eps < 0 or 0 < cos(gamma * _toradians) - eps:
+            elif cos(gamma * toradians) + eps < 0 or 0 < cos(gamma * toradians) - eps:
                 cell = [cell[2], cell[0], cell[1]]
                 a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
             # alpha > 90
-            if cos(alpha * _toradians) < -eps:
+            if cos(alpha * toradians) < -eps:
                 cell = [cell[0], cell[2], -cell[1]]
                 a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
@@ -1768,7 +1788,7 @@ class MCL(Lattice):
         else:
             eps = eps_rel * volume(a, b, c, alpha, 90, 90) ** (1 / 3.0)
             b, c = tuple(sorted([b, c]))
-            if cos(alpha * _toradians) < -eps:
+            if cos(alpha * toradians) < -eps:
                 alpha = alpha - 90
             self.conv_a = a
             self.conv_b = b
@@ -1777,7 +1797,7 @@ class MCL(Lattice):
             super().__init__(
                 [a, 0, 0],
                 [0, b, 0],
-                [0, c * cos(alpha * _toradians), c * sin(alpha * _toradians)],
+                [0, c * cos(alpha * toradians), c * sin(alpha * toradians)],
             )
             a, b, c, alpha, beta, gamma = param_from_cell(self.cell)
             lattice_type = lepage(a, b, c, alpha, beta, gamma, eps_rel=eps_rel)
@@ -1788,8 +1808,8 @@ class MCL(Lattice):
 
         self.conv_cell = self.cell
 
-        eta = (1 - b * cos(alpha * _toradians) / c) / (2 * sin(alpha * _toradians) ** 2)
-        nu = 1 / 2 - eta * c * cos(alpha * _toradians) / b
+        eta = (1 - b * cos(alpha * toradians) / c) / (2 * sin(alpha * toradians) ** 2)
+        nu = 1 / 2 - eta * c * cos(alpha * toradians) / b
 
         self.points = {
             "G": np.array([0, 0, 0]),
@@ -1928,7 +1948,7 @@ class MCLC(Lattice):
             a, b, c, alpha, beta, gamma = param_from_cell(conv_cell)
 
             # alpha > 90
-            if cos(alpha * _toradians) < -eps:
+            if cos(alpha * toradians) < -eps:
                 cell = [cell[0], cell[2], -cell[1]]
                 conv_cell = [[1.0, -1.0, 0.0], [1.0, 1.0, 0.0], [0.0, 0.0, 1.0]] @ cell
                 a, b, c, alpha, beta, gamma = param_from_cell(conv_cell)
@@ -1952,7 +1972,7 @@ class MCLC(Lattice):
         else:
             eps = eps_rel * volume(a, b, c, alpha, 90, 90) ** (1 / 3.0)
             b, c = tuple(sorted([b, c]))
-            if cos(alpha * _toradians) < -eps:
+            if cos(alpha * toradians) < -eps:
                 alpha = alpha - 90
             self.conv_a = a
             self.conv_b = b
@@ -1963,8 +1983,8 @@ class MCLC(Lattice):
                 [-a / 2, b / 2, 0],
                 [
                     0,
-                    c * cos(alpha * _toradians),
-                    c * sin(alpha * _toradians),
+                    c * cos(alpha * toradians),
+                    c * sin(alpha * toradians),
                 ],
             )
             self.conv_cell = np.array(
@@ -1973,8 +1993,8 @@ class MCLC(Lattice):
                     [0, self.conv_b, 0],
                     [
                         0,
-                        self.conv_c * cos(alpha * _toradians),
-                        self.conv_c * sin(alpha * _toradians),
+                        self.conv_c * cos(alpha * toradians),
+                        self.conv_c * sin(alpha * toradians),
                     ],
                 ]
             )
@@ -1988,43 +2008,42 @@ class MCLC(Lattice):
         # Parameters
         if self.variation in ["MCLC1", "MCLC2"]:
             zeta = (
-                2 - self.conv_b * cos(self.conv_alpha * _toradians) / self.conv_c
-            ) / (4 * sin(self.conv_alpha * _toradians) ** 2)
+                2 - self.conv_b * cos(self.conv_alpha * toradians) / self.conv_c
+            ) / (4 * sin(self.conv_alpha * toradians) ** 2)
             eta = (
                 1 / 2
                 + 2
                 * zeta
                 * self.conv_c
-                * cos(self.conv_alpha * _toradians)
+                * cos(self.conv_alpha * toradians)
                 / self.conv_b
             )
             psi = 3 / 4 - self.conv_a**2 / (
-                4 * self.conv_b**2 * sin(self.conv_alpha * _toradians) ** 2
+                4 * self.conv_b**2 * sin(self.conv_alpha * toradians) ** 2
             )
             phi = (
-                psi
-                + (3 / 4 - psi) * self.conv_b * cos(self.conv_alpha * _toradians) / c
+                psi + (3 / 4 - psi) * self.conv_b * cos(self.conv_alpha * toradians) / c
             )
         elif self.variation in ["MCLC3", "MCLC4"]:
             mu = (1 + self.conv_b**2 / self.conv_a**2) / 4
             delta = (
                 self.conv_b
                 * c
-                * cos(self.conv_alpha * _toradians)
+                * cos(self.conv_alpha * toradians)
                 / (2 * self.conv_a**2)
             )
             zeta = (
                 mu
                 - 1 / 4
-                + (1 - self.conv_b * cos(self.conv_alpha * _toradians) / self.conv_c)
-                / (4 * sin(self.conv_alpha * _toradians) ** 2)
+                + (1 - self.conv_b * cos(self.conv_alpha * toradians) / self.conv_c)
+                / (4 * sin(self.conv_alpha * toradians) ** 2)
             )
             eta = (
                 1 / 2
                 + 2
                 * zeta
                 * self.conv_c
-                * cos(self.conv_alpha * _toradians)
+                * cos(self.conv_alpha * toradians)
                 / self.conv_b
             )
             phi = 1 + zeta - 2 * mu
@@ -2032,15 +2051,15 @@ class MCLC(Lattice):
         elif self.variation == "MCLC5":
             zeta = (
                 self.conv_b**2 / self.conv_a**2
-                + (1 - self.conv_b * cos(self.conv_alpha * _toradians) / self.conv_c)
-                / sin(self.conv_alpha * _toradians) ** 2
+                + (1 - self.conv_b * cos(self.conv_alpha * toradians) / self.conv_c)
+                / sin(self.conv_alpha * toradians) ** 2
             ) / 4
             eta = (
                 1 / 2
                 + 2
                 * zeta
                 * self.conv_c
-                * cos(self.conv_alpha * _toradians)
+                * cos(self.conv_alpha * toradians)
                 / self.conv_b
             )
             mu = (
@@ -2048,7 +2067,7 @@ class MCLC(Lattice):
                 + self.conv_b**2 / (4 * self.conv_a**2)
                 - self.conv_b
                 * self.conv_c
-                * cos(self.conv_alpha * _toradians)
+                * cos(self.conv_alpha * toradians)
                 / (2 * self.conv_a**2)
             )
             nu = 2 * mu - zeta
@@ -2058,14 +2077,14 @@ class MCLC(Lattice):
                     4 * nu
                     - 1
                     - self.conv_b**2
-                    * sin(self.conv_alpha * _toradians) ** 2
+                    * sin(self.conv_alpha * toradians) ** 2
                     / self.conv_a**2
                 )
                 * self.conv_c
-                / (2 * self.conv_b * cos(self.conv_alpha * _toradians))
+                / (2 * self.conv_b * cos(self.conv_alpha * toradians))
             )
             delta = (
-                zeta * self.conv_c * cos(self.conv_alpha * _toradians) / self.conv_b
+                zeta * self.conv_c * cos(self.conv_alpha * toradians) / self.conv_b
                 + omega / 2
                 - 1 / 4
             )
@@ -2207,6 +2226,12 @@ class MCLC(Lattice):
         :math:`\text{MCLC}_3: k_{\gamma} < 90^{\circ}, \dfrac{b\cos(\alpha)}{c} + \dfrac{b^2\sin(\alpha)^2}{a^2} < 1`
         :math:`\text{MCLC}_4: k_{\gamma} < 90^{\circ}, \dfrac{b\cos(\alpha)}{c} + \dfrac{b^2\sin(\alpha)^2}{a^2} = 1`
         :math:`\text{MCLC}_5: k_{\gamma} < 90^{\circ}, \dfrac{b\cos(\alpha)}{c} + \dfrac{b^2\sin(\alpha)^2}{a^2} > 1`
+
+        Returns
+        -------
+        variation : str
+            Variation of the lattice.
+            Either "MCLC1", "MCLC2", "MCLC3", "MCLC4" or "MCLC5".
         """
 
         if np.abs(self.k_gamma - 90) <= 10 * np.finfo(float).eps:
@@ -2215,9 +2240,9 @@ class MCLC(Lattice):
             return "MCLC1"
         elif self.k_gamma < 90:
             expression = (
-                self.conv_b * cos(self.conv_alpha * _toradians) / self.conv_c
+                self.conv_b * cos(self.conv_alpha * toradians) / self.conv_c
                 + self.conv_b**2
-                * sin(self.conv_alpha * _toradians) ** 2
+                * sin(self.conv_alpha * toradians) ** 2
                 / self.conv_a**2
             )
             if np.abs(expression - 1) <= 10 * np.finfo(float).eps:
@@ -2383,6 +2408,12 @@ class TRI(Lattice):
         :math:`\text{TRI}_{2a} k_{\alpha} > 90^{\circ}, k_{\beta} > 90^{\circ}, k_{\gamma} = 90^{\circ}`
 
         :math:`\text{TRI}_{2b} k_{\alpha} < 90^{\circ}, k_{\beta} < 90^{\circ}, k_{\gamma} = 90^{\circ}`
+
+        Returns
+        -------
+        variation : str
+            Variation of the lattice.
+            Either "TRI1a", "TRI1b", "TRI2a" or "TRI2b".
         """
         if self.k_gamma == 90:
             if self.k_alpha > 90 and self.k_beta > 90:
@@ -2399,7 +2430,7 @@ class TRI(Lattice):
 
 def bravais_lattice_from_param(a, b, c, alpha, beta, gamma) -> Lattice:
     r"""
-    Return Bravais lattice.
+    Create Bravais lattice from lattice parameters.
 
     Orientation is default as described in [1]_.
 
@@ -2422,7 +2453,8 @@ def bravais_lattice_from_param(a, b, c, alpha, beta, gamma) -> Lattice:
 
     Returns
     -------
-    bravais_lattice
+    bravais_lattice : Lattice
+        Bravais lattice.
 
     References
     ----------
@@ -2484,7 +2516,7 @@ def bravais_lattice_from_param(a, b, c, alpha, beta, gamma) -> Lattice:
 
 def bravais_lattice_from_cell(cell) -> Lattice:
     r"""
-    Return Bravais lattice.
+    Create Bravais lattice from cell matrix.
 
     Orientation of the cell is respected, however the lattice vectors are renamed
     with respect to [1]_.
@@ -2505,7 +2537,8 @@ def bravais_lattice_from_cell(cell) -> Lattice:
 
     Returns
     -------
-    bravais_lattice
+    bravais_lattice : Lattice
+        Bravais lattice.
 
     References
     ----------
@@ -2561,7 +2594,7 @@ def lattice_example(
 
     Returns
     -------
-    lattice
+    lattice : Lattice or list   
         Child of the :py:class:`.Lattice` class is returned.
         If no math found a list with available examples is returned.
     """
@@ -2634,12 +2667,12 @@ def lattice_example(
     elif lattice in ["mclc1", "mclc"]:
         return MCLC(pi, 1.4 * pi, 1.7 * pi, 80)
     elif lattice == "mclc2":
-        return MCLC(1.4 * pi * sin(75 * _toradians), 1.4 * pi, 1.7 * pi, 75)
+        return MCLC(1.4 * pi * sin(75 * toradians), 1.4 * pi, 1.7 * pi, 75)
     elif lattice == "mclc3":
         b = pi
         x = 1.1
         alpha = 78
-        ralpha = alpha * _toradians
+        ralpha = alpha * toradians
         c = b * (x**2) / (x**2 - 1) * cos(ralpha) * 1.8
         a = x * b * sin(ralpha)
         return MCLC(a, b, c, alpha)
@@ -2647,7 +2680,7 @@ def lattice_example(
         b = pi
         x = 1.2
         alpha = 65
-        ralpha = alpha * _toradians
+        ralpha = alpha * toradians
         c = b * (x**2) / (x**2 - 1) * cos(ralpha)
         a = x * b * sin(ralpha)
         return MCLC(a, b, c, alpha)
@@ -2655,7 +2688,7 @@ def lattice_example(
         b = pi
         x = 1.4
         alpha = 53
-        ralpha = alpha * _toradians
+        ralpha = alpha * toradians
         c = b * (x**2) / (x**2 - 1) * cos(ralpha) * 0.9
         a = x * b * sin(ralpha)
         return MCLC(a, b, c, alpha)

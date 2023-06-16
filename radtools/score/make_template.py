@@ -12,7 +12,7 @@ from radtools.io.tb2j import read_tb2j_model
 
 
 def manager(
-    output_name="template",
+    output_name="template.txt",
     input_filename=None,
     R_vector=None,
     max_distance=None,
@@ -22,7 +22,7 @@ def manager(
     eps=1e-3,
 ):
     r"""
-    ``rad-make-template.py`` script.
+    :ref:`rad-make-template` script.
 
     Full documentation on the behaviour is available in the
     :ref:`User Guide <rad-make-template>`.
@@ -30,23 +30,24 @@ def manager(
     correspond to the arguments of the script.
     """
 
+    # Create the output directory if it does not exist
+    makedirs(split(output_name)[0], exist_ok=True)
+
+    # Get current date and time
+    cd = datetime.now()
+
     if distance is not None:
         min_distance = distance
         max_distance = distance
 
+    # Translate sequence of numbers to R vectors
     if R_vector is not None:
         R_vector = np.array(R_vector[: len(R_vector) // 3 * 3], dtype=int).reshape(
             (len(R_vector) // 3, 3)
         )
         R_vector = list(map(tuple, R_vector.tolist()))
 
-    try:
-        makedirs(split(output_name)[0])
-    except FileExistsError:
-        pass
-    except FileNotFoundError:
-        pass
-
+    # Template draft
     template = (
         "=" * 20
         + "\n"
@@ -67,8 +68,8 @@ def manager(
         + "=" * 20
         + "\n"
     )
-    cd = datetime.now()
-    with open(f"{output_name}.txt", "w") as file:
+    with open(output_name, "w") as file:
+        # Write the draft
         if input_filename is None:
             file.write(
                 f"Template is created "
@@ -77,6 +78,7 @@ def manager(
             )
 
             file.write(template)
+        # Create the template based on the input file
         else:
             file.write(
                 f"Template is created based on the file: {input_filename}\n"
@@ -84,10 +86,13 @@ def manager(
                 + f" at {cd.hour}:{cd.minute}:{cd.second} by rad-tools {version}\n\n"
             )
 
+            # Read and filter the model
             model = read_tb2j_model(input_filename, quiet=not verbose)
             model.filter(
                 min_distance=min_distance, max_distance=max_distance, R_vector=R_vector
             )
+
+            # Write header
             file.write(
                 "=" * 20
                 + "\n"
@@ -96,13 +101,17 @@ def manager(
                 + "-" * 20
                 + "\n"
             )
+
+            # Get bonds from the model
             data = []
             for atom1, atom2, R, J in model:
                 data.append(
                     (atom1, atom2, R, model.crystal.get_distance(atom1, atom2, R))
                 )
 
+            # Sort bonds by distance
             data.sort(key=lambda x: x[3])
+
             j = 1
             file.write(f"J{j} " + "$J_{" + f"{j}" + "}$\n")
             file.write(
@@ -110,11 +119,13 @@ def manager(
                 + f"{data[0][2][0]:3.0f} {data[0][2][1]:3.0f} {data[0][2][2]:3.0f}\n"
             )
             for i, (atom1, atom2, R, distance) in enumerate(data[1:]):
+                # If distance is the same as the previous one, write the bond
                 if abs(distance - data[i][3]) < eps:
                     file.write(
                         f"{atom1:4} {atom2:4} "
                         + f"{R[0]:3.0f} {R[1]:3.0f} {R[2]:3.0f}\n"
                     )
+                # If distance is different, start a new group and write the bond
                 else:
                     j += 1
                     file.write("-" * 20 + "\n")
@@ -126,7 +137,7 @@ def manager(
 
             file.write("=" * 20 + "\n")
     cprint(
-        f"Template draft is in " + f"{abspath(output_name)}.txt, grouped by distance",
+        f"Template draft is in " + f"{abspath(output_name)}, grouped by distance",
         "green",
     )
     cprint(f"Do not forget to correct the template draft to your needs!", "yellow")
@@ -142,7 +153,7 @@ def create_parser():
         "--output-name",
         metavar="filename",
         type=str,
-        default="template",
+        default="template.txt",
         help="Name for the template output file.",
     )
     parser.add_argument(

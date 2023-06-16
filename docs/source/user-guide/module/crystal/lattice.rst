@@ -1,21 +1,20 @@
 .. _rad-tools_lattice:
 
+.. currentmodule:: radtools
+
 *******
 Lattice
 *******
 
-.. automodule:: radtools.crystal.lattice
-
 3D lattice
 ==========
-.. currentmodule:: radtools
 
 General lattice is describe by the class :py:class:`.Lattice`.
 
 Each Bravais lattice class is a child of :py:class:`.Lattice`, 
 thus all it`s method and attribute are available.
 
-For the full reference see :ref:`lattice-api`.
+For the full reference see :ref:`api_lattice`.
 
 
 3D Bravais lattices
@@ -45,8 +44,6 @@ return parameters of the primitive lattice. Conventional lattice may be accessed
 the attributes ``conv_cell``, ``conv_a``, ``conv_b``, ``conv_c``, 
 ``conv_alpha``, ``conv_beta``, ``conv_gamma`` .
 
-
-.. currentmodule:: radtools
 
 Creation
 --------

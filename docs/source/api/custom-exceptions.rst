@@ -31,4 +31,3 @@ Diagonalization Exceptions
     :toctree: generated/
 
     magnons.diagonalization.ColpaFailed
-

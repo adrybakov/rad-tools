@@ -2,30 +2,32 @@
 
 .. currentmodule:: {{ module }}
 
+.. role:: custom-header
+
 .. autoclass:: {{ objname }}
 
-   {% block attributes %}
-   {% if attributes %}
-   .. rubric:: {{ _('Properties') }}
+   {% block methods %}
+   {% if methods %}
+   :custom-header:`{{ _('Methods:') }}`
 
    .. autosummary::
       :toctree:
-   {% for item in attributes %}
-      {%- if not item.startswith('_') %}
+   {% for item in methods %}
+      {%- if not item.startswith('_') or item in ['__call__'] %}
       ~{{ name }}.{{ item }}
       {%- endif -%}
    {%- endfor %}
    {% endif %}
    {% endblock %}
 
-   {% block methods %}
-   {% if methods %}
-   .. rubric:: {{ _('Methods') }}
+   {% block attributes %}
+   {% if attributes %}
+   :custom-header:`{{ _('Properties:') }}`
 
    .. autosummary::
       :toctree:
-   {% for item in methods %}
-      {%- if not item.startswith('_') or item in ['__call__'] %}
+   {% for item in attributes %}
+      {%- if not item.startswith('_') %}
       ~{{ name }}.{{ item }}
       {%- endif -%}
    {%- endfor %}

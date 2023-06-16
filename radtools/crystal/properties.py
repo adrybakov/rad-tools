@@ -1,7 +1,7 @@
-import numpy as np
-
-from tqdm import tqdm
 from math import pi
+
+import numpy as np
+from tqdm import tqdm
 
 __all__ = ["dipole_dipole_energy", "dipole_dipole_interaction"]
 
@@ -22,7 +22,7 @@ def dipole_dipole_energy(magnetic_centres, progress_bar=True, normalize=True):
     ----------
     magnetic_centres: (N, 2, 3) |array_like|_
         List of N magnetic centres.
-        First element along second axis is magnetic moment (in Bohr magnetons),
+        First element along second axis is magnetic moment (in Bohr magnetons).
         Second element along second axis if position (in Angstrom).
     progress_bar : bool, default True
         Whether to show progressbar.
@@ -76,7 +76,7 @@ def dipole_dipole_interaction(
     Computes magnetic dipole-dipole interaction.
 
     This function computes dipole-dipole interaction between two sets of magnetic
-    centres (:math:`ms_1` and :math:`ms_2`):
+    centres (:math:`mc_1` and :math:`mc_2`):
 
     .. math::
 
@@ -86,11 +86,11 @@ def dipole_dipole_interaction(
     ----------
     magnetic_centres1: (N, 2, 3) |array_like|_
         List of N magnetic centres of the first set.
-        First element along second axis is magnetic moment (in Bohr magnetons),
+        First element along second axis is magnetic moment (in Bohr magnetons).
         Second element along second axis if position (in Angstrom).
     magnetic_centres2: (M, 2, 3) |array_like|_
         List of M magnetic centres of the second set.
-        First element along second axis is magnetic moment (in Bohr magnetons),
+        First element along second axis is magnetic moment (in Bohr magnetons).
         Second element along second axis if position (in Angstrom).
         Python cycle is running along this set.
     progress_bar : bool, default True

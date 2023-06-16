@@ -13,27 +13,25 @@ from radtools.crystal.atom import Atom
 from radtools.crystal.crystal import Crystal
 from radtools.exchange.parameter import ExchangeParameter
 from radtools.exchange.template import ExchangeTemplate
-from radtools.routines import _toradians
+from radtools.routines import toradians, print_2d_array
 
 
 class NotationError(ValueError):
     r"""
-    Class for the errors with the exchange Hamiltonian notation.
+    Raised when the notation (or individual property) is not defined.
+
+    Gives a summary of the notation (or individual property) and how to set it.
 
     Parameters
     ----------
     name : str
         Name of the corresponding attribute.
-    hr_name : str, optional
-        Human-readable name of the property.
 
     """
 
-    def __init__(self, name, hr_name=None):
-        if hr_name is None:
-            hr_name = name
+    def __init__(self, name):
         self.message = (
-            f"\n\nNotation`s interpretation is not set for the Hamiltonian ({hr_name}).\n"
+            f"\n\nNotation`s interpretation is not set for the property {name}.\n"
             + f"Set the notation first:\n"
             + f"    ExchangeHamiltonian.{name} = True  "
             + f"or  ExchangeHamiltonian.{name} = False\n\n"
@@ -74,16 +72,7 @@ class ExchangeHamiltonian:
     Attributes
     ----------
     crystal : :py:class:`.Crystal`
-    magnetic_atoms : list
-    cell_list : list
-    number_spins_in_unit_cell : int
-    notation : str
-    space_dimensions : tuple of floats
-    double_counting : bool
-    spin_normalized : bool
-    factor_one_half : bool
-    factor_two : bool
-    minus_sign : bool
+        Crystal on which the ExchangeHamiltonian is build.
     """
 
     def __init__(self, crystal: Crystal = None, notation=None) -> None:
@@ -290,38 +279,36 @@ class ExchangeHamiltonian:
         minus_sign
         set_interpretation
         """
-        if self._double_counting is None:
-            raise NotationError("double_counting", "double counting")
-        if self._spin_normalized is None:
-            raise NotationError("spin_normalized", "spin normalized")
-        if self._factor_one_half is None:
-            raise NotationError("factor_one_half", "factor 1/2")
-        if self._factor_two is None:
-            raise NotationError("factor_two", "factor 2")
-        if self._minus_sign is None:
-            raise NotationError("minus_sign", "minus sign")
+
         text_result = "H = "
-        if self._minus_sign:
+        if self.minus_sign:
             text_result += "-"
-        if self._factor_one_half and not self._factor_two:
+
+        if self.factor_one_half and not self._factor_two:
             text_result += "1/2 "
         if self._factor_two and not self.factor_one_half:
             text_result += "2 "
+
         text_result += "sum_{"
-        if self._double_counting:
+        if self.double_counting:
             text_result += "i,j} "
         else:
             text_result += "i>=j} "
+
         text_result += "S_i J_ij S_j\n"
-        if self._double_counting:
+
+        if self.double_counting:
             text_result += "Double counting is present.\n"
         else:
             text_result += "No double counting.\n"
-        if self._spin_normalized:
+
+        if self.spin_normalized:
             text_result += "Spin vectors are normalized to 1."
         else:
             text_result += "Spin vectors are not normalized."
+
         print(text_result)
+
         return (
             self.double_counting,
             self.spin_normalized,
@@ -406,6 +393,11 @@ class ExchangeHamiltonian:
         Access this attribute to check the current notation of the Hamiltonian,
         set this attribute to change the notation of the Hamiltonian.
 
+        Returns
+        -------
+        double_counting : bool
+            ``True`` if double counting is present, ``False`` otherwise.
+
         Raises
         ------
         :py:exc:`.NotationError`
@@ -418,7 +410,7 @@ class ExchangeHamiltonian:
         """
 
         if self._double_counting is None:
-            raise NotationError("double_counting", "double counting")
+            raise NotationError("double_counting")
         return self._double_counting
 
     def _ensure_double_counting(self):
@@ -493,6 +485,11 @@ class ExchangeHamiltonian:
         Access this attribute to check the current notation of the Hamiltonian,
         set this attribute to change the notation of the Hamiltonian.
 
+        Returns
+        -------
+        spin_normalized : bool
+            ``True`` if spin is normalized, ``False`` otherwise.
+
         Raises
         ------
         :py:exc:`.NotationError`
@@ -505,7 +502,7 @@ class ExchangeHamiltonian:
         """
 
         if self._spin_normalized is None:
-            raise NotationError("spin_normalized", "spin normalized")
+            raise NotationError("spin_normalized")
         return self._spin_normalized
 
     @spin_normalized.setter
@@ -527,6 +524,11 @@ class ExchangeHamiltonian:
         Access this attribute to check the current notation of the Hamiltonian,
         set this attribute to change the notation of the Hamiltonian.
 
+        Returns
+        -------
+        factor_one_half : bool
+            ``True`` if factor 1/2 is present, ``False`` otherwise.
+
         Raises
         ------
         :py:exc:`.NotationError`
@@ -539,7 +541,7 @@ class ExchangeHamiltonian:
         """
 
         if self._factor_one_half is None:
-            raise NotationError("factor_one_half", "factor 1/2")
+            raise NotationError("factor_one_half")
         return self._factor_one_half
 
     @factor_one_half.setter
@@ -566,6 +568,11 @@ class ExchangeHamiltonian:
         Access this attribute to check the current notation of the Hamiltonian,
         set this attribute to change the notation of the Hamiltonian.
 
+        Returns
+        -------
+        factor_two : bool
+            ``True`` if factor 2 is present, ``False`` otherwise.
+
         Raises
         ------
         :py:exc:`.NotationError`
@@ -578,7 +585,7 @@ class ExchangeHamiltonian:
         """
 
         if self._factor_two is None:
-            raise NotationError("factor_two", "factor 2")
+            raise NotationError("factor_two")
         return self._factor_two
 
     @factor_two.setter
@@ -605,6 +612,11 @@ class ExchangeHamiltonian:
         Access this attribute to check the current notation of the Hamiltonian,
         set this attribute to change the notation of the Hamiltonian.
 
+        Returns
+        -------
+        minus_sign : bool
+            ``True`` if minus sign is present, ``False`` otherwise.
+
         Raises
         ------
         :py:exc:`.NotationError`
@@ -617,7 +629,7 @@ class ExchangeHamiltonian:
         """
 
         if self._minus_sign is None:
-            raise NotationError("minus_sign", "minus sign")
+            raise NotationError("minus_sign")
         return self._minus_sign
 
     @minus_sign.setter
@@ -666,6 +678,11 @@ class ExchangeHamiltonian:
 
         Crystal, which define the structure.
         See :py:class:`.Crystal`.
+
+        Returns
+        -------
+        crystal : :py:class:`.Crystal`
+            Crystal of the Hamiltonian.
         """
         return self._crystal
 
@@ -704,6 +721,11 @@ class ExchangeHamiltonian:
         Atoms with at least bond starting or finishing in it.
 
         Atoms are ordered with respect to the :py:attr:`.Atom.index`.
+
+        Returns
+        -------
+        magnetic_atoms : list of :py:class:`.Atom`
+            List of magnetic atoms.
         """
         result = set()
         for atom1, atom2, R, J in self:
@@ -716,6 +738,11 @@ class ExchangeHamiltonian:
     def number_spins_in_unit_cell(self):
         r"""
         Number of spins (or magnetic atoms) in the unit cell.
+
+        Returns
+        -------
+        number_spins_in_unit_cell : int
+            Number of spins (or magnetic atoms) in the unit cell.
         """
 
         return len(self.magnetic_atoms)
@@ -1180,28 +1207,26 @@ class ExchangeHamiltonian:
                     if anisotropic:
                         summary += (
                             f"    Anisotropic:\n"
-                            + f"        {J.aniso[0][0]:{decimals+3}.{decimals}f}  "
-                            + f"{J.aniso[0][1]:{decimals+3}.{decimals}f}  "
-                            + f"{J.aniso[0][2]:{decimals+3}.{decimals}f}\n"
-                            + f"        {J.aniso[1][0]:{decimals+3}.{decimals}f}  "
-                            + f"{J.aniso[1][1]:{decimals+3}.{decimals}f}  "
-                            + f"{J.aniso[1][2]:{decimals+3}.{decimals}f}\n"
-                            + f"        {J.aniso[2][0]:{decimals+3}.{decimals}f}  "
-                            + f"{J.aniso[2][1]:{decimals+3}.{decimals}f}  "
-                            + f"{J.aniso[2][2]:{decimals+3}.{decimals}f}\n"
+                            + print_2d_array(
+                                J.aniso,
+                                fmt=f"{decimals+3}.{decimals}f",
+                                borders=False,
+                                shift=7,
+                                print_result=False,
+                            )
+                            + "\n"
                         )
                     if matrix:
                         summary += (
                             f"    Matrix:\n"
-                            + f"        {J.matrix[0][0]:{decimals+3}.{decimals}f}  "
-                            + f"{J.matrix[0][1]:{decimals+3}.{decimals}f}  "
-                            + f"{J.matrix[0][2]:{decimals+3}.{decimals}f}\n"
-                            + f"        {J.matrix[1][0]:{decimals+3}.{decimals}f}  "
-                            + f"{J.matrix[1][1]:{decimals+3}.{decimals}f}  "
-                            + f"{J.matrix[1][2]:{decimals+3}.{decimals}f}\n"
-                            + f"        {J.matrix[2][0]:{decimals+3}.{decimals}f}  "
-                            + f"{J.matrix[2][1]:{decimals+3}.{decimals}f}  "
-                            + f"{J.matrix[2][2]:{decimals+3}.{decimals}f}\n"
+                            + print_2d_array(
+                                J.matrix,
+                                fmt=f"{decimals+3}.{decimals}f",
+                                borders=False,
+                                shift=7,
+                                print_result=False,
+                            )
+                            + "\n"
                         )
                     if dmi:
                         summary += (
@@ -1221,28 +1246,26 @@ class ExchangeHamiltonian:
                         if anisotropic:
                             summary += (
                                 f"    Anisotropic:\n"
-                                + f"        {J.aniso[0][0]:{decimals+3}.{decimals}f}  "
-                                + f"{J.aniso[0][1]:{decimals+3}.{decimals}f}  "
-                                + f"{J.aniso[0][2]:{decimals+3}.{decimals}f}\n"
-                                + f"        {J.aniso[1][0]:{decimals+3}.{decimals}f}  "
-                                + f"{J.aniso[1][1]:{decimals+3}.{decimals}f}  "
-                                + f"{J.aniso[1][2]:{decimals+3}.{decimals}f}\n"
-                                + f"        {J.aniso[2][0]:{decimals+3}.{decimals}f}  "
-                                + f"{J.aniso[2][1]:{decimals+3}.{decimals}f}  "
-                                + f"{J.aniso[2][2]:{decimals+3}.{decimals}f}\n"
+                                + print_2d_array(
+                                    J.aniso,
+                                    fmt=f"{decimals+3}.{decimals}f",
+                                    borders=False,
+                                    shift=7,
+                                    print_result=False,
+                                )
+                                + "\n"
                             )
                         if matrix:
                             summary += (
                                 f"    Matrix:\n"
-                                + f"        {J.matrix[0][0]:{decimals+3}.{decimals}f}  "
-                                + f"{J.matrix[0][1]:{decimals+3}.{decimals}f}  "
-                                + f"{J.matrix[0][2]:{decimals+3}.{decimals}f}\n"
-                                + f"        {J.matrix[1][0]:{decimals+3}.{decimals}f}  "
-                                + f"{J.matrix[1][1]:{decimals+3}.{decimals}f}  "
-                                + f"{J.matrix[1][2]:{decimals+3}.{decimals}f}\n"
-                                + f"        {J.matrix[2][0]:{decimals+3}.{decimals}f}  "
-                                + f"{J.matrix[2][1]:{decimals+3}.{decimals}f}  "
-                                + f"{J.matrix[2][2]:{decimals+3}.{decimals}f}\n"
+                                + print_2d_array(
+                                    J.matrix,
+                                    fmt=f"{decimals+3}.{decimals}f",
+                                    borders=False,
+                                    shift=7,
+                                    print_result=False,
+                                )
+                                + "\n"
                             )
                         if dmi:
                             summary += (
@@ -1266,14 +1289,10 @@ class ExchangeHamiltonian:
         r"""
         Compute energy of the Hamiltonian assuming ferromagnetic state.
 
-        With Hamiltonian of the form:
-
-        .. math::
-
-            \hat{H} = - \sum_{i,j} \vec{S}_i J_{ij} \vec{S}_j
-
-        where spin vectors are normalized to 1 and :math:`J_{ij}` is the
-        exchange matrix.
+        Notes
+        -----
+        Notation of the Hamiltonian nas to be known.
+        See :py:meth:`.set_interpretation` and :py:attr:`.notation`.
 
         Parameters
         ----------
@@ -1292,8 +1311,8 @@ class ExchangeHamiltonian:
             by ``theta`` and ``phi``. In the units of J values.
         """
 
-        theta = np.array(theta) * _toradians
-        phi = np.array(phi) * _toradians
+        theta = np.array(theta) * toradians
+        phi = np.array(phi) * toradians
         if theta.shape == ():
             theta = np.array([theta])
         if phi.shape == ():

@@ -179,7 +179,7 @@ custom_links = {
     "latex": ("LaTeX", "https://www.latex-project.org/"),
     "black": ("black", "https://black.readthedocs.io"),
     "array_like": (
-        "array_like",
+        "array-like",
         "https://numpy.org/doc/stable/glossary.html#term-array_like",
     ),
     "termcolor": ("termcolor", "https://github.com/termcolor/termcolor"),

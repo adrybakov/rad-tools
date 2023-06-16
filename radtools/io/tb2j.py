@@ -18,17 +18,24 @@ def read_tb2j_model(filename, quiet=True) -> ExchangeHamiltonian:
     In |TB2J|_ exchange Hamiltonian is define in a following notation:
 
     .. math::
-        H = -\sum_{i,j} \hat{\boldsymbol{S}}_i \cdot \boldsymbol{J}){i,j} \hat{\boldsymbol{S}}_j
+        H = -\sum_{i,j} \hat{\boldsymbol{S}}_i \cdot \boldsymbol{J}_{i,j} \hat{\boldsymbol{S}}_j
 
     where spin vectors :math:`\boldsymbol{S}_i` are normalized to 1
     and double counting is present (both :math:`ij` and :math:`ji` are in the sum).
     :py:class:`.ExchangeHamiltonian` can store exchange values in any notation.
-    One could check the notation by calling the attribute :py:func:`.ExchangeHamiltonian.notation`.
+    One could check the notation by calling the attribute :py:attr:`.ExchangeHamiltonian.notation`.
+
     This function reads and stores exchange parameters in the notation of Hamiltonian
-    mentioned above, since for the conversion to the non-normalized spins one need to
-    know the values of spin for each atom and those data are not present in the |TB2J|_
-    file. One could have the data of spins for each atom, but this silent conversion may
-    be confusing for the user, thus it is avoided here.
+    mentioned above.
+
+    Distance between the atoms are not read from the atoms,
+    but rather computed from the unit cell and atom positions
+    (see :py:meth:`.Crystal.get_distance`). If the distance read from the file
+    is different from the computed one and ``quiet=False``, the warning is printed.
+    It is usual for the computed and read distances to differ in the last digits, since
+    the unit cell is provided with the same precision as the distance in
+    |TB2J|_ output file.
+
 
     Parameters
     ----------
@@ -40,7 +47,7 @@ def read_tb2j_model(filename, quiet=True) -> ExchangeHamiltonian:
     Returns
     -------
     model : :py:class:`.ExchangeHamiltonian`
-        Exchange Hamiltonian build from |TB2J|_ file.
+        Exchange Hamiltonian build from |TB2J|_ file. With notation set to "TB2J".
     """
 
     major_sep = "=" * 90

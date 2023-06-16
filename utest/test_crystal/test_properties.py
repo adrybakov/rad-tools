@@ -1,8 +1,9 @@
-import pytest
-from radtools.crystal.crystal import Crystal
-from radtools.crystal.atom import Atom
-from radtools.crystal.properties import dipole_dipole_energy, CONSTANT
 import numpy as np
+import pytest
+
+from radtools.crystal.atom import Atom
+from radtools.crystal.crystal import Crystal
+from radtools.crystal.properties import CONSTANT, dipole_dipole_energy
 
 
 def test_custom():
