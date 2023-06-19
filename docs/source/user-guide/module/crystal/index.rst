@@ -174,7 +174,7 @@ There is a number of properties involving atom of the crystal you have access to
     >>> atom2.index
     2
 
-* :py:attr:`.Crystal.get_coordinates` - get coordinates of the atom by name or by fullname.
+* :py:attr:`.Crystal.get_atom_coordinates` - get coordinates of the atom by name or by fullname.
 
 .. doctest::
 
