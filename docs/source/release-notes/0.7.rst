@@ -68,18 +68,18 @@ Add attribute access to the atoms through atom names to the :py:class:`.Crystal`
     >>> c = rad.Crystal()
     >>> c.add_atom(rad.Atom("Cr", index=1))
     >>> c.Cr.fullname
-    'Cr_1'
-    >>> c.Cr_1.fullname
-    'Cr_1'
+    'Cr__1'
+    >>> c.Cr__1.fullname
+    'Cr__1'
     >>> c.add_atom(rad.Atom("Cr", index=2))
-    >>> c.Cr_1.fullname
-    'Cr_1'
-    >>> c.Cr_2.fullname
-    'Cr_2'
-    >>> # c.Cr
-    >>> # It will raise Attribute error, since after addition 
-    >>> # of the second atom with the same name 
-    >>> # information about the index is needed to identify the atom object.
+    >>> c.Cr__1.fullname
+    'Cr__1'
+    >>> c.Cr__2.fullname
+    'Cr__2'
+    >>> c.Cr
+    Traceback (most recent call last):
+    ...
+    AttributeError: 'Lattice' object has no attribute 'Cr'
 
 0.7.2
 -----

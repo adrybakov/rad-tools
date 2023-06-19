@@ -1348,6 +1348,8 @@ class ExchangeHamiltonian:
                 energy += factor * J.matrix * atom1.spin * atom2.spin
 
         energy = np.einsum("ni,ij,jn->n", spin_direction.T, energy, spin_direction)
+        if len(energy) == 1:
+            energy = energy[0]
         return energy
 
     # OLD METHODS AND ATTRIBUTES, KEPT FOR BACKWARD COMPATIBILITY

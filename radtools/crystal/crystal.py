@@ -132,11 +132,7 @@ class Crystal:
         if name in ["__setstate__"]:
             raise AttributeError(name)
         try:
-            index = None
-            if "_" in name:
-                index = int(name.split("_")[1])
-                name = name.split("_")[0]
-            atom = self.get_atom(name=name, index=index)
+            atom = self.get_atom(name=name)
             return atom
         except ValueError:
             return getattr(self.lattice, name)
@@ -228,8 +224,9 @@ class Crystal:
         Parameters
         ----------
         name : str
-            Name of the atom. In general not unique.
-        index : any, optional
+            Name of the atom. In general not unique. If ``name`` contains "__", then it is split
+            into ``name`` and ``index``.
+        index : int, optional
             Index of the atom.
         return_all : bool, default False
             Whether to return the list of non-unique matches or raise an ``ValueError``.
@@ -248,6 +245,9 @@ class Crystal:
         """
 
         atoms = []
+        if "__" in name and index is None:
+            name, index = name.split("__")
+            index = int(index)
 
         for atom in self:
             if atom.name == name:

@@ -351,7 +351,10 @@ class Atom:
     @property
     def fullname(self):
         r"""
-        Fullname (name_index) of an atom.
+        Fullname (name__index) of an atom.
+
+        Double "_" is used intentionally, so the user can use "_" for
+        the name of the atom.
 
         If index is not defined, then only name is returned.
 
@@ -366,6 +369,6 @@ class Atom:
             If index is not defined for the atom.
         """
         try:
-            return f"{self.name}_{self.index}"
+            return f"{self.name}__{self.index}"
         except ValueError:
             return self.name
