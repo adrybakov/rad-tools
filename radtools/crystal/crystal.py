@@ -116,16 +116,18 @@ class Crystal:
 
     def __contains__(self, atom: Union[Atom, str]):
         if isinstance(atom, str):
-            atom = self.get_atom(atom, return_all=True)
-            if isinstance(atom, list):
-                atom = atom[0]
+            try:
+                atom = self.get_atom(atom, return_all=True)
+                return True
+            except ValueError:
+                return False
         return atom in self.atoms
 
     def __len__(self):
         return self.atoms.__len__()
 
-    def __getitem__(self, index) -> Atom:
-        return self.atoms[index]
+    def __getitem__(self, name) -> Atom:
+        return self.get_atom(name, return_all=True)
 
     def __getattr__(self, name):
         # Fix copy/deepcopy RecursionError
@@ -135,6 +137,8 @@ class Crystal:
             atom = self.get_atom(name=name)
             return atom
         except ValueError:
+            if "__" in name:
+                raise AttributeError(f"'Crystal' object has no attribute '{name}'")
             return getattr(self.lattice, name)
 
     @property
@@ -159,7 +163,7 @@ class Crystal:
             )
         self._lattice = new_lattice
 
-    def add_atom(self, new_atom: Atom):
+    def add_atom(self, new_atom: Atom, relative=False):
         r"""
         Add atom to the crystall.
 
@@ -172,6 +176,8 @@ class Crystal:
         ----------
         new_atoms : :py:class:`.Atom`
             New atom.
+        relative : bool, default False
+            Whether ``new_atom`` position is in relative coordinates.
 
         Raises
         ------
@@ -180,12 +186,17 @@ class Crystal:
         ValueError
             If the atom is already present in the crystal.
         """
+
         if not isinstance(new_atom, Atom):
             raise TypeError("New atom is not an Atom. " + f"Received {type(new_atom)}.")
         try:
             i = new_atom.index
         except ValueError:
             new_atom.index = len(self.atoms) + 1
+
+        if relative:
+            new_atom.position = new_atom.position @ self.cell
+
         if new_atom not in self.atoms:
             self.atoms.append(new_atom)
         else:
@@ -256,6 +267,8 @@ class Crystal:
         if len(atoms) == 0:
             raise ValueError(f"No match found for name = {name}, index = {index}")
         elif len(atoms) == 1:
+            if return_all:
+                return atoms
             return atoms[0]
         elif not return_all:
             raise ValueError(
@@ -263,7 +276,7 @@ class Crystal:
             )
         return atoms
 
-    def get_atom_coordinates(self, atom: Union[Atom, str], R=(0, 0, 0)):
+    def get_atom_coordinates(self, atom: Union[Atom, str], R=(0, 0, 0), relative=False):
         r"""
         Getter for the atom coordinates.
 
@@ -274,6 +287,8 @@ class Crystal:
             If name, then it has to be unique among atoms of the crystal.
         R : (3,) |array_like|_, default (0, 0, 0)
             Radius vector of the unit cell for atom2 (i,j,k).
+        relative : bool, default False
+            Whether to return relative coordinates.
 
         Returns
         -------
@@ -287,9 +302,18 @@ class Crystal:
         if atom not in self.atoms:
             raise ValueError(f"There is no {atom} in the crystal.")
 
+        if relative:
+            return np.array(R + absolute_to_relative(self.cell, atom.position))
+
         return np.array(R) @ self.lattice.cell + atom.position
 
-    def get_vector(self, atom1: Union[Atom, str], atom2: Union[Atom, str], R=(0, 0, 0)):
+    def get_vector(
+        self,
+        atom1: Union[Atom, str],
+        atom2: Union[Atom, str],
+        R=(0, 0, 0),
+        relative=False,
+    ):
         r"""
         Getter for vector between the atom1 and atom2.
 
@@ -303,6 +327,8 @@ class Crystal:
             If name, then it has to be unique among atoms of the crystal.
         R : (3,) |array_like|_, default (0, 0, 0)
             Radius vector of the unit cell for atom2 (i,j,k).
+        relative : bool, default False
+            Whether to return the vector relative coordinates.
 
         Returns
         -------
@@ -310,8 +336,8 @@ class Crystal:
             Vector from atom1 in (0,0,0) cell to atom2 in R cell.
         """
 
-        coord1 = self.get_atom_coordinates(atom1)
-        coord2 = self.get_atom_coordinates(atom2, R)
+        coord1 = self.get_atom_coordinates(atom1, relative=relative)
+        coord2 = self.get_atom_coordinates(atom2, R, relative=relative)
 
         return coord2 - coord1
 
@@ -406,6 +432,9 @@ class Crystal:
                 magnetic_atoms.append(atom)
             except ValueError:
                 pass
+
+        if len(magnetic_atoms) == 0:
+            raise ValueError("There are no magnetic atoms in the crystal.")
 
         magnetic_centres = np.zeros((n_t * len(magnetic_atoms), 2, 3), dtype=float)
         for a_i, atom in enumerate(magnetic_atoms):

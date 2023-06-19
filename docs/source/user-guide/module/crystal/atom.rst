@@ -83,15 +83,15 @@ Properties
 Atom object has a few physical properties. Some of them have default values
 and some of them has to be set manually. The properties which have to be set:
 
-    * :py:attr:`.charge`
-    * :py:attr:`.magmom`
-    * :py:attr:`.spin`
-    * :py:attr:`.spin_vector`
+* :py:attr:`.charge`
+* :py:attr:`.magmom`
+* :py:attr:`.spin`
+* :py:attr:`.spin_vector`
 
 Properties which have default values:
 
-    * :py:attr:`.position` : [0, 0, 0]
-    * :py:attr:`.spin_direction` : [0, 0, 1]
+* :py:attr:`.position` : [0, 0, 0]
+* :py:attr:`.spin_direction` : [0, 0, 1]
 
 All properties can be set by assigning a value to the corresponding attribute:
 
