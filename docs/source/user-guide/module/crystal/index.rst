@@ -12,7 +12,8 @@ For the full reference see :ref:`api_crystal-module`
 
 Crystal is a base class, which store the structure. 
 It is defined as a combination of the the :py:class:`.Lattice` and the set of  
-:py:class:`.Atom`\ s.
+:py:class:`.Atom`\ s. For the detailed description of the :py:class:`.Lattice` and
+:py:class:`.Atom` see:
 
 .. toctree::
     :maxdepth: 2

@@ -675,6 +675,11 @@ class Lattice:
     def identify(self):
         r"""
         Identify the Bravais lattice type.
+
+        Returns
+        -------
+        bravais_lattice_type : str
+            Bravais lattice type.
         """
         return lepage(self.a, self.b, self.c, self.alpha, self.beta, self.gamma)
 

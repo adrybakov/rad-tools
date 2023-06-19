@@ -11,6 +11,9 @@ providing extensive examples of usage.
 .. toctree::
     :maxdepth: 2
     
+    exchange/index
     crystal/index
     routines
     io/index
+
+    

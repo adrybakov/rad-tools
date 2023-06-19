@@ -8,19 +8,17 @@ Lattice
 
 For the full reference see :ref:`api_lattice`
 
-3D lattice
-==========
+Any lattice
+===========
 
 General lattice is describe by the class :py:class:`.Lattice`.
 
+
+Bravais lattices
+================
+
 Each Bravais lattice class is a child of :py:class:`.Lattice`, 
 thus all it`s method and attribute are available.
-
-For the full reference see :ref:`api_lattice`.
-
-
-3D Bravais lattices
-===================
 
 Bravais lattice notation follows Setyawan and Curtarolo [1]_.
 

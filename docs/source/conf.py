@@ -204,6 +204,10 @@ custom_links = {
         "matplotlib colors",
         "https://matplotlib.org/stable/tutorials/colors/colors.html",
     ),
+    "array_interface": (
+        "Array interface",
+        "https://numpy.org/doc/stable/reference/arrays.interface.html#object.__array_interface__",
+    ),
 }
 
 
