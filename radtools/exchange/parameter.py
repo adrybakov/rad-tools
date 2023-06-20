@@ -99,6 +99,13 @@ class ExchangeParameter:
         -------
         matrix : (3, 3) :numpy:`ndarray`
             Full exchange matrix.
+
+        See Also
+        --------
+        symm_matrix
+            Symmetric part.
+        asymm_matrix
+            Asymmetric part.
         """
 
         return self._matrix
@@ -126,6 +133,13 @@ class ExchangeParameter:
         -------
         symm_matrix : (3, 3) :numpy:`ndarray`
             Symmetric part of exchange matrix.
+
+        See Also
+        --------
+        asymm_matrix
+            Asymmetric part.
+        matrix
+            Full matrix.
         """
 
         return (self.matrix + self.matrix.T) / 2
@@ -143,6 +157,13 @@ class ExchangeParameter:
         -------
         asymm_matrix : (3, 3) :numpy:`ndarray`
             Asymmetric part of exchange matrix.
+
+        See Also
+        --------
+        symm_matrix
+            Symmetric part.
+        matrix
+            Full matrix.
         """
 
         return (self.matrix - self.matrix.T) / 2
@@ -161,6 +182,11 @@ class ExchangeParameter:
         -------
         iso : float
             Value of isotropic exchange parameter.
+
+        See Also
+        --------
+        iso_matrix
+            Isotropic exchange in a matrix form.
         """
 
         return np.trace(self.symm_matrix) / 3
@@ -187,6 +213,11 @@ class ExchangeParameter:
         -------
         iso_matrix : (3, 3) :numpy:`ndarray`
             Isotropic part of the exchange matrix.
+
+        See Also
+        --------
+        iso
+            Isotropic exchange parameter.
         """
 
         return self.iso * np.identity(3, dtype=float)
@@ -214,6 +245,13 @@ class ExchangeParameter:
         -------
         aniso : (3, 3) :numpy:`ndarray`
             Matrix of symmetric anisotropic exchange.
+
+        See Also
+        --------
+        aniso_diagonal
+            Diagonal part of the symmetric anisotropic exchange.
+        aniso_diagonal_matrix
+            Diagonal part of the symmetric anisotropic exchange in a matrix form.
         """
 
         return self.symm_matrix - self.iso * np.identity(3, dtype=float)
@@ -243,6 +281,13 @@ class ExchangeParameter:
         -------
         aniso_diagonal : (3,) :numpy:`ndarray`
             Diagonal part of the symmetric anisotropic exchange.
+
+        See Also
+        --------
+        aniso
+            3 x 3 matrix of symmetric anisotropic exchange.
+        aniso_diagonal_matrix
+            Diagonal part of the symmetric anisotropic exchange in a matrix form.
         """
 
         return np.diag(self.aniso)
@@ -262,6 +307,13 @@ class ExchangeParameter:
         -------
         aniso_diagonal_matrix : (3, 3) :numpy:`ndarray`
             Diagonal part of the symmetric anisotropic exchange in matrix form.
+
+        See Also
+        --------
+        aniso
+            3 x 3 matrix of symmetric anisotropic exchange.
+        aniso_diagonal
+            Diagonal part of the symmetric anisotropic exchange.
         """
 
         return np.diag(np.diag(self.aniso))
@@ -279,6 +331,15 @@ class ExchangeParameter:
         -------
         dmi : (3,) :numpy:`ndarray`
             Dzyaroshinsky-Moria interaction vector.
+
+        See Also
+        --------
+        dmi_matrix
+            Dzyaroshinsky-Moria interaction in a matrix form.
+        dmi_module
+            Module of Dzyaroshinsky-Moria vector.
+        rel_dmi
+            Relative strength of Dzyaroshinsky-Moria interaction.
         """
 
         return np.array(
@@ -320,6 +381,15 @@ class ExchangeParameter:
         -------
         dmi_matrix : (3, 3) :numpy:`ndarray`
             Asymmetric part of the exchange matrix.
+
+        See Also
+        --------
+        dmi
+            Dzyaroshinsky-Moria interaction vector.
+        dmi_module
+            Module of Dzyaroshinsky-Moria vector.
+        rel_dmi
+            Relative strength of Dzyaroshinsky-Moria interaction.
         """
 
         return self.asymm_matrix
@@ -334,6 +404,14 @@ class ExchangeParameter:
         dmi_module : float
             Length of the DMI vector in the units of exchange interaction.
 
+        See Also
+        --------
+        dmi
+            Dzyaroshinsky-Moria interaction vector.
+        dmi_matrix
+            Dzyaroshinsky-Moria interaction in a matrix form.
+        rel_dmi
+            Relative strength of Dzyaroshinsky-Moria interaction.
         """
 
         return np.linalg.norm(self.dmi)
@@ -350,11 +428,20 @@ class ExchangeParameter:
         -------
         rel_dmi : float
             Relative value of DMI.
+
+        See Also
+        --------
+        dmi
+            Dzyaroshinsky-Moria interaction vector.
+        dmi_matrix
+            Dzyaroshinsky-Moria interaction in a matrix form.
+        dmi_module
+            Module of Dzyaroshinsky-Moria vector.
         """
 
         return self.dmi_module / abs(self.iso)
 
-    # Definition of operators
+    # Definition of arithmetic operations5t
 
     # + (add)
     def __add__(self, other) -> Self:
