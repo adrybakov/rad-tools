@@ -757,6 +757,8 @@ class Lattice:
         r"""
         K-point path.
 
+        It could be anything which is considered to be a valid path for :py:class:`.Kpoints`.
+
         Manage default path for the predefined lattices and custom user-defined path.
 
         Returns
@@ -772,42 +774,6 @@ class Lattice:
 
     @path.setter
     def path(self, new_path):
-        if isinstance(new_path, str):
-            tmp_path = new_path.split("|")
-            new_path = []
-            for i in range(len(tmp_path)):
-                subpath = tmp_path[i].split("-")
-                # Each subpath has to contain at least two points.
-                if len(subpath) != 1:
-                    new_path.append(subpath)
-        elif isinstance(new_path, Iterable):
-            tmp_path = new_path
-            new_path = []
-            for subpath in tmp_path:
-                if isinstance(subpath, str) and "-" in subpath:
-                    subpath = subpath.split("-")
-                    # Each subpath has to contain at least two points.
-                    if len(subpath) != 1:
-                        new_path.append(subpath)
-                elif (
-                    not isinstance(subpath, str)
-                    and isinstance(subpath, Iterable)
-                    and len(subpath) != 1
-                ):
-                    new_path.append(subpath)
-                else:
-                    new_path = [tmp_path]
-                    break
-        # Check if all points are defined.
-        for subpath in new_path:
-            for point in subpath:
-                if point not in self.kpoints:
-                    message = f"Point {point} is not defined. Defined points are:"
-                    for defined_point in self.kpoints:
-                        message += (
-                            f"\n  {defined_point} : {self.kpoints[defined_point]}"
-                        )
-                    raise ValueError(message)
         self._path = new_path
 
     def add_kpoint(self, name, coordinates, plot_name=None):
@@ -848,11 +814,14 @@ class Lattice:
         """
 
         return Kpoints(
-            self.path,
             dict(
-                [(point, self.kpoints @ self.reciprocal_cell) for point in self.kpoints]
+                [
+                    (point, self.kpoints[point] @ self.reciprocal_cell)
+                    for point in self.kpoints
+                ]
             ),
             dict([(point, self._PLOT_NAMES[point]) for point in self.kpoints]),
+            path=self.path,
             n=n,
         )
 

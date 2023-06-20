@@ -247,11 +247,6 @@ to access labels of the plot, flatten coordinates, whole list of k points, etc.
     >>> lattice.path = "Gamma-X|M-CP-X"
     >>> # n = 100 by default, it could be changed on the kp instance.
     >>> kp = lattice.get_kpoints(n=100)
-    >>> kp.n
-    100
-    >>> kp.n = 50
-    >>> kp.n
-    50
 
 .. note::
 
