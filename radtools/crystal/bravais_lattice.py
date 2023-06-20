@@ -209,7 +209,7 @@ class CUB(Lattice):
             super().__init__([a, 0, 0], [0, a, 0], [0, 0, a])
             self.conv_a = a
         self.conv_cell = self.cell
-        self.points = {
+        self.kpoints = {
             "G": np.array([0, 0, 0]),
             "M": np.array([1 / 2, 1 / 2, 0]),
             "R": np.array([1 / 2, 1 / 2, 1 / 2]),
@@ -309,7 +309,7 @@ class FCC(Lattice):
             super().__init__([0, a / 2, a / 2], [a / 2, 0, a / 2], [a / 2, a / 2, 0])
             self.conv_cell = np.diag([self.conv_a, self.conv_a, self.conv_a])
 
-        self.points = {
+        self.kpoints = {
             "G": np.array([0, 0, 0]),
             "K": np.array([3 / 8, 3 / 8, 3 / 4]),
             "L": np.array([1 / 2, 1 / 2, 1 / 2]),
@@ -415,7 +415,7 @@ class BCC(Lattice):
                 [-a / 2, a / 2, a / 2], [a / 2, -a / 2, a / 2], [a / 2, a / 2, -a / 2]
             )
             self.conv_cell = np.diag([self.conv_a, self.conv_a, self.conv_a])
-        self.points = {
+        self.kpoints = {
             "G": np.array([0, 0, 0]),
             "H": np.array([1 / 2, -1 / 2, 1 / 2]),
             "P": np.array([1 / 4, 1 / 4, 1 / 4]),
@@ -519,7 +519,7 @@ class TET(Lattice):
             self.conv_c = c
             super().__init__([a, 0, 0], [0, a, 0], [0, 0, c])
         self.conv_cell = self.cell
-        self.points = {
+        self.kpoints = {
             "G": np.array([0, 0, 0]),
             "A": np.array([1 / 2, 1 / 2, 1 / 2]),
             "M": np.array([1 / 2, 1 / 2, 0]),
@@ -650,7 +650,7 @@ class BCT(Lattice):
 
         if self.variation == "BCT1":
             eta = (1 + self.conv_c**2 / self.conv_a**2) / 4
-            self.points = {
+            self.kpoints = {
                 "G": np.array([0, 0, 0]),
                 "M": np.array([-1 / 2, 1 / 2, 1 / 2]),
                 "N": np.array([0, 1 / 2, 0]),
@@ -668,7 +668,7 @@ class BCT(Lattice):
         elif self.variation == "BCT2":
             eta = (1 + self.conv_a**2 / self.conv_c**2) / 4
             zeta = self.conv_a**2 / (2 * self.conv_c**2)
-            self.points = {
+            self.kpoints = {
                 "G": np.array([0, 0, 0]),
                 "N": np.array([0, 1 / 2, 0]),
                 "P": np.array([1 / 4, 1 / 4, 1 / 4]),
@@ -822,7 +822,7 @@ class ORC(Lattice):
             self.conv_c = c
             super().__init__([a, 0, 0], [0, b, 0], [0, 0, c])
         self.conv_cell = self.cell
-        self.points = {
+        self.kpoints = {
             "G": np.array([0, 0, 0]),
             "R": np.array([1 / 2, 1 / 2, 1 / 2]),
             "S": np.array([1 / 2, 1 / 2, 0]),
@@ -974,7 +974,7 @@ class ORCF(Lattice):
                 + self.conv_a**2 / self.conv_b**2
                 - self.conv_a**2 / self.conv_c**2
             ) / 4
-            self.points = {
+            self.kpoints = {
                 "G": np.array([0, 0, 0]),
                 "A": np.array([1 / 2, 1 / 2 + zeta, zeta]),
                 "A1": np.array([1 / 2, 1 / 2 - zeta, 1 - zeta]),
@@ -1009,7 +1009,7 @@ class ORCF(Lattice):
                 - self.conv_c**2 / self.conv_a**2
             ) / 4
 
-            self.points = {
+            self.kpoints = {
                 "G": np.array([0, 0, 0]),
                 "C": np.array([1 / 2, 1 / 2 - eta, 1 - eta]),
                 "C1": np.array([1 / 2, 1 / 2 + eta, eta]),
@@ -1042,7 +1042,7 @@ class ORCF(Lattice):
                 - self.conv_a**2 / self.conv_c**2
             ) / 4
 
-            self.points = {
+            self.kpoints = {
                 "G": np.array([0, 0, 0]),
                 "A": np.array([1 / 2, 1 / 2 + zeta, zeta]),
                 "A1": np.array([1 / 2, 1 / 2 - zeta, 1 - zeta]),
@@ -1215,7 +1215,7 @@ class ORCI(Lattice):
         delta = (self.conv_b**2 - self.conv_a**2) / (4 * self.conv_c**2)
         mu = (self.conv_a**2 + self.conv_b**2) / (4 * self.conv_c**2)
 
-        self.points = {
+        self.kpoints = {
             "G": np.array([0, 0, 0]),
             "L": np.array([-mu, mu, 1 / 2 - delta]),
             "L1": np.array([mu, -mu, 1 / 2 + delta]),
@@ -1368,7 +1368,7 @@ class ORCC(Lattice):
 
         zeta = (1 + self.conv_a**2 / self.conv_b**2) / 4
 
-        self.points = {
+        self.kpoints = {
             "G": np.array([0, 0, 0]),
             "A": np.array([zeta, zeta, 1 / 2]),
             "A1": np.array([-zeta, 1 - zeta, 1 / 2]),
@@ -1490,7 +1490,7 @@ class HEX(Lattice):
 
         self.conv_cell = self.cell
 
-        self.points = {
+        self.kpoints = {
             "G": np.array([0, 0, 0]),
             "A": np.array([0, 0, 1 / 2]),
             "H": np.array([1 / 3, 1 / 3, 1 / 2]),
@@ -1614,7 +1614,7 @@ class RHL(Lattice):
             eta = (1 + 4 * cos(alpha * toradians)) / (2 + 4 * cos(alpha * toradians))
             nu = 3 / 4 - eta / 2
 
-            self.points = {
+            self.kpoints = {
                 "G": np.array([0, 0, 0]),
                 "B": np.array([eta, 1 / 2, 1 - eta]),
                 "B1": np.array([1 / 2, 1 - eta, eta - 1]),
@@ -1639,7 +1639,7 @@ class RHL(Lattice):
             eta = 1 / (2 * tan(alpha * toradians / 2) ** 2)
             nu = 3 / 4 - eta / 2
 
-            self.points = {
+            self.kpoints = {
                 "G": np.array([0, 0, 0]),
                 "F": np.array([1 / 2, -1 / 2, 0]),
                 "L": np.array([1 / 2, 0, 0]),
@@ -1811,7 +1811,7 @@ class MCL(Lattice):
         eta = (1 - b * cos(alpha * toradians) / c) / (2 * sin(alpha * toradians) ** 2)
         nu = 1 / 2 - eta * c * cos(alpha * toradians) / b
 
-        self.points = {
+        self.kpoints = {
             "G": np.array([0, 0, 0]),
             "A": np.array([1 / 2, 1 / 2, 0]),
             "C": np.array([0, 1 / 2, 1 / 2]),
@@ -2098,7 +2098,7 @@ class MCLC(Lattice):
                 ["X", "G", "N"],
                 ["M", "G"],
             ]
-            self.points = {
+            self.kpoints = {
                 "G": np.array([0, 0, 0]),
                 "N": np.array([1 / 2, 0, 0]),
                 "N1": np.array([0, -1 / 2, 0]),
@@ -2122,7 +2122,7 @@ class MCLC(Lattice):
                 ["I1", "Z", "F1"],
                 ["N", "G", "M"],
             ]
-            self.points = {
+            self.kpoints = {
                 "G": np.array([0, 0, 0]),
                 "N": np.array([1 / 2, 0, 0]),
                 "N1": np.array([0, -1 / 2, 0]),
@@ -2140,7 +2140,7 @@ class MCLC(Lattice):
                 "Z": np.array([0, 0, 1 / 2]),
             }
         elif self.variation == "MCLC3":
-            self.points = {
+            self.kpoints = {
                 "G": np.array([0, 0, 0]),
                 "F": np.array([1 - phi, 1 - phi, 1 - psi]),
                 "F1": np.array([phi, phi - 1, psi]),
@@ -2165,7 +2165,7 @@ class MCLC(Lattice):
                 ["M", "G"],
             ]
         elif self.variation == "MCLC4":
-            self.points = {
+            self.kpoints = {
                 "G": np.array([0, 0, 0]),
                 "F": np.array([1 - phi, 1 - phi, 1 - psi]),
                 "H": np.array([zeta, zeta, eta]),
@@ -2194,7 +2194,7 @@ class MCLC(Lattice):
                 ["H1", "Y1", "X", "G", "N"],
                 ["M", "G"],
             ]
-            self.points = {
+            self.kpoints = {
                 "G": np.array([0, 0, 0]),
                 "F": np.array([nu, nu, omega]),
                 "F1": np.array([1 - nu, 1 - nu, 1 - omega]),
@@ -2358,7 +2358,7 @@ class TRI(Lattice):
             raise RuntimeError("k_gamma is not minimal nor maximal.")
         self.conv_cell = self.cell
         if self.variation in ["TRI1a", "TRI2a"]:
-            self.points = {
+            self.kpoints = {
                 "G": np.array([0, 0, 0]),
                 "L": np.array([1 / 2, 1 / 2, 0]),
                 "M": np.array([0, 1 / 2, 1 / 2]),
@@ -2373,11 +2373,10 @@ class TRI(Lattice):
                 ["X", "G", "Y"],
                 ["L", "G", "Z"],
                 ["N", "G", "M"],
-                "R",
-                "G",
+                ["R", "G"],
             ]
         elif self.variation in ["TRI1b", "TRI2b"]:
-            self.points = {
+            self.kpoints = {
                 "G": np.array([0, 0, 0]),
                 "L": np.array([1 / 2, -1 / 2, 0]),
                 "M": np.array([0, 0, 1 / 2]),
@@ -2392,8 +2391,7 @@ class TRI(Lattice):
                 ["X", "G", "Y"],
                 ["L", "G", "Z"],
                 ["N", "G", "M"],
-                "R",
-                "G",
+                ["R", "G"],
             ]
 
     @property
@@ -2594,7 +2592,7 @@ def lattice_example(
 
     Returns
     -------
-    lattice : Lattice or list   
+    lattice : Lattice or list
         Child of the :py:class:`.Lattice` class is returned.
         If no math found a list with available examples is returned.
     """

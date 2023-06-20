@@ -4,7 +4,7 @@ from typing import Iterable
 
 import numpy as np
 
-from radtools.crystal.atom_types import atom_types
+from radtools.crystal.atom_types import ATOM_TYPES
 
 
 class Atom:
@@ -35,11 +35,6 @@ class Atom:
         Combination of :py:attr:`.name` and :py:attr:`.index`
         is meant to be unique, when an atom belongs to some group
         (i.e. to :py:class:`.Crystal` or :py:class:`.ExchangeHamiltonian`).
-
-    Attributes
-    ----------
-    position : (3,) :numpy:`ndarray`
-        Position of the atom in absolute coordinates.
     """
 
     def __init__(
@@ -51,29 +46,40 @@ class Atom:
         charge=None,
         index=None,
     ) -> None:
+        # Set name
         self._name = "X"
-        self._index = None
-        self._type = None
-        if position is None:
-            position = (0, 0, 0)
-        self.position = np.array(position)
-        self._magmom = None
-        self._charge = None
-        self._spin = None
-        self._spin_direction = [0, 0, 1]
-
         self.name = name
 
-        if isinstance(spin, Iterable):
-            self.spin_vector = spin
-        else:
-            self.spin = spin
-        if magmom is not None:
-            self.magmom = magmom
-        if charge is not None:
-            self.charge = charge
+        # Set index
+        self._index = None
         if index is not None:
             self.index = index
+
+        # Set position
+        self._position = np.array([0, 0, 0])
+        if position is not None:
+            self.position = np.array(position)
+
+        # Set magmom
+        self._magmom = None
+        if magmom is not None:
+            self.magmom = magmom
+
+        # Set charge
+        self._charge = None
+        if charge is not None:
+            self.charge = charge
+
+        # Set spin
+        self._spin = None
+        self._spin_direction = [0, 0, 1]
+        if isinstance(spin, Iterable):
+            self.spin_vector = spin
+        elif spin is not None:
+            self.spin = spin
+
+        # Set type placeholder
+        self._type = None
 
     def __str__(self):
         return self.name
@@ -98,6 +104,32 @@ class Atom:
         return not self == other
 
     @property
+    def position(self):
+        r"""
+        Position of the atom.
+
+        Returns
+        -------
+        position : (3,) :numpy:`ndarray`
+            Position of the atom in absolute coordinates.
+        """
+        return self._position
+
+    @position.setter
+    def position(self, new_position):
+        try:
+            new_position = np.array(new_position, dtype=float)
+        except:
+            raise ValueError(
+                f"New position is not array-like, new_position = {new_position}"
+            )
+        if new_position.shape != (3,):
+            raise ValueError(
+                f"New position has to be a 3 x 1 vector, shape: {new_position.shape}"
+            )
+        self._position = new_position
+
+    @property
     def name(self):
         r"""
         Name of the atom.
@@ -112,6 +144,7 @@ class Atom:
     @name.setter
     def name(self, new_name):
         self._name = new_name
+        # Reset type
         self._type = None
 
     @property
@@ -126,7 +159,7 @@ class Atom:
         """
         if self._type is None:
             self._type = "X"
-            for i in atom_types:
+            for i in ATOM_TYPES:
                 if i.lower() in self._name.lower():
                     self._type = i
                     if len(i) == 2:
@@ -181,7 +214,7 @@ class Atom:
 
     @spin.setter
     def spin(self, new_spin):
-        self._spin = new_spin
+        self._spin = float(new_spin)
 
     @property
     def spin_direction(self):
@@ -285,7 +318,7 @@ class Atom:
     @magmom.setter
     def magmom(self, new_magmom):
         try:
-            new_magmom = np.array(new_magmom)
+            new_magmom = np.array(new_magmom, dtype=float)
         except:
             raise ValueError(
                 f"New magnetic moment value is not array-like, new_magmom = {new_magmom}"
@@ -313,12 +346,17 @@ class Atom:
 
     @charge.setter
     def charge(self, new_charge):
-        self._charge = new_charge
+        self._charge = float(new_charge)
 
     @property
     def fullname(self):
         r"""
-        Fullname (name + index) of an atom.
+        Fullname (name__index) of an atom.
+
+        Double "_" is used intentionally, so the user can use "_" for
+        the name of the atom.
+
+        If index is not defined, then only name is returned.
 
         Returns
         -------
@@ -331,6 +369,6 @@ class Atom:
             If index is not defined for the atom.
         """
         try:
-            return f"{self.name}_{self.index}"
+            return f"{self.name}__{self.index}"
         except ValueError:
             return self.name

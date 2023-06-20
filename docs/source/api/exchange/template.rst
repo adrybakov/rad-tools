@@ -6,6 +6,9 @@ ExchangeTemplate
 
 .. currentmodule:: radtools
 
+Class
+=====
+
 .. autosummary::
     :toctree: generated/
 

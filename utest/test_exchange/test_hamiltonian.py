@@ -768,10 +768,10 @@ class TestExchangeHamiltonian:
         model = ExchangeHamiltonian()
         model.add_atom(Atom("Cr"))
         assert model.Cr.name == "Cr"
-        assert model.Cr.fullname == "Cr_1"
+        assert model.Cr.fullname == "Cr__1"
 
         model.add_atom(Atom("Cr"))
-        assert model.Cr_1.name == "Cr"
-        assert model.Cr_1.fullname == "Cr_1"
-        assert model.Cr_2.name == "Cr"
-        assert model.Cr_2.fullname == "Cr_2"
+        assert model.Cr__1.name == "Cr"
+        assert model.Cr__1.fullname == "Cr__1"
+        assert model.Cr__2.name == "Cr"
+        assert model.Cr__2.fullname == "Cr__2"

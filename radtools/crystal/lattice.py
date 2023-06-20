@@ -13,6 +13,7 @@ from scipy.spatial import Voronoi
 
 from radtools.crystal.identify import lepage
 from radtools.routines import angle, cell_from_param, reciprocal_cell, volume
+from radtools.crystal.kpoints import Kpoints
 
 __all__ = ["Lattice"]
 
@@ -141,7 +142,7 @@ class Lattice:
                 "Unable to identify input parameters. "
                 + "Supported: one (3,3) array_like, or three (3,) array_like, or 6 floats."
             )
-        self.points = {}
+        self.kpoints = {}
         self._path = None
         self._default_path = None
         self.fig = None
@@ -198,48 +199,7 @@ class Lattice:
             "Y3": "$Y_3$",
         }
 
-    @property
-    def cell(self):
-        r"""
-        Unit cell of the lattice.
-
-        Returns
-        -------
-        cell : (3, 3) :numpy:`ndarray`
-            Unit cell, rows are vectors, columns are coordinates.
-        """
-        if self._cell is None:
-            raise AttributeError(f"Cell is not defined for lattice {self}")
-        return self._cell
-
-    @cell.setter
-    def cell(self, new_cell):
-        try:
-            new_cell = np.array(new_cell)
-        except:
-            raise ValueError(f"New cell is not array_like: {new_cell}")
-        if new_cell.shape != (3, 3):
-            raise ValueError(f"New cell is not 3 x 3 matrix.")
-        self._cell = new_cell
-
-    @property
-    def path(self):
-        r"""
-        K-point path.
-
-        Manage default path for the predefined lattices and custom user-defined path.
-
-        Returns
-        -------
-        path : list of str
-            List of the high symmetry points.
-        """
-        if self._path is None and self._default_path is None:
-            return []
-        if self._path is None:
-            return self._default_path
-        return self._path
-
+    # Reference properties
     @property
     def pearson_symbol(self):
         r"""
@@ -307,6 +267,31 @@ class Lattice:
         """
 
         return self.pearson_symbol[1]
+
+    # Real space parameters
+    @property
+    def cell(self):
+        r"""
+        Unit cell of the lattice.
+
+        Returns
+        -------
+        cell : (3, 3) :numpy:`ndarray`
+            Unit cell, rows are vectors, columns are coordinates.
+        """
+        if self._cell is None:
+            raise AttributeError(f"Cell is not defined for lattice {self}")
+        return self._cell
+
+    @cell.setter
+    def cell(self, new_cell):
+        try:
+            new_cell = np.array(new_cell)
+        except:
+            raise ValueError(f"New cell is not array_like: {new_cell}")
+        if new_cell.shape != (3, 3):
+            raise ValueError(f"New cell is not 3 x 3 matrix.")
+        self._cell = new_cell
 
     @property
     def a1(self):
@@ -450,6 +435,7 @@ class Lattice:
 
         return volume(self.a1, self.a2, self.a3)
 
+    # Reciprocal parameters
     @property
     def reciprocal_cell(self):
         r"""
@@ -612,6 +598,7 @@ class Lattice:
 
         return volume(self.b1, self.b2, self.b3)
 
+    # Lattice type routines and properties
     @property
     def variation(self):
         r"""
@@ -675,6 +662,11 @@ class Lattice:
     def identify(self):
         r"""
         Identify the Bravais lattice type.
+
+        Returns
+        -------
+        bravais_lattice_type : str
+            Bravais lattice type.
         """
         return lepage(self.a, self.b, self.c, self.alpha, self.beta, self.gamma)
 
@@ -759,6 +751,81 @@ class Lattice:
             edges[i][1] = voronoi.vertices[edges_index[i][1]]
         return edges, voronoi.vertices[np.unique(edges_index.flatten())]
 
+    # K-path routines and attributes
+    @property
+    def path(self):
+        r"""
+        K-point path.
+
+        It could be anything which is considered to be a valid path for :py:class:`.Kpoints`.
+
+        Manage default path for the predefined lattices and custom user-defined path.
+
+        Returns
+        -------
+        path : list of str
+            List of the high symmetry points.
+        """
+        if self._path is None and self._default_path is None:
+            return []
+        if self._path is None:
+            return self._default_path
+        return self._path
+
+    @path.setter
+    def path(self, new_path):
+        self._path = new_path
+
+    def add_kpoint(self, name, coordinates, plot_name=None):
+        r"""
+        Add named kpoint to the lattice.
+
+        Parameters
+        ----------
+        name : str
+            Name of the kpoint.
+        coordinates : (3,) |array_like|_
+            Coordinates of the kpoint. Relative to the reciprocal vectors.
+        plot_name : str, optional
+            Name of the kpoint to be plotted.
+            If not given, ``name`` is used.
+        """
+
+        if plot_name is None and name not in self._PLOT_NAMES:
+            self._PLOT_NAMES[name] = plot_name
+        if plot_name is not None:
+            self._PLOT_NAMES[name] = plot_name
+
+        self.kpoints[name] = np.array(coordinates)
+
+    def get_kpoints(self, n=100) -> Kpoints:
+        r"""
+        Getter for the instance of :py:class:`.Kpoints`.
+
+        Parameters
+        ----------
+        n : int
+            Number of points between each pair of the high symmetry points.
+
+        Returns
+        -------
+        kpoints : :py:class:`.Kpoints`
+            Instance of the :py:class:`.Kpoints` class.
+        """
+
+        return Kpoints(
+            dict(
+                [
+                    (point, self.kpoints[point] @ self.reciprocal_cell)
+                    for point in self.kpoints
+                ]
+            ),
+            dict([(point, self._PLOT_NAMES[point]) for point in self.kpoints]),
+            path=self.path,
+            n=n,
+        )
+
+    # Plotting routines
     def prepare_figure(self, background=True, focal_length=0.2) -> None:
         r"""
         Prepare style of the figure for the plot.
@@ -1304,10 +1371,10 @@ class Lattice:
         if normalize:
             cell /= volume(cell) ** (1 / 3.0)
 
-        for point in self.points:
+        for point in self.kpoints:
             self._artists[artist_group].append(
                 ax.scatter(
-                    *tuple(self.points[point] @ cell),
+                    *tuple(self.kpoints[point] @ cell),
                     s=36,
                     color=colour,
                 )
@@ -1315,7 +1382,7 @@ class Lattice:
             self._artists[artist_group].append(
                 ax.text(
                     *tuple(
-                        self.points[point] @ cell
+                        self.kpoints[point] @ cell
                         + 0.025 * cell[0]
                         + +0.025 * cell[1]
                         + 0.025 * cell[2]
@@ -1344,8 +1411,8 @@ class Lattice:
                         *tuple(
                             np.concatenate(
                                 (
-                                    self.points[subpath[i]] @ cell,
-                                    self.points[subpath[i + 1]] @ cell,
+                                    self.kpoints[subpath[i]] @ cell,
+                                    self.kpoints[subpath[i + 1]] @ cell,
                                 )
                             )
                             .reshape(2, 3)

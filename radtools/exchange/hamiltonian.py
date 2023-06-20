@@ -81,6 +81,7 @@ class ExchangeHamiltonian:
             "tb2j": (True, True, False, False, True),
             "spinw": (True, False, False, False, False),
         }
+
         self._crystal = None
         if crystal is None:
             crystal = Crystal()
@@ -319,6 +320,7 @@ class ExchangeHamiltonian:
 
     @notation.setter
     def notation(self, new_notation):
+        # Set the notation from predefined notations
         if isinstance(new_notation, str):
             new_notation = new_notation.lower()
             if new_notation not in self._predefined_notations:
@@ -327,6 +329,7 @@ class ExchangeHamiltonian:
                     + f"{list(self._predefined_notations)}, got: {new_notation}"
                 )
             new_notation = self._predefined_notations[new_notation]
+        # Set the notation from five values, converted to bool
         elif isinstance(new_notation, Iterable) and len(new_notation) == 5:
             new_notation = tuple(map(bool, new_notation))
         else:
@@ -508,12 +511,12 @@ class ExchangeHamiltonian:
     @spin_normalized.setter
     def spin_normalized(self, new_value: bool):
         if self._spin_normalized is not None:
-            if self._spin_normalized ^ new_value:
+            if self._spin_normalized and not new_value:
                 for atom1, atom2, R, J in self:
-                    if self._spin_normalized and not new_value:
-                        self[atom1, atom2, R] = J / atom1.spin / atom2.spin
-                    elif not self._spin_normalized and new_value:
-                        self[atom1, atom2, R] = J * atom1.spin * atom2.spin
+                    self[atom1, atom2, R] = J / atom1.spin / atom2.spin
+            elif not self._spin_normalized and new_value:
+                for atom1, atom2, R, J in self:
+                    self[atom1, atom2, R] = J * atom1.spin * atom2.spin
         self._spin_normalized = bool(new_value)
 
     @property
@@ -649,19 +652,23 @@ class ExchangeHamiltonian:
 
     def __contains__(self, key):
         atom1, atom2, R = key
+        # If atom is a string, get the atom object
         if isinstance(atom1, str):
             atom1 = self.crystal.get_atom(atom1)
         if isinstance(atom2, str):
             atom2 = self.crystal.get_atom(atom2)
+
         key = (atom1, atom2, R)
         return key in self._bonds
 
     def __getitem__(self, key) -> ExchangeParameter:
         atom1, atom2, R = key
+        # If atom is a string, get the atom object
         if isinstance(atom1, str):
             atom1 = self.crystal.get_atom(atom1)
         if isinstance(atom2, str):
             atom2 = self.crystal.get_atom(atom2)
+
         key = (atom1, atom2, R)
         return self._bonds[key]
 
@@ -893,9 +900,9 @@ class ExchangeHamiltonian:
             Radius vector of the unit cell for atom2 (i,j,k).
         """
 
+        # If atom is a string, get the atom object
         if isinstance(atom1, str):
             atom1 = self.crystal.get_atom(atom1)
-
         if isinstance(atom2, str):
             atom2 = self.crystal.get_atom(atom2)
 
@@ -933,8 +940,10 @@ class ExchangeHamiltonian:
             Atom object.
         """
 
+        # If atom given as a string, get the atom object
         if isinstance(atom, str):
             atom = self.crystal.get_atom(atom)
+
         bonds_for_removal = []
         for atom1, atom2, R, J in self:
             if atom1 == atom or atom2 == atom:
@@ -1311,6 +1320,7 @@ class ExchangeHamiltonian:
             by ``theta`` and ``phi``. In the units of J values.
         """
 
+        # Compute spin direction
         theta = np.array(theta) * toradians
         phi = np.array(phi) * toradians
         if theta.shape == ():
@@ -1321,7 +1331,7 @@ class ExchangeHamiltonian:
             [np.cos(phi) * np.sin(theta), np.sin(phi) * np.sin(theta), np.cos(theta)]
         )
 
-        energy = np.zeros((3, 3), dtype=float)
+        # compute factor from notation
         factor = 1
         if self.minus_sign:
             factor *= -1
@@ -1329,6 +1339,8 @@ class ExchangeHamiltonian:
             factor /= 2
         if self.factor_two:
             factor *= 2
+
+        energy = np.zeros((3, 3), dtype=float)
         for atom1, atom2, R, J in self:
             if self.spin_normalized:
                 energy += factor * J.matrix
@@ -1336,6 +1348,8 @@ class ExchangeHamiltonian:
                 energy += factor * J.matrix * atom1.spin * atom2.spin
 
         energy = np.einsum("ni,ij,jn->n", spin_direction.T, energy, spin_direction)
+        if len(energy) == 1:
+            energy = energy[0]
         return energy
 
     def input_for_magnons(self):
