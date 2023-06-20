@@ -21,6 +21,7 @@ Classes
     crystal
     lattice
     atom
+    kpoints
 
 Bravais lattice classes
 =======================

@@ -20,7 +20,7 @@ It is defined as a combination of the the :py:class:`.Lattice` and the set of
     
     lattice
     atom
-
+    kpoints
 
 
 Creation of the Crystal

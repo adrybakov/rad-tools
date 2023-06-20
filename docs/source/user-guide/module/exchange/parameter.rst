@@ -23,7 +23,7 @@ Isotropic, anisotropic and DMI parts of exchange matrix are defined as follows:
 
 .. math::
 
-    \mathbf{J}_{aniso} = \boldsymbol{J}_{symm} = \dfrac{\boldsymbol{J} + \boldsymbol{J}^T}{2}
+    \mathbf{J}_{aniso} = \boldsymbol{J}_{symm} = \dfrac{\boldsymbol{J} + \boldsymbol{J}^T}{2} - \dfrac{1}{3}\text{tr}(\boldsymbol{J})\cdot\mathbf{I}
 
 * :py:attr:`.dmi`:
 
