@@ -24,6 +24,7 @@ In the examples across the documentation it is expected to be imported in that w
 
    crystal/index
    exchange/index
+   magnons/index
    dos
    io
    score

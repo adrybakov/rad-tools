@@ -93,8 +93,7 @@ def manager(
             atom_name = spin[4 * i]
             atom = model.crystal.get_atom(atom_name)
             atom_spin = list(map(float, spin[4 * i + 1 : 4 * i + 4]))
-            if atom in model.magnetic_atoms:
-                atom.spin_vector = atom_spin
+            atom.spin_vector = atom_spin
 
     # Get the magnon dispersion
     dispersion = MagnonDispersion(model, Q=spiral_vector, n=rotation_axis)

@@ -101,17 +101,6 @@ get_atom_coordinates crystal.get_atom_coordinates
 
 .. autosummary::
 
-    ExchangeHamiltonian.cell
-    ExchangeHamiltonian.a
-    ExchangeHamiltonian.b
-    ExchangeHamiltonian.c
-    ExchangeHamiltonian.len_a
-    ExchangeHamiltonian.len_b
-    ExchangeHamiltonian.len_c
-    ExchangeHamiltonian.b1
-    ExchangeHamiltonian.b2
-    ExchangeHamiltonian.b3
-    ExchangeHamiltonian.unit_cell_volume
     ExchangeHamiltonian.get_distance
     ExchangeHamiltonian.get_bond_vector
     ExchangeHamiltonian.get_atom_coordinates

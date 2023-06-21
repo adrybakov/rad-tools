@@ -14,7 +14,7 @@ from math import sqrt, pi
 
 import matplotlib.pyplot as plt
 
-__all__ = ["MAgnonDispersion"]
+__all__ = ["MagnonDispersion"]
 
 
 class MagnonDispersion:
@@ -25,8 +25,6 @@ class MagnonDispersion:
     ----------
     model : :py:class:`.ExchangeHamiltonian`
         Exchange Hamiltonian.
-    magnetic atoms : list
-        List of magnetic atoms. Indices from data are used on this list.
     Q : (3,) |array_like|_
         Ordering wave vector of the spin-spiral.
         In relative coordinates with respect to the model`s reciprocal cell.
@@ -34,6 +32,29 @@ class MagnonDispersion:
         but not from atom to atom in (0, 0, 0) unit cell.
     n : (3,) |array_like|_, optional
         Global rotational axis. If None provided, then it is set to the direction of ``Q``.
+
+    Attributes
+    ----------
+    Q : (3,) :numpy:`ndarray`
+        Ordering wave vector of the spin-spiral. in absolute coordinates in reciprocal space.
+    n : (3,) :numpy:`ndarray`
+        Global rotational axis.
+    N : int
+        Number of magnetic atoms.
+    J : (M,) :numpy:`ndarray`
+        Exchange parameters.
+    i : (M,) :numpy:`ndarray`
+        Indices of the first atom in the exchange pair.
+    j : (M,) :numpy:`ndarray`
+        Indices of the second atom in the exchange pair.
+    d : (M, 3) :numpy:`ndarray`
+        Vectors from the first atom to the second atom in the exchange pair.
+    S : (N, 3) :numpy:`ndarray`
+        Spin vectors.
+    u : (N, 3) :numpy:`ndarray`
+        Defined from local spin directions.
+    v : (N, 3) :numpy:`ndarray`
+        Defined from local spin directions.
     """
 
     def __init__(self, model: ExchangeHamiltonian, Q=None, n=None):

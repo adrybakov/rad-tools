@@ -24,6 +24,7 @@ RAD-tools user guide
     :maxdepth: 1
 
     library/lepage
+    library/magnon-dispersion
 
 .. div:: logo-custom-text
     
