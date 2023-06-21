@@ -27,6 +27,7 @@ Files from the usage examples are available :examples:`here <>`.
     rad-make-template
     rad-extract-tb2j
     rad-plot-tb2j
+    rad-plot-tb2j-magnons
 
 .. toctree::
     :caption: for Wannier90:
