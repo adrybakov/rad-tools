@@ -138,7 +138,7 @@ def manager(
             file.write("=" * 20 + "\n")
     cprint(
         f"Template draft is in " + f"{abspath(output_name)}, grouped by distance",
-        "green",
+        "blue",
     )
     cprint(f"Do not forget to correct the template draft to your needs!", "yellow")
 

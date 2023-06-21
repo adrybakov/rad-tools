@@ -59,7 +59,7 @@ def manager(
     # Read the model
     model = read_tb2j_model(input_filename, quiet=not verbose)
 
-    # Force symmetry of the template 
+    # Force symmetry of the template
     if template_file is not None:
         template = read_template(template_file)
     else:
@@ -211,7 +211,7 @@ def manager(
 
         png_path = join(output_path, f"{output_name}.{wtp}.png")
         plt.savefig(png_path, dpi=400, bbox_inches="tight")
-        cprint(f"2D plot with {wtp} is in {abspath(png_path)}", "green")
+        cprint(f"2D plot with {wtp} is in {abspath(png_path)}", "blue")
 
 
 def create_parser():
