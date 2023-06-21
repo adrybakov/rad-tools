@@ -28,6 +28,7 @@ setup(
         "scripts/rad-plot-dos.py",
         "scripts/rad-identify-wannier-centres.py",
         "scripts/compute-energies.py",
+        "scripts/rad-plot-tb2j-magnons.py",
     ],
     install_requires=["numpy", "matplotlib", "scipy", "tqdm", "termcolor"],
     classifiers=[
