@@ -143,23 +143,23 @@ for i in range(len(paths)):
 
 @pytest.mark.parametrize("path, cor_lab, cor_coord, cor_points, cor_flat_points", input)
 def test_labels(path, cor_lab, cor_coord, cor_points, cor_flat_points):
-    kp = Kpoints(path, points, labels, n=4)
+    kp = Kpoints(points, labels, n=4, path=path)
     assert kp.labels == cor_lab
 
 
 @pytest.mark.parametrize("path, cor_lab, cor_coord, cor_points, cor_flat_points", input)
 def test_coordinates(path, cor_lab, cor_coord, cor_points, cor_flat_points):
-    kp = Kpoints(path, points, labels, n=4)
+    kp = Kpoints(points, labels, n=4, path=path)
     assert (np.abs(kp.coordinates - cor_coord) < 1e-5).all()
 
 
 @pytest.mark.parametrize("path, cor_lab, cor_coord, cor_points, cor_flat_points", input)
 def test_points(path, cor_lab, cor_coord, cor_points, cor_flat_points):
-    kp = Kpoints(path, points, labels, n=4)
+    kp = Kpoints(points, labels, n=4, path=path)
     assert (np.abs(kp.points - cor_points) < 1e-5).all()
 
 
 @pytest.mark.parametrize("path, cor_lab, cor_coord, cor_points, cor_flat_points", input)
 def test_flatten_points(path, cor_lab, cor_coord, cor_points, cor_flat_points):
-    kp = Kpoints(path, points, labels, n=4)
+    kp = Kpoints(points, labels, n=4, path=path)
     assert (np.abs(kp.flatten_points - cor_flat_points) < 1e-5).all()

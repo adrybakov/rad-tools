@@ -1383,6 +1383,21 @@ class ExchangeHamiltonian:
 
     # OLD METHODS AND ATTRIBUTES, KEPT FOR BACKWARD COMPATIBILITY
 
+    # TODO, get rid of this cell
+    @property
+    def cell(self):
+        r"""
+        Matrix of lattice vectors.
+
+        See :py:attr:`.Crystal.cell`.
+        """
+
+        return self.crystal.lattice.cell
+
+    @cell.setter
+    def cell(self, new_cell):
+        self.crystal.cell = new_cell
+
     def get_atom_coordinates(self, atom, R=(0, 0, 0)):
         r"""
         Getter for the atom coordinates.

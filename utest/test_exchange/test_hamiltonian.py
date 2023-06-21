@@ -97,6 +97,9 @@ class TestExchangeHamiltonian:
         model = ExchangeHamiltonian()
         with pytest.raises(ValueError):
             model.cell = [3, 4, 5]
+        # TODO
+        # with pytest.raises(ValueError):
+        #     model.cell = [3, 4, 5]
 
     def test_abc(self):
         model = ExchangeHamiltonian()
@@ -121,9 +124,9 @@ class TestExchangeHamiltonian:
     def test_len_abc(self):
         model = ExchangeHamiltonian()
         model.cell = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-        assert model.a1 == sqrt(14)
-        assert model.a2 == sqrt(77)
-        assert model.a3 == sqrt(194)
+        assert model.a == sqrt(14)
+        assert model.b == sqrt(77)
+        assert model.c == sqrt(194)
 
     def test_unit_cell_volume(self):
         model = ExchangeHamiltonian()
@@ -153,9 +156,9 @@ class TestExchangeHamiltonian:
     def test_len_abc_and_volume(self, a, b, c, A, B, C, volume):
         model = ExchangeHamiltonian()
         model.cell = np.array([a, b, c], dtype=float)
-        assert A == round(model.len_a, 4)
-        assert B == round(model.len_b, 4)
-        assert C == round(model.len_c, 4)
+        assert A == round(model.a, 4)
+        assert B == round(model.b, 4)
+        assert C == round(model.c, 4)
         assert volume == round(model.unit_cell_volume, 4)
 
     def test_b123(self):
