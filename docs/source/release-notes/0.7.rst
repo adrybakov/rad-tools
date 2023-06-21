@@ -127,3 +127,8 @@ Changes in :ref:`rad-make-template`. Now bonds are grouped by distances by defau
 Bugfix in :py:func:`.print_2d_array`. Refractor the whole module. Extend documentation.
 Add ``shift`` and ``borders`` options to :py:func:`.print_2d_array`.
 Bugfix in ``dos.py``.
+
+0.7.12
+------
+
+First version of magnons module, Add :ref:`rad-tools_plot-tb2j-magnons` script.
