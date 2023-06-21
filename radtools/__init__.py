@@ -11,6 +11,7 @@ from . import crystal, dos, exchange, io, score
 from .crystal import *
 from .dos import *
 from .exchange import *
+from .magnons import *
 from .io import *
 from .routines import *
 from .score import *
@@ -19,6 +20,7 @@ __all__ = []
 __all__.extend(score.__all__)
 __all__.extend(io.__all__)
 __all__.extend(exchange.__all__)
+__all__.extend(magnons.__all__)
 __all__.extend(dos.__all__)
 __all__.extend(routines.__all__)
 __all__.extend(crystal.__all__)

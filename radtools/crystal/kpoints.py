@@ -94,6 +94,27 @@ class Kpoints:
         self._path = new_path
 
     @property
+    def path_string(self):
+        r"""
+        K points path as a string.
+
+        Returns
+        -------
+        path : str
+        """
+
+        result = ""
+        for s_i, subpath in enumerate(self.path):
+            for i, name in enumerate(subpath):
+                if i != 0:
+                    result += "-"
+                result += name
+            if s_i != len(self.path) - 1:
+                result += "|"
+
+        return result
+
+    @property
     def n(self):
         r"""
         Amount of points between each pair of the high symmetry points
