@@ -27,7 +27,7 @@ Bravais Lattice Exceptions
 Diagonalization Exceptions
 ==========================
 
-.. auttosummary::
+.. autosummary::
     :toctree: generated/
 
     magnons.diagonalization.ColpaFailed

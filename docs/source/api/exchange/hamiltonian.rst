@@ -93,17 +93,6 @@ Usage of this parameters is deprecated. Usage of corresponding
 ==================== =======================
 Deprecated parameter Corresponding parameter
 ==================== =======================
-cell                 crystal.cell
-a                    crystal.a1
-b                    crystal.a2
-c                    crystal.a3
-len_a                crystal.a
-len_b                crystal.b
-len_c                crystal.c
-b1                   crystal.b1
-b2                   crystal.b2
-b3                   crystal.b3
-unit_cell_volume     crystal.unit_cell_volume
 get_distance         crystal.get_distance
 get_bond_vector      crystal.get_vector
 get_atom_coordinates crystal.get_atom_coordinates

@@ -44,6 +44,7 @@ Real-valued array
     ├──────┼──────┤
     │ 5.00 │ 6.00 │
     └──────┴──────┘
+    >>> rad.print_2d_array([[0, 1., -0.],[1, 1, 1]])
 
 Custom formatting
 -----------------
