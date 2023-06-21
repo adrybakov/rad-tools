@@ -224,7 +224,7 @@ def create_parser():
     )
     parser.add_argument(
         "-Q",
-        "--spiral_vector",
+        "--spiral-vector",
         metavar="Q_i Q_j Q_k",
         type=float,
         nargs=3,
@@ -233,7 +233,7 @@ def create_parser():
     )
     parser.add_argument(
         "-ra",
-        "--rotation_axis",
+        "--rotation-axis",
         metavar="n_i n_j n_k",
         type=float,
         nargs=3,
