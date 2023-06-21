@@ -101,19 +101,19 @@ class TestExchangeHamiltonian:
     def test_abc(self):
         model = ExchangeHamiltonian()
         model.cell = [[1, 2, 3], [0, 1, 0], [0, 0, 1]]
-        assert (model.a == np.array([1, 2, 3])).all()
-        assert (model.b == np.array([0, 1, 0])).all()
-        assert (model.c == np.array([0, 0, 1])).all()
+        assert (model.a1 == np.array([1, 2, 3])).all()
+        assert (model.a2 == np.array([0, 1, 0])).all()
+        assert (model.a3 == np.array([0, 0, 1])).all()
         assert (model.cell == np.array([[1, 2, 3], [0, 1, 0], [0, 0, 1]])).all()
         model.cell = [[1, 2, 3], [4, 5, 6], [0, 0, 1]]
-        assert (model.a == np.array([1, 2, 3])).all()
-        assert (model.b == np.array([4, 5, 6])).all()
-        assert (model.c == np.array([0, 0, 1])).all()
+        assert (model.a1 == np.array([1, 2, 3])).all()
+        assert (model.a2 == np.array([4, 5, 6])).all()
+        assert (model.a3 == np.array([0, 0, 1])).all()
         assert (model.cell == np.array([[1, 2, 3], [4, 5, 6], [0, 0, 1]])).all()
         model.cell = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-        assert (model.a == np.array([1, 2, 3])).all()
-        assert (model.b == np.array([4, 5, 6])).all()
-        assert (model.c == np.array([7, 8, 9])).all()
+        assert (model.a1 == np.array([1, 2, 3])).all()
+        assert (model.a2 == np.array([4, 5, 6])).all()
+        assert (model.a3 == np.array([7, 8, 9])).all()
         assert (model.cell == np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])).all()
         model.cell = [[2, 5, 3], [7, 3, 1], [8, 4, 9]]
         assert (model.cell == np.array([[2, 5, 3], [7, 3, 1], [8, 4, 9]])).all()
@@ -121,9 +121,9 @@ class TestExchangeHamiltonian:
     def test_len_abc(self):
         model = ExchangeHamiltonian()
         model.cell = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-        assert model.len_a == sqrt(14)
-        assert model.len_b == sqrt(77)
-        assert model.len_c == sqrt(194)
+        assert model.a1 == sqrt(14)
+        assert model.a2 == sqrt(77)
+        assert model.a3 == sqrt(194)
 
     def test_unit_cell_volume(self):
         model = ExchangeHamiltonian()

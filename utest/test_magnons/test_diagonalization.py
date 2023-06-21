@@ -2,7 +2,6 @@ import pytest
 import numpy as np
 
 from radtools.magnons.diagonalization import solve_via_colpa, ColpaFailed
-from radtools.routines import print_2d_array
 
 
 @pytest.mark.parametrize(

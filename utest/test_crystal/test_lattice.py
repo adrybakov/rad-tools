@@ -11,7 +11,7 @@ class TestLattice:
     l = Lattice([1, 0, 0], [0, 2, 0], [0, 0, 3])
 
     def test_init(self):
-        assert self.l.points == {}
+        assert self.l.kpoints == {}
         assert self.l.path == []
 
     def test_extended_init(self):

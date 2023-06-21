@@ -131,4 +131,4 @@ Bugfix in ``dos.py``.
 0.7.12
 ------
 
-First version of magnons module, Add :ref:`rad-tools_plot-tb2j-magnons` script.
+First version of magnons module, Add :ref:`rad-plot-tb2j-magnons` script.
