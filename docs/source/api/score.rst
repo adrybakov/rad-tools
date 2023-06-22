@@ -19,3 +19,4 @@ Scenarios
     make_template
     extract_tb2j
     plot_tb2j
+    plot_tb2j_magnons
