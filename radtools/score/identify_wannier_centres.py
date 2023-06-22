@@ -100,6 +100,7 @@ def manager(filename, span, output_path, output_name):
                 + f"{coordinate[2]:14.8f}"
                 + f"   ->   {atom}\n"
             )
+    cprint(f"Results are in {join(output_path, output_name)}", "blue")
 
 
 def create_parser():

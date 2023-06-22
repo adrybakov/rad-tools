@@ -31,7 +31,8 @@ def manager(
     """
 
     # Create the output directory if it does not exist
-    makedirs(split(output_name)[0], exist_ok=True)
+    if split(output_name)[0] != "":
+        makedirs(split(output_name)[0], exist_ok=True)
 
     # Get current date and time
     cd = datetime.now()
@@ -106,7 +107,12 @@ def manager(
             data = []
             for atom1, atom2, R, J in model:
                 data.append(
-                    (atom1, atom2, R, model.crystal.get_distance(atom1, atom2, R))
+                    (
+                        atom1.name,
+                        atom2.name,
+                        R,
+                        model.crystal.get_distance(atom1, atom2, R),
+                    )
                 )
 
             # Sort bonds by distance

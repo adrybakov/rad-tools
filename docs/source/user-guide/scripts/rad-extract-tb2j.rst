@@ -107,7 +107,7 @@ standard output stream.
 
 .. code-block:: text
 
-    default : None
+    default : "extracted_exchange.txt"
     type : str
 
 See also: :ref:`example <output-notes>`.

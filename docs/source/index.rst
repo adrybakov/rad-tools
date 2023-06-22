@@ -19,10 +19,6 @@ RAD-tools
 `Source Repository <https://github.com/adrybakov/rad-tools>`_ |
 `Issue Tracker <https://github.com/adrybakov/rad-tools/issues>`_ 
 
-.. warning::
-    This project is under active development. 
-    Pin the version if you want to rely on the functionality.
-
 .. grid:: 2
 
     .. grid-item-card::

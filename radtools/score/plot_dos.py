@@ -539,7 +539,7 @@ def manager(
                 axes_labels_fontsize=axes_labels_fontsize,
                 title_fontsize=title_fontsize,
             )
-            cprint(f"Result is in {join(output_root, 'pdos-vs-dos')}", "blue")
+            cprint(f"Result is in {abspath(join(output_root, 'pdos-vs-dos'))}", "blue")
 
             # Plot PDOS for each atom/wfc
             plot_orbital_resolved(

@@ -14,7 +14,7 @@ from radtools.io.tb2j import read_tb2j_model
 def manager(
     input_filename,
     template_file,
-    output_name=None,
+    output_name="extracted_exchange.txt",
     decimals=4,
     force_symmetry=False,
     isotropic=False,
@@ -34,7 +34,8 @@ def manager(
     """
 
     # Create the output directory if it does not exist
-    makedirs(split(output_name)[0], exist_ok=True)
+    if split(output_name)[0] != "":
+        makedirs(split(output_name)[0], exist_ok=True)
 
     # Get current date and time
     cd = datetime.now()
@@ -106,7 +107,7 @@ def create_parser():
         "--output-name",
         metavar="filename",
         type=str,
-        default=None,
+        default="extracted_exchange.txt",
         help="Seedname for the output files.",
     )
     parser.add_argument(
