@@ -23,7 +23,7 @@ Full documentation on the behaviour is available in the
 
     .. code-block:: bash
 
-        rad-identify-wannier-centres seedname_centres.xyz -s 0.2 -op . -on identified_centres
+        rad-identify-wannier-centres.py seedname_centres.xyz -s 0.2 -op . -on identified_centres
 
     The same result could be achieved by calling the function
     :py:func:`.identify_wannier_centres`:
