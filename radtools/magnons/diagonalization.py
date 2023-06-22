@@ -54,7 +54,7 @@ def solve_via_colpa(D):
             \boldsymbol{a}_{\boldsymbol{k}} =
             \begin{pmatrix}
                 \boldsymbol{\alpha}_{\boldsymbol{k}} \\
-                \boldsymbol{\alpha}_{-\boldsymbol{k}}^{\dag}
+                \boldsymbol{\alpha}_{-\boldsymbol{k}}^{\dagger}
             \end{pmatrix}
 
     Notes
@@ -64,7 +64,7 @@ def solve_via_colpa(D):
 
     .. math::
 
-        \boldsymbol{E} = (\boldsymbol{G}^{\dag})^{-1} \boldsymbol{D} \boldsymbol{G}^{-1}
+        \boldsymbol{E} = (\boldsymbol{G}^{\dagger})^{-1} \boldsymbol{D} \boldsymbol{G}^{-1}
 
 
 
