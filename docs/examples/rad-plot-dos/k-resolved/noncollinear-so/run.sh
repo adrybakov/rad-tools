@@ -22,19 +22,11 @@
 #Wall clock limit:
 #SBATCH --time=0-00:40:00
 
-#e-mail notifications
-#SBATCH --mail-type=ALL
-#SBATCH --mail-user=rybakov.ad@icloud.com
-
-####################
-# Load environment #
-####################
-
 # Make sure each process only uses one thread, that is, force VASP to use only one thread per core
-ulimit - s unlimited
-export OMP_NUM_THREADS =$SLURM_CPUS_PER_TASK
+ulimit -s unlimited
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 # For pinning threads correctly:
-export OMP_PLACES = cores
+export OMP_PLACES=cores
 
 # Libraries and modules
 module load intel/21.7.1
