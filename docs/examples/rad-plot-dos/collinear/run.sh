@@ -37,9 +37,9 @@ export OMP_NUM_THREADS =$SLURM_CPUS_PER_TASK
 export OMP_PLACES = cores
 
 # Libraries and modules
-module load intel/21.3.0
-module load impi/2021.3
-module load qe/6.8
+module load intel/21.7.1
+module load impi/2021.7
+module load qe/7.2
 
 srun pw.x -i input/scf.in > output/scf.out
 srun pw.x -i input/nscf.in > output/nscf.out
