@@ -5,6 +5,5 @@
   DeltaE = 0.04
   filproj = 'nnso'
   kresolveddos = .true.
-  diag_basis = .true.
   Emin = -10
 /

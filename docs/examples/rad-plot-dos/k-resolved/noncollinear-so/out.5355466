@@ -1,0 +1,30 @@
+                                  
+================================= 
+Global information about the job: 
+================================= 
+  
+Job owner: jojaibal(84538)
+Job name:  pdos-k-res-nso
+Node list: ravc4095
+Job start: Mon Jun 26 23:26:58 CEST 2023
+Job end:   Mon Jun 26 23:28:45 CEST 2023
+Work dir:  /ptmp/jojaibal/andrey/rad-tools/docs/examples/rad-plot-dos/k-resolved/noncollinear-so/./
+Command:   /raven/ptmp/jojaibal/andrey/rad-tools/docs/examples/rad-plot-dos/k-resolved/noncollinear-so/run.sh
+  
+  
+  
+==========================================================================================
+Information on jobsteps (Note: MaxRSS/AveRSS is the maximum/average over all 
+tasks of the per-task memory high-water marks; cf. "man sacct"): 
+==========================================================================================
+  
+JobID            JobName NNodes NTasks  NCPUS       MaxRSS       AveRSS    Elapsed ExitCode
+------------- ---------- ------ ------ ------ ------------ ------------ ---------- --------
+5355466       pdos-k-res      1            40                             00:01:47      0:0
+5355466.0           pw.x      1     20     40      202.40M      196.81M   00:00:41      0:0
+5355466.1           pw.x      1     20     40      134.28M      118.95M   00:00:57      0:0
+5355466.2      projwfc.x      1     20     40        0.44M        0.43M   00:00:06      0:0
+  
+Maximum memory per node: 4.244623 GB (defined as MaxRSS*Ntasks/NNodes)
+CPU utilization: 88.8 %
+  
