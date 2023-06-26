@@ -2,7 +2,7 @@
   prefix = 'csp'
   outdir = './tmp'
   degauss = 0.003
-  DeltaE = 0.04,
+  DeltaE = 0.04
   filproj = 'csp'
   kresolveddos = .true.
   diag_basis = .true.
