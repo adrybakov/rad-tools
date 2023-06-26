@@ -26,6 +26,7 @@ setup(
         "scripts/rad-extract-tb2j.py",
         "scripts/rad-make-template.py",
         "scripts/rad-plot-dos.py",
+        "scripts/rad-plot-fatbands.py",
         "scripts/rad-identify-wannier-centres.py",
         "scripts/compute-energies.py",
         "scripts/rad-plot-tb2j-magnons.py",

@@ -131,7 +131,10 @@ example-extract-tb2j:
 	@rad-extract-tb2j.py -if docs/examples/rad-extract-tb2j/exchange.out -tf docs/examples/rad-extract-tb2j/template.txt -on docs/examples/rad-extract-tb2j/summary_forced_symmetry.txt -all -fs
 	@rad-extract-tb2j.py -if docs/examples/rad-extract-tb2j/exchange.out -tf docs/examples/rad-extract-tb2j/template.txt -on docs/examples/rad-extract-tb2j/summary.txt -all
 
-examples: install example-plot-dos example-identify-wannier-centres example-make-template example-plot-tb2j example-extract-tb2j
+example-plot-dos-gallery:
+	@rad-plot-dos.py -h
+
+examples: install example-plot-dos example-identify-wannier-centres example-make-template example-plot-tb2j example-extract-tb2j example-plot-dos-gallery
 	@echo "Done"
 
 pictures:

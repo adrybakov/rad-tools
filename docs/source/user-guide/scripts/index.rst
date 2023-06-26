@@ -18,6 +18,7 @@ Files from the usage examples are available :examples:`here <>`.
     :maxdepth: 1
 
     rad-plot-dos
+    rad-plot-fatbands
 
 .. toctree::
     :caption: for TB2J:

@@ -43,6 +43,7 @@ from .make_template import manager as make_template
 from .plot_dos import manager as plot_dos
 from .plot_tb2j import manager as plot_tb2j
 from .plot_tb2j_magnons import manager as plot_tb2j_magnons
+from .plot_fatbands import manager as plot_fatbands
 
 __all__ = [
     "identify_wannier_centres",
@@ -51,4 +52,5 @@ __all__ = [
     "plot_dos",
     "make_template",
     "plot_tb2j_magnons",
+    "plot_fatbands",
 ]
