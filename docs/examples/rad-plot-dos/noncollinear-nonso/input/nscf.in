@@ -19,6 +19,8 @@
   angle1(1)=0
   angle2(1)=0
   noncolin = .true.
+  noinv=.true. 
+  nosymm=.true.
 /
 &ELECTRONS
   conv_thr =   1.0000000000d-6

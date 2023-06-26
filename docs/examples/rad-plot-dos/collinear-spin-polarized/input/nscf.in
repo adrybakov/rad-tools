@@ -17,6 +17,8 @@
   starting_magnetization(1) =   2.7777777778d-01
   starting_magnetization(2) =   1.0000000000d-01
   nspin = 2
+  noinv=.true. 
+  nosymm=.true.
 /
 &ELECTRONS
   conv_thr =   1.0000000000d-6
