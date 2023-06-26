@@ -32,10 +32,10 @@ def manager(
     verbose=False,
 ):
     r"""
-    :ref:`rad-plot-magnons` script.
+    :ref:`rad-plot-tb2j-magnons` script.
 
     Full documentation on the behaviour is available in the
-    :ref:`User Guide <rad-plot-magnons>`.
+    :ref:`User Guide <rad-plot-tb2j-magnons>`.
     Parameters of the function directly
     correspond to the arguments of the script.
     """
