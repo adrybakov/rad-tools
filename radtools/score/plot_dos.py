@@ -1,6 +1,5 @@
-import re
 from argparse import ArgumentParser
-from os import makedirs, walk
+from os import makedirs
 from os.path import abspath, isfile, join
 
 from termcolor import cprint
