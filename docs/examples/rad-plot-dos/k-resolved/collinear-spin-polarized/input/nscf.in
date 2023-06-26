@@ -1,8 +1,8 @@
 &CONTROL
   calculation = 'nscf'
   outdir = './tmp/'
-  prefix = 'c'
-  pseudo_dir = '../pseudo'
+  prefix = 'csp'
+  pseudo_dir = '../../pseudo'
   verbosity = 'high'
 /
 &SYSTEM
@@ -14,7 +14,9 @@
   ntyp = 2
   occupations = 'smearing'
   smearing = 'cold'
-  nspin = 1
+  starting_magnetization(1) =   2.7777777778d-01
+  starting_magnetization(2) =   1.0000000000d-01
+  nspin = 2
 /
 &ELECTRONS
   conv_thr =   1.0000000000d-6

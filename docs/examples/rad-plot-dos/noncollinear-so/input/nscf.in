@@ -2,7 +2,7 @@
   calculation = 'nscf'
   outdir = './tmp/'
   prefix = 'nso'
-  pseudo_dir = 'pseudo'
+  pseudo_dir = '../pseudo'
   verbosity = 'high'
 /
 &SYSTEM
