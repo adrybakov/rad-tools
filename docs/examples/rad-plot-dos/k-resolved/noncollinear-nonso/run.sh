@@ -15,9 +15,10 @@
 #SBATCH -J pdos-k-res-nnso
 
 #Number of nodes and MPI tasks per node:
-#SBATCH --nodes=2
-#SBATCH --ntasks-per-node=72
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=20
 #SBATCH --cpus-per-task=1
+#SBATCH --mem=64000MB
 
 #Wall clock limit:
 #SBATCH --time=0-00:40:00
