@@ -27,6 +27,17 @@ There are two ways to use this script:
 * :ref:`rad-plot-dos_predefined-plots`
 * :ref:`rad-plot-dos_custom-plots`
 
+Examples of predefined plots for each type of calculations 
+(all commands for the command line are executed from "docs/examples/rad-plot-dos" folder):
+
+.. toctree::
+    :maxdepth: 1
+
+    collinear
+    collinear-spin-polarized
+    non-collinear-non-spin-orbit
+    non-collinear-spin-orbit
+
 Before we discuss the difference between those two types, we describe 
 parameters, which affects both of them
 
@@ -49,7 +60,7 @@ There are two main plot style:
 
 .. figure:: /../examples/rad-plot-dos/style-examples/csp/custom.png
     :align: center
-    :target: ../../../../../_images/custom.png
+    :target: ../../../../../../_images/custom.png
 
     Default style
 
@@ -60,7 +71,7 @@ There are two main plot style:
 
 .. figure:: /../examples/rad-plot-dos/style-examples/csp-relative/custom.png
     :align: center
-    :target: ../../../../../_images/custom1.png
+    :target: ../../../../../../_images/custom1.png
 
     Relative style
 
@@ -73,13 +84,13 @@ Each of these styles could be modified by the following "substyles":
 
 .. figure:: /../examples/rad-plot-dos/style-examples/csp-normalized/custom.png
     :align: center
-    :target: ../../../../../_images/custom2.png
+    :target: ../../../../../../_images/custom2.png
 
     With default style
 
 .. figure:: /../examples/rad-plot-dos/style-examples/csp-relative-normalized/custom.png
     :align: center
-    :target: ../../../../../_images/custom3.png
+    :target: ../../../../../../_images/custom3.png
 
     With relative style
 
@@ -89,13 +100,13 @@ Each of these styles could be modified by the following "substyles":
 
 .. figure:: /../examples/rad-plot-dos/style-examples/csp-vstotal/custom.png
     :align: center
-    :target: ../../../../../_images/custom4.png
+    :target: ../../../../../../_images/custom4.png
 
     With default style
 
 .. figure:: /../examples/rad-plot-dos/style-examples/csp-relative-vstotal/custom.png
     :align: center
-    :target: ../../../../../_images/custom5.png
+    :target: ../../../../../../_images/custom5.png
 
     With relative style
 
@@ -103,13 +114,13 @@ Each of these styles could be modified by the following "substyles":
 
 .. figure:: /../examples/rad-plot-dos/style-examples/csp-normalized-vstotal/custom.png
     :align: center
-    :target: ../../../../../_images/custom6.png
+    :target: ../../../../../../_images/custom6.png
 
     With default style
 
 .. figure:: /../examples/rad-plot-dos/style-examples/csp-relative-normalized-vstotal/custom.png
     :align: center
-    :target: ../../../../../_images/custom7.png
+    :target: ../../../../../../_images/custom7.png
 
     With relative style
 

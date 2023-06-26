@@ -132,7 +132,14 @@ example-extract-tb2j:
 	@rad-extract-tb2j.py -if docs/examples/rad-extract-tb2j/exchange.out -tf docs/examples/rad-extract-tb2j/template.txt -on docs/examples/rad-extract-tb2j/summary.txt -all
 
 example-plot-dos-gallery:
-	@rad-plot-dos.py -h
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear/pdos -ew -6.5 6.5 -ef -1.7806 -op docs/examples/rad-plot-dos/collinear/pdos 
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear/pdos -ew -6.5 6.5 -ef -1.7806 -op docs/examples/rad-plot-dos/collinear/pdos -r -n
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -6.5 6.5 -ef -1.7810 -op docs/examples/rad-plot-dos/collinear-spin-polarized/pdos 
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -6.5 6.5 -ef -1.7810 -op docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -r -n
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/noncollinear-nonso/pdos -ew -6.5 6.5 -ef -1.7810 -op docs/examples/rad-plot-dos/noncollinear-nonso/pdos 
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/noncollinear-nonso/pdos -ew -6.5 6.5 -ef -1.7810 -op docs/examples/rad-plot-dos/noncollinear-nonso/pdos -r -n
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/noncollinear-so/pdos -ew -6.5 6.5 -ef -1.6372 -op docs/examples/rad-plot-dos/noncollinear-so/pdos 
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/noncollinear-so/pdos -ew -6.5 6.5 -ef -1.6372 -op docs/examples/rad-plot-dos/noncollinear-so/pdos -r -n
 
 examples: install example-plot-dos example-identify-wannier-centres example-make-template example-plot-tb2j example-extract-tb2j example-plot-dos-gallery
 	@echo "Done"

@@ -17,7 +17,7 @@ Files from the usage examples are available :examples:`here <>`.
     :caption: for Quantum Espresso:
     :maxdepth: 1
 
-    rad-plot-dos
+    rad-plot-dos/index
     rad-plot-fatbands
 
 .. toctree::
