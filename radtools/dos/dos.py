@@ -80,6 +80,10 @@ class DOSQE:
         self.energy = self.energy[self.energy_window[0] : self.energy_window[1]]
 
     @property
+    def spin_pol(self):
+        return self.case in [2, 3]
+
+    @property
     def case(self):
         r"""
         Detects case of the DOS calculations.
@@ -476,7 +480,7 @@ class DOSQE:
                 pdos = np.loadtxt(path, skiprows=1).T
             else:
                 pdos += np.loadtxt(path, skiprows=1).T
-        if self.case in [2, 3]:
+        if self.spin_pol:
             if self.k_resolved:
                 ldos = pdos[2:4].reshape(2, self.nkpoints, self.nepoints)[
                     :, :, self.energy_window[0] : self.energy_window[1]
@@ -508,7 +512,7 @@ class DOSQE:
             pdos=pdos,
             projectors_group=wfc,
             ldos=ldos,
-            spin_pol=self.case in [2, 3],
+            spin_pol=self.spin_pol,
         )
 
     def plot_pdos_tot(

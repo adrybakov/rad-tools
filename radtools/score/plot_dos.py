@@ -6,7 +6,8 @@ from termcolor import cprint
 from tqdm import tqdm
 
 from radtools.dos.dos import DOSQE, detect_seednames
-from radtools.dos.pdos import COLOURS, PDOS, plot_projected
+from radtools.dos.pdos import PDOS
+from radtools.dos.plotting import COLOURS, plot_projected
 
 
 def plot_orbital_resolved(
@@ -132,7 +133,7 @@ def plot_atom_resolved(
                     ldos=dos.total_pdos(),
                     projectors_group=atom_name,
                     projectors=projectors,
-                    spin_pol=dos.case in [2, 3],
+                    spin_pol=dos.spin_pol,
                 )
                 pdos.projectors_group = "Total PDOS"
             else:
@@ -141,7 +142,7 @@ def plot_atom_resolved(
                     pdos=pdos,
                     projectors_group=atom_name,
                     projectors=projectors,
-                    spin_pol=dos.case in [2, 3],
+                    spin_pol=dos.spin_pol,
                 )
             title = f"PDOS for {atom_name}"
             if save_txt:
@@ -210,7 +211,7 @@ def plot_atom_to_total(
             ldos=dos.total_pdos(),
             projectors_group="Total PDOS",
             projectors=projectors,
-            spin_pol=dos.case in [2, 3],
+            spin_pol=dos.spin_pol,
         )
         pdos.projectors_group = "Total PDOS"
     else:
@@ -219,7 +220,7 @@ def plot_atom_to_total(
             pdos=pdos,
             projectors_group="Total PDOS",
             projectors=projectors,
-            spin_pol=dos.case in [2, 3],
+            spin_pol=dos.spin_pol,
         )
 
     title = f"Atom contribution in PDOS"
@@ -367,7 +368,7 @@ def plot_custom(
             ldos=dos.total_pdos(),
             projectors_group="Total PDOS",
             projectors=projectors,
-            spin_pol=dos.case in [2, 3],
+            spin_pol=dos.spin_pol,
         )
     else:
         pdos = PDOS(
@@ -375,7 +376,7 @@ def plot_custom(
             pdos=pdos,
             projectors_group="Total (sum)",
             projectors=projectors,
-            spin_pol=dos.case in [2, 3],
+            spin_pol=dos.spin_pol,
         )
 
     if isfile(join(output_root, "custom.png")):
@@ -472,7 +473,8 @@ def manager(
         )
         # Preparations
         output_root = join(output_path, f"{seedname}{suffix}")
-        makedirs(output_root, exist_ok=True)
+        if output_root != "":
+            makedirs(output_root, exist_ok=True)
 
         # Load DOS data.
         dos = DOSQE(seedname, input_path, energy_window=energy_window, efermi=efermi)
