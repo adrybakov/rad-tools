@@ -1,7 +1,3 @@
-####################
-# Cluster settings #
-####################
-
 #!/bin/bash -l
 
 #Standard output and error:
