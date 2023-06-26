@@ -1,5 +1,3 @@
-# TODO Fix background total + non-colinear-nonspin-orbit
-
 import re
 from argparse import ArgumentParser
 from os import makedirs, walk
