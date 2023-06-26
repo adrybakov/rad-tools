@@ -1,0 +1,279 @@
+
+     Program PROJWFC v.7.1 starts on 26Jun2023 at 23:34:25 
+
+     This program is part of the open-source Quantum ESPRESSO suite
+     for quantum simulation of materials; please cite
+         "P. Giannozzi et al., J. Phys.:Condens. Matter 21 395502 (2009);
+         "P. Giannozzi et al., J. Phys.:Condens. Matter 29 465901 (2017);
+         "P. Giannozzi et al., J. Chem. Phys. 152 154105 (2020);
+          URL http://www.quantum-espresso.org", 
+     in publications or presentations arising from this work. More details at
+     http://www.quantum-espresso.org/quote
+
+     Parallel version (MPI & OpenMP), running on      20 processor cores
+     Number of MPI processes:                20
+     Threads/MPI process:                     1
+
+     MPI processes distributed on     1 nodes
+     R & G space division:  proc/nbgrp/npool/nimage =      20
+     241615 MiB available memory on the printing compute node when the environment starts
+ 
+
+     Reading xml data from directory:
+
+     ./tmp/nnso.save/
+
+     IMPORTANT: XC functional enforced from input :
+     Exchange-correlation= PBE
+                           (   1   4   3   4   0   0   0)
+     Any further DFT definition will be discarded
+     Please, verify this is what you really want
+
+ 
+     Parallelization info
+     --------------------
+     sticks:   dense  smooth     PW     G-vecs:    dense   smooth      PW
+     Min          93      89     21                20483    19267    2377
+     Max          94      90     22                20500    19300    2420
+     Sum        1879    1789    439               409943   385631   48107
+ 
+     Using Slab Decomposition
+ 
+
+     Gaussian broadening (read from input): ngauss,degauss=   0    0.003000
+
+
+     Calling projwave .... 
+     Subspace diagonalization in iterative solution of the eigenvalue problem:
+     one sub-group per band group will be used
+     ELPA distributed-memory algorithm (size of sub-group:  4*  4 procs)
+
+     linear algebra parallelized on  16 procs
+ 
+  Problem Sizes 
+  natomwfc =           36
+  nx       =            9
+  nbnd     =           40
+  nkstot   =            1
+  npwx     =         2400
+  nkb      =           54
+ 
+
+     Atomic states used for projection
+     (read from pseudopotential files):
+
+     state #   1: atom   1 (Ni ), wfc  1 (l=0 m= 1 s_z= 0.5)
+     state #   2: atom   1 (Ni ), wfc  1 (l=0 m= 1 s_z=-0.5)
+     state #   3: atom   1 (Ni ), wfc  2 (l=1 m= 1 s_z= 0.5)
+     state #   4: atom   1 (Ni ), wfc  2 (l=1 m= 2 s_z= 0.5)
+     state #   5: atom   1 (Ni ), wfc  2 (l=1 m= 3 s_z= 0.5)
+     state #   6: atom   1 (Ni ), wfc  2 (l=1 m= 1 s_z=-0.5)
+     state #   7: atom   1 (Ni ), wfc  2 (l=1 m= 2 s_z=-0.5)
+     state #   8: atom   1 (Ni ), wfc  2 (l=1 m= 3 s_z=-0.5)
+     state #   9: atom   1 (Ni ), wfc  3 (l=2 m= 1 s_z= 0.5)
+     state #  10: atom   1 (Ni ), wfc  3 (l=2 m= 2 s_z= 0.5)
+     state #  11: atom   1 (Ni ), wfc  3 (l=2 m= 3 s_z= 0.5)
+     state #  12: atom   1 (Ni ), wfc  3 (l=2 m= 4 s_z= 0.5)
+     state #  13: atom   1 (Ni ), wfc  3 (l=2 m= 5 s_z= 0.5)
+     state #  14: atom   1 (Ni ), wfc  3 (l=2 m= 1 s_z=-0.5)
+     state #  15: atom   1 (Ni ), wfc  3 (l=2 m= 2 s_z=-0.5)
+     state #  16: atom   1 (Ni ), wfc  3 (l=2 m= 3 s_z=-0.5)
+     state #  17: atom   1 (Ni ), wfc  3 (l=2 m= 4 s_z=-0.5)
+     state #  18: atom   1 (Ni ), wfc  3 (l=2 m= 5 s_z=-0.5)
+     state #  19: atom   1 (Ni ), wfc  4 (l=0 m= 1 s_z= 0.5)
+     state #  20: atom   1 (Ni ), wfc  4 (l=0 m= 1 s_z=-0.5)
+     state #  21: atom   2 (I  ), wfc  1 (l=0 m= 1 s_z= 0.5)
+     state #  22: atom   2 (I  ), wfc  1 (l=0 m= 1 s_z=-0.5)
+     state #  23: atom   2 (I  ), wfc  2 (l=1 m= 1 s_z= 0.5)
+     state #  24: atom   2 (I  ), wfc  2 (l=1 m= 2 s_z= 0.5)
+     state #  25: atom   2 (I  ), wfc  2 (l=1 m= 3 s_z= 0.5)
+     state #  26: atom   2 (I  ), wfc  2 (l=1 m= 1 s_z=-0.5)
+     state #  27: atom   2 (I  ), wfc  2 (l=1 m= 2 s_z=-0.5)
+     state #  28: atom   2 (I  ), wfc  2 (l=1 m= 3 s_z=-0.5)
+     state #  29: atom   3 (I  ), wfc  1 (l=0 m= 1 s_z= 0.5)
+     state #  30: atom   3 (I  ), wfc  1 (l=0 m= 1 s_z=-0.5)
+     state #  31: atom   3 (I  ), wfc  2 (l=1 m= 1 s_z= 0.5)
+     state #  32: atom   3 (I  ), wfc  2 (l=1 m= 2 s_z= 0.5)
+     state #  33: atom   3 (I  ), wfc  2 (l=1 m= 3 s_z= 0.5)
+     state #  34: atom   3 (I  ), wfc  2 (l=1 m= 1 s_z=-0.5)
+     state #  35: atom   3 (I  ), wfc  2 (l=1 m= 2 s_z=-0.5)
+     state #  36: atom   3 (I  ), wfc  2 (l=1 m= 3 s_z=-0.5)
+
+ k =   0.0000000000  0.0000000000  0.0000000000
+==== e(   1) =  -105.99971 eV ==== 
+     psi = 0.996*[#   1]+0.002*[#  23]+0.002*[#  31]
+    |psi|^2 = 1.000
+==== e(   2) =  -104.62916 eV ==== 
+     psi = 0.996*[#   2]+0.002*[#  26]+0.002*[#  34]
+    |psi|^2 = 1.000
+==== e(   3) =   -66.47339 eV ==== 
+     psi = 0.999*[#   3]
+    |psi|^2 = 1.000
+==== e(   4) =   -66.41994 eV ==== 
+     psi = 0.500*[#   4]+0.500*[#   5]
+    |psi|^2 = 1.000
+==== e(   5) =   -66.41994 eV ==== 
+     psi = 0.500*[#   4]+0.500*[#   5]
+    |psi|^2 = 1.000
+==== e(   6) =   -64.96404 eV ==== 
+     psi = 0.999*[#   6]
+    |psi|^2 = 1.000
+==== e(   7) =   -64.95299 eV ==== 
+     psi = 0.500*[#   7]+0.500*[#   8]
+    |psi|^2 = 1.000
+==== e(   8) =   -64.95299 eV ==== 
+     psi = 0.500*[#   7]+0.500*[#   8]
+    |psi|^2 = 1.000
+==== e(   9) =   -15.79563 eV ==== 
+     psi = 0.364*[#  21]+0.364*[#  29]+0.261*[#  19]+0.005*[#  23]+0.005*[#  31]
+          +0.001*[#   1]
+    |psi|^2 = 1.000
+==== e(  10) =   -15.57079 eV ==== 
+     psi = 0.361*[#  22]+0.361*[#  30]+0.266*[#  20]+0.005*[#  26]+0.005*[#  34]
+          +0.001*[#   2]
+    |psi|^2 = 1.000
+==== e(  11) =   -14.85348 eV ==== 
+     psi = 0.495*[#  21]+0.495*[#  29]+0.003*[#  23]+0.003*[#  31]
+    |psi|^2 = 0.997
+==== e(  12) =   -14.59725 eV ==== 
+     psi = 0.495*[#  22]+0.495*[#  30]+0.003*[#  26]+0.003*[#  34]
+    |psi|^2 = 0.997
+==== e(  13) =    -6.86252 eV ==== 
+     psi = 0.374*[#  23]+0.374*[#  31]+0.100*[#   9]+0.072*[#  19]+0.035*[#  21]
+          +0.035*[#  29]+0.002*[#   1]
+    |psi|^2 = 0.994
+==== e(  14) =    -6.64336 eV ==== 
+     psi = 0.381*[#  26]+0.381*[#  34]+0.078*[#  14]+0.075*[#  20]+0.039*[#  22]
+          +0.039*[#  30]+0.003*[#   2]
+    |psi|^2 = 0.994
+==== e(  15) =    -5.81816 eV ==== 
+     psi = 0.193*[#  12]+0.193*[#  13]+0.186*[#  10]+0.186*[#  11]+0.060*[#  24]
+          +0.060*[#  25]+0.060*[#  32]+0.060*[#  33]
+    |psi|^2 = 0.995
+==== e(  16) =    -5.81816 eV ==== 
+     psi = 0.193*[#  12]+0.193*[#  13]+0.186*[#  10]+0.186*[#  11]+0.060*[#  24]
+          +0.060*[#  25]+0.060*[#  32]+0.060*[#  33]
+    |psi|^2 = 0.995
+==== e(  17) =    -4.57124 eV ==== 
+     psi = 0.214*[#  17]+0.214*[#  18]+0.117*[#  27]+0.117*[#  28]+0.117*[#  35]
+          +0.117*[#  36]+0.046*[#  15]+0.046*[#  16]
+    |psi|^2 = 0.988
+==== e(  18) =    -4.57124 eV ==== 
+     psi = 0.214*[#  17]+0.214*[#  18]+0.117*[#  27]+0.117*[#  28]+0.117*[#  35]
+          +0.117*[#  36]+0.046*[#  15]+0.046*[#  16]
+    |psi|^2 = 0.988
+==== e(  19) =    -4.28568 eV ==== 
+     psi = 0.285*[#  10]+0.285*[#  11]+0.201*[#  12]+0.201*[#  13]+0.004*[#  24]
+          +0.004*[#  25]+0.004*[#  32]+0.004*[#  33]
+    |psi|^2 = 0.990
+==== e(  20) =    -4.28568 eV ==== 
+     psi = 0.285*[#  10]+0.285*[#  11]+0.201*[#  12]+0.201*[#  13]+0.004*[#  24]
+          +0.004*[#  25]+0.004*[#  32]+0.004*[#  33]
+    |psi|^2 = 0.990
+==== e(  21) =    -3.91979 eV ==== 
+     psi = 0.885*[#   9]+0.035*[#  23]+0.035*[#  31]+0.025*[#  19]+0.006*[#  21]
+          +0.006*[#  29]
+    |psi|^2 = 0.993
+==== e(  22) =    -3.79161 eV ==== 
+     psi = 0.495*[#  23]+0.495*[#  31]+0.003*[#  21]+0.003*[#  29]
+    |psi|^2 = 0.995
+==== e(  23) =    -3.54906 eV ==== 
+     psi = 0.494*[#  26]+0.494*[#  34]+0.003*[#  22]+0.003*[#  30]
+    |psi|^2 = 0.994
+==== e(  24) =    -3.34536 eV ==== 
+     psi = 0.349*[#  15]+0.349*[#  16]+0.135*[#  17]+0.135*[#  18]+0.004*[#  27]
+          +0.004*[#  28]+0.004*[#  35]+0.004*[#  36]
+    |psi|^2 = 0.986
+==== e(  25) =    -3.34536 eV ==== 
+     psi = 0.349*[#  15]+0.349*[#  16]+0.135*[#  17]+0.135*[#  18]+0.004*[#  27]
+          +0.004*[#  28]+0.004*[#  35]+0.004*[#  36]
+    |psi|^2 = 0.986
+==== e(  26) =    -3.18518 eV ==== 
+     psi = 0.900*[#  14]+0.025*[#  20]+0.025*[#  26]+0.025*[#  34]+0.006*[#  22]
+          +0.006*[#  30]
+    |psi|^2 = 0.987
+==== e(  27) =    -2.88152 eV ==== 
+     psi = 0.246*[#  24]+0.246*[#  25]+0.246*[#  32]+0.246*[#  33]
+    |psi|^2 = 0.984
+==== e(  28) =    -2.88152 eV ==== 
+     psi = 0.246*[#  24]+0.246*[#  25]+0.246*[#  32]+0.246*[#  33]
+    |psi|^2 = 0.984
+==== e(  29) =    -2.62921 eV ==== 
+     psi = 0.245*[#  27]+0.245*[#  28]+0.245*[#  35]+0.245*[#  36]
+    |psi|^2 = 0.980
+==== e(  30) =    -2.62921 eV ==== 
+     psi = 0.245*[#  27]+0.245*[#  28]+0.245*[#  35]+0.245*[#  36]
+    |psi|^2 = 0.980
+==== e(  31) =    -1.98543 eV ==== 
+     psi = 0.185*[#  24]+0.185*[#  25]+0.185*[#  32]+0.185*[#  33]+0.103*[#  12]
+          +0.103*[#  13]+0.026*[#  10]+0.026*[#  11]
+    |psi|^2 = 0.999
+==== e(  32) =    -1.98543 eV ==== 
+     psi = 0.185*[#  24]+0.185*[#  25]+0.185*[#  32]+0.185*[#  33]+0.103*[#  12]
+          +0.103*[#  13]+0.026*[#  10]+0.026*[#  11]
+    |psi|^2 = 0.999
+==== e(  33) =    -0.89059 eV ==== 
+     psi = 0.145*[#  17]+0.145*[#  18]+0.128*[#  27]+0.128*[#  28]+0.128*[#  35]
+          +0.128*[#  36]+0.097*[#  15]+0.097*[#  16]
+    |psi|^2 = 0.996
+==== e(  34) =    -0.89059 eV ==== 
+     psi = 0.145*[#  17]+0.145*[#  18]+0.128*[#  27]+0.128*[#  28]+0.128*[#  35]
+          +0.128*[#  36]+0.097*[#  15]+0.097*[#  16]
+    |psi|^2 = 0.996
+==== e(  35) =     1.76643 eV ==== 
+     psi = 0.402*[#  19]+0.058*[#  21]+0.058*[#  29]+0.053*[#  23]+0.053*[#  31]
+          +0.002*[#   9]
+    |psi|^2 = 0.627
+==== e(  36) =     1.89902 eV ==== 
+     psi = 0.376*[#  20]+0.055*[#  22]+0.055*[#  30]+0.052*[#  26]+0.052*[#  34]
+          +0.002*[#  14]
+    |psi|^2 = 0.592
+==== e(  37) =     2.50453 eV ==== 
+     psi = 0.001*[#  21]+0.001*[#  29]
+    |psi|^2 = 0.004
+==== e(  38) =     2.60945 eV ==== 
+     psi = 0.002*[#  22]+0.002*[#  30]+0.001*[#  26]+0.001*[#  34]
+    |psi|^2 = 0.005
+==== e(  39) =     2.68436 eV ==== 
+ 
+    |psi|^2 = 0.000
+==== e(  40) =     2.75758 eV ==== 
+ 
+    |psi|^2 = 0.000
+
+Lowdin Charges: 
+
+     Atom #   1: total charge =  17.6401, s =  2.7236, p =  5.9999, d =  8.9166, 
+                 spin up      =   9.3170, s =  1.3574, 
+                 spin up      =   9.3170, p =  3.0000, 
+                 spin up      =   9.3170, d =  4.9596, 
+                 spin down    =   8.3231, s =  1.3662, 
+                 spin down    =   8.3231, p =  2.9999, 
+                 spin down    =   8.3231, d =  3.9570, 
+                 polarization =   0.9938, s = -0.0088, p =  0.0000, d =  1.0026, 
+     Atom #   2: total charge =   7.0767, s =  1.8083, p =  5.2684, d =  0.0000, 
+                 spin up      =   3.7981, s =  0.9044, 
+                 spin up      =   3.7981, p =  2.8937, 
+                 spin up      =   3.7981, d =  0.0000, 
+                 spin down    =   3.2786, s =  0.9040, 
+                 spin down    =   3.2786, p =  2.3747, 
+                 spin down    =   3.2786, d =  0.0000, 
+                 polarization =   0.5195, s =  0.0004, p =  0.5191, d =  0.0000, 
+     Atom #   3: total charge =   7.0767, s =  1.8083, p =  5.2684, d =  0.0000, 
+                 spin up      =   3.7981, s =  0.9044, 
+                 spin up      =   3.7981, p =  2.8937, 
+                 spin up      =   3.7981, d =  0.0000, 
+                 spin down    =   3.2786, s =  0.9040, 
+                 spin down    =   3.2786, p =  2.3747, 
+                 spin down    =   3.2786, d =  0.0000, 
+                 polarization =   0.5195, s =  0.0004, p =  0.5191, d =  0.0000, 
+     Spilling Parameter:   0.0065
+ 
+     PROJWFC      :      0.98s CPU      1.08s WALL
+
+ 
+   This run was terminated on:  23:34:27  26Jun2023            
+
+=------------------------------------------------------------------------------=
+   JOB DONE.
+=------------------------------------------------------------------------------=

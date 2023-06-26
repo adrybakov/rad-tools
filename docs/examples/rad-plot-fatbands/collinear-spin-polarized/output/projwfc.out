@@ -1,0 +1,439 @@
+
+     Program PROJWFC v.7.1 starts on 26Jun2023 at 23:34:10 
+
+     This program is part of the open-source Quantum ESPRESSO suite
+     for quantum simulation of materials; please cite
+         "P. Giannozzi et al., J. Phys.:Condens. Matter 21 395502 (2009);
+         "P. Giannozzi et al., J. Phys.:Condens. Matter 29 465901 (2017);
+         "P. Giannozzi et al., J. Chem. Phys. 152 154105 (2020);
+          URL http://www.quantum-espresso.org", 
+     in publications or presentations arising from this work. More details at
+     http://www.quantum-espresso.org/quote
+
+     Parallel version (MPI & OpenMP), running on      20 processor cores
+     Number of MPI processes:                20
+     Threads/MPI process:                     1
+
+     MPI processes distributed on     1 nodes
+     R & G space division:  proc/nbgrp/npool/nimage =      20
+     237841 MiB available memory on the printing compute node when the environment starts
+ 
+
+     Reading xml data from directory:
+
+     ./tmp/csp.save/
+
+     IMPORTANT: XC functional enforced from input :
+     Exchange-correlation= PBE
+                           (   1   4   3   4   0   0   0)
+     Any further DFT definition will be discarded
+     Please, verify this is what you really want
+
+ 
+     Parallelization info
+     --------------------
+     sticks:   dense  smooth     PW     G-vecs:    dense   smooth      PW
+     Min          93      89     21                20483    19267    2377
+     Max          94      90     22                20500    19300    2420
+     Sum        1879    1789    439               409943   385631   48107
+ 
+     Using Slab Decomposition
+ 
+
+     Gaussian broadening (read from input): ngauss,degauss=   0    0.003000
+
+
+     Calling projwave .... 
+     Subspace diagonalization in iterative solution of the eigenvalue problem:
+     one sub-group per band group will be used
+     ELPA distributed-memory algorithm (size of sub-group:  4*  4 procs)
+
+     linear algebra parallelized on  16 procs
+ 
+  Problem Sizes 
+  natomwfc =           18
+  nx       =            5
+  nbnd     =           20
+  nkstot   =            2
+  npwx     =         2400
+  nkb      =           54
+ 
+
+     --------------------- ATOM    1 ----------------------
+
+     Orbital quantum number l = 0
+     SPIN  1
+     occupation matrix ns (before diag.):
+       0.999
+     eigenvalues:
+       0.999
+     eigenvectors (columns):
+       1.000
+     SPIN  2
+     occupation matrix ns (before diag.):
+       0.999
+     eigenvalues:
+       0.999
+     eigenvectors (columns):
+       1.000
+
+     Orbital quantum number l = 1
+     SPIN  1
+     occupation matrix ns (before diag.):
+       1.000  0.000 -0.000
+       0.000  1.000  0.000
+      -0.000  0.000  1.000
+     eigenvalues:
+       1.000  1.000  1.000
+     eigenvectors (columns):
+       1.000  0.000  0.000
+       0.000  1.000  0.000
+       0.000  0.000  1.000
+     SPIN  2
+     occupation matrix ns (before diag.):
+       1.000  0.000 -0.000
+       0.000  1.000  0.000
+      -0.000  0.000  1.000
+     eigenvalues:
+       1.000  1.000  1.000
+     eigenvectors (columns):
+       1.000  0.000  0.000
+       0.000  1.000  0.000
+       0.000  0.000  1.000
+
+     Orbital quantum number l = 2
+     SPIN  1
+     occupation matrix ns (before diag.):
+       0.986 -0.000 -0.000 -0.000 -0.000
+      -0.000  0.993 -0.000  0.000  0.002
+      -0.000 -0.000  0.993  0.002 -0.000
+      -0.000  0.000  0.002  0.994  0.000
+      -0.000  0.002 -0.000  0.000  0.994
+     eigenvalues:
+       0.986  0.991  0.991  0.996  0.996
+     eigenvectors (columns):
+       1.000  0.000 -0.000  0.000  0.000
+       0.000  0.779 -0.122  0.485 -0.378
+       0.000 -0.122 -0.779 -0.378 -0.485
+       0.000  0.095  0.608 -0.484 -0.622
+       0.000 -0.608  0.095  0.622 -0.484
+     SPIN  2
+     occupation matrix ns (before diag.):
+       0.978 -0.000 -0.000 -0.000 -0.000
+      -0.000  0.791 -0.000  0.000 -0.236
+      -0.000 -0.000  0.791 -0.236 -0.000
+      -0.000  0.000 -0.236  0.699  0.000
+      -0.000 -0.236 -0.000  0.000  0.699
+     eigenvalues:
+       0.505  0.505  0.978  0.985  0.985
+     eigenvectors (columns):
+       0.000 -0.000  1.000  0.000  0.000
+      -0.494 -0.401 -0.000  0.757  0.149
+       0.401 -0.494 -0.000 -0.149  0.757
+       0.486 -0.599  0.000  0.123 -0.624
+      -0.599 -0.486  0.000 -0.624 -0.123
+
+     Orbital quantum number l = 0
+     SPIN  1
+     occupation matrix ns (before diag.):
+       0.358
+     eigenvalues:
+       0.358
+     eigenvectors (columns):
+       1.000
+     SPIN  2
+     occupation matrix ns (before diag.):
+       0.367
+     eigenvalues:
+       0.367
+     eigenvectors (columns):
+       1.000
+
+     --------------------- ATOM    2 ----------------------
+
+     Orbital quantum number l = 0
+     SPIN  1
+     occupation matrix ns (before diag.):
+       0.904
+     eigenvalues:
+       0.904
+     eigenvectors (columns):
+       1.000
+     SPIN  2
+     occupation matrix ns (before diag.):
+       0.904
+     eigenvalues:
+       0.904
+     eigenvectors (columns):
+       1.000
+
+     Orbital quantum number l = 1
+     SPIN  1
+     occupation matrix ns (before diag.):
+       0.913  0.000 -0.000
+       0.000  0.990  0.000
+      -0.000  0.000  0.990
+     eigenvalues:
+       0.913  0.990  0.990
+     eigenvectors (columns):
+       1.000  0.000  0.000
+       0.000  1.000  0.000
+       0.000  0.000  1.000
+     SPIN  2
+     occupation matrix ns (before diag.):
+       0.910  0.000 -0.000
+       0.000  0.732  0.000
+      -0.000  0.000  0.732
+     eigenvalues:
+       0.910  0.732  0.732
+     eigenvectors (columns):
+       1.000  0.000  0.000
+       0.000  1.000  0.000
+       0.000  0.000  1.000
+
+     --------------------- ATOM    3 ----------------------
+
+     Orbital quantum number l = 0
+     SPIN  1
+     occupation matrix ns (before diag.):
+       0.904
+     eigenvalues:
+       0.904
+     eigenvectors (columns):
+       1.000
+     SPIN  2
+     occupation matrix ns (before diag.):
+       0.904
+     eigenvalues:
+       0.904
+     eigenvectors (columns):
+       1.000
+
+     Orbital quantum number l = 1
+     SPIN  1
+     occupation matrix ns (before diag.):
+       0.913  0.000 -0.000
+       0.000  0.990  0.000
+      -0.000  0.000  0.990
+     eigenvalues:
+       0.913  0.990  0.990
+     eigenvectors (columns):
+       1.000  0.000  0.000
+       0.000  1.000  0.000
+       0.000  0.000  1.000
+     SPIN  2
+     occupation matrix ns (before diag.):
+       0.910  0.000 -0.000
+       0.000  0.732  0.000
+      -0.000  0.000  0.732
+     eigenvalues:
+       0.910  0.732  0.732
+     eigenvectors (columns):
+       1.000  0.000  0.000
+       0.000  1.000  0.000
+       0.000  0.000  1.000
+
+     Rotating the orbitals to the diagonal representation of ns...
+
+     Atomic states used for projection
+     (read from pseudopotential files):
+
+     state #   1: atom   1 (Ni ), wfc  1 (l=0 m= 1)
+     state #   2: atom   1 (Ni ), wfc  2 (l=1 m= 1)
+     state #   3: atom   1 (Ni ), wfc  2 (l=1 m= 2)
+     state #   4: atom   1 (Ni ), wfc  2 (l=1 m= 3)
+     state #   5: atom   1 (Ni ), wfc  3 (l=2 m= 1)
+     state #   6: atom   1 (Ni ), wfc  3 (l=2 m= 2)
+     state #   7: atom   1 (Ni ), wfc  3 (l=2 m= 3)
+     state #   8: atom   1 (Ni ), wfc  3 (l=2 m= 4)
+     state #   9: atom   1 (Ni ), wfc  3 (l=2 m= 5)
+     state #  10: atom   1 (Ni ), wfc  4 (l=0 m= 1)
+     state #  11: atom   2 (I  ), wfc  1 (l=0 m= 1)
+     state #  12: atom   2 (I  ), wfc  2 (l=1 m= 1)
+     state #  13: atom   2 (I  ), wfc  2 (l=1 m= 2)
+     state #  14: atom   2 (I  ), wfc  2 (l=1 m= 3)
+     state #  15: atom   3 (I  ), wfc  1 (l=0 m= 1)
+     state #  16: atom   3 (I  ), wfc  2 (l=1 m= 1)
+     state #  17: atom   3 (I  ), wfc  2 (l=1 m= 2)
+     state #  18: atom   3 (I  ), wfc  2 (l=1 m= 3)
+
+ k =   0.0000000000  0.0000000000  0.0000000000
+==== e(   1) =  -106.00214 eV ==== 
+     psi = 0.996*[#   1]+0.002*[#  12]+0.002*[#  16]
+    |psi|^2 = 1.000
+==== e(   2) =   -66.47578 eV ==== 
+     psi = 0.999*[#   2]
+    |psi|^2 = 1.000
+==== e(   3) =   -66.42234 eV ==== 
+     psi = 0.793*[#   3]+0.207*[#   4]
+    |psi|^2 = 1.000
+==== e(   4) =   -66.42234 eV ==== 
+     psi = 0.793*[#   4]+0.207*[#   3]
+    |psi|^2 = 1.000
+==== e(   5) =   -15.79608 eV ==== 
+     psi = 0.364*[#  11]+0.364*[#  15]+0.261*[#  10]+0.005*[#  12]+0.005*[#  16]
+          +0.001*[#   1]
+    |psi|^2 = 1.000
+==== e(   6) =   -14.85379 eV ==== 
+     psi = 0.495*[#  11]+0.495*[#  15]+0.003*[#  12]+0.003*[#  16]
+    |psi|^2 = 0.997
+==== e(   7) =    -6.86309 eV ==== 
+     psi = 0.374*[#  12]+0.374*[#  16]+0.100*[#   5]+0.072*[#  10]+0.035*[#  11]
+          +0.035*[#  15]+0.002*[#   1]
+    |psi|^2 = 0.994
+==== e(   8) =    -5.81985 eV ==== 
+     psi = 0.732*[#   8]+0.090*[#  13]+0.090*[#  17]+0.029*[#  14]+0.029*[#  18]
+          +0.015*[#   9]+0.008*[#   6]+0.001*[#   7]
+    |psi|^2 = 0.995
+==== e(   9) =    -5.81985 eV ==== 
+     psi = 0.732*[#   9]+0.090*[#  14]+0.090*[#  18]+0.029*[#  13]+0.029*[#  17]
+          +0.015*[#   8]+0.008*[#   7]+0.001*[#   6]
+    |psi|^2 = 0.995
+==== e(  10) =    -4.28773 eV ==== 
+     psi = 0.834*[#   7]+0.138*[#   6]+0.006*[#  14]+0.006*[#  18]+0.002*[#  13]
+          +0.002*[#  17]+0.001*[#   9]
+    |psi|^2 = 0.990
+==== e(  11) =    -4.28773 eV ==== 
+     psi = 0.834*[#   6]+0.138*[#   7]+0.006*[#  13]+0.006*[#  17]+0.002*[#  14]
+          +0.002*[#  18]+0.001*[#   8]
+    |psi|^2 = 0.990
+==== e(  12) =    -3.92169 eV ==== 
+     psi = 0.885*[#   5]+0.035*[#  12]+0.035*[#  16]+0.025*[#  10]+0.006*[#  11]
+          +0.006*[#  15]
+    |psi|^2 = 0.993
+==== e(  13) =    -3.79190 eV ==== 
+     psi = 0.495*[#  12]+0.495*[#  16]+0.003*[#  11]+0.003*[#  15]
+    |psi|^2 = 0.995
+==== e(  14) =    -2.88192 eV ==== 
+     psi = 0.369*[#  13]+0.369*[#  17]+0.123*[#  14]+0.123*[#  18]
+    |psi|^2 = 0.984
+==== e(  15) =    -2.88192 eV ==== 
+     psi = 0.369*[#  14]+0.369*[#  18]+0.123*[#  13]+0.123*[#  17]
+    |psi|^2 = 0.984
+==== e(  16) =    -1.98631 eV ==== 
+     psi = 0.278*[#  14]+0.278*[#  18]+0.243*[#   9]+0.093*[#  13]+0.093*[#  17]
+          +0.009*[#   7]+0.005*[#   8]+0.001*[#   6]
+    |psi|^2 = 0.999
+==== e(  17) =    -1.98631 eV ==== 
+     psi = 0.278*[#  13]+0.278*[#  17]+0.243*[#   8]+0.093*[#  14]+0.093*[#  18]
+          +0.009*[#   6]+0.005*[#   9]+0.001*[#   7]
+    |psi|^2 = 0.999
+==== e(  18) =     1.76614 eV ==== 
+     psi = 0.402*[#  10]+0.058*[#  11]+0.058*[#  15]+0.053*[#  12]+0.053*[#  16]
+          +0.002*[#   5]
+    |psi|^2 = 0.627
+==== e(  19) =     2.50392 eV ==== 
+     psi = 0.001*[#  11]+0.001*[#  15]
+    |psi|^2 = 0.004
+==== e(  20) =     2.68447 eV ==== 
+ 
+    |psi|^2 = 0.000
+
+ k =   0.0000000000  0.0000000000  0.0000000000
+==== e(   1) =  -104.63144 eV ==== 
+     psi = 0.996*[#   1]+0.002*[#  12]+0.002*[#  16]
+    |psi|^2 = 1.000
+==== e(   2) =   -64.96627 eV ==== 
+     psi = 0.999*[#   2]
+    |psi|^2 = 1.000
+==== e(   3) =   -64.95524 eV ==== 
+     psi = 0.793*[#   3]+0.206*[#   4]
+    |psi|^2 = 1.000
+==== e(   4) =   -64.95524 eV ==== 
+     psi = 0.793*[#   4]+0.206*[#   3]
+    |psi|^2 = 1.000
+==== e(   5) =   -15.57127 eV ==== 
+     psi = 0.361*[#  11]+0.361*[#  15]+0.266*[#  10]+0.005*[#  12]+0.005*[#  16]
+          +0.001*[#   1]
+    |psi|^2 = 1.000
+==== e(   6) =   -14.59759 eV ==== 
+     psi = 0.495*[#  11]+0.495*[#  15]+0.003*[#  12]+0.003*[#  16]
+    |psi|^2 = 0.997
+==== e(   7) =    -6.64392 eV ==== 
+     psi = 0.381*[#  12]+0.381*[#  16]+0.078*[#   7]+0.075*[#  10]+0.039*[#  11]
+          +0.039*[#  15]+0.003*[#   1]
+    |psi|^2 = 0.994
+==== e(   8) =    -4.57246 eV ==== 
+     psi = 0.471*[#   5]+0.181*[#  13]+0.181*[#  17]+0.053*[#  14]+0.053*[#  18]
+          +0.030*[#   8]+0.017*[#   6]+0.003*[#   9]
+    |psi|^2 = 0.988
+==== e(   9) =    -4.57246 eV ==== 
+     psi = 0.471*[#   6]+0.181*[#  14]+0.181*[#  18]+0.053*[#  13]+0.053*[#  17]
+          +0.030*[#   9]+0.017*[#   5]+0.003*[#   8]
+    |psi|^2 = 0.988
+==== e(  10) =    -3.54936 eV ==== 
+     psi = 0.494*[#  12]+0.494*[#  16]+0.003*[#  11]+0.003*[#  15]
+    |psi|^2 = 0.994
+==== e(  11) =    -3.34730 eV ==== 
+     psi = 0.896*[#   8]+0.055*[#   9]+0.016*[#   5]+0.007*[#  13]+0.007*[#  17]
+          +0.002*[#  14]+0.002*[#  18]+0.001*[#   6]
+    |psi|^2 = 0.986
+==== e(  12) =    -3.34730 eV ==== 
+     psi = 0.896*[#   9]+0.055*[#   8]+0.016*[#   6]+0.007*[#  14]+0.007*[#  18]
+          +0.002*[#  13]+0.002*[#  17]+0.001*[#   5]
+    |psi|^2 = 0.986
+==== e(  13) =    -3.18701 eV ==== 
+     psi = 0.900*[#   7]+0.025*[#  10]+0.025*[#  12]+0.025*[#  16]+0.006*[#  11]
+          +0.006*[#  15]
+    |psi|^2 = 0.987
+==== e(  14) =    -2.62964 eV ==== 
+     psi = 0.368*[#  13]+0.368*[#  17]+0.122*[#  14]+0.122*[#  18]
+    |psi|^2 = 0.980
+==== e(  15) =    -2.62964 eV ==== 
+     psi = 0.368*[#  14]+0.368*[#  18]+0.122*[#  13]+0.122*[#  17]
+    |psi|^2 = 0.980
+==== e(  16) =    -0.89178 eV ==== 
+     psi = 0.476*[#   6]+0.184*[#  14]+0.184*[#  18]+0.072*[#  13]+0.072*[#  17]
+          +0.008*[#   5]
+    |psi|^2 = 0.996
+==== e(  17) =    -0.89178 eV ==== 
+     psi = 0.476*[#   5]+0.184*[#  13]+0.184*[#  17]+0.072*[#  14]+0.072*[#  18]
+          +0.008*[#   6]
+    |psi|^2 = 0.996
+==== e(  18) =     1.89875 eV ==== 
+     psi = 0.376*[#  10]+0.055*[#  11]+0.055*[#  15]+0.052*[#  12]+0.052*[#  16]
+          +0.002*[#   7]
+    |psi|^2 = 0.592
+==== e(  19) =     2.60878 eV ==== 
+     psi = 0.002*[#  11]+0.002*[#  15]+0.001*[#  12]+0.001*[#  16]
+    |psi|^2 = 0.005
+==== e(  20) =     2.75769 eV ==== 
+ 
+    |psi|^2 = 0.000
+
+Lowdin Charges: 
+
+     Atom #   1: total charge =  17.6406, s =  2.7237, p =  5.9999, d =  8.9171, 
+                 spin up      =   9.3170, s =  1.3574, 
+                 spin up      =   9.3170, p =  3.0000, p1=  1.0000, p2=  1.0000, p3=  1.0000, 
+                 spin up      =   9.3170, d =  4.9596, d1=  0.9857, d2=  0.9909, d3=  0.9909, d4=  0.9961, d5=  0.9961, 
+                 spin down    =   8.3236, s =  1.3662, 
+                 spin down    =   8.3236, p =  2.9999, p1=  1.0000, p2=  1.0000, p3=  1.0000, 
+                 spin down    =   8.3236, d =  3.9575, d1=  0.5049, d2=  0.5049, d3=  0.9780, d4=  0.9848, d5=  0.9848, 
+                 polarization =   0.9934, s = -0.0088, p =  0.0000, d =  1.0022, 
+     Atom #   2: total charge =   7.0765, s =  1.8083, p =  5.2681, d =  0.0000, 
+                 spin up      =   3.7981, s =  0.9044, 
+                 spin up      =   3.7981, p =  2.8937, p1=  0.9131, p2=  0.9903, p3=  0.9903, 
+                 spin up      =   3.7981, d =  0.0000, d1=  0.0000, d2=  0.0000, d3=  0.0000, d4=  0.0000, d5=  0.0000, 
+                 spin down    =   3.2784, s =  0.9040, 
+                 spin down    =   3.2784, p =  2.3744, p1=  0.9097, p2=  0.7323, p3=  0.7323, 
+                 spin down    =   3.2784, d =  0.0000, d1=  0.0000, d2=  0.0000, d3=  0.0000, d4=  0.0000, d5=  0.0000, 
+                 polarization =   0.5197, s =  0.0004, p =  0.5193, d =  0.0000, 
+     Atom #   3: total charge =   7.0765, s =  1.8083, p =  5.2681, d =  0.0000, 
+                 spin up      =   3.7981, s =  0.9044, 
+                 spin up      =   3.7981, p =  2.8937, p1=  0.9131, p2=  0.9903, p3=  0.9903, 
+                 spin up      =   3.7981, d =  0.0000, d1=  0.0000, d2=  0.0000, d3=  0.0000, d4=  0.0000, d5=  0.0000, 
+                 spin down    =   3.2784, s =  0.9040, 
+                 spin down    =   3.2784, p =  2.3744, p1=  0.9097, p2=  0.7323, p3=  0.7323, 
+                 spin down    =   3.2784, d =  0.0000, d1=  0.0000, d2=  0.0000, d3=  0.0000, d4=  0.0000, d5=  0.0000, 
+                 polarization =   0.5197, s =  0.0004, p =  0.5193, d =  0.0000, 
+     Spilling Parameter:   0.0065
+ 
+     PROJWFC      :      1.03s CPU      1.14s WALL
+
+ 
+   This run was terminated on:  23:34:11  26Jun2023            
+
+=------------------------------------------------------------------------------=
+   JOB DONE.
+=------------------------------------------------------------------------------=

@@ -1,0 +1,30 @@
+                                  
+================================= 
+Global information about the job: 
+================================= 
+  
+Job owner: jojaibal(84538)
+Job name:  fatbands-csp
+Node list: ravc3326
+Job start: Mon Jun 26 23:33:42 CEST 2023
+Job end:   Mon Jun 26 23:34:12 CEST 2023
+Work dir:  /ptmp/jojaibal/andrey/rad-tools/docs/examples/rad-plot-fatbands/collinear-spin-polarized/./
+Command:   /raven/ptmp/jojaibal/andrey/rad-tools/docs/examples/rad-plot-fatbands/collinear-spin-polarized/run.sh
+  
+  
+  
+==========================================================================================
+Information on jobsteps (Note: MaxRSS/AveRSS is the maximum/average over all 
+tasks of the per-task memory high-water marks; cf. "man sacct"): 
+==========================================================================================
+  
+JobID            JobName NNodes NTasks  NCPUS       MaxRSS       AveRSS    Elapsed ExitCode
+------------- ---------- ------ ------ ------ ------------ ------------ ---------- --------
+5356706       fatbands-c      1            40                             00:00:30      0:0
+5356706.0           pw.x      1     20     40       78.27M        4.31M   00:00:21      0:0
+5356706.1           pw.x      1     20     40        0.44M        0.43M   00:00:04      0:0
+5356706.2      projwfc.x      1     20     40       87.94M        4.80M   00:00:04      0:0
+  
+Maximum memory per node: 1.844265 GB (defined as MaxRSS*Ntasks/NNodes)
+CPU utilization: 60.0 %
+  

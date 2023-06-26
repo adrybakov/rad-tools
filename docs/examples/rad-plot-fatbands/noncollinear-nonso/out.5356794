@@ -1,0 +1,30 @@
+                                  
+================================= 
+Global information about the job: 
+================================= 
+  
+Job owner: jojaibal(84538)
+Job name:  fatbands-nnso
+Node list: ravc3326
+Job start: Mon Jun 26 23:33:42 CEST 2023
+Job end:   Mon Jun 26 23:34:27 CEST 2023
+Work dir:  /ptmp/jojaibal/andrey/rad-tools/docs/examples/rad-plot-fatbands/noncollinear-nonso/./
+Command:   /raven/ptmp/jojaibal/andrey/rad-tools/docs/examples/rad-plot-fatbands/noncollinear-nonso/run.sh
+  
+  
+  
+==========================================================================================
+Information on jobsteps (Note: MaxRSS/AveRSS is the maximum/average over all 
+tasks of the per-task memory high-water marks; cf. "man sacct"): 
+==========================================================================================
+  
+JobID            JobName NNodes NTasks  NCPUS       MaxRSS       AveRSS    Elapsed ExitCode
+------------- ---------- ------ ------ ------ ------------ ------------ ---------- --------
+5356794       fatbands-n      1            40                             00:00:45      0:0
+5356794.0           pw.x      1     20     40      197.62M      190.88M   00:00:36      0:0
+5356794.1           pw.x      1     20     40        0.47M        0.46M   00:00:05      0:0
+5356794.2      projwfc.x      1     20     40        0.45M        0.44M   00:00:03      0:0
+  
+Maximum memory per node: 4.144415 GB (defined as MaxRSS*Ntasks/NNodes)
+CPU utilization: 77.8 %
+  
