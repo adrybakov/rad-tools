@@ -550,17 +550,18 @@ class DOSQE:
         """
         fig, ax = plt.subplots(figsize=(8, 4))
 
-        ax.set_xlabel("Energy, eV", fontsize=axes_labels_fontsize)
+        if efermi == 0:
+            ax.set_xlabel("E, eV", fontsize=axes_labels_fontsize)
+        else:
+            ax.set_xlabel("E - E$_{Fermi}$, eV", fontsize=axes_labels_fontsize)
+
         ax.set_ylabel("DOS, states/eV", fontsize=axes_labels_fontsize)
         if xlim is None:
             xlim = (np.amin(self.energy), np.amax(self.energy))
         ax.set_xlim(*tuple(xlim))
         if ylim is not None:
             ax.set_ylim(*tuple(ylim))
-        if efermi != 0:
-            ax.set_title(f"DOS vs PDOS (0 is Fermi energy)", fontsize=title_fontsize)
-        else:
-            ax.set_title(f"DOS vs PDOS (0 is 0)", fontsize=title_fontsize)
+        ax.set_title(f"DOS vs PDOS", fontsize=title_fontsize)
         ax.vlines(
             0,
             0,
@@ -708,3 +709,35 @@ class DOSIterator:
 
     def __iter__(self):
         return self
+
+
+def detect_seednames(input_path):
+    r"""
+    Analyze input folder, detects seednames for the dos output files.
+
+    Parameters
+    ----------
+    input_path : str
+        Directory with DOS files.
+
+    Returns
+    -------
+    seednames : list
+        List of seednames found in ``input_path``.
+    """
+
+    # Get list of files in the folder
+    files = []
+    for dirpath, dirnames, filenames in walk(input_path):
+        files.extend(filenames)
+        break
+
+    seednames = set()
+    for file in files:
+        if ".pdos_tot" in file and ".pdos_tot" == file[-9:]:
+            seednames.add(file[:-9])
+        elif re.match(f".*{PATTERN}$", file):
+            seednames.add(re.split(f"{PATTERN}$", file)[0])
+    seednames = list(seednames)
+
+    return seednames

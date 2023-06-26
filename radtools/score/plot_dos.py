@@ -8,40 +8,8 @@ from os.path import abspath, isfile, join
 from termcolor import cprint
 from tqdm import tqdm
 
-from radtools.dos.dos import DOSQE, PATTERN
+from radtools.dos.dos import DOSQE, detect_seednames
 from radtools.dos.pdos import COLOURS, PDOS, plot_projected
-
-
-def detect_seednames(input_path):
-    r"""
-    Analyze input folder, detects seednames for the dos output files.
-
-    Parameters
-    ----------
-    input_path : str
-        Directory with DOS files.
-
-    Returns
-    -------
-    seednames : list
-        List of seednames found in ``input_path``.
-    """
-
-    # Get list of files in the folder
-    files = []
-    for dirpath, dirnames, filenames in walk(input_path):
-        files.extend(filenames)
-        break
-
-    seednames = set()
-    for file in files:
-        if ".pdos_tot" in file and ".pdos_tot" == file[-9:]:
-            seednames.add(file[:-9])
-        elif re.match(f".*{PATTERN}$", file):
-            seednames.add(re.split(f"{PATTERN}$", file)[0])
-    seednames = list(seednames)
-
-    return seednames
 
 
 def plot_orbital_resolved(
@@ -88,10 +56,7 @@ def plot_orbital_resolved(
                 else:
                     atom_name = atom
 
-                if efermi == 0:
-                    title = f"PDOS for {atom_name} ({wfc} #{wfc_number}) (0 is 0)"
-                else:
-                    title = f"PDOS for {atom_name} ({wfc} #{wfc_number}) (0 is Fermi energy)"
+                title = f"PDOS for {atom_name} ({wfc} #{wfc_number})"
 
                 pdos = dos.pdos(
                     atom=atom,
@@ -181,10 +146,7 @@ def plot_atom_resolved(
                     projectors=projectors,
                     spin_pol=dos.case in [2, 3],
                 )
-            if efermi == 0:
-                title = f"PDOS for {atom_name} (0 is 0)"
-            else:
-                title = f"PDOS for {atom_name} (0 is Fermi energy)"
+            title = f"PDOS for {atom_name}"
             if save_txt:
                 pdos.dump_txt(join(local_output, f"{atom_name}.txt"))
             plot_projected(
@@ -263,10 +225,7 @@ def plot_atom_to_total(
             spin_pol=dos.case in [2, 3],
         )
 
-    if efermi == 0:
-        title = f"Atom contribution in PDOS (0 is 0)"
-    else:
-        title = f"Atom contribution in PDOS (0 is Fermi energy)"
+    title = f"Atom contribution in PDOS"
     if save_txt:
         pdos.dump_txt(join(output_root, "atomic-contributions.txt"))
     plot_projected(
