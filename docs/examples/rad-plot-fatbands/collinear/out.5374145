@@ -1,0 +1,30 @@
+                                  
+================================= 
+Global information about the job: 
+================================= 
+  
+Job owner: jojaibal(84538)
+Job name:  fatbands-c
+Node list: ravc3471
+Job start: Tue Jun 27 15:28:41 CEST 2023
+Job end:   Tue Jun 27 15:29:23 CEST 2023
+Work dir:  /ptmp/jojaibal/andrey/rad-tools/docs/examples/rad-plot-fatbands/collinear/./
+Command:   /raven/ptmp/jojaibal/andrey/rad-tools/docs/examples/rad-plot-fatbands/collinear/run.sh
+  
+  
+  
+==========================================================================================
+Information on jobsteps (Note: MaxRSS/AveRSS is the maximum/average over all 
+tasks of the per-task memory high-water marks; cf. "man sacct"): 
+==========================================================================================
+  
+JobID            JobName NNodes NTasks  NCPUS       MaxRSS       AveRSS    Elapsed ExitCode
+------------- ---------- ------ ------ ------ ------------ ------------ ---------- --------
+5374145       fatbands-c      1            40                             00:00:42      0:0
+5374145.0           pw.x      1     20     40        0.45M        0.44M   00:00:12      0:0
+5374145.1           pw.x      1     20     40        0.43M        0.43M   00:00:24      0:0
+5374145.2      projwfc.x      1     20     40        0.45M        0.44M   00:00:05      0:0
+  
+Maximum memory per node: 0.009380 GB (defined as MaxRSS*Ntasks/NNodes)
+CPU utilization: 73.8 %
+  
