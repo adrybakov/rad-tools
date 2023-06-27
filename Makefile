@@ -110,7 +110,6 @@ example-plot-dos:
 	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -r -n
 	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -r -bt
 	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -r -n -bt
-	@rad-identify-wannier-centres.py docs/examples/rad-identify-wannier-centres/example_centres.xyz > docs/examples/rad-identify-wannier-centres/console_output.txt
 
 example-identify-wannier-centres:
 	@rad-identify-wannier-centres.py docs/examples/rad-identify-wannier-centres/example_centres.xyz --span 0.11 --output-name example_centres.xyz_bigger_span
