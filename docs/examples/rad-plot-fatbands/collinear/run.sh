@@ -17,7 +17,7 @@
 #SBATCH --mem=64000MB
 
 #Wall clock limit:
-#SBATCH --time=0-00:40:00
+#SBATCH --time=0-00:20:00
 
 # Make sure each process only uses one thread, that is, force VASP to use only one thread per core
 ulimit -s unlimited
