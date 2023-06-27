@@ -16,7 +16,7 @@
   smearing = 'cold'
   nspin = 1
   noinv=.true. 
-  nosymm=.true.
+  nosym=.true.
 /
 &ELECTRONS
   conv_thr =   1.0000000000d-6

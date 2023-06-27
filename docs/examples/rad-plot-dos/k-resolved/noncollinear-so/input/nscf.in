@@ -21,7 +21,7 @@
   lspinorb = .true.
   noncolin = .true.
   noinv=.true. 
-  nosymm=.true.
+  nosym=.true.
 /
 &ELECTRONS
   conv_thr =   1.0000000000d-6
