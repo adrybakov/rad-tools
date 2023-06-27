@@ -89,9 +89,9 @@ def plot_projected(
             ax.set_ylabel("DOS, states/eV", fontsize=axes_labels_fontsize)
         if i == n - 1:
             if efermi == 0:
-                ax.set_xlabel("E, ev", fontsize=axes_labels_fontsize)
+                ax.set_xlabel("E, eV", fontsize=axes_labels_fontsize)
             else:
-                ax.set_xlabel("E - E$_{Fermi}$, ev", fontsize=axes_labels_fontsize)
+                ax.set_xlabel("E - E$_{Fermi}$, eV", fontsize=axes_labels_fontsize)
         else:
             ax.axes.get_xaxis().set_visible(False)
         if ylim is not None:

@@ -128,13 +128,20 @@ In addition one could modify the colours used in the
 :ref:`relative <rad-plot-dos_relative>` or :ref:`custom <rad-plot-dos_custom-plots>` plots
 with the :ref:`rad-plot-dos_colours` parameter.
 
-:ref:`rad-plot-dos_efermi` allows to shift zero to the value of Fermi energy.
+:ref:`rad-plot-dos_axes-labels-fontsize`, :ref:`rad-plot-dos_legend-fontsize` 
+and :ref:`rad-plot-dos_title-fontsize` provide control of the fontsizes.
+
+Fermi energy
+------------
+
+:ref:`rad-plot-dos_efermi` allows to shift zero to the value of Fermi energy. 
+If energy is shifted to Fermi, then in the axis labels one would have 
+:math:`\text{E}-\text{E}_{Fermi}, \text{eV}`. 
+Otherwise the label would be :math:`\text{E}, \text{eV}`.
 
 :ref:`rad-plot-dos_energy-window` and :ref:`rad-plot-dos_dos-window` allows to specify 
 energy and states/eV windows.
 
-:ref:`rad-plot-dos_axes-labels-fontsize`, :ref:`rad-plot-dos_legend-fontsize` 
-and :ref:`rad-plot-dos_title-fontsize` provide control of the fontsizes.
 
 Interactive plot
 ----------------
