@@ -1,0 +1,30 @@
+                                  
+================================= 
+Global information about the job: 
+================================= 
+  
+Job owner: jojaibal(84538)
+Job name:  pdos-csp
+Node list: ravc3712
+Job start: Tue Jun 27 15:34:24 CEST 2023
+Job end:   Tue Jun 27 15:38:42 CEST 2023
+Work dir:  /ptmp/jojaibal/andrey/rad-tools/docs/examples/rad-plot-dos/collinear-spin-polarized/./
+Command:   /raven/ptmp/jojaibal/andrey/rad-tools/docs/examples/rad-plot-dos/collinear-spin-polarized/run.sh
+  
+  
+  
+==========================================================================================
+Information on jobsteps (Note: MaxRSS/AveRSS is the maximum/average over all 
+tasks of the per-task memory high-water marks; cf. "man sacct"): 
+==========================================================================================
+  
+JobID            JobName NNodes NTasks  NCPUS       MaxRSS       AveRSS    Elapsed ExitCode
+------------- ---------- ------ ------ ------ ------------ ------------ ---------- --------
+5374247         pdos-csp      1            40                             00:04:18      0:0
+5374247.0           pw.x      1     20     40        0.42M        0.41M   00:00:19      0:0
+5374247.1           pw.x      1     20     40       97.60M       90.87M   00:03:26      0:0
+5374247.2      projwfc.x      1     20     40      113.00M       88.82M   00:00:31      0:0
+  
+Maximum memory per node: 2.369884 GB (defined as MaxRSS*Ntasks/NNodes)
+CPU utilization: 95.0 %
+  

@@ -1,0 +1,30 @@
+                                  
+================================= 
+Global information about the job: 
+================================= 
+  
+Job owner: jojaibal(84538)
+Job name:  pdos-nnso
+Node list: ravc3712
+Job start: Tue Jun 27 15:34:24 CEST 2023
+Job end:   Tue Jun 27 15:42:34 CEST 2023
+Work dir:  /ptmp/jojaibal/andrey/rad-tools/docs/examples/rad-plot-dos/noncollinear-nonso/./
+Command:   /raven/ptmp/jojaibal/andrey/rad-tools/docs/examples/rad-plot-dos/noncollinear-nonso/run.sh
+  
+  
+  
+==========================================================================================
+Information on jobsteps (Note: MaxRSS/AveRSS is the maximum/average over all 
+tasks of the per-task memory high-water marks; cf. "man sacct"): 
+==========================================================================================
+  
+JobID            JobName NNodes NTasks  NCPUS       MaxRSS       AveRSS    Elapsed ExitCode
+------------- ---------- ------ ------ ------ ------------ ------------ ---------- --------
+5374248        pdos-nnso      1            40                             00:08:10      0:0
+5374248.0           pw.x      1     20     40      197.30M      190.21M   00:00:36      0:0
+5374248.1           pw.x      1     20     40      133.78M      113.65M   00:07:14      0:0
+5374248.2      projwfc.x      1     20     40       63.83M        3.64M   00:00:18      0:0
+  
+Maximum memory per node: 4.137697 GB (defined as MaxRSS*Ntasks/NNodes)
+CPU utilization: 97.1 %
+  
