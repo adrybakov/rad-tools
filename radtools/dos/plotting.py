@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap, to_rgb
 import numpy as np
 from termcolor import cprint
 from os.path import isfile, join, abspath
@@ -6,6 +7,25 @@ from os import makedirs
 from tqdm import tqdm
 
 from radtools.dos.pdos import PDOS
+from radtools.routines import plot_horizontal_lines, plot_vertical_lines
+
+
+def CustomCmap(from_rgb, to_rgb):
+    # from color r,g,b
+    r1, g1, b1 = from_rgb
+
+    # to color r,g,b
+    r2, g2, b2 = to_rgb
+
+    cdict = {
+        "red": ((0, r1, r1), (1, r2, r2)),
+        "green": ((0, g1, g1), (1, g2, g2)),
+        "blue": ((0, b1, b1), (1, b2, b2)),
+    }
+
+    cmap = LinearSegmentedColormap("custom_cmap", cdict, N=256)
+    return cmap
+
 
 __all__ = [
     "COLOURS",
@@ -740,6 +760,7 @@ def plot_custom_fatbands(
     k_window=None,
     efermi=0.0,
     interactive=False,
+    separate=False,
     save_pickle=False,
     save_txt=False,
     colours=COLOURS,
@@ -747,33 +768,17 @@ def plot_custom_fatbands(
     legend_fontsize=12,
     axes_labels_fontsize=14,
     title_fontsize=18,
-    scale_points=1,
+    k_points=None,
 ):
     cprint("Plotting custom plot", "green")
     print("Input is understood as:")
     projectors = []
 
     # Check if labels are provided and correct
-    if (
-        labels is not None
-        and len(labels) != len(custom)
-        and len(labels) != len(custom) + 1
-    ):
+    if labels is not None and len(labels) != len(custom):
         raise ValueError(
-            f"Got {len(labels)} labels, but {len(custom)} PDOS, have to be the same or n custom, n+1 labels."
+            f"Got {len(labels)} labels, but {len(custom)} PDOS, have to be the same."
         )
-
-    # Process some of the predefined labels
-    if labels is not None and len(labels) == len(custom) + 1:
-        if labels[0].lower() == "none":
-            total_label = None
-        elif labels[0].lower() == "default":
-            total_label = "default"
-        else:
-            total_label = labels[0]
-        labels = labels[1:]
-    else:
-        total_label = "default"
 
     # Set projectors
     if labels is None:
@@ -788,7 +793,6 @@ def plot_custom_fatbands(
     pdos = PDOS(
         energy=dos.energy,
         pdos=pdos,
-        ldos=dos.total_pdos(),
         projectors_group="Total (sum)",
         projectors=projectors,
         spin_pol=dos.case in [2, 3],
@@ -815,13 +819,13 @@ def plot_custom_fatbands(
         ylim=energy_window,
         xlim=k_window,
         interactive=interactive,
+        separate=separate,
         save_pickle=save_pickle,
         colours=colours,
-        total_label=total_label,
         legend_fontsize=legend_fontsize,
         axes_labels_fontsize=axes_labels_fontsize,
         title_fontsize=title_fontsize,
-        scale_points=scale_points,
+        k_points=k_points,
     )
     cprint(f"Result is in {abspath(join(output_root, f'{output_name}.png'))}", "blue")
 
@@ -833,13 +837,13 @@ def plot_fatbands(
     ylim=None,
     xlim=None,
     interactive=False,
+    separate=False,
     save_pickle=False,
     colours=COLOURS,
-    total_label="default",
     legend_fontsize=14,
     axes_labels_fontsize=12,
     title_fontsize=18,
-    scale_points=1,
+    k_points=None,
 ):
     r"""
     Plot fatbands.
@@ -856,6 +860,8 @@ def plot_fatbands(
         limits for the y (PDOS) axis
     interactive : bool, default False
         Whether to use interactive plotting mode.
+    separate : bool, default False
+        Whether to plot each entry in an individual figure.
     save_pickle : bool, default False
         Whether to save figure as a .pickle file.
         Helps for custom modification of particular figures.
@@ -869,117 +875,133 @@ def plot_fatbands(
         Fontsize of the legend.
     title_fontsize : int, default 18
         Fontsize of the title
-    point_max_size : int, default 16
-        Maximum size of the points in the plot.
     """
 
-    point_max_size = 16 * scale_points
-
     norm = np.amax(pdos.pdos)
-    if abs(norm) > 1e-8:
-        pdos.pdos = pdos.pdos / norm
 
-    kpoints = np.tile(pdos.kpoints, pdos.n_e).reshape((pdos.n_e, pdos.n_k)).T
-    energy = np.tile(pdos.energy, pdos.n_k).reshape((pdos.n_k, pdos.n_e))
+    if xlim is None:
+        xlim = (pdos.kpoints[0], pdos.kpoints[-1])
+    if ylim is None:
+        ylim = (pdos.energy[0], pdos.energy[-1])
 
-    if pdos.spin_pol:
-        fig, axs = plt.subplots(2, 1, figsize=(10, 9))
-        axs[1].get_yaxis().set_visible(False)
-        axs[1].set_xlabel("k path", fontsize=axes_labels_fontsize)
-        if ylim is not None:
+    if k_points is not None:
+        tmp = k_points
+        k_points = [[], []]
+        for i in range(len(tmp) // 2):
+            k_points[1].append(tmp[2 * i])
+            k_points[0].append(float(tmp[2 * i + 1]))
+
+    if not separate:
+        pass
+
+    def plot_entry(axs, pdos, projector, xlim, ylim, efermi):
+        if pdos.spin_pol:
+            axs[1].get_yaxis().set_visible(False)
+            if k_points is not None:
+                axs[1].set_xticks(
+                    k_points[0], k_points[1], fontsize=axes_labels_fontsize
+                )
+                plot_vertical_lines(axs[1], k_points[0])
+            else:
+                axs[1].set_xlabel("k path", fontsize=axes_labels_fontsize)
             axs[1].set_ylim(*tuple(ylim))
-        if xlim is not None:
             axs[1].set_xlim(*tuple(xlim))
+        if k_points is not None:
+            axs[0].set_xticks(k_points[0], k_points[1], fontsize=axes_labels_fontsize)
+            plot_vertical_lines(axs[0], k_points[0])
         else:
-            axs[1].set_xlim(kpoints[0][0], kpoints[-1][0])
-        axs[0].title("Spin-up", fontsize=title_fontsize)
-        axs[1].title("Spin-down", fontsize=title_fontsize)
-    else:
-        fig, axs = plt.subplots(figsize=(5, 9))
-        axs = [axs]
-
-    fig.subplots_adjust(wspace=0)
-
-    if efermi == 0:
-        axs[0].set_ylabel("E, eV", fontsize=axes_labels_fontsize)
-    else:
-        axs[0].set_ylabel("E - E$_{Fermi}$, eV", fontsize=axes_labels_fontsize)
-
-    axs[0].set_xlabel("k path", fontsize=axes_labels_fontsize)
-    if ylim is not None:
+            axs[0].set_xlabel("k path", fontsize=axes_labels_fontsize)
         axs[0].set_ylim(*tuple(ylim))
-    if xlim is not None:
         axs[0].set_xlim(*tuple(xlim))
-    else:
-        axs[0].set_xlim(kpoints[0][0], kpoints[-1][0])
-    axs[0].set_xlim(kpoints[0][0], kpoints[-1][0])
+
+        if efermi == 0:
+            axs[0].set_ylabel("E, eV", fontsize=axes_labels_fontsize)
+        else:
+            axs[0].set_ylabel("E - E$_{Fermi}$, eV", fontsize=axes_labels_fontsize)
+
+        if pdos.spin_pol:
+            axs[0].imshow(
+                pdos[projector][0].T,
+                cmap=CustomCmap((1, 1, 1), (0, 0, 1)),
+                origin="lower",
+                extent=(
+                    xlim[0],
+                    xlim[1],
+                    ylim[0],
+                    ylim[1],
+                ),
+                aspect="auto",
+                vmax=norm,
+                vmin=0,
+            )
+            axs[0].set_title(f"{projector} (up)", fontsize=title_fontsize)
+            axs[1].imshow(
+                pdos[projector][1].T,
+                cmap=CustomCmap((1, 1, 1), (1, 0, 0)),
+                origin="lower",
+                extent=(
+                    xlim[0],
+                    xlim[1],
+                    ylim[0],
+                    ylim[1],
+                ),
+                aspect="auto",
+                vmax=norm,
+                vmin=0,
+            )
+            axs[1].set_title(f"{projector} (down)", fontsize=title_fontsize)
+        else:
+            axs[0].imshow(
+                pdos[projector].T,
+                cmap="inferno",
+                origin="lower",
+                extent=(
+                    xlim[0],
+                    xlim[1],
+                    ylim[0],
+                    ylim[1],
+                ),
+                aspect="auto",
+                vmax=norm,
+                vmin=0,
+            )
+            axs[0].set_title(projector, fontsize=title_fontsize)
+
+        if efermi != 0:
+            plot_horizontal_lines(axs[0], 0)
+            if pdos.spin_pol:
+                plot_horizontal_lines(axs[1], 0)
 
     for i, projector in enumerate(pdos):
-        if pdos.spin_pol:
-            axs[0].scatter(
-                kpoints,
-                energy,
-                s=pdos[projector][0] * point_max_size,
-                color=colours[i % len(colours)],
-                alpha=0.8,
-                linewidth=0,
-            )
-            axs[1].scatter(
-                kpoints,
-                energy,
-                s=pdos[projector][1] * point_max_size,
-                color=colours[i % len(colours)],
-                label=f"{projector}",
-                alpha=0.8,
-                linewidth=0,
-            )
-        else:
-            axs[0].scatter(
-                kpoints,
-                energy,
-                s=pdos[projector] * point_max_size,
-                color=colours[i % len(colours)],
-                label=f"{projector}",
-                alpha=0.8,
-                linewidth=0,
-            )
+        if separate:
+            if pdos.spin_pol:
+                fig, axs = plt.subplots(1, 2, figsize=(8, 7))
+            else:
+                fig, axs = plt.subplots(figsize=(4, 7))
+                axs = [axs]
+            fig.subplots_adjust(wspace=0)
+            plot_entry(axs, pdos, projector, xlim, ylim, efermi)
+            if interactive:
+                plt.show()
+            else:
+                plt.savefig(f"{output_name}_{i}.png", dpi=600, bbox_inches="tight")
+                if save_pickle:
+                    import pickle
 
-    if interactive:
-        if pdos.spin_pol:
-            axs[1].legend(
-                loc=(1.025, 0.2),
-                bbox_transform=axs[1].transAxes,
-                draggable=True,
-                fontsize=legend_fontsize,
-            )
+                    with open(f"{output_name}_{i}.png.pickle", "wb") as file:
+                        pickle.dump(fig, file)
+            plt.close()
         else:
-            axs[0].legend(
-                loc=(1.025, 0.2),
-                bbox_transform=axs[0].transAxes,
-                draggable=True,
-                fontsize=legend_fontsize,
-            )
-    else:
-        if pdos.spin_pol:
-            axs[1].legend(
-                loc=(1.025, 0.2),
-                bbox_transform=axs[1].transAxes,
-                fontsize=legend_fontsize,
-            )
+            plot_entry(axs[i], pdos, projector, xlim, ylim, efermi)
+
+    if not separate:
+        if interactive:
+            plt.show()
         else:
-            axs[0].legend(
-                loc=(1.025, 0.2),
-                bbox_transform=axs[0].transAxes,
-                fontsize=legend_fontsize,
-            )
+            plt.savefig(f"{output_name}.png", dpi=600, bbox_inches="tight")
+            if save_pickle:
+                import pickle
 
-    if interactive:
-        plt.show()
-    else:
-        plt.savefig(f"{output_name}.png", dpi=600, bbox_inches="tight")
-        if save_pickle:
-            import pickle
-
-            with open(f"{output_name}.png.pickle", "wb") as file:
-                pickle.dump(fig, file)
-    plt.close()
+                with open(f"{output_name}.png.pickle", "wb") as file:
+                    pickle.dump(fig, file)
+        plt.close()

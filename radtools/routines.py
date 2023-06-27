@@ -8,6 +8,8 @@ It's purpose is to serve as an "other" folder.
 import sys
 from math import asin, cos, pi, sin, sqrt
 
+from typing import Iterable
+
 import numpy as np
 from termcolor import cprint, colored
 
@@ -715,3 +717,55 @@ if __name__ == "__main__":
 
     print_2d_array([[1, 2], [3, 4], [5, 6]], highlight=True, borders=False, shift=8)
     print_2d_array([[1, 2], [3, 4], [5, 6]], highlight=True, shift=8)
+
+
+def plot_horizontal_lines(ax, positions):
+    r"""
+    Plot horizontal lines.
+
+    Parameters
+    ----------
+    ax : :matplotlib:`axes`
+        Axes to plot on.
+    positions : list
+        List of y positions.
+    """
+
+    if not isinstance(positions, Iterable):
+        positions = [positions]
+
+    ax.hlines(
+        positions,
+        0,
+        1,
+        transform=ax.get_yaxis_transform(),
+        color="grey",
+        linewidths=0.5,
+        linestyles="dashed",
+    )
+
+
+def plot_vertical_lines(ax, positions):
+    r"""
+    Plot vertical lines.
+
+    Parameters
+    ----------
+    ax : :matplotlib:`axes`
+        Axes to plot on.
+    positions : list
+        List of x positions.
+    """
+
+    if not isinstance(positions, Iterable):
+        positions = [positions]
+
+    ax.vlines(
+        positions,
+        0,
+        1,
+        transform=ax.get_xaxis_transform(),
+        color="grey",
+        linewidths=0.5,
+        linestyles="dashed",
+    )

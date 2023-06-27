@@ -17,6 +17,7 @@ def manager(
     efermi=0.0,
     verbose=False,
     interactive=False,
+    separate=False,
     save_pickle=False,
     save_txt=False,
     custom=None,
@@ -25,7 +26,7 @@ def manager(
     legend_fontsize=12,
     axes_labels_fontsize=14,
     title_fontsize=18,
-    scale_points=1,
+    k_points=None,
 ):
     r"""
     :ref:`rad-plot-fatbands` script.
@@ -77,6 +78,7 @@ def manager(
             k_window=k_window,
             efermi=efermi,
             interactive=interactive,
+            separate=separate,
             save_pickle=save_pickle,
             save_txt=save_txt,
             colours=colours,
@@ -84,7 +86,7 @@ def manager(
             legend_fontsize=legend_fontsize,
             axes_labels_fontsize=axes_labels_fontsize,
             title_fontsize=title_fontsize,
-            scale_points=scale_points,
+            k_points=k_points,
         )
 
 
@@ -157,6 +159,13 @@ def create_parser():
         help="Interactive plotting.",
     )
     parser.add_argument(
+        "-sep",
+        "--separate",
+        action="store_true",
+        default=True,
+        help="Whether to plot each entry in a separate file.",
+    )
+    parser.add_argument(
         "-sp",
         "--save-pickle",
         action="store_true",
@@ -221,12 +230,11 @@ def create_parser():
         help="Fontsize of the title.",
     )
     parser.add_argument(
-        "-sps",
-        "--scale-points",
-        type=float,
-        default=1,
-        metavar="scale",
-        help="Scale of the points in the graph.",
+        "-kp",
+        "--k-points",
+        nargs="*",
+        default=None,
+        help="List of high symmetry points.",
     )
 
     return parser

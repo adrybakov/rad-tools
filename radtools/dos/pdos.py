@@ -159,6 +159,9 @@ class PDOS:
     def __iter__(self):
         return PDOSIterator(self)
 
+    def __len__(self):
+        return len(self.projectors)
+
     def __contains__(self, item):
         return item in self.projectors
 
