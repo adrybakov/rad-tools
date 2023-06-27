@@ -102,14 +102,14 @@ help:
 
 example-plot-dos:
 	-@rm -r docs/examples/rad-plot-dos/style-examples/*
-	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples
-	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -n
-	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -bt
-	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -n -bt
-	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -r
-	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -r -n
-	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -r -bt
-	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -r -n -bt
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -n
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -bt
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -n -bt
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -r
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -r -n
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -r -bt
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -7 -2 --custom "Ni (d)" "I (p)" -op docs/examples/rad-plot-dos/style-examples -r -n -bt
 	@rad-identify-wannier-centres.py docs/examples/rad-identify-wannier-centres/example_centres.xyz > docs/examples/rad-identify-wannier-centres/console_output.txt
 
 example-identify-wannier-centres:
@@ -132,14 +132,14 @@ example-extract-tb2j:
 	@rad-extract-tb2j.py -if docs/examples/rad-extract-tb2j/exchange.out -tf docs/examples/rad-extract-tb2j/template.txt -on docs/examples/rad-extract-tb2j/summary.txt -all
 
 example-plot-dos-gallery:
-	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear/pdos -ew -6.5 6.5 -ef -1.7806 -op docs/examples/rad-plot-dos/collinear/pdos 
-	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear/pdos -ew -6.5 6.5 -ef -1.7806 -op docs/examples/rad-plot-dos/collinear/pdos -r -n
-	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -6.5 6.5 -ef -1.7810 -op docs/examples/rad-plot-dos/collinear-spin-polarized/pdos 
-	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -ew -6.5 6.5 -ef -1.7810 -op docs/examples/rad-plot-dos/collinear-spin-polarized/pdos -r -n
-	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/noncollinear-nonso/pdos -ew -6.5 6.5 -ef -1.7810 -op docs/examples/rad-plot-dos/noncollinear-nonso/pdos 
-	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/noncollinear-nonso/pdos -ew -6.5 6.5 -ef -1.7810 -op docs/examples/rad-plot-dos/noncollinear-nonso/pdos -r -n
-	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/noncollinear-so/pdos -ew -6.5 6.5 -ef -1.6372 -op docs/examples/rad-plot-dos/noncollinear-so/pdos 
-	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/noncollinear-so/pdos -ew -6.5 6.5 -ef -1.6372 -op docs/examples/rad-plot-dos/noncollinear-so/pdos -r -n
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear/ -ew -6.5 6.5 -ef -1.7806 -op docs/examples/rad-plot-dos/collinear/ 
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear/ -ew -6.5 6.5 -ef -1.7806 -op docs/examples/rad-plot-dos/collinear/ -r -n
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -6.5 6.5 -ef -1.7810 -op docs/examples/rad-plot-dos/collinear-spin-polarized/ 
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -6.5 6.5 -ef -1.7810 -op docs/examples/rad-plot-dos/collinear-spin-polarized/ -r -n
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/noncollinear-nonso/ -ew -6.5 6.5 -ef -1.7810 -op docs/examples/rad-plot-dos/noncollinear-nonso/ 
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/noncollinear-nonso/ -ew -6.5 6.5 -ef -1.7810 -op docs/examples/rad-plot-dos/noncollinear-nonso/ -r -n
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/noncollinear-so/ -ew -6.5 6.5 -ef -1.6372 -op docs/examples/rad-plot-dos/noncollinear-so/ 
+	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/noncollinear-so/ -ew -6.5 6.5 -ef -1.6372 -op docs/examples/rad-plot-dos/noncollinear-so/ -r -n
 
 examples: install example-plot-dos example-identify-wannier-centres example-make-template example-plot-tb2j example-extract-tb2j example-plot-dos-gallery
 	@echo "Done"

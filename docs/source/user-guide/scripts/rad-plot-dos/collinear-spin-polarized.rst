@@ -10,24 +10,24 @@ Default style
 
 .. code-block:: bash
 
-    rad-plot-dos.py -ip collinear-spin-polarized/pdos -ew -6.5 6.5 -ef -1.7810 -op collinear-spin-polarized/pdos
+    rad-plot-dos.py -ip collinear-spin-polarized/ -ew -6.5 6.5 -ef -1.7810 -op collinear-spin-polarized/
 
 Relative style, normalized
 --------------------------
 
 .. code-block:: bash
 
-    rad-plot-dos.py -ip collinear-spin-polarized/pdos -ew -6.5 6.5 -ef -1.7810 -op collinear-spin-polarized/pdos -r -n
+    rad-plot-dos.py -ip collinear-spin-polarized/ -ew -6.5 6.5 -ef -1.7810 -op collinear-spin-polarized/ -r -n
 
 pdos-vs-dos
 ===========
 
-.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/pdos/csp/pdos-vs-dos.png
+.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/csp/pdos-vs-dos.png
     :align: center
 
     Default style
 
-.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/pdos/csp-relative-normalized/pdos-vs-dos.png
+.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/csp-relative-normalized/pdos-vs-dos.png
     :align: center
 
     Relative style, normalized
@@ -35,12 +35,12 @@ pdos-vs-dos
 atomic-contributions
 ====================
 
-.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/pdos/csp/atomic-contributions.png
+.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/csp/atomic-contributions.png
     :align: center
 
     Default style
 
-.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/pdos/csp-relative-normalized/atomic-contributions.png
+.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/csp-relative-normalized/atomic-contributions.png
     :align: center
 
     Relative style, normalized
@@ -51,12 +51,12 @@ atom-resolved
 Iodine
 ------
 
-.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/pdos/csp/atom-resolved/I.png
+.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/csp/atom-resolved/I.png
     :align: center
 
     Default style
 
-.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/pdos/csp-relative-normalized/atom-resolved/I.png
+.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/csp-relative-normalized/atom-resolved/I.png
     :align: center
 
     Relative style, normalized
@@ -64,12 +64,12 @@ Iodine
 Nickel
 ------
 
-.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/pdos/csp/atom-resolved/Ni.png
+.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/csp/atom-resolved/Ni.png
     :align: center
 
     Default style
 
-.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/pdos/csp-relative-normalized/atom-resolved/Ni.png
+.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/csp-relative-normalized/atom-resolved/Ni.png
     :align: center
 
     Relative style, normalized
@@ -80,22 +80,22 @@ orbital-resolved
 Iodine
 ------
 
-.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/pdos/csp/orbital-resolved/I_p#2.png
+.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/csp/orbital-resolved/I_p#2.png
     :align: center
 
     p orbitals, default style
 
-.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/pdos/csp-relative-normalized/orbital-resolved/I_p#2.png
+.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/csp-relative-normalized/orbital-resolved/I_p#2.png
     :align: center
 
     p orbitals, relative style, normalized
 
-.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/pdos/csp/orbital-resolved/I_s#1.png
+.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/csp/orbital-resolved/I_s#1.png
     :align: center
 
     s orbitals, default style
 
-.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/pdos/csp-relative-normalized/orbital-resolved/I_s#1.png
+.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/csp-relative-normalized/orbital-resolved/I_s#1.png
     :align: center
 
     s orbitals, relative style, normalized
@@ -103,42 +103,42 @@ Iodine
 Nickel
 ------
 
-.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/pdos/csp/orbital-resolved/Ni_d#3.png
+.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/csp/orbital-resolved/Ni_d#3.png
     :align: center
 
     d orbitals, default style
 
-.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/pdos/csp-relative-normalized/orbital-resolved/Ni_d#3.png
+.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/csp-relative-normalized/orbital-resolved/Ni_d#3.png
     :align: center
 
     d orbitals, relative style, normalized
 
-.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/pdos/csp/orbital-resolved/Ni_p#2.png
+.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/csp/orbital-resolved/Ni_p#2.png
     :align: center
 
     p orbitals, default style
 
-.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/pdos/csp-relative-normalized/orbital-resolved/Ni_p#2.png
+.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/csp-relative-normalized/orbital-resolved/Ni_p#2.png
     :align: center
 
     p orbitals, relative style, normalized
 
-.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/pdos/csp/orbital-resolved/Ni_s#1.png
+.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/csp/orbital-resolved/Ni_s#1.png
     :align: center
 
     s (#1) orbitals, default style
 
-.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/pdos/csp-relative-normalized/orbital-resolved/Ni_s#1.png
+.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/csp-relative-normalized/orbital-resolved/Ni_s#1.png
     :align: center
 
     s (#1) orbitals, relative style, normalized
 
-.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/pdos/csp/orbital-resolved/Ni_s#4.png
+.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/csp/orbital-resolved/Ni_s#4.png
     :align: center
 
     s (#4) orbitals, default style
 
-.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/pdos/csp-relative-normalized/orbital-resolved/Ni_s#4.png
+.. figure:: /../examples/rad-plot-dos/collinear-spin-polarized/csp-relative-normalized/orbital-resolved/Ni_s#4.png
     :align: center
 
     s (#4) orbitals, relative style, normalized
