@@ -20,7 +20,7 @@ When summation over the atoms of the same type is involved PDOS is just summed.
 In contrary, when the summation over k-points is involved, 
 PDOS is summed and divided by the number of k points.
 
-K-resolved PDOS are handled by summing over kpoints (and dividing by the number of kpoints).
+K-resolved PDOS are handled by summing over kpoints.
 
 There are two ways to use this script:
 
