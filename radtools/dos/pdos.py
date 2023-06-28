@@ -367,7 +367,7 @@ class PDOS:
         squeezed_pdos.squeeze()
         return squeezed_pdos
 
-    def normalize(self):
+    def normalize(self, zeros_to_none=False):
         r"""
         Normalize values of PDOS to 1 for each k and energy point.
 
@@ -381,6 +381,12 @@ class PDOS:
         Those sums are computed individually for spin-up and
         spin-down in the spin-polarized case.
 
+        Parameters
+        ----------
+        zeros_to_none : bool, default False
+            If True, then the values of PDOS and LDOS > 1e-8
+            will be replaced with ``None``.
+
         See Also
         --------
         normalized : Returns new object.
@@ -390,18 +396,27 @@ class PDOS:
         It modifies the instance on which called.
 
         """
-
+        tmp_ldos = np.where(self._ldos > 1e-8, self._ldos, 1)
         for i in range(0, self.pdos.shape[0]):
-            self._pdos[i] = np.where(
-                self._ldos > 10e-8, self._pdos[i] / self._ldos, None
-            )
-        self._ldos = np.where(self._ldos > 10e-8, self._ldos / self._ldos, 0)
+            self._pdos[i] = self._pdos[i] / tmp_ldos
+            if zeros_to_none:
+                self._pdos[i] = np.where(self._pdos[i] > 1e-8, self._pdos[i], None)
+        self._ldos = self._ldos / tmp_ldos
 
-    def normalized(self):
+        if zeros_to_none:
+            self._ldos = np.where(self._ldos > 1e-8, self._ldos, None)
+
+    def normalized(self, zeros_to_none=False):
         r"""
         Return new instance with normalized PDOS.
 
         Calls :py:func:`PDOS.normalize`.
+
+        Parameters
+        ----------
+        zeros_to_none : bool, default False
+            If True, then the values of PDOS and LDOS equal to zero
+            will be replaced with ``None``.
 
         Returns
         -------
@@ -414,10 +429,10 @@ class PDOS:
         """
 
         normalized_pdos = deepcopy(self)
-        normalized_pdos.normalize()
+        normalized_pdos.normalize(zeros_to_none=zeros_to_none)
         return normalized_pdos
 
-    def dump_txt(self, ouptut_name):
+    def dump_txt(self, output_name):
         r"""
         Save PDOS as .txt file.
 
@@ -475,17 +490,17 @@ class PDOS:
             data.append(ldos)
             for i in range(pdos.shape[0]):
                 data.append(pdos[i])
-        np.savetxt(ouptut_name, np.array(data).T, fmt=fmt, header=header, comments="")
+        np.savetxt(output_name, np.array(data).T, fmt=fmt, header=header, comments="")
 
 
 class PDOSIterator:
     def __init__(self, pdos: PDOS) -> None:
-        self._projectors = pdos.projectors
+        self._list = pdos.projectors
         self._index = 0
 
     def __next__(self) -> str:
-        if self._index < len(self._projectors):
-            result = self._projectors[self._index]
+        if self._index < len(self._list):
+            result = self._list[self._index]
             self._index += 1
             return result
         raise StopIteration
