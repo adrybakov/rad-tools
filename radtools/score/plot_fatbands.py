@@ -5,7 +5,8 @@ from os.path import join
 from termcolor import cprint
 
 from radtools.dos.dos import DOSQE, detect_seednames
-from radtools.dos.plotting import plot_custom_fatbands, COLOURS
+from radtools.dos.fatbands_plotting import plot_custom_fatbands
+from radtools.dos.plotting import COLOURS
 
 
 def manager(

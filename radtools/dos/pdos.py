@@ -299,7 +299,7 @@ class PDOS:
         if self.k_resolved:
             return np.linspace(1, self.pdos.shape[-2], self.pdos.shape[-2])
         else:
-            return None
+            return np.array([1])
 
     @property
     def n_k(self):
@@ -334,6 +334,8 @@ class PDOS:
         r"""
         Squeeze k-resolved PDOS.
 
+        Sum the pdos over kpoints and divide by the number of kpoints.
+
         See Also
         --------
         squeezed : Returns new object.
@@ -344,8 +346,8 @@ class PDOS:
         """
 
         if self.k_resolved:
-            self._pdos = np.sum(self._pdos, axis=1 + int(self.spin_pol))
-            self._ldos = np.sum(self._ldos, axis=int(self.spin_pol))
+            self._pdos = np.sum(self._pdos, axis=1 + int(self.spin_pol)) / self.n_k
+            self._ldos = np.sum(self._ldos, axis=int(self.spin_pol)) / self.n_k
 
     def squeezed(self):
         r"""

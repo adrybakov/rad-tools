@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-from matplotlib.colors import LinearSegmentedColormap, to_rgb
 import numpy as np
 from termcolor import cprint
 from os.path import isfile, join, abspath
@@ -7,24 +6,9 @@ from os import makedirs
 from tqdm import tqdm
 
 from radtools.dos.pdos import PDOS
+
+from radtools.dos.dos import prepare_custom_pdos
 from radtools.routines import plot_horizontal_lines, plot_vertical_lines
-
-
-def CustomCmap(from_rgb, to_rgb):
-    # from color r,g,b
-    r1, g1, b1 = from_rgb
-
-    # to color r,g,b
-    r2, g2, b2 = to_rgb
-
-    cdict = {
-        "red": ((0, r1, r1), (1, r2, r2)),
-        "green": ((0, g1, g1), (1, g2, g2)),
-        "blue": ((0, b1, b1), (1, b2, b2)),
-    }
-
-    cmap = LinearSegmentedColormap("custom_cmap", cdict, N=256)
-    return cmap
 
 
 __all__ = [
@@ -32,8 +16,6 @@ __all__ = [
     "plot_projected",
     "plot_custom_pdos",
     "prepare_custom_pdos",
-    "plot_custom_fatbands",
-    "plot_fatbands",
 ]
 
 COLOURS = [
@@ -47,101 +29,6 @@ COLOURS = [
     "#FF0BEA",
     "#0200FF",
 ]
-
-
-def prepare_custom_pdos(
-    dos,
-    custom,
-):
-    r"""
-    Prepare custom PDOS. Based on the input line.
-
-    Parameters
-    ----------
-    dos : :py:class:`.DOSQE`
-        DOS input files wrapper.
-    custom : list of str
-        List of strings describing the custom PDOS.
-
-    Returns
-    -------
-    pdos : list of :numpy:`ndarray`
-        PDOS array.
-    """
-    pdos = []
-
-    for entry in custom:
-        cprint(f'"{entry}":', "green")
-        entry = entry.replace(" ", "").replace(")", "")
-        subentries = entry.split(";")
-        pdos_element = None
-        for subentry in subentries:
-            atom_part = subentry.split("(")[0]
-            atom = atom_part.split("#")[0]
-            if "#" in subentry:
-                atom_numbers = list(map(int, atom_part.split("#")[1:]))
-            else:
-                atom_numbers = dos.atom_numbers(atom)
-
-            cprint(
-                f"  * PDOS is summed among the following {atom} atoms:",
-                "green",
-                end="\n      ",
-            )
-            for i, number in enumerate(atom_numbers):
-                print(f"{atom}#{number}", end="")
-                if i != len(atom_numbers) - 1:
-                    print(end=", ")
-                else:
-                    print()
-
-            if "(" in subentry:
-                wfc_parts = subentry.split("(")[1].split(",")
-                wfcs = []
-                for wfc_part in wfc_parts:
-                    wfc = wfc_part.split("#")[0]
-                    if "#" in wfc_part:
-                        wfc_numbers = list(map(int, wfc_part.split("#")[1:]))
-                        for number in wfc_numbers:
-                            wfcs.append((wfc, number))
-                    else:
-                        wfc_list = dos.wfcs(atom)
-                        for name, number in wfc_list:
-                            if name == wfc:
-                                wfcs.append((wfc, number))
-            else:
-                wfcs = dos.wfcs(atom)
-
-            print(
-                f"  * For each {atom} atom PDOS is summed among the following projections:",
-                end="\n      ",
-            )
-            for i, (name, number) in enumerate(wfcs):
-                print(f"{name}#{number}", end="")
-                if i != len(wfcs) - 1:
-                    print(end=", ")
-                else:
-                    print()
-
-            for name, number in wfcs:
-                if pdos_element is None:
-                    pdos_element = dos.pdos(
-                        atom=atom,
-                        wfc=name,
-                        wfc_number=number,
-                        atom_numbers=atom_numbers,
-                    ).ldos
-                else:
-                    pdos_element += dos.pdos(
-                        atom=atom,
-                        wfc=name,
-                        wfc_number=number,
-                        atom_numbers=atom_numbers,
-                    ).ldos
-
-        pdos.append(pdos_element)
-
-    return pdos
 
 
 def plot_custom_pdos(
@@ -196,7 +83,7 @@ def plot_custom_pdos(
         projectors = labels
 
     # Get PDOS array
-    pdos = prepare_custom_pdos(dos=dos, custom=custom)
+    pdos = prepare_custom_pdos(dos=dos, custom=custom, quiet=False)
 
     # Create PDOS object
     if background_total:
@@ -300,7 +187,7 @@ def plot_orbital_resolved(
                 pdos = dos.pdos(
                     atom=atom,
                     wfc=wfc,
-                    wfc_number=wfc_number,
+                    wfc_numbers=wfc_number,
                     atom_numbers=atom_number,
                     background_total=background_total,
                 )
@@ -363,9 +250,10 @@ def plot_atom_resolved(
                 atom_name = atom
             projectors = []
             pdos = []
-            for wfc, wfc_number in dos.wfcs(atom, atom_number):
-                projectors.append(f"{wfc} #{wfc_number}")
-                pdos.append(dos.pdos(atom, wfc, wfc_number, atom_number).ldos)
+            for wfc in dos.wfcs(atom, atom_number):
+                for wfc_number in dos.wfc_numbers(atom, wfc, atom_number):
+                    projectors.append(f"{wfc} #{wfc_number}")
+                    pdos.append(dos.pdos(atom, wfc, wfc_number, atom_number).ldos)
 
             if background_total:
                 pdos = PDOS(
@@ -439,11 +327,11 @@ def plot_atom_to_total(
             else:
                 atom_name = atom
             projectors.append(atom_name)
-            for i, (wfc, wfc_number) in enumerate(dos.wfcs(atom, atom_number)):
+            for i, wfc in enumerate(dos.wfcs(atom, atom_number)):
                 if i == 0:
-                    ldos = dos.pdos(atom, wfc, wfc_number, atom_number).ldos
+                    ldos = dos.pdos(atom, wfc, None, atom_number).ldos
                 else:
-                    ldos += dos.pdos(atom, wfc, wfc_number, atom_number).ldos
+                    ldos += dos.pdos(atom, wfc, None, atom_number).ldos
             pdos.append(ldos)
     if background_total:
         pdos = PDOS(
@@ -570,31 +458,18 @@ def plot_projected(
             ax.set_xlim(*tuple(xlim))
         else:
             ax.set_xlim(np.amin(pdos.energy), np.amax(pdos.energy))
-        ax.vlines(
-            0,
-            0,
-            1,
-            transform=ax.get_xaxis_transform(),
-            color="grey",
-            linewidths=0.5,
-            linestyles="dashed",
-        )
+        if efermi != 0:
+            plot_vertical_lines(ax, 0)
+
         if title is not None and (i == 0 or relative):
             ax.set_title(title, fontsize=title_fontsize)
 
     if normalize:
-        pdos = pdos.normalized()
+        pdos = pdos.normalized(zeros_to_none=False)
 
     if relative:
         set_up_axis(ax, n - 1)
-        ax.hlines(
-            0,
-            0,
-            1,
-            transform=ax.get_yaxis_transform(),
-            color="black",
-            linewidths=1,
-        )
+        plot_horizontal_lines(ax, 0)
 
     for i, projector in enumerate(pdos):
         if not relative:
@@ -614,7 +489,7 @@ def plot_projected(
                 if i == 0:
                     ax.plot(
                         pdos.energy,
-                        np.where(pdos.ldos[0] > 1e-5, pdos.ldos[0], None),
+                        pdos.ldos[0],
                         "-",
                         lw=1,
                         color="blue",
@@ -623,7 +498,7 @@ def plot_projected(
                     )
                     ax.plot(
                         pdos.energy,
-                        np.where(pdos.ldos[1] > 1e-5, -pdos.ldos[1], None),
+                        -pdos.ldos[1],
                         "-",
                         lw=1,
                         color="red",
@@ -692,7 +567,7 @@ def plot_projected(
                 if i == 0:
                     ax.plot(
                         pdos.energy,
-                        np.where(pdos.ldos > 1e-5, pdos.ldos, None),
+                        pdos.ldos,
                         "-",
                         lw=1,
                         color="black",
@@ -747,261 +622,6 @@ def plot_projected(
         if save_pickle:
             import pickle
 
-            with open(f"{output_name}.png.pickle", "wb") as file:
+            with open(f"{output_name}.pickle", "wb") as file:
                 pickle.dump(fig, file)
     plt.close()
-
-
-def plot_custom_fatbands(
-    dos,
-    custom,
-    output_root=".",
-    energy_window=None,
-    k_window=None,
-    efermi=0.0,
-    interactive=False,
-    separate=False,
-    save_pickle=False,
-    save_txt=False,
-    colours=COLOURS,
-    labels=None,
-    legend_fontsize=12,
-    axes_labels_fontsize=14,
-    title_fontsize=18,
-    k_points=None,
-):
-    cprint("Plotting custom plot", "green")
-    print("Input is understood as:")
-    projectors = []
-
-    # Check if labels are provided and correct
-    if labels is not None and len(labels) != len(custom):
-        raise ValueError(
-            f"Got {len(labels)} labels, but {len(custom)} PDOS, have to be the same."
-        )
-
-    # Set projectors
-    if labels is None:
-        projectors = custom
-    else:
-        projectors = labels
-
-    # Get PDOS array
-    pdos = prepare_custom_pdos(dos=dos, custom=custom)
-
-    # Create PDOS object
-    pdos = PDOS(
-        energy=dos.energy,
-        pdos=pdos,
-        projectors_group="Total (sum)",
-        projectors=projectors,
-        spin_pol=dos.case in [2, 3],
-    )
-
-    # Compute output name
-    if isfile(join(output_root, "custom.png")):
-        i = 1
-        while isfile(join(output_root, f"custom{i}.png")):
-            i += 1
-        output_name = f"custom{i}"
-    else:
-        output_name = "custom"
-
-    # Save txt
-    if save_txt:
-        pdos.dump_txt(join(output_root, f"{output_name}.txt"))
-
-    # Plot
-    plot_fatbands(
-        pdos=pdos,
-        efermi=efermi,
-        output_name=join(output_root, output_name),
-        ylim=energy_window,
-        xlim=k_window,
-        interactive=interactive,
-        separate=separate,
-        save_pickle=save_pickle,
-        colours=colours,
-        legend_fontsize=legend_fontsize,
-        axes_labels_fontsize=axes_labels_fontsize,
-        title_fontsize=title_fontsize,
-        k_points=k_points,
-    )
-    cprint(f"Result is in {abspath(join(output_root, f'{output_name}.png'))}", "blue")
-
-
-def plot_fatbands(
-    pdos: PDOS,
-    efermi=0.0,
-    output_name="fatbands",
-    ylim=None,
-    xlim=None,
-    interactive=False,
-    separate=False,
-    save_pickle=False,
-    colours=COLOURS,
-    legend_fontsize=14,
-    axes_labels_fontsize=12,
-    title_fontsize=18,
-    k_points=None,
-):
-    r"""
-    Plot fatbands.
-
-    Parameters
-    ----------
-    pdos : :py:class:`.PDOS`
-        PDOS for the plot.
-    efermi : float, default 0
-        Fermi energy.
-    output_name : str, default "pdos"
-        output_name for the plot file. Extension ".png" is added at the end.
-    ylim : tuple
-        limits for the y (PDOS) axis
-    interactive : bool, default False
-        Whether to use interactive plotting mode.
-    separate : bool, default False
-        Whether to plot each entry in an individual figure.
-    save_pickle : bool, default False
-        Whether to save figure as a .pickle file.
-        Helps for custom modification of particular figures.
-    colours : list
-        List of colours to be used. values are passed directly to matplotlib
-    total_label : str or ``None``, default "default"
-        Label for the total data. If None , then the label is not added
-    axes_label_fontsize : int, default 14
-        Fontsize of the axes labels.
-    legend_fontsize : int, default 12
-        Fontsize of the legend.
-    title_fontsize : int, default 18
-        Fontsize of the title
-    """
-
-    norm = np.amax(pdos.pdos)
-
-    if xlim is None:
-        xlim = (pdos.kpoints[0], pdos.kpoints[-1])
-    if ylim is None:
-        ylim = (pdos.energy[0], pdos.energy[-1])
-
-    if k_points is not None:
-        tmp = k_points
-        k_points = [[], []]
-        for i in range(len(tmp) // 2):
-            k_points[1].append(tmp[2 * i])
-            k_points[0].append(float(tmp[2 * i + 1]))
-
-    if not separate:
-        pass
-
-    def plot_entry(axs, pdos, projector, xlim, ylim, efermi):
-        if pdos.spin_pol:
-            axs[1].get_yaxis().set_visible(False)
-            if k_points is not None:
-                axs[1].set_xticks(
-                    k_points[0], k_points[1], fontsize=axes_labels_fontsize
-                )
-                plot_vertical_lines(axs[1], k_points[0])
-            else:
-                axs[1].set_xlabel("k path", fontsize=axes_labels_fontsize)
-            axs[1].set_ylim(*tuple(ylim))
-            axs[1].set_xlim(*tuple(xlim))
-        if k_points is not None:
-            axs[0].set_xticks(k_points[0], k_points[1], fontsize=axes_labels_fontsize)
-            plot_vertical_lines(axs[0], k_points[0])
-        else:
-            axs[0].set_xlabel("k path", fontsize=axes_labels_fontsize)
-        axs[0].set_ylim(*tuple(ylim))
-        axs[0].set_xlim(*tuple(xlim))
-
-        if efermi == 0:
-            axs[0].set_ylabel("E, eV", fontsize=axes_labels_fontsize)
-        else:
-            axs[0].set_ylabel("E - E$_{Fermi}$, eV", fontsize=axes_labels_fontsize)
-
-        if pdos.spin_pol:
-            axs[0].imshow(
-                pdos[projector][0].T,
-                cmap=CustomCmap((1, 1, 1), (0, 0, 1)),
-                origin="lower",
-                extent=(
-                    xlim[0],
-                    xlim[1],
-                    ylim[0],
-                    ylim[1],
-                ),
-                aspect="auto",
-                vmax=norm,
-                vmin=0,
-            )
-            axs[0].set_title(f"{projector} (up)", fontsize=title_fontsize)
-            axs[1].imshow(
-                pdos[projector][1].T,
-                cmap=CustomCmap((1, 1, 1), (1, 0, 0)),
-                origin="lower",
-                extent=(
-                    xlim[0],
-                    xlim[1],
-                    ylim[0],
-                    ylim[1],
-                ),
-                aspect="auto",
-                vmax=norm,
-                vmin=0,
-            )
-            axs[1].set_title(f"{projector} (down)", fontsize=title_fontsize)
-        else:
-            axs[0].imshow(
-                pdos[projector].T,
-                cmap="inferno",
-                origin="lower",
-                extent=(
-                    xlim[0],
-                    xlim[1],
-                    ylim[0],
-                    ylim[1],
-                ),
-                aspect="auto",
-                vmax=norm,
-                vmin=0,
-            )
-            axs[0].set_title(projector, fontsize=title_fontsize)
-
-        if efermi != 0:
-            plot_horizontal_lines(axs[0], 0)
-            if pdos.spin_pol:
-                plot_horizontal_lines(axs[1], 0)
-
-    for i, projector in enumerate(pdos):
-        if separate:
-            if pdos.spin_pol:
-                fig, axs = plt.subplots(1, 2, figsize=(8, 7))
-            else:
-                fig, axs = plt.subplots(figsize=(4, 7))
-                axs = [axs]
-            fig.subplots_adjust(wspace=0)
-            plot_entry(axs, pdos, projector, xlim, ylim, efermi)
-            if interactive:
-                plt.show()
-            else:
-                plt.savefig(f"{output_name}_{i}.png", dpi=600, bbox_inches="tight")
-                if save_pickle:
-                    import pickle
-
-                    with open(f"{output_name}_{i}.png.pickle", "wb") as file:
-                        pickle.dump(fig, file)
-            plt.close()
-        else:
-            plot_entry(axs[i], pdos, projector, xlim, ylim, efermi)
-
-    if not separate:
-        if interactive:
-            plt.show()
-        else:
-            plt.savefig(f"{output_name}.png", dpi=600, bbox_inches="tight")
-            if save_pickle:
-                import pickle
-
-                with open(f"{output_name}.png.pickle", "wb") as file:
-                    pickle.dump(fig, file)
-        plt.close()

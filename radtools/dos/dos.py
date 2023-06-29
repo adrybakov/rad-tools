@@ -5,12 +5,17 @@ import re
 from os import walk
 from os.path import join
 
+from typing import Iterable
+
 import matplotlib.pyplot as plt
 import numpy as np
 
-from radtools.dos.pdos import PDOSQE
+from termcolor import cprint
 
-PATTERN = ".pdos_atm#[0-9]*\\([a-zA-Z0-9]*\\)_wfc#[0-9]*\\([spdf_0-9j.]*\\)"
+from radtools.dos.pdos import PDOSQE
+from radtools.routines import plot_horizontal_lines, plot_vertical_lines
+
+PATTERN = "\\.pdos_atm\\#[0-9]*\\([a-zA-Z0-9]*\\)_wfc\\#[0-9]*\\([spdf_0-9j\\.]*\\)"
 
 
 class DOSQE:
@@ -97,7 +102,7 @@ class DOSQE:
         #. Non-collinear, non-spin-orbit
         #. Non-collinear, spin-orbit
 
-        Headers of "seedname".pdos_tot with according to the
+        Headers of "seedname".pdos_tot according to the
         |projwfc|_:
 
         * Collinear:
@@ -113,8 +118,9 @@ class DOSQE:
             E DOS(E) PDOS(E)
         """
 
+        # Detect the case
         if self._case is None:
-            # Detect the case
+            # Read header
             with open(join(f"{self._input_path}", f"{self.seedname}.pdos_tot")) as file:
                 header = file.readline().lower().split()
 
@@ -129,18 +135,25 @@ class DOSQE:
                 and "pdosdw(e)" in header
             ):
                 self._case = 2
+            # Differentiate between case 1 and 4
             if self._case == 1:
                 # pattern is intentionally different from PATTERN
-                pattern = ".pdos_atm#[0-9]*\\([a-zA-Z]*\\)_wfc#[0-9]*\\([spdf.]*\\)"
+                pattern = (
+                    "\\.pdos_atm\\#[0-9]*\\([a-zA-Z]*\\)_wfc\\#[0-9]*\\([spdf\\.]*\\)"
+                )
                 filename = self.filenames[0]
                 if not re.fullmatch(
                     f"{re.escape(self.seedname)}{pattern}",
                     filename,
                 ):
                     self._case = 4
+
             if self._case is None:
                 raise RuntimeError(
-                    "Unable to detect case, analysed header:\n" + f"{header}"
+                    "Unable to detect case, analysed header:\n"
+                    + f"{header}\n"
+                    + f"of the file:\n"
+                    + f"{join(f'{self._input_path}', f'{self.seedname}.pdos_tot')}"
                 )
 
         return self._case
@@ -177,14 +190,19 @@ class DOSQE:
         return self._k_resolved
 
     def _extract_energy(self):
+        # Load data
         dos = np.loadtxt(
             join(f"{self._input_path}", f"{self.seedname}.pdos_tot"), skiprows=1
         ).T
+
+        # Load energy
         if self.k_resolved:
+            # ik E ...
             self.nkpoints = int(dos[0][-1])
             self.nepoints = len(dos[0]) // self.nkpoints
             self.energy = dos[1][0 : self.nepoints] - self.efermi
         else:
+            # E ...
             self.nkpoints = 1
             self.nepoints = len(dos[0])
             self.energy = dos[0] - self.efermi
@@ -223,13 +241,13 @@ class DOSQE:
 
             .. code-block:: python
 
-                atoms = {atom1: [n_1, n_2, n_3, ...]}
+                _atoms = {atom_symbol: [atom_number, ...], ...}
         wfcs : dict
-            Dictionary of projectors functions and their numbers.
+            Dictionary of projectors wave functions and their numbers.
 
             .. code-block:: python
 
-                wfcs = {(atom1, atom1_number): (wfc_label, wfc_number), ...}
+                _wfcs = {(atom_symbol, atom_number): {wfc_symbol: [wfc_number, ...], ...}, ...}
         """
 
         for filename in self.filenames:
@@ -244,15 +262,18 @@ class DOSQE:
             self._atoms[atom_symbol].append(atom_number)
 
             if (atom_symbol, atom_number) not in self._wfcs:
-                self._wfcs[(atom_symbol, atom_number)] = []
-            self._wfcs[(atom_symbol, atom_number)].append((wfc_symbol, wfc_number))
+                self._wfcs[(atom_symbol, atom_number)] = {}
+            if wfc_symbol not in self._wfcs[(atom_symbol, atom_number)]:
+                self._wfcs[(atom_symbol, atom_number)][wfc_symbol] = []
+            self._wfcs[(atom_symbol, atom_number)][wfc_symbol].append(wfc_number)
 
         # Sort entries
         for atom in self._atoms:
             self._atoms[atom] = list(set(self._atoms[atom]))
             self._atoms[atom].sort()
         for key in self._wfcs:
-            self._wfcs[key].sort(key=lambda x: x[1])
+            for wfc_symbol in self._wfcs[key]:
+                self._wfcs[key][wfc_symbol].sort()
 
     def __iter__(self):
         return DOSIterator(self)
@@ -262,7 +283,8 @@ class DOSQE:
         return (
             atom in self.atoms
             and atom_number in self.atom_numbers(atom)
-            and (wfc, wfc_number) in self.wfcs(atom, atom_number)
+            and wfc in self.wfcs(atom, atom_number)
+            and wfc_number in self.wfc_numbers(atom, wfc, atom_number)
         )
 
     def total_dos(self, squeeze=False):
@@ -286,33 +308,40 @@ class DOSQE:
             :math:`(n_e)` otherwise.
         """
 
+        # Load data
         dos = np.loadtxt(
             join(self._input_path, f"{self.seedname}.pdos_tot"), skiprows=1
         ).T
 
         if self.case == 2:
+            # ik E DOS(up) DOS(down) PDOS(up) PDOS(down)
             if self.k_resolved:
-                if squeeze:
-                    return (
-                        np.sum(
-                            dos[2:4].reshape((2, self.nkpoints, self.nepoints)), axis=1
-                        )
-                        / self.nkpoints
-                    )[:, self.energy_window[0] : self.energy_window[1]]
-                return dos[2:4].reshape((2, self.nkpoints, self.nepoints))[
+                reshaped_dos = dos[2:4].reshape((2, self.nkpoints, self.nepoints))[
                     :, :, self.energy_window[0] : self.energy_window[1]
                 ]
+                # Squeeze if necessary
+                if squeeze:
+                    return np.sum(reshaped_dos, axis=1) / self.nkpoints
+                return reshaped_dos
+
+            # E DOS(up) DOS(down) PDOS(up) PDOS(down)
             return dos[1:3][:, self.energy_window[0] : self.energy_window[1]]
 
+        # ik E DOS PDOS
+        # or
+        # ik E DOS PDOS(up) PDOS(down)
         if self.k_resolved:
-            if squeeze:
-                return (
-                    np.sum(dos[2].reshape((self.nkpoints, self.nepoints)), axis=0)
-                    / self.nkpoints
-                )[self.energy_window[0] : self.energy_window[1]]
-            return dos[2].reshape((self.nkpoints, self.nepoints))[
+            reshaped_dos = dos[2].reshape((self.nkpoints, self.nepoints))[
                 :, self.energy_window[0] : self.energy_window[1]
             ]
+            # Squeeze if necessary
+            if squeeze:
+                return np.sum(reshaped_dos, axis=0) / self.nkpoints
+            return reshaped_dos
+
+        # E DOS PDOS
+        # or
+        # E DOS PDOS(up) PDOS(down)
         return dos[1][self.energy_window[0] : self.energy_window[1]]
 
     def total_pdos(self, squeeze=False):
@@ -333,49 +362,50 @@ class DOSQE:
             :math:`(n_e)` otherwise.
         """
 
+        # Load data
         dos = np.loadtxt(
             join(f"{self._input_path}", f"{self.seedname}.pdos_tot"), skiprows=1
         ).T
 
         if self.case == 2:
+            # ik E DOS(up) DOS(down) PDOS(up) PDOS(down)
             if self.k_resolved:
-                if squeeze:
-                    return (
-                        np.sum(
-                            dos[4:6].reshape((2, self.nkpoints, self.nepoints)), axis=1
-                        )
-                        / self.nkpoints
-                    )[:, self.energy_window[0] : self.energy_window[1]]
-                return dos[4:6].reshape((2, self.nkpoints, self.nepoints))[
+                reshaped_pdos = dos[4:6].reshape((2, self.nkpoints, self.nepoints))[
                     :, :, self.energy_window[0] : self.energy_window[1]
                 ]
+                # Squeeze if necessary
+                if squeeze:
+                    return np.sum(reshaped_pdos, axis=1) / self.nkpoints
+                return reshaped_pdos
+
+            # E DOS(up) DOS(down) PDOS(up) PDOS(down)
             return dos[3:5][:, self.energy_window[0] : self.energy_window[1]]
 
         elif self.case == 3:
+            # ik E DOS PDOS(up) PDOS(down)
             if self.k_resolved:
-                if squeeze:
-                    total_pdos = (
-                        np.sum(
-                            dos[3:5].reshape((2, self.nkpoints, self.nepoints)), axis=1
-                        )
-                        / self.nkpoints
-                    )[:, self.energy_window[0] : self.energy_window[1]]
-
-                total_pdos = dos[3:5].reshape((2, self.nkpoints, self.nepoints))[
+                reshaped_pdos = dos[3:5].reshape((2, self.nkpoints, self.nepoints))[
                     :, :, self.energy_window[0] : self.energy_window[1]
                 ]
-            total_pdos = dos[2:4][:, self.energy_window[0] : self.energy_window[1]]
-            return total_pdos
+                # Squeeze if necessary
+                if squeeze:
+                    total_pdos = np.sum(reshaped_pdos, axis=1) / self.nkpoints
+                return reshaped_pdos
 
+            # E DOS PDOS(up) PDOS(down)
+            return dos[2:4][:, self.energy_window[0] : self.energy_window[1]]
+
+        # ik E DOS PDOS
         if self.k_resolved:
-            if squeeze:
-                return (
-                    np.sum(dos[3].reshape((self.nkpoints, self.nepoints)), axis=0)
-                    / self.nkpoints
-                )[self.energy_window[0] : self.energy_window[1]]
-            return dos[3].reshape((self.nkpoints, self.nepoints))[
+            reshaped_pdos = dos[3].reshape((self.nkpoints, self.nepoints))[
                 :, self.energy_window[0] : self.energy_window[1]
             ]
+            # Squeeze if necessary
+            if squeeze:
+                return np.sum(reshaped_pdos, axis=0) / self.nkpoints
+            return reshaped_pdos
+
+        # E DOS PDOS
         return dos[2][self.energy_window[0] : self.energy_window[1]]
 
     @property
@@ -386,18 +416,18 @@ class DOSQE:
         Returns
         -------
         atoms : list
-            List of atom's types labels
+            List of atom's types symbols
 
             .. code-block:: python
 
-                atoms = [atom1, atom2, ...]
+                atoms = [atom_symbol, ...]
         """
 
         return [atom for atom in self._atoms]
 
     def atom_numbers(self, atom: str):
         r"""
-        List of atom's number for particular atom type.
+        List of atom's numbers for particular atom type.
 
         Parameters
         ----------
@@ -410,38 +440,69 @@ class DOSQE:
 
             .. code-block:: python
 
-                numbers = [n_1, n_2, n_3, ...]
+                numbers = [atom_number, ...]
         """
 
         return self._atoms[atom]
 
     def wfcs(self, atom: str, atom_number: int = None):
         r"""
-        Return list of wave function labels for particular atom.
+        Return list of wave function symbols for particular atom.
 
         Parameters
         ----------
         atom : str
             Label of an atom.
         atom_number : int, optional
-            Number of an atom. If ``None`` then return wfc and wfc numbers of first atom.
+            Number of an atom. If ``None`` then return wfc symbols of first atom.
 
         Returns
         -------
-        wfcs : list
-            List of wave function labels and numbers
+        wfc_symbols : list
+            List of wave function symbols
 
             .. code-block:: python
 
-                wfcs = [(wfc_label, wfc_number), ...]
+                wfc_symbols = [wfc_symbol, ...]
 
         """
+
+        # If atom_number is not provided, then return wfc symbols of first atom
         if atom_number is None:
             atom_number = self.atom_numbers(atom)[0]
-        return self._wfcs[(atom, atom_number)]
+        return [symbol for symbol in self._wfcs[(atom, atom_number)]]
+
+    def wfc_numbers(self, atom: str, wfc_symbol, atom_number: int = None):
+        r"""
+        Return list of wave function numbers for particular atom and wave function type.
+
+        Parameters
+        ----------
+        atom : str
+            Label of an atom.
+        wfc_symbol : str
+            Label of a wave function type.
+        atom_number : int, optional
+            Number of an atom. If ``None`` then return wfc numbers of first atom.
+
+        Returns
+        -------
+        wfc_numbers : list
+            List of wave function numbers
+
+            .. code-block:: python
+
+                wfc_numbers = [wfc_number, ...]
+
+        """
+
+        # If atom_number is not provided, then return wfc numbers of first atom
+        if atom_number is None:
+            atom_number = self.atom_numbers(atom)[0]
+        return self._wfcs[(atom, atom_number)][wfc_symbol]
 
     def pdos(
-        self, atom, wfc, wfc_number, atom_numbers=None, background_total=False
+        self, atom, wfc, wfc_numbers=None, atom_numbers=None, background_total=False
     ) -> PDOSQE:
         r"""
         Projected density of states for a particular atom.
@@ -452,9 +513,9 @@ class DOSQE:
             Name of the atom type.
         wfc : str
             Name of the projector wave function.
-        wfc_numbers : int
+        wfc_numbers : Iterable or int, optional
             Number of wave function projector.
-        atom_numbers : list or int, optional
+        atom_numbers : Iterable or int, optional
             If ``None``, then PDOS summed over all atom numbers for ``atom``.
 
         Returns
@@ -463,25 +524,65 @@ class DOSQE:
             Partial density of states, orbital-resolved.
         """
 
+        # Check if atom is valid
+        if atom not in self.atoms:
+            raise ValueError(f"There is no {atom} in PDOS.")
+
+        # Prepare atom_numbers
         if atom_numbers is None:
             atom_numbers = self.atom_numbers(atom)
         elif isinstance(atom_numbers, int):
-            if atom_numbers in self.atom_numbers(atom):
-                atom_numbers = [atom_numbers]
-            else:
-                raise ValueError(f"There is no {atom}{atom_numbers} in PDOS.")
-
-        for i, atom_number in enumerate(atom_numbers):
-            path = join(
-                self._input_path,
-                f"{self.seedname}.pdos_atm#{atom_number}({atom})_wfc#{wfc_number}({wfc})",
+            atom_numbers = [atom_numbers]
+        elif not isinstance(atom_numbers, Iterable):
+            raise ValueError(
+                f"atom_numbers must be None, int or Iterable, "
+                + f"got {type(atom_numbers)} :\n"
+                + f"{atom_numbers}"
             )
-            if i == 0:
-                pdos = np.loadtxt(path, skiprows=1).T
-            else:
-                pdos += np.loadtxt(path, skiprows=1).T
+
+        # Check if wfc is valid
+        if wfc not in self.wfcs(atom, atom_numbers[0]):
+            raise ValueError(f"There is no {wfc} projector of {atom} atom in PDOS.")
+
+        # Load and sum data for all atom numbers of the atom and all wfc numbers
+        for i, atom_number in enumerate(atom_numbers):
+            # Check if atom number is valid
+            if atom_number not in self.atom_numbers(atom):
+                raise ValueError(f"There is no {atom}#{atom_number} atom in PDOS.")
+
+            # Prepare wfc_numbers
+            if wfc_numbers is None:
+                wfc_numbers = self.wfc_numbers(atom, wfc, atom_number)
+            elif isinstance(wfc_numbers, int):
+                wfc_numbers = [wfc_numbers]
+            elif not isinstance(wfc_numbers, Iterable):
+                raise ValueError(
+                    f"wfc_numbers must be None, int or Iterable,"
+                    + f" got {type(wfc_numbers)} :\n"
+                    + f"{wfc_numbers}"
+                )
+
+            for j, wfc_number in enumerate(wfc_numbers):
+                # Check if wfc number is valid
+                if wfc_number not in self.wfc_numbers(atom, wfc, atom_number):
+                    raise ValueError(
+                        f"There is no {wfc}#{wfc_number} wave-function for "
+                        + f"{atom}#{atom_number} atom in PDOS."
+                    )
+                # Load and sum data
+                path = join(
+                    self._input_path,
+                    f"{self.seedname}.pdos_atm#{atom_number}({atom})_wfc#{wfc_number}({wfc})",
+                )
+                if i == 0 and j == 0:
+                    pdos = np.loadtxt(path, skiprows=1).T
+                else:
+                    pdos += np.loadtxt(path, skiprows=1).T
+
+        # Reshape data
         if self.spin_pol:
             if self.k_resolved:
+                # ik E LDOS(up) LDOS(down) PDOS_1(up) PDOS_1(down) ... PDOS_2l+1(up) PDOS_2l+1(down)
                 ldos = pdos[2:4].reshape(2, self.nkpoints, self.nepoints)[
                     :, :, self.energy_window[0] : self.energy_window[1]
                 ]
@@ -489,12 +590,14 @@ class DOSQE:
                     (pdos.shape[0] - 4) // 2, 2, self.nkpoints, self.nepoints
                 )[:, :, :, self.energy_window[0] : self.energy_window[1]]
             else:
+                # E LDOS(up) LDOS(down) PDOS_1(up) PDOS_1(down) ... PDOS_2l+1(up) PDOS_2l+1(down)
                 ldos = pdos[1:3][:, self.energy_window[0] : self.energy_window[1]]
                 pdos = pdos[3:].reshape((pdos.shape[0] - 3) // 2, 2, self.nepoints)[
                     :, :, self.energy_window[0] : self.energy_window[1]
                 ]
         else:
             if self.k_resolved:
+                # ik E LDOS PDOS_1 ... PDOS_2l+1
                 ldos = pdos[2].reshape(self.nkpoints, self.nepoints)[
                     :, self.energy_window[0] : self.energy_window[1]
                 ]
@@ -502,11 +605,12 @@ class DOSQE:
                     pdos.shape[0] - 3, self.nkpoints, self.nepoints
                 )[:, :, self.energy_window[0] : self.energy_window[1]]
             else:
+                # E LDOS PDOS_1 ... PDOS_2l+1
                 ldos = pdos[1][self.energy_window[0] : self.energy_window[1]]
                 pdos = pdos[2:][:, self.energy_window[0] : self.energy_window[1]]
 
         if background_total:
-            ldos = self.total_pdos(fix_updown=True)
+            ldos = self.total_pdos()
         return PDOSQE(
             energy=self.energy,
             pdos=pdos,
@@ -554,133 +658,63 @@ class DOSQE:
         """
         fig, ax = plt.subplots(figsize=(8, 4))
 
+        #  x axis label
         if efermi == 0:
             ax.set_xlabel("E, eV", fontsize=axes_labels_fontsize)
         else:
             ax.set_xlabel("E - E$_{Fermi}$, eV", fontsize=axes_labels_fontsize)
-
+        # y axis label
         ax.set_ylabel("DOS, states/eV", fontsize=axes_labels_fontsize)
+
+        # x axis limits
         if xlim is None:
             xlim = (np.amin(self.energy), np.amax(self.energy))
         ax.set_xlim(*tuple(xlim))
+        # y axis limits
         if ylim is not None:
             ax.set_ylim(*tuple(ylim))
+
+        # Title
         ax.set_title(f"DOS vs PDOS", fontsize=title_fontsize)
-        ax.vlines(
-            0,
-            0,
-            1,
-            transform=ax.get_xaxis_transform(),
-            color="grey",
-            linewidths=0.5,
-            linestyles="dashed",
-        )
 
+        # Eye-guide lines
+        if efermi != 0:
+            plot_vertical_lines(ax, 0)
+        if self.spin_pol:
+            plot_horizontal_lines(ax, 0)
+
+        def fill(data, color, label):
+            ax.fill_between(
+                self.energy, 0, data, lw=0, color=color, alpha=0.3, label=label
+            )
+
+        def plot(data, color, label):
+            ax.plot(self.energy, data, "-", lw=1, color=color, alpha=0.7, label=label)
+
+        # E DOS(E) PDOS(E)
         if self.case in [1, 4]:
-            ax.fill_between(
-                self.energy,
-                0,
-                self.total_dos(squeeze=True),
-                lw=0,
-                color="grey",
-                alpha=0.3,
-                label="DOS",
-            )
-            ax.plot(
-                self.energy,
-                self.total_pdos(squeeze=True),
-                "-",
-                lw=1,
-                color="black",
-                alpha=0.7,
-                label="PDOS",
-            )
+            fill(self.total_dos(squeeze=True), "grey", "DOS")
+            plot(self.total_pdos(squeeze=True), "black", "PDOS")
             ncol = 1
+        # E DOSup(E) DOSdw(E) PDOSup(E) PDOSdw(E)
         if self.case == 2:
-            ax.fill_between(
-                self.energy,
-                0,
-                self.total_dos(squeeze=True)[0],
-                lw=0,
-                color="blue",
-                alpha=0.3,
-                label="DOS (up)",
-            )
-            ax.fill_between(
-                self.energy,
-                0,
-                -self.total_dos(squeeze=True)[1],
-                lw=0,
-                color="red",
-                alpha=0.3,
-                label="DOS (down)",
-            )
-
-            ax.plot(
-                self.energy,
-                self.total_pdos(squeeze=True)[0],
-                "-",
-                lw=1,
-                color="blue",
-                alpha=0.7,
-                label="PDOS (up)",
-            )
-            ax.plot(
-                self.energy,
-                -self.total_pdos(squeeze=True)[1],
-                "-",
-                lw=1,
-                color="red",
-                alpha=0.7,
-                label="PDOS (down)",
-            )
+            fill(self.total_dos(squeeze=True)[0], "blue", "DOS (up)")
+            fill(-self.total_dos(squeeze=True)[1], "red", "DOS (down)")
+            plot(self.total_pdos(squeeze=True)[0], "blue", "PDOS (up)")
+            plot(-self.total_pdos(squeeze=True)[1], "red", "PDOS (down)")
             ncol = 2
+        # E DOS(E) PDOSup(E) PDOSdw(E)
         if self.case == 3:
-            ax.fill_between(
-                self.energy,
-                0,
-                self.total_dos(squeeze=True),
-                lw=0,
-                color="grey",
-                alpha=0.3,
-                label="DOS",
-            )
-            ax.fill_between(
-                self.energy,
-                -self.total_dos(squeeze=True),
-                0,
-                lw=0,
-                color="grey",
-                alpha=0.3,
-                label="$-$DOS",
-            )
-
-            ax.plot(
-                self.energy,
-                self.total_pdos(squeeze=True)[0],
-                "-",
-                lw=1,
-                color="blue",
-                alpha=0.7,
-                label="PDOS (up)",
-            )
-            ax.plot(
-                self.energy,
-                -self.total_pdos(squeeze=True)[1],
-                "-",
-                lw=1,
-                color="red",
-                alpha=0.7,
-                label="PDOS (down)",
-            )
+            fill(self.total_dos(squeeze=True), "grey", "DOS")
+            fill(-self.total_dos(squeeze=True), "grey", "$-$DOS")
+            plot(self.total_pdos(squeeze=True)[0], "blue", "PDOS (up)")
+            plot(-self.total_pdos(squeeze=True)[1], "red", "PDOS (down)")
             ncol = 1
 
-            if interactive:
-                ax.legend(
-                    loc="best", ncol=ncol, draggable=True, fontsize=legend_fontsize
-                )
-            else:
-                ax.legend(loc="best", ncol=ncol, fontsize=legend_fontsize)
+        if interactive:
+            ax.legend(loc="best", ncol=ncol, draggable=True, fontsize=legend_fontsize)
+        else:
+            ax.legend(loc="best", ncol=ncol, fontsize=legend_fontsize)
 
         if interactive:
             plt.show()
@@ -697,16 +731,17 @@ class DOSQE:
 
 class DOSIterator:
     def __init__(self, dos: DOSQE) -> None:
-        self.list = []
+        self._list = []
         for atom in dos.atoms:
             for atom_number in dos.atom_numbers(atom):
-                for wfc, wfc_number in dos.wfcs(atom, atom_number):
-                    self.list.append([atom, atom_number, wfc, wfc_number])
+                for wfc in dos.wfcs(atom, atom_number):
+                    for wfc_number in dos.wfc_numbers(atom, wfc, atom_number):
+                        self._list.append([atom, atom_number, wfc, wfc_number])
         self._index = 0
 
     def __next__(self) -> str:
-        if self._index < len(self.list):
-            result = self.list[self._index]
+        if self._index < len(self._list):
+            result = self._list[self._index]
             self._index += 1
             return result
         raise StopIteration
@@ -745,3 +780,137 @@ def detect_seednames(input_path):
     seednames = list(seednames)
 
     return seednames
+
+
+def prepare_custom_pdos(dos: DOSQE, custom, quiet=True):
+    r"""
+    Prepare custom PDOS. Based on the input line.
+
+    Parameters
+    ----------
+    dos : :py:class:`.DOSQE`
+        DOS input files wrapper.
+    custom : list of str
+        List of strings describing the custom PDOS.
+        See :ref:`rad-plot-dos_custom-plots` for the string`s description.
+    quiet : bool, default True
+        Whether to print information about the runtime.
+
+    Returns
+    -------
+    pdos : list of :numpy:`ndarray`
+        PDOS array. Not the instance of the :py:class:`.PDOS`, but
+        an array, which could be passed to the constructor of
+        :py:class:`.PDOS` class
+    """
+    pdos = []
+
+    # Process each custom specification
+    for entry in custom:
+        # Print info about current specification
+        if not quiet:
+            cprint(f'"{entry}":', "green")
+
+        # Initialize pdos_element corresponding to the entry
+        pdos_element = None
+
+        # Remove spaces and closing brackets
+        entry = entry.replace(" ", "").replace(")", "")
+
+        # Split by semicolon into different atom types
+        subentries = entry.split(";")
+
+        # Process each atom specification
+        for subentry in subentries:
+            # Get the info about atoms
+            atom_part = subentry.split("(")[0]
+
+            # Get the info about atom type
+            atom = atom_part.split("#")[0]
+
+            # Get the info about atom numbers
+            if "#" in subentry:
+                # Atom numbers provided directly
+                atom_numbers = list(map(int, atom_part.split("#")[1:]))
+                # Check if the custom numbers are correct
+                if not set(atom_numbers).issubset(set(dos.atom_numbers(atom))):
+                    raise ValueError(
+                        f"For the atom {atom} the following numbers exist:\n"
+                        + f"{dos.atom_numbers(atom)}\n"
+                        + f"but the following numbers are provided:\n"
+                        + f"{atom_numbers}"
+                    )
+            else:
+                # Atom numbers are taken from the dos object
+                atom_numbers = dos.atom_numbers(atom)
+
+            # Print the summary of the atom with numbers
+            if not quiet:
+                cprint(
+                    f"  * PDOS is summed among the following {atom} atoms:",
+                    "green",
+                    end="\n      ",
+                )
+                for i, number in enumerate(atom_numbers):
+                    print(f"{atom}#{number}", end="")
+                    if i != len(atom_numbers) - 1:
+                        print(end=", ")
+                    else:
+                        print()
+
+            # Get the info about wave function projectors, if any
+            if "(" in subentry:
+                # Get all wave function types
+                wfc_parts = subentry.split("(")[1].split(",")
+                wfcs = {}
+                # Process each wave function type
+                for wfc_part in wfc_parts:
+                    # Get the name of the wave function type
+                    wfc = wfc_part.split("#")[0]
+
+                    # If wave function numbers are provided directly
+                    if "#" in wfc_part:
+                        wfc_numbers = list(map(int, wfc_part.split("#")[1:]))
+                        if wfc in wfcs:
+                            wfcs[wfc].extend(wfc_numbers)
+                        else:
+                            wfcs[wfc] = wfc_numbers
+                    # If wave function numbers are not provided
+                    else:
+                        # It will result in the summ over all numbers
+                        wfcs[wfc] = dos.wfc_numbers(atom, wfc, atom_numbers[0])
+
+            # If no wave function projectors are provided, then sum over all projectors
+            else:
+                wfcs = dict(
+                    [
+                        (wfc, dos.wfc_numbers(atom, wfc, atom_numbers[0]))
+                        for wfc in dos.wfcs(atom)
+                    ]
+                )
+
+            if not quiet:
+                print(
+                    f"  * For each {atom} atom PDOS is summed among the following projections:",
+                    end="\n      ",
+                )
+                for wfc in wfcs:
+                    for number in wfcs[wfc]:
+                        print(f"{wfc}#{number}", end=" ")
+                print()
+
+            for wfc in wfcs:
+                tmp_pdos = dos.pdos(
+                    atom=atom,
+                    wfc=wfc,
+                    wfc_numbers=wfcs[wfc],
+                    atom_numbers=atom_numbers,
+                ).ldos
+                if pdos_element is None:
+                    pdos_element = tmp_pdos
+                else:
+                    pdos_element += tmp_pdos
+
+        pdos.append(pdos_element)
+
+    return np.array(pdos)
