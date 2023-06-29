@@ -137,3 +137,8 @@ First version of magnons module, Add :ref:`rad-plot-tb2j-magnons` script.
 ------
 
 Bugfix, some scripts did not work before.
+
+0.7.14
+------
+
+Preliminary version of :ref:`rad-plot-fatbands` script.
