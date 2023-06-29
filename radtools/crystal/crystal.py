@@ -372,7 +372,7 @@ class Crystal:
         """
         pass
 
-    def identify(self, find_primitive=True):
+    def identify(self, find_primitive=True, eps_rel=1e-5):
         r"""
         Identify Bravais lattice type.
 
@@ -380,13 +380,15 @@ class Crystal:
         ----------
         find_primitive : bool, default True
             Whether to find primitive cell before identification.
+        eps_rel : float, default 1e-5
+            Relative tolerance for the identification.
         """
 
         # Define primitive cell
         if find_primitive:
             self.find_primitive_cell()
 
-        self.lattice = bravais_lattice_from_cell(self.lattice.cell)
+        self.lattice = bravais_lattice_from_cell(self.lattice.cell, eps_rel=eps_rel)
 
     def mag_dipdip_energy(self, na, nb, nc, progress_bar=True):
         r"""

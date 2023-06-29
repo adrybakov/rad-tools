@@ -2512,7 +2512,7 @@ def bravais_lattice_from_param(a, b, c, alpha, beta, gamma) -> Lattice:
     return TRI(a, b, c, alpha, beta, gamma)
 
 
-def bravais_lattice_from_cell(cell) -> Lattice:
+def bravais_lattice_from_cell(cell, eps_rel=1e-5) -> Lattice:
     r"""
     Create Bravais lattice from cell matrix.
 
@@ -2530,8 +2530,8 @@ def bravais_lattice_from_cell(cell) -> Lattice:
                     [a2_x, a2_y, a2_z],
                     [a3_x, a3_y, a3_z]]
 
-    lattice_type : str
-        Lattice type.
+    eps_rel : float, default 1e-5
+        Relative tolerance for determining the lattice type.
 
     Returns
     -------
@@ -2545,36 +2545,35 @@ def bravais_lattice_from_cell(cell) -> Lattice:
         Computational materials science, 49(2), pp.299-312.
     """
 
-    lattice_type = lepage(*param_from_cell(cell))
+    lattice_type = lepage(*param_from_cell(cell), eps_rel=eps_rel)
 
     if lattice_type == "CUB":
-        return CUB(cell=cell)
+        return CUB(cell=cell, eps_rel=eps_rel)
     if lattice_type == "FCC":
-        return FCC(cell=cell)
+        return FCC(cell=cell, eps_rel=eps_rel)
     if lattice_type == "BCC":
-        return BCC(cell=cell)
+        return BCC(cell=cell, eps_rel=eps_rel)
     if lattice_type == "TET":
-        return TET(cell=cell)
+        return TET(cell=cell, eps_rel=eps_rel)
     if lattice_type == "BCT":
-        return BCT(cell=cell)
+        return BCT(cell=cell, eps_rel=eps_rel)
     if lattice_type == "ORC":
-        return ORC(cell=cell)
+        return ORC(cell=cell, eps_rel=eps_rel)
     if lattice_type == "ORCF":
-        return ORCF(cell=cell)
+        return ORCF(cell=cell, eps_rel=eps_rel)
     if lattice_type == "ORCC":
-        return ORCC(cell=cell)
+        return ORCC(cell=cell, eps_rel=eps_rel)
     if lattice_type == "ORCI":
-        return ORCI(cell=cell)
+        return ORCI(cell=cell, eps_rel=eps_rel)
     if lattice_type == "HEX":
-        return HEX(cell=cell)
+        return HEX(cell=cell, eps_rel=eps_rel)
     if lattice_type == "RHL":
-        return RHL(cell=cell)
+        return RHL(cell=cell, eps_rel=eps_rel)
     if lattice_type == "MCL":
-        return MCL(cell=cell)
+        return MCL(cell=cell, eps_rel=eps_rel)
     if lattice_type == "MCLC":
-        return MCLC(cell=cell)
-    return TRI(cell=cell)
-    return Lattice(cell)
+        return MCLC(cell=cell, eps_rel=eps_rel)
+    return TRI(cell=cell, eps_rel=eps_rel)
 
 
 def lattice_example(

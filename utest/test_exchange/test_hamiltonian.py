@@ -764,6 +764,7 @@ class TestExchangeHamiltonian:
             np.indices((2, 2, 2, 2, 2)), (1, 2, 3, 4, 5, 0)
         ).reshape((32, 5))
         for new_notation in notations:
+            print(new_notation)
             model.notation = new_notation
             assert model.ferromagnetic_energy() == -6
 
@@ -778,3 +779,24 @@ class TestExchangeHamiltonian:
         assert model.Cr__1.fullname == "Cr__1"
         assert model.Cr__2.name == "Cr"
         assert model.Cr__2.fullname == "Cr__2"
+
+    def test_add_remove_bond_with_notation(self):
+        model = ExchangeHamiltonian()
+        Cr1 = Atom("Cr1", (2, 5, 1))
+        Cr2 = Atom("Cr2", (4, 2, 1))
+        bond = ExchangeParameter(iso=1)
+        model.double_counting = False
+        model.add_bond(bond, Cr1, Cr2, (0, 0, 0))
+        assert (Cr1, Cr2, (0, 0, 0)) in model
+        assert (Cr2, Cr1, (0, 0, 0)) not in model
+        model.remove_bond(Cr1, Cr2, (0, 0, 0))
+        assert (Cr1, Cr2, (0, 0, 0)) not in model
+        assert (Cr2, Cr1, (0, 0, 0)) not in model
+
+        model.double_counting = True
+        model.add_bond(bond, Cr1, Cr2, (0, 0, 0))
+        assert (Cr1, Cr2, (0, 0, 0)) in model
+        assert (Cr2, Cr1, (0, 0, 0)) in model
+        model.remove_bond(Cr2, Cr1, (0, 0, 0))
+        assert (Cr1, Cr2, (0, 0, 0)) not in model
+        assert (Cr2, Cr1, (0, 0, 0)) not in model

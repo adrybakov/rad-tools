@@ -10,6 +10,8 @@ from math import asin, cos, pi, sin, sqrt
 
 from matplotlib.colors import LinearSegmentedColormap, to_rgb
 
+from scipy.spatial.transform import Rotation
+
 from typing import Iterable
 
 import numpy as np
@@ -669,6 +671,23 @@ def span_orthonormal_set(vec):
     e2 : (3,) :numpy:`ndarray`
     e3 : (3,) :numpy:`ndarray`
     """
+
+    if np.allclose(vec, [0, 0, 1]):
+        return (
+            np.array([1.0, 0.0, 0.0]),
+            np.array([0.0, 1.0, 0.0]),
+            np.array([0.0, 0.0, 1.0]),
+        )
+
+    z_dir = [0, 0, 1]
+    n = (
+        np.cross(vec, z_dir)
+        / np.linalg.norm(np.cross(vec, z_dir))
+        * np.arccos(np.dot(vec, z_dir) / np.linalg.norm(vec))
+    )
+    rotation_matrix = Rotation.from_rotvec(n).as_matrix()
+
+    return rotation_matrix
 
     e3 = np.array(vec) / np.linalg.norm(vec)
     x, y, z = e3

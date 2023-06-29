@@ -9,7 +9,7 @@ from radtools.exchange.hamiltonian import ExchangeHamiltonian
 from radtools.exchange.parameter import ExchangeParameter
 
 
-def read_tb2j_model(filename, quiet=True) -> ExchangeHamiltonian:
+def read_tb2j_model(filename, quiet=True, bravais_type=None) -> ExchangeHamiltonian:
     r"""
     Read exchange Hamiltonian from |TB2J|_ output file.
 
@@ -36,13 +36,17 @@ def read_tb2j_model(filename, quiet=True) -> ExchangeHamiltonian:
     the unit cell is provided with the same precision as the distance in
     |TB2J|_ output file.
 
-
     Parameters
     ----------
     filename : str
         Path to the |TB2J|_ output file.
     quiet : bool, default True
         Whether to suppress output.
+    bravais_type : str, default None
+        Expected bravais lattice type. If ``None``, the lattice type is identified
+        automatically. See :py:meth:`.Crystal.identify` for more details.
+        The bravais lattice type is reached by reducing the accuracy for the :ref:`rad-tools_lepage`.
+        If the desired lattice type is not reached, the error is raised.
 
     Returns
     -------
@@ -72,13 +76,25 @@ def read_tb2j_model(filename, quiet=True) -> ExchangeHamiltonian:
     while line:
         line = file.readline()
 
-        # Read cell
+        # Read cell and define eps_rel
         if line and cell_flag in line:
+            a = file.readline().split()
+            b = file.readline().split()
+            c = file.readline().split()
+
+            try:
+                n_a = min(*tuple(map(lambda x: len(x.split(".")[1]), a)))
+                n_b = min(*tuple(map(lambda x: len(x.split(".")[1]), b)))
+                n_c = min(*tuple(map(lambda x: len(x.split(".")[1]), c)))
+                eps_rel = 10 ** (-min(n_a, n_b, n_c))
+            except:
+                eps_rel = 1e-5
+
             model.crystal.lattice.cell = np.array(
                 [
-                    list(map(float, file.readline().split())),
-                    list(map(float, file.readline().split())),
-                    list(map(float, file.readline().split())),
+                    list(map(float, a)),
+                    list(map(float, b)),
+                    list(map(float, c)),
                 ]
             )
 
@@ -115,9 +131,21 @@ def read_tb2j_model(filename, quiet=True) -> ExchangeHamiltonian:
             break
 
     # Identify lattice type
-    model.crystal.identify()
+    tmp_type = model.crystal.lattice.identify(eps_rel=eps_rel)
+    if bravais_type is not None:
+        if tmp_type != bravais_type:
+            eps_rel *= 10
+            while eps_rel < 1:
+                tmp_type = model.crystal.lattice.identify(eps_rel=eps_rel)
+                if tmp_type == bravais_type:
+                    break
+                eps_rel *= 10
+            if tmp_type != bravais_type:
+                raise ValueError(
+                    f"Bravais type {bravais_type} could not be reached."
+                    )
+    model.crystal.identify(eps_rel=eps_rel)
 
-    # Read exchange
     while line:
         while line and minor_sep not in line:
             line = file.readline()

@@ -460,11 +460,15 @@ class ExchangeHamiltonian:
 
     @double_counting.setter
     def double_counting(self, new_value: bool):
-        if self._double_counting is not None:
+        # Need to be at the beginning, otherwise _ensure methods do not work
+        old_value = self._double_counting
+        self._double_counting = bool(new_value)
+
+        if old_value is not None:
             factor = 1
-            if self._double_counting and not new_value:
+            if old_value and not new_value:
                 factor = 2
-            elif not self._double_counting and new_value:
+            elif not old_value and new_value:
                 factor = 0.5
             if factor != 1:
                 if new_value:
@@ -478,7 +482,6 @@ class ExchangeHamiltonian:
                 self._ensure_double_counting()
             else:
                 self._ensure_no_double_counting()
-        self._double_counting = bool(new_value)
 
     @property
     def spin_normalized(self) -> bool:
@@ -852,6 +855,16 @@ class ExchangeHamiltonian:
 
         self._bonds[(atom1, atom2, R)] = J
 
+        # Check for double counting
+        double_counting = False
+        try:
+            double_counting = self.double_counting
+        except NotationError:
+            pass
+        i, j, k = R
+        if double_counting and (atom2, atom1, (-i, -j, -k)) not in self:
+            self._bonds[(atom2, atom1, (-i, -j, -k))] = J.T
+
     def __delitem__(self, key):
         self.remove_bond(*key)
 
@@ -912,6 +925,16 @@ class ExchangeHamiltonian:
             raise KeyError(
                 f"Bond ({atom2.fullname}, {atom2.fullname}, {R}) is not present in the model."
             )
+
+        # Check for double counting
+        double_counting = False
+        try:
+            double_counting = self.double_counting
+        except NotationError:
+            pass
+        i, j, k = R
+        if double_counting and (atom2, atom1, (-i, -j, -k)) in self:
+            del self._bonds[(atom2, atom1, (-i, -j, -k))]
 
     def add_atom(self, atom: Atom):
         r"""
@@ -1023,7 +1046,10 @@ class ExchangeHamiltonian:
                 bonds_for_removal.add((atom1, atom2, R))
 
         for atom1, atom2, R in bonds_for_removal:
-            del self[atom1, atom2, R]
+            try:
+                del self[atom1, atom2, R]
+            except KeyError:
+                pass
 
     def filtered(
         self, max_distance=None, min_distance=None, template=None, R_vector=None

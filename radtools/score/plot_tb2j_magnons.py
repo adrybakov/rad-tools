@@ -30,6 +30,7 @@ def manager(
     save_txt=False,
     interactive=False,
     verbose=False,
+    bravais_type=None,
 ):
     r"""
     :ref:`rad-plot-tb2j-magnons` script.
@@ -58,7 +59,9 @@ def manager(
         R_vector = list(map(tuple, R_vector.tolist()))
 
     # Read the model
-    model = read_tb2j_model(input_filename, quiet=not verbose)
+    model = read_tb2j_model(
+        input_filename, quiet=not verbose, bravais_type=bravais_type
+    )
 
     cprint(f"{model.variation} crystal detected", "green")
 
@@ -225,7 +228,7 @@ def create_parser():
     parser.add_argument(
         "-Q",
         "--spiral-vector",
-        metavar="Q_i Q_j Q_k",
+        metavar=("Q_x", "Q_y", "Q_z"),
         type=float,
         nargs=3,
         default=None,
@@ -234,7 +237,7 @@ def create_parser():
     parser.add_argument(
         "-ra",
         "--rotation-axis",
-        metavar="n_i n_j n_k",
+        metavar=("n_x", "n_y", "n_z"),
         type=float,
         nargs=3,
         default=None,
@@ -300,6 +303,30 @@ def create_parser():
         action="store_true",
         default=False,
         help="Verbose output, propagates to the called methods.",
+    )
+    parser.add_argument(
+        "-bt",
+        "--bravais-type",
+        metavar="type",
+        choices=[
+            "CUB",
+            "FCC",
+            "BCC",
+            "TET",
+            "BCT",
+            "ORC",
+            "ORCF",
+            "ORCI",
+            "ORCC",
+            "HEX",
+            "RHL",
+            "MCL",
+            "MCLC",
+            "TRI",
+        ],
+        type=str,
+        default=None,
+        help="Bravais lattice type. If not provided, the type is identified automatically.",
     )
 
     return parser
