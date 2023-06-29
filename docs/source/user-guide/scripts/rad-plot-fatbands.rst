@@ -14,3 +14,7 @@ It supports the result of the calculation from:
     collinear, spin-polarized; 
     non-collinear, non-spin-orbit; 
     non-collinear, spin-orbit)
+
+.. warning::
+
+    Preliminary version, work in progress.
