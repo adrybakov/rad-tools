@@ -3,6 +3,7 @@ import numpy as np
 from termcolor import cprint
 from os.path import isfile, join, abspath
 
+from radtools.dos.dos import prepare_custom_pdos
 from radtools.dos.pdos import PDOS
 from radtools.dos.plotting import COLOURS
 from radtools.routines import plot_horizontal_lines, plot_vertical_lines, custom_cmap
@@ -48,7 +49,7 @@ def plot_custom_fatbands(
         projectors = labels
 
     # Get PDOS array
-    pdos = prepare_custom_pdos(dos=dos, custom=custom)
+    pdos = prepare_custom_pdos(dos=dos, custom=custom, quiet=False)
 
     # Create PDOS object
     pdos = PDOS(
