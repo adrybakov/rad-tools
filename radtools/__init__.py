@@ -5,7 +5,7 @@ All tools from the package.
 |version|
 """
 
-__version__ = "0.7.14"
+__version__ = "0.7.15"
 
 from . import crystal, dos, exchange, io, score
 from .crystal import *

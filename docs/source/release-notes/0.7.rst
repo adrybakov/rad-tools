@@ -142,3 +142,8 @@ Bugfix, some scripts did not work before.
 ------
 
 Preliminary version of :ref:`rad-plot-fatbands` script.
+
+0.7.15
+------
+
+Bugfix if :ref:`rad-plot-dos` script. With custom plotting.
