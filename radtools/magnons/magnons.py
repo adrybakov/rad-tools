@@ -243,7 +243,7 @@ class MagnonDispersion:
         print_2d_array(h)
         return h
 
-    # TODO Create compute() method and move all dispresion-related storage in the class. MAke it iterable over omegas (not k points, but eigenvalues)
+    # TODO Create compute() method and move all dispersion-related storage in the class. Make it iterable over omegas (not k points, but eigenvalues)
     def omega(self, k, zeros_to_none=False):
         r"""
         Computes magnon energies.
@@ -254,7 +254,7 @@ class MagnonDispersion:
             Reciprocal vector.
             In absolute coordinates.
         zeros_to_none : bool, default=False
-            If True, then return None if Colpa fails.
+            If True, then return ``None`` instead of 0 if Colpa fails.
 
         Returns
         -------
