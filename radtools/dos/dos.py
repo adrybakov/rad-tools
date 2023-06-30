@@ -829,7 +829,7 @@ def prepare_custom_pdos(dos: DOSQE, custom, quiet=True):
             atom = atom_part.split("#")[0]
 
             # Get the info about atom numbers
-            if "#" in subentry:
+            if "#" in atom_part:
                 # Atom numbers provided directly
                 atom_numbers = list(map(int, atom_part.split("#")[1:]))
                 # Check if the custom numbers are correct

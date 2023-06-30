@@ -65,6 +65,10 @@ This command produces example_centres.xyz_bigger_span file:
 
 where all centres are correctly identified.
 
+.. hint::
+    Set span to 0 to see the distances to the closest atom in the output file for each 
+    wannier center.
+
 .. _rad-identify-wannier-centres_arguments:
 
 Arguments
