@@ -672,11 +672,20 @@ def span_orthonormal_set(vec):
     e3 : (3,) :numpy:`ndarray`
     """
 
+    vec = np.array(vec) / np.linalg.norm(vec)
+
     if np.allclose(vec, [0, 0, 1]):
         return (
             np.array([1.0, 0.0, 0.0]),
             np.array([0.0, 1.0, 0.0]),
             np.array([0.0, 0.0, 1.0]),
+        )
+
+    if np.allclose(vec, [0, 0, -1]):
+        return (
+            np.array([-1.0, 0.0, 0.0]),
+            np.array([0.0, -1.0, 0.0]),
+            np.array([0.0, 0.0, -1.0]),
         )
 
     z_dir = [0, 0, 1]
@@ -688,24 +697,6 @@ def span_orthonormal_set(vec):
     rotation_matrix = Rotation.from_rotvec(n).as_matrix()
 
     return rotation_matrix
-
-    e3 = np.array(vec) / np.linalg.norm(vec)
-    x, y, z = e3
-    if x != 0:
-        ny = 0
-        nz = x / sqrt(x**2 + z**2)
-        nx = -nz * z / x
-    elif y != 0:
-        nz = 0
-        nx = y / sqrt(x**2 + y**2)
-        ny = -nx * x / y
-    else:
-        nx = 0
-        ny = z / sqrt(y**2 + z**2)
-        nz = -ny * y / z
-    e2 = np.array([nx, ny, nz])
-    e1 = np.cross(e2, e3)
-    return e1, e2, e3
 
 
 if __name__ == "__main__":
