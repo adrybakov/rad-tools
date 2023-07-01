@@ -204,10 +204,10 @@ class TestReadExchangeHamiltonian:
         "R_vector, elements_number",
         [
             ((0, 0, 0), 2),
-            ([(0, 0, 0), (1, 0, 0)], 6),
+            ([(0, 0, 0), (1, 0, 0)], 10),  # keep in mind double counting
             ([(0, 0, 0), (1, 0, 0), (-1, 0, 0)], 10),
             ([], 0),
-            ([(0, 0, 0), (1, 0, 0), (1, 0, 0)], 6),
+            ([(0, 0, 0), (1, 0, 0), (1, 0, 0)], 10),
         ],
     )
     def test_filter_by_R_vector(self, R_vector, elements_number):
@@ -258,10 +258,10 @@ class TestReadExchangeHamiltonian:
         "R_vector, elements_number",
         [
             ((0, 0, 0), 2),
-            ([(0, 0, 0), (1, 0, 0)], 5),
+            ([(0, 0, 0), (1, 0, 0)], 8),
             ([(0, 0, 0), (1, 0, 0), (-1, 0, 0)], 8),
             ([], 0),
-            ([(0, 0, 0), (1, 0, 0), (1, 0, 0)], 5),
+            ([(0, 0, 0), (1, 0, 0), (1, 0, 0)], 8),
         ],
     )
     def test_filter_by_R_vector_and_template(self, R_vector, elements_number):
@@ -273,7 +273,7 @@ class TestReadExchangeHamiltonian:
         [
             (0, (0, 0, 0), 0),
             (10, (0, 0, 0), 2),
-            (5, [(0, 0, 0), (1, 0, 0)], 5),
+            (5, [(0, 0, 0), (1, 0, 0)], 8),
             (10, [(0, 0, 0), (1, 0, 0), (-1, 0, 0)], 10),
             (5, [(0, 0, 0), (1, 0, 0), (-1, 0, 0)], 8),
             (100, [], 0),

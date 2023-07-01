@@ -478,7 +478,7 @@ class TestExchangeHamiltonian:
         assert (Cr2, Cr1, (0, 0, 0)) in model
         assert (Cr1, Cr2, (0, 0, 0)) in model
         filtered_model = model.filtered(R_vector=[(0, 0, 0), (1, 0, 0)])
-        assert len(filtered_model) == 4
+        assert len(filtered_model) == 6
         assert (Cr2, Cr1, (0, 0, 0)) in model
         assert (Cr1, Cr2, (0, 0, 0)) in model
         assert (Cr1, Cr1, (1, 0, 0)) in model
@@ -764,7 +764,6 @@ class TestExchangeHamiltonian:
             np.indices((2, 2, 2, 2, 2)), (1, 2, 3, 4, 5, 0)
         ).reshape((32, 5))
         for new_notation in notations:
-            print(new_notation)
             model.notation = new_notation
             assert model.ferromagnetic_energy() == -6
 
