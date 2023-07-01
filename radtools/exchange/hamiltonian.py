@@ -1023,9 +1023,9 @@ class ExchangeHamiltonian:
                 R_vector = set(R_vector)
             else:
                 raise TypeError("Type is not supported, supported: list.")
-
         bonds_for_removal = set()
         for atom1, atom2, R, J in self:
+            i, j, k = R
             dis = self.crystal.get_distance(atom1, atom2, R)
 
             if max_distance is not None and dis > max_distance:
@@ -1034,7 +1034,11 @@ class ExchangeHamiltonian:
             if min_distance is not None and dis < min_distance:
                 bonds_for_removal.add((atom1, atom2, R))
 
-            if R_vector is not None and R not in R_vector:
+            if (
+                R_vector is not None
+                and R not in R_vector
+                and (-i, -j, -k) not in R_vector
+            ):
                 bonds_for_removal.add((atom1, atom2, R))
             # Here names, not objects are compared, because in general
             # template only has information about names (or fullnames) and R.
