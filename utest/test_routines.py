@@ -137,15 +137,31 @@ def test_get_permutation(n, k, shape):
 
 
 @pytest.mark.parametrize(
-    "e1,e2,e3",
+    "e3",
     [
-        ([1, 0, 0], [0, 1, 0], [0, 0, 1]),
-        ([0, 0, 1], [1, 0, 0], [0, 1, 0]),
-        ([0, 1, 0], [0, 0, 1], [1, 0, 0]),
+        ([0, 0, 1]),
+        ([0, 1, 0]),
+        ([1, 0, 0]),
+        ([1, 1, 0]),
+        ([1, 0, 1]),
+        ([0, 1, 1]),
     ],
 )
-def test_span_orthonormal_set(e1, e2, e3):
+def test_span_orthonormal_set(e3):
     e1p, e2p, e3p = span_orthonormal_set(e3)
-    assert (e3p == np.array(e3)).all()
-    assert (e1p == np.array(e1)).all()
-    assert (e2p == np.array(e2)).all()
+
+    # Check if the third vector is the same as the normalized input vector
+    assert np.allclose(e3p, np.array(e3) / np.linalg.norm(e3))
+
+    # Check if all vectors are orthogonal to each other
+    assert np.allclose(np.dot(e1p, e2p), 0)
+    assert np.allclose(np.dot(e1p, e3p), 0)
+    assert np.allclose(np.dot(e2p, e3p), 0)
+
+    # Check if all vectors are normalized
+    assert np.allclose(np.linalg.norm(e1p), 1)
+    assert np.allclose(np.linalg.norm(e2p), 1)
+    assert np.allclose(np.linalg.norm(e3p), 1)
+
+    # Check if the system is right-handed
+    assert np.allclose(np.dot(e1p, np.cross(e2p, e3p)), 1)
