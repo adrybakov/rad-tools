@@ -1,0 +1,11 @@
+.. _release-notes_0.8:
+
+***********
+Version 0.8
+***********
+
+**Date:** 06 June 2023
+
+Whats new?
+----------
+Major change: Restructure the class hierarchy: 
