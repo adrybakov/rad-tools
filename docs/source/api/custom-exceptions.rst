@@ -15,15 +15,6 @@ ExchangeHamiltonian Exceptions
 
     exchange.hamiltonian.NotationError
 
-Bravais Lattice Exceptions
-==========================
-
-.. autosummary::
-    :toctree: generated/
-
-    crystal.bravais_lattice.NotEnoughParameters
-    crystal.bravais_lattice.CellTypeMismatch
-
 Diagonalization Exceptions
 ==========================
 

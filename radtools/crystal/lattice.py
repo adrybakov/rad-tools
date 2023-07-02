@@ -14,6 +14,22 @@ from scipy.spatial import Voronoi
 from radtools.crystal.identify import lepage
 from radtools.routines import angle, cell_from_param, reciprocal_cell, volume
 from radtools.crystal.kpoints import Kpoints
+from radtools.crystal.constants import (
+    EPS_REL,
+    PEARSON_SYMBOLS,
+    BRAVAIS_LATTICE_NAMES,
+    TRANSFORM_TO_CONVENTIONAL,
+    HS_PLOT_NAMES,
+    DEFAULT_K_PATHS,
+)
+from radtools.crystal.bravais_lattice.variations import (
+    bct_variation,
+    orcf_variation,
+    rhl_variation,
+    mclc_variation,
+    tri_variation,
+)
+from radtools.crystal.bravais_lattice.cells import fix_cell
 
 __all__ = ["Lattice"]
 
@@ -88,9 +104,9 @@ class Lattice:
     .. doctest::
 
         >>> import radtools as rad
-        >>> l = rad.Lattice([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-        >>> l = rad.Lattice([1,0,0], [0,1,0], [0,0,1])
-        >>> l = rad.Lattice(1, 1, 1, 90, 90, 90)
+        >>> l = rad.Lattice(cell = [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+        >>> l = rad.Lattice(a1 = [1,0,0], a2 = [0,1,0], a3 = [0,0,1])
+        >>> l = rad.Lattice(a=1, b=1, c=1, alpha=90, beta=90, gamma=90)
 
     Parameters
     ----------
@@ -117,6 +133,8 @@ class Lattice:
 
     Attributes
     ----------
+    eps_rel : float, default 1e-4
+        Relative error for the :ref:`rad-tools_lepage` algorithm.
     kpoints : dist
         Dictionary of the high symmetry points.
         Coordinates are given in relative coordinates.
@@ -126,11 +144,32 @@ class Lattice:
             kpoints = {"Name" : [k_x, k_y, k_z], ...}
     """
 
-    _pearson_symbol = None
-
-    def __init__(self, *args) -> None:
+    def __init__(self, *args, **kwargs) -> None:
+        self.eps_rel = EPS_REL
         self._cell = None
-        if len(args) == 1:
+        self._type = None
+        self_kpoints = None
+        if "cell" in kwargs:
+            self.cell = kwargs["cell"]
+        elif "a1" in kwargs and "a2" in kwargs and "a3" in kwargs:
+            self.cell = np.array([kwargs["a1"], kwargs["a2"], kwargs["a3"]])
+        elif (
+            "a" in kwargs
+            and "b" in kwargs
+            and "c" in kwargs
+            and "alpha" in kwargs
+            and "beta" in kwargs
+            and "gamma" in kwargs
+        ):
+            self.cell = cell_from_param(
+                kwargs["a"],
+                kwargs["b"],
+                kwargs["c"],
+                kwargs["alpha"],
+                kwargs["beta"],
+                kwargs["gamma"],
+            )
+        elif len(args) == 1:
             self.cell = np.array(args[0])
         elif len(args) == 3:
             self.cell = np.array(args)
@@ -140,11 +179,11 @@ class Lattice:
         else:
             raise ValueError(
                 "Unable to identify input parameters. "
-                + "Supported: one (3,3) array_like, or three (3,) array_like, or 6 floats."
+                + "Supported: cell ((3,3) array_like), "
+                + "or a1, a2, a3 (each is an (3,) array_like), "
+                + "or a, b, c, alpha, beta, gamma (floats)."
             )
-        self.kpoints = {}
-        self._path = None
-        self._default_path = None
+
         self.fig = None
         self.ax = None
         self._artists = {}
@@ -199,75 +238,6 @@ class Lattice:
             "Y3": "Y$_3$",
         }
 
-    # Reference properties
-    @property
-    def pearson_symbol(self):
-        r"""
-        Pearson symbol.
-
-        Returns
-        -------
-        pearson_symbol : str
-            Pearson symbol of the lattice.
-
-        Raises
-        ------
-        RuntimeError
-            If the type of the lattice is not defined.
-
-        Notes
-        -----
-        See: |PearsonSymbol|_
-        """
-
-        if self._pearson_symbol is not None:
-            return self._pearson_symbol
-        raise RuntimeError("Type of the lattice is not defined.")
-
-    @property
-    def crystal_family(self):
-        r"""
-        Crystal family.
-
-        Returns
-        -------
-        crystal_family : str
-            Crystal family of the lattice.
-
-        Raises
-        ------
-        ValueError
-            If the type of the lattice is not defined.
-
-        Notes
-        -----
-        See: |PearsonSymbol|_
-        """
-
-        return self.pearson_symbol[0]
-
-    @property
-    def centring_type(self):
-        r"""
-        Centring type.
-
-        Returns
-        -------
-        centring_type : str
-            Centring type of the lattice.
-
-        Raises
-        ------
-        ValueError
-            If the type of the lattice is not defined.
-
-        Notes
-        -----
-        See: |PearsonSymbol|_
-        """
-
-        return self.pearson_symbol[1]
-
     # Real space parameters
     @property
     def cell(self):
@@ -292,6 +262,140 @@ class Lattice:
         if new_cell.shape != (3, 3):
             raise ValueError(f"New cell is not 3 x 3 matrix.")
         self._cell = new_cell
+        # Reset type
+        self._type = None
+        # Fix cell
+        self._cell = fix_cell(self._cell, self.eps_rel, self.type())
+
+    @property
+    def conv_cell(self):
+        r"""
+        Conventional cell.
+
+        Returns
+        -------
+        conv_cell : (3, 3) :numpy:`ndarray`
+            Conventional cell, rows are vectors, columns are coordinates.
+        """
+
+        return TRANSFORM_TO_CONVENTIONAL[self.type()] @ self.cell
+
+    @property
+    def conv_a1(self):
+        r"""
+        First vector of the conventional cell.
+
+        Returns
+        -------
+        conv_a1 : (3,) :numpy:`ndarray`
+            First vector of the conventional cell.
+        """
+
+        return self.conv_cell[0]
+
+    @property
+    def conv_a2(self):
+        r"""
+        Second vector of the conventional cell.
+
+        Returns
+        -------
+        conv_a2 : (3,) :numpy:`ndarray`
+            Second vector of the conventional cell.
+        """
+
+        return self.conv_cell[1]
+
+    @property
+    def conv_a3(self):
+        r"""
+        Third vector of the conventional cell.
+
+        Returns
+        -------
+        conv_a3 : (3,) :numpy:`ndarray`
+            Third vector of the conventional cell.
+        """
+
+        return self.conv_cell[2]
+
+    @property
+    def conv_a(self):
+        r"""
+        Length of the first vector of the conventional cell.
+
+        Returns
+        -------
+        conv_a : float
+            Length of the first vector of the conventional cell.
+        """
+
+        return np.linalg.norm(self.conv_a1)
+
+    @property
+    def conv_b(self):
+        r"""
+        Length of the second vector of the conventional cell.
+
+        Returns
+        -------
+        conv_b : float
+            Length of the second vector of the conventional cell.
+        """
+
+        return np.linalg.norm(self.conv_a2)
+
+    @property
+    def conv_c(self):
+        r"""
+        Length of the third vector of the conventional cell.
+
+        Returns
+        -------
+        conv_c : float
+            Length of the third vector of the conventional cell.
+        """
+
+        return np.linalg.norm(self.conv_a3)
+
+    @property
+    def conv_alpha(self):
+        r"""
+        Angle between second and third conventional lattice vector.
+
+        Returns
+        -------
+        angle : float
+            In degrees.
+        """
+
+        return angle(self.conv_a2, self.conv_a3)
+
+    @property
+    def conv_beta(self):
+        r"""
+        Angle between first and third conventional lattice vector.
+
+        Returns
+        -------
+        angle : float
+            In degrees.
+        """
+
+        return angle(self.conv_a1, self.conv_a3)
+
+    @property
+    def conv_gamma(self):
+        r"""
+        Angle between first and second conventional lattice vector.
+
+        Returns
+        -------
+        angle : float
+            In degrees.
+        """
+
+        return angle(self.conv_a1, self.conv_a2)
 
     @property
     def a1(self):
@@ -600,16 +704,47 @@ class Lattice:
 
     # Lattice type routines and properties
     @property
+    def eps(self):
+        r"""
+        Epsilon parameter.
+
+        Defined from :py:attr:`.eps_rel` as :math:`\epsilon = \epsilon_{rel}\cdot V^{\frac{1}{3}}`.
+        """
+
+        return self.eps_rel * self.unit_cell_volume ** (1 / 3.0)
+
+    def type(self, eps_rel=None):
+        r"""
+        Identify the lattice type.
+
+        Parameters
+        ----------
+        eps_rel : float, optional
+            Relative error for the :ref:`rad-tools_lepage` algorithm.
+
+        Returns
+        -------
+        lattice_type : str
+            Bravais lattice type.
+        """
+
+        if self._type is not None:
+            return None
+
+        if eps_rel is None:
+            eps_rel = self.eps_rel
+
+        lattice_type = lepage(
+            self.a, self.b, self.c, self.alpha, self.beta, self.gamma, eps_rel=eps_rel
+        )
+        return lattice_type
+
+    @property
     def variation(self):
         r"""
         Variation of the lattice, if any.
 
-        For the :py:class:`.Lattice` return "Lattice".
-
-        For the Bravais lattice with only one variation the name of the class is returned.
-
-        For the variation of each Bravais lattice type see
-        corresponding ``variation`` attribute.
+        For the Bravais lattice with only one variation the :py:meth:`.Lattice.type` is returned.
 
         Returns
         -------
@@ -642,37 +777,125 @@ class Lattice:
 
         See Also
         --------
-        :py:attr:`.CUB.variation`
-        :py:attr:`.FCC.variation`
-        :py:attr:`.BCC.variation`
-        :py:attr:`.TET.variation`
-        :py:attr:`.BCT.variation`
-        :py:attr:`.ORC.variation`
-        :py:attr:`.ORCF.variation`
-        :py:attr:`.ORCI.variation`
-        :py:attr:`.ORCC.variation`
-        :py:attr:`.HEX.variation`
-        :py:attr:`.RHL.variation`
-        :py:attr:`.MCL.variation`
-        :py:attr:`.MCLC.variation`
-        :py:attr:`.TRI.variation`
+        :py:meth:`.Lattice.type`
         """
-        return self.__class__.__name__
+        lattice_type = self.type()
 
-    def identify(self, eps_rel=1e-4):
+        if lattice_type == "BCT":
+            result = bct_variation(self.conv_a, self.conv_c)
+        elif lattice_type == "ORCF":
+            result = orcf_variation(self.conv_a, self.conv_b, self.conv_c, self.eps)
+        elif lattice_type == "RHL":
+            result = rhl_variation(self.conv_alpha, self.eps)
+        elif lattice_type == "MCLC":
+            result = mclc_variation(
+                self.conv_a, self.conv_b, self.conv_c, self.conv_alpha, self.eps
+            )
+        elif lattice_type == "TRI":
+            result = tri_variation(self.k_alpha, self.k_beta, self.k_gamma, self.eps)
+        else:
+            result = lattice_type
+
+        return result
+
+    @property
+    def name(self):
         r"""
-        Identify the Bravais lattice type.
+        Human-readable name of the Bravais lattice type.
 
         Returns
         -------
-        bravais_lattice_type : str
-            Bravais lattice type.
-        eps_rel : float, default 1e-4
-            Relative error for the :ref:`rad-tools_lepage` algorithm.
+        name : str
+            Name of the Bravais lattice type.
         """
-        return lepage(
-            self.a, self.b, self.c, self.alpha, self.beta, self.gamma, eps_rel=eps_rel
-        )
+
+        return BRAVAIS_LATTICE_NAMES[self.type]
+
+    @property
+    def pearson_symbol(self):
+        r"""
+        Pearson symbol.
+
+        Returns
+        -------
+        pearson_symbol : str
+            Pearson symbol of the lattice.
+
+        Raises
+        ------
+        RuntimeError
+            If the type of the lattice is not defined.
+
+        Notes
+        -----
+        See: |PearsonSymbol|_
+        """
+
+        return PEARSON_SYMBOLS[self.type]
+
+    @property
+    def crystal_family(self):
+        r"""
+        Crystal family.
+
+        Returns
+        -------
+        crystal_family : str
+            Crystal family of the lattice.
+
+        Raises
+        ------
+        ValueError
+            If the type of the lattice is not defined.
+
+        Notes
+        -----
+        See: |PearsonSymbol|_
+        """
+
+        return self.pearson_symbol[0]
+
+    @property
+    def centring_type(self):
+        r"""
+        Centring type.
+
+        Returns
+        -------
+        centring_type : str
+            Centring type of the lattice.
+
+        Raises
+        ------
+        ValueError
+            If the type of the lattice is not defined.
+
+        Notes
+        -----
+        See: |PearsonSymbol|_
+        """
+
+        return self.pearson_symbol[1]
+
+    def identify(self):
+        r"""
+        Identify the Bravais lattice type and variation.
+
+        Parameters
+        ----------
+        eps_rel : float, optional
+            Relative error for the :ref:`rad-tools_lepage` algorithm.
+
+        Returns
+        -------
+        variation : str
+            Variation of the lattice.
+        """
+
+        if eps_rel is None:
+            eps_rel = self.eps_rel
+
+        return self.variation()
 
     def lattice_points(self, relative=False, reciprocal=False, normalize=False):
         r"""
@@ -755,61 +978,10 @@ class Lattice:
             edges[i][1] = voronoi.vertices[edges_index[i][1]]
         return edges, voronoi.vertices[np.unique(edges_index.flatten())]
 
-    # K-path routines and attributes
     @property
-    def path(self):
+    def kpoints(self) -> Kpoints:
         r"""
-        K-point path.
-
-        It could be anything which is considered to be a valid path for :py:class:`.Kpoints`.
-
-        Manage default path for the predefined lattices and custom user-defined path.
-
-        Returns
-        -------
-        path : list of str
-            List of the high symmetry points.
-        """
-        if self._path is None and self._default_path is None:
-            return []
-        if self._path is None:
-            return self._default_path
-        return self._path
-
-    @path.setter
-    def path(self, new_path):
-        self._path = new_path
-
-    def add_kpoint(self, name, coordinates, plot_name=None):
-        r"""
-        Add named kpoint to the lattice.
-
-        Parameters
-        ----------
-        name : str
-            Name of the kpoint.
-        coordinates : (3,) |array_like|_
-            Coordinates of the kpoint. Relative to the reciprocal vectors.
-        plot_name : str, optional
-            Name of the kpoint to be plotted.
-            If not given, ``name`` is used.
-        """
-
-        if plot_name is None and name not in self._PLOT_NAMES:
-            self._PLOT_NAMES[name] = plot_name
-        if plot_name is not None:
-            self._PLOT_NAMES[name] = plot_name
-
-        self.kpoints[name] = np.array(coordinates)
-
-    def get_kpoints(self, n=100) -> Kpoints:
-        r"""
-        Getter for the instance of :py:class:`.Kpoints`.
-
-        Parameters
-        ----------
-        n : int
-            Number of points between each pair of the high symmetry points.
+        Instance of :py:class:`.Kpoints` with the high symmetry points and path.
 
         Returns
         -------
@@ -817,17 +989,29 @@ class Lattice:
             Instance of the :py:class:`.Kpoints` class.
         """
 
-        return Kpoints(
-            dict(
-                [
-                    (point, self.kpoints[point] @ self.reciprocal_cell)
-                    for point in self.kpoints
-                ]
-            ),
-            dict([(point, self._PLOT_NAMES[point]) for point in self.kpoints]),
-            path=self.path,
-            n=n,
-        )
+        if self._kpoints is None:
+            self._kpoints = Kpoints(
+                dict(
+                    [
+                        (point, self.kpoints[point] @ self.reciprocal_cell)
+                        for point in self.kpoints
+                    ]
+                ),
+                dict([(point, self._PLOT_NAMES[point]) for point in self.kpoints]),
+                path=DEFAULT_K_PATHS[self.variation],
+            )
+        hs_points = {}  # TODO
+        for point in hs_points:
+            if point == "S" and self.type == "BCT":
+                self._kpoints.add_kpoint(point, hs_points[point], plot_name="$\\Sigma$")
+            elif point == "S1" and self.type == "BCT":
+                self._kpoints.add_kpoint(
+                    point, hs_points[point], plot_name="$\\Sigma_1$"
+                )
+            else:
+                self._kpoints.add_kpoint(
+                    point, hs_points[point], plot_name=HS_PLOT_NAMES[point]
+                )
 
     # Plotting routines
     def prepare_figure(self, background=True, focal_length=0.2) -> None:

@@ -4,7 +4,7 @@ from typing import Iterable
 
 import numpy as np
 
-from radtools.crystal.atom_types import ATOM_TYPES
+from radtools.crystal.constants import ATOM_TYPES
 
 
 class Atom:

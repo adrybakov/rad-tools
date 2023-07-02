@@ -535,6 +535,12 @@ def lepage(
     delta_max : float, default 0.01
         Maximum angle tolerance, in degrees.
 
+    Returns
+    -------
+    result : str
+        Bravais lattice type. If give_all_results == True, then return list of all
+        consecutive results.
+
     References
     ----------
     .. [1] Le Page, Y., 1982.

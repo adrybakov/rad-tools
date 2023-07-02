@@ -806,3 +806,38 @@ def custom_cmap(start_color, finish_color):
     }
 
     return LinearSegmentedColormap("custom_cmap", cdict, N=256)
+
+
+def compare_numerically(x, condition, y, eps):
+    r"""
+    Compare two numbers numerically.
+
+    Parameters
+    ----------
+    x : float
+        First number.
+    condition : str
+        Condition to compare with. One of "<", ">", "<=", ">=", "==", "!=".
+    y : float
+        Second number.
+    eps : float
+        Tolerance.
+
+    Returns
+    -------
+    result: bool
+        Whether the condition is satisfied.
+    """
+
+    if condition == "<":
+        return x < y - eps
+    if condition == ">":
+        return y < x - eps
+    if condition == "<=":
+        return not y < x - eps
+    if condition == ">=":
+        return not x < y - eps
+    if condition == "==":
+        return not (x < y - eps or y < x - eps)
+    if condition == "!=":
+        return x < y - eps or y < x - eps

@@ -10,9 +10,11 @@ from radtools.crystal.properties import dipole_dipole_energy, dipole_dipole_inte
 from radtools.routines import absolute_to_relative
 
 
-class Crystal:
+class Crystal(Lattice):
     r"""
     Crystal class.
+
+    It is a child of Lattice class.
 
     Iterable over atoms. All attributes of the :py:class:`.Lattice`
     are accessible directly from the crystal or from the lattice attribute,
@@ -46,12 +48,14 @@ class Crystal:
     """
 
     def __init__(self, lattice: Lattice = None, atoms=None) -> None:
-        self._lattice = None
         self.atoms = []
-
         if lattice is None:
-            lattice = Lattice([1, 0, 0], [0, 1, 0], [0, 0, 1])
-        self.lattice = lattice
+            cell = ([1, 0, 0], [0, 1, 0], [0, 0, 1])
+        else:
+            cell = lattice.cell
+
+        self.super().__init__(cell)
+
         if atoms is not None:
             for a in atoms:
                 self.add_atom(a)
@@ -139,12 +143,13 @@ class Crystal:
         except ValueError:
             if "__" in name:
                 raise AttributeError(f"'Crystal' object has no attribute '{name}'")
-            return getattr(self.lattice, name)
 
     @property
     def lattice(self):
         r"""
         Lattice of the crystal.
+
+        It returns an independent instance of the :py:class:`.Lattice` class.
 
         See :ref:`rad-tools_lattice` for details.
 
@@ -153,7 +158,7 @@ class Crystal:
         lattice : :py:class:`.Lattice`
             Lattice of the crystal.
         """
-        return self._lattice
+        return Lattice(self.cell)
 
     @lattice.setter
     def lattice(self, new_lattice: Lattice):
@@ -161,7 +166,7 @@ class Crystal:
             raise TypeError(
                 "New lattice is not a lattice. " + f"Received {type(new_lattice)}."
             )
-        self._lattice = new_lattice
+        self.super().__init__(new_lattice.cell)
 
     def add_atom(self, new_atom: Atom, relative=False):
         r"""
