@@ -9,7 +9,7 @@ from radtools.routines import (
     cell_from_param,
     reciprocal_cell,
 )
-from radtools.crystal.constants import TRANSFORM_TO_CONVENTIONAL
+from radtools.crystal.constants import TRANSFORM_TO_CONVENTIONAL, EPS_REL
 
 __all__ = ["fix_cell"]
 
@@ -23,8 +23,8 @@ def CUB_cell(a: float):
 
     Parameters
     ----------
-    a : float
-        Length of the lattice vector of the conventional cell.
+    a : float or int
+        Length of the all three lattice vectors of the conventional cell.
 
     Returns
     -------
@@ -44,7 +44,7 @@ def FCC_cell(a: float):
     Parameters
     ----------
     a : float
-        Length of the lattice vector of the conventional cell.
+        Length of the all three lattice vectors of the conventional cell.
 
     Returns
     -------
@@ -64,7 +64,7 @@ def BCC_cell(a: float):
     Parameters
     ----------
     a : float
-        Length of the lattice vector of the conventional cell.
+        Length of the all three lattice vectors of the conventional cell.
 
     Returns
     -------
@@ -86,9 +86,9 @@ def TET_cell(a: float, c: float):
     Parameters
     ----------
     a : float
-        Length of the lattice vector of the conventional cell.
+        Length of the two equal lattice vectors of the conventional cell.
     c : float
-        Length of the lattice vector of the conventional cell.
+        Length of the third lattice vector of the conventional cell.
 
     Returns
     -------
@@ -108,9 +108,9 @@ def BCT_cell(a: float, c: float):
     Parameters
     ----------
     a : float
-        Length of the lattice vector of the conventional cell.
+        Length of the two equal lattice vectors of the conventional cell.
     c : float
-        Length of the lattice vector of the conventional cell.
+        Length of the third lattice vector of the conventional cell.
 
     Returns
     -------
@@ -134,11 +134,11 @@ def ORC_cell(a: float, b: float, c: float):
     Parameters
     ----------
     a : float
-        Length of the lattice vector of the conventional cell.
+        Length of the smallest lattice vector of the conventional cell.
     b : float
-        Length of the lattice vector of the conventional cell.
+        Length of the medium lattice vector of the conventional cell.
     c : float
-        Length of the lattice vector of the conventional cell.
+        Length of the largest lattice vector of the conventional cell.
 
     Returns
     -------
@@ -162,11 +162,11 @@ def ORCF_cell(a: float, b: float, c: float):
     Parameters
     ----------
     a : float
-        Length of the lattice vector of the conventional cell.
+        Length of the smallest lattice vector of the conventional cell.
     b : float
-        Length of the lattice vector of the conventional cell.
+        Length of the medium lattice vector of the conventional cell.
     c : float
-        Length of the lattice vector of the conventional cell.
+        Length of the largest lattice vector of the conventional cell.
 
     Returns
     -------
@@ -190,11 +190,11 @@ def ORCI_cell(a: float, b: float, c: float):
     Parameters
     ----------
     a : float
-        Length of the lattice vector of the conventional cell.
+        Length of the smallest lattice vector of the conventional cell.
     b : float
-        Length of the lattice vector of the conventional cell.
+        Length of the medium lattice vector of the conventional cell.
     c : float
-        Length of the lattice vector of the conventional cell.
+        Length of the largest lattice vector of the conventional cell.
 
     Returns
     -------
@@ -220,11 +220,11 @@ def ORCC_cell(a: float, b: float, c: float):
     Parameters
     ----------
     a : float
-        Length of the lattice vector of the conventional cell.
+        Length of the smallest lattice vector of the conventional cell.
     b : float
-        Length of the lattice vector of the conventional cell.
+        Length of the medium lattice vector of the conventional cell.
     c : float
-        Length of the lattice vector of the conventional cell.
+        Length of the largest lattice vector of the conventional cell.
 
     Returns
     -------
@@ -310,11 +310,11 @@ def MCL_cell(a: float, b: float, c: float, alpha: float):
     Parameters
     ----------
     a : float
-        Length of the lattice vector of the conventional cell.
+        Length of the first lattice vector of the conventional cell. (The one oriented along x axis)
     b : float
-        Length of the lattice vector of the conventional cell.
+        Length of the shorter of the two remaining lattice vectors of the conventional cell.
     c : float
-        Length of the lattice vector of the conventional cell.
+        Length of the longer of the two remaining lattice vectors of the conventional cell.
     alpha : float
         Angle between vectors :math:`a_2` and :math:`a_3` of the conventional cell. In degrees.
 
@@ -325,15 +325,11 @@ def MCL_cell(a: float, b: float, c: float, alpha: float):
     """
 
     b, c = tuple(sorted([b, c]))
-    if alpha >= 90:
+    if alpha > 90:
         alpha = alpha - 90
 
     alpha *= toradians
-    return np.array(
-        [a, 0, 0],
-        [0, b, 0],
-        [0, c * cos(alpha), c * sin(alpha)],
-    )
+    return np.array([[a, 0, 0], [0, b, 0], [0, c * cos(alpha), c * sin(alpha)]])
 
 
 def MCLC_cell(a: float, b: float, c: float, alpha: float):
@@ -347,11 +343,11 @@ def MCLC_cell(a: float, b: float, c: float, alpha: float):
     Parameters
     ----------
     a : float
-        Length of the lattice vector of the conventional cell.
+        Length of the first lattice vector of the conventional cell. (The one oriented along x axis)
     b : float
-        Length of the lattice vector of the conventional cell.
+        Length of the shorter of the two remaining lattice vectors of the conventional cell.
     c : float
-        Length of the lattice vector of the conventional cell.
+        Length of the longer of the two remaining lattice vectors of the conventional cell.
     alpha : float
         Angle between vectors :math:`a_2` and :math:`a_3` of the conventional cell. In degrees.
 
@@ -362,7 +358,7 @@ def MCLC_cell(a: float, b: float, c: float, alpha: float):
     """
 
     b, c = tuple(sorted([b, c]))
-    if alpha >= 90:
+    if alpha > 90:
         alpha = alpha - 90
 
     alpha *= toradians
@@ -420,7 +416,7 @@ def TRI_cell(
 
 
 # Cell fixers
-def fix_cell(cell, eps, correct_lattice_type):
+def fix_cell(cell, correct_lattice_type, eps=EPS_REL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the lattice conditions.
 
@@ -430,7 +426,7 @@ def fix_cell(cell, eps, correct_lattice_type):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float
+    eps : float, default ``EPS_REL``
         Tolerance for numerical comparison.
     correct_lattice_type : str
         Correct lattice type.
@@ -460,7 +456,7 @@ def fix_cell(cell, eps, correct_lattice_type):
     return functions[correct_lattice_type](cell, eps)
 
 
-def CUB_fix_cell(cell, eps):
+def CUB_fix_cell(cell, eps=EPS_REL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the CUB lattice conditions.
 
@@ -480,7 +476,7 @@ def CUB_fix_cell(cell, eps):
     return cell
 
 
-def FCC_fix_cell(cell, eps):
+def FCC_fix_cell(cell, eps=EPS_REL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the FCC lattice conditions.
 
@@ -500,7 +496,7 @@ def FCC_fix_cell(cell, eps):
     return cell
 
 
-def BCC_fix_cell(cell, eps):
+def BCC_fix_cell(cell, eps=EPS_REL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the BCC lattice conditions.
 
@@ -520,7 +516,7 @@ def BCC_fix_cell(cell, eps):
     return cell
 
 
-def TET_fix_cell(cell, eps):
+def TET_fix_cell(cell, eps=EPS_REL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the TET lattice conditions.
 
@@ -530,7 +526,7 @@ def TET_fix_cell(cell, eps):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float
+    eps : float, default ``EPS_REL``
         Tolerance for numerical comparison.
 
     Returns
@@ -549,7 +545,7 @@ def TET_fix_cell(cell, eps):
     return cell
 
 
-def BCT_fix_cell(cell, eps):
+def BCT_fix_cell(cell, eps=EPS_REL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the BCT lattice conditions.
 
@@ -559,7 +555,7 @@ def BCT_fix_cell(cell, eps):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float
+    eps : float, default ``EPS_REL``
         Tolerance for numerical comparison.
 
     Returns
@@ -580,7 +576,7 @@ def BCT_fix_cell(cell, eps):
     return cell
 
 
-def ORC_fix_cell(cell, eps):
+def ORC_fix_cell(cell, eps=EPS_REL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORC lattice conditions.
 
@@ -590,7 +586,7 @@ def ORC_fix_cell(cell, eps):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float
+    eps : float, default ``EPS_REL``
         Tolerance for numerical comparison.
 
     Returns
@@ -614,7 +610,7 @@ def ORC_fix_cell(cell, eps):
     return cell
 
 
-def ORCF_fix_cell(cell, eps):
+def ORCF_fix_cell(cell, eps=EPS_REL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORCF lattice conditions.
 
@@ -624,7 +620,7 @@ def ORCF_fix_cell(cell, eps):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float
+    eps : float, default ``EPS_REL``
         Tolerance for numerical comparison.
 
     Returns
@@ -650,7 +646,7 @@ def ORCF_fix_cell(cell, eps):
     return cell
 
 
-def ORCI_fix_cell(cell, eps):
+def ORCI_fix_cell(cell, eps=EPS_REL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORCI lattice conditions.
 
@@ -660,7 +656,7 @@ def ORCI_fix_cell(cell, eps):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float
+    eps : float, default ``EPS_REL``
         Tolerance for numerical comparison.
 
     Returns
@@ -686,7 +682,7 @@ def ORCI_fix_cell(cell, eps):
     return cell
 
 
-def ORCC_fix_cell(cell, eps):
+def ORCC_fix_cell(cell, eps=EPS_REL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORCC lattice conditions.
 
@@ -696,7 +692,7 @@ def ORCC_fix_cell(cell, eps):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float
+    eps : float, default ``EPS_REL``
         Tolerance for numerical comparison.
 
     Returns
@@ -731,7 +727,7 @@ def ORCC_fix_cell(cell, eps):
     return cell
 
 
-def HEX_fix_cell(cell, eps):
+def HEX_fix_cell(cell, eps=EPS_REL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the HEX lattice conditions.
 
@@ -741,7 +737,7 @@ def HEX_fix_cell(cell, eps):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float
+    eps : float, default ``EPS_REL``
         Tolerance for numerical comparison.
 
     Returns
@@ -761,7 +757,7 @@ def HEX_fix_cell(cell, eps):
     return cell
 
 
-def RHL_fix_cell(cell, eps):
+def RHL_fix_cell(cell, eps=EPS_REL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the RHL lattice conditions.
 
@@ -781,7 +777,7 @@ def RHL_fix_cell(cell, eps):
     return cell
 
 
-def MCL_fix_cell(cell, eps):
+def MCL_fix_cell(cell, eps=EPS_REL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the MCL lattice conditions.
 
@@ -791,7 +787,7 @@ def MCL_fix_cell(cell, eps):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float
+    eps : float, default ``EPS_REL``
         Tolerance for numerical comparison.
 
     Returns
@@ -826,7 +822,7 @@ def MCL_fix_cell(cell, eps):
     return cell
 
 
-def MCLC_fix_cell(cell, eps):
+def MCLC_fix_cell(cell, eps=EPS_REL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the MCLC lattice conditions.
 
@@ -836,7 +832,7 @@ def MCLC_fix_cell(cell, eps):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float
+    eps : float, default ``EPS_REL``
         Tolerance for numerical comparison.
 
     Returns
@@ -874,7 +870,7 @@ def MCLC_fix_cell(cell, eps):
 
 
 # TODO
-def TRI_fix_cell(cell, eps, resiprocal=False):
+def TRI_fix_cell(cell, eps=EPS_REL, resiprocal=False):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the TRI lattice conditions.
 
@@ -884,7 +880,7 @@ def TRI_fix_cell(cell, eps, resiprocal=False):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float
+    eps : float, default ``EPS_REL``
         Tolerance for numerical comparison.
     resiprocal : bool, default False
         Whether to interpret input as reciprocal cell.
