@@ -28,6 +28,10 @@ from radtools.crystal.bravais_lattice.cells import (
     MCLC_fix_cell,
     TRI_fix_cell,
 )
+
+from scipy.spatial.transform import Rotation
+from radtools.routines import print_2d_array
+
 import numpy as np
 from math import sqrt, cos, sin
 import pytest
@@ -199,6 +203,12 @@ def test_TRI_cell(a, b, c, alpha, beta, gamma, reciprocal):
     pass
 
 
+rotation_matrices = Rotation.random(10).as_matrix()
+
+a_set = [1, 1.0, 45, -1]
+
+
+@pytest.mark.parametrize("a", a_set)
 def test_CUB_fix_cell():
     for _ in range(0, 10):
         a = np.random.rand() / np.random.rand()
@@ -215,6 +225,11 @@ def test_BCC_fix_cell():
     for _ in range(0, 10):
         a = np.random.rand() / np.random.rand()
         assert np.allclose(np.eye(3) * a, BCC_fix_cell(np.eye(3) * a, 4))
+
+
+@pytest.mark.parametrize("cell, fixed_cell", cells_set)
+def test_TET_fix_cell(cell, fixed_cell):
+    assert np.allclose(fixed_cell, TET_fix_cell(cell, 1e-5))
 
 
 cells_set = [

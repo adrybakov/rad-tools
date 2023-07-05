@@ -29,6 +29,23 @@ from radtools.crystal.bravais_lattice.variations import (
     mclc_variation,
     tri_variation,
 )
+from radtools.crystal.bravais_lattice.hs_points import (
+    CUB_hs_points,
+    FCC_hs_points,
+    BCC_hs_points,
+    TET_hs_points,
+    BCT_hs_points,
+    ORC_hs_points,
+    ORCF_hs_points,
+    ORCI_hs_points,
+    ORCC_hs_points,
+    HEX_hs_points,
+    RHL_hs_points,
+    MCL_hs_points,
+    MCLC_hs_points,
+    TRI_hs_points,
+)
+
 from radtools.crystal.bravais_lattice.cells import fix_cell
 
 __all__ = ["Lattice"]
@@ -148,7 +165,7 @@ class Lattice:
         self.eps_rel = EPS_REL
         self._cell = None
         self._type = None
-        self_kpoints = None
+        self._kpoints = None
         if "cell" in kwargs:
             self.cell = kwargs["cell"]
         elif "a1" in kwargs and "a2" in kwargs and "a3" in kwargs:
@@ -187,56 +204,7 @@ class Lattice:
         self.fig = None
         self.ax = None
         self._artists = {}
-        self._PLOT_NAMES = {
-            "G": "$\\Gamma$",
-            "M": "M",
-            "R": "R",
-            "X": "X",
-            "K": "K",
-            "L": "L",
-            "U": "U",
-            "W": "W",
-            "H": "H",
-            "P": "P",
-            "N": "N",
-            "A": "A",
-            "Z": "Z",
-            "Z1": "Z$_1$",
-            "Y": "Y",
-            "Y1": "Y$_1$",
-            "S": "S",  # it is overwritten to sigma if needed.
-            "S1": "S$_1$",  # it is overwritten to sigma if needed.
-            "T": "T",
-            "A1": "A$_1$",
-            "X1": "X$_1$",
-            "C": "C",
-            "C1": "C$_1$",
-            "D": "D",
-            "D1": "D$_1$",
-            "H1": "H$_1$",
-            "L1": "L$_1$",
-            "L2": "L$_2$",
-            "B": "B",
-            "B1": "B$_1$",
-            "F": "F",
-            "P1": "P$_1$",
-            "P2": "P$_2$",
-            "Q": "Q",
-            "Q1": "Q$_1$",
-            "E": "E",
-            "H2": "H$_2$",
-            "M1": "M$_1$",
-            "M2": "M$_2$",
-            "N1": "N$_1$",
-            "F1": "F$_1$",
-            "F2": "F$_2$",
-            "F3": "F$_3$",
-            "I": "I",
-            "I1": "I$_1$",
-            "X2": "X$_2$",
-            "Y2": "Y$_2$",
-            "Y3": "Y$_3$",
-        }
+        self._PLOT_NAMES = HS_PLOT_NAMES
 
     # Real space parameters
     @property
@@ -253,8 +221,8 @@ class Lattice:
             raise AttributeError(f"Cell is not defined for lattice {self}")
         return self._cell
 
-    @cell.setter
-    def cell(self, new_cell):
+    # For the child`s overriding`
+    def _set_cell(self, new_cell):
         try:
             new_cell = np.array(new_cell)
         except:
@@ -265,7 +233,11 @@ class Lattice:
         # Reset type
         self._type = None
         # Fix cell
-        self._cell = fix_cell(self._cell, self.eps_rel, self.type())
+        self._cell = fix_cell(self._cell, self.type(), self.eps_rel)
+
+    @cell.setter
+    def cell(self, new_cell):
+        self._set_cell(new_cell)
 
     @property
     def conv_cell(self):
@@ -728,16 +700,22 @@ class Lattice:
             Bravais lattice type.
         """
 
-        if self._type is not None:
-            return None
+        if self._type is None or eps_rel is not None:
+            if eps_rel is None:
+                eps_rel = self.eps_rel
 
-        if eps_rel is None:
-            eps_rel = self.eps_rel
+            lattice_type = lepage(
+                self.a,
+                self.b,
+                self.c,
+                self.alpha,
+                self.beta,
+                self.gamma,
+                eps_rel=eps_rel,
+            )
 
-        lattice_type = lepage(
-            self.a, self.b, self.c, self.alpha, self.beta, self.gamma, eps_rel=eps_rel
-        )
-        return lattice_type
+            self._type = lattice_type
+        return self._type
 
     @property
     def variation(self):
@@ -991,26 +969,61 @@ class Lattice:
 
         if self._kpoints is None:
             self._kpoints = Kpoints(
-                dict(
-                    [
-                        (point, self.kpoints[point] @ self.reciprocal_cell)
-                        for point in self.kpoints
-                    ]
-                ),
-                dict([(point, self._PLOT_NAMES[point]) for point in self.kpoints]),
+                self.b1,
+                self.b2,
+                self.b3,
                 path=DEFAULT_K_PATHS[self.variation],
             )
-        hs_points = {}  # TODO
+
+        if self.type == "CUB":
+            hs_points = CUB_hs_points()
+        elif self.type == "FCC":
+            hs_points = FCC_hs_points()
+        elif self.type == "BCC":
+            hs_points = BCC_hs_points()
+        elif self.type == "TET":
+            hs_points = TET_hs_points()
+        elif self.type == "BCT":
+            hs_points = BCT_hs_points(self.variation, self.conv_a, self.conv_c)
+        elif self.type == "ORC":
+            hs_points = ORC_hs_points()
+        elif self.type == "ORCF":
+            hs_points = ORCF_hs_points(
+                self.variation, self.conv_a, self.conv_b, self.conv_c
+            )
+        elif self.type == "ORCI":
+            hs_points = ORCI_hs_points(self.conv_a, self.conv_b, self.conv_c)
+        elif self.type == "ORCC":
+            hs_points = ORCC_hs_points(self.conv_a, self.conv_b)
+        elif self.type == "HEX":
+            hs_points = HEX_hs_points()
+        elif self.type == "RHL":
+            hs_points = RHL_hs_points(self.variation, self.conv_alpha)
+        elif self.type == "MCL":
+            hs_points = MCL_hs_points(self.conv_b, self.conv_c, self.conv_alpha)
+        elif self.type == "MCLC":
+            hs_points = MCLC_hs_points(
+                self.variation,
+                self.conv_a,
+                self.conv_b,
+                self.conv_c,
+                self.conv_alpha,
+            )
+        elif self.type == "TRI":
+            hs_points = TRI_hs_points(self.variation)
+
         for point in hs_points:
             if point == "S" and self.type == "BCT":
-                self._kpoints.add_kpoint(point, hs_points[point], plot_name="$\\Sigma$")
+                self._kpoints.add_kpoint(
+                    point, hs_points[point], plot_label="$\\Sigma$"
+                )
             elif point == "S1" and self.type == "BCT":
                 self._kpoints.add_kpoint(
-                    point, hs_points[point], plot_name="$\\Sigma_1$"
+                    point, hs_points[point], plot_label="$\\Sigma_1$"
                 )
             else:
                 self._kpoints.add_kpoint(
-                    point, hs_points[point], plot_name=HS_PLOT_NAMES[point]
+                    point, hs_points[point], plot_label=HS_PLOT_NAMES[point]
                 )
 
     # Plotting routines
@@ -1559,7 +1572,7 @@ class Lattice:
         if normalize:
             cell /= volume(cell) ** (1 / 3.0)
 
-        for point in self.kpoints:
+        for point in self.kpoints.hs_points:
             self._artists[artist_group].append(
                 ax.scatter(
                     *tuple(self.kpoints[point] @ cell),

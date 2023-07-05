@@ -131,7 +131,7 @@ def read_tb2j_model(filename, quiet=True, bravais_type=None) -> ExchangeHamilton
             break
 
     # Identify lattice type
-    tmp_type = model.crystal.lattice.identify(eps_rel=eps_rel)
+    tmp_type = model.identify(eps_rel=eps_rel)
     if bravais_type is not None:
         if tmp_type != bravais_type:
             eps_rel *= 10
@@ -141,9 +141,7 @@ def read_tb2j_model(filename, quiet=True, bravais_type=None) -> ExchangeHamilton
                     break
                 eps_rel *= 10
             if tmp_type != bravais_type:
-                raise ValueError(
-                    f"Bravais type {bravais_type} could not be reached."
-                    )
+                raise ValueError(f"Bravais type {bravais_type} could not be reached.")
     model.crystal.identify(eps_rel=eps_rel)
 
     while line:

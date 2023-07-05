@@ -54,7 +54,7 @@ class Crystal(Lattice):
         else:
             cell = lattice.cell
 
-        self.super().__init__(cell)
+        super().__init__(cell)
 
         if atoms is not None:
             for a in atoms:
@@ -105,13 +105,13 @@ class Crystal(Lattice):
             >>> c.atoms[0].position
             array([1., 1., 1.])
         """
-        return self.lattice.cell
+        return super().cell
 
     @cell.setter
     def cell(self, new_cell):
         old_cell = self.cell
-        self.lattice.cell = new_cell
-        for atom in self:
+        self._set_cell(new_cell)
+        for atom in self.atoms:
             relative = absolute_to_relative(old_cell, atom.position)
             atom.position = relative @ self.cell
 

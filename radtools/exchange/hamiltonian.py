@@ -47,7 +47,7 @@ class NotationError(ValueError):
         return self.message
 
 
-class ExchangeHamiltonian:
+class ExchangeHamiltonian(Crystal):
     r"""
     Exchange Hamiltonian.
 
@@ -82,10 +82,10 @@ class ExchangeHamiltonian:
             "spinw": (True, False, False, False, False),
         }
 
-        self._crystal = None
         if crystal is None:
             crystal = Crystal()
-        self.crystal = crystal
+
+        super().__init__(crystal.lattice)
 
         self._bonds = {}
 
@@ -679,12 +679,13 @@ class ExchangeHamiltonian:
         # Fix copy/deepcopy RecursionError
         if name in ["__setstate__"]:
             raise AttributeError(name)
-        return getattr(self.crystal, name)
 
     @property
     def crystal(self) -> Crystal:
         r"""
         Crystal of the Hamiltonian.
+
+        Return an independent instance of a crystal.
 
         Crystal, which define the structure.
         See :py:class:`.Crystal`.
@@ -694,15 +695,7 @@ class ExchangeHamiltonian:
         crystal : :py:class:`.Crystal`
             Crystal of the Hamiltonian.
         """
-        return self._crystal
-
-    @crystal.setter
-    def crystal(self, new_crystal: Crystal):
-        if not isinstance(new_crystal, Crystal):
-            raise TypeError(
-                "New crystal is not a Crystal. " + f"Received {type(new_crystal)}."
-            )
-        self._crystal = new_crystal
+        return Crystal(self.lattice, self.atoms)
 
     @property
     def cell_list(self):
@@ -1412,21 +1405,6 @@ class ExchangeHamiltonian:
         return Jij, i, j, dij
 
     # OLD METHODS AND ATTRIBUTES, KEPT FOR BACKWARD COMPATIBILITY
-
-    # TODO, get rid of this cell
-    @property
-    def cell(self):
-        r"""
-        Matrix of lattice vectors.
-
-        See :py:attr:`.Crystal.cell`.
-        """
-
-        return self.crystal.lattice.cell
-
-    @cell.setter
-    def cell(self, new_cell):
-        self.crystal.cell = new_cell
 
     def get_atom_coordinates(self, atom, R=(0, 0, 0)):
         r"""
