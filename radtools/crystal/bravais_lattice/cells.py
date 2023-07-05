@@ -436,6 +436,8 @@ def fix_cell(cell, correct_lattice_type, eps=EPS_REL):
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
     """
+
+    cell = np.array(cell)
     functions = {
         "CUB": CUB_fix_cell,
         "FCC": FCC_fix_cell,
@@ -473,7 +475,7 @@ def CUB_fix_cell(cell, eps=EPS_REL):
         Primitive unit cell.
     """
 
-    return cell
+    return np.array(cell)
 
 
 def FCC_fix_cell(cell, eps=EPS_REL):
@@ -493,7 +495,7 @@ def FCC_fix_cell(cell, eps=EPS_REL):
         Primitive unit cell.
     """
 
-    return cell
+    return np.array(cell)
 
 
 def BCC_fix_cell(cell, eps=EPS_REL):
@@ -513,7 +515,7 @@ def BCC_fix_cell(cell, eps=EPS_REL):
         Primitive unit cell.
     """
 
-    return cell
+    return np.array(cell)
 
 
 def TET_fix_cell(cell, eps=EPS_REL):
@@ -534,6 +536,8 @@ def TET_fix_cell(cell, eps=EPS_REL):
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
     """
+
+    cell = np.array(cell)
 
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
@@ -563,6 +567,7 @@ def BCT_fix_cell(cell, eps=EPS_REL):
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
     """
+    cell = np.array(cell)
 
     a, b, c, alpha, beta, gamma = param_from_cell(
         TRANSFORM_TO_CONVENTIONAL["BCT"] @ cell
@@ -594,6 +599,7 @@ def ORC_fix_cell(cell, eps=EPS_REL):
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
     """
+    cell = np.array(cell)
 
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
@@ -628,20 +634,28 @@ def ORCF_fix_cell(cell, eps=EPS_REL):
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
     """
+    cell = np.array(cell)
+    a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
-    a, b, c, alpha, beta, gamma = param_from_cell(
-        TRANSFORM_TO_CONVENTIONAL["ORCI"] @ cell
-    )
-
-    if compare_numerically(a, ">", b, eps):
+    if compare_numerically(a, "<", b, eps):
         # minus preserves right-hand order
-        cell = [cell[1], cell[0], -cell[2]]
-        a, b = b, a
-    if compare_numerically(a, ">", c, eps):
+        # abc - > bca
+        cell = [cell[1], cell[2], cell[0]]
+        if compare_numerically(b, "<", c, eps):
+            # minus preserves right-hand order
+            # bca -> -cba
+            cell = [-cell[1], cell[0], cell[2]]
+        elif compare_numerically(c, "<", a, eps):
+            # minus preserves right-hand order
+            # bca -> b-ac
+            cell = [cell[0], -cell[2], cell[1]]
+    elif compare_numerically(a, "<", c, eps):
+        # abc -> cab
         cell = [cell[2], cell[0], cell[1]]
-    elif compare_numerically(b, ">", c, eps):
+    elif compare_numerically(b, "<", c, eps):
         # minus preserves right-hand order
-        cell = [cell[0], cell[2], -cell[1]]
+        # abc -> a-cb
+        cell = [cell[0], -cell[2], cell[1]]
 
     return cell
 
@@ -662,9 +676,10 @@ def ORCI_fix_cell(cell, eps=EPS_REL):
     Returns
     -------
     cell : (3,3) :numpy:`ndarray`
-        Primitive unit cell.
+        Primitiv4e unit cell.
     """
 
+    cell = np.array(cell)
     a, b, c, alpha, beta, gamma = param_from_cell(
         TRANSFORM_TO_CONVENTIONAL["ORCI"] @ cell
     )
@@ -700,6 +715,7 @@ def ORCC_fix_cell(cell, eps=EPS_REL):
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
     """
+    cell = np.array(cell)
 
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
@@ -745,6 +761,7 @@ def HEX_fix_cell(cell, eps=EPS_REL):
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
     """
+    cell = np.array(cell)
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
     # a == c
@@ -774,7 +791,7 @@ def RHL_fix_cell(cell, eps=EPS_REL):
         Primitive unit cell.
     """
 
-    return cell
+    return np.array(cell)
 
 
 def MCL_fix_cell(cell, eps=EPS_REL):
@@ -795,6 +812,8 @@ def MCL_fix_cell(cell, eps=EPS_REL):
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
     """
+
+    cell = np.array(cell)
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
     beta *= toradians
     gamma *= toradians
@@ -840,6 +859,8 @@ def MCLC_fix_cell(cell, eps=EPS_REL):
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
     """
+
+    cell = np.array(cell)
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
     # a == c
@@ -891,4 +912,4 @@ def TRI_fix_cell(cell, eps=EPS_REL, resiprocal=False):
         Primitive unit cell.
     """
 
-    return cell
+    return np.array(cell)

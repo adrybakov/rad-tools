@@ -4,6 +4,7 @@
 # Python stuff
 __pycache__
 .venv
+.hypothesis
 
 # Build
 build
