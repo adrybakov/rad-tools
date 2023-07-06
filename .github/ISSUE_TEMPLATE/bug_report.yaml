@@ -26,7 +26,7 @@ body:
   - type: markdown
     attributes:
       value: |
-      Use 
+      Use |
       ```bash 
       python3 -c "exec('from radtools import __version__\nprint(__version__)')" 
       ``` 
