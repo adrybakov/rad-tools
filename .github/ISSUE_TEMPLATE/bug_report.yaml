@@ -26,11 +26,11 @@ body:
   - type: markdown
     attributes:
       value: |
-      Use |
-      ```bash 
-      python3 -c "exec('from radtools import __version__\nprint(__version__)')" 
-      ``` 
-      In your terminal to check the version of RAD-tools
+        Use |
+        ```bash 
+        python3 -c "exec('from radtools import __version__\nprint(__version__)')" 
+        ``` 
+        In your terminal to check the version of RAD-tools
   - type: input
     id: version
     attributes:
