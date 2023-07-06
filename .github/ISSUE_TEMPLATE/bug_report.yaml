@@ -1,5 +1,5 @@
 name: "Bug Report"
-description: Create a report to help us improve
+description: "Create a report to help us improve"
 title: "[Bug]: "
 labels: "bug"
 
@@ -15,7 +15,7 @@ body:
     description: "How often do you or others encounter this bug?"
     placeholder: "Whenever I visit the user account page (1-2 times a week)"
   validations:
-    required: true
+    required: "true"
   - type: textarea
     id: what-happened
     attributes:
@@ -24,7 +24,7 @@ body:
       placeholder: Tell us what you see!
       value: "A bug happened!"
     validations:
-      required: true
+      required: "true"
   - type: textarea
     id: version
     attributes:
@@ -32,7 +32,7 @@ body:
       description: What version of our software are you running?
       placeholder: e.g. 0.7.15
     validations:
-      required: true
+      required: "true"
   - type: textarea
     id: python-version
     attributes:
@@ -40,12 +40,12 @@ body:
       description: What version of python do you use our software with?
       placeholder: e.g. 3.11.4
     validations:
-      required: true
+      required: "true"
   - type: dropdown
     id: os
     attributes:
       label: What OS are you working with?
-      multiple: true
+      multiple: "true"
       options:
         - MacOS
         - Linux
