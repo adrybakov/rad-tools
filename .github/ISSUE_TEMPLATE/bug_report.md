@@ -1,11 +1,55 @@
----
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: bug
-assignees: ''
+name: Bug Report
+description: Create a report to help us improve
+title: "[Bug]: "
+labels: "bug"
 
----
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+ - type: input
+  id: prevalence
+  attributes:
+    label: Bug prevalence
+    description: "How often do you or others encounter this bug?"
+    placeholder: "Whenever I visit the user account page (1-2 times a week)"
+  validations:
+    required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also tell us, what did you expect to happen?
+      placeholder: Tell us what you see!
+      value: "A bug happened!"
+    validations:
+      required: true
+  - type: textarea
+    id: version
+    attributes:
+      label: Version
+      description: What version of our software are you running?
+      placeholder: e.g. 0.7.15
+    validations:
+      required: true
+  - type: textarea
+    id: python-version
+    attributes:
+      label: Version
+      description: What version of python do you use our software with?
+      placeholder: e.g. 3.11.4
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: What OS are you working with?
+      multiple: true
+      options:
+        - MacOS
+        - Linux
+        - Windows
 
 **Describe the bug**
 A clear and concise description of what the bug is.
@@ -21,12 +65,6 @@ A clear and concise description of what you expected to happen.
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
-
-**Setup (please complete the following information):**
- - OS: [e.g. MacOS, linux, win64]
- - Browser [e.g. chrome, safari]
- - Python version [e.g. 3.11.4]
- - RAD-tools version [e.g. 0.7.15]
 
 **Additional context**
 Add any other context about the problem here.
