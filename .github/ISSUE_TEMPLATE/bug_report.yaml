@@ -11,9 +11,18 @@ body:
     id: what-happened
     attributes:
       label: What happened?
-      description: Also tell us, what did you expect to happen?
+      description: Please add screenshots or code/bash samples if applicable.
       placeholder: Tell us what you see!
       value: "A bug happened!"
+    validations:
+      required: true
+  - type: textarea
+    id: what-expected
+    attributes:
+      label: What did you expect to happen?
+      description: Please add screenshots or code/bash samples if applicable.
+      placeholder: Tell us what you want!
+      value: "I want the bug not to happen!"
     validations:
       required: true
   - type: input
@@ -38,10 +47,17 @@ body:
       label: OS
       description: What operating system are you using?
       options:
-        - MacOS (ARM)
-        - MacOS (Intel)
-        - Linux (Ubuntu)
+        - MacOS 
+        - Linux 
         - Windows
-        - Linux (Other)
     validations:
       required: true
+  - type: input
+    id: OS-info
+    attributes:
+      label: Additional info about OS
+      description: Any information you ant to specify about your OS.
+      placeholder: ex. Ubuntu
+    validations:
+      required: false
+
