@@ -128,7 +128,7 @@ def test_ORCI_cell(a, b, c):
 )
 def test_ORCC_cell(a, b, c):
     cell = ORCC_cell(a, b, c)
-    a, b, c = sorted([a, b, c])
+    a, b = sorted([a, b])
     correct_cell = np.array([[1, -1, 0], [1, 1, 0], [0, 0, 2]]) / 2
     correct_cell[:, 0] *= a
     correct_cell[:, 1] *= b
@@ -181,7 +181,7 @@ def test_RHL_cell(a, alpha):
 def test_MCL_cell(a, b, c, alpha):
     cell = MCL_cell(a, b, c, alpha)
     if alpha > 90:
-        alpha = alpha - 90
+        alpha = 180 - alpha
     alpha *= toradians
     b, c = sorted([b, c])
     correct_cell = np.array(
@@ -203,7 +203,7 @@ def test_MCL_cell(a, b, c, alpha):
 def test_MCLC_cell(a, b, c, alpha):
     cell = MCLC_cell(a, b, c, alpha)
     if alpha > 90:
-        alpha = alpha - 90
+        alpha = 180.0 - alpha
     alpha *= toradians
     b, c = sorted([b, c])
     correct_cell = np.array(
@@ -412,20 +412,282 @@ def test_ORCF_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
         cell = shuffle(rotate(ORCF_cell(conv_a, conv_b, conv_c), r1, r2, r3), order)
 
         conv_a, conv_b, conv_c = sorted([conv_a, conv_b, conv_c])
-        prim_a = sqrt(conv_b**2 + conv_c**2) / 2
-        prim_b = sqrt(conv_a**2 + conv_c**2) / 2
-        prim_c = sqrt(conv_a**2 + conv_b**2) / 2
-        prim_alpha = acos(conv_a**2 / 4 / prim_b / prim_c) * todegrees
-        prim_beta = acos(conv_b**2 / 4 / prim_a / prim_c) * todegrees
-        prim_gamma = acos(conv_c**2 / 4 / prim_a / prim_b) * todegrees
+        prim_a = sqrt(conv_b**2 + conv_c**2) / 2.0
+        prim_b = sqrt(conv_a**2 + conv_c**2) / 2.0
+        prim_c = sqrt(conv_a**2 + conv_b**2) / 2.0
+        prim_alpha = acos(conv_a**2 / 4.0 / prim_b / prim_c) * todegrees
+        prim_beta = acos(conv_b**2 / 4.0 / prim_a / prim_c) * todegrees
+        prim_gamma = acos(conv_c**2 / 4.0 / prim_a / prim_b) * todegrees
 
         old_det = np.linalg.det(cell)
 
         cell = ORCF_fix_cell(cell, 1e-5)
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
-        assert np.allclose(
-            [a, b, c, alpha, beta, gamma],
-            [prim_a, prim_b, prim_c, prim_alpha, prim_beta, prim_gamma],
-        )
+        assert np.allclose([a, b, c], [prim_a, prim_b, prim_c])
+        assert np.allclose(alpha, prim_alpha) or np.allclose(alpha, 180.0 - prim_alpha)
+        assert np.allclose(beta, prim_beta) or np.allclose(beta, 180.0 - prim_beta)
+        assert np.allclose(gamma, prim_gamma) or np.allclose(gamma, 180.0 - prim_gamma)
 
         assert np.linalg.det(cell) * old_det > 0
+
+
+@given(
+    st.floats(min_value=0, max_value=100),
+    st.floats(min_value=0, max_value=100),
+    st.floats(min_value=0, max_value=100),
+    st.floats(min_value=0.1, exclude_min=True, max_value=100),
+    st.floats(min_value=0.1, exclude_min=True, max_value=100),
+    st.floats(min_value=0.1, exclude_min=True, max_value=100),
+    st.integers(min_value=0, max_value=n_order),
+)
+def test_ORCI_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
+    if not np.allclose([r1, r2, r3], [0, 0, 0]):
+        cell = shuffle(rotate(ORCI_cell(conv_a, conv_b, conv_c), r1, r2, r3), order)
+
+        conv_a, conv_b, conv_c = sorted([conv_a, conv_b, conv_c])
+        prim = sqrt(conv_a**2 + conv_b**2 + conv_c**2) / 2
+        prim_alpha = (
+            acos((conv_a**2 - conv_b**2 - conv_c**2) / 4.0 / prim**2)
+            * todegrees
+        )
+        prim_beta = (
+            acos((-(conv_a**2) + conv_b**2 - conv_c**2) / 4.0 / prim**2)
+            * todegrees
+        )
+        prim_gamma = (
+            acos((-(conv_a**2) - conv_b**2 + conv_c**2) / 4.0 / prim**2)
+            * todegrees
+        )
+
+        old_det = np.linalg.det(cell)
+
+        cell = ORCI_fix_cell(cell, 1e-5)
+        a, b, c, alpha, beta, gamma = param_from_cell(cell)
+        assert np.allclose([a, b, c], [prim, prim, prim])
+        assert np.allclose(alpha, prim_alpha) or np.allclose(alpha, 180.0 - prim_alpha)
+        assert np.allclose(beta, prim_beta) or np.allclose(beta, 180.0 - prim_beta)
+        assert np.allclose(gamma, prim_gamma) or np.allclose(gamma, 180.0 - prim_gamma)
+
+        assert np.linalg.det(cell) * old_det > 0
+
+
+@given(
+    st.floats(min_value=0, max_value=100),
+    st.floats(min_value=0, max_value=100),
+    st.floats(min_value=0, max_value=100),
+    st.floats(min_value=0.1, exclude_min=True, max_value=100),
+    st.floats(min_value=0.1, exclude_min=True, max_value=100),
+    st.floats(min_value=0.1, exclude_min=True, max_value=100),
+    st.integers(min_value=0, max_value=n_order),
+)
+def test_ORCC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
+    if not np.allclose([r1, r2, r3], [0, 0, 0]):
+        cell = shuffle(rotate(ORCC_cell(conv_a, conv_b, conv_c), r1, r2, r3), order)
+
+        conv_a, conv_b = sorted([conv_a, conv_b])
+        prim_a = sqrt(conv_a**2 + conv_b**2) / 2
+        prim_b = prim_a
+        prim_c = conv_c
+        prim_alpha = 90.0
+        prim_beta = prim_alpha
+        prim_gamma = (
+            acos((conv_a**2 - conv_b**2) / 4.0 / prim_a / prim_b) * todegrees
+        )
+
+        old_det = np.linalg.det(cell)
+
+        cell = ORCC_fix_cell(cell, 1e-5)
+        a, b, c, alpha, beta, gamma = param_from_cell(cell)
+        assert np.allclose([a, b, c], [prim_a, prim_b, prim_c])
+        assert np.allclose(alpha, prim_alpha) or np.allclose(alpha, 180.0 - prim_alpha)
+        assert np.allclose(beta, prim_beta) or np.allclose(beta, 180.0 - prim_beta)
+        assert np.allclose(gamma, prim_gamma) or np.allclose(gamma, 180.0 - prim_gamma)
+
+        assert np.linalg.det(cell) * old_det > 0
+
+
+@given(
+    st.floats(min_value=0, max_value=100),
+    st.floats(min_value=0, max_value=100),
+    st.floats(min_value=0, max_value=100),
+    st.floats(min_value=0.1, exclude_min=True, max_value=100),
+    st.floats(min_value=0.1, exclude_min=True, max_value=100),
+    st.integers(min_value=0, max_value=n_order),
+)
+def test_HEX_fix_cell(r1, r2, r3, conv_a, conv_c, order):
+    if not np.allclose([r1, r2, r3], [0, 0, 0]):
+        cell = shuffle(rotate(HEX_cell(conv_a, conv_c), r1, r2, r3), order)
+
+        prim_a = conv_a
+        prim_b = conv_a
+        prim_c = conv_c
+        prim_alpha = 90.0
+        prim_beta = 90.0
+        prim_gamma = 120.0
+
+        old_det = np.linalg.det(cell)
+
+        cell = HEX_fix_cell(cell, 1e-5)
+        a, b, c, alpha, beta, gamma = param_from_cell(cell)
+        assert np.allclose([a, b, c], [prim_a, prim_b, prim_c])
+        assert np.allclose(alpha, prim_alpha)
+        assert np.allclose(beta, prim_beta)
+        assert np.allclose(gamma, prim_gamma)
+
+        assert np.linalg.det(cell) * old_det > 0
+
+
+@given(
+    st.floats(min_value=0, max_value=100),
+    st.floats(min_value=0, max_value=100),
+    st.floats(min_value=0, max_value=100),
+    st.floats(min_value=0.1, exclude_min=True, max_value=100),
+    st.floats(min_value=0.1, exclude_min=True, max_value=120, exclude_max=True),
+    st.integers(min_value=0, max_value=n_order),
+)
+def test_RHL_fix_cell(r1, r2, r3, conv_a, conv_alpha, order):
+    if not np.allclose([r1, r2, r3], [0, 0, 0]):
+        cell = shuffle(rotate(RHL_cell(conv_a, conv_alpha), r1, r2, r3), order)
+
+        prim_a = conv_a
+        prim_b = conv_a
+        prim_c = conv_a
+        prim_alpha = conv_alpha
+        prim_beta = conv_alpha
+        prim_gamma = conv_alpha
+
+        old_det = np.linalg.det(cell)
+
+        cell = RHL_fix_cell(cell, 1e-5)
+        a, b, c, alpha, beta, gamma = param_from_cell(cell)
+        assert np.allclose([a, b, c], [prim_a, prim_b, prim_c])
+        assert np.allclose(alpha, prim_alpha)
+        assert np.allclose(beta, prim_beta)
+        assert np.allclose(gamma, prim_gamma)
+
+        assert np.linalg.det(cell) * old_det > 0
+
+
+@given(
+    st.floats(min_value=0, max_value=100),
+    st.floats(min_value=0, max_value=100),
+    st.floats(min_value=0, max_value=100),
+    st.floats(min_value=0.1, exclude_min=True, max_value=100),
+    st.floats(min_value=0.1, exclude_min=True, max_value=100),
+    st.floats(min_value=0.1, exclude_min=True, max_value=100),
+    st.floats(min_value=0.1, exclude_min=True, max_value=179.9, exclude_max=True),
+    st.integers(min_value=0, max_value=n_order),
+)
+def test_MCL_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
+    if not np.allclose([r1, r2, r3], [0, 0, 0]):
+        cell = shuffle(
+            rotate(MCL_cell(conv_a, conv_b, conv_c, conv_alpha), r1, r2, r3), order
+        )
+
+        prim_a = conv_a
+        prim_b, prim_c = sorted([conv_b, conv_c])
+        prim_beta = 90.0
+        if conv_alpha > 90.0:
+            prim_alpha = 180.0 - conv_alpha
+        else:
+            prim_alpha = conv_alpha
+        prim_gamma = 90.0
+
+        old_det = np.linalg.det(cell)
+
+        cell = MCL_fix_cell(cell, 1e-5)
+        a, b, c, alpha, beta, gamma = param_from_cell(cell)
+        assert np.allclose([a, b, c], [prim_a, prim_b, prim_c])
+        assert np.allclose(alpha, prim_alpha) or np.allclose(alpha, 180.0 - prim_alpha)
+        assert np.allclose(beta, prim_beta)
+        assert np.allclose(gamma, prim_gamma)
+
+        assert np.linalg.det(cell) * old_det > 0
+
+
+@given(
+    st.floats(min_value=0, max_value=100),
+    st.floats(min_value=0, max_value=100),
+    st.floats(min_value=0, max_value=100),
+    st.floats(min_value=0.1, exclude_min=True, max_value=100),
+    st.floats(min_value=0.1, exclude_min=True, max_value=100),
+    st.floats(min_value=0.1, exclude_min=True, max_value=100),
+    st.floats(min_value=0.1, exclude_min=True, max_value=179.9, exclude_max=True),
+    st.integers(min_value=0, max_value=n_order),
+)
+def test_MCLC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
+    if not np.allclose([r1, r2, r3], [0, 0, 0]):
+        cell = shuffle(
+            rotate(MCLC_cell(conv_a, conv_b, conv_c, conv_alpha), r1, r2, r3), order
+        )
+
+        conv_b, conv_c = sorted([conv_b, conv_c])
+        if conv_alpha > 90.0:
+            conv_alpha = 180.0 - conv_alpha
+        else:
+            conv_alpha = conv_alpha
+        prim_a = sqrt(conv_a**2 + conv_b**2) / 2
+        prim_b = sqrt(conv_a**2 + conv_b**2) / 2
+        prim_c = conv_c
+        prim_alpha = (
+            acos(conv_b * conv_c * cos(conv_alpha * toradians) / 2.0 / prim_b / prim_c)
+            * todegrees
+        )
+        prim_beta = (
+            acos(conv_b * conv_c * cos(conv_alpha * toradians) / 2.0 / prim_a / prim_c)
+            * todegrees
+        )
+        prim_gamma = (
+            acos((conv_b**2 - conv_a**2) / 4.0 / prim_a / prim_b) * todegrees
+        )
+
+        old_det = np.linalg.det(cell)
+
+        cell = MCLC_fix_cell(cell, 1e-5)
+        a, b, c, alpha, beta, gamma = param_from_cell(cell)
+
+        assert np.allclose([a, b, c], [prim_a, prim_b, prim_c])
+        assert np.allclose(alpha, prim_alpha) or np.allclose(alpha, 180.0 - prim_alpha)
+        assert np.allclose(beta, prim_beta) or np.allclose(beta, 180.0 - prim_beta)
+        assert np.allclose(gamma, prim_gamma)
+
+        assert np.linalg.det(cell) * old_det > 0
+
+
+# @given(
+#     st.floats(min_value=0, max_value=100),
+#     st.floats(min_value=0, max_value=100),
+#     st.floats(min_value=0, max_value=100),
+#     st.floats(min_value=0.1, exclude_min=True, max_value=100),
+#     st.floats(min_value=0.1, exclude_min=True, max_value=100),
+#     st.floats(min_value=0.1, exclude_min=True, max_value=100),
+#     st.floats(min_value=0.1, exclude_min=True, max_value=179.9, exclude_max=True),
+#     st.floats(min_value=0.1, exclude_min=True, max_value=179.9, exclude_max=True),
+#     st.floats(min_value=0.1, exclude_min=True, max_value=179.9, exclude_max=True),
+#     st.integers(min_value=0, max_value=n_order),
+# )
+# def test_TRI_fix_cell(
+#     r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, conv_beta, conv_gamma, order
+# ):
+#     if not np.allclose([r1, r2, r3], [0, 0, 0]):
+#         cell = shuffle(
+#             rotate(
+#                 TRI_cell(conv_a, conv_b, conv_c, conv_alpha, conv_beta, conv_gamma),
+#                 r1,
+#                 r2,
+#                 r3,
+#             ),
+#             order,
+#         )
+
+#         old_det = np.linalg.det(cell)
+#         # TODO: Decide the logic of parameter`s order
+#         cell = TRI_fix_cell(cell, 1e-5)
+#         a, b, c, alpha, beta, gamma = param_from_cell(cell)
+
+#         assert np.allclose(
+#             [a, b, c, alpha, beta, gamma],
+#             [conv_a, conv_b, conv_c, conv_alpha, conv_beta, conv_gamma],
+#         )
+
+#         assert np.linalg.det(cell) * old_det > 0

@@ -232,7 +232,7 @@ def ORCC_cell(a: float, b: float, c: float):
         Primitive unit cell.
     """
 
-    a, b, c = tuple(sorted([a, b, c]))
+    a, b = tuple(sorted([a, b]))
 
     return np.array([[a / 2, -b / 2, 0], [a / 2, b / 2, 0], [0, 0, c]])
 
@@ -326,7 +326,7 @@ def MCL_cell(a: float, b: float, c: float, alpha: float):
 
     b, c = tuple(sorted([b, c]))
     if alpha > 90:
-        alpha = alpha - 90
+        alpha = 180 - alpha
 
     alpha *= toradians
     return np.array([[a, 0, 0], [0, b, 0], [0, c * cos(alpha), c * sin(alpha)]])
@@ -359,7 +359,7 @@ def MCLC_cell(a: float, b: float, c: float, alpha: float):
 
     b, c = tuple(sorted([b, c]))
     if alpha > 90:
-        alpha = alpha - 90
+        alpha = 180.0 - alpha
 
     alpha *= toradians
     return np.array(
@@ -686,13 +686,23 @@ def ORCI_fix_cell(cell, eps=EPS_REL):
 
     if compare_numerically(a, ">", b, eps):
         # minus preserves right-hand order
-        cell = [cell[1], cell[0], -cell[2]]
-        a, b = b, a
-    if compare_numerically(a, ">", c, eps):
+        # abc - > bca
+        cell = [cell[1], cell[2], cell[0]]
+        if compare_numerically(b, ">", c, eps):
+            # minus preserves right-hand order
+            # bca -> -cba
+            cell = [-cell[1], cell[0], cell[2]]
+        elif compare_numerically(c, ">", a, eps):
+            # minus preserves right-hand order
+            # bca -> b-ac
+            cell = [cell[0], -cell[2], cell[1]]
+    elif compare_numerically(a, ">", c, eps):
+        # abc -> cab
         cell = [cell[2], cell[0], cell[1]]
     elif compare_numerically(b, ">", c, eps):
         # minus preserves right-hand order
-        cell = [cell[0], cell[2], -cell[1]]
+        # abc -> a-cb
+        cell = [cell[0], -cell[2], cell[1]]
 
     return cell
 
@@ -715,7 +725,6 @@ def ORCC_fix_cell(cell, eps=EPS_REL):
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
     """
-    cell = np.array(cell)
 
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
@@ -726,19 +735,17 @@ def ORCC_fix_cell(cell, eps=EPS_REL):
     elif compare_numerically(b, "==", c, eps):
         cell = [cell[1], cell[2], cell[0]]
 
+    a, b, c, alpha, beta, gamma = param_from_cell(cell)
+
+    cell = np.array(cell)
+
     a, b, c, alpha, beta, gamma = param_from_cell(
-        TRANSFORM_TO_CONVENTIONAL["ORCI"] @ cell
+        TRANSFORM_TO_CONVENTIONAL["ORCC"] @ cell
     )
 
     if compare_numerically(a, ">", b, eps):
         # minus preserves right-hand order
-        cell = [cell[1], cell[0], -cell[2]]
-        a, b = b, a
-    if compare_numerically(a, ">", c, eps):
-        cell = [cell[2], cell[0], cell[1]]
-    elif compare_numerically(b, ">", c, eps):
-        # minus preserves right-hand order
-        cell = [cell[0], cell[2], -cell[1]]
+        cell = [-cell[1], cell[0], cell[2]]
 
     return cell
 
@@ -765,10 +772,10 @@ def HEX_fix_cell(cell, eps=EPS_REL):
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
     # a == c
-    if compare_numerically(a, "==", c, eps):
+    if compare_numerically(beta, "==", 120.0, eps):
         cell = [cell[2], cell[0], cell[1]]
     # b = c
-    elif compare_numerically(b, "==", c, eps):
+    elif compare_numerically(alpha, "==", 120.0, eps):
         cell = [cell[1], cell[2], cell[0]]
 
     return cell
@@ -819,17 +826,17 @@ def MCL_fix_cell(cell, eps=EPS_REL):
     gamma *= toradians
 
     # beta != 90
-    if compare_numerically(cos(beta), "!=", 0, eps):
+    if compare_numerically(cos(beta), "!=", 0.0, eps):
         cell = [cell[1], cell[2], cell[0]]
     # gamma != 90
-    elif compare_numerically(cos(gamma), "!=", 0, eps):
+    elif compare_numerically(cos(gamma), "!=", 0.0, eps):
         cell = [cell[2], cell[0], cell[1]]
 
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
     alpha *= toradians
 
     # alpha > 90 (cos(alpha) < 0)
-    if compare_numerically(cos(alpha), "<", 0, eps):
+    if compare_numerically(cos(alpha), "<", 0.0, eps):
         cell = [cell[0], cell[2], -cell[1]]
 
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -860,7 +867,6 @@ def MCLC_fix_cell(cell, eps=EPS_REL):
         Primitive unit cell.
     """
 
-    cell = np.array(cell)
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
     # a == c
@@ -870,6 +876,7 @@ def MCLC_fix_cell(cell, eps=EPS_REL):
     elif compare_numerically(b, "==", c, eps):
         cell = [cell[1], cell[2], cell[0]]
 
+    cell = np.array(cell)
     a, b, c, alpha, beta, gamma = param_from_cell(
         TRANSFORM_TO_CONVENTIONAL["MCLC"] @ cell
     )
@@ -879,6 +886,7 @@ def MCLC_fix_cell(cell, eps=EPS_REL):
     if compare_numerically(cos(alpha), "<", 0, eps):
         cell = [cell[0], cell[2], -cell[1]]
 
+    cell = np.array(cell)
     a, b, c, alpha, beta, gamma = param_from_cell(
         TRANSFORM_TO_CONVENTIONAL["MCLC"] @ cell
     )
