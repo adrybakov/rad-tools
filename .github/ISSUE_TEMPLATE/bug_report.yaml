@@ -23,11 +23,18 @@ body:
       placeholder: Tell us what you want!
     validations:
       required: true
+  - type: markdown
+    attributes:
+      value: Use 
+      ```bash
+      python3 -c "exec('from radtools import __version__\nprint(__version__)')"
+      ```
+      In your terminal to check the version of RAD-tools
   - type: input
     id: version
     attributes:
       label: RAD-tools version
-      description: What version of our software are you running?
+      description: What version of our software are you running? (Use python3 -c "exec('from radtools import __version__\nprint(__version__)')" )
       placeholder: ex. 0.7.15
     validations:
       required: true
