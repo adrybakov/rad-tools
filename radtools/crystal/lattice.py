@@ -767,7 +767,12 @@ class Lattice:
             result = rhl_variation(self.conv_alpha, self.eps)
         elif lattice_type == "MCLC":
             result = mclc_variation(
-                self.conv_a, self.conv_b, self.conv_c, self.conv_alpha, self.eps
+                self.conv_a,
+                self.conv_b,
+                self.conv_c,
+                self.conv_alpha,
+                self.k_gamma,
+                self.eps,
             )
         elif lattice_type == "TRI":
             result = tri_variation(self.k_alpha, self.k_beta, self.k_gamma, self.eps)

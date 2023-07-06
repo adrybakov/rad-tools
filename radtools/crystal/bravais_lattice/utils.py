@@ -3,7 +3,7 @@ from math import cos, pi, sin
 from radtools.crystal.identify import lepage
 from radtools.crystal.lattice import Lattice
 from radtools.routines import param_from_cell, toradians
-from radtools.crystal.constants import EPS_REL
+from radtools.crystal.constants import EPS_REL, BRAVAIS_LATTICE_VARIATIONS
 
 from radtools.crystal.bravais_lattice.cells import (
     CUB_cell,
@@ -133,8 +133,20 @@ def bravais_lattice_from_cell(cell, eps_rel=EPS_REL) -> Lattice:
     r"""
     Create Bravais lattice from cell matrix.
 
-    Orientation of the cell is respected, however the lattice vectors are renamed
+    Orientation of the crystal is respected, however the lattice vectors are renamed
     with respect to [1]_.
+
+    This function may change the angles and the lengths of the cell.
+    It preserve the volume, right- or left- handedness, lattice type and variation
+    of the cell.
+
+    The lattice vector`s lengths are preserved as a set.
+
+    The angles between the lattice vectors are preserved as a set with possible
+    changes of the form: :math:`angle \rightarrow 180 - angle`.
+
+    The returned cell may not be the same as the input one, but it is translationally
+    equivalent.
 
     Parameters
     ----------
@@ -194,14 +206,14 @@ def bravais_lattice_from_cell(cell, eps_rel=EPS_REL) -> Lattice:
 
 
 def lattice_example(
-    lattice=None,
+    lattice_name: str = None,
 ):
     r"""
     Return an example of the lattice.
 
     Parameters
     ----------
-    lattice : str, optional
+    lattice_name : str, optional
         Name of the lattice to be returned.
         For available names see documentation of each Bravais lattice class.
         Lowercased before usage.
@@ -209,82 +221,63 @@ def lattice_example(
     Returns
     -------
     lattice : Lattice or list
-        Child of the :py:class:`.Lattice` class is returned.
+        :py:class:`.Lattice` class is returned.
         If no math found a list with available examples is returned.
     """
 
-    all_examples = [
-        "CUB",
-        "FCC",
-        "BCC",
-        "TET",
-        "BCT1",
-        "BCT2",
-        "ORC",
-        "ORCF1",
-        "ORCF2",
-        "ORCF3",
-        "ORCI",
-        "ORCC",
-        "HEX",
-        "RHL1",
-        "RHL2",
-        "MCL",
-        "MCLC1",
-        "MCLC2",
-        "MCLC3",
-        "MCLC4",
-        "MCLC5",
-        "TRI1a",
-        "TRI2a",
-        "TRI1b",
-        "TRI2b",
-    ]
-    if not isinstance(lattice, str):
-        return all_examples
+    if (
+        not isinstance(lattice_name, str)
+        or lattice_name not in BRAVAIS_LATTICE_VARIATIONS
+    ):
+        message = (
+            f"There is no {lattice_name} Bravais lattice. Available examples are:\n"
+        )
+        for name in BRAVAIS_LATTICE_VARIATIONS:
+            message += f"  * {name}\n"
+        raise ValueError(message)
 
-    lattice = lattice.lower()
+    lattice_name = lattice_name.lower()
 
-    if lattice == "cub":
+    if lattice_name == "cub":
         return Lattice(CUB_cell(pi))
-    elif lattice == "fcc":
+    elif lattice_name == "fcc":
         return Lattice(FCC_cell(pi))
-    elif lattice == "bcc":
+    elif lattice_name == "bcc":
         return Lattice(BCC_cell(pi))
-    elif lattice == "tet":
+    elif lattice_name == "tet":
         return Lattice(TET_cell(pi, 1.5 * pi))
-    elif lattice in ["bct1", "bct"]:
+    elif lattice_name in ["bct1", "bct"]:
         return Lattice(BCT_cell(1.5 * pi, pi))
-    elif lattice == "bct2":
+    elif lattice_name == "bct2":
         return Lattice(BCT_cell(pi, 1.5 * pi))
-    elif lattice == "orc":
+    elif lattice_name == "orc":
         return Lattice(ORC_cell(pi, 1.5 * pi, 2 * pi))
-    elif lattice in ["orcf1", "orcf"]:
+    elif lattice_name in ["orcf1", "orcf"]:
         return Lattice(ORCF_cell(0.7 * pi, 5 / 4 * pi, 5 / 3 * pi))
-    elif lattice == "orcf2":
+    elif lattice_name == "orcf2":
         return Lattice(ORCF_cell(1.2 * pi, 5 / 4 * pi, 5 / 3 * pi))
-    elif lattice == "orcf3":
+    elif lattice_name == "orcf3":
         return Lattice(ORCF_cell(pi, 5 / 4 * pi, 5 / 3 * pi))
-    elif lattice == "orci":
+    elif lattice_name == "orci":
         return Lattice(ORCI_cell(pi, 1.3 * pi, 1.7 * pi))
-    elif lattice == "orcc":
+    elif lattice_name == "orcc":
         return Lattice(ORCC_cell(pi, 1.3 * pi, 1.7 * pi))
-    elif lattice == "hex":
+    elif lattice_name == "hex":
         return Lattice(HEX_cell(pi, 2 * pi))
-    elif lattice in ["rhl1", "rhl"]:
+    elif lattice_name in ["rhl1", "rhl"]:
         # If alpha = 60 it is effectively FCC!
         return Lattice(RHL_cell(pi, 70))
-    elif lattice == "rhl2":
+    elif lattice_name == "rhl2":
         return Lattice(RHL_cell(pi, 110))
-    elif lattice == "mcl":
+    elif lattice_name == "mcl":
         return Lattice(MCL_cell(pi, 1.3 * pi, 1.6 * pi, alpha=75))
-    elif lattice in ["mclc1", "mclc"]:
+    elif lattice_name in ["mclc1", "mclc"]:
         return Lattice(MCLC_cell(pi, 1.4 * pi, 1.7 * pi, 80))
-    elif lattice == "mclc2":
+    elif lattice_name == "mclc2":
         return Lattice(
             MCLC_cell(1.4 * pi * sin(75 * toradians), 1.4 * pi, 1.7 * pi, 75)
         )
-    elif lattice == "mclc3":
+    elif lattice_name == "mclc3":
         b = pi
         x = 1.1
         alpha = 78
@@ -292,7 +285,7 @@ def lattice_example(
         c = b * (x**2) / (x**2 - 1) * cos(ralpha) * 1.8
         a = x * b * sin(ralpha)
         return Lattice(MCLC_cell(a, b, c, alpha))
-    elif lattice == "mclc4":
+    elif lattice_name == "mclc4":
         b = pi
         x = 1.2
         alpha = 65
@@ -300,7 +293,7 @@ def lattice_example(
         c = b * (x**2) / (x**2 - 1) * cos(ralpha)
         a = x * b * sin(ralpha)
         return Lattice(MCLC_cell(a, b, c, alpha))
-    elif lattice == "mclc5":
+    elif lattice_name == "mclc5":
         b = pi
         x = 1.4
         alpha = 53
@@ -308,13 +301,11 @@ def lattice_example(
         c = b * (x**2) / (x**2 - 1) * cos(ralpha) * 0.9
         a = x * b * sin(ralpha)
         return Lattice(MCLC_cell(a, b, c, alpha))
-    elif lattice in ["tri1a", "tri1", "tri", "tria"]:
+    elif lattice_name in ["tri1a", "tri1", "tri", "tria"]:
         return Lattice(TRI_cell(1, 1.5, 2, 120, 110, 100, reciprocal=True))
-    elif lattice in ["tri2a", "tri2"]:
+    elif lattice_name in ["tri2a", "tri2"]:
         return Lattice(TRI_cell(1, 1.5, 2, 120, 110, 90, reciprocal=True))
-    elif lattice in ["tri1b", "trib"]:
+    elif lattice_name in ["tri1b", "trib"]:
         return Lattice(TRI_cell(1, 1.5, 2, 60, 70, 80, reciprocal=True))
-    elif lattice == "tri2b":
+    elif lattice_name == "tri2b":
         return Lattice(TRI_cell(1, 1.5, 2, 60, 70, 90, reciprocal=True))
-    else:
-        return all_examples

@@ -3,6 +3,7 @@ __all__ = [
     "EPS_REL",
     "PEARSON_SYMBOLS",
     "BRAVAIS_LATTICE_NAMES",
+    "BRAVAIS_LATTICE_VARIATIONS",
     "TRANSFORM_TO_CONVENTIONAL",
     "DEFAULT_K_PATHS",
     "HS_PLOT_NAMES",
@@ -164,6 +165,34 @@ BRAVAIS_LATTICE_NAMES = {
     "MCLC": "C-centered monoclinic",
     "TRI": "Triclinic",
 }
+
+BRAVAIS_LATTICE_VARIATIONS = [
+    "CUB",
+    "FCC",
+    "BCC",
+    "TET",
+    "BCT1",
+    "BCT2",
+    "ORC",
+    "ORCF1",
+    "ORCF2",
+    "ORCF3",
+    "ORCI",
+    "ORCC",
+    "HEX",
+    "RHL1",
+    "RHL2",
+    "MCL",
+    "MCLC1",
+    "MCLC2",
+    "MCLC3",
+    "MCLC4",
+    "MCLC5",
+    "TRI1a",
+    "TRI2a",
+    "TRI1b",
+    "TRI2b",
+]
 
 TRANSFORM_TO_CONVENTIONAL = {
     "CUB": [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]],

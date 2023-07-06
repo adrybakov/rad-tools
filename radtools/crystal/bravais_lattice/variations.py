@@ -69,18 +69,17 @@ def orcf_variation(conv_a: float, conv_b: float, conv_c: float, eps: float):
     ValueError
         If :math:`a < b < c` is not satisfied.
     """
-
     if compare_numerically(conv_a, ">=", conv_b, eps) or compare_numerically(
         conv_b, ">=", conv_c, eps
     ):
         raise ValueError(f"a < b < c is not satisfied with {eps} tolerance.")
 
     expression = 1 / conv_a**2 - 1 / conv_b**2 - 1 / conv_c**2
-    if compare_numerically(abs(expression), "==", 0, eps):
+    if compare_numerically(expression, "==", 0, eps):
         return "ORCF3"
-    elif compare_numerically(abs(expression), ">", 0, eps):
+    elif compare_numerically(expression, ">", 0, eps):
         return "ORCF1"
-    elif compare_numerically(abs(expression), "<", 0, eps):
+    elif compare_numerically(expression, "<", 0, eps):
         return "ORCF2"
 
 
@@ -164,12 +163,15 @@ def mclc_variation(
         If :math:`\alpha > 90^{\circ}` or :math:`a > c` or :math:`b > c` with given tolerance ``eps``.
     """
 
-    if (
-        compare_numerically(conv_alpha, ">", 90, eps)
-        or compare_numerically(conv_a, ">", conv_c, eps)
-        or compare_numerically(conv_b, ">", conv_c, eps)
+    if compare_numerically(conv_alpha, ">", 90, eps) or compare_numerically(
+        conv_b, ">", conv_c, eps
     ):
-        raise ValueError(f"alpha > 90 or a > c or b > c with {eps} tolerance.")
+        raise ValueError(
+            f"alpha > 90 or  or b > c with {eps} tolerance:\n"
+            + f"  alpha = {conv_alpha}\n"
+            + f"  b = {conv_b}\n"
+            + f"  c = {conv_c}\n"
+        )
 
     conv_alpha *= toradians
 
