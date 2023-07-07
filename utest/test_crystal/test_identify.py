@@ -3,9 +3,13 @@ from math import acos, sqrt
 import numpy as np
 import pytest
 
-from radtools.crystal.bravais_lattice import Lattice, lattice_example
+from radtools.crystal.lattice import Lattice
+from radtools.crystal.bravais_lattice.utils import lattice_example
 from radtools.crystal.identify import lepage, niggli
-from radtools.routines import todegrees
+from radtools.routines import todegrees, param_from_cell
+from hypothesis import given
+from hypothesis.extra.numpy import arrays as harrays
+from radtools.crystal.constants import BRAVAIS_LATTICE_VARIATIONS
 
 
 def test_niggli():
@@ -19,6 +23,11 @@ def test_niggli():
         np.array([[4, 9, 9], [9 / 2, 3 / 2, 2]]) - niggli(a, b, c, alpha, beta, gamma)
         < 1e-5
     ).all()
+
+
+@given(harrays(float, (3, 3)))
+def test_niggli_finish(cell):
+    niggli(*param_from_cell(cell))
 
 
 def test_niggli_run():
@@ -40,10 +49,9 @@ def test_niggli_run():
     assert gamma - gammap < 1e-3
 
 
-lattices = lattice_example()
-
-
-@pytest.mark.parametrize("name", lattices, ids=lattices)
+@pytest.mark.parametrize(
+    "name", BRAVAIS_LATTICE_VARIATIONS, ids=BRAVAIS_LATTICE_VARIATIONS
+)
 def test_lepage(name):
     lattice = lattice_example(name)
     type_name = ""

@@ -10,6 +10,7 @@ from radtools.crystal.constants import BRAVAIS_LATTICE_VARIATIONS
 
 import pytest
 from hypothesis import given, example, strategies as st
+from hypothesis.extra.numpy import arrays as harrays
 import numpy as np
 
 
@@ -32,26 +33,9 @@ def test_lattice_example_error(wrong_name):
 
 
 # TODO: test taking too long
-@given(
-    st.floats(),
-    st.floats(),
-    st.floats(),
-    st.floats(),
-    st.floats(),
-    st.floats(),
-    st.floats(),
-    st.floats(),
-    st.floats(),
-)
-def test_bravais_lattice_from_cell(a1, a2, a3, b1, b2, b3, c1, c2, c3):
-    cell = [[a1, a2, a3], [b1, b2, b3], [c1, c2, c3]]
+@given(harrays(float, (3, 3)))
+def test_bravais_lattice_from_cell(cell):
     print(cell)
-    if (
-        a1**2 + a2**2 + a3**2 != 0
-        and b1**2 + b2**2 + b3**2 != 0
-        and c1**2 + c2**2 + c3**2 != 0
-        and np.linalg.det(cell) != 0
-    ):
-        cell = [[a1, a2, a3], [b1, b2, b3], [c1, c2, c3]]
+    if np.linalg.det(cell) != 0:
         new_cell = bravais_lattice_from_cell(cell)
         assert np.allclose(volume(cell), volume(new_cell))

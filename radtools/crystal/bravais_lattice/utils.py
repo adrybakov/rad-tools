@@ -174,7 +174,7 @@ def bravais_lattice_from_cell(cell, eps_rel=EPS_REL) -> Lattice:
         Computational materials science, 49(2), pp.299-312.
     """
 
-    lattice_type = lepage(*param_from_cell(cell), eps_rel=eps_rel)
+    lattice_type = lepage(*param_from_cell(cell), eps_rel=eps_rel, very_verbose=True)
 
     if lattice_type == "CUB":
         return Lattice(CUB_fix_cell(cell=cell, eps_rel=eps_rel))

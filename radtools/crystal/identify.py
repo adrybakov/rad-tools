@@ -553,7 +553,6 @@ def lepage(
         verbose = True
 
     limit = max(1.5, delta_max * 1.1)
-
     eps_volumetric = eps_rel * volume(a, b, c, alpha, beta, gamma) ** (1 / 3.0)
     decimals = abs(floor(log10(abs(eps_volumetric))))
     if delta_max is None:
@@ -717,59 +716,11 @@ def lepage(
 
 
 if __name__ == "__main__":
-    print(
-        lepage(
-            6.137,
-            6.136925044352425,
-            20.718,
-            90.0,
-            90.0,
-            119.99501387877993,
-            very_verbose=True,
-        )
-    )
-    # from radtools.crystal.bravais_lattice import lattice_example
+    cell = [
+        [2.0000000e00, 1.0000000e00, 7.2057594e16],
+        [1.0000000e00, 1.0000000e00, 1.0000000e00],
+        [1.0000000e00, 1.0000000e00, 1.0000000e00],
+    ]
+    from radtools.routines import param_from_cell
 
-    # for i, name in enumerate(
-    #     [
-    #         "CUB",
-    #         "FCC",
-    #         "BCC",
-    #         "HEX",
-    #         "TET",
-    #         "BCT1",
-    #         "BCT2",
-    #         "RHL1",
-    #         "RHL2",
-    #         "ORC",
-    #         "ORCF1",
-    #         "ORCF2",
-    #         "ORCF3",
-    #         "ORCI",
-    #         "ORCC",
-    #         "MCL",
-    #         "MCLC1",
-    #         "MCLC2",
-    #         "MCLC3",
-    #         "MCLC4",
-    #         "MCLC5",
-    #         "TRI1a",
-    #         "TRI2a",
-    #         "TRI1b",
-    #         "TRI2b",
-    #     ]
-    # ):
-    #     lattice = lattice_example(name)
-
-    #     print(
-    #         name,
-    #         lepage(
-    #             lattice.a,
-    #             lattice.b,
-    #             lattice.c,
-    #             lattice.alpha,
-    #             lattice.beta,
-    #             lattice.gamma,
-    #             very_verbose=True,
-    #         ),
-    #     )
+    niggli(*param_from_cell(cell), verbose=False)
