@@ -35,7 +35,7 @@ body:
     id: version
     attributes:
       label: RAD-tools version
-      description: What version of our software are you running? (Use python3 -c "exec('from radtools import __version__\nprint(__version__)')" )
+      description: What version of our software are you running?
       placeholder: ex. 0.7.15
     validations:
       required: true
