@@ -212,6 +212,16 @@ class Lattice:
         r"""
         Unit cell of the lattice.
 
+        Notes
+        -----
+        In order to rotate the cell with an arbitrary rotation matrix :math:`R` use the syntax:
+
+        .. code-block:: python
+
+            rotated_cell = R.T @ cell
+
+        Transpose is required, since the vectors are stored as rows.
+
         Returns
         -------
         cell : (3, 3) :numpy:`ndarray`
