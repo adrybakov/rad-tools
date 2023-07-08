@@ -3,7 +3,7 @@ from math import cos, pi, sin
 from radtools.crystal.identify import lepage
 from radtools.crystal.lattice import Lattice
 from radtools.routines import param_from_cell, toradians
-from radtools.crystal.constants import EPS_REL, BRAVAIS_LATTICE_VARIATIONS
+from radtools.crystal.constants import REL_TOL, BRAVAIS_LATTICE_VARIATIONS
 
 from radtools.crystal.bravais_lattice.cells import (
     CUB_cell,
@@ -129,7 +129,7 @@ def bravais_lattice_from_param(a, b, c, alpha, beta, gamma) -> Lattice:
     return Lattice(TRI_cell(a, b, c, alpha, beta, gamma))
 
 
-def bravais_lattice_from_cell(cell, eps_rel=EPS_REL) -> Lattice:
+def bravais_lattice_from_cell(cell, eps_rel=REL_TOL) -> Lattice:
     r"""
     Create Bravais lattice from cell matrix.
 

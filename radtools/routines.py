@@ -22,7 +22,6 @@ __all__ = [
     "volume",
     "angle",
     "absolute_to_relative",
-    "get_permutation",
     "cell_from_param",
     "reciprocal_cell",
     "span_orthonormal_set",
@@ -36,8 +35,8 @@ PURPLE = "#DC5CFF"
 
 # Constants are usually defined in uppercase
 # but these two are intentionally defined in lowercase
-todegrees = 180 / pi
-toradians = pi / 180
+todegrees = 180.0 / pi
+toradians = pi / 180.0
 
 
 def atom_mark_to_latex(mark):
@@ -218,33 +217,29 @@ def volume(*args):
     """
 
     if len(args) == 1:
-        v1, v2, v3 = np.array(args[0])
+        cell = np.array(args[0])
     elif len(args) == 3:
-        v1, v2, v3 = np.array(args)
+        cell = np.array(args)
     elif len(args) == 6:
         a, b, c, alpha, beta, gamma = args
         alpha = alpha * toradians
         beta = beta * toradians
         gamma = gamma * toradians
-        return (
-            a
-            * b
-            * c
-            * sqrt(
-                1
-                + 2 * cos(alpha) * cos(beta) * cos(gamma)
-                - cos(alpha) ** 2
-                - cos(beta) ** 2
-                - cos(gamma) ** 2
-            )
+        sq_root = (
+            1
+            + 2 * cos(alpha) * cos(beta) * cos(gamma)
+            - cos(alpha) ** 2
+            - cos(beta) ** 2
+            - cos(gamma) ** 2
         )
+        return abs(a * b * c * sqrt(sq_root))
     else:
         raise ValueError(
             "Unable to identify input. "
             + "Supported: one (3,3) array_like, or three (3,) array_like, or 6 floats."
         )
 
-    return v1 @ np.cross(v2, v3)
+    return abs(np.linalg.det(cell))
 
 
 def winwait():
@@ -466,11 +461,22 @@ def angle(v1, v2, radians=False):
     -------
     angle: float
         Angle in degrees or radians (see ``radians``).
+
+    Raises
+    ------
+    ValueError
+        If one of the vectors is zero vector (or both). Norm is compare against
+        :numpy:`finfo`\ (float).eps.
     """
 
     # Normalize vectors
-    v1 = np.array(v1) / np.linalg.norm(v1)
-    v2 = np.array(v2) / np.linalg.norm(v2)
+    v1_norm = np.linalg.norm(v1)
+    v2_norm = np.linalg.norm(v2)
+    if abs(v1_norm) <= np.finfo(float).eps or abs(v2_norm) <= np.finfo(float).eps:
+        raise ValueError("Angle is ill defined (zero vector).")
+
+    v1 = np.array(v1) / v1_norm
+    v2 = np.array(v2) / v2_norm
 
     alpha = np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0))
     if radians:
@@ -504,6 +510,7 @@ def reciprocal_cell(cell):
             \end{matrix}
 
     """
+
     vol = volume(cell)
     reciprocal_cell = np.array(
         [
@@ -515,7 +522,7 @@ def reciprocal_cell(cell):
     return reciprocal_cell
 
 
-def cell_from_param(a=1, b=1, c=1, alpha=90, beta=90, gamma=90):
+def cell_from_param(a=1.0, b=1.0, c=1.0, alpha=90.0, beta=90.0, gamma=90.0):
     r"""
     Return cell from lattice parameters.
 
@@ -567,7 +574,8 @@ def cell_from_param(a=1, b=1, c=1, alpha=90, beta=90, gamma=90):
                     - cos(gamma) ** 2
                 ),
             ],
-        ]
+        ],
+        dtype=float,
     )
 
 
@@ -614,48 +622,6 @@ def param_from_cell(cell):
     )
 
 
-def get_permutation(n, k):
-    r"""
-    Return array of index permutations
-
-    .. versionadded:: 0.7
-
-    Parameters
-    ----------
-    n : int
-        Length of the array to be permuted.
-
-        .. code-block::
-
-            range(0, n)
-    k : int
-        Length of the permutation.
-
-    Returns
-    -------
-    permutations : list
-        List of permutations. If N permutations are found,
-        the it is a list of N lists of length k.
-
-    """
-    if k == n:
-        return [[i for i in range(n)]]
-    elif n < k:
-        raise ValueError("Permutations: n < k")
-    else:
-        result = [[i] for i in range(n)]
-        true_k = k
-        k = 0
-        while k < true_k - 1:
-            new_result = []
-            for i in range(len(result)):
-                for j in range(result[i][-1] + 1, n):
-                    new_result.append(result[i] + [j])
-            result = new_result
-            k += 1
-        return result
-
-
 def span_orthonormal_set(vec):
     r"""
     Span orthonormal set of vectors.
@@ -697,38 +663,6 @@ def span_orthonormal_set(vec):
     rotation_matrix = Rotation.from_rotvec(n).as_matrix()
 
     return rotation_matrix
-
-
-if __name__ == "__main__":
-    print_2d_array([[1, 2], [3, 4], [5, 6]])
-    print_2d_array([[1, 2], [3, 4], [5, 6]], fmt="10.2f")
-    print_2d_array([[1, 2], [3, 4], [5, 6]], fmt=".2f")
-    print_2d_array([[1, 2], [3, 4], [52414345345, 6]], fmt="10.2E")
-    print_2d_array([[1, 2 + 1j], [3, 4], [52, 6]])
-    print_2d_array([[1, 2 - 1j], [3, 4], [52, 6]])
-    print_2d_array([[1, -1j], [3, 4], [52, 6]])
-    print_2d_array([])
-
-    print_2d_array([[1, 2], [3, 4], [5, 6]], highlight=True)
-    print_2d_array([[1, 2], [3, 4], [5, 6]], fmt="10.2f", highlight=True)
-    print_2d_array([[1, 2], [3, 4], [5, 6]], fmt=".2f", highlight=True)
-    print_2d_array([[1, 2], [3, 4], [52414345345, 6]], fmt="10.2E", highlight=True)
-    print_2d_array([[1, 2 + 1j], [3, 4], [52, 6]], highlight=True)
-    print_2d_array([[1, 2 - 1j], [3, 4], [52, 6]], highlight=True)
-    print_2d_array([[1, -1j], [3, 4], [52, 6]], highlight=True)
-
-    print_2d_array([[1, 2], [3, 4], [5, 6]], highlight=True, borders=False)
-    print_2d_array([[1, 2], [3, 4], [5, 6]], fmt="10.2f", highlight=True, borders=False)
-    print_2d_array([[1, 2], [3, 4], [5, 6]], fmt=".2f", highlight=True, borders=False)
-    print_2d_array(
-        [[1, 2], [3, 4], [52414345345, 6]], fmt="10.2E", highlight=True, borders=False
-    )
-    print_2d_array([[1, 2 + 1j], [3, 4], [52, 6]], highlight=True, borders=False)
-    print_2d_array([[1, 2 - 1j], [3, 4], [52, 6]], highlight=True, borders=False)
-    print_2d_array([[1, -1j], [3, 4], [52, 6]], highlight=True, borders=False)
-
-    print_2d_array([[1, 2], [3, 4], [5, 6]], highlight=True, borders=False, shift=8)
-    print_2d_array([[1, 2], [3, 4], [5, 6]], highlight=True, shift=8)
 
 
 def plot_horizontal_lines(ax, positions):

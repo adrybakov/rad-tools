@@ -32,10 +32,8 @@ def test_lattice_example_error(wrong_name):
             lattice_example(wrong_name)
 
 
-# TODO: test taking too long
 @given(harrays(float, (3, 3)))
 def test_bravais_lattice_from_cell(cell):
-    print(cell)
     if np.linalg.det(cell) != 0:
         new_cell = bravais_lattice_from_cell(cell)
         assert np.allclose(volume(cell), volume(new_cell))

@@ -30,6 +30,7 @@ def niggli(
     eps_rel=1e-5,
     verbose=False,
     return_cell=False,
+    max_iter=10000,
 ):
     r"""
     Computes Niggli matrix form.
@@ -54,6 +55,8 @@ def niggli(
         Whether to print the steps of an algorithm.
     return_cell : bool, default False
         Whether to return cell parameters instead of Niggli matrix form.
+    max_iter : int, default 10000
+        Maximum number of iterations.
 
     Returns
     -------
@@ -69,6 +72,12 @@ def niggli(
         
         If return_cell == True, then return Niggli cell: (a, b, c, alpha, beta, gamma).
 
+    Raises
+    ------
+    ValueError
+        If the niggli cell is not found in ``max_iter`` iterations.
+    ValueError
+        If the provided cell`s volume is zero.
 
     References
     ----------
@@ -123,7 +132,9 @@ def niggli(
                [4.5, 1.5, 2. ]])
 
     """
-
+    cell_volume = volume(a, b, c, alpha, beta, gamma)
+    if cell_volume == 0:
+        raise ValueError("Cell volume is zero")
     eps = eps_rel * volume(a, b, c, alpha, beta, gamma) ** (1 / 3.0)
     n = abs(floor(log10(abs(eps))))
 
@@ -175,7 +186,11 @@ def niggli(
             color="yellow",
         )
         phrase = "appl. to"
+    iter_count = 0
     while True:
+        if iter_count > max_iter:
+            raise ValueError(f"Niggli cell not found in {max_iter} iterations")
+        iter_count += 1
         # 1
         if compare(A, ">", B) or (
             compare(A, "==", B) and compare(abs(xi), ">", abs(eta))
@@ -717,10 +732,10 @@ def lepage(
 
 if __name__ == "__main__":
     cell = [
-        [2.0000000e00, 1.0000000e00, 7.2057594e16],
-        [1.0000000e00, 1.0000000e00, 1.0000000e00],
-        [1.0000000e00, 1.0000000e00, 1.0000000e00],
+        [1.0, 1.0, 1.0],
+        [1.0, 1.0, 1.0],
+        [1.0, 1.0, 1.0],
     ]
     from radtools.routines import param_from_cell
 
-    niggli(*param_from_cell(cell), verbose=False)
+    niggli(*param_from_cell(cell), verbose=True)

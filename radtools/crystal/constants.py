@@ -1,12 +1,15 @@
 __all__ = [
     "ATOM_TYPES",
-    "EPS_REL",
+    "REL_TOL",
+    "ABS_TOL",
     "PEARSON_SYMBOLS",
     "BRAVAIS_LATTICE_NAMES",
     "BRAVAIS_LATTICE_VARIATIONS",
     "TRANSFORM_TO_CONVENTIONAL",
     "DEFAULT_K_PATHS",
     "HS_PLOT_NAMES",
+    "MAX_LENGTH",
+    "MIN_LENGTH",
 ]
 
 ATOM_TYPES = (
@@ -130,7 +133,12 @@ ATOM_TYPES = (
     "Og",
 )
 
-EPS_REL = 1e-4
+REL_TOL = 1e-4  # Meant for the linear spatial variables
+ABS_TOL = 1e-8  # Meant for the linear spatial variables
+MAX_LENGTH = 1e10  # At the default Angstrom assumption it corresponds to 1 meter
+MIN_LENGTH = 1e-8  # At the default Angstrom assumption it corresponds to 1 attometer
+MIN_ANGLE = 0.01
+
 
 PEARSON_SYMBOLS = {
     "CUB": "cP",

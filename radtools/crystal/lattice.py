@@ -15,7 +15,7 @@ from radtools.crystal.identify import lepage
 from radtools.routines import angle, cell_from_param, reciprocal_cell, volume
 from radtools.crystal.kpoints import Kpoints
 from radtools.crystal.constants import (
-    EPS_REL,
+    REL_TOL,
     PEARSON_SYMBOLS,
     BRAVAIS_LATTICE_NAMES,
     TRANSFORM_TO_CONVENTIONAL,
@@ -162,7 +162,7 @@ class Lattice:
     """
 
     def __init__(self, *args, **kwargs) -> None:
-        self.eps_rel = EPS_REL
+        self.eps_rel = REL_TOL
         self._cell = None
         self._type = None
         self._kpoints = None
@@ -218,7 +218,7 @@ class Lattice:
 
         .. code-block:: python
 
-            rotated_cell = R.T @ cell
+            rotated_cell = cell @ R.T
 
         Transpose is required, since the vectors are stored as rows.
 
