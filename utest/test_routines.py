@@ -1,36 +1,36 @@
-from math import pi, sqrt, cos, sin
+from math import cos, pi, sin
 
 import numpy as np
 import pytest
-
-from hypothesis import given, strategies as st
+from hypothesis import given
+from hypothesis import strategies as st
 from hypothesis.extra.numpy import arrays as harrays
+from scipy.spatial.transform import Rotation
+
 from radtools.crystal.constants import (
-    MAX_LENGTH,
-    MIN_LENGTH,
-    MIN_ANGLE,
-    REL_TOL,
     ABS_TOL,
     ABS_TOL_ANGLE,
+    MAX_LENGTH,
+    MIN_ANGLE,
+    MIN_LENGTH,
+    REL_TOL,
     REL_TOL_ANGLE,
 )
-from scipy.spatial.transform import Rotation
 from radtools.routines import (
     absolute_to_relative,
     angle,
     atom_mark_to_latex,
     cell_from_param,
-    reciprocal_cell,
-    rot_angle,
-    volume,
-    span_orthonormal_set,
-    param_from_cell,
-    toradians,
-    print_2d_array,
     compare_numerically,
     parallelepiped_check,
+    param_from_cell,
+    print_2d_array,
+    reciprocal_cell,
+    rot_angle,
+    span_orthonormal_set,
+    toradians,
+    volume,
 )
-
 
 n_order = 5
 
@@ -84,25 +84,11 @@ def test_absolute_to_relative(cell, absolute, relative):
 
 
 @given(
+    harrays(float, 3, elements=st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH)),
     harrays(
         float,
         3,
-        elements=st.floats(
-            allow_infinity=False,
-            allow_nan=False,
-            min_value=MIN_LENGTH,
-            max_value=MAX_LENGTH,
-        ),
-    ),
-    harrays(
-        float,
-        3,
-        elements=st.floats(
-            allow_infinity=False,
-            allow_nan=False,
-            min_value=MIN_LENGTH,
-            max_value=MAX_LENGTH,
-        ),
+        elements=st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     ),
 )
 def test_angle(v1, v2):
@@ -116,7 +102,7 @@ def test_angle(v1, v2):
         assert 0 <= result_radians <= pi
 
 
-@given(st.floats(allow_nan=False, min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE))
+@given(st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE))
 def test_angle_values(alpha):
     v1 = np.array([1.0, 0.0, 0.0])
     v2 = np.array([cos(alpha * toradians), sin(alpha * toradians), 0.0])
@@ -196,12 +182,7 @@ def test_reciprocal_cell_examples(cell, rec_cell):
     harrays(
         float,
         (3, 3),
-        elements=st.floats(
-            allow_infinity=False,
-            allow_nan=False,
-            min_value=MIN_LENGTH,
-            max_value=MAX_LENGTH,
-        ),
+        elements=st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     ),
 )
 def test_param_from_cell(cell):
@@ -209,12 +190,12 @@ def test_param_from_cell(cell):
 
 
 @given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH, allow_nan=False),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH, allow_nan=False),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH, allow_nan=False),
-    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE, allow_nan=False),
-    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE, allow_nan=False),
-    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE, allow_nan=False),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
 )
 def test_cell_from_param(a, b, c, alpha, beta, gamma):
     if parallelepiped_check(a, b, c, alpha, beta, gamma):
@@ -234,15 +215,15 @@ def test_cell_from_param(a, b, c, alpha, beta, gamma):
 
 
 @given(
-    st.floats(min_value=0, max_value=2 * pi, allow_nan=False),
-    st.floats(min_value=0, max_value=2 * pi, allow_nan=False),
-    st.floats(min_value=0, max_value=2 * pi, allow_nan=False),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH, allow_nan=False),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH, allow_nan=False),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH, allow_nan=False),
-    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE, allow_nan=False),
-    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE, allow_nan=False),
-    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE, allow_nan=False),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
     st.integers(min_value=0, max_value=n_order),
 )
 def test_reciprocal_cell(r1, r2, r3, a, b, c, alpha, beta, gamma, order):
@@ -341,12 +322,12 @@ def test_cell_from_param_example(a, b, c, alpha, beta, gamma, cell):
 
 
 @given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH, allow_nan=False),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH, allow_nan=False),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH, allow_nan=False),
-    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE, allow_nan=False),
-    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE, allow_nan=False),
-    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE, allow_nan=False),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
 )
 def test_parallelepiped_check(a, b, c, alpha, beta, gamma):
     assert parallelepiped_check(a, b, c, alpha, beta, gamma) == (
