@@ -11,6 +11,8 @@ from radtools.crystal.constants import (
     MIN_ANGLE,
     REL_TOL,
     ABS_TOL,
+    ABS_TOL_ANGLE,
+    REL_TOL_ANGLE,
 )
 from scipy.spatial.transform import Rotation
 from radtools.routines import (
@@ -26,6 +28,7 @@ from radtools.routines import (
     toradians,
     print_2d_array,
     compare_numerically,
+    parallelepiped_check,
 )
 
 
@@ -117,7 +120,7 @@ def test_angle(v1, v2):
 def test_angle_values(alpha):
     v1 = np.array([1.0, 0.0, 0.0])
     v2 = np.array([cos(alpha * toradians), sin(alpha * toradians), 0.0])
-    assert abs(angle(v1, v2) - alpha) < ABS_TOL
+    assert abs(angle(v1, v2) - alpha) < ABS_TOL_ANGLE
 
 
 def test_angle_raises():
@@ -171,14 +174,7 @@ def test_volume_with_cell(cell):
     st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
 )
 def test_volume_parameters(a, b, c, alpha, beta, gamma):
-    if (
-        compare_numerically(gamma, "<", alpha + beta, ABS_TOL)
-        and compare_numerically(alpha + beta, "<", 360.0 - gamma, ABS_TOL)
-        and compare_numerically(beta, "<", alpha + gamma, ABS_TOL)
-        and compare_numerically(alpha + gamma, "<", 360.0 - beta, ABS_TOL)
-        and compare_numerically(alpha, "<", beta + gamma, ABS_TOL)
-        and compare_numerically(beta + gamma, "<", 360.0 - alpha, ABS_TOL)
-    ):
+    if parallelepiped_check(a, b, c, alpha, beta, gamma):
         assert volume(a, b, c, alpha, beta, gamma) > 0
 
 
@@ -221,20 +217,20 @@ def test_param_from_cell(cell):
     st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE, allow_nan=False),
 )
 def test_cell_from_param(a, b, c, alpha, beta, gamma):
-    if (
-        compare_numerically(gamma, "<", alpha + beta, ABS_TOL)
-        and compare_numerically(alpha + beta, "<", 360.0 - gamma, ABS_TOL)
-        and compare_numerically(beta, "<", alpha + gamma, ABS_TOL)
-        and compare_numerically(alpha + gamma, "<", 360.0 - beta, ABS_TOL)
-        and compare_numerically(alpha, "<", beta + gamma, ABS_TOL)
-        and compare_numerically(beta + gamma, "<", 360.0 - alpha, ABS_TOL)
-    ):
+    if parallelepiped_check(a, b, c, alpha, beta, gamma):
         cell = cell_from_param(a, b, c, alpha, beta, gamma)
-        ap, bp, cp, alphap, betap, gammap = param_from_cell(cell)
-        assert np.allclose([a, b, c], [ap, bp, cp], rtol=REL_TOL, atol=ABS_TOL)
-        assert np.allclose(
-            [alpha, beta, gamma], [alphap, betap, gammap], rtol=REL_TOL, atol=MIN_ANGLE
-        )
+        if (cell > MIN_LENGTH).all():
+            ap, bp, cp, alphap, betap, gammap = param_from_cell(cell)
+            assert np.allclose([a, b, c], [ap, bp, cp], rtol=REL_TOL, atol=ABS_TOL)
+            assert np.allclose(
+                [alpha, beta, gamma],
+                [alphap, betap, gammap],
+                rtol=REL_TOL_ANGLE,
+                atol=ABS_TOL_ANGLE,
+            )
+    else:
+        with pytest.raises(ValueError):
+            cell_from_param(a, b, c, alpha, beta, gamma)
 
 
 @given(
@@ -251,17 +247,10 @@ def test_cell_from_param(a, b, c, alpha, beta, gamma):
 )
 def test_reciprocal_cell(r1, r2, r3, a, b, c, alpha, beta, gamma, order):
     if (
-        compare_numerically(gamma, "<", alpha + beta, ABS_TOL)
-        and compare_numerically(alpha + beta, "<", 360.0 - gamma, ABS_TOL)
-        and compare_numerically(beta, "<", alpha + gamma, ABS_TOL)
-        and compare_numerically(alpha + gamma, "<", 360.0 - beta, ABS_TOL)
-        and compare_numerically(alpha, "<", beta + gamma, ABS_TOL)
-        and compare_numerically(beta + gamma, "<", 360.0 - alpha, ABS_TOL)
+        parallelepiped_check(a, b, c, alpha, beta, gamma)
         # Maximum I can do right now.
         # It passes only for the vectors, which are not too far away from each other.
-        and compare_numerically(a, "==", b, 1 / REL_TOL)
-        and compare_numerically(b, "==", c, 1 / REL_TOL)
-        and compare_numerically(c, "==", a, 1 / REL_TOL)
+        and min(a, b, c) / max(a, b, c) > REL_TOL
     ):
         cell = shuffle(
             rotate(cell_from_param(a, b, c, alpha, beta, gamma), r1, r2, r3), order
@@ -349,3 +338,31 @@ def test_cell_from_param_example(a, b, c, alpha, beta, gamma, cell):
 #     def test_ill_case(self):
 #         with pytest.raises(ValueError):
 #             rot_angle(0, 0)
+
+
+@given(
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH, allow_nan=False),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH, allow_nan=False),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH, allow_nan=False),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE, allow_nan=False),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE, allow_nan=False),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE, allow_nan=False),
+)
+def test_parallelepiped_check(a, b, c, alpha, beta, gamma):
+    assert parallelepiped_check(a, b, c, alpha, beta, gamma) == (
+        compare_numerically(a, ">", 0.0, ABS_TOL)
+        and compare_numerically(b, ">", 0.0, ABS_TOL)
+        and compare_numerically(c, ">", 0.0, ABS_TOL)
+        and compare_numerically(alpha, "<", 180.0, ABS_TOL_ANGLE)
+        and compare_numerically(beta, "<", 180.0, ABS_TOL_ANGLE)
+        and compare_numerically(gamma, "<", 180.0, ABS_TOL_ANGLE)
+        and compare_numerically(alpha, ">", 0.0, ABS_TOL_ANGLE)
+        and compare_numerically(beta, ">", 0.0, ABS_TOL_ANGLE)
+        and compare_numerically(gamma, ">", 0.0, ABS_TOL_ANGLE)
+        and compare_numerically(gamma, "<", alpha + beta, ABS_TOL_ANGLE)
+        and compare_numerically(alpha + beta, "<", 360.0 - gamma, ABS_TOL_ANGLE)
+        and compare_numerically(beta, "<", alpha + gamma, ABS_TOL_ANGLE)
+        and compare_numerically(alpha + gamma, "<", 360.0 - beta, ABS_TOL_ANGLE)
+        and compare_numerically(alpha, "<", beta + gamma, ABS_TOL_ANGLE)
+        and compare_numerically(beta + gamma, "<", 360.0 - alpha, ABS_TOL_ANGLE)
+    )

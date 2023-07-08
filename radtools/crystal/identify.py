@@ -9,7 +9,6 @@ from termcolor import cprint
 
 from radtools.routines import (
     cell_from_param,
-    get_permutation,
     print_2d_array,
     reciprocal_cell,
     todegrees,

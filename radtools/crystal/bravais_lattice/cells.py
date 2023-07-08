@@ -9,7 +9,7 @@ from radtools.routines import (
     cell_from_param,
     reciprocal_cell,
 )
-from radtools.crystal.constants import TRANSFORM_TO_CONVENTIONAL, REL_TOL
+from radtools.crystal.constants import TRANSFORM_TO_CONVENTIONAL, REL_TOL, ABS_TOL_ANGLE
 from radtools.routines import volume
 
 __all__ = ["fix_cell"]
@@ -605,6 +605,7 @@ def ORC_fix_cell(cell, eps=REL_TOL):
         Primitive unit cell.
     """
     cell = np.array(cell)
+    eps = eps * volume(cell) ** (1.0 / 3.0)
 
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
@@ -640,6 +641,7 @@ def ORCF_fix_cell(cell, eps=REL_TOL):
         Primitive unit cell.
     """
     cell = np.array(cell)
+    eps = eps * volume(cell) ** (1.0 / 3.0)
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
     if compare_numerically(a, "<", b, eps):
@@ -685,6 +687,7 @@ def ORCI_fix_cell(cell, eps=REL_TOL):
     """
 
     cell = np.array(cell)
+    eps = eps * volume(cell) ** (1.0 / 3.0)
     a, b, c, alpha, beta, gamma = param_from_cell(
         TRANSFORM_TO_CONVENTIONAL["ORCI"] @ cell
     )
@@ -732,6 +735,7 @@ def ORCC_fix_cell(cell, eps=REL_TOL):
     """
 
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
+    eps = eps * volume(cell) ** (1.0 / 3.0)
 
     # a == c
     if compare_numerically(a, "==", c, eps):
@@ -777,10 +781,10 @@ def HEX_fix_cell(cell, eps=REL_TOL):
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
     # a == c
-    if compare_numerically(beta, "==", 120.0, eps):
+    if compare_numerically(beta, "==", 120.0, ABS_TOL_ANGLE):
         cell = [cell[2], cell[0], cell[1]]
     # b = c
-    elif compare_numerically(alpha, "==", 120.0, eps):
+    elif compare_numerically(alpha, "==", 120.0, ABS_TOL_ANGLE):
         cell = [cell[1], cell[2], cell[0]]
 
     return cell
@@ -826,22 +830,20 @@ def MCL_fix_cell(cell, eps=REL_TOL):
     """
 
     cell = np.array(cell)
+    eps = eps * volume(cell) ** (1.0 / 3.0)
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
-    beta *= toradians
-    gamma *= toradians
 
     # beta != 90
-    if compare_numerically(cos(beta), "!=", 0.0, eps):
+    if compare_numerically(beta, "!=", 90.0, ABS_TOL_ANGLE):
         cell = [cell[1], cell[2], cell[0]]
     # gamma != 90
-    elif compare_numerically(cos(gamma), "!=", 0.0, eps):
+    elif compare_numerically(gamma, "!=", 90.0, ABS_TOL_ANGLE):
         cell = [cell[2], cell[0], cell[1]]
 
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
-    alpha *= toradians
 
     # alpha > 90 (cos(alpha) < 0)
-    if compare_numerically(cos(alpha), "<", 0.0, eps):
+    if compare_numerically(alpha, ">", 90.0, ABS_TOL_ANGLE):
         cell = [cell[0], cell[2], -cell[1]]
 
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -872,6 +874,7 @@ def MCLC_fix_cell(cell, eps=REL_TOL):
         Primitive unit cell.
     """
 
+    eps = eps * volume(cell) ** (1.0 / 3.0)
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
     # a == c
@@ -924,5 +927,6 @@ def TRI_fix_cell(cell, eps=REL_TOL, resiprocal=False):
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
     """
+    eps = eps * volume(cell) ** (1.0 / 3.0)
 
     return np.array(cell)

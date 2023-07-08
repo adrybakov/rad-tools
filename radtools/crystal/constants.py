@@ -1,15 +1,18 @@
 __all__ = [
     "ATOM_TYPES",
-    "REL_TOL",
-    "ABS_TOL",
     "PEARSON_SYMBOLS",
     "BRAVAIS_LATTICE_NAMES",
     "BRAVAIS_LATTICE_VARIATIONS",
     "TRANSFORM_TO_CONVENTIONAL",
     "DEFAULT_K_PATHS",
     "HS_PLOT_NAMES",
-    "MAX_LENGTH",
+    "ABS_TOL",
+    "REL_TOL",
     "MIN_LENGTH",
+    "MAX_LENGTH",
+    "ABS_TOL_ANGLE",
+    "REL_TOL_ANGLE",
+    "MIN_ANGLE",
 ]
 
 ATOM_TYPES = (
@@ -133,11 +136,24 @@ ATOM_TYPES = (
     "Og",
 )
 
-REL_TOL = 1e-4  # Meant for the linear spatial variables
+# Length variables
 ABS_TOL = 1e-8  # Meant for the linear spatial variables
-MAX_LENGTH = 1e10  # At the default Angstrom assumption it corresponds to 1 meter
-MIN_LENGTH = 1e-8  # At the default Angstrom assumption it corresponds to 1 attometer
-MIN_ANGLE = 0.01
+REL_TOL = 1e-4  # Meant for the linear spatial variables
+# MIN_LENGTH is a direct consequence of the REL_TOL and ABS_TOL:
+# for l = MIN_LENGTH => ABS_TOL = l * REL_TOL
+MIN_LENGTH = ABS_TOL / REL_TOL
+# MAX_LENGTH is a direct consequence of the ABS_TOL:
+# Inverse of the MAX_LENGTH in the real space has to be meaningful
+# in the reciprocal space (< ABS_TOL).
+MAX_LENGTH = 1 / ABS_TOL
+
+# TODO Think how to connect angle tolerance with spatial tolerance.
+
+ABS_TOL_ANGLE = 1e-4  # Meant for the angular variables, in degrees.
+REL_TOL_ANGLE = 1e-2  # Meant for the angular variables.
+# MIN_ANGLE is a direct consequence of the REL_TOL_ANGLE and ABS_TOL_ANGLE:
+# for a = MIN_ANGLE => ABS_TOL_ANGLE = a * REL_TOL_ANGLE
+MIN_ANGLE = ABS_TOL_ANGLE / REL_TOL_ANGLE  # In degrees
 
 
 PEARSON_SYMBOLS = {

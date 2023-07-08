@@ -14,6 +14,8 @@ from scipy.spatial.transform import Rotation
 
 from typing import Iterable
 
+from radtools.crystal.constants import ABS_TOL_ANGLE, ABS_TOL
+
 import numpy as np
 from termcolor import cprint, colored
 
@@ -25,6 +27,7 @@ __all__ = [
     "cell_from_param",
     "reciprocal_cell",
     "span_orthonormal_set",
+    "parallelepiped_check",
 ]
 
 RED = "#FF4D67"
@@ -553,7 +556,17 @@ def cell_from_param(a=1.0, b=1.0, c=1.0, alpha=90.0, beta=90.0, gamma=90.0):
             cell = [[a1_x, a1_y, a1_z],
                     [a2_x, a2_y, a2_z],
                     [a3_x, a3_y, a3_z]]
+
+    Raises
+    ------
+    ValueError
+        If parameters could not form a parallelepiped.
+
+    See Also
+    --------
+    parallelepiped_check : Check if parameters could form a parallelepiped.
     """
+    parallelepiped_check(a, b, c, alpha, beta, gamma, raise_error=True)
     alpha = alpha * toradians
     beta = beta * toradians
     gamma = gamma * toradians
@@ -775,3 +788,100 @@ def compare_numerically(x, condition, y, eps):
         return not (x < y - eps or y < x - eps)
     if condition == "!=":
         return x < y - eps or y < x - eps
+
+
+def parallelepiped_check(a, b, c, alpha, beta, gamma, raise_error=False):
+    r"""
+    Check if parallelepiped is valid.
+
+    Parameters
+    ----------
+    a : float
+        Length of the :math:`v_1` vector.
+    b : float
+        Length of the :math:`v_2` vector.
+    c : float
+        Length of the :math:`v_3` vector.
+    alpha : float
+        Angle between vectors :math:`v_2` and :math:`v_3`. In degrees.
+    beta : float
+        Angle between vectors :math:`v_1` and :math:`v_3`. In degrees.
+    gamma : float
+        Angle between vectors :math:`v_1` and :math:`v_2`. In degrees.
+    raise_error : bool, default False
+        Whether to raise error if parameters could not form a parallelepiped.
+
+    Returns
+    -------
+    result: bool
+        Whether the parameters could from a parallelepiped.
+
+    Raises
+    ------
+    ValueError
+        If parameters could not form a parallelepiped.
+        Only raised if ``raise_error`` is ``True`` (it is ``False`` by default).
+    """
+
+    result = (
+        compare_numerically(a, ">", 0.0, ABS_TOL)
+        and compare_numerically(b, ">", 0.0, ABS_TOL)
+        and compare_numerically(c, ">", 0.0, ABS_TOL)
+        and compare_numerically(alpha, "<", 180.0, ABS_TOL_ANGLE)
+        and compare_numerically(beta, "<", 180.0, ABS_TOL_ANGLE)
+        and compare_numerically(gamma, "<", 180.0, ABS_TOL_ANGLE)
+        and compare_numerically(alpha, ">", 0.0, ABS_TOL_ANGLE)
+        and compare_numerically(beta, ">", 0.0, ABS_TOL_ANGLE)
+        and compare_numerically(gamma, ">", 0.0, ABS_TOL_ANGLE)
+        and compare_numerically(gamma, "<", alpha + beta, ABS_TOL_ANGLE)
+        and compare_numerically(alpha + beta, "<", 360.0 - gamma, ABS_TOL_ANGLE)
+        and compare_numerically(beta, "<", alpha + gamma, ABS_TOL_ANGLE)
+        and compare_numerically(alpha + gamma, "<", 360.0 - beta, ABS_TOL_ANGLE)
+        and compare_numerically(alpha, "<", beta + gamma, ABS_TOL_ANGLE)
+        and compare_numerically(beta + gamma, "<", 360.0 - alpha, ABS_TOL_ANGLE)
+    )
+
+    if not result and raise_error:
+        message = "Parameters could not form a parallelepiped:\n"
+        message += f"a = {a}"
+        if not compare_numerically(a, ">", 0.0, ABS_TOL):
+            message += f" (a <= 0 with numerical tolerance: {ABS_TOL})"
+        message += "\n"
+        message += f"b = {b}"
+        if not compare_numerically(b, ">", 0.0, ABS_TOL):
+            message += f" (b <= 0 with numerical tolerance: {ABS_TOL})"
+        message += "\n"
+        message += f"c = {c}"
+        if not compare_numerically(c, ">", 0.0, ABS_TOL):
+            message += f" (c <= 0 with numerical tolerance: {ABS_TOL})"
+        message += "\n"
+        message += f"alpha = {alpha}\n"
+        if not compare_numerically(alpha, "<", 180.0, ABS_TOL_ANGLE):
+            message += f"  (alpha >= 180 with numerical tolerance: {ABS_TOL_ANGLE})\n"
+        if not compare_numerically(alpha, ">", 0.0, ABS_TOL_ANGLE):
+            message += f"  (alpha <= 0 with numerical tolerance: {ABS_TOL_ANGLE})\n"
+        message += f"beta = {beta}\n"
+        if not compare_numerically(beta, "<", 180.0, ABS_TOL_ANGLE):
+            message += f"  (beta >= 180 with numerical tolerance: {ABS_TOL_ANGLE})\n"
+        if not compare_numerically(beta, ">", 0.0, ABS_TOL_ANGLE):
+            message += f"  (beta <= 0 with numerical tolerance: {ABS_TOL_ANGLE})\n"
+        message += f"gamma = {gamma}\n"
+        if not compare_numerically(gamma, "<", 180.0, ABS_TOL_ANGLE):
+            message += f"  (gamma >= 180 with numerical tolerance: {ABS_TOL_ANGLE})\n"
+        if not compare_numerically(gamma, ">", 0.0, ABS_TOL_ANGLE):
+            message += f"  (gamma <= 0 with numerical tolerance: {ABS_TOL_ANGLE})\n"
+        if not compare_numerically(gamma, "<", alpha + beta, ABS_TOL_ANGLE):
+            message += f"Inequality gamma < alpha + beta is not satisfied with numerical tolerance: {ABS_TOL_ANGLE}\n"
+        if not compare_numerically(alpha + beta, "<", 360.0 - gamma, ABS_TOL_ANGLE):
+            message += f"Inequality alpha + beta < 360 - gamma is not satisfied with numerical tolerance: {ABS_TOL_ANGLE}\n"
+        if not compare_numerically(beta, "<", alpha + gamma, ABS_TOL_ANGLE):
+            message += f"Inequality beta < alpha + gamma is not satisfied with numerical tolerance: {ABS_TOL_ANGLE}\n"
+        if not compare_numerically(alpha + gamma, "<", 360.0 - beta, ABS_TOL_ANGLE):
+            message += f"Inequality alpha + gamma < 360 - beta is not satisfied with numerical tolerance: {ABS_TOL_ANGLE}\n"
+        if not compare_numerically(alpha, "<", beta + gamma, ABS_TOL_ANGLE):
+            message += f"Inequality alpha < beta + gamma is not satisfied with numerical tolerance: {ABS_TOL_ANGLE}\n"
+        if not compare_numerically(beta + gamma, "<", 360.0 - alpha, ABS_TOL_ANGLE):
+            message += f"Inequality beta + gamma < 360 - alpha is not satisfied with numerical tolerance: {ABS_TOL_ANGLE}\n"
+        raise ValueError(message)
+
+    return result

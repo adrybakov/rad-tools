@@ -1,3 +1,5 @@
+# NOTE Relative size of lattice parameters have to be consistent with the REL_TOL, in order for the tests to be correct.
+
 from hypothesis import given, example, strategies as st
 
 from radtools.crystal.bravais_lattice.cells import (
@@ -44,6 +46,8 @@ from radtools.crystal.constants import (
     MIN_ANGLE,
     REL_TOL,
     ABS_TOL,
+    ABS_TOL_ANGLE,
+    REL_TOL_ANGLE,
 )
 
 from radtools.routines import toradians
@@ -284,19 +288,24 @@ def rotate(cell, r1, r2, r3):
 )
 def test_CUB_fix_cell(r1, r2, r3, conv_a, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
+        # Prepare cell
         cell = shuffle(rotate(CUB_cell(conv_a), r1, r2, r3), order)
-
         old_det = np.linalg.det(cell)
 
-        cell = CUB_fix_cell(cell, 1e-5)
+        # Fix cell
+        cell = CUB_fix_cell(cell, REL_TOL)
+
+        # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
+        assert np.allclose([a, b, c], [a, a, a], rtol=REL_TOL, atol=ABS_TOL)
         assert np.allclose(
-            [a, b, c, alpha, beta, gamma],
-            [a, a, a, 90, 90, 90],
-            rtol=REL_TOL,
-            atol=ABS_TOL,
+            [alpha, beta, gamma],
+            [90.0, 90.0, 90.0],
+            rtol=REL_TOL_ANGLE,
+            atol=ABS_TOL_ANGLE,
         )
 
+        # Check that chirality is the same
         assert np.linalg.det(cell) * old_det > 0
 
 
@@ -309,21 +318,27 @@ def test_CUB_fix_cell(r1, r2, r3, conv_a, order):
 )
 def test_FCC_fix_cell(r1, r2, r3, conv_a, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
+        # Prepare cell
         cell = shuffle(rotate(FCC_cell(conv_a), r1, r2, r3), order)
-
         prim_a = conv_a * sqrt(2) / 2
-
         old_det = np.linalg.det(cell)
 
-        cell = FCC_fix_cell(cell, 1e-5)
+        # Fix cell
+        cell = FCC_fix_cell(cell, REL_TOL)
+
+        # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
         assert np.allclose(
-            [a, b, c, alpha, beta, gamma],
-            [prim_a, prim_a, prim_a, 60, 60, 60],
-            rtol=REL_TOL,
-            atol=ABS_TOL,
+            [a, b, c], [prim_a, prim_a, prim_a], rtol=REL_TOL, atol=ABS_TOL
+        )
+        assert np.allclose(
+            [alpha, beta, gamma],
+            [60.0, 60.0, 60.0],
+            rtol=REL_TOL_ANGLE,
+            atol=ABS_TOL_ANGLE,
         )
 
+        # Check that chirality is the same
         assert np.linalg.det(cell) * old_det > 0
 
 
@@ -336,22 +351,28 @@ def test_FCC_fix_cell(r1, r2, r3, conv_a, order):
 )
 def test_BCC_fix_cell(r1, r2, r3, conv_a, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
+        # Prepare cell
         cell = shuffle(rotate(BCC_cell(conv_a), r1, r2, r3), order)
-
         angle = acos(-1 / 3) * todegrees
         prim_a = conv_a * sqrt(3) / 2
-
         old_det = np.linalg.det(cell)
 
-        cell = BCC_fix_cell(cell, 1e-5)
+        # Fix cell
+        cell = BCC_fix_cell(cell, REL_TOL)
+
+        # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
         assert np.allclose(
-            [a, b, c, alpha, beta, gamma],
-            [prim_a, prim_a, prim_a, angle, angle, angle],
-            rtol=REL_TOL,
-            atol=ABS_TOL,
+            [a, b, c], [prim_a, prim_a, prim_a], rtol=REL_TOL, atol=ABS_TOL
+        )
+        assert np.allclose(
+            [alpha, beta, gamma],
+            [angle, angle, angle],
+            rtol=REL_TOL_ANGLE,
+            atol=ABS_TOL_ANGLE,
         )
 
+        # Check that chirality is the same
         assert np.linalg.det(cell) * old_det > 0
 
 
@@ -365,23 +386,32 @@ def test_BCC_fix_cell(r1, r2, r3, conv_a, order):
 )
 def test_TET_fix_cell(r1, r2, r3, conv_a, conv_c, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
+        # Prepare cell
         cell = shuffle(rotate(TET_cell(conv_a, conv_c), r1, r2, r3), order)
-
         angle = 90
         prim_a = conv_a
         prim_c = conv_c
-
         old_det = np.linalg.det(cell)
 
-        cell = TET_fix_cell(cell, 1e-5)
+        # Fix cell
+        cell = TET_fix_cell(cell, REL_TOL)
+
+        # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
         assert np.allclose(
-            [a, b, c, alpha, beta, gamma],
-            [prim_a, prim_a, prim_c, angle, angle, angle],
+            [a, b, c],
+            [prim_a, prim_a, prim_c],
             rtol=REL_TOL,
             atol=ABS_TOL,
         )
+        assert np.allclose(
+            [alpha, beta, gamma],
+            [angle, angle, angle],
+            rtol=REL_TOL_ANGLE,
+            atol=ABS_TOL_ANGLE,
+        )
 
+        # Check that chirality is the same
         assert np.linalg.det(cell) * old_det > 0
 
 
@@ -394,27 +424,34 @@ def test_TET_fix_cell(r1, r2, r3, conv_a, conv_c, order):
     st.integers(min_value=0, max_value=n_order),
 )
 def test_BCT_fix_cell(r1, r2, r3, conv_a, conv_c, order):
-    if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
+    if (
+        not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL)
+        and min(conv_a, conv_c) / max(conv_a, conv_c) > REL_TOL
+    ):
+        # Prepare cell
         cell = shuffle(rotate(BCT_cell(conv_a, conv_c), r1, r2, r3), order)
-
         prim = sqrt(2 * conv_a**2 + conv_c**2) / 2
         angle12 = acos((conv_c**2 - 2 * conv_a**2) / 4 / prim**2)
         angle = acos(-(conv_c**2) / 4 / prim**2)
-
         old_det = np.linalg.det(cell)
 
-        cell = BCT_fix_cell(cell, 1e-5)
+        # Fix cell
+        cell = BCT_fix_cell(cell, REL_TOL)
+
+        # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
         alpha *= toradians
         beta *= toradians
         gamma *= toradians
+        assert np.allclose([a, b, c], [prim, prim, prim], rtol=REL_TOL, atol=ABS_TOL)
         assert np.allclose(
-            [a, b, c, alpha, beta, gamma],
-            [prim, prim, prim, angle, angle, angle12],
-            rtol=REL_TOL,
-            atol=ABS_TOL,
+            [alpha, beta, gamma],
+            [angle, angle, angle12],
+            rtol=REL_TOL_ANGLE,
+            atol=ABS_TOL_ANGLE,
         )
 
+        # Check that chirality is the same
         assert np.linalg.det(cell) * old_det > 0
 
 
@@ -428,23 +465,32 @@ def test_BCT_fix_cell(r1, r2, r3, conv_a, conv_c, order):
     st.integers(min_value=0, max_value=n_order),
 )
 def test_ORC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
-    if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
+    if (
+        not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL)
+        and min(conv_a, conv_b, conv_c) / max(conv_a, conv_b, conv_c) > REL_TOL
+    ):
+        # Prepare cell
         cell = shuffle(rotate(ORC_cell(conv_a, conv_b, conv_c), r1, r2, r3), order)
-
         prim_a, prim_b, prim_c = sorted([conv_a, conv_b, conv_c])
         angle = 90
-
         old_det = np.linalg.det(cell)
 
-        cell = ORC_fix_cell(cell, 1e-5)
+        # Fix cell
+        cell = ORC_fix_cell(cell, REL_TOL)
+
+        # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
         assert np.allclose(
-            [a, b, c, alpha, beta, gamma],
-            [prim_a, prim_b, prim_c, angle, angle, angle],
-            rtol=REL_TOL,
-            atol=ABS_TOL,
+            [a, b, c], [prim_a, prim_b, prim_c], rtol=REL_TOL, atol=ABS_TOL
+        )
+        assert np.allclose(
+            [alpha, beta, gamma],
+            [angle, angle, angle],
+            rtol=REL_TOL_ANGLE,
+            atol=ABS_TOL_ANGLE,
         )
 
+        # Check that chirality is the same
         assert np.linalg.det(cell) * old_det > 0
 
 
@@ -458,34 +504,42 @@ def test_ORC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
     st.integers(min_value=0, max_value=n_order),
 )
 def test_ORCF_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
-    if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
+    if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
+        min(conv_a, conv_b, conv_c) / max(conv_a, conv_b, conv_c) > REL_TOL
+    ):
+        # Prepare cell
         cell = shuffle(rotate(ORCF_cell(conv_a, conv_b, conv_c), r1, r2, r3), order)
-
         conv_a, conv_b, conv_c = sorted([conv_a, conv_b, conv_c])
         prim_a = sqrt(conv_b**2 + conv_c**2) / 2.0
         prim_b = sqrt(conv_a**2 + conv_c**2) / 2.0
         prim_c = sqrt(conv_a**2 + conv_b**2) / 2.0
         prim_alpha = acos(conv_a**2 / 4.0 / prim_b / prim_c) * todegrees
+        prim_alpha_twin = 180.0 - prim_alpha
         prim_beta = acos(conv_b**2 / 4.0 / prim_a / prim_c) * todegrees
+        prim_beta_twin = 180.0 - prim_beta
         prim_gamma = acos(conv_c**2 / 4.0 / prim_a / prim_b) * todegrees
-
+        prim_gamma_twin = 180.0 - prim_gamma
         old_det = np.linalg.det(cell)
 
-        cell = ORCF_fix_cell(cell, 1e-5)
+        # Fix cell
+        cell = ORCF_fix_cell(cell, REL_TOL)
+
+        # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
         assert np.allclose(
             [a, b, c], [prim_a, prim_b, prim_c], rtol=REL_TOL, atol=ABS_TOL
         )
         assert np.allclose(
-            alpha, prim_alpha, rtol=REL_TOL, atol=ABS_TOL
-        ) or np.allclose(alpha, 180.0 - prim_alpha, rtol=REL_TOL, atol=ABS_TOL)
-        assert np.allclose(beta, prim_beta, rtol=REL_TOL, atol=ABS_TOL) or np.allclose(
-            beta, 180.0 - prim_beta, rtol=REL_TOL, atol=ABS_TOL
-        )
+            alpha, prim_alpha, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE
+        ) or np.allclose(alpha, prim_alpha_twin, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE)
         assert np.allclose(
-            gamma, prim_gamma, rtol=REL_TOL, atol=ABS_TOL
-        ) or np.allclose(gamma, 180.0 - prim_gamma, rtol=REL_TOL, atol=ABS_TOL)
+            beta, prim_beta, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE
+        ) or np.allclose(beta, prim_beta_twin, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE)
+        assert np.allclose(
+            gamma, prim_gamma, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE
+        ) or np.allclose(gamma, prim_gamma_twin, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE)
 
+        # Check that chirality is the same
         assert np.linalg.det(cell) * old_det > 0
 
 
@@ -499,39 +553,47 @@ def test_ORCF_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
     st.integers(min_value=0, max_value=n_order),
 )
 def test_ORCI_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
-    if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
+    if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
+        min(conv_a, conv_b, conv_c) / max(conv_a, conv_b, conv_c) > REL_TOL
+    ):
+        # Prepare cell
         cell = shuffle(rotate(ORCI_cell(conv_a, conv_b, conv_c), r1, r2, r3), order)
-
         conv_a, conv_b, conv_c = sorted([conv_a, conv_b, conv_c])
         prim = sqrt(conv_a**2 + conv_b**2 + conv_c**2) / 2
         prim_alpha = (
             acos((conv_a**2 - conv_b**2 - conv_c**2) / 4.0 / prim**2)
             * todegrees
         )
+        prim_alpha_twin = 180.0 - prim_alpha
         prim_beta = (
             acos((-(conv_a**2) + conv_b**2 - conv_c**2) / 4.0 / prim**2)
             * todegrees
         )
+        prim_beta_twin = 180.0 - prim_beta
         prim_gamma = (
             acos((-(conv_a**2) - conv_b**2 + conv_c**2) / 4.0 / prim**2)
             * todegrees
         )
-
+        prim_gamma_twin = 180.0 - prim_gamma
         old_det = np.linalg.det(cell)
 
-        cell = ORCI_fix_cell(cell, 1e-5)
+        # Fix cell
+        cell = ORCI_fix_cell(cell, REL_TOL)
+
+        # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
         assert np.allclose([a, b, c], [prim, prim, prim], rtol=REL_TOL, atol=ABS_TOL)
         assert np.allclose(
-            alpha, prim_alpha, rtol=REL_TOL, atol=ABS_TOL
-        ) or np.allclose(alpha, 180.0 - prim_alpha, rtol=REL_TOL, atol=ABS_TOL)
-        assert np.allclose(beta, prim_beta, rtol=REL_TOL, atol=ABS_TOL) or np.allclose(
-            beta, 180.0 - prim_beta, rtol=REL_TOL, atol=ABS_TOL
-        )
+            alpha, prim_alpha, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE
+        ) or np.allclose(alpha, prim_alpha_twin, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE)
         assert np.allclose(
-            gamma, prim_gamma, rtol=REL_TOL, atol=ABS_TOL
-        ) or np.allclose(gamma, 180.0 - prim_gamma, rtol=REL_TOL, atol=ABS_TOL)
+            beta, prim_beta, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE
+        ) or np.allclose(beta, prim_beta_twin, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE)
+        assert np.allclose(
+            gamma, prim_gamma, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE
+        ) or np.allclose(gamma, prim_gamma_twin, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE)
 
+        # Check that chirality is the same
         assert np.linalg.det(cell) * old_det > 0
 
 
@@ -545,7 +607,9 @@ def test_ORCI_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
     st.integers(min_value=0, max_value=n_order),
 )
 def test_ORCC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
-    if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
+    if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
+        min(conv_a, conv_b, conv_c) / max(conv_a, conv_b, conv_c) > REL_TOL
+    ):
         cell = shuffle(rotate(ORCC_cell(conv_a, conv_b, conv_c), r1, r2, r3), order)
 
         conv_a, conv_b = sorted([conv_a, conv_b])
@@ -560,7 +624,7 @@ def test_ORCC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
 
         old_det = np.linalg.det(cell)
 
-        cell = ORCC_fix_cell(cell, 1e-5)
+        cell = ORCC_fix_cell(cell, REL_TOL)
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
         assert np.allclose(
             [a, b, c], [prim_a, prim_b, prim_c], rtol=REL_TOL, atol=ABS_TOL
@@ -587,27 +651,32 @@ def test_ORCC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
     st.integers(min_value=0, max_value=n_order),
 )
 def test_HEX_fix_cell(r1, r2, r3, conv_a, conv_c, order):
-    if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
+    if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
+        min(conv_a, conv_c) / max(conv_a, conv_c) > REL_TOL
+    ):
+        # Prepare cell
         cell = shuffle(rotate(HEX_cell(conv_a, conv_c), r1, r2, r3), order)
-
         prim_a = conv_a
         prim_b = conv_a
         prim_c = conv_c
         prim_alpha = 90.0
         prim_beta = 90.0
         prim_gamma = 120.0
-
         old_det = np.linalg.det(cell)
 
-        cell = HEX_fix_cell(cell, 1e-5)
+        # Fix cell
+        cell = HEX_fix_cell(cell, REL_TOL)
+
+        # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
         assert np.allclose(
             [a, b, c], [prim_a, prim_b, prim_c], rtol=REL_TOL, atol=ABS_TOL
         )
-        assert np.allclose(alpha, prim_alpha, rtol=REL_TOL, atol=ABS_TOL)
-        assert np.allclose(beta, prim_beta, rtol=REL_TOL, atol=ABS_TOL)
-        assert np.allclose(gamma, prim_gamma, rtol=REL_TOL, atol=ABS_TOL)
+        assert np.allclose(alpha, prim_alpha, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE)
+        assert np.allclose(beta, prim_beta, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE)
+        assert np.allclose(gamma, prim_gamma, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE)
 
+        # Check that chirality is the same
         assert np.linalg.det(cell) * old_det > 0
 
 
@@ -626,26 +695,29 @@ def test_HEX_fix_cell(r1, r2, r3, conv_a, conv_c, order):
 )
 def test_RHL_fix_cell(r1, r2, r3, conv_a, conv_alpha, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
+        # Prepare cell
         cell = shuffle(rotate(RHL_cell(conv_a, conv_alpha), r1, r2, r3), order)
-
         prim_a = conv_a
         prim_b = conv_a
         prim_c = conv_a
         prim_alpha = conv_alpha
         prim_beta = conv_alpha
         prim_gamma = conv_alpha
-
         old_det = np.linalg.det(cell)
 
-        cell = RHL_fix_cell(cell, 1e-5)
+        # Fix cell
+        cell = RHL_fix_cell(cell, REL_TOL)
+
+        # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
         assert np.allclose(
             [a, b, c], [prim_a, prim_b, prim_c], rtol=REL_TOL, atol=ABS_TOL
         )
-        assert np.allclose(alpha, prim_alpha, rtol=REL_TOL, atol=ABS_TOL)
-        assert np.allclose(beta, prim_beta, rtol=REL_TOL, atol=ABS_TOL)
-        assert np.allclose(gamma, prim_gamma, rtol=REL_TOL, atol=ABS_TOL)
+        assert np.allclose(alpha, prim_alpha, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE)
+        assert np.allclose(beta, prim_beta, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE)
+        assert np.allclose(gamma, prim_gamma, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE)
 
+        # Check that chirality is the same
         assert np.linalg.det(cell) * old_det > 0
 
 
@@ -665,11 +737,13 @@ def test_RHL_fix_cell(r1, r2, r3, conv_a, conv_alpha, order):
     st.integers(min_value=0, max_value=n_order),
 )
 def test_MCL_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
-    if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
+    if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
+        min(conv_a, conv_b, conv_c) / max(conv_a, conv_b, conv_c) > REL_TOL
+    ):
+        # Prepare cell
         cell = shuffle(
             rotate(MCL_cell(conv_a, conv_b, conv_c, conv_alpha), r1, r2, r3), order
         )
-
         prim_a = conv_a
         prim_b, prim_c = sorted([conv_b, conv_c])
         prim_beta = 90.0
@@ -678,20 +752,21 @@ def test_MCL_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
         else:
             prim_alpha = conv_alpha
         prim_gamma = 90.0
-
         old_det = np.linalg.det(cell)
 
-        cell = MCL_fix_cell(cell, 1e-5)
+        # Fix cell
+        cell = MCL_fix_cell(cell, REL_TOL)
+
+        # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
         assert np.allclose(
             [a, b, c], [prim_a, prim_b, prim_c], rtol=REL_TOL, atol=ABS_TOL
         )
-        assert np.allclose(
-            alpha, prim_alpha, rtol=REL_TOL, atol=ABS_TOL
-        ) or np.allclose(alpha, 180.0 - prim_alpha, rtol=REL_TOL, atol=ABS_TOL)
-        assert np.allclose(beta, prim_beta, rtol=REL_TOL, atol=ABS_TOL)
-        assert np.allclose(gamma, prim_gamma, rtol=REL_TOL, atol=ABS_TOL)
+        assert np.allclose(alpha, prim_alpha, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE)
+        assert np.allclose(beta, prim_beta, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE)
+        assert np.allclose(gamma, prim_gamma, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE)
 
+        # Check that chirality is the same
         assert np.linalg.det(cell) * old_det > 0
 
 
@@ -711,11 +786,13 @@ def test_MCL_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
     st.integers(min_value=0, max_value=n_order),
 )
 def test_MCLC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
-    if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
+    if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
+        min(conv_a, conv_b, conv_c) / max(conv_a, conv_b, conv_c) > REL_TOL
+    ):
+        # Prepare cell
         cell = shuffle(
             rotate(MCLC_cell(conv_a, conv_b, conv_c, conv_alpha), r1, r2, r3), order
         )
-
         conv_b, conv_c = sorted([conv_b, conv_c])
         if conv_alpha > 90.0:
             conv_alpha = 180.0 - conv_alpha
@@ -728,30 +805,34 @@ def test_MCLC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
             acos(conv_b * conv_c * cos(conv_alpha * toradians) / 2.0 / prim_b / prim_c)
             * todegrees
         )
+        prim_alpha_twin = 180.0 - prim_alpha
         prim_beta = (
             acos(conv_b * conv_c * cos(conv_alpha * toradians) / 2.0 / prim_a / prim_c)
             * todegrees
         )
+        prim_beta_twin = 180.0 - prim_beta
         prim_gamma = (
             acos((conv_b**2 - conv_a**2) / 4.0 / prim_a / prim_b) * todegrees
         )
-
         old_det = np.linalg.det(cell)
 
-        cell = MCLC_fix_cell(cell, 1e-5)
-        a, b, c, alpha, beta, gamma = param_from_cell(cell)
+        # Fix cell
+        cell = MCLC_fix_cell(cell, REL_TOL)
 
+        # Check results
+        a, b, c, alpha, beta, gamma = param_from_cell(cell)
         assert np.allclose(
             [a, b, c], [prim_a, prim_b, prim_c], rtol=REL_TOL, atol=ABS_TOL
         )
         assert np.allclose(
-            alpha, prim_alpha, rtol=REL_TOL, atol=ABS_TOL
-        ) or np.allclose(alpha, 180.0 - prim_alpha, rtol=REL_TOL, atol=ABS_TOL)
-        assert np.allclose(beta, prim_beta, rtol=REL_TOL, atol=ABS_TOL) or np.allclose(
-            beta, 180.0 - prim_beta, rtol=REL_TOL, atol=ABS_TOL
-        )
-        assert np.allclose(gamma, prim_gamma, rtol=REL_TOL, atol=ABS_TOL)
+            alpha, prim_alpha, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE
+        ) or np.allclose(alpha, prim_alpha_twin, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE)
+        assert np.allclose(
+            beta, prim_beta, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE
+        ) or np.allclose(beta, prim_beta_twin, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE)
+        assert np.allclose(gamma, prim_gamma, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE)
 
+        # Check that chirality is the same
         assert np.linalg.det(cell) * old_det > 0
 
 
@@ -783,7 +864,7 @@ def test_MCLC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
 
 #         old_det = np.linalg.det(cell)
 #         # TODO: Decide the logic of parameter`s order
-#         cell = TRI_fix_cell(cell, 1e-5)
+#         cell = TRI_fix_cell(cell, REL_TOL)
 #         a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
 #         assert np.allclose(
