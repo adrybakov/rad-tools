@@ -852,6 +852,7 @@ def test_MCLC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
 #     r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, conv_beta, conv_gamma, order
 # ):
 #     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL,atol=ABS_TOL):
+#         # Prepare cell
 #         cell = shuffle(
 #             rotate(
 #                 TRI_cell(conv_a, conv_b, conv_c, conv_alpha, conv_beta, conv_gamma),
@@ -861,15 +862,21 @@ def test_MCLC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
 #             ),
 #             order,
 #         )
-
 #         old_det = np.linalg.det(cell)
 #         # TODO: Decide the logic of parameter`s order
+#         # Fix cell
 #         cell = TRI_fix_cell(cell, REL_TOL)
+
+#         # Check results
 #         a, b, c, alpha, beta, gamma = param_from_cell(cell)
-
 #         assert np.allclose(
-#             [a, b, c, alpha, beta, gamma],
-#             [conv_a, conv_b, conv_c, conv_alpha, conv_beta, conv_gamma],
-#         , rtol=REL_TOL,atol=ABS_TOL)
+#             [a, b, c],
+#             [conv_a, conv_b, conv_c],
+#         rtol=REL_TOL, atol=ABS_TOL)
+#         assert np.allclose(
+#             [alpha, beta, gamma],
+#             [conv_alpha, conv_beta, conv_gamma],
+#         rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE)
 
+#         # Check that chirality is the same
 #         assert np.linalg.det(cell) * old_det > 0
