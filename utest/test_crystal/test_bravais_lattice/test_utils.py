@@ -6,12 +6,28 @@ from radtools.crystal.bravais_lattice.utils import (
 
 from radtools.routines import volume
 
-from radtools.crystal.constants import BRAVAIS_LATTICE_VARIATIONS
+from radtools.crystal.lattice import Lattice
+
+from radtools.crystal.constants import (
+    BRAVAIS_LATTICE_VARIATIONS,
+    MAX_LENGTH,
+    MIN_LENGTH,
+    MIN_ANGLE,
+    REL_TOL,
+    ABS_TOL,
+)
 
 import pytest
-from hypothesis import given, example, strategies as st
+from hypothesis import given, example, strategies as st, settings
 from hypothesis.extra.numpy import arrays as harrays
 import numpy as np
+
+from scipy.spatial.transform import Rotation
+
+
+from math import pi
+
+from radtools.routines import parallelepiped_check, cell_from_param
 
 
 @pytest.mark.parametrize(
@@ -32,8 +48,55 @@ def test_lattice_example_error(wrong_name):
             lattice_example(wrong_name)
 
 
-@given(harrays(float, (3, 3)))
-def test_bravais_lattice_from_cell(cell):
-    if np.linalg.det(cell) != 0:
-        new_cell = bravais_lattice_from_cell(cell)
-        assert np.allclose(volume(cell), volume(new_cell))
+n_order = 5
+
+
+def shuffle(cell, order):
+    if order == 0:
+        return [cell[2], cell[0], cell[1]]
+    if order == 1:
+        return [cell[1], cell[2], cell[0]]
+    if order == 2:
+        return cell
+    if order == 3:
+        return [cell[1], cell[0], cell[2]]
+    if order == 4:
+        return [cell[2], cell[1], cell[0]]
+    if order == 5:
+        return [cell[0], cell[2], cell[1]]
+
+
+def rotate(cell, r1, r2, r3):
+    R = Rotation.from_rotvec([r1, r2, r3]).as_matrix()
+    return R.T @ cell
+
+
+@settings(deadline=1000)
+@given(
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
+    st.integers(min_value=0, max_value=n_order),
+)
+def test_bravais_lattice_from_cell(r1, r2, r3, a, b, c, alpha, beta, gamma, order):
+    if (
+        parallelepiped_check(a, b, c, alpha, beta, gamma)
+        and min(a, b, c) / max(a, b, c) > REL_TOL
+    ):
+        cell = shuffle(
+            rotate(cell_from_param(a, b, c, alpha, beta, gamma), r1, r2, r3), order
+        )
+        lattice = Lattice(cell)
+        new_lattice = bravais_lattice_from_cell(cell)
+        assert np.allclose(
+            lattice.unit_cell_volume,
+            new_lattice.unit_cell_volume,
+            rtol=REL_TOL,
+            atol=ABS_TOL,
+        )

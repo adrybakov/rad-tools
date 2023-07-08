@@ -30,7 +30,7 @@ def niggli(
     eps_rel=1e-5,
     verbose=False,
     return_cell=False,
-    max_iter=100000,
+    max_iter=10000,
 ):
     r"""
     Computes Niggli matrix form.

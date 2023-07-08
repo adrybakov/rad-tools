@@ -166,7 +166,7 @@ class Crystal(Lattice):
             raise TypeError(
                 "New lattice is not a lattice. " + f"Received {type(new_lattice)}."
             )
-        self.super().__init__(new_lattice.cell)
+        super().__init__(new_lattice.cell)
 
     def add_atom(self, new_atom: Atom, relative=False):
         r"""

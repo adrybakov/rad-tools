@@ -417,9 +417,10 @@ def TRI_cell(
 
 
 # Cell fixers
-def fix_cell(cell, correct_lattice_type, eps=REL_TOL):
+def fix_cell(cell, correct_lattice_type, eps_rel=REL_TOL):
     r"""
-    Analyse arbitrary cell and redefine vectors if required to satisfy the lattice conditions.
+    Analyse arbitrary cell and redefine it
+    if required to ensure the unique choice of lattice vectors.
 
     See :ref:`lattice` for the details.
 
@@ -427,7 +428,7 @@ def fix_cell(cell, correct_lattice_type, eps=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float, default ``REL_TOL``
+    eps_rel : float, default ``REL_TOL``
         Tolerance for numerical comparison.
     correct_lattice_type : str
         Correct lattice type.
@@ -456,10 +457,10 @@ def fix_cell(cell, correct_lattice_type, eps=REL_TOL):
         "TRI": TRI_fix_cell,
     }
 
-    return functions[correct_lattice_type](cell, eps)
+    return functions[correct_lattice_type](cell, eps_rel)
 
 
-def CUB_fix_cell(cell, eps=REL_TOL):
+def CUB_fix_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the CUB lattice conditions.
 
@@ -469,6 +470,9 @@ def CUB_fix_cell(cell, eps=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
+    eps_rel : float, default ``REL_TOL``
+        Relative tolerance for numerical comparison.
+        Ignored here, but preserved for the unification of input.
 
     Returns
     -------
@@ -479,7 +483,7 @@ def CUB_fix_cell(cell, eps=REL_TOL):
     return np.array(cell)
 
 
-def FCC_fix_cell(cell, eps=REL_TOL):
+def FCC_fix_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the FCC lattice conditions.
 
@@ -489,6 +493,9 @@ def FCC_fix_cell(cell, eps=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
+    eps_rel : float, default ``REL_TOL``
+        Relative tolerance for numerical comparison.
+        Ignored here, but preserved for the unification of input.
 
     Returns
     -------
@@ -499,7 +506,7 @@ def FCC_fix_cell(cell, eps=REL_TOL):
     return np.array(cell)
 
 
-def BCC_fix_cell(cell, eps=REL_TOL):
+def BCC_fix_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the BCC lattice conditions.
 
@@ -509,6 +516,9 @@ def BCC_fix_cell(cell, eps=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
+    eps_rel : float, default ``REL_TOL``
+        Relative tolerance for numerical comparison.
+        Ignored here, but preserved for the unification of input.
 
     Returns
     -------
@@ -519,7 +529,7 @@ def BCC_fix_cell(cell, eps=REL_TOL):
     return np.array(cell)
 
 
-def TET_fix_cell(cell, eps=REL_TOL):
+def TET_fix_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the TET lattice conditions.
 
@@ -529,7 +539,7 @@ def TET_fix_cell(cell, eps=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float, default ``REL_TOL``
+    eps_rel : float, default ``REL_TOL``
         Relative tolerance for numerical comparison.
 
     Returns
@@ -540,7 +550,7 @@ def TET_fix_cell(cell, eps=REL_TOL):
 
     cell = np.array(cell)
 
-    eps = eps * volume(cell) ** (1.0 / 3.0)
+    eps = eps_rel * volume(cell) ** (1.0 / 3.0)
 
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
@@ -552,7 +562,7 @@ def TET_fix_cell(cell, eps=REL_TOL):
     return cell
 
 
-def BCT_fix_cell(cell, eps=REL_TOL):
+def BCT_fix_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the BCT lattice conditions.
 
@@ -562,7 +572,7 @@ def BCT_fix_cell(cell, eps=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float, default ``REL_TOL``
+    eps_rel : float, default ``REL_TOL``
         Tolerance for numerical comparison.
 
     Returns
@@ -572,7 +582,7 @@ def BCT_fix_cell(cell, eps=REL_TOL):
     """
     cell = np.array(cell)
 
-    eps = eps * volume(cell) ** (1.0 / 3.0)
+    eps = eps_rel * volume(cell) ** (1.0 / 3.0)
 
     a, b, c, alpha, beta, gamma = param_from_cell(
         TRANSFORM_TO_CONVENTIONAL["BCT"] @ cell
@@ -586,7 +596,7 @@ def BCT_fix_cell(cell, eps=REL_TOL):
     return cell
 
 
-def ORC_fix_cell(cell, eps=REL_TOL):
+def ORC_fix_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORC lattice conditions.
 
@@ -596,7 +606,7 @@ def ORC_fix_cell(cell, eps=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float, default ``REL_TOL``
+    eps_rel : float, default ``REL_TOL``
         Tolerance for numerical comparison.
 
     Returns
@@ -605,7 +615,7 @@ def ORC_fix_cell(cell, eps=REL_TOL):
         Primitive unit cell.
     """
     cell = np.array(cell)
-    eps = eps * volume(cell) ** (1.0 / 3.0)
+    eps = eps_rel * volume(cell) ** (1.0 / 3.0)
 
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
@@ -622,7 +632,7 @@ def ORC_fix_cell(cell, eps=REL_TOL):
     return cell
 
 
-def ORCF_fix_cell(cell, eps=REL_TOL):
+def ORCF_fix_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORCF lattice conditions.
 
@@ -632,7 +642,7 @@ def ORCF_fix_cell(cell, eps=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float, default ``REL_TOL``
+    eps_rel : float, default ``REL_TOL``
         Tolerance for numerical comparison.
 
     Returns
@@ -641,7 +651,7 @@ def ORCF_fix_cell(cell, eps=REL_TOL):
         Primitive unit cell.
     """
     cell = np.array(cell)
-    eps = eps * volume(cell) ** (1.0 / 3.0)
+    eps = eps_rel * volume(cell) ** (1.0 / 3.0)
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
     if compare_numerically(a, "<", b, eps):
@@ -667,7 +677,7 @@ def ORCF_fix_cell(cell, eps=REL_TOL):
     return cell
 
 
-def ORCI_fix_cell(cell, eps=REL_TOL):
+def ORCI_fix_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORCI lattice conditions.
 
@@ -677,7 +687,7 @@ def ORCI_fix_cell(cell, eps=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float, default ``REL_TOL``
+    eps_rel : float, default ``REL_TOL``
         Tolerance for numerical comparison.
 
     Returns
@@ -687,7 +697,7 @@ def ORCI_fix_cell(cell, eps=REL_TOL):
     """
 
     cell = np.array(cell)
-    eps = eps * volume(cell) ** (1.0 / 3.0)
+    eps = eps_rel * volume(cell) ** (1.0 / 3.0)
     a, b, c, alpha, beta, gamma = param_from_cell(
         TRANSFORM_TO_CONVENTIONAL["ORCI"] @ cell
     )
@@ -715,7 +725,7 @@ def ORCI_fix_cell(cell, eps=REL_TOL):
     return cell
 
 
-def ORCC_fix_cell(cell, eps=REL_TOL):
+def ORCC_fix_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORCC lattice conditions.
 
@@ -725,7 +735,7 @@ def ORCC_fix_cell(cell, eps=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float, default ``REL_TOL``
+    eps_rel : float, default ``REL_TOL``
         Tolerance for numerical comparison.
 
     Returns
@@ -735,7 +745,7 @@ def ORCC_fix_cell(cell, eps=REL_TOL):
     """
 
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
-    eps = eps * volume(cell) ** (1.0 / 3.0)
+    eps = eps_rel * volume(cell) ** (1.0 / 3.0)
 
     # a == c
     if compare_numerically(a, "==", c, eps):
@@ -759,7 +769,7 @@ def ORCC_fix_cell(cell, eps=REL_TOL):
     return cell
 
 
-def HEX_fix_cell(cell, eps=REL_TOL):
+def HEX_fix_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the HEX lattice conditions.
 
@@ -769,8 +779,9 @@ def HEX_fix_cell(cell, eps=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float, default ``REL_TOL``
-        Tolerance for numerical comparison.
+    eps_rel : float, default ``REL_TOL``
+        Relative tolerance for numerical comparison.
+        Ignored here, but preserved for the unification of input.
 
     Returns
     -------
@@ -790,7 +801,7 @@ def HEX_fix_cell(cell, eps=REL_TOL):
     return cell
 
 
-def RHL_fix_cell(cell, eps=REL_TOL):
+def RHL_fix_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the RHL lattice conditions.
 
@@ -800,6 +811,9 @@ def RHL_fix_cell(cell, eps=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
+    eps_rel : float, default ``REL_TOL``
+        Relative tolerance for numerical comparison.
+        Ignored here, but preserved for the unification of input.
 
     Returns
     -------
@@ -810,7 +824,7 @@ def RHL_fix_cell(cell, eps=REL_TOL):
     return np.array(cell)
 
 
-def MCL_fix_cell(cell, eps=REL_TOL):
+def MCL_fix_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the MCL lattice conditions.
 
@@ -820,7 +834,7 @@ def MCL_fix_cell(cell, eps=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float, default ``REL_TOL``
+    eps_rel : float, default ``REL_TOL``
         Tolerance for numerical comparison.
 
     Returns
@@ -830,7 +844,7 @@ def MCL_fix_cell(cell, eps=REL_TOL):
     """
 
     cell = np.array(cell)
-    eps = eps * volume(cell) ** (1.0 / 3.0)
+    eps = eps_rel * volume(cell) ** (1.0 / 3.0)
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
     # beta != 90
@@ -855,7 +869,7 @@ def MCL_fix_cell(cell, eps=REL_TOL):
     return cell
 
 
-def MCLC_fix_cell(cell, eps=REL_TOL):
+def MCLC_fix_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the MCLC lattice conditions.
 
@@ -865,7 +879,7 @@ def MCLC_fix_cell(cell, eps=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float, default ``REL_TOL``
+    eps_rel : float, default ``REL_TOL``
         Tolerance for numerical comparison.
 
     Returns
@@ -874,7 +888,7 @@ def MCLC_fix_cell(cell, eps=REL_TOL):
         Primitive unit cell.
     """
 
-    eps = eps * volume(cell) ** (1.0 / 3.0)
+    eps = eps_rel * volume(cell) ** (1.0 / 3.0)
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
     # a == c
@@ -907,7 +921,7 @@ def MCLC_fix_cell(cell, eps=REL_TOL):
 
 
 # TODO
-def TRI_fix_cell(cell, eps=REL_TOL, resiprocal=False):
+def TRI_fix_cell(cell, eps_rel=REL_TOL, resiprocal=False):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the TRI lattice conditions.
 
@@ -917,7 +931,7 @@ def TRI_fix_cell(cell, eps=REL_TOL, resiprocal=False):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps : float, default ``REL_TOL``
+    eps_rel : float, default ``REL_TOL``
         Tolerance for numerical comparison.
     resiprocal : bool, default False
         Whether to interpret input as reciprocal cell.
@@ -927,6 +941,6 @@ def TRI_fix_cell(cell, eps=REL_TOL, resiprocal=False):
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
     """
-    eps = eps * volume(cell) ** (1.0 / 3.0)
+    eps = eps_rel * volume(cell) ** (1.0 / 3.0)
 
     return np.array(cell)

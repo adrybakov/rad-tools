@@ -824,7 +824,7 @@ class Lattice:
         See: |PearsonSymbol|_
         """
 
-        return PEARSON_SYMBOLS[self.type]
+        return PEARSON_SYMBOLS[self.type()]
 
     @property
     def crystal_family(self):
@@ -888,7 +888,7 @@ class Lattice:
         if eps_rel is None:
             eps_rel = self.eps_rel
 
-        return self.variation()
+        return self.variation
 
     def lattice_points(self, relative=False, reciprocal=False, normalize=False):
         r"""
