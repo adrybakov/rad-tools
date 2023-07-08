@@ -4,7 +4,7 @@ from typing import Union
 import numpy as np
 
 from radtools.crystal.atom import Atom
-from radtools.crystal.bravais_lattice import bravais_lattice_from_cell
+
 from radtools.crystal.lattice import Lattice
 from radtools.crystal.properties import dipole_dipole_energy, dipole_dipole_interaction
 from radtools.routines import absolute_to_relative
@@ -374,26 +374,11 @@ class Crystal(Lattice):
     def find_primitive_cell(self):
         r"""
         Detect primitive cell.
+
+        Before the detection of the primitive cell the corresponding bravais lattice type may not
+        be correct, since it is determined with the current cell, which is not necessary primitive one.
         """
-        pass
-
-    def identify(self, find_primitive=True, eps_rel=1e-5):
-        r"""
-        Identify Bravais lattice type.
-
-        Parameters
-        ----------
-        find_primitive : bool, default True
-            Whether to find primitive cell before identification.
-        eps_rel : float, default 1e-5
-            Relative tolerance for the identification.
-        """
-
-        # Define primitive cell
-        if find_primitive:
-            self.find_primitive_cell()
-
-        self.lattice = bravais_lattice_from_cell(self.lattice.cell, eps_rel=eps_rel)
+        raise NotImplementedError
 
     def mag_dipdip_energy(self, na, nb, nc, progress_bar=True):
         r"""

@@ -1,42 +1,43 @@
 # NOTE Relative size of lattice parameters have to be consistent with the REL_TOL, in order for the tests to be correct.
 
-from math import acos, cos, sin, sqrt, pi
+from math import acos, cos, sqrt, pi
 
 import numpy as np
-import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 from scipy.spatial.transform import Rotation
 
-from radtools.crystal.bravais_lattice.cells import (
-    BCC_cell,
-    BCC_fix_cell,
-    BCT_cell,
-    BCT_fix_cell,
-    CUB_cell,
-    CUB_fix_cell,
-    FCC_cell,
-    FCC_fix_cell,
-    HEX_cell,
-    HEX_fix_cell,
-    MCL_cell,
-    MCL_fix_cell,
-    MCLC_cell,
-    MCLC_fix_cell,
-    ORC_cell,
-    ORC_fix_cell,
-    ORCC_cell,
-    ORCC_fix_cell,
-    ORCF_cell,
-    ORCF_fix_cell,
-    ORCI_cell,
-    ORCI_fix_cell,
-    RHL_cell,
-    RHL_fix_cell,
-    TET_cell,
-    TET_fix_cell,
-    TRI_cell,
-    TRI_fix_cell,
+from radtools.crystal.bravais_lattice.unify import (
+    BCC_unify_cell,
+    BCT_unify_cell,
+    CUB_unify_cell,
+    FCC_unify_cell,
+    HEX_unify_cell,
+    MCL_unify_cell,
+    MCLC_unify_cell,
+    ORC_unify_cell,
+    ORCC_unify_cell,
+    ORCF_unify_cell,
+    ORCI_unify_cell,
+    RHL_unify_cell,
+    TET_unify_cell,
+    TRI_unify_cell,
+)
+from radtools.crystal.bravais_lattice.constructor import (
+    BCC,
+    BCT,
+    CUB,
+    FCC,
+    HEX,
+    MCL,
+    MCLC,
+    ORC,
+    ORCC,
+    ORCF,
+    ORCI,
+    RHL,
+    TET,
+    TRI,
 )
 from radtools.crystal.constants import (
     ABS_TOL,
@@ -49,194 +50,6 @@ from radtools.crystal.constants import (
 )
 from radtools.routines import param_from_cell, todegrees, toradians
 
-
-@given(st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH))
-def test_CUB_cell(a):
-    cell = CUB_cell(a)
-    assert np.allclose(cell, np.eye(3) * a, rtol=REL_TOL, atol=ABS_TOL)
-
-
-@given(st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH))
-def test_FCC_cell(a):
-    cell = FCC_cell(a)
-    assert np.allclose(
-        cell, (np.ones((3, 3)) - np.eye(3)) * a / 2, rtol=REL_TOL, atol=ABS_TOL
-    )
-
-
-@given(st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH))
-def test_BCC_cell(a):
-    cell = BCC_cell(a)
-    assert np.allclose(
-        cell, (np.ones((3, 3)) - 2 * np.eye(3)) * a / 2, rtol=REL_TOL, atol=ABS_TOL
-    )
-
-
-@given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-)
-def test_TET_cell(a, c):
-    cell = TET_cell(a, c)
-    assert np.allclose(cell, np.diag([a, a, c]), rtol=REL_TOL, atol=ABS_TOL)
-
-
-@given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-)
-def test_BCT_cell(a, c):
-    cell = BCT_cell(a, c)
-    correct_cell = (np.ones((3, 3)) - 2 * np.eye(3)) / 2
-    correct_cell[:, :2] *= a
-    correct_cell[:, 2] *= c
-    assert np.allclose(cell, correct_cell, rtol=REL_TOL, atol=ABS_TOL)
-
-
-@given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-)
-def test_ORC_cell(a, b, c):
-    cell = ORC_cell(a, b, c)
-    a, b, c = sorted([a, b, c])
-    assert np.allclose(cell, np.diag([a, b, c]), rtol=REL_TOL, atol=ABS_TOL)
-
-
-@given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-)
-def test_ORCF_cell(a, b, c):
-    cell = ORCF_cell(a, b, c)
-    a, b, c = sorted([a, b, c])
-    correct_cell = (np.ones((3, 3)) - np.eye(3)) / 2
-    correct_cell[:, 0] *= a
-    correct_cell[:, 1] *= b
-    correct_cell[:, 2] *= c
-    assert np.allclose(cell, correct_cell, rtol=REL_TOL, atol=ABS_TOL)
-
-
-@given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-)
-def test_ORCI_cell(a, b, c):
-    cell = ORCI_cell(a, b, c)
-    a, b, c = sorted([a, b, c])
-    correct_cell = (np.ones((3, 3)) - 2 * np.eye(3)) / 2
-    correct_cell[:, 0] *= a
-    correct_cell[:, 1] *= b
-    correct_cell[:, 2] *= c
-    assert np.allclose(cell, correct_cell, rtol=REL_TOL, atol=ABS_TOL)
-
-
-@given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-)
-def test_ORCC_cell(a, b, c):
-    cell = ORCC_cell(a, b, c)
-    a, b = sorted([a, b])
-    correct_cell = np.array([[1, -1, 0], [1, 1, 0], [0, 0, 2]]) / 2
-    correct_cell[:, 0] *= a
-    correct_cell[:, 1] *= b
-    correct_cell[:, 2] *= c
-    assert np.allclose(cell, correct_cell, rtol=REL_TOL, atol=ABS_TOL)
-
-
-@given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-)
-def test_HEX_cell(a, c):
-    cell = HEX_cell(a, c)
-    correct_cell = np.array(
-        [[a / 2, -a * sqrt(3) / 2, 0], [a / 2, a * sqrt(3) / 2, 0], [0, 0, c]]
-    )
-    assert np.allclose(cell, correct_cell, rtol=REL_TOL, atol=ABS_TOL)
-
-
-@given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_ANGLE, max_value=120.0 - MIN_ANGLE),
-)
-def test_RHL_cell(a, alpha):
-    cell = RHL_cell(a, alpha)
-    alpha *= toradians
-    correct_cell = np.array(
-        [
-            [a * cos(alpha / 2), -a * sin(alpha / 2), 0],
-            [a * cos(alpha / 2), a * sin(alpha / 2), 0],
-            [
-                a * cos(alpha) / cos(alpha / 2),
-                0,
-                a * sqrt(1 - cos(alpha) ** 2 / cos(alpha / 2) ** 2),
-            ],
-        ]
-    )
-    assert np.allclose(cell, correct_cell, rtol=REL_TOL, atol=ABS_TOL)
-
-    with pytest.raises(ValueError):
-        RHL_cell(a, 120)
-
-
-@given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
-)
-def test_MCL_cell(a, b, c, alpha):
-    cell = MCL_cell(a, b, c, alpha)
-    if alpha > 90:
-        alpha = 180 - alpha
-    alpha *= toradians
-    b, c = sorted([b, c])
-    correct_cell = np.array(
-        [
-            [a, 0, 0],
-            [0, b, 0],
-            [0, c * cos(alpha), c * sin(alpha)],
-        ]
-    )
-    assert np.allclose(cell, correct_cell, rtol=REL_TOL, atol=ABS_TOL)
-
-
-@given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
-)
-def test_MCLC_cell(a, b, c, alpha):
-    cell = MCLC_cell(a, b, c, alpha)
-    if alpha > 90:
-        alpha = 180.0 - alpha
-    alpha *= toradians
-    b, c = sorted([b, c])
-    correct_cell = np.array(
-        [
-            [a / 2, b / 2, 0],
-            [-a / 2, b / 2, 0],
-            [0, c * cos(alpha), c * sin(alpha)],
-        ]
-    )
-    assert np.allclose(cell, correct_cell, rtol=REL_TOL, atol=ABS_TOL)
-
-
-# # TODO Test trigonal
-# full_set = []
-
-
-# @pytest.mark.parametrize("a, b, c, alpha, beta, gamma, reciprocal", full_set)
-# def test_TRI_cell(a, b, c, alpha, beta, gamma, reciprocal):
-#     cell = TRI_cell(a, b, c, alpha, beta, gamma, reciprocal)
-#     pass
 
 n_order = 5
 
@@ -268,14 +81,14 @@ def rotate(cell, r1, r2, r3):
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_CUB_fix_cell(r1, r2, r3, conv_a, order):
+def test_CUB_unify_cell(r1, r2, r3, conv_a, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
         # Prepare cell
-        cell = shuffle(rotate(CUB_cell(conv_a), r1, r2, r3), order)
+        cell = shuffle(rotate(CUB(conv_a, return_cell=True), r1, r2, r3), order)
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = CUB_fix_cell(cell, REL_TOL)
+        cell = CUB_unify_cell(cell, REL_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -298,15 +111,15 @@ def test_CUB_fix_cell(r1, r2, r3, conv_a, order):
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_FCC_fix_cell(r1, r2, r3, conv_a, order):
+def test_FCC_unify_cell(r1, r2, r3, conv_a, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
         # Prepare cell
-        cell = shuffle(rotate(FCC_cell(conv_a), r1, r2, r3), order)
+        cell = shuffle(rotate(FCC(conv_a, return_cell=True), r1, r2, r3), order)
         prim_a = conv_a * sqrt(2) / 2
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = FCC_fix_cell(cell, REL_TOL)
+        cell = FCC_unify_cell(cell, REL_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -331,16 +144,16 @@ def test_FCC_fix_cell(r1, r2, r3, conv_a, order):
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_BCC_fix_cell(r1, r2, r3, conv_a, order):
+def test_BCC_unify_cell(r1, r2, r3, conv_a, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
         # Prepare cell
-        cell = shuffle(rotate(BCC_cell(conv_a), r1, r2, r3), order)
+        cell = shuffle(rotate(BCC(conv_a, return_cell=True), r1, r2, r3), order)
         angle = acos(-1 / 3) * todegrees
         prim_a = conv_a * sqrt(3) / 2
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = BCC_fix_cell(cell, REL_TOL)
+        cell = BCC_unify_cell(cell, REL_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -366,17 +179,17 @@ def test_BCC_fix_cell(r1, r2, r3, conv_a, order):
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_TET_fix_cell(r1, r2, r3, conv_a, conv_c, order):
+def test_TET_unify_cell(r1, r2, r3, conv_a, conv_c, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
         # Prepare cell
-        cell = shuffle(rotate(TET_cell(conv_a, conv_c), r1, r2, r3), order)
+        cell = shuffle(rotate(TET(conv_a, conv_c, return_cell=True), r1, r2, r3), order)
         angle = 90
         prim_a = conv_a
         prim_c = conv_c
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = TET_fix_cell(cell, REL_TOL)
+        cell = TET_unify_cell(cell, REL_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -405,20 +218,20 @@ def test_TET_fix_cell(r1, r2, r3, conv_a, conv_c, order):
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_BCT_fix_cell(r1, r2, r3, conv_a, conv_c, order):
+def test_BCT_unify_cell(r1, r2, r3, conv_a, conv_c, order):
     if (
         not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL)
         and min(conv_a, conv_c) / max(conv_a, conv_c) > REL_TOL
     ):
         # Prepare cell
-        cell = shuffle(rotate(BCT_cell(conv_a, conv_c), r1, r2, r3), order)
+        cell = shuffle(rotate(BCT(conv_a, conv_c, return_cell=True), r1, r2, r3), order)
         prim = sqrt(2 * conv_a**2 + conv_c**2) / 2
         angle12 = acos((conv_c**2 - 2 * conv_a**2) / 4 / prim**2)
         angle = acos(-(conv_c**2) / 4 / prim**2)
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = BCT_fix_cell(cell, REL_TOL)
+        cell = BCT_unify_cell(cell, REL_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -446,19 +259,21 @@ def test_BCT_fix_cell(r1, r2, r3, conv_a, conv_c, order):
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_ORC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
+def test_ORC_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
     if (
         not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL)
         and min(conv_a, conv_b, conv_c) / max(conv_a, conv_b, conv_c) > REL_TOL
     ):
         # Prepare cell
-        cell = shuffle(rotate(ORC_cell(conv_a, conv_b, conv_c), r1, r2, r3), order)
+        cell = shuffle(
+            rotate(ORC(conv_a, conv_b, conv_c, return_cell=True), r1, r2, r3), order
+        )
         prim_a, prim_b, prim_c = sorted([conv_a, conv_b, conv_c])
         angle = 90
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = ORC_fix_cell(cell, REL_TOL)
+        cell = ORC_unify_cell(cell, REL_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -485,12 +300,14 @@ def test_ORC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_ORCF_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
+def test_ORCF_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
         min(conv_a, conv_b, conv_c) / max(conv_a, conv_b, conv_c) > REL_TOL
     ):
         # Prepare cell
-        cell = shuffle(rotate(ORCF_cell(conv_a, conv_b, conv_c), r1, r2, r3), order)
+        cell = shuffle(
+            rotate(ORCF(conv_a, conv_b, conv_c, return_cell=True), r1, r2, r3), order
+        )
         conv_a, conv_b, conv_c = sorted([conv_a, conv_b, conv_c])
         prim_a = sqrt(conv_b**2 + conv_c**2) / 2.0
         prim_b = sqrt(conv_a**2 + conv_c**2) / 2.0
@@ -504,7 +321,7 @@ def test_ORCF_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = ORCF_fix_cell(cell, REL_TOL)
+        cell = ORCF_unify_cell(cell, REL_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -534,12 +351,14 @@ def test_ORCF_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_ORCI_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
+def test_ORCI_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
         min(conv_a, conv_b, conv_c) / max(conv_a, conv_b, conv_c) > REL_TOL
     ):
         # Prepare cell
-        cell = shuffle(rotate(ORCI_cell(conv_a, conv_b, conv_c), r1, r2, r3), order)
+        cell = shuffle(
+            rotate(ORCI(conv_a, conv_b, conv_c, return_cell=True), r1, r2, r3), order
+        )
         conv_a, conv_b, conv_c = sorted([conv_a, conv_b, conv_c])
         prim = sqrt(conv_a**2 + conv_b**2 + conv_c**2) / 2
         prim_alpha = (
@@ -560,7 +379,7 @@ def test_ORCI_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = ORCI_fix_cell(cell, REL_TOL)
+        cell = ORCI_unify_cell(cell, REL_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -588,11 +407,13 @@ def test_ORCI_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_ORCC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
+def test_ORCC_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
         min(conv_a, conv_b, conv_c) / max(conv_a, conv_b, conv_c) > REL_TOL
     ):
-        cell = shuffle(rotate(ORCC_cell(conv_a, conv_b, conv_c), r1, r2, r3), order)
+        cell = shuffle(
+            rotate(ORCC(conv_a, conv_b, conv_c, return_cell=True), r1, r2, r3), order
+        )
 
         conv_a, conv_b = sorted([conv_a, conv_b])
         prim_a = sqrt(conv_a**2 + conv_b**2) / 2
@@ -606,7 +427,7 @@ def test_ORCC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
 
         old_det = np.linalg.det(cell)
 
-        cell = ORCC_fix_cell(cell, REL_TOL)
+        cell = ORCC_unify_cell(cell, REL_TOL)
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
         assert np.allclose(
             [a, b, c], [prim_a, prim_b, prim_c], rtol=REL_TOL, atol=ABS_TOL
@@ -632,12 +453,12 @@ def test_ORCC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_HEX_fix_cell(r1, r2, r3, conv_a, conv_c, order):
+def test_HEX_unify_cell(r1, r2, r3, conv_a, conv_c, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
         min(conv_a, conv_c) / max(conv_a, conv_c) > REL_TOL
     ):
         # Prepare cell
-        cell = shuffle(rotate(HEX_cell(conv_a, conv_c), r1, r2, r3), order)
+        cell = shuffle(rotate(HEX(conv_a, conv_c, return_cell=True), r1, r2, r3), order)
         prim_a = conv_a
         prim_b = conv_a
         prim_c = conv_c
@@ -647,7 +468,7 @@ def test_HEX_fix_cell(r1, r2, r3, conv_a, conv_c, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = HEX_fix_cell(cell, REL_TOL)
+        cell = HEX_unify_cell(cell, REL_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -670,10 +491,12 @@ def test_HEX_fix_cell(r1, r2, r3, conv_a, conv_c, order):
     st.floats(min_value=MIN_ANGLE, max_value=120.0 - MIN_ANGLE),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_RHL_fix_cell(r1, r2, r3, conv_a, conv_alpha, order):
+def test_RHL_unify_cell(r1, r2, r3, conv_a, conv_alpha, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
         # Prepare cell
-        cell = shuffle(rotate(RHL_cell(conv_a, conv_alpha), r1, r2, r3), order)
+        cell = shuffle(
+            rotate(RHL(conv_a, conv_alpha, return_cell=True), r1, r2, r3), order
+        )
         prim_a = conv_a
         prim_b = conv_a
         prim_c = conv_a
@@ -683,7 +506,7 @@ def test_RHL_fix_cell(r1, r2, r3, conv_a, conv_alpha, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = RHL_fix_cell(cell, REL_TOL)
+        cell = RHL_unify_cell(cell, REL_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -708,13 +531,16 @@ def test_RHL_fix_cell(r1, r2, r3, conv_a, conv_alpha, order):
     st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_MCL_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
+def test_MCL_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
         min(conv_a, conv_b, conv_c) / max(conv_a, conv_b, conv_c) > REL_TOL
     ):
         # Prepare cell
         cell = shuffle(
-            rotate(MCL_cell(conv_a, conv_b, conv_c, conv_alpha), r1, r2, r3), order
+            rotate(
+                MCL(conv_a, conv_b, conv_c, conv_alpha, return_cell=True), r1, r2, r3
+            ),
+            order,
         )
         prim_a = conv_a
         prim_b, prim_c = sorted([conv_b, conv_c])
@@ -727,7 +553,7 @@ def test_MCL_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = MCL_fix_cell(cell, REL_TOL)
+        cell = MCL_unify_cell(cell, REL_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -752,13 +578,16 @@ def test_MCL_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
     st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_MCLC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
+def test_MCLC_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
         min(conv_a, conv_b, conv_c) / max(conv_a, conv_b, conv_c) > REL_TOL
     ):
         # Prepare cell
         cell = shuffle(
-            rotate(MCLC_cell(conv_a, conv_b, conv_c, conv_alpha), r1, r2, r3), order
+            rotate(
+                MCLC(conv_a, conv_b, conv_c, conv_alpha, return_cell=True), r1, r2, r3
+            ),
+            order,
         )
         conv_b, conv_c = sorted([conv_b, conv_c])
         if conv_alpha > 90.0:
@@ -784,7 +613,7 @@ def test_MCLC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = MCLC_fix_cell(cell, REL_TOL)
+        cell = MCLC_unify_cell(cell, REL_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -815,14 +644,14 @@ def test_MCLC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
 #     st.floats(min_value=0.1, max_value=179.9),
 #     st.integers(min_value=0, max_value=n_order),
 # )
-# def test_TRI_fix_cell(
+# def test_TRI_unify_cell(
 #     r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, conv_beta, conv_gamma, order
 # ):
 #     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL,atol=ABS_TOL):
 #         # Prepare cell
 #         cell = shuffle(
 #             rotate(
-#                 TRI_cell(conv_a, conv_b, conv_c, conv_alpha, conv_beta, conv_gamma),
+#                 TRI(conv_a, conv_b, conv_c, conv_alpha, conv_beta, conv_gamma, return_cell = True),
 #                 r1,
 #                 r2,
 #                 r3,
@@ -832,7 +661,7 @@ def test_MCLC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
 #         old_det = np.linalg.det(cell)
 #         # TODO: Decide the logic of parameter`s order
 #         # Fix cell
-#         cell = TRI_fix_cell(cell, REL_TOL)
+#         cell = TRI_unify_cell(cell, REL_TOL)
 
 #         # Check results
 #         a, b, c, alpha, beta, gamma = param_from_cell(cell)

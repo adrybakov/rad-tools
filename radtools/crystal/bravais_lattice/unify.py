@@ -1,423 +1,14 @@
-from math import cos, pi, sin, sqrt, tan
-
 import numpy as np
 
-from radtools.routines import (
-    param_from_cell,
-    toradians,
-    compare_numerically,
-    cell_from_param,
-    reciprocal_cell,
-)
+from radtools.routines import param_from_cell, compare_numerically
 from radtools.crystal.constants import TRANSFORM_TO_CONVENTIONAL, REL_TOL, ABS_TOL_ANGLE
 from radtools.routines import volume
 
-__all__ = ["fix_cell"]
+__all__ = ["unify_cell"]
 
 
-# Primitive cell`s construction
-def CUB_cell(a: float):
-    r"""
-    Construct cubic primitive cell.
-
-    See :ref:`lattice-cub` for the definition of primitive and conventional cells.
-
-    Parameters
-    ----------
-    a : float or int
-        Length of the all three lattice vectors of the conventional cell.
-
-    Returns
-    -------
-    prim_cell : (3,3) :numpy:`ndarray`
-        Primitive unit cell.
-    """
-
-    return np.array([[a, 0, 0], [0, a, 0], [0, 0, a]])
-
-
-def FCC_cell(a: float):
-    r"""
-    Construct face-centred cubic primitive cell.
-
-    See :ref:`lattice-fcc` for the definition of primitive and conventional cells.
-
-    Parameters
-    ----------
-    a : float
-        Length of the all three lattice vectors of the conventional cell.
-
-    Returns
-    -------
-    prim_cell : (3,3) :numpy:`ndarray`
-        Primitive unit cell.
-    """
-
-    return np.array([[0, a / 2, a / 2], [a / 2, 0, a / 2], [a / 2, a / 2, 0]])
-
-
-def BCC_cell(a: float):
-    r"""
-    Construct body-centred cubic primitive cell.
-
-    See :ref:`lattice-bcc` for the definition of primitive and conventional cells.
-
-    Parameters
-    ----------
-    a : float
-        Length of the all three lattice vectors of the conventional cell.
-
-    Returns
-    -------
-    prim_cell : (3,3) :numpy:`ndarray`
-        Primitive unit cell.
-    """
-
-    return np.array(
-        [[-a / 2, a / 2, a / 2], [a / 2, -a / 2, a / 2], [a / 2, a / 2, -a / 2]]
-    )
-
-
-def TET_cell(a: float, c: float):
-    r"""
-    Construct tetragonal primitive cell.
-
-    See :ref:`lattice-tet` for the definition of primitive and conventional cells.
-
-    Parameters
-    ----------
-    a : float
-        Length of the two equal lattice vectors of the conventional cell.
-    c : float
-        Length of the third lattice vector of the conventional cell.
-
-    Returns
-    -------
-    prim_cell : (3,3) :numpy:`ndarray`
-        Primitive unit cell.
-    """
-
-    return np.array([[a, 0, 0], [0, a, 0], [0, 0, c]])
-
-
-def BCT_cell(a: float, c: float):
-    r"""
-    Construct body-centred tetragonal primitive cell.
-
-    See :ref:`lattice-bct` for the definition of primitive and conventional cells.
-
-    Parameters
-    ----------
-    a : float
-        Length of the two equal lattice vectors of the conventional cell.
-    c : float
-        Length of the third lattice vector of the conventional cell.
-
-    Returns
-    -------
-    prim_cell : (3,3) :numpy:`ndarray`
-        Primitive unit cell.
-    """
-
-    return np.array(
-        [[-a / 2, a / 2, c / 2], [a / 2, -a / 2, c / 2], [a / 2, a / 2, -c / 2]]
-    )
-
-
-def ORC_cell(a: float, b: float, c: float):
-    r"""
-    Construct orthorhombic primitive cell.
-
-    See :ref:`lattice-orc` for the definition of primitive and conventional cells.
-
-    Order: :math:`a < b < c`. Input is reordered if necessary.
-
-    Parameters
-    ----------
-    a : float
-        Length of the smallest lattice vector of the conventional cell.
-    b : float
-        Length of the medium lattice vector of the conventional cell.
-    c : float
-        Length of the largest lattice vector of the conventional cell.
-
-    Returns
-    -------
-    prim_cell : (3,3) :numpy:`ndarray`
-        Primitive unit cell.
-    """
-
-    a, b, c = tuple(sorted([a, b, c]))
-
-    return np.array([[a, 0, 0], [0, b, 0], [0, 0, c]])
-
-
-def ORCF_cell(a: float, b: float, c: float):
-    r"""
-    Construct face-centred orthorhombic primitive cell.
-
-    See :ref:`lattice-orcf` for the definition of primitive and conventional cells.
-
-    Order: :math:`a < b < c`. Input is reordered if necessary.
-
-    Parameters
-    ----------
-    a : float
-        Length of the smallest lattice vector of the conventional cell.
-    b : float
-        Length of the medium lattice vector of the conventional cell.
-    c : float
-        Length of the largest lattice vector of the conventional cell.
-
-    Returns
-    -------
-    prim_cell : (3,3) :numpy:`ndarray`
-        Primitive unit cell.
-    """
-
-    a, b, c = tuple(sorted([a, b, c]))
-
-    return np.array([[0, b / 2, c / 2], [a / 2, 0, c / 2], [a / 2, b / 2, 0]])
-
-
-def ORCI_cell(a: float, b: float, c: float):
-    r"""
-    Construct body-centred orthorhombic primitive cell.
-
-    See :ref:`lattice-orci` for the definition of primitive and conventional cells.
-
-    Order: :math:`a < b < c`. Input is reordered if necessary.
-
-    Parameters
-    ----------
-    a : float
-        Length of the smallest lattice vector of the conventional cell.
-    b : float
-        Length of the medium lattice vector of the conventional cell.
-    c : float
-        Length of the largest lattice vector of the conventional cell.
-
-    Returns
-    -------
-    prim_cell : (3,3) :numpy:`ndarray`
-        Primitive unit cell.
-    """
-
-    a, b, c = tuple(sorted([a, b, c]))
-
-    return np.array(
-        [[-a / 2, b / 2, c / 2], [a / 2, -b / 2, c / 2], [a / 2, b / 2, -c / 2]]
-    )
-
-
-def ORCC_cell(a: float, b: float, c: float):
-    r"""
-    Construct base-centred orthorhombic primitive cell.
-
-    See :ref:`lattice-orcc` for the definition of primitive and conventional cells.
-
-    Order: :math:`a < b < c`. Input is reordered if necessary.
-
-    Parameters
-    ----------
-    a : float
-        Length of the smallest lattice vector of the conventional cell.
-    b : float
-        Length of the medium lattice vector of the conventional cell.
-    c : float
-        Length of the largest lattice vector of the conventional cell.
-
-    Returns
-    -------
-    prim_cell : (3,3) :numpy:`ndarray`
-        Primitive unit cell.
-    """
-
-    a, b = tuple(sorted([a, b]))
-
-    return np.array([[a / 2, -b / 2, 0], [a / 2, b / 2, 0], [0, 0, c]])
-
-
-def HEX_cell(a: float, c: float):
-    r"""
-    Construct hexagonal primitive cell.
-
-    See :ref:`lattice-hex` for the definition of primitive and conventional cells.
-
-    Parameters
-    ----------
-    a : float
-        Length of the lattice vector of the conventional cell.
-    c : float
-        Length of the lattice vector of the conventional cell.
-
-    Returns
-    -------
-    prim_cell : (3,3) :numpy:`ndarray`
-        Primitive unit cell.
-    """
-
-    return np.array(
-        [[a / 2, -a * sqrt(3) / 2, 0], [a / 2, a * sqrt(3) / 2, 0], [0, 0, c]]
-    )
-
-
-def RHL_cell(a: float, alpha: float):
-    r"""
-    Construct rhombohedral primitive cell.
-
-    See :ref:`lattice-rhl` for the definition of primitive and conventional cells.
-
-    Condition :math:`\alpha < 120^{\circ}` is assumed.
-
-    Parameters
-    ----------
-    a : float
-        Length of the lattice vector of the conventional cell.
-    alpha : float
-        Angle between vectors :math:`a_2` and :math:`a_3` of the conventional cell. In degrees.
-
-    Returns
-    -------
-    prim_cell : (3,3) :numpy:`ndarray`
-        Primitive unit cell.
-    """
-
-    if alpha >= 120:
-        raise ValueError("alpha has to be < 120 degrees.")
-
-    alpha *= toradians
-    return np.array(
-        [
-            [a * cos(alpha / 2), -a * sin(alpha / 2), 0],
-            [a * cos(alpha / 2), a * sin(alpha / 2), 0],
-            [
-                a * cos(alpha) / cos(alpha / 2),
-                0,
-                a * sqrt(1 - cos(alpha) ** 2 / cos(alpha / 2) ** 2),
-            ],
-        ]
-    )
-
-
-def MCL_cell(a: float, b: float, c: float, alpha: float):
-    r"""
-    Construct monoclinic primitive cell.
-
-    See :ref:`lattice-mcl` for the definition of primitive and conventional cells.
-
-    Order: :math:`b \le c`, :math:`\alpha < 90^{\circ}`. Input is reordered if necessary.
-
-    Parameters
-    ----------
-    a : float
-        Length of the first lattice vector of the conventional cell. (The one oriented along x axis)
-    b : float
-        Length of the shorter of the two remaining lattice vectors of the conventional cell.
-    c : float
-        Length of the longer of the two remaining lattice vectors of the conventional cell.
-    alpha : float
-        Angle between vectors :math:`a_2` and :math:`a_3` of the conventional cell. In degrees.
-
-    Returns
-    -------
-    prim_cell : (3,3) :numpy:`ndarray`
-        Primitive unit cell.
-    """
-
-    b, c = tuple(sorted([b, c]))
-    if alpha > 90:
-        alpha = 180 - alpha
-
-    alpha *= toradians
-    return np.array([[a, 0, 0], [0, b, 0], [0, c * cos(alpha), c * sin(alpha)]])
-
-
-def MCLC_cell(a: float, b: float, c: float, alpha: float):
-    r"""
-    Construct base-centred monoclinic primitive cell.
-
-    See :ref:`lattice-mclc` for the definition of primitive and conventional cells.
-
-    Order: :math:`b \le c`, :math:`\alpha < 90^{\circ}`. Input is reordered if necessary.
-
-    Parameters
-    ----------
-    a : float
-        Length of the first lattice vector of the conventional cell. (The one oriented along x axis)
-    b : float
-        Length of the shorter of the two remaining lattice vectors of the conventional cell.
-    c : float
-        Length of the longer of the two remaining lattice vectors of the conventional cell.
-    alpha : float
-        Angle between vectors :math:`a_2` and :math:`a_3` of the conventional cell. In degrees.
-
-    Returns
-    -------
-    prim_cell : (3,3) :numpy:`ndarray`
-        Primitive unit cell.
-    """
-
-    b, c = tuple(sorted([b, c]))
-    if alpha > 90:
-        alpha = 180.0 - alpha
-
-    alpha *= toradians
-    return np.array(
-        [
-            [a / 2, b / 2, 0],
-            [-a / 2, b / 2, 0],
-            [0, c * cos(alpha), c * sin(alpha)],
-        ]
-    )
-
-
-# TODO work out the order of the vectors
-def TRI_cell(
-    a: float,
-    b: float,
-    c: float,
-    alpha: float,
-    beta: float,
-    gamma: float,
-    reciprocal=False,
-):
-    r"""
-    Construct triclinic primitive cell.
-
-    See :ref:`lattice-tri` for the definition of primitive and conventional cells.
-
-    Parameters
-    ----------
-    a : float
-        Length of the lattice vector of the conventional cell.
-    b : float
-        Length of the lattice vector of the conventional cell.
-    c : float
-        Length of the lattice vector of the conventional cell.
-    alpha : float
-        Angle between vectors :math:`a_2` and :math:`a_3` of the conventional cell. In degrees.
-    beta : float
-        Angle between vectors :math:`a_1` and :math:`a_3` of the conventional cell. In degrees.
-    gamma : float
-        Angle between vectors :math:`a_1` and :math:`a_2` of the conventional cell. In degrees.
-    reciprocal : bool, default False
-        Whether to interpret input as reciprocal parameters.
-
-    Returns
-    -------
-    prim_cell : (3,3) :numpy:`ndarray`
-        Primitive unit cell.
-    """
-
-    cell = cell_from_param(a, b, c, alpha, beta, gamma)
-    if reciprocal:
-        return reciprocal_cell(cell)
-    return cell
-
-
-# Cell fixers
-def fix_cell(cell, correct_lattice_type, eps_rel=REL_TOL):
+# Main routine, serves as interface to all of them
+def unify_cell(cell, correct_lattice_type, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine it
     if required to ensure the unique choice of lattice vectors.
@@ -441,26 +32,26 @@ def fix_cell(cell, correct_lattice_type, eps_rel=REL_TOL):
 
     cell = np.array(cell)
     functions = {
-        "CUB": CUB_fix_cell,
-        "FCC": FCC_fix_cell,
-        "BCC": BCC_fix_cell,
-        "TET": TET_fix_cell,
-        "BCT": BCT_fix_cell,
-        "ORC": ORC_fix_cell,
-        "ORCF": ORCF_fix_cell,
-        "ORCI": ORCI_fix_cell,
-        "ORCC": ORCC_fix_cell,
-        "HEX": HEX_fix_cell,
-        "RHL": RHL_fix_cell,
-        "MCL": MCL_fix_cell,
-        "MCLC": MCLC_fix_cell,
-        "TRI": TRI_fix_cell,
+        "CUB": CUB_unify_cell,
+        "FCC": FCC_unify_cell,
+        "BCC": BCC_unify_cell,
+        "TET": TET_unify_cell,
+        "BCT": BCT_unify_cell,
+        "ORC": ORC_unify_cell,
+        "ORCF": ORCF_unify_cell,
+        "ORCI": ORCI_unify_cell,
+        "ORCC": ORCC_unify_cell,
+        "HEX": HEX_unify_cell,
+        "RHL": RHL_unify_cell,
+        "MCL": MCL_unify_cell,
+        "MCLC": MCLC_unify_cell,
+        "TRI": TRI_unify_cell,
     }
 
     return functions[correct_lattice_type](cell, eps_rel)
 
 
-def CUB_fix_cell(cell, eps_rel=REL_TOL):
+def CUB_unify_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the CUB lattice conditions.
 
@@ -483,7 +74,7 @@ def CUB_fix_cell(cell, eps_rel=REL_TOL):
     return np.array(cell)
 
 
-def FCC_fix_cell(cell, eps_rel=REL_TOL):
+def FCC_unify_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the FCC lattice conditions.
 
@@ -506,7 +97,7 @@ def FCC_fix_cell(cell, eps_rel=REL_TOL):
     return np.array(cell)
 
 
-def BCC_fix_cell(cell, eps_rel=REL_TOL):
+def BCC_unify_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the BCC lattice conditions.
 
@@ -529,7 +120,7 @@ def BCC_fix_cell(cell, eps_rel=REL_TOL):
     return np.array(cell)
 
 
-def TET_fix_cell(cell, eps_rel=REL_TOL):
+def TET_unify_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the TET lattice conditions.
 
@@ -562,7 +153,7 @@ def TET_fix_cell(cell, eps_rel=REL_TOL):
     return cell
 
 
-def BCT_fix_cell(cell, eps_rel=REL_TOL):
+def BCT_unify_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the BCT lattice conditions.
 
@@ -596,7 +187,7 @@ def BCT_fix_cell(cell, eps_rel=REL_TOL):
     return cell
 
 
-def ORC_fix_cell(cell, eps_rel=REL_TOL):
+def ORC_unify_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORC lattice conditions.
 
@@ -632,7 +223,7 @@ def ORC_fix_cell(cell, eps_rel=REL_TOL):
     return cell
 
 
-def ORCF_fix_cell(cell, eps_rel=REL_TOL):
+def ORCF_unify_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORCF lattice conditions.
 
@@ -677,7 +268,7 @@ def ORCF_fix_cell(cell, eps_rel=REL_TOL):
     return cell
 
 
-def ORCI_fix_cell(cell, eps_rel=REL_TOL):
+def ORCI_unify_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORCI lattice conditions.
 
@@ -725,7 +316,7 @@ def ORCI_fix_cell(cell, eps_rel=REL_TOL):
     return cell
 
 
-def ORCC_fix_cell(cell, eps_rel=REL_TOL):
+def ORCC_unify_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORCC lattice conditions.
 
@@ -769,7 +360,7 @@ def ORCC_fix_cell(cell, eps_rel=REL_TOL):
     return cell
 
 
-def HEX_fix_cell(cell, eps_rel=REL_TOL):
+def HEX_unify_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the HEX lattice conditions.
 
@@ -801,7 +392,7 @@ def HEX_fix_cell(cell, eps_rel=REL_TOL):
     return cell
 
 
-def RHL_fix_cell(cell, eps_rel=REL_TOL):
+def RHL_unify_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the RHL lattice conditions.
 
@@ -824,7 +415,7 @@ def RHL_fix_cell(cell, eps_rel=REL_TOL):
     return np.array(cell)
 
 
-def MCL_fix_cell(cell, eps_rel=REL_TOL):
+def MCL_unify_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the MCL lattice conditions.
 
@@ -856,7 +447,7 @@ def MCL_fix_cell(cell, eps_rel=REL_TOL):
 
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
-    # alpha > 90 (cos(alpha) < 0)
+    # alpha > 90
     if compare_numerically(alpha, ">", 90.0, ABS_TOL_ANGLE):
         cell = [cell[0], cell[2], -cell[1]]
 
@@ -869,7 +460,7 @@ def MCL_fix_cell(cell, eps_rel=REL_TOL):
     return cell
 
 
-def MCLC_fix_cell(cell, eps_rel=REL_TOL):
+def MCLC_unify_cell(cell, eps_rel=REL_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the MCLC lattice conditions.
 
@@ -902,10 +493,9 @@ def MCLC_fix_cell(cell, eps_rel=REL_TOL):
     a, b, c, alpha, beta, gamma = param_from_cell(
         TRANSFORM_TO_CONVENTIONAL["MCLC"] @ cell
     )
-    alpha *= toradians
 
-    # alpha > 90 (cos(alpha) < 0)
-    if compare_numerically(cos(alpha), "<", 0, eps):
+    # alpha > 90
+    if compare_numerically(alpha, ">", 90.0, ABS_TOL_ANGLE):
         cell = [cell[0], cell[2], -cell[1]]
 
     cell = np.array(cell)
@@ -921,7 +511,7 @@ def MCLC_fix_cell(cell, eps_rel=REL_TOL):
 
 
 # TODO
-def TRI_fix_cell(cell, eps_rel=REL_TOL, resiprocal=False):
+def TRI_unify_cell(cell, eps_rel=REL_TOL, resiprocal=False):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the TRI lattice conditions.
 

@@ -46,7 +46,7 @@ from radtools.crystal.bravais_lattice.hs_points import (
     TRI_hs_points,
 )
 
-from radtools.crystal.bravais_lattice.cells import fix_cell
+from radtools.crystal.bravais_lattice.unify import unify_cell
 
 __all__ = ["Lattice"]
 
@@ -116,6 +116,21 @@ class Lattice:
     interpreted as the primitive unit cell. In the case of the Bravais lattice additional
     attribute conv_cell appears.
 
+    When created from the cell orientation of the cell is respected, however the lattice vectors are renamed
+    with respect to [1]_.
+
+    This function may change the angles and the lengths of the cell.
+    It preserve the volume, right- or left- handedness, lattice type and variation
+    of the cell.
+
+    The lattice vector`s lengths are preserved as a set.
+
+    The angles between the lattice vectors are preserved as a set with possible
+    changes of the form: :math:`angle \rightarrow 180 - angle`.
+
+    The returned cell may not be the same as the input one, but it is translationally
+    equivalent.
+
     Lattice can be created in a three alternative ways:
 
     .. doctest::
@@ -159,6 +174,12 @@ class Lattice:
         .. code-block:: python
 
             kpoints = {"Name" : [k_x, k_y, k_z], ...}
+
+    References
+    ----------
+    .. [1] Setyawan, W. and Curtarolo, S., 2010.
+        High-throughput electronic band structure calculations: Challenges and tools.
+        Computational materials science, 49(2), pp.299-312.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -243,7 +264,7 @@ class Lattice:
         # Reset type
         self._type = None
         # Fix cell
-        self._cell = fix_cell(self._cell, self.type(), self.eps_rel)
+        self._cell = unify_cell(self._cell, self.type(), self.eps_rel)
 
     @cell.setter
     def cell(self, new_cell):
@@ -708,6 +729,11 @@ class Lattice:
         -------
         lattice_type : str
             Bravais lattice type.
+
+        See Also
+        --------
+        lepage : Algoritm for the lattice type identification
+        variation : Variation of the lattice, if any.
         """
 
         if self._type is None or eps_rel is not None:
