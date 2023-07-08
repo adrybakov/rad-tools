@@ -14,6 +14,7 @@ from radtools.routines import (
     todegrees,
     toradians,
     volume,
+    compare_numerically,
 )
 
 __all__ = ["niggli", "lepage"]
@@ -29,7 +30,7 @@ def niggli(
     eps_rel=1e-5,
     verbose=False,
     return_cell=False,
-    max_iter=10000,
+    max_iter=100000,
 ):
     r"""
     Computes Niggli matrix form.
@@ -54,7 +55,7 @@ def niggli(
         Whether to print the steps of an algorithm.
     return_cell : bool, default False
         Whether to return cell parameters instead of Niggli matrix form.
-    max_iter : int, default 10000
+    max_iter : int, default 100000
         Maximum number of iterations.
 
     Returns
@@ -157,18 +158,6 @@ def niggli(
         + n
     )
 
-    def compare(x, condition, y):
-        if condition == "<":
-            return x < y - eps
-        if condition == ">":
-            return y < x - eps
-        if condition == "<=":
-            return not y < x - eps
-        if condition == ">=":
-            return not x < y - eps
-        if condition == "==":
-            return not (x < y - eps or y < x - eps)
-
     def summary_line():
         return (
             f"{A:{N}.{n}f} {B:{N}.{n}f} {C:{N}.{n}f} "
@@ -191,76 +180,101 @@ def niggli(
             raise ValueError(f"Niggli cell not found in {max_iter} iterations")
         iter_count += 1
         # 1
-        if compare(A, ">", B) or (
-            compare(A, "==", B) and compare(abs(xi), ">", abs(eta))
+        if compare_numerically(A, ">", B, eps) or (
+            compare_numerically(A, "==", B, eps)
+            and compare_numerically(abs(xi), ">", abs(eta), eps)
         ):
             if verbose:
                 print(f"1 {phrase} {summary_line()}")
             A, xi, B, eta = B, eta, A, xi
         # 2
-        if compare(B, ">", C) or (
-            compare(B, "==", C) and compare(abs(eta), ">", abs(zeta))
+        if compare_numerically(B, ">", C, eps) or (
+            compare_numerically(B, "==", C, eps)
+            and compare_numerically(abs(eta), ">", abs(zeta), eps)
         ):
             if verbose:
                 print(f"2 {phrase} {summary_line()}")
             B, eta, C, zeta = C, zeta, B, eta
+            # go to 1
             continue
         # 3
-        if compare(xi * eta * zeta, ">", 0):
+        if compare_numerically(xi * eta * zeta, ">", 0, eps):
             if verbose:
                 print(f"3 {phrase} {summary_line()}")
             xi, eta, zeta = abs(xi), abs(eta), abs(zeta)
         # 4
-        if compare(xi * eta * zeta, "<=", 0):
+        if compare_numerically(xi * eta * zeta, "<=", 0, eps):
             if verbose:
                 print(f"4 {phrase} {summary_line()}")
             xi, eta, zeta = -abs(xi), -abs(eta), -abs(zeta)
         # 5
         if (
-            compare(abs(xi), ">", B)
-            or (compare(xi, "==", B) and compare(2 * eta, "<", zeta))
-            or (compare(xi, "==", -B) and compare(zeta, "<", 0))
+            compare_numerically(abs(xi), ">", B, eps)
+            or (
+                compare_numerically(xi, "==", B, eps)
+                and compare_numerically(2 * eta, "<", zeta, eps)
+            )
+            or (
+                compare_numerically(xi, "==", -B, eps)
+                and compare_numerically(zeta, "<", 0, eps)
+            )
         ):
             if verbose:
                 print(f"5 {phrase} {summary_line()}")
             C = B + C - xi * np.sign(xi)
             eta = eta - zeta * np.sign(xi)
             xi = xi - 2 * B * np.sign(xi)
+            # go to 1
             continue
         # 6
         if (
-            compare(abs(eta), ">", A)
-            or (compare(eta, "==", A) and compare(2 * xi, "<", zeta))
-            or (compare(eta, "==", -A) and compare(zeta, "<", 0))
+            compare_numerically(abs(eta), ">", A, eps)
+            or (
+                compare_numerically(eta, "==", A, eps)
+                and compare_numerically(2 * xi, "<", zeta, eps)
+            )
+            or (
+                compare_numerically(eta, "==", -A, eps)
+                and compare_numerically(zeta, "<", 0, eps)
+            )
         ):
             if verbose:
                 print(f"6 {phrase} {summary_line()}")
             C = A + C - eta * np.sign(eta)
             xi = xi - zeta * np.sign(eta)
             eta = eta - 2 * A * np.sign(eta)
+            # go to 1
             continue
         # 7
         if (
-            compare(abs(zeta), ">", A)
-            or (compare(zeta, "==", A) and compare(2 * xi, "<", eta))
-            or (compare(zeta, "==", -A) and compare(eta, "<", 0))
+            compare_numerically(abs(zeta), ">", A, eps)
+            or (
+                compare_numerically(zeta, "==", A, eps)
+                and compare_numerically(2 * xi, "<", eta, eps)
+            )
+            or (
+                compare_numerically(zeta, "==", -A, eps)
+                and compare_numerically(eta, "<", 0, eps)
+            )
         ):
             if verbose:
                 print(f"7 {phrase} {summary_line()}")
             B = A + B - zeta * np.sign(zeta)
             xi = xi - eta * np.sign(zeta)
             zeta = zeta - 2 * A * np.sign(zeta)
+            # go to 1
             continue
         # 8
-        if compare(xi + eta + zeta + A + B, "<", 0) or (
-            compare(xi + eta + zeta + A + B, "==", 0)
-            and compare(2 * (A + eta) + zeta, ">", 0)
+        if compare_numerically(xi + eta + zeta + A + B, "<", 0, eps) or (
+            compare_numerically(xi + eta + zeta + A + B, "==", 0, eps)
+            and compare_numerically(2 * (A + eta) + zeta, ">", 0, eps)
         ):
             if verbose:
                 print(f"8 {phrase} {summary_line()}")
             C = A + B + C + xi + eta + zeta
             xi = 2 * B + xi + zeta
             eta = 2 * A + eta + zeta
+            # go to 1
             continue
         break
     if verbose:
@@ -299,26 +313,24 @@ def check_cub(angles: np.ndarray, axes: np.ndarray, eps):
     axes = np.array([i[0] for i in axes])
 
     if 9 <= angles.shape[0]:
-        indices = get_permutation(angles.shape[0], 9)
-        for index in indices:
-            sub_angles = angles[np.ix_(index, index)]
-            sub_axes = axes[index]
-            if (
-                np.abs(np.sort(sub_angles.flatten()) - np.sort(target_angles.flatten()))
-                < eps
-            ).all():
-                xyz = []
-                for i in range(9):
-                    if (np.abs(np.sort(sub_angles[i]) - conventional_axis) < eps).all():
-                        xyz.append(sub_axes[i])
-                det = np.abs(np.linalg.det(xyz))
-                if det == 1:
-                    result = "CUB"
-                elif det == 4:
-                    result = "FCC"
-                elif det == 2:
-                    result = "BCC"
-                return result, False
+        sub_angles = angles[:9, :9]
+        sub_axes = axes[:9]
+        if (
+            np.abs(np.sort(sub_angles.flatten()) - np.sort(target_angles.flatten()))
+            < eps
+        ).all():
+            xyz = []
+            for i in range(9):
+                if (np.abs(np.sort(sub_angles[i]) - conventional_axis) < eps).all():
+                    xyz.append(sub_axes[i])
+            det = np.abs(np.linalg.det(xyz))
+            if det == 1:
+                result = "CUB"
+            elif det == 4:
+                result = "FCC"
+            elif det == 2:
+                result = "BCC"
+            return result, False
         return None, True
     return None, True
 
@@ -337,14 +349,12 @@ def check_hex(angles: np.ndarray, eps):
     )
     angles = angles[:7]
     if 7 <= angles.shape[0]:
-        indices = get_permutation(angles.shape[0], 7)
-        for index in indices:
-            sub_angles = angles[np.ix_(index, index)]
-            if (
-                np.abs(np.sort(sub_angles.flatten()) - np.sort(target_angles.flatten()))
-                < eps
-            ).all():
-                return "HEX", False
+        sub_angles = angles[:7, :7]
+        if (
+            np.abs(np.sort(sub_angles.flatten()) - np.sort(target_angles.flatten()))
+            < eps
+        ).all():
+            return "HEX", False
         return None, True
     return None, True
 
@@ -366,30 +376,28 @@ def check_tet(angles: np.ndarray, axes: np.ndarray, eps, cell):
 
     angles = angles[:5]
     if 5 <= angles.shape[0]:
-        indices = get_permutation(angles.shape[0], 5)
-        for index in indices:
-            sub_angles = angles[np.ix_(index, index)]
-            sub_axes = axes[index]
-            if (
-                np.abs(np.sort(sub_angles.flatten()) - np.sort(target_angles.flatten()))
-                < eps
-            ).all():
-                xy = []
-                for i in range(5):
-                    if (np.abs(np.sort(sub_angles[i]) - conventional_axis) < eps).all():
-                        z = sub_axes[i]
-                    else:
-                        xy.append(sub_axes[i])
-                xy.sort(key=lambda x: np.linalg.norm(x @ cell))
+        sub_angles = angles[:5, :5]
+        sub_axes = axes[:5]
+        if (
+            np.abs(np.sort(sub_angles.flatten()) - np.sort(target_angles.flatten()))
+            < eps
+        ).all():
+            xy = []
+            for i in range(5):
+                if (np.abs(np.sort(sub_angles[i]) - conventional_axis) < eps).all():
+                    z = sub_axes[i]
+                else:
+                    xy.append(sub_axes[i])
+            xy.sort(key=lambda x: np.linalg.norm(x @ cell))
 
-                xyz = [z, xy[0], xy[1]]
+            xyz = [z, xy[0], xy[1]]
 
-                det = np.abs(np.linalg.det(xyz))
-                if det == 1:
-                    result = "TET"
-                elif det == 2:
-                    result = "BCT"
-                return result, False
+            det = np.abs(np.linalg.det(xyz))
+            if det == 1:
+                result = "TET"
+            elif det == 2:
+                result = "BCT"
+            return result, False
         return None, True
     return None, True
 
@@ -405,14 +413,12 @@ def check_rhl(angles: np.ndarray, eps):
 
     angles = angles[:3]
     if 3 <= angles.shape[0]:
-        indices = get_permutation(angles.shape[0], 3)
-        for index in indices:
-            sub_angles = angles[np.ix_(index, index)]
-            if (
-                np.abs(np.sort(sub_angles.flatten()) - np.sort(target_angles.flatten()))
-                < eps
-            ).all():
-                return "RHL", False
+        sub_angles = angles[:3, :3]
+        if (
+            np.abs(np.sort(sub_angles.flatten()) - np.sort(target_angles.flatten()))
+            < eps
+        ).all():
+            return "RHL", False
         return None, True
     return None, True
 
@@ -429,37 +435,35 @@ def check_orc(angles: np.ndarray, axes: np.ndarray, eps):
     angles = angles[:3]
     axes = np.array([i[0] for i in axes])
     if 3 <= angles.shape[0]:
-        indices = get_permutation(angles.shape[0], 3)
-        for index in indices:
-            sub_angles = angles[np.ix_(index, index)]
-            sub_axes = axes[index]
-            if (
-                np.abs(np.sort(sub_angles.flatten()) - np.sort(target_angles.flatten()))
-                < eps
-            ).all():
-                C = np.array(sub_axes, dtype=float).T
-                det = np.abs(np.linalg.det(C))
-                if det == 1:
-                    result = "ORC"
-                if det == 4:
-                    result = "ORCF"
-                if det == 2:
-                    v = C @ [1, 1, 1]
+        sub_angles = angles[:3, :3]
+        sub_axes = axes[:3]
+        if (
+            np.abs(np.sort(sub_angles.flatten()) - np.sort(target_angles.flatten()))
+            < eps
+        ).all():
+            C = np.array(sub_axes, dtype=float).T
+            det = np.abs(np.linalg.det(C))
+            if det == 1:
+                result = "ORC"
+            if det == 4:
+                result = "ORCF"
+            if det == 2:
+                v = C @ [1, 1, 1]
 
-                    def gcd(p, q):
-                        while q != 0:
-                            p, q = q, p % q
-                        return p
+                def gcd(p, q):
+                    while q != 0:
+                        p, q = q, p % q
+                    return p
 
-                    if (
-                        gcd(abs(v[0]), abs(v[1])) > 1
-                        and gcd(abs(v[0]), abs(v[2])) > 1
-                        and gcd(abs(v[1]), abs(v[2])) > 1
-                    ):
-                        result = "ORCI"
-                    else:
-                        result = "ORCC"
-                return result, False
+                if (
+                    gcd(abs(v[0]), abs(v[1])) > 1
+                    and gcd(abs(v[0]), abs(v[2])) > 1
+                    and gcd(abs(v[1]), abs(v[2])) > 1
+                ):
+                    result = "ORCI"
+                else:
+                    result = "ORCC"
+            return result, False
         return None, True
     return None, True
 
@@ -484,26 +488,23 @@ def check_mcl(angles: np.ndarray, axes: np.ndarray, eps, cell):
     axes = np.array([i[0] for i in axes])
     angles = angles[:1]
     if 1 <= angles.shape[0]:
-        indices = get_permutation(angles.shape[0], 1)
-        for index in indices:
-            sub_axes = axes[index]
-            b = sub_axes[0]
+        b = axes[0]
 
-            a, c = get_perpendicular_shortest(b, cell, eps)
+        a, c = get_perpendicular_shortest(b, cell, eps)
 
-            C = np.array(
-                [
-                    a,
-                    b,
-                    c,
-                ],
-                dtype=float,
-            ).T
-            det = np.abs(np.linalg.det(C))
-            if det == 1:
-                return "MCL", False
-            if det == 2:
-                return "MCLC", False
+        C = np.array(
+            [
+                a,
+                b,
+                c,
+            ],
+            dtype=float,
+        ).T
+        det = np.abs(np.linalg.det(C))
+        if det == 1:
+            return "MCL", False
+        if det == 2:
+            return "MCLC", False
         return None, True
     return None, True
 
@@ -566,6 +567,9 @@ def lepage(
     if very_verbose:
         verbose = True
 
+    if volume(a, b, c, alpha, beta, gamma) == 0:
+        raise ValueError("Cell volume is zero")
+
     limit = max(1.5, delta_max * 1.1)
     eps_volumetric = eps_rel * volume(a, b, c, alpha, beta, gamma) ** (1 / 3.0)
     decimals = abs(floor(log10(abs(eps_volumetric))))
@@ -573,7 +577,18 @@ def lepage(
         delta_max = eps
 
     # Niggli reduction
-    a, b, c, alpha, beta, gamma = niggli(a, b, c, alpha, beta, gamma, return_cell=True)
+    try:
+        a, b, c, alpha, beta, gamma = niggli(
+            a, b, c, alpha, beta, gamma, return_cell=True
+        )
+    except:
+        import warnings
+
+        warnings.warn(
+            "LePage algorithm: Niggli reduction failed, using input parameters",
+            RuntimeWarning,
+        )
+
     cell = cell_from_param(a, b, c, alpha, beta, gamma)
     rcell = reciprocal_cell(cell)
     if very_verbose:
