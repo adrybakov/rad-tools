@@ -1,6 +1,6 @@
 # NOTE Relative size of lattice parameters have to be consistent with the REL_TOL, in order for the tests to be correct.
 
-from math import acos, cos, sin, sqrt
+from math import acos, cos, sin, sqrt, pi
 
 import numpy as np
 import pytest
@@ -262,9 +262,9 @@ def rotate(cell, r1, r2, r3):
 
 
 @given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
@@ -292,9 +292,9 @@ def test_CUB_fix_cell(r1, r2, r3, conv_a, order):
 
 
 @given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
@@ -325,9 +325,9 @@ def test_FCC_fix_cell(r1, r2, r3, conv_a, order):
 
 
 @given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
@@ -359,9 +359,9 @@ def test_BCC_fix_cell(r1, r2, r3, conv_a, order):
 
 
 @given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
@@ -398,9 +398,9 @@ def test_TET_fix_cell(r1, r2, r3, conv_a, conv_c, order):
 
 
 @given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
@@ -438,9 +438,9 @@ def test_BCT_fix_cell(r1, r2, r3, conv_a, conv_c, order):
 
 
 @given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
@@ -477,9 +477,9 @@ def test_ORC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
 
 
 @given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
@@ -526,9 +526,9 @@ def test_ORCF_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
 
 
 @given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
@@ -580,9 +580,9 @@ def test_ORCI_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
 
 
 @given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
@@ -625,9 +625,9 @@ def test_ORCC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
 
 
 @given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
@@ -663,9 +663,9 @@ def test_HEX_fix_cell(r1, r2, r3, conv_a, conv_c, order):
 
 
 @given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.floats(min_value=MIN_ANGLE, max_value=120.0 - MIN_ANGLE),
     st.integers(min_value=0, max_value=n_order),
@@ -699,9 +699,9 @@ def test_RHL_fix_cell(r1, r2, r3, conv_a, conv_alpha, order):
 
 
 @given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
@@ -743,9 +743,9 @@ def test_MCL_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
 
 
 @given(
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
@@ -804,9 +804,9 @@ def test_MCLC_fix_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
 
 
 # @given(
-#     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-#     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
-#     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+#     st.floats(min_value=0, max_value=2 * pi),
+#     st.floats(min_value=0, max_value=2 * pi),
+#     st.floats(min_value=0, max_value=2 * pi),
 #     st.floats(min_value=0.1, max_value=MAX_LENGTH),
 #     st.floats(min_value=0.1, max_value=MAX_LENGTH),
 #     st.floats(min_value=0.1, max_value=MAX_LENGTH),
