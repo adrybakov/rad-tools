@@ -72,7 +72,8 @@ class Atom:
 
         # Set spin
         self._spin = None
-        self._spin_direction = [0, 0, 1]
+        self._spin_direction = None
+        self.spin_direction = [0, 0, 1]
         if isinstance(spin, Iterable):
             self.spin_vector = spin
         elif spin is not None:

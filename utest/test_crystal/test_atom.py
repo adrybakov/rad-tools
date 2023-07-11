@@ -2,6 +2,56 @@ import numpy as np
 import pytest
 
 from radtools import Atom
+from radtools.crystal.constants import ATOM_TYPES
+from hypothesis import given, strategies as st
+from hypothesis.extra.numpy import arrays as harrays
+
+
+@given(
+    harrays(
+        np.float64,
+        (3,),
+        elements=st.floats(
+            allow_nan=False, allow_infinity=False, max_value=1e9, min_value=-1e9
+        ),
+    )
+)
+def test_Atom_spin(v):
+    atom = Atom()
+
+    assert np.allclose(atom.spin_direction, [0, 0, 1])
+    with pytest.raises(ValueError):
+        atom.spin
+    with pytest.raises(ValueError):
+        atom.spin_vector
+
+    atom.spin = np.linalg.norm(v)
+    assert np.allclose(atom.spin, np.linalg.norm(v))
+    assert np.allclose(atom.spin_direction, [0, 0, 1])
+    assert np.allclose(atom.spin_vector, np.linalg.norm(v) * atom.spin_direction)
+
+    if np.linalg.norm(v) != 0:
+        atom.spin_vector = v
+        assert np.allclose(atom.spin_direction, v / np.linalg.norm(v))
+        assert np.allclose(atom.spin_vector, v)
+
+
+@given(
+    st.text(
+        min_size=1,
+        max_size=3,
+        alphabet=[i for i in "0123456789_-#$%!"],
+    ),
+    st.text(
+        min_size=1,
+        max_size=3,
+        alphabet=[i for i in "0123456789_-#$%!"],
+    ),
+)
+def test_Atom_type(prefix, suffix):
+    for atom_type in ATOM_TYPES:
+        atom = Atom(prefix + atom_type + suffix)
+        assert atom.type == atom_type
 
 
 def test_atom():
