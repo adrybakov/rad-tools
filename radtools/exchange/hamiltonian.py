@@ -657,9 +657,9 @@ class ExchangeHamiltonian(Crystal):
         atom1, atom2, R = key
         # If atom is a string, get the atom object
         if isinstance(atom1, str):
-            atom1 = self.crystal.get_atom(atom1)
+            atom1 = self.get_atom(atom1)
         if isinstance(atom2, str):
-            atom2 = self.crystal.get_atom(atom2)
+            atom2 = self.get_atom(atom2)
 
         key = (atom1, atom2, R)
         return key in self._bonds
@@ -668,9 +668,9 @@ class ExchangeHamiltonian(Crystal):
         atom1, atom2, R = key
         # If atom is a string, get the atom object
         if isinstance(atom1, str):
-            atom1 = self.crystal.get_atom(atom1)
+            atom1 = self.get_atom(atom1)
         if isinstance(atom2, str):
-            atom2 = self.crystal.get_atom(atom2)
+            atom2 = self.get_atom(atom2)
 
         key = (atom1, atom2, R)
         return self._bonds[key]
@@ -776,9 +776,9 @@ class ExchangeHamiltonian(Crystal):
 
         x_max, y_max, z_max = None, None, None
         x_min, y_min, z_min = None, None, None
-        for atom1, atom2, R, J in self:
-            x1, y1, z1 = self.crystal.get_atom_coordinates(atom1)
-            x2, y2, z2 = self.crystal.get_atom_coordinates(atom2, R)
+        for atom1, atom2, R in self._bonds:
+            x1, y1, z1 = self.get_atom_coordinates(atom1, relative=False)
+            x2, y2, z2 = self.get_atom_coordinates(atom2, R, relative=False)
             if x_max is None:
                 x_min, y_min, z_min = x1, y1, z1
                 x_max, y_max, z_max = x1, y1, z1
@@ -837,13 +837,13 @@ class ExchangeHamiltonian(Crystal):
         """
 
         if isinstance(atom1, str):
-            atom1 = self.crystal.get_atom(atom1)
-        elif atom1 not in self.crystal:
+            atom1 = self.get_atom(atom1)
+        elif atom1 not in self.atoms:
             self.add_atom(atom1)
 
         if isinstance(atom2, str):
-            atom2 = self.crystal.get_atom(atom2)
-        elif atom2 not in self.crystal:
+            atom2 = self.get_atom(atom2)
+        elif atom2 not in self.atoms:
             self.add_atom(atom2)
 
         self._bonds[(atom1, atom2, R)] = J
@@ -908,9 +908,9 @@ class ExchangeHamiltonian(Crystal):
 
         # If atom is a string, get the atom object
         if isinstance(atom1, str):
-            atom1 = self.crystal.get_atom(atom1)
+            atom1 = self.get_atom(atom1)
         if isinstance(atom2, str):
-            atom2 = self.crystal.get_atom(atom2)
+            atom2 = self.get_atom(atom2)
 
         try:
             del self._bonds[(atom1, atom2, R)]
@@ -929,20 +929,6 @@ class ExchangeHamiltonian(Crystal):
         if double_counting and (atom2, atom1, (-i, -j, -k)) in self:
             del self._bonds[(atom2, atom1, (-i, -j, -k))]
 
-    def add_atom(self, atom: Atom):
-        r"""
-        Add atom to the Hamiltonian.
-
-        see :py:meth:`.Crystal.add_atom`
-
-        Parameters
-        ----------
-        atom : :py:class:`.Atom`
-            Atom object.
-        """
-
-        self.crystal.add_atom(atom)
-
     def remove_atom(self, atom):
         r"""
         Remove magnetic atom from the Hamiltonian.
@@ -958,7 +944,7 @@ class ExchangeHamiltonian(Crystal):
 
         # If atom given as a string, get the atom object
         if isinstance(atom, str):
-            atom = self.crystal.get_atom(atom)
+            atom = self.get_atom(atom)
 
         bonds_for_removal = []
         for atom1, atom2, R, J in self:
@@ -968,7 +954,7 @@ class ExchangeHamiltonian(Crystal):
         for bond in bonds_for_removal:
             del self[bond]
 
-        self.crystal.remove_atom(atom)
+        super().remove_atom(atom)
 
     def filter(
         self, max_distance=None, min_distance=None, template=None, R_vector=None
@@ -1019,7 +1005,7 @@ class ExchangeHamiltonian(Crystal):
         bonds_for_removal = set()
         for atom1, atom2, R, J in self:
             i, j, k = R
-            dis = self.crystal.get_distance(atom1, atom2, R)
+            dis = self.get_distance(atom1, atom2, R)
 
             if max_distance is not None and dis > max_distance:
                 bonds_for_removal.add((atom1, atom2, R))
@@ -1133,7 +1119,7 @@ class ExchangeHamiltonian(Crystal):
             for atom1, atom2, R in bonds:
                 # Here names, not objects are obtained, because in general
                 # template only has information about names and R.
-                J = self[self.crystal.get_atom(atom1), self.crystal.get_atom(atom2), R]
+                J = self[self.get_atom(atom1), self.get_atom(atom2), R]
                 symm_matrix = symm_matrix + J.symm_matrix
                 dmi_module = dmi_module + J.dmi_module
 
@@ -1141,7 +1127,7 @@ class ExchangeHamiltonian(Crystal):
             dmi_module = dmi_module / len(bonds)
 
             for atom1, atom2, R in bonds:
-                J = self[self.crystal.get_atom(atom1), self.crystal.get_atom(atom2), R]
+                J = self[self.get_atom(atom1), self.get_atom(atom2), R]
                 if J.dmi_module != 0:
                     asymm_factor = dmi_module / J.dmi_module
                 else:
@@ -1224,8 +1210,8 @@ class ExchangeHamiltonian(Crystal):
             scalar_written = False
             for atom1, atom2, R in template.names[name]:
                 # Get values from the model
-                atom1 = self.crystal.get_atom(atom1)
-                atom2 = self.crystal.get_atom(atom2)
+                atom1 = self.get_atom(atom1)
+                atom2 = self.get_atom(atom2)
                 J = self[atom1, atom2, R]
 
                 if not force_symmetry:
@@ -1400,38 +1386,9 @@ class ExchangeHamiltonian(Crystal):
             Jij.append(J.matrix)
             i.append(atom_index[atom1])
             j.append(atom_index[atom2])
-            dij.append(self.crystal.get_vector(atom1, atom1, R))
+            dij.append(self.get_vector(atom1, atom1, R))
 
         return Jij, i, j, dij
-
-    # OLD METHODS AND ATTRIBUTES, KEPT FOR BACKWARD COMPATIBILITY
-
-    def get_atom_coordinates(self, atom, R=(0, 0, 0)):
-        r"""
-        Getter for the atom coordinates.
-
-        See :py:meth:`.Crystal.get_atom_coordinates`.
-        """
-
-        return self.crystal.get_atom_coordinates(atom, R)
-
-    def get_bond_vector(self, atom1, atom2, R=(0, 0, 0)):
-        r"""
-        Getter for distance between the atom1 and atom2.
-
-        See :py:meth:`.Crystal.get_vector`
-        """
-
-        return self.crystal.get_vector(atom1, atom2, R)
-
-    def get_distance(self, atom1, atom2, R=(0, 0, 0)):
-        r"""
-        Getter for distance between the atom1 and atom2.
-
-        See :py:meth:`.Crystal.get_distance`
-        """
-
-        return self.crystal.get_distance(atom1, atom2, R)
 
 
 class ExchangeHamiltonianIterator:

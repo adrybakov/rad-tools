@@ -101,76 +101,6 @@ class TestExchangeHamiltonian:
         # with pytest.raises(ValueError):
         #     model.cell = [3, 4, 5]
 
-    def test_abc(self):
-        model = ExchangeHamiltonian()
-        model.cell = [[1, 2, 3], [0, 1, 0], [0, 0, 1]]
-        assert (model.a1 == np.array([1, 2, 3])).all()
-        assert (model.a2 == np.array([0, 1, 0])).all()
-        assert (model.a3 == np.array([0, 0, 1])).all()
-        assert (model.cell == np.array([[1, 2, 3], [0, 1, 0], [0, 0, 1]])).all()
-        model.cell = [[1, 2, 3], [4, 5, 6], [0, 0, 1]]
-        assert (model.a1 == np.array([1, 2, 3])).all()
-        assert (model.a2 == np.array([4, 5, 6])).all()
-        assert (model.a3 == np.array([0, 0, 1])).all()
-        assert (model.cell == np.array([[1, 2, 3], [4, 5, 6], [0, 0, 1]])).all()
-        model.cell = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-        assert (model.a1 == np.array([1, 2, 3])).all()
-        assert (model.a2 == np.array([4, 5, 6])).all()
-        assert (model.a3 == np.array([7, 8, 9])).all()
-        assert (model.cell == np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])).all()
-        model.cell = [[2, 5, 3], [7, 3, 1], [8, 4, 9]]
-        assert (model.cell == np.array([[2, 5, 3], [7, 3, 1], [8, 4, 9]])).all()
-
-    def test_len_abc(self):
-        model = ExchangeHamiltonian()
-        model.cell = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-        assert model.a == sqrt(14)
-        assert model.b == sqrt(77)
-        assert model.c == sqrt(194)
-
-    def test_unit_cell_volume(self):
-        model = ExchangeHamiltonian()
-        model.cell = [[1, 2, 3], [4, 5, 6], [7, 8, 8]]
-        assert model.unit_cell_volume == np.dot(
-            np.array([1, 2, 3]), np.cross(np.array([4, 5, 6]), np.array([7, 8, 8]))
-        )
-
-    @pytest.mark.parametrize(
-        "a, b, c, A, B, C, volume",
-        [
-            ((1, 0, 0), (0, 1, 0), (0, 0, 1), 1, 1, 1, 1),
-            (
-                (3.588, 0, 0),
-                (0, 4.807, 0),
-                (0, 0, 23.571),
-                3.588,
-                4.807,
-                23.571,
-                406.5412,
-            ),
-            ((4, 3, 0), (0, 1, 0), (0, 0, 1), 5, 1, 1, 4),
-            ((1, 0, 0), (4, 3, 0), (0, 0, 1), 1, 5, 1, 3),
-            ((1, 0, 0), (0, 1, 0), (0, 4, 3), 1, 1, 5, 3),
-        ],
-    )
-    def test_len_abc_and_volume(self, a, b, c, A, B, C, volume):
-        model = ExchangeHamiltonian()
-        model.cell = np.array([a, b, c], dtype=float)
-        assert A == round(model.a, 4)
-        assert B == round(model.b, 4)
-        assert C == round(model.c, 4)
-        assert volume == round(model.unit_cell_volume, 4)
-
-    def test_b123(self):
-        model = ExchangeHamiltonian()
-        a = [1, 2, 3]
-        b = [4, 5, 6]
-        c = [7, 8, 8]
-        model.cell = [[1, 2, 3], [4, 5, 6], [7, 8, 8]]
-        assert (model.b1 == 2 * pi / 3 * np.cross(b, c)).all()
-        assert (model.b2 == 2 * pi / 3 * np.cross(c, a)).all()
-        assert (model.b3 == 2 * pi / 3 * np.cross(a, b)).all()
-
     def test_cell_list(self):
         model = ExchangeHamiltonian()
         model.cell = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
@@ -212,9 +142,9 @@ class TestExchangeHamiltonian:
     def test_space_dimensions(self):
         model = ExchangeHamiltonian()
         model.cell = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
-        Cr1 = Atom("Cr1", (1, 6, 2))
-        Cr2 = Atom("Cr2", (1, 3, 5))
-        Cr3 = Atom("Cr3", (1, 3, 3))
+        Cr1 = Atom("Cr1", (0.1, 0.6, 0.2))
+        Cr2 = Atom("Cr2", (0.1, 0.3, 0.5))
+        Cr3 = Atom("Cr3", (0.1, 0.3, 0.3))
         model.add_bond(ExchangeParameter(iso=1), Cr1, Cr2, (0, 0, 0))
         model.add_bond(ExchangeParameter(iso=2), Cr1, Cr3, (0, -1, 0))
         model.add_bond(ExchangeParameter(iso=3), Cr2, Cr1, (0, 0, -3))
@@ -334,54 +264,54 @@ class TestExchangeHamiltonian:
     def test_get_atom_coordinates(self):
         model = ExchangeHamiltonian()
         model.cell = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
-        Cr1 = Atom("Cr1", (1, 6, 2))
+        Cr1 = Atom("Cr1", (0.1, 0.6, 0.2))
         model.add_atom(Cr1)
-        x, y, z = model.get_atom_coordinates(Cr1)
+        x, y, z = model.get_atom_coordinates(Cr1, relative=False)
         assert x == 1
         assert y == 6
         assert z == 2
-        x, y, z = model.get_atom_coordinates(Cr1, R=[1, 0, 0])
+        x, y, z = model.get_atom_coordinates(Cr1, R=[1, 0, 0], relative=False)
         assert x == 11
         assert y == 6
         assert z == 2
-        x, y, z = model.get_atom_coordinates(Cr1, R=[0, -1, 0])
+        x, y, z = model.get_atom_coordinates(Cr1, R=[0, -1, 0], relative=False)
         assert x == 1
         assert y == -4
         assert z == 2
-        x, y, z = model.get_atom_coordinates(Cr1, R=[0, 0, 2])
+        x, y, z = model.get_atom_coordinates(Cr1, R=[0, 0, 2], relative=False)
         assert x == 1
         assert y == 6
         assert z == 22
-        x, y, z = model.get_atom_coordinates(Cr1, R=[0, -3, 2])
+        x, y, z = model.get_atom_coordinates(Cr1, R=[0, -3, 2], relative=False)
         assert x == 1
         assert y == -24
         assert z == 22
-        x, y, z = model.get_atom_coordinates(Cr1, R=[3, -3, 2])
+        x, y, z = model.get_atom_coordinates(Cr1, R=[3, -3, 2], relative=False)
         assert x == 31
         assert y == -24
         assert z == 22
         model.cell = [[10, 10, 0], [0, 10, 10], [0, 0, 10]]
-        x, y, z = model.get_atom_coordinates(Cr1)
+        x, y, z = model.get_atom_coordinates(Cr1, relative=False)
         assert x == 1
         assert y == 7
         assert z == 8
-        x, y, z = model.get_atom_coordinates(Cr1, R=[1, 0, 0])
+        x, y, z = model.get_atom_coordinates(Cr1, R=[1, 0, 0], relative=False)
         assert x == 11
         assert y == 17
         assert z == 8
-        x, y, z = model.get_atom_coordinates(Cr1, R=[0, -1, 0])
+        x, y, z = model.get_atom_coordinates(Cr1, R=[0, -1, 0], relative=False)
         assert x == 1
         assert y == -3
         assert z == -2
-        x, y, z = model.get_atom_coordinates(Cr1, R=[0, 0, 2])
+        x, y, z = model.get_atom_coordinates(Cr1, R=[0, 0, 2], relative=False)
         assert x == 1
         assert y == 7
         assert z == 28
-        x, y, z = model.get_atom_coordinates(Cr1, R=[0, -3, 2])
+        x, y, z = model.get_atom_coordinates(Cr1, R=[0, -3, 2], relative=False)
         assert x == 1
         assert y == -23
         assert z == -2
-        x, y, z = model.get_atom_coordinates(Cr1, R=[3, -3, 2])
+        x, y, z = model.get_atom_coordinates(Cr1, R=[3, -3, 2], relative=False)
         assert x == 31
         assert y == 7
         assert z == -2
@@ -389,20 +319,20 @@ class TestExchangeHamiltonian:
     def test_get_bond_vector(self):
         model = ExchangeHamiltonian()
         model.cell = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
-        Cr1 = Atom("Cr1", (1, 6, 2))
-        Cr2 = Atom("Cr2", (1, 3, 4))
+        Cr1 = Atom("Cr1", (0.1, 0.6, 0.2))
+        Cr2 = Atom("Cr2", (0.1, 0.3, 0.4))
         model.add_atom(Cr1)
         model.add_atom(Cr2)
-        vector = model.get_bond_vector(Cr1, Cr2)
+        vector = model.get_vector(Cr1, Cr2)
         assert (vector == np.array([0, -3, 2])).all()
-        vector = model.get_bond_vector(Cr1, Cr2, R=[3, 2, -5])
+        vector = model.get_vector(Cr1, Cr2, R=[3, 2, -5])
         assert (vector == np.array([30, 17, -48])).all()
 
     def test_get_distance(self):
         model = ExchangeHamiltonian()
         model.cell = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
-        Cr1 = Atom("Cr1", (1, 6, 2))
-        Cr2 = Atom("Cr2", (1, 3, 4))
+        Cr1 = Atom("Cr1", (0.1, 0.6, 0.2))
+        Cr2 = Atom("Cr2", (0.1, 0.3, 0.4))
         model.add_atom(Cr1)
         model.add_atom(Cr2)
         d = model.get_distance(Cr1, Cr2)
