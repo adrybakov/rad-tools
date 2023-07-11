@@ -200,7 +200,8 @@ class Crystal(Lattice):
         for atom in atoms:
             self.atoms.remove(atom)
 
-    def get_atom(self, name, index=None, return_all=False, relative=True):
+    # Modification of position has to be avoided here.
+    def get_atom(self, name, index=None, return_all=False):
         r"""
         Return atom object of the crystal.
 
@@ -219,8 +220,6 @@ class Crystal(Lattice):
             Index of the atom.
         return_all : bool, default False
             Whether to return the list of non-unique matches or raise an ``ValueError``.
-        relative : bool, default True
-            Whether to return atom with :py:attr:`.Atom.position` in relative coordinates.
 
         Returns
         -------
@@ -243,8 +242,6 @@ class Crystal(Lattice):
         for atom in self.atoms:
             if atom.name == name:
                 if index is None or atom.index == index:
-                    if not relative:
-                        atom.position = atom.position @ self.cell
                     atoms.append(atom)
 
         if len(atoms) == 0:
@@ -284,7 +281,7 @@ class Crystal(Lattice):
         """
 
         if isinstance(atom, str):
-            atom = self.get_atom(atom, index=index, relative=True)
+            atom = self.get_atom(atom, index=index)
         elif atom not in self.atoms:
             raise ValueError(f"There is no {atom} in the crystal.")
 
@@ -370,12 +367,9 @@ class Crystal(Lattice):
             Distance between atom1 in (0,0,0) cell and atom2 in R cell.
         """
 
-        return sqrt(
-            np.sum(
-                self.get_vector(
-                    atom1, atom2, R, index1=index1, index2=index2, relative=relative
-                )
-                ** 2
+        return np.linalg.norm(
+            self.get_vector(
+                atom1, atom2, R, index1=index1, index2=index2, relative=relative
             )
         )
 

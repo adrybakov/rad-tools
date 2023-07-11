@@ -57,10 +57,6 @@ def test_get_atom(name, position):
     c.add_atom(name, position=position * 2.0)
     atom = c.get_atom(name, 2)
     assert np.allclose(atom.position, position * 2.0)
-    atom = c.get_atom(name, 1, relative=False)
-    assert np.allclose(
-        atom.position, [position[0], position[1] * 2.0, position[2] * 3.0]
-    )
     with pytest.raises(ValueError):
         c.get_atom(name)
 

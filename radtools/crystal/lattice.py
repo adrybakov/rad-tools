@@ -1038,12 +1038,7 @@ class Lattice:
         """
 
         if self._kpoints is None:
-            self._kpoints = Kpoints(
-                self.b1,
-                self.b2,
-                self.b3,
-                path=DEFAULT_K_PATHS[self.variation],
-            )
+            self._kpoints = Kpoints(self.b1, self.b2, self.b3)
 
             if self.type() == "CUB":
                 hs_points = CUB_hs_points()
@@ -1085,16 +1080,18 @@ class Lattice:
             for point in hs_points:
                 if point == "S" and self.type() == "BCT":
                     self._kpoints.add_hs_point(
-                        point, hs_points[point], plot_label="$\\Sigma$"
+                        point, hs_points[point], label="$\\Sigma$"
                     )
                 elif point == "S1" and self.type() == "BCT":
                     self._kpoints.add_hs_point(
-                        point, hs_points[point], plot_label="$\\Sigma_1$"
+                        point, hs_points[point], label="$\\Sigma_1$"
                     )
                 else:
                     self._kpoints.add_hs_point(
-                        point, hs_points[point], plot_label=HS_PLOT_NAMES[point]
+                        point, hs_points[point], label=HS_PLOT_NAMES[point]
                     )
+
+            self._kpoints.path = DEFAULT_K_PATHS[self.variation]
 
         return self._kpoints
 

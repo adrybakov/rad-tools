@@ -20,7 +20,7 @@ class Kpoints:
         Second reciprocal lattice vector :math:`\mathbf{b}_2`.
     b3 : (3,) array_like
         Third reciprocal lattice vector :math:`\mathbf{b}_3`.
-    coordinates : list
+    coordinates : list, optional
         Coordinates are given in relative coordinates in reciprocal space.
     names: list, optional
         Names of the high symmetry points. Used for programming, not for plotting.
@@ -59,11 +59,14 @@ class Kpoints:
     """
 
     def __init__(
-        self, b1, b2, b3, coordinates, names=None, labels=None, path=None, n=100
+        self, b1, b2, b3, coordinates=None, names=None, labels=None, path=None, n=100
     ) -> None:
         self.b1 = np.array(b1)
         self.b2 = np.array(b2)
         self.b3 = np.array(b3)
+
+        if coordinates is None:
+            coordinates = []
 
         # Fill names and labels with defaults
         if names is None:

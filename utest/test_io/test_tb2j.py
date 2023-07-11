@@ -41,12 +41,13 @@ class TestReadExchangeHamiltonian:
         ids=["Cr1", "Cr2", "Br1", "Br2", "S1", "S2"],
     )
     def test_atoms(self, atom, position):
-        assert len(self.model.crystal.atoms) - len(self.model.magnetic_atoms) == 4
-        assert len(self.model.crystal.atoms) == 6
+        assert len(self.model.atoms) - len(self.model.magnetic_atoms) == 4
+        assert len(self.model.atoms) == 6
         assert len(self.model.magnetic_atoms) == 2
         assert (
             np.around(
-                self.model.crystal.get_atom(atom).position - np.array(position),
+                self.model.get_atom_coordinates(atom, relative=False)
+                - np.array(position),
                 4,
             )
             == np.zeros(3)
@@ -139,8 +140,6 @@ class TestReadExchangeHamiltonian:
         ],
     )
     def test_read_exchange_examples(self, atom1, atom2, R, iso, aniso, dmi, distance):
-        atom1 = self.model.crystal.get_atom(atom1)
-        atom2 = self.model.crystal.get_atom(atom2)
         assert round(self.model[(atom1, atom2, R)].iso, 4) == iso
         assert round(self.model.get_distance(atom1, atom2, R), 2) == round(distance, 2)
         for i in range(0, 3):

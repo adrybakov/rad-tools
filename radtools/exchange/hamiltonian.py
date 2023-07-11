@@ -13,6 +13,7 @@ from radtools.crystal.atom import Atom
 from radtools.crystal.crystal import Crystal
 from radtools.exchange.parameter import ExchangeParameter
 from radtools.exchange.template import ExchangeTemplate
+from radtools.exchange.constants import PREDEFINED_NOTATIONS
 from radtools.routines import toradians, print_2d_array
 
 
@@ -63,11 +64,12 @@ class ExchangeHamiltonian(Crystal):
     ----------
     crystal : :py:class:`.Crystal`, optional
         Crystal on which the exchange Hamiltonian is build.
-        By default it is orthonormal lattice
-        (:py:class:`.CUB`, :math:`a = 1`) with no atoms.
+        By default it is cubic (:math:`a=1`) lattice with no atoms.
     notation : str or tuple of bool, optional
         One of the predefined notations or list of 5 bool.
         See :py:attr:`.notation` for details.
+    **kwargs
+        Keyword arguments are passed to :py:class:`.Crystal` constructor.
 
     Attributes
     ----------
@@ -75,17 +77,12 @@ class ExchangeHamiltonian(Crystal):
         Crystal on which the ExchangeHamiltonian is build.
     """
 
-    def __init__(self, crystal: Crystal = None, notation=None) -> None:
-        self._predefined_notations = {
-            "standard": (True, False, False, False, True),
-            "tb2j": (True, True, False, False, True),
-            "spinw": (True, False, False, False, False),
-        }
+    def __init__(self, crystal: Crystal = None, notation=None, **kwargs) -> None:
+        if crystal is not None:
+            kwargs["atoms"] = crystal.atoms
+            kwargs["cell"] = crystal.cell
 
-        if crystal is None:
-            crystal = Crystal()
-
-        super().__init__(crystal.lattice)
+        super().__init__(**kwargs)
 
         self._bonds = {}
 
@@ -323,12 +320,12 @@ class ExchangeHamiltonian(Crystal):
         # Set the notation from predefined notations
         if isinstance(new_notation, str):
             new_notation = new_notation.lower()
-            if new_notation not in self._predefined_notations:
+            if new_notation not in PREDEFINED_NOTATIONS:
                 raise ValueError(
                     f"Predefine notations are: "
-                    + f"{list(self._predefined_notations)}, got: {new_notation}"
+                    + f"{list(PREDEFINED_NOTATIONS)}, got: {new_notation}"
                 )
-            new_notation = self._predefined_notations[new_notation]
+            new_notation = PREDEFINED_NOTATIONS[new_notation]
         # Set the notation from five values, converted to bool
         elif isinstance(new_notation, Iterable) and len(new_notation) == 5:
             new_notation = tuple(map(bool, new_notation))
@@ -679,6 +676,7 @@ class ExchangeHamiltonian(Crystal):
         # Fix copy/deepcopy RecursionError
         if name in ["__setstate__"]:
             raise AttributeError(name)
+        raise AttributeError(name)
 
     @property
     def crystal(self) -> Crystal:

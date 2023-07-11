@@ -11,8 +11,7 @@ from math import cos
 
 
 def test_ferromagnetic():
-    model = ExchangeHamiltonian()
-    model.crystal.lattice = lattice_example("cub")
+    model = ExchangeHamiltonian(lattice=lattice_example("CUB"))
     model.add_atom(Atom("Fe", (0, 0, 0), spin=[0, 0, 1]))
     J = ExchangeParameter(iso=1)
     model.add_bond(J, "Fe", "Fe", (1, 0, 0))
@@ -22,10 +21,10 @@ def test_ferromagnetic():
 
     dispersion = MagnonDispersion(model)
 
-    kp = model.get_kpoints()
+    kp = model.kpoints
     computed_omegas = []
     analytical_omegas = []
-    for point in kp.points:
+    for point in kp.points():
         computed_omegas.append(dispersion.omega(point)[0])
         analytical_omegas.append(
             -12

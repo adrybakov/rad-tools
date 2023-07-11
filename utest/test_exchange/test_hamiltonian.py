@@ -697,18 +697,6 @@ class TestExchangeHamiltonian:
             model.notation = new_notation
             assert model.ferromagnetic_energy() == -6
 
-    def test_interface(self):
-        model = ExchangeHamiltonian()
-        model.add_atom(Atom("Cr"))
-        assert model.Cr.name == "Cr"
-        assert model.Cr.fullname == "Cr__1"
-
-        model.add_atom(Atom("Cr"))
-        assert model.Cr__1.name == "Cr"
-        assert model.Cr__1.fullname == "Cr__1"
-        assert model.Cr__2.name == "Cr"
-        assert model.Cr__2.fullname == "Cr__2"
-
     def test_add_remove_bond_with_notation(self):
         model = ExchangeHamiltonian()
         Cr1 = Atom("Cr1", (2, 5, 1))

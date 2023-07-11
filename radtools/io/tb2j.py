@@ -96,7 +96,7 @@ def read_tb2j_model(filename, quiet=True, bravais_type=None) -> ExchangeHamilton
             except:
                 model.eps_rel = REL_TOL
 
-            model.crystal.lattice.cell = np.array(
+            model.cell = np.array(
                 [
                     list(map(float, a)),
                     list(map(float, b)),
@@ -121,13 +121,12 @@ def read_tb2j_model(filename, quiet=True, bravais_type=None) -> ExchangeHamilton
                 except IndexError:
                     charge = None
                 model.add_atom(
-                    Atom(
-                        name=line[0],
-                        position=tuple(map(float, line[1:4])),
-                        index=i,
-                        magmom=magmom,
-                        charge=charge,
-                    )
+                    name=line[0],
+                    position=tuple(map(float, line[1:4])),
+                    index=i,
+                    magmom=magmom,
+                    charge=charge,
+                    relative=False,
                 )
                 line = file.readline().split()
                 i += 1
@@ -147,8 +146,6 @@ def read_tb2j_model(filename, quiet=True, bravais_type=None) -> ExchangeHamilton
         while line and minor_sep not in line:
             line = file.readline()
         line = file.readline().translate(garbage).split()
-        # atom1 = model.crystal.get_atom(line[0])
-        # atom2 = model.crystal.get_atom(line[1])
         atom1 = line[0]
         atom2 = line[1]
         R = tuple(map(int, line[2:5]))
