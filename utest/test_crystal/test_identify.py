@@ -104,16 +104,11 @@ def test_niggli_cell_volume_error():
 
 
 @pytest.mark.parametrize(
-    "name", BRAVAIS_LATTICE_VARIATIONS, ids=BRAVAIS_LATTICE_VARIATIONS
+    "variation", BRAVAIS_LATTICE_VARIATIONS, ids=BRAVAIS_LATTICE_VARIATIONS
 )
-def test_lepage(name):
-    lattice = lattice_example(name)
-    type_name = ""
-    for i in name:
-        if i in "12345":
-            break
-        type_name += i
-
+def test_lepage(variation):
+    lattice = lattice_example(variation)
+    type_name = variation.translate(str.maketrans("", "", "12345ab"))
     assert (
         lepage(
             lattice.a,

@@ -4,7 +4,7 @@ import numpy as np
 
 
 points = {
-    "Gamma": [0, 0, 0],
+    "G": [0, 0, 0],
     "K": [0.5, 0.5, 0],
     "R": [0.5, 0.5, 0.5],
     "X": [0.5, 0, 0],
@@ -17,7 +17,7 @@ points = {
 }
 
 labels = {
-    "Gamma": R"$\Gamma$",
+    "G": R"$\Gamma$",
     "K": "K",
     "R": "R",
     "X": "X",
@@ -29,10 +29,11 @@ labels = {
     "Q": "Q",
 }
 paths = [
-    [["Gamma", "K", "R"]],
+    [["G", "K", "R"]],
     [["X", "Y", "Z"], ["R", "E"]],
     [["X", "Y", "Z"], ["R", "E"], ["F", "A", "Q"]],
 ]
+path_strings = ["G-K-R", "X-Y-Z|R-E", "X-Y-Z|R-E|F-A-Q"]
 correct_labels = [
     [R"$\Gamma$", "K", "R"],
     ["X", "Y", "Z|R", "E"],
@@ -59,7 +60,7 @@ correct_coordinates = [
 correct_points = [
     np.array(
         [
-            [0, 0, 0, 0],  # Gamma
+            [0, 0, 0, 0],  # G
             [0.1, 0.1, 0, 0.14142135623730953],
             [0.2, 0.2, 0, 0.28284271247461906],
             [0.3, 0.3, 0, 0.42426406871192857],
@@ -131,38 +132,86 @@ correct_points = [
     ),
 ]
 
-input = []
+path_input = []
+label_input = []
+coord_input = []
+point_input = []
+flat_point_input = []
 for i in range(len(paths)):
-    input.append(
-        (
-            paths[i],
-            correct_labels[i],
-            correct_coordinates[i],
-            correct_points[i][:, :3],
-            correct_points[i][:, 3],
-        )
+    path_input.append((paths[i], path_strings[i]))
+    label_input.append((paths[i], correct_labels[i]))
+    coord_input.append((paths[i], correct_coordinates[i]))
+    point_input.append((paths[i], correct_points[i][:, :3]))
+    flat_point_input.append((paths[i], correct_points[i][:, 3]))
+
+
+@pytest.mark.parametrize("path, corr_path", path_input)
+def test_path(path, corr_path):
+    kp = Kpoints(
+        b1,
+        b2,
+        b3,
+        [points[i] for i in points],
+        names=[i for i in points],
+        labels=[labels[i] for i in points],
+        n=4,
+        path=path,
     )
+    assert kp.path_string == corr_path
 
 
-@pytest.mark.parametrize("path, cor_lab, cor_coord, cor_points, cor_flat_points", input)
-def test_labels(path, cor_lab, cor_coord, cor_points, cor_flat_points):
-    kp = Kpoints(b1, b2, b3, points, labels, n=4, path=path)
-    assert kp.labels == cor_lab
+@pytest.mark.parametrize("path, corr_lab", label_input)
+def test_labels(path, corr_lab):
+    kp = Kpoints(
+        b1,
+        b2,
+        b3,
+        [points[i] for i in points],
+        names=[i for i in points],
+        labels=[labels[i] for i in points],
+        n=4,
+        path=path,
+    )
+    assert kp.labels == corr_lab
 
 
-@pytest.mark.parametrize("path, cor_lab, cor_coord, cor_points, cor_flat_points", input)
-def test_coordinates(path, cor_lab, cor_coord, cor_points, cor_flat_points):
-    kp = Kpoints(b1, b2, b3, points, labels, n=4, path=path)
-    assert (np.abs(kp.coordinates(relative=True) - cor_coord) < 1e-5).all()
+@pytest.mark.parametrize("path, corr_coord", coord_input)
+def test_coordinates(path, corr_coord):
+    kp = Kpoints(
+        b1,
+        b2,
+        b3,
+        [points[i] for i in points],
+        names=[i for i in points],
+        n=4,
+        path=path,
+    )
+    assert (np.abs(kp.coordinates(relative=True) - corr_coord) < 1e-5).all()
 
 
-@pytest.mark.parametrize("path, cor_lab, cor_coord, cor_points, cor_flat_points", input)
-def test_points(path, cor_lab, cor_coord, cor_points, cor_flat_points):
-    kp = Kpoints(b1, b2, b3, points, labels, n=4, path=path)
-    assert (np.abs(kp.points(relative=True) - cor_points) < 1e-5).all()
+@pytest.mark.parametrize("path, corr_points", point_input)
+def test_points(path, corr_points):
+    kp = Kpoints(
+        b1,
+        b2,
+        b3,
+        [points[i] for i in points],
+        names=[i for i in points],
+        n=4,
+        path=path,
+    )
+    assert (np.abs(kp.points(relative=True) - corr_points) < 1e-5).all()
 
 
-@pytest.mark.parametrize("path, cor_lab, cor_coord, cor_points, cor_flat_points", input)
-def test_flatten_points(path, cor_lab, cor_coord, cor_points, cor_flat_points):
-    kp = Kpoints(b1, b2, b3, points, labels, n=4, path=path)
-    assert (np.abs(kp.flatten_points(relative=True) - cor_flat_points) < 1e-5).all()
+@pytest.mark.parametrize("path, corr_flat_points", flat_point_input)
+def test_flatten_points(path, corr_flat_points):
+    kp = Kpoints(
+        b1,
+        b2,
+        b3,
+        [points[i] for i in points],
+        names=[i for i in points],
+        n=4,
+        path=path,
+    )
+    assert (np.abs(kp.flatten_points(relative=True) - corr_flat_points) < 1e-5).all()

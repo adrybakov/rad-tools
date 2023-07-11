@@ -14,7 +14,7 @@ from scipy.spatial.transform import Rotation
 
 from typing import Iterable
 
-from radtools.crystal.constants import ABS_TOL_ANGLE, ABS_TOL
+from radtools.crystal.constants import ABS_TOL_ANGLE, ABS_TOL, REL_TOL
 
 import numpy as np
 from termcolor import cprint, colored
@@ -755,7 +755,7 @@ def custom_cmap(start_color, finish_color):
     return LinearSegmentedColormap("custom_cmap", cdict, N=256)
 
 
-def compare_numerically(x, condition, y, eps):
+def compare_numerically(x, condition, y, eps=None, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Compare two numbers numerically.
 
@@ -767,14 +767,26 @@ def compare_numerically(x, condition, y, eps):
         Condition to compare with. One of "<", ">", "<=", ">=", "==", "!=".
     y : float
         Second number.
-    eps : float
-        Tolerance.
+    eps : float, optional
+        Tolerance. Used for the comparison if provided. If ``None``, the computed as:
+
+        .. code-block:: python
+
+            eps = atol + rtol * y
+
+    rtol : float, default 1e-04
+        Relative tolerance.
+    atol : float, default 1e-08
+        Absolute tolerance.
 
     Returns
     -------
     result: bool
         Whether the condition is satisfied.
     """
+
+    if eps is None:
+        eps = atol + rtol * y
 
     if condition == "<":
         return x < y - eps

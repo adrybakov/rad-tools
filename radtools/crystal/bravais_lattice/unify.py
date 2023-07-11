@@ -1,14 +1,19 @@
 import numpy as np
 
 from radtools.routines import param_from_cell, compare_numerically
-from radtools.crystal.constants import TRANSFORM_TO_CONVENTIONAL, REL_TOL, ABS_TOL_ANGLE
+from radtools.crystal.constants import (
+    TRANSFORM_TO_CONVENTIONAL,
+    REL_TOL,
+    ABS_TOL_ANGLE,
+    ABS_TOL,
+)
 from radtools.routines import volume
 
 __all__ = ["unify_cell"]
 
 
 # Main routine, serves as interface to all of them
-def unify_cell(cell, correct_lattice_type, eps_rel=REL_TOL):
+def unify_cell(cell, correct_lattice_type, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine it
     if required to ensure the unique choice of lattice vectors.
@@ -19,8 +24,10 @@ def unify_cell(cell, correct_lattice_type, eps_rel=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps_rel : float, default ``REL_TOL``
-        Tolerance for numerical comparison.
+    rtol : float, default ``REL_TOL``
+        Relative tolerance for numerical comparison.
+    atol : float, default ``ABS_TOL``
+        Absolute tolerance for numerical comparison.
     correct_lattice_type : str
         Correct lattice type.
 
@@ -48,10 +55,10 @@ def unify_cell(cell, correct_lattice_type, eps_rel=REL_TOL):
         "TRI": TRI_unify_cell,
     }
 
-    return functions[correct_lattice_type](cell, eps_rel)
+    return functions[correct_lattice_type](cell, rtol=rtol, atol=atol)
 
 
-def CUB_unify_cell(cell, eps_rel=REL_TOL):
+def CUB_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the CUB lattice conditions.
 
@@ -61,8 +68,11 @@ def CUB_unify_cell(cell, eps_rel=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps_rel : float, default ``REL_TOL``
+    rtol : float, default ``REL_TOL``
         Relative tolerance for numerical comparison.
+        Ignored here, but preserved for the unification of input.
+    atol : float, default ``ABS_TOL``
+        Absolute tolerance for numerical comparison.
         Ignored here, but preserved for the unification of input.
 
     Returns
@@ -74,7 +84,7 @@ def CUB_unify_cell(cell, eps_rel=REL_TOL):
     return np.array(cell)
 
 
-def FCC_unify_cell(cell, eps_rel=REL_TOL):
+def FCC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the FCC lattice conditions.
 
@@ -84,8 +94,11 @@ def FCC_unify_cell(cell, eps_rel=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps_rel : float, default ``REL_TOL``
+    rtol : float, default ``REL_TOL``
         Relative tolerance for numerical comparison.
+        Ignored here, but preserved for the unification of input.
+    atol : float, default ``ABS_TOL``
+        Absolute tolerance for numerical comparison.
         Ignored here, but preserved for the unification of input.
 
     Returns
@@ -97,7 +110,7 @@ def FCC_unify_cell(cell, eps_rel=REL_TOL):
     return np.array(cell)
 
 
-def BCC_unify_cell(cell, eps_rel=REL_TOL):
+def BCC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the BCC lattice conditions.
 
@@ -107,8 +120,11 @@ def BCC_unify_cell(cell, eps_rel=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps_rel : float, default ``REL_TOL``
+    rtol : float, default ``REL_TOL``
         Relative tolerance for numerical comparison.
+        Ignored here, but preserved for the unification of input.
+    atol : float, default ``ABS_TOL``
+        Absolute tolerance for numerical comparison.
         Ignored here, but preserved for the unification of input.
 
     Returns
@@ -120,7 +136,7 @@ def BCC_unify_cell(cell, eps_rel=REL_TOL):
     return np.array(cell)
 
 
-def TET_unify_cell(cell, eps_rel=REL_TOL):
+def TET_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the TET lattice conditions.
 
@@ -130,8 +146,10 @@ def TET_unify_cell(cell, eps_rel=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps_rel : float, default ``REL_TOL``
+    rtol : float, default ``REL_TOL``
         Relative tolerance for numerical comparison.
+    atol : float, default ``ABS_TOL``
+        Absolute tolerance for numerical comparison.
 
     Returns
     -------
@@ -141,19 +159,17 @@ def TET_unify_cell(cell, eps_rel=REL_TOL):
 
     cell = np.array(cell)
 
-    eps = eps_rel * volume(cell) ** (1.0 / 3.0)
-
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
-    if compare_numerically(a, "==", c, eps):
+    if compare_numerically(a, "==", c, rtol=rtol, atol=atol):
         cell = [cell[2], cell[0], cell[1]]
-    elif compare_numerically(b, "==", c, eps):
+    elif compare_numerically(b, "==", c, rtol=rtol, atol=atol):
         cell = [cell[1], cell[2], cell[0]]
 
     return cell
 
 
-def BCT_unify_cell(cell, eps_rel=REL_TOL):
+def BCT_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the BCT lattice conditions.
 
@@ -163,8 +179,10 @@ def BCT_unify_cell(cell, eps_rel=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps_rel : float, default ``REL_TOL``
-        Tolerance for numerical comparison.
+    rtol : float, default ``REL_TOL``
+        Relative tolerance for numerical comparison.
+    atol : float, default ``ABS_TOL``
+        Absolute tolerance for numerical comparison.
 
     Returns
     -------
@@ -173,21 +191,19 @@ def BCT_unify_cell(cell, eps_rel=REL_TOL):
     """
     cell = np.array(cell)
 
-    eps = eps_rel * volume(cell) ** (1.0 / 3.0)
-
     a, b, c, alpha, beta, gamma = param_from_cell(
         TRANSFORM_TO_CONVENTIONAL["BCT"] @ cell
     )
 
-    if compare_numerically(a, "==", c, eps):
+    if compare_numerically(a, "==", c, rtol=rtol, atol=atol):
         cell = [cell[2], cell[0], cell[1]]
-    elif compare_numerically(b, "==", c, eps):
+    elif compare_numerically(b, "==", c, rtol=rtol, atol=atol):
         cell = [cell[1], cell[2], cell[0]]
 
     return cell
 
 
-def ORC_unify_cell(cell, eps_rel=REL_TOL):
+def ORC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORC lattice conditions.
 
@@ -197,8 +213,10 @@ def ORC_unify_cell(cell, eps_rel=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps_rel : float, default ``REL_TOL``
-        Tolerance for numerical comparison.
+    rtol : float, default ``REL_TOL``
+        Relative tolerance for numerical comparison.
+    atol : float, default ``ABS_TOL``
+        Absolute tolerance for numerical comparison.
 
     Returns
     -------
@@ -206,24 +224,23 @@ def ORC_unify_cell(cell, eps_rel=REL_TOL):
         Primitive unit cell.
     """
     cell = np.array(cell)
-    eps = eps_rel * volume(cell) ** (1.0 / 3.0)
 
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
-    if compare_numerically(a, ">", b, eps):
+    if compare_numerically(a, ">", b, rtol=rtol, atol=atol):
         # minus preserves right-hand order
         cell = [cell[1], cell[0], -cell[2]]
         a, b = b, a
-    if compare_numerically(a, ">", c, eps):
+    if compare_numerically(a, ">", c, rtol=rtol, atol=atol):
         cell = [cell[2], cell[0], cell[1]]
-    elif compare_numerically(b, ">", c, eps):
+    elif compare_numerically(b, ">", c, rtol=rtol, atol=atol):
         # minus preserves right-hand order
         cell = [cell[0], cell[2], -cell[1]]
 
     return cell
 
 
-def ORCF_unify_cell(cell, eps_rel=REL_TOL):
+def ORCF_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORCF lattice conditions.
 
@@ -233,8 +250,10 @@ def ORCF_unify_cell(cell, eps_rel=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps_rel : float, default ``REL_TOL``
-        Tolerance for numerical comparison.
+    rtol : float, default ``REL_TOL``
+        Relative tolerance for numerical comparison.
+    atol : float, default ``ABS_TOL``
+        Absolute tolerance for numerical comparison.
 
     Returns
     -------
@@ -242,25 +261,24 @@ def ORCF_unify_cell(cell, eps_rel=REL_TOL):
         Primitive unit cell.
     """
     cell = np.array(cell)
-    eps = eps_rel * volume(cell) ** (1.0 / 3.0)
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
-    if compare_numerically(a, "<", b, eps):
+    if compare_numerically(a, "<", b, rtol=rtol, atol=atol):
         # minus preserves right-hand order
         # abc - > bca
         cell = [cell[1], cell[2], cell[0]]
-        if compare_numerically(b, "<", c, eps):
+        if compare_numerically(b, "<", c, rtol=rtol, atol=atol):
             # minus preserves right-hand order
             # bca -> -cba
             cell = [-cell[1], cell[0], cell[2]]
-        elif compare_numerically(c, "<", a, eps):
+        elif compare_numerically(c, "<", a, rtol=rtol, atol=atol):
             # minus preserves right-hand order
             # bca -> b-ac
             cell = [cell[0], -cell[2], cell[1]]
-    elif compare_numerically(a, "<", c, eps):
+    elif compare_numerically(a, "<", c, rtol=rtol, atol=atol):
         # abc -> cab
         cell = [cell[2], cell[0], cell[1]]
-    elif compare_numerically(b, "<", c, eps):
+    elif compare_numerically(b, "<", c, rtol=rtol, atol=atol):
         # minus preserves right-hand order
         # abc -> a-cb
         cell = [cell[0], -cell[2], cell[1]]
@@ -268,7 +286,7 @@ def ORCF_unify_cell(cell, eps_rel=REL_TOL):
     return cell
 
 
-def ORCI_unify_cell(cell, eps_rel=REL_TOL):
+def ORCI_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORCI lattice conditions.
 
@@ -278,8 +296,10 @@ def ORCI_unify_cell(cell, eps_rel=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps_rel : float, default ``REL_TOL``
-        Tolerance for numerical comparison.
+    rtol : float, default ``REL_TOL``
+        Relative tolerance for numerical comparison.
+    atol : float, default ``ABS_TOL``
+        Absolute tolerance for numerical comparison.
 
     Returns
     -------
@@ -288,27 +308,27 @@ def ORCI_unify_cell(cell, eps_rel=REL_TOL):
     """
 
     cell = np.array(cell)
-    eps = eps_rel * volume(cell) ** (1.0 / 3.0)
+
     a, b, c, alpha, beta, gamma = param_from_cell(
         TRANSFORM_TO_CONVENTIONAL["ORCI"] @ cell
     )
 
-    if compare_numerically(a, ">", b, eps):
+    if compare_numerically(a, ">", b, rtol=rtol, atol=atol):
         # minus preserves right-hand order
         # abc - > bca
         cell = [cell[1], cell[2], cell[0]]
-        if compare_numerically(b, ">", c, eps):
+        if compare_numerically(b, ">", c, rtol=rtol, atol=atol):
             # minus preserves right-hand order
             # bca -> -cba
             cell = [-cell[1], cell[0], cell[2]]
-        elif compare_numerically(c, ">", a, eps):
+        elif compare_numerically(c, ">", a, rtol=rtol, atol=atol):
             # minus preserves right-hand order
             # bca -> b-ac
             cell = [cell[0], -cell[2], cell[1]]
-    elif compare_numerically(a, ">", c, eps):
+    elif compare_numerically(a, ">", c, rtol=rtol, atol=atol):
         # abc -> cab
         cell = [cell[2], cell[0], cell[1]]
-    elif compare_numerically(b, ">", c, eps):
+    elif compare_numerically(b, ">", c, rtol=rtol, atol=atol):
         # minus preserves right-hand order
         # abc -> a-cb
         cell = [cell[0], -cell[2], cell[1]]
@@ -316,7 +336,7 @@ def ORCI_unify_cell(cell, eps_rel=REL_TOL):
     return cell
 
 
-def ORCC_unify_cell(cell, eps_rel=REL_TOL):
+def ORCC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORCC lattice conditions.
 
@@ -326,8 +346,10 @@ def ORCC_unify_cell(cell, eps_rel=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps_rel : float, default ``REL_TOL``
-        Tolerance for numerical comparison.
+    rtol : float, default ``REL_TOL``
+        Relative tolerance for numerical comparison.
+    atol : float, default ``ABS_TOL``
+        Absolute tolerance for numerical comparison.
 
     Returns
     -------
@@ -336,13 +358,12 @@ def ORCC_unify_cell(cell, eps_rel=REL_TOL):
     """
 
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
-    eps = eps_rel * volume(cell) ** (1.0 / 3.0)
 
     # a == c
-    if compare_numerically(a, "==", c, eps):
+    if compare_numerically(a, "==", c, rtol=rtol, atol=atol):
         cell = [cell[2], cell[0], cell[1]]
     # b = c
-    elif compare_numerically(b, "==", c, eps):
+    elif compare_numerically(b, "==", c, rtol=rtol, atol=atol):
         cell = [cell[1], cell[2], cell[0]]
 
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -353,14 +374,14 @@ def ORCC_unify_cell(cell, eps_rel=REL_TOL):
         TRANSFORM_TO_CONVENTIONAL["ORCC"] @ cell
     )
 
-    if compare_numerically(a, ">", b, eps):
+    if compare_numerically(a, ">", b, rtol=rtol, atol=atol):
         # minus preserves right-hand order
         cell = [-cell[1], cell[0], cell[2]]
 
     return cell
 
 
-def HEX_unify_cell(cell, eps_rel=REL_TOL):
+def HEX_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the HEX lattice conditions.
 
@@ -370,8 +391,11 @@ def HEX_unify_cell(cell, eps_rel=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps_rel : float, default ``REL_TOL``
+    rtol : float, default ``REL_TOL``
         Relative tolerance for numerical comparison.
+        Ignored here, but preserved for the unification of input.
+    atol : float, default ``ABS_TOL``
+        Absolute tolerance for numerical comparison.
         Ignored here, but preserved for the unification of input.
 
     Returns
@@ -383,16 +407,16 @@ def HEX_unify_cell(cell, eps_rel=REL_TOL):
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
     # a == c
-    if compare_numerically(beta, "==", 120.0, ABS_TOL_ANGLE):
+    if compare_numerically(beta, "==", 120.0, eps=ABS_TOL_ANGLE):
         cell = [cell[2], cell[0], cell[1]]
     # b = c
-    elif compare_numerically(alpha, "==", 120.0, ABS_TOL_ANGLE):
+    elif compare_numerically(alpha, "==", 120.0, eps=ABS_TOL_ANGLE):
         cell = [cell[1], cell[2], cell[0]]
 
     return cell
 
 
-def RHL_unify_cell(cell, eps_rel=REL_TOL):
+def RHL_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the RHL lattice conditions.
 
@@ -402,8 +426,11 @@ def RHL_unify_cell(cell, eps_rel=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps_rel : float, default ``REL_TOL``
+    rtol : float, default ``REL_TOL``
         Relative tolerance for numerical comparison.
+        Ignored here, but preserved for the unification of input.
+    atol : float, default ``ABS_TOL``
+        Absolute tolerance for numerical comparison.
         Ignored here, but preserved for the unification of input.
 
     Returns
@@ -415,7 +442,7 @@ def RHL_unify_cell(cell, eps_rel=REL_TOL):
     return np.array(cell)
 
 
-def MCL_unify_cell(cell, eps_rel=REL_TOL):
+def MCL_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the MCL lattice conditions.
 
@@ -425,8 +452,10 @@ def MCL_unify_cell(cell, eps_rel=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps_rel : float, default ``REL_TOL``
-        Tolerance for numerical comparison.
+    rtol : float, default ``REL_TOL``
+        Relative tolerance for numerical comparison.
+    atol : float, default ``ABS_TOL``
+        Absolute tolerance for numerical comparison.
 
     Returns
     -------
@@ -435,32 +464,31 @@ def MCL_unify_cell(cell, eps_rel=REL_TOL):
     """
 
     cell = np.array(cell)
-    eps = eps_rel * volume(cell) ** (1.0 / 3.0)
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
     # beta != 90
-    if compare_numerically(beta, "!=", 90.0, ABS_TOL_ANGLE):
+    if compare_numerically(beta, "!=", 90.0, eps=ABS_TOL_ANGLE):
         cell = [cell[1], cell[2], cell[0]]
     # gamma != 90
-    elif compare_numerically(gamma, "!=", 90.0, ABS_TOL_ANGLE):
+    elif compare_numerically(gamma, "!=", 90.0, eps=ABS_TOL_ANGLE):
         cell = [cell[2], cell[0], cell[1]]
 
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
     # alpha > 90
-    if compare_numerically(alpha, ">", 90.0, ABS_TOL_ANGLE):
+    if compare_numerically(alpha, ">", 90.0, eps=ABS_TOL_ANGLE):
         cell = [cell[0], cell[2], -cell[1]]
 
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
     # b > c
-    if compare_numerically(b, ">", c, eps):
+    if compare_numerically(b, ">", c, rtol=rtol, atol=atol):
         cell = [-cell[0], cell[2], cell[1]]
 
     return cell
 
 
-def MCLC_unify_cell(cell, eps_rel=REL_TOL):
+def MCLC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the MCLC lattice conditions.
 
@@ -470,8 +498,10 @@ def MCLC_unify_cell(cell, eps_rel=REL_TOL):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps_rel : float, default ``REL_TOL``
-        Tolerance for numerical comparison.
+    rtol : float, default ``REL_TOL``
+        Relative tolerance for numerical comparison.
+    atol : float, default ``ABS_TOL``
+        Absolute tolerance for numerical comparison.
 
     Returns
     -------
@@ -479,14 +509,13 @@ def MCLC_unify_cell(cell, eps_rel=REL_TOL):
         Primitive unit cell.
     """
 
-    eps = eps_rel * volume(cell) ** (1.0 / 3.0)
     a, b, c, alpha, beta, gamma = param_from_cell(cell)
 
     # a == c
-    if compare_numerically(a, "==", c, eps):
+    if compare_numerically(a, "==", c, rtol=rtol, atol=atol):
         cell = [cell[2], cell[0], cell[1]]
     # b == c
-    elif compare_numerically(b, "==", c, eps):
+    elif compare_numerically(b, "==", c, rtol=rtol, atol=atol):
         cell = [cell[1], cell[2], cell[0]]
 
     cell = np.array(cell)
@@ -495,7 +524,7 @@ def MCLC_unify_cell(cell, eps_rel=REL_TOL):
     )
 
     # alpha > 90
-    if compare_numerically(alpha, ">", 90.0, ABS_TOL_ANGLE):
+    if compare_numerically(alpha, ">", 90.0, eps=ABS_TOL_ANGLE):
         cell = [cell[0], cell[2], -cell[1]]
 
     cell = np.array(cell)
@@ -504,14 +533,14 @@ def MCLC_unify_cell(cell, eps_rel=REL_TOL):
     )
 
     # b > c
-    if compare_numerically(b, ">", c, eps):
+    if compare_numerically(b, ">", c, rtol=rtol, atol=atol):
         cell = [-cell[0], cell[2], cell[1]]
 
     return cell
 
 
 # TODO
-def TRI_unify_cell(cell, eps_rel=REL_TOL, resiprocal=False):
+def TRI_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL, resiprocal=False):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the TRI lattice conditions.
 
@@ -521,8 +550,10 @@ def TRI_unify_cell(cell, eps_rel=REL_TOL, resiprocal=False):
     ----------
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
-    eps_rel : float, default ``REL_TOL``
-        Tolerance for numerical comparison.
+    rtol : float, default ``REL_TOL``
+        Relative tolerance for numerical comparison.
+    atol : float, default ``ABS_TOL``
+        Absolute tolerance for numerical comparison.
     resiprocal : bool, default False
         Whether to interpret input as reciprocal cell.
 
@@ -531,6 +562,5 @@ def TRI_unify_cell(cell, eps_rel=REL_TOL, resiprocal=False):
     cell : (3,3) :numpy:`ndarray`
         Primitive unit cell.
     """
-    eps = eps_rel * volume(cell) ** (1.0 / 3.0)
 
     return np.array(cell)

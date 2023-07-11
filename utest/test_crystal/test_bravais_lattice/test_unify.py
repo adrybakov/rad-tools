@@ -88,7 +88,7 @@ def test_CUB_unify_cell(r1, r2, r3, conv_a, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = CUB_unify_cell(cell, REL_TOL)
+        cell = CUB_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -119,7 +119,7 @@ def test_FCC_unify_cell(r1, r2, r3, conv_a, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = FCC_unify_cell(cell, REL_TOL)
+        cell = FCC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -153,7 +153,7 @@ def test_BCC_unify_cell(r1, r2, r3, conv_a, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = BCC_unify_cell(cell, REL_TOL)
+        cell = BCC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -189,7 +189,7 @@ def test_TET_unify_cell(r1, r2, r3, conv_a, conv_c, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = TET_unify_cell(cell, REL_TOL)
+        cell = TET_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -231,7 +231,7 @@ def test_BCT_unify_cell(r1, r2, r3, conv_a, conv_c, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = BCT_unify_cell(cell, REL_TOL)
+        cell = BCT_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -273,8 +273,7 @@ def test_ORC_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = ORC_unify_cell(cell, REL_TOL)
-
+        cell = ORC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
         assert np.allclose(
@@ -321,7 +320,7 @@ def test_ORCF_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = ORCF_unify_cell(cell, REL_TOL)
+        cell = ORCF_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -379,7 +378,7 @@ def test_ORCI_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = ORCI_unify_cell(cell, REL_TOL)
+        cell = ORCI_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -427,7 +426,7 @@ def test_ORCC_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
 
         old_det = np.linalg.det(cell)
 
-        cell = ORCC_unify_cell(cell, REL_TOL)
+        cell = ORCC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
         assert np.allclose(
             [a, b, c], [prim_a, prim_b, prim_c], rtol=REL_TOL, atol=ABS_TOL
@@ -468,7 +467,7 @@ def test_HEX_unify_cell(r1, r2, r3, conv_a, conv_c, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = HEX_unify_cell(cell, REL_TOL)
+        cell = HEX_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -506,7 +505,7 @@ def test_RHL_unify_cell(r1, r2, r3, conv_a, conv_alpha, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = RHL_unify_cell(cell, REL_TOL)
+        cell = RHL_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -553,7 +552,7 @@ def test_MCL_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = MCL_unify_cell(cell, REL_TOL)
+        cell = MCL_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -613,7 +612,7 @@ def test_MCLC_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = MCLC_unify_cell(cell, REL_TOL)
+        cell = MCLC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -661,7 +660,7 @@ def test_MCLC_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
 #         old_det = np.linalg.det(cell)
 #         # TODO: Decide the logic of parameter`s order
 #         # Fix cell
-#         cell = TRI_unify_cell(cell, REL_TOL)
+#         cell = TRI_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
 #         # Check results
 #         a, b, c, alpha, beta, gamma = param_from_cell(cell)

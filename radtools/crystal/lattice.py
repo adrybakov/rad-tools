@@ -162,6 +162,9 @@ class Lattice:
         Angle between vectors :math:`a_1` and :math:`a_3`. In degrees.
     gamma : float, default=90
         Angle between vectors :math:`a_1` and :math:`a_2`. In degrees.
+    unify : bool, default True
+        Whether to unify the cell.
+        The consistence of the predefined k paths is not guaranteed in the cell is not unified.
 
     Attributes
     ----------
@@ -182,15 +185,15 @@ class Lattice:
         Computational materials science, 49(2), pp.299-312.
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, unify=True, **kwargs) -> None:
         self.eps_rel = REL_TOL
         self._cell = None
         self._type = None
         self._kpoints = None
         if "cell" in kwargs:
-            self.cell = kwargs["cell"]
+            cell = kwargs["cell"]
         elif "a1" in kwargs and "a2" in kwargs and "a3" in kwargs:
-            self.cell = np.array([kwargs["a1"], kwargs["a2"], kwargs["a3"]])
+            cell = np.array([kwargs["a1"], kwargs["a2"], kwargs["a3"]])
         elif (
             "a" in kwargs
             and "b" in kwargs
@@ -199,7 +202,7 @@ class Lattice:
             and "beta" in kwargs
             and "gamma" in kwargs
         ):
-            self.cell = cell_from_param(
+            cell = cell_from_param(
                 kwargs["a"],
                 kwargs["b"],
                 kwargs["c"],
@@ -208,12 +211,12 @@ class Lattice:
                 kwargs["gamma"],
             )
         elif len(args) == 1:
-            self.cell = np.array(args[0])
+            cell = np.array(args[0])
         elif len(args) == 3:
-            self.cell = np.array(args)
+            cell = np.array(args)
         elif len(args) == 6:
             a, b, c, alpha, beta, gamma = args
-            self.cell = cell_from_param(a, b, c, alpha, beta, gamma)
+            cell = cell_from_param(a, b, c, alpha, beta, gamma)
         else:
             raise ValueError(
                 "Unable to identify input parameters. "
@@ -226,6 +229,8 @@ class Lattice:
         self.ax = None
         self._artists = {}
         self._PLOT_NAMES = HS_PLOT_NAMES
+
+        self._set_cell(cell, unify=unify)
 
     # Real space parameters
     @property
@@ -252,8 +257,8 @@ class Lattice:
             raise AttributeError(f"Cell is not defined for lattice {self}")
         return self._cell
 
-    # For the child`s overriding`
-    def _set_cell(self, new_cell):
+    # For the child`s overriding
+    def _set_cell(self, new_cell, unify=True):
         try:
             new_cell = np.array(new_cell)
         except:
@@ -263,12 +268,157 @@ class Lattice:
         self._cell = new_cell
         # Reset type
         self._type = None
-        # Fix cell
-        self._cell = unify_cell(self._cell, self.type(), self.eps_rel)
+        # Unify cell
+        if unify:
+            self._cell = unify_cell(
+                self._cell, self.type(), rtol=self.eps_rel, atol=self.eps
+            )
 
     @cell.setter
     def cell(self, new_cell):
         self._set_cell(new_cell)
+
+    @property
+    def a1(self):
+        r"""
+        First lattice vector :math:`\vec{a}_1`.
+
+        Returns
+        -------
+        a1 : (3,) :numpy:`ndarray`
+            First lattice vector :math:`\vec{a}_1`.
+        """
+        return self.cell[0]
+
+    @property
+    def a2(self):
+        r"""
+        Second lattice vector :math:`\vec{a}_2`.
+
+        Returns
+        -------
+        a2 : (3,) :numpy:`ndarray`
+            Second lattice vector :math:`\vec{a}_2`.
+        """
+        return self.cell[1]
+
+    @property
+    def a3(self):
+        r"""
+        Third lattice vector :math:`\vec{a}_3`.
+
+        Returns
+        -------
+        a3 : (3,) :numpy:`ndarray`
+            Third lattice vector :math:`\vec{a}_3`.
+        """
+        return self.cell[2]
+
+    @property
+    def a(self):
+        r"""
+        Length of the first lattice vector :math:`\vert\vec{a}_1\vert`.
+
+        Returns
+        -------
+        a : float
+        """
+
+        return np.linalg.norm(self.cell[0])
+
+    @property
+    def b(self):
+        r"""
+        Length of the second lattice vector :math:`\vert\vec{a}_2\vert`.
+
+        Returns
+        -------
+        b : float
+        """
+
+        return np.linalg.norm(self.cell[1])
+
+    @property
+    def c(self):
+        r"""
+        Length of the third lattice vector :math:`\vert\vec{a}_3\vert`.
+
+        Returns
+        -------
+        c : float
+        """
+
+        return np.linalg.norm(self.cell[2])
+
+    @property
+    def alpha(self):
+        r"""
+        Angle between second and third lattice vector.
+
+        Returns
+        -------
+        angle : float
+            In degrees
+        """
+
+        return angle(self.a2, self.a3)
+
+    @property
+    def beta(self):
+        r"""
+        Angle between first and third lattice vector.
+
+        Returns
+        -------
+        angle : float
+            In degrees
+        """
+
+        return angle(self.a1, self.a3)
+
+    @property
+    def gamma(self):
+        r"""
+        Angle between first and second lattice vector.
+
+        Returns
+        -------
+        angle : float
+            In degrees
+        """
+
+        return angle(self.a1, self.a2)
+
+    @property
+    def unit_cell_volume(self):
+        r"""
+        Volume of the unit cell.
+
+        Returns
+        -------
+        volume : float
+            Unit cell volume.
+        """
+
+        return volume(self.a1, self.a2, self.a3)
+
+    @property
+    def parameters(self):
+        r"""
+        Return cell parameters.
+
+        :math:`(a, b, c, \alpha, \beta, \gamma)`
+
+        Returns
+        -------
+        a : float
+        b : float
+        c : float
+        alpha : float
+        beta : float
+        gamma : float
+        """
+        return self.a, self.b, self.c, self.alpha, self.beta, self.gamma
 
     @property
     def conv_cell(self):
@@ -401,138 +551,9 @@ class Lattice:
         return angle(self.conv_a1, self.conv_a2)
 
     @property
-    def a1(self):
+    def conv_unit_cell_volume(self):
         r"""
-        First lattice vector :math:`\vec{a}_1`.
-
-        Returns
-        -------
-        a1 : (3,) :numpy:`ndarray`
-            First lattice vector :math:`\vec{a}_1`.
-        """
-        return self.cell[0]
-
-    @property
-    def a2(self):
-        r"""
-        Second lattice vector :math:`\vec{a}_2`.
-
-        Returns
-        -------
-        a2 : (3,) :numpy:`ndarray`
-            Second lattice vector :math:`\vec{a}_2`.
-        """
-        return self.cell[1]
-
-    @property
-    def a3(self):
-        r"""
-        Third lattice vector :math:`\vec{a}_3`.
-
-        Returns
-        -------
-        a3 : (3,) :numpy:`ndarray`
-            Third lattice vector :math:`\vec{a}_3`.
-        """
-        return self.cell[2]
-
-    @property
-    def a(self):
-        r"""
-        Length of the first lattice vector :math:`\vert\vec{a}_1\vert`.
-
-        Returns
-        -------
-        a : float
-        """
-
-        return np.linalg.norm(self.cell[0])
-
-    @property
-    def b(self):
-        r"""
-        Length of the second lattice vector :math:`\vert\vec{a}_2\vert`.
-
-        Returns
-        -------
-        b : float
-        """
-
-        return np.linalg.norm(self.cell[1])
-
-    @property
-    def c(self):
-        r"""
-        Length of the third lattice vector :math:`\vert\vec{a}_3\vert`.
-
-        Returns
-        -------
-        c : float
-        """
-
-        return np.linalg.norm(self.cell[2])
-
-    @property
-    def alpha(self):
-        r"""
-        Angle between second and third lattice vector.
-
-        Returns
-        -------
-        angle : float
-            In degrees
-        """
-
-        return angle(self.a2, self.a3)
-
-    @property
-    def beta(self):
-        r"""
-        Angle between first and third lattice vector.
-
-        Returns
-        -------
-        angle : float
-            In degrees
-        """
-
-        return angle(self.a1, self.a3)
-
-    @property
-    def gamma(self):
-        r"""
-        Angle between first and second lattice vector.
-
-        Returns
-        -------
-        angle : float
-            In degrees
-        """
-
-        return angle(self.a1, self.a2)
-
-    @property
-    def parameters(self):
-        r"""
-        Return cell parameters.
-
-        :math:`(a, b, c, \alpha, \beta, \gamma)`
-
-        Returns
-        -------
-        a : float
-        b : float
-        c : float
-        alpha : float
-        beta : float
-        gamma : float
-        """
-        return self.a, self.b, self.c, self.alpha, self.beta, self.gamma
-
-    @property
-    def unit_cell_volume(self):
-        r"""
-        Volume of the unit cell.
+        Volume of the conventional unit cell.
 
         Returns
         -------
@@ -540,7 +561,7 @@ class Lattice:
             Unit cell volume.
         """
 
-        return volume(self.a1, self.a2, self.a3)
+        return volume(self.conv_a1, self.conv_a2, self.conv_a3)
 
     # Reciprocal parameters
     @property
@@ -705,6 +726,24 @@ class Lattice:
 
         return volume(self.b1, self.b2, self.b3)
 
+    @property
+    def reciprocal_parameters(self):
+        r"""
+        Return reciprocal cell parameters.
+
+        :math:`(a, b, c, \alpha, \beta, \gamma)`
+
+        Returns
+        -------
+        a : float
+        b : float
+        c : float
+        alpha : float
+        beta : float
+        gamma : float
+        """
+        return self.k_a, self.k_b, self.k_c, self.k_alpha, self.k_beta, self.k_gamma
+
     # Lattice type routines and properties
     @property
     def eps(self):
@@ -828,7 +867,7 @@ class Lattice:
             Name of the Bravais lattice type.
         """
 
-        return BRAVAIS_LATTICE_NAMES[self.type]
+        return BRAVAIS_LATTICE_NAMES[self.type()]
 
     @property
     def pearson_symbol(self):
@@ -895,26 +934,6 @@ class Lattice:
         """
 
         return self.pearson_symbol[1]
-
-    def identify(self):
-        r"""
-        Identify the Bravais lattice type and variation.
-
-        Parameters
-        ----------
-        eps_rel : float, optional
-            Relative error for the :ref:`rad-tools_lepage` algorithm.
-
-        Returns
-        -------
-        variation : str
-            Variation of the lattice.
-        """
-
-        if eps_rel is None:
-            eps_rel = self.eps_rel
-
-        return self.variation
 
     def lattice_points(self, relative=False, reciprocal=False, normalize=False):
         r"""
@@ -1002,10 +1021,20 @@ class Lattice:
         r"""
         Instance of :py:class:`.Kpoints` with the high symmetry points and path.
 
+        Notes
+        -----
+        When a new instance of the :py:class:`.Kpoints` is assigned to the lattice,
+        reciprocal vectors of the lattice are not updated. REciprocal vectors of new kpoints
+        are not updated as well.
+
         Returns
         -------
         kpoints : :py:class:`.Kpoints`
             Instance of the :py:class:`.Kpoints` class.
+
+        See Also
+        --------
+        Kpoints : Class for the high symmetry points and path.
         """
 
         if self._kpoints is None:
@@ -1016,56 +1045,67 @@ class Lattice:
                 path=DEFAULT_K_PATHS[self.variation],
             )
 
-        if self.type == "CUB":
-            hs_points = CUB_hs_points()
-        elif self.type == "FCC":
-            hs_points = FCC_hs_points()
-        elif self.type == "BCC":
-            hs_points = BCC_hs_points()
-        elif self.type == "TET":
-            hs_points = TET_hs_points()
-        elif self.type == "BCT":
-            hs_points = BCT_hs_points(self.variation, self.conv_a, self.conv_c)
-        elif self.type == "ORC":
-            hs_points = ORC_hs_points()
-        elif self.type == "ORCF":
-            hs_points = ORCF_hs_points(
-                self.variation, self.conv_a, self.conv_b, self.conv_c
-            )
-        elif self.type == "ORCI":
-            hs_points = ORCI_hs_points(self.conv_a, self.conv_b, self.conv_c)
-        elif self.type == "ORCC":
-            hs_points = ORCC_hs_points(self.conv_a, self.conv_b)
-        elif self.type == "HEX":
-            hs_points = HEX_hs_points()
-        elif self.type == "RHL":
-            hs_points = RHL_hs_points(self.variation, self.conv_alpha)
-        elif self.type == "MCL":
-            hs_points = MCL_hs_points(self.conv_b, self.conv_c, self.conv_alpha)
-        elif self.type == "MCLC":
-            hs_points = MCLC_hs_points(
-                self.variation,
-                self.conv_a,
-                self.conv_b,
-                self.conv_c,
-                self.conv_alpha,
-            )
-        elif self.type == "TRI":
-            hs_points = TRI_hs_points(self.variation)
+            if self.type() == "CUB":
+                hs_points = CUB_hs_points()
+            elif self.type() == "FCC":
+                hs_points = FCC_hs_points()
+            elif self.type() == "BCC":
+                hs_points = BCC_hs_points()
+            elif self.type() == "TET":
+                hs_points = TET_hs_points()
+            elif self.type() == "BCT":
+                hs_points = BCT_hs_points(self.variation, self.conv_a, self.conv_c)
+            elif self.type() == "ORC":
+                hs_points = ORC_hs_points()
+            elif self.type() == "ORCF":
+                hs_points = ORCF_hs_points(
+                    self.variation, self.conv_a, self.conv_b, self.conv_c
+                )
+            elif self.type() == "ORCI":
+                hs_points = ORCI_hs_points(self.conv_a, self.conv_b, self.conv_c)
+            elif self.type() == "ORCC":
+                hs_points = ORCC_hs_points(self.conv_a, self.conv_b)
+            elif self.type() == "HEX":
+                hs_points = HEX_hs_points()
+            elif self.type() == "RHL":
+                hs_points = RHL_hs_points(self.variation, self.conv_alpha)
+            elif self.type() == "MCL":
+                hs_points = MCL_hs_points(self.conv_b, self.conv_c, self.conv_alpha)
+            elif self.type() == "MCLC":
+                hs_points = MCLC_hs_points(
+                    self.variation,
+                    self.conv_a,
+                    self.conv_b,
+                    self.conv_c,
+                    self.conv_alpha,
+                )
+            elif self.type() == "TRI":
+                hs_points = TRI_hs_points(self.variation)
 
-        for point in hs_points:
-            if point == "S" and self.type == "BCT":
-                self._kpoints.add_kpoint(
-                    point, hs_points[point], plot_label="$\\Sigma$"
-                )
-            elif point == "S1" and self.type == "BCT":
-                self._kpoints.add_kpoint(
-                    point, hs_points[point], plot_label="$\\Sigma_1$"
-                )
-            else:
-                self._kpoints.add_kpoint(
-                    point, hs_points[point], plot_label=HS_PLOT_NAMES[point]
-                )
+            for point in hs_points:
+                if point == "S" and self.type() == "BCT":
+                    self._kpoints.add_hs_point(
+                        point, hs_points[point], plot_label="$\\Sigma$"
+                    )
+                elif point == "S1" and self.type() == "BCT":
+                    self._kpoints.add_hs_point(
+                        point, hs_points[point], plot_label="$\\Sigma_1$"
+                    )
+                else:
+                    self._kpoints.add_hs_point(
+                        point, hs_points[point], plot_label=HS_PLOT_NAMES[point]
+                    )
+
+        return self._kpoints
+
+    @kpoints.setter
+    def kpoints(self, new_kpoints: Kpoints):
+        if not isinstance(new_kpoints, Kpoints):
+            raise ValueError(
+                f"New kpoints should be an instance of the Kpoints class. "
+                + f"Got {type(new_kpoints)} instead."
+            )
+        self._kpoints = new_kpoints
 
     # Plotting routines
     def prepare_figure(self, background=True, focal_length=0.2) -> None:

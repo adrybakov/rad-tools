@@ -31,14 +31,14 @@ from radtools.routines import parallelepiped_check, cell_from_param
 @pytest.mark.parametrize(
     "lattice_variation", BRAVAIS_LATTICE_VARIATIONS, ids=BRAVAIS_LATTICE_VARIATIONS
 )
-def test_lattice_example(lattice_variation):
+def test_lattice_example(lattice_variation: str):
     lattice_type = lattice_variation.translate(str.maketrans("", "", "12345ab"))
     assert lattice_example(lattice_variation).type() == lattice_type
     assert lattice_example(lattice_variation).variation == lattice_variation
 
 
 @given(st.text())
-def test_lattice_example_error(wrong_name):
+def test_lattice_example_error(wrong_name: str):
     if wrong_name.lower() not in list(
         map(lambda x: x.lower(), BRAVAIS_LATTICE_VARIATIONS)
     ):

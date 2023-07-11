@@ -3,16 +3,203 @@ from math import acos, pi, sqrt
 import numpy as np
 import pytest
 
-from radtools.crystal.lattice import *
-from radtools.routines import todegrees
+from radtools.crystal.lattice import Lattice
+from radtools.routines import (
+    todegrees,
+    cell_from_param,
+    parallelepiped_check,
+    print_2d_array,
+)
 from radtools.crystal.constants import ABS_TOL, REL_TOL
+from scipy.spatial.transform import Rotation
+from hypothesis import given, strategies as st, target
+from radtools.crystal.bravais_lattice.utils import lattice_example
+from radtools.crystal.constants import (
+    BRAVAIS_LATTICE_VARIATIONS,
+    BRAVAIS_LATTICE_NAMES,
+    PEARSON_SYMBOLS,
+    MIN_LENGTH,
+    MAX_LENGTH,
+    MIN_ANGLE,
+    REL_TOL,
+    ABS_TOL,
+    REL_TOL_ANGLE,
+    ABS_TOL_ANGLE,
+)
 
+
+n_order = 5
+
+
+def shuffle(cell, order):
+    if order == 0:
+        return [cell[2], cell[0], cell[1]]
+    if order == 1:
+        return [cell[1], cell[2], cell[0]]
+    if order == 2:
+        return cell
+    if order == 3:
+        return [cell[1], cell[0], cell[2]]
+    if order == 4:
+        return [cell[2], cell[1], cell[0]]
+    if order == 5:
+        return [cell[0], cell[2], cell[1]]
+
+
+def rotate(cell, r1, r2, r3):
+    R = Rotation.from_rotvec([r1, r2, r3]).as_matrix()
+    return cell @ R.T
+
+
+@given(
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
+)
+def test_Lattice_cell_attributes(r1, r2, r3, a, b, c, alpha, beta, gamma):
+    if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
+        min(a, b, c) / max(a, b, c) > REL_TOL
+        and parallelepiped_check(a, b, c, alpha, beta, gamma)
+    ):
+        # Prepare cell
+        cell = rotate(
+            cell_from_param(a, b, c, alpha, beta, gamma),
+            r1,
+            r2,
+            r3,
+        )
+        l = Lattice(cell, unify=False)
+        # TODO: fix accuracy in cell_from_param (sin, cos)
+        # assert np.allclose(
+        #     sorted([l.a, l.b, l.c]), sorted([a, b, c]), rtol=REL_TOL, atol=ABS_TOL
+        # )
+        # assert np.allclose(
+        #     sorted([l.alpha, l.beta, l.gamma]),
+        #     sorted([alpha, beta, gamma]),
+        #     rtol=REL_TOL_ANGLE,
+        #     atol=ABS_TOL_ANGLE,
+        # )
+        assert np.allclose(
+            [l.a, l.b, l.c], list(l.parameters[:3]), rtol=REL_TOL, atol=ABS_TOL
+        )
+        assert np.allclose(
+            [l.alpha, l.beta, l.gamma],
+            list(l.parameters[3:]),
+            rtol=REL_TOL_ANGLE,
+            atol=ABS_TOL_ANGLE,
+        )
+        assert np.allclose(
+            l.unit_cell_volume,
+            abs(np.linalg.det(l.cell)),
+            rtol=REL_TOL,
+            atol=ABS_TOL,
+        )
+
+
+@given(
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
+)
+def test_Lattice_reciprocal_cell_attributes(r1, r2, r3, a, b, c, alpha, beta, gamma):
+    if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
+        min(a, b, c) / max(a, b, c) > REL_TOL
+        and parallelepiped_check(a, b, c, alpha, beta, gamma)
+    ):
+        # Prepare cell
+        cell = rotate(
+            cell_from_param(a, b, c, alpha, beta, gamma),
+            r1,
+            r2,
+            r3,
+        )
+        l = Lattice(cell, unify=False)
+
+        assert np.allclose(
+            [l.k_a, l.k_b, l.k_c],
+            list(l.reciprocal_parameters[:3]),
+            rtol=REL_TOL,
+            atol=ABS_TOL,
+        )
+        assert np.allclose(
+            [l.k_alpha, l.k_beta, l.k_gamma],
+            list(l.reciprocal_parameters[3:]),
+            rtol=REL_TOL_ANGLE,
+            atol=ABS_TOL_ANGLE,
+        )
+        r_vol = (2 * pi) ** 3 / abs(np.linalg.det(l.cell))
+        assert np.allclose(
+            l.reciprocal_cell_volume,
+            r_vol,
+            rtol=REL_TOL,
+            atol=ABS_TOL,
+        )
+
+
+@given(
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=0, max_value=2 * pi),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
+    st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
+    st.floats(min_value=0.0, max_value=1 / ABS_TOL),
+)
+def test_Lattice_eps(r1, r2, r3, a, b, c, alpha, beta, gamma, eps_rel):
+    if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
+        min(a, b, c) / max(a, b, c) > REL_TOL
+        and parallelepiped_check(a, b, c, alpha, beta, gamma)
+    ):
+        # Prepare cell
+        cell = rotate(
+            cell_from_param(a, b, c, alpha, beta, gamma),
+            r1,
+            r2,
+            r3,
+        )
+        l = Lattice(cell, unify=False)
+        l.eps_rel = eps_rel
+        assert l.eps_rel == eps_rel
+        assert np.allclose(
+            l.eps,
+            eps_rel * l.unit_cell_volume ** (1.0 / 3.0),
+            rtol=REL_TOL,
+            atol=ABS_TOL,
+        )
+
+
+@pytest.mark.parametrize(
+    "variation", BRAVAIS_LATTICE_VARIATIONS, ids=BRAVAIS_LATTICE_VARIATIONS
+)
+def test_Lattice_classifications(variation: str):
+    lattice = lattice_example(variation)
+    type_name = variation.translate(str.maketrans("", "", "12345ab"))
+    assert lattice.type() == type_name
+    assert lattice.variation == variation
+    assert lattice.name == BRAVAIS_LATTICE_NAMES[type_name]
+    assert lattice.pearson_symbol == PEARSON_SYMBOLS[type_name]
+    assert lattice.crystal_family == lattice.pearson_symbol[0]
+    assert lattice.centring_type == lattice.pearson_symbol[1]
+
+
+# legacy tests
 
 l = Lattice([1, 0, 0], [0, 2, 0], [0, 0, 3])
-
-
-def test_init():
-    pass
 
 
 def test_extended_init():

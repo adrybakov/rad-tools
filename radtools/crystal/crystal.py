@@ -40,6 +40,12 @@ class Crystal(Lattice):
         then orthonormal lattice is used ("CUB with :math:`a = 1`).
     atoms : list, optional
         List of :py:class:`Atom` objects.
+    relative : bool, default True
+        Whether ``atoms`` positions are in relative coordinates.
+    unify : bool, default True
+        Whether to unify the lattice.
+    **kwargs
+        Keyword arguments for :py:class:`.Lattice` initialization.
 
     Attributes
     ----------
@@ -47,73 +53,22 @@ class Crystal(Lattice):
         List of atoms of the crystal.
     """
 
-    def __init__(self, lattice: Lattice = None, atoms=None) -> None:
+    def __init__(
+        self, lattice: Lattice = None, atoms=None, relative=True, unify=True, **kwargs
+    ) -> None:
         self.atoms = []
         if lattice is None:
-            cell = ([1, 0, 0], [0, 1, 0], [0, 0, 1])
+            if len(kwargs) == 0:
+                kwargs["cell"] = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
         else:
-            cell = lattice.cell
+            kwargs = {}
+            kwargs["cell"] = lattice.cell
 
-        super().__init__(cell)
+        super().__init__(unify=unify, **kwargs)
 
         if atoms is not None:
             for a in atoms:
-                self.add_atom(a)
-
-    @property
-    def cell(self):
-        r"""
-        Cell of the lattice.
-
-        Main difference of the cell attribute of the crystal from the cell
-        attribute of the lattice is that change of the crystal`s cell
-        leads to the computation of the atom coordinate.
-
-        Returns
-        -------
-        cell : (3, 3) :numpy:`ndarray`
-            Cell of the crystal`s lattice.
-
-
-        Examples
-        --------
-
-        .. doctest::
-
-            >>> import radtools as rad
-            >>> c = rad.Crystal()
-            >>> c.add_atom(rad.Atom("Cr", (0.5, 0.5, 0.5)))
-            >>> c.cell
-            array([[1, 0, 0],
-                   [0, 1, 0],
-                   [0, 0, 1]])
-            >>> c.atoms[0].position
-            array([0.5, 0.5, 0.5])
-            >>> c.lattice.cell = [[2,0,0],[0,2,0],[0,0,2]]
-            >>> c.cell
-            array([[2, 0, 0],
-                   [0, 2, 0],
-                   [0, 0, 2]])
-            >>> c.atoms[0].position
-            array([0.5, 0.5, 0.5])
-            >>> c.lattice.cell = [[1,0,0],[0,1,0],[0,0,1]]
-            >>> c.cell = [[2,0,0],[0,2,0],[0,0,2]]
-            >>> c.cell
-            array([[2, 0, 0],
-                   [0, 2, 0],
-                   [0, 0, 2]])
-            >>> c.atoms[0].position
-            array([1., 1., 1.])
-        """
-        return super().cell
-
-    @cell.setter
-    def cell(self, new_cell):
-        old_cell = self.cell
-        self._set_cell(new_cell)
-        for atom in self.atoms:
-            relative = absolute_to_relative(old_cell, atom.position)
-            atom.position = relative @ self.cell
+                self.add_atom(a, relative=relative)
 
     def __iter__(self):
         return CrystalIterator(self)
@@ -141,8 +96,7 @@ class Crystal(Lattice):
             atom = self.get_atom(name=name)
             return atom
         except ValueError:
-            if "__" in name:
-                raise AttributeError(f"'Crystal' object has no attribute '{name}'")
+            raise AttributeError(f"'Crystal' object has no attribute '{name}'")
 
     @property
     def lattice(self):
@@ -150,6 +104,8 @@ class Crystal(Lattice):
         Lattice of the crystal.
 
         It returns an independent instance of the :py:class:`.Lattice` class.
+        You can use it to play with the crystal`s lattice independently,
+        but it will not affect the crystal itself.
 
         See :ref:`rad-tools_lattice` for details.
 
@@ -157,20 +113,17 @@ class Crystal(Lattice):
         -------
         lattice : :py:class:`.Lattice`
             Lattice of the crystal.
+
+        Notes
+        -----
+        New :py:class:`.Lattice` object is created each time you call this property.
+        It is created with ``unify=False`` parameter.
         """
-        return Lattice(self.cell)
+        return Lattice(self.cell, unify=False)
 
-    @lattice.setter
-    def lattice(self, new_lattice: Lattice):
-        if not isinstance(new_lattice, Lattice):
-            raise TypeError(
-                "New lattice is not a lattice. " + f"Received {type(new_lattice)}."
-            )
-        super().__init__(new_lattice.cell)
-
-    def add_atom(self, new_atom: Atom, relative=False):
+    def add_atom(self, new_atom: Union[Atom, str] = None, relative=True, **kwargs):
         r"""
-        Add atom to the crystall.
+        Add atom to the crystal.
 
         If ``new_atom```s literal and index are the same as of some atom of the crystal,
         then ``new_atom`` is not added.
@@ -179,10 +132,13 @@ class Crystal(Lattice):
 
         Parameters
         ----------
-        new_atoms : :py:class:`.Atom`
-            New atom.
-        relative : bool, default False
+        new_atoms : :py:class:`.Atom` or str, optional
+            New atom. All kwargs are ignored if ``new_atom`` is not ``None`` and of type :py:class:`.Atom`.
+            If ``str``, then pair ``name : new_atom`` is added to ``kwargs``.
+        relative : bool, default True
             Whether ``new_atom`` position is in relative coordinates.
+        **kwargs
+            Keyword arguments for :py:class:`.Atom` initialization.
 
         Raises
         ------
@@ -192,6 +148,13 @@ class Crystal(Lattice):
             If the atom is already present in the crystal.
         """
 
+        if isinstance(new_atom, str):
+            kwargs["name"] = new_atom
+            new_atom = None
+
+        if new_atom is None:
+            new_atom = Atom(**kwargs)
+
         if not isinstance(new_atom, Atom):
             raise TypeError("New atom is not an Atom. " + f"Received {type(new_atom)}.")
         try:
@@ -199,35 +162,45 @@ class Crystal(Lattice):
         except ValueError:
             new_atom.index = len(self.atoms) + 1
 
-        if relative:
-            new_atom.position = new_atom.position @ self.cell
+        if not relative:
+            new_atom.position = absolute_to_relative(self.cell, new_atom.position)
 
         if new_atom not in self.atoms:
             self.atoms.append(new_atom)
         else:
             raise ValueError("Atom is already in the crystal.")
 
-    def remove_atom(self, atom: Union[Atom, str]):
+    def remove_atom(self, atom: Union[Atom, str], index=None):
         r"""
         Remove atom from the crystal.
 
-        If type(``atom``) == ``str``, then all atoms with the name ``atom`` are removed.
+        If type(``atom``) == ``str``, then all atoms with the name ``atom`` are removed
+        if ``index`` == ``None`` or only atom with the name ``atom`` and index ``index`` is removed.
+
+        It type(``atom``) == :py:class:`.Atom`, ``index`` is ignored.
 
         Parameters
         ----------
         atom : :py:class:`.Atom` or str
             :py:class`.Atom` object or atom`s name.
             If name, then it has to be unique among atoms of the crystal.
+        index : optional
+            Index of the atom.
+
+        Raises
+        ------
+        ValueError
+            If no match is found.
         """
 
         if isinstance(atom, str):
-            atoms = self.get_atom(atom, return_all=True)
+            atoms = self.get_atom(atom, index=index, return_all=True)
         else:
             atoms = [atom]
         for atom in atoms:
             self.atoms.remove(atom)
 
-    def get_atom(self, name, index=None, return_all=False):
+    def get_atom(self, name, index=None, return_all=False, relative=True):
         r"""
         Return atom object of the crystal.
 
@@ -246,6 +219,8 @@ class Crystal(Lattice):
             Index of the atom.
         return_all : bool, default False
             Whether to return the list of non-unique matches or raise an ``ValueError``.
+        relative : bool, default True
+            Whether to return atom with :py:attr:`.Atom.position` in relative coordinates.
 
         Returns
         -------
@@ -257,7 +232,7 @@ class Crystal(Lattice):
         Raises
         ------
         ValueError
-            If no match is found or the match is not unique and ``return_all`` is False.
+            If no match is found or the match is not unique and ``return_all`` is ``False``.
         """
 
         atoms = []
@@ -265,10 +240,13 @@ class Crystal(Lattice):
             name, index = name.split("__")
             index = int(index)
 
-        for atom in self:
+        for atom in self.atoms:
             if atom.name == name:
                 if index is None or atom.index == index:
+                    if not relative:
+                        atom.position = atom.position @ self.cell
                     atoms.append(atom)
+
         if len(atoms) == 0:
             raise ValueError(f"No match found for name = {name}, index = {index}")
         elif len(atoms) == 1:
@@ -281,7 +259,9 @@ class Crystal(Lattice):
             )
         return atoms
 
-    def get_atom_coordinates(self, atom: Union[Atom, str], R=(0, 0, 0), relative=False):
+    def get_atom_coordinates(
+        self, atom: Union[Atom, str], R=(0, 0, 0), index=None, relative=True
+    ):
         r"""
         Getter for the atom coordinates.
 
@@ -290,9 +270,11 @@ class Crystal(Lattice):
         atom : :py:class:`.Atom` or str
             :py:class`.Atom` object or atom`s name.
             If name, then it has to be unique among atoms of the crystal.
+        index : int, optional
+            Index of the atom.
         R : (3,) |array_like|_, default (0, 0, 0)
             Radius vector of the unit cell for atom2 (i,j,k).
-        relative : bool, default False
+        relative : bool, default True
             Whether to return relative coordinates.
 
         Returns
@@ -302,25 +284,28 @@ class Crystal(Lattice):
         """
 
         if isinstance(atom, str):
-            atom = self.get_atom(atom)
-
-        if atom not in self.atoms:
+            atom = self.get_atom(atom, index=index, relative=True)
+        elif atom not in self.atoms:
             raise ValueError(f"There is no {atom} in the crystal.")
 
-        if relative:
-            return np.array(R + absolute_to_relative(self.cell, atom.position))
+        rel_coordinates = np.array(R + atom.position)
 
-        return np.array(R) @ self.lattice.cell + atom.position
+        if relative:
+            return rel_coordinates
+
+        return rel_coordinates @ self.cell
 
     def get_vector(
         self,
         atom1: Union[Atom, str],
         atom2: Union[Atom, str],
         R=(0, 0, 0),
+        index1=None,
+        index2=None,
         relative=False,
     ):
         r"""
-        Getter for vector between the atom1 and atom2.
+        Getter for vector from atom1 to atom2.
 
         Parameters
         ----------
@@ -334,6 +319,10 @@ class Crystal(Lattice):
             Radius vector of the unit cell for atom2 (i,j,k).
         relative : bool, default False
             Whether to return the vector relative coordinates.
+        index1 : int, optional
+            Index of the atom1.
+        index2 : int, optional
+            Index of the atom2.
 
         Returns
         -------
@@ -341,13 +330,19 @@ class Crystal(Lattice):
             Vector from atom1 in (0,0,0) cell to atom2 in R cell.
         """
 
-        coord1 = self.get_atom_coordinates(atom1, relative=relative)
-        coord2 = self.get_atom_coordinates(atom2, R, relative=relative)
+        coord1 = self.get_atom_coordinates(atom1, index=index1, relative=relative)
+        coord2 = self.get_atom_coordinates(atom2, R, index=index2, relative=relative)
 
         return coord2 - coord1
 
     def get_distance(
-        self, atom1: Union[Atom, str], atom2: Union[Atom, str], R=(0, 0, 0)
+        self,
+        atom1: Union[Atom, str],
+        atom2: Union[Atom, str],
+        R=(0, 0, 0),
+        index1=None,
+        index2=None,
+        relative=False,
     ):
         r"""
         Getter for distance between the atom1 and atom2.
@@ -362,6 +357,12 @@ class Crystal(Lattice):
             If name, then it has to be unique among atoms of the crystal.
         R : (3,) |array_like|_, default (0, 0, 0)
             Radius vector of the unit cell for atom2 (i,j,k).
+        relative : bool, default False
+            Whether to use relative coordinates. (Strange, but if you wish)
+        index1 : int, optional
+            Index of the atom1.
+        index2 : int, optional
+            Index of the atom2.
 
         Returns
         -------
@@ -369,7 +370,14 @@ class Crystal(Lattice):
             Distance between atom1 in (0,0,0) cell and atom2 in R cell.
         """
 
-        return sqrt(np.sum(self.get_vector(atom1, atom2, R) ** 2))
+        return sqrt(
+            np.sum(
+                self.get_vector(
+                    atom1, atom2, R, index1=index1, index2=index2, relative=relative
+                )
+                ** 2
+            )
+        )
 
     def find_primitive_cell(self):
         r"""
@@ -418,7 +426,7 @@ class Crystal(Lattice):
         n_t = len(translations)
 
         magnetic_atoms = []
-        for atom in self:
+        for atom in self.atoms:
             try:
                 tmp = atom.magmom
                 magnetic_atoms.append(atom)
@@ -434,7 +442,7 @@ class Crystal(Lattice):
                 atom.magmom, (n_t, 1)
             )
             magnetic_centres[a_i * n_t : (a_i + 1) * n_t, 1] = (
-                translations + atom.position
+                translations + atom.position @ self.cell
             )
 
         return dipole_dipole_energy(magnetic_centres, progress_bar=progress_bar)
@@ -489,7 +497,7 @@ class Crystal(Lattice):
         )
 
         magnetic_atoms = []
-        for atom in self:
+        for atom in self.atoms:
             try:
                 tmp = atom.magmom
                 magnetic_atoms.append(atom)
@@ -501,7 +509,9 @@ class Crystal(Lattice):
         mc1 = np.zeros((n_t * n_atoms, 2, 3), dtype=float)
         for a_i, atom in enumerate(magnetic_atoms):
             mc1[a_i * n_t : (a_i + 1) * n_t, 0] = np.tile(atom.magmom, (n_t, 1))
-            mc1[a_i * n_t : (a_i + 1) * n_t, 1] = translations + atom.position
+            mc1[a_i * n_t : (a_i + 1) * n_t, 1] = (
+                translations + atom.position @ self.cell
+            )
 
         energy1 = dipole_dipole_energy(mc1, progress_bar=progress_bar, normalize=False)
         energies = [(start, energy1 / len(mc1))]
@@ -540,7 +550,9 @@ class Crystal(Lattice):
             mc2 = np.zeros((n_t * n_atoms, 2, 3), dtype=float)
             for a_i, atom in enumerate(magnetic_atoms):
                 mc2[a_i * n_t : (a_i + 1) * n_t, 0] = np.tile(atom.magmom, (n_t, 1))
-                mc2[a_i * n_t : (a_i + 1) * n_t, 1] = translations + atom.position
+                mc2[a_i * n_t : (a_i + 1) * n_t, 1] = (
+                    translations + atom.position @ self.cell
+                )
             energy2 = dipole_dipole_energy(
                 mc2, progress_bar=progress_bar, normalize=False
             )
@@ -581,37 +593,3 @@ class CrystalIterator:
 
     def __iter__(self):
         return self
-
-
-if __name__ == "__main__":
-    crystal = Crystal()
-    crystal.cell = [
-        [3.513012, 0.000000000, 0.000000000],
-        [0.000000000, 4.752699, 0.000000000],
-        [0.000000000, 0.000000000, 23.5428674],
-    ]
-
-    Cr1 = Atom(
-        "Cr1",
-        np.array((0.2500000000, 0.7500000000, 0.1616620796)) @ crystal.cell,
-    )
-    Cr2 = Atom(
-        "Cr2",
-        np.array((0.7500000000, 0.2500000000, 0.0737774367)) @ crystal.cell,
-    )
-
-    crystal.add_atom(Cr1)
-    crystal.add_atom(Cr2)
-
-    crystal.Cr1.magmom = [0, 0, 3]
-    crystal.Cr2.magmom = [0, 0, 3]
-
-    z10 = crystal.mag_dipdip_energy(10, 10, 1)
-    z15 = crystal.mag_dipdip_energy(15, 15, 1)
-    z20 = crystal.mag_dipdip_energy(20, 20, 1)
-    print(z10, z15, z20, sep="\n")
-    energies = crystal.converge_mag_dipdip_energy(
-        (10, 10, 1), (5, 5, 0), eps=0.001, verbose=1, progress_bar=False
-    )
-    for e in energies:
-        print(f"{e[0]} ({e[1]})<------")

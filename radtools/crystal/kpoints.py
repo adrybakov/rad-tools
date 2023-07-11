@@ -20,53 +20,83 @@ class Kpoints:
         Second reciprocal lattice vector :math:`\mathbf{b}_2`.
     b3 : (3,) array_like
         Third reciprocal lattice vector :math:`\mathbf{b}_3`.
-    points : dict, optional
-        Dictionary of the high symmetry points.
+    coordinates : list
         Coordinates are given in relative coordinates in reciprocal space.
-    labels : dict, optional
-        Dictionary of the high symmetry points labels. Has to have the same
-        keys as ``points``.
+    names: list, optional
+        Names of the high symmetry points. Used for programming, not for plotting.
+    labels : list, optional
+        Dictionary of the high symmetry points labels for plotting.
+        Has to have the same length as ``coordinates``.
     path : str, optional
         K points path.
     n : int
         Number of points between each pair of the high symmetry points
         (high symmetry points excluded).
+
+    Attributes
+    ----------
+    b1 : (3,) :numpy:`ndarray`
+        First reciprocal lattice vector :math:`\mathbf{b}_1`.
+    b2 : (3,) :numpy:`ndarray`
+        Second reciprocal lattice vector :math:`\mathbf{b}_2`.
+    b3 : (3,) :numpy:`ndarray`
+        Third reciprocal lattice vector :math:`\mathbf{b}_3`.
+    hs_names : list
+        Names of the high symmetry points. Used for programming, not for plotting.
+    hs_coordinates : dict
+        Dictionary of the high symmetry points coordinates.
+
+        .. code-block:: python
+
+            {"name": [k_a, k_b, k_c], ... }
+
+    hs_labels : dict
+        Dictionary of the high symmetry points labels for plotting.
+
+        .. code-block:: python
+
+            {"name": "label", ... }
     """
 
-    def __init__(self, b1, b2, b3, points=None, labels=None, path=None, n=100) -> None:
+    def __init__(
+        self, b1, b2, b3, coordinates, names=None, labels=None, path=None, n=100
+    ) -> None:
         self.b1 = np.array(b1)
         self.b2 = np.array(b2)
         self.b3 = np.array(b3)
-        self._path = None
-        if points is None:
-            self.hs_points = []
+
+        # Fill names and labels with defaults
+        if names is None:
+            names = [f"K{i+1}" for i in range(len(coordinates))]
+            if labels is None:
+                labels = [f"K$_{i+1}$" for i in range(len(coordinates))]
+        if labels is None:
+            labels = [name for name in names]
         else:
-            self.hs_points = [point for point in points]
-            self.hs_coordinates = dict(
-                [(point, np.array(points[point])) for point in points]
-            )
+            if len(labels) != len(coordinates):
+                raise ValueError(
+                    f"Amount of labels ({len(labels)}) does not match amount of points ({len(coordinates)})."
+                )
+
+        # Define high symmetry points attributes
+        self.hs_coordinates = dict(
+            [(names[i], np.array(coordinates[i])) for i in range(len(coordinates))]
+        )
+        self.hs_labels = dict([(names[i], labels[i]) for i in range(len(coordinates))])
+        self.hs_names = names
+
         self._n = n
 
-        if labels is None:
-            self._labels = []
-        else:
-            if len(labels) != len(self.hs_points):
-                raise ValueError(
-                    f"Amount of labels ({len(labels)}) does not match amount of points ({len(self.hs_points)})."
-                )
-            self._labels = [
-                (point, labels[i]) for i, point in enumerate(self.hs_points)
-            ]
-
+        self._path = None
         if path is None:
             path = ""
-            for i in self.hs_points:
+            for i in self.hs_names:
                 if i != 0:
                     path += "-"
                 path += i
         self.path = path
 
-    def add_hs_point(self, name, coordinates, plot_label, relative=True):
+    def add_hs_point(self, name, coordinates, label, relative=True):
         r"""
         Add high symmetry point.
 
@@ -76,21 +106,23 @@ class Kpoints:
             Name of the high symmetry point.
         coordinates : (3,) array_like
             Coordinates of the high symmetry point.
-        plot_label : str
+        label : str
             Label of the high symmetry point, ready to be plotted.
         relative : bool, optional
             Whether to interpret coordinates as relative or absolute.
         """
 
-        if name in self.hs_points:
+        if name in self.hs_names:
             raise ValueError(f"Point '{name}' already defined.")
+
         if relative:
             cell = np.array([self.b1, self.b2, self.b3])
         else:
             cell = np.eye(3)
-        self.hs_points.append(name)
+
+        self.hs_names.append(name)
         self.hs_coordinates[name] = np.array(coordinates) @ cell
-        self._labels.append(plot_label)
+        self.hs_labels[name] = label
 
     @property
     def path(self):
@@ -136,10 +168,12 @@ class Kpoints:
         # Check if all points are defined.
         for subpath in new_path:
             for point in subpath:
-                if point not in self.hs_points:
+                if point not in self.hs_names:
                     message = f"Point '{point}' is not defined. Defined points are:"
-                    for defined_point in self.hs_points:
-                        message += f"\n  {defined_point} : {self.hs_coordinates[defined_point]}"
+                    for defined_name in self.hs_names:
+                        message += (
+                            f"\n  {defined_name} : {self.hs_coordinates[defined_name]}"
+                        )
                     raise ValueError(message)
         self._path = new_path
 
@@ -180,7 +214,9 @@ class Kpoints:
     @n.setter
     def n(self, new_n):
         if not isinstance(new_n, int):
-            raise ValueError(f"n has to be integer. Given: {new_n}")
+            raise ValueError(
+                f"n has to be integer. Given: {new_n}, type = {type(new_n)}"
+            )
         self._n = new_n
 
     @property
@@ -202,11 +238,11 @@ class Kpoints:
         labels = []
         for s_i, subpath in enumerate(self.path):
             if s_i != 0:
-                labels[-1] += "|" + self._labels[subpath[0]]
+                labels[-1] += "|" + self.hs_labels[subpath[0]]
             else:
-                labels.append(self._labels[subpath[0]])
+                labels.append(self.hs_labels[subpath[0]])
             for name in subpath[1:]:
-                labels.append(self._labels[name])
+                labels.append(self.hs_labels[name])
 
         return labels
 

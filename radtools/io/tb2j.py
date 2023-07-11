@@ -7,6 +7,7 @@ import numpy as np
 from radtools.crystal.atom import Atom
 from radtools.exchange.hamiltonian import ExchangeHamiltonian
 from radtools.exchange.parameter import ExchangeParameter
+from radtools.crystal.constants import REL_TOL
 
 
 def read_tb2j_model(filename, quiet=True, bravais_type=None) -> ExchangeHamiltonian:
@@ -52,6 +53,11 @@ def read_tb2j_model(filename, quiet=True, bravais_type=None) -> ExchangeHamilton
     -------
     model : :py:class:`.ExchangeHamiltonian`
         Exchange Hamiltonian build from |TB2J|_ file. With notation set to "TB2J".
+
+    Raises
+    ------
+    ValueError
+        If ``bravais_type`` is provided and can not be reached.
     """
 
     major_sep = "=" * 90
@@ -86,9 +92,9 @@ def read_tb2j_model(filename, quiet=True, bravais_type=None) -> ExchangeHamilton
                 n_a = min(*tuple(map(lambda x: len(x.split(".")[1]), a)))
                 n_b = min(*tuple(map(lambda x: len(x.split(".")[1]), b)))
                 n_c = min(*tuple(map(lambda x: len(x.split(".")[1]), c)))
-                eps_rel = 10 ** (-min(n_a, n_b, n_c))
+                model.eps_rel = 10 ** (-min(n_a, n_b, n_c))
             except:
-                eps_rel = 1e-5
+                model.eps_rel = REL_TOL
 
             model.crystal.lattice.cell = np.array(
                 [
@@ -130,19 +136,12 @@ def read_tb2j_model(filename, quiet=True, bravais_type=None) -> ExchangeHamilton
         if line and exchange_flag in line:
             break
 
-    # Identify lattice type
-    tmp_type = model.identify(eps_rel=eps_rel)
+    # Try to reach desired bravais type, if any
     if bravais_type is not None:
-        if tmp_type != bravais_type:
-            eps_rel *= 10
-            while eps_rel < 1:
-                tmp_type = model.crystal.lattice.identify(eps_rel=eps_rel)
-                if tmp_type == bravais_type:
-                    break
-                eps_rel *= 10
-            if tmp_type != bravais_type:
-                raise ValueError(f"Bravais type {bravais_type} could not be reached.")
-    model.crystal.identify(eps_rel=eps_rel)
+        while model.eps_rel < 1 and model.type() != bravais_type:
+            model.eps_rel *= 10
+        if model.type() != bravais_type:
+            raise ValueError(f"Bravais type {bravais_type} could not be reached.")
 
     while line:
         while line and minor_sep not in line:
