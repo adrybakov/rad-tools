@@ -2,9 +2,173 @@ from math import sqrt
 
 import pytest
 
-from radtools.exchange.parameter import *
+from radtools.exchange.parameter import ExchangeParameter
+
+import numpy as np
+
+from hypothesis import given, strategies as st, example
+from hypothesis.extra.numpy import arrays as harrays
+
+MAX_MODULUS = 1e8
 
 
+@given(
+    harrays(
+        np.float64,
+        (3, 3),
+        elements=st.floats(min_value=-MAX_MODULUS, max_value=MAX_MODULUS),
+    )
+)
+def test_init_from_matrix(matrix):
+    parameter = ExchangeParameter(matrix=matrix)
+    assert np.allclose(parameter.matrix, matrix)
+
+
+@given(st.floats(min_value=-MAX_MODULUS, max_value=MAX_MODULUS))
+def test_init_from_iso(iso):
+    parameter = ExchangeParameter(iso=iso)
+    assert np.allclose(parameter.matrix, parameter.iso * np.eye(3))
+
+
+@given(
+    harrays(
+        np.float64,
+        (3,),
+        elements=st.floats(min_value=-MAX_MODULUS, max_value=MAX_MODULUS),
+    )
+)
+def test_init_from_dmi(dmi):
+    parameter = ExchangeParameter(dmi=dmi)
+    assert np.allclose(
+        parameter.matrix,
+        parameter.dmi_matrix,
+    )
+
+
+@given(
+    st.floats(min_value=-MAX_MODULUS, max_value=MAX_MODULUS),
+    st.floats(min_value=-MAX_MODULUS, max_value=MAX_MODULUS),
+    st.floats(min_value=-MAX_MODULUS, max_value=MAX_MODULUS),
+)
+def test_init_from_aniso(a, b, c):
+    aniso = np.array([[0, a, b], [a, 0, c], [b, c, 0]])
+    parameter = ExchangeParameter(aniso=aniso)
+    assert np.allclose(parameter.matrix, parameter.aniso)
+
+
+@given(
+    harrays(
+        np.float64,
+        (3, 3),
+        elements=st.floats(min_value=-MAX_MODULUS, max_value=MAX_MODULUS),
+    )
+)
+def test_T(matrix):
+    parameter = ExchangeParameter(matrix=matrix)
+    assert np.allclose(parameter.T.matrix, matrix.T)
+
+
+@given(
+    harrays(
+        np.float64,
+        (3, 3),
+        elements=st.floats(min_value=-MAX_MODULUS, max_value=MAX_MODULUS),
+    )
+)
+def test_symm_matrix(matrix):
+    parameter = ExchangeParameter(matrix=matrix)
+    assert np.allclose(parameter.symm_matrix, (matrix + matrix.T) / 2)
+
+
+@given(
+    harrays(
+        np.float64,
+        (3, 3),
+        elements=st.floats(min_value=-MAX_MODULUS, max_value=MAX_MODULUS),
+    )
+)
+def test_asymm_matrix(matrix):
+    parameter = ExchangeParameter(matrix=matrix)
+    assert np.allclose(parameter.asymm_matrix, (matrix - matrix.T) / 2)
+
+
+@given(
+    harrays(
+        np.float64,
+        (3, 3),
+        elements=st.floats(min_value=-MAX_MODULUS, max_value=MAX_MODULUS),
+    ),
+    st.floats(min_value=-MAX_MODULUS, max_value=MAX_MODULUS),
+)
+def test_iso(matrix, new_iso):
+    parameter = ExchangeParameter(matrix=matrix)
+    assert np.allclose(parameter.iso, np.trace(matrix) / 3.0)
+    assert np.allclose(
+        parameter.iso_matrix, np.eye(3, dtype=float) * np.trace(matrix) / 3.0
+    )
+
+    # Test setter
+    parameter.iso = new_iso
+    assert np.allclose(parameter.iso, new_iso, atol=1e-7)
+
+
+@given(
+    harrays(
+        np.float64,
+        (3, 3),
+        elements=st.floats(min_value=-MAX_MODULUS, max_value=MAX_MODULUS),
+    ),
+    st.floats(min_value=-MAX_MODULUS, max_value=MAX_MODULUS),
+    st.floats(min_value=-MAX_MODULUS, max_value=MAX_MODULUS),
+    st.floats(min_value=-MAX_MODULUS, max_value=MAX_MODULUS),
+)
+def test_aniso(matrix, a, b, c):
+    parameter = ExchangeParameter(matrix=matrix)
+    aniso = (matrix + matrix.T) / 2.0 - np.eye(3, dtype=float) * np.trace(matrix) / 3.0
+    assert np.allclose(parameter.aniso, aniso)
+    assert np.allclose(parameter.aniso_diagonal, np.diag(aniso))
+    assert np.allclose(parameter.aniso_diagonal_matrix, np.diag(np.diag(aniso)))
+
+    # Test setter
+    new_aniso = np.array([[0, a, b], [a, 0, c], [b, c, 0]])
+    parameter.aniso = new_aniso
+    assert np.allclose(parameter.aniso, new_aniso)
+
+
+@given(
+    harrays(
+        np.float64,
+        (3, 3),
+        elements=st.floats(min_value=-MAX_MODULUS, max_value=MAX_MODULUS),
+    ),
+    harrays(
+        np.float64,
+        (3,),
+        elements=st.floats(min_value=-MAX_MODULUS, max_value=MAX_MODULUS),
+    ),
+)
+def test_dmi(matrix, new_dmi):
+    parameter = ExchangeParameter(matrix=matrix)
+    dmi_matrix = (matrix - matrix.T) / 2.0
+    dmi = [dmi_matrix[1, 2], dmi_matrix[2, 0], dmi_matrix[0, 1]]
+    assert np.allclose(parameter.dmi, dmi)
+    assert np.allclose(parameter.dmi_matrix, dmi_matrix)
+    assert np.allclose(parameter.dmi_module, np.linalg.norm(dmi))
+    if abs(parameter.iso) > 1e-10:
+        assert np.allclose(parameter.rel_dmi, parameter.dmi_module / abs(parameter.iso))
+
+    # Test setter
+    if (
+        max(np.linalg.norm(new_dmi), np.linalg.norm(dmi)) > 1e-8
+        and min(np.linalg.norm(new_dmi), np.linalg.norm(dmi))
+        / max(np.linalg.norm(new_dmi), np.linalg.norm(dmi))
+        > 1e-8
+    ):
+        parameter.dmi = new_dmi
+        assert np.allclose(parameter.dmi, new_dmi)
+
+
+# Legacy tests
 class TestExchangeParameter:
     parameter = ExchangeParameter([[1, 5, 2], [5, 8, 4], [2, 6, 3]])
 
