@@ -684,14 +684,17 @@ class ExchangeHamiltonian(Crystal):
         Crystal of the Hamiltonian.
 
         Return an independent instance of a crystal.
-
-        Crystal, which define the structure.
-        See :py:class:`.Crystal`.
+        You can use it to play with the model`s crystal independently,
+        but it will not affect the model itself.
 
         Returns
         -------
         crystal : :py:class:`.Crystal`
             Crystal of the Hamiltonian.
+
+        See Also
+        --------
+        Crystal
         """
         return Crystal(self.lattice, self.atoms)
 
