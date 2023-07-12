@@ -66,14 +66,14 @@ def manager(
     cprint(f"{model.variation} crystal detected", "green")
 
     # Get k points of the model
-    kp = model.crystal.get_kpoints()  # Set custom k path
+    kp = model.crystal.kpoints  # Set custom k path
     if path is not None:
         kp.path = path
 
     if verbose:
         print("Predefined high symmetry k points:")
-        for name in kp._hs_points:
-            print(f"  {name} : {kp._hs_coordinates[name]}")
+        for name in kp.hs_names:
+            print(f"  {name} : {kp.hs_coordinates[name]}")
 
     # Force symmetry of the template
     if template_file is not None:
@@ -104,15 +104,15 @@ def manager(
     fig, ax = plt.subplots()
 
     omegas = []
-    for point in kp.points:
+    for point in kp.points():
         omegas.append(dispersion.omega(point))
 
     omegas = np.array(omegas).T
 
-    ax.set_xticks(kp.coordinates, kp.labels, fontsize=15)
+    ax.set_xticks(kp.coordinates(), kp.labels, fontsize=15)
     ax.set_ylabel("E, meV", fontsize=15)
     ax.vlines(
-        kp.coordinates,
+        kp.coordinates(),
         0,
         1,
         transform=ax.get_xaxis_transform(),
@@ -122,9 +122,9 @@ def manager(
         ls="dashed",
     )
     for omega in omegas:
-        ax.plot(kp.flatten_points, omega)
+        ax.plot(kp.flatten_points(), omega)
 
-    ax.set_xlim(kp.flatten_points[0], kp.flatten_points[-1])
+    ax.set_xlim(kp.flatten_points()[0], kp.flatten_points()[-1])
     ax.set_ylim(0, None)
 
     if save_txt:
@@ -149,7 +149,7 @@ def manager(
 
         header += "\nLabels: \n"
         for i in range(len(kp.labels)):
-            header += f"  {kp.labels[i]} : {kp.coordinates[i]:.8f}\n"
+            header += f"  {kp.labels[i]} : {kp.coordinates()[i]:.8f}\n"
 
         header += "\nMagnon dispersion header:\ncoordinate"
         for i in range(omegas.shape[0]):
@@ -161,7 +161,7 @@ def manager(
 
         np.savetxt(
             join(output_path, f"{output_name}.txt"),
-            np.concatenate(([kp.flatten_points], omegas, kp.points.T), axis=0).T,
+            np.concatenate(([kp.flatten_points()], omegas, kp.points().T), axis=0).T,
             fmt="%.8f" + " %.8e" * omegas.shape[0] + "   " + " %.8f" * 3,
         )
     if interactive:
