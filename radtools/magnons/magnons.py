@@ -82,8 +82,8 @@ class MagnonDispersion:
         # Convert Q to absolute coordinates
         if Q is None:
             Q = [0, 0, 0]
-        self.Q = np.array(Q, dtype=float) @ self._model.crystal.lattice.reciprocal_cell
-
+        self.Q = np.array(Q, dtype=float) @ self._model.reciprocal_cell
+        print("Q:", self.Q)
         # Convert n to absolute coordinates, use Q if n is not provided
         if n is None:
             if np.allclose([0, 0, 0], Q):
@@ -92,7 +92,7 @@ class MagnonDispersion:
                 self.n = self.Q / np.linalg.norm(self.Q)
         else:
             self.n = np.array(n, dtype=float) / np.linalg.norm(n)
-
+        print("n:", self.n)
         # Get the number of magnetic atoms
         self.N = len(self._model.magnetic_atoms)
 
@@ -124,12 +124,13 @@ class MagnonDispersion:
                 )
 
         for index in range(len(self.S)):
-            print(f"{index} : {self.S[index]}")
-            print(f"{index} : {self.u[index]}")
-            print(f"{index} : {self.v[index]}")
+            print(f"S ({index}) : {self.S[index]}")
+            print(f"u ({index}) : {self.u[index]}")
+            print(f"v ({index}) : {self.v[index]}")
+
         # Rotate exchange matrices
         for i in range(len(self.J_matrices)):
-            rotvec = self.n * (Q @ self.dis_vectors[i])
+            rotvec = self.n * (self.Q @ self.dis_vectors[i])
             R_nm = Rotation.from_rotvec(rotvec).as_matrix()
             self.J_matrices[i] = self.J_matrices[i] @ R_nm
 
@@ -363,7 +364,7 @@ if __name__ == "__main__":
         "debug/magnons/exchange.out",
         bravais_type="HEX",
     )
-    model.filter(max_distance=7)
+    model.filter(max_distance=8)
     cprint(f"{model.variation} crystal detected", "green")
     cprint(f"Notation is {model.notation}", "green")
     model.kpoints.add_hs_point("Mprime", [0, 0.5, 0], "M$^{\prime}$")
@@ -377,7 +378,7 @@ if __name__ == "__main__":
     if spin is not None:
         for i in range(len(spin) // 4):
             atom_name = spin[4 * i]
-            atom = model.crystal.get_atom(atom_name)
+            atom = model.get_atom(atom_name)
             atom_spin = list(map(float, spin[4 * i + 1 : 4 * i + 4]))
             print("here")
             atom.spin_vector = atom_spin
