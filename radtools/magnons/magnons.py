@@ -152,20 +152,24 @@ class MagnonDispersion:
         """
         # Initialize matrix
         result = np.zeros((self.N, self.N, 3, 3), dtype=complex)
+        k = np.array(k)
         # Compute J(k)
         for index in range(len(self.J_matrices)):
             i = self.indices_i[index]
             j = self.indices_j[index]
 
-            # print(
-            #     i + 2,
-            #     j + 2,
-            #     f"{k @ self.dis_vectors[index]:.4f}",
-            #     self.dis_vectors[index],
-            # )
+            #     print(
+            #         i,
+            #         j,
+            #         k,
+            #         f"{k @ self.dis_vectors[index]:.4f}",
+            #         self.dis_vectors[index],
+            #     )
+            #     print(result[i][j], np.exp(-1j * (k @ self.dis_vectors[index])))
             result[i][j] += self.J_matrices[index] * np.exp(
                 -1j * (k @ self.dis_vectors[index])
             )
+        # print()
         return result
 
     def A(self, k):
@@ -186,6 +190,7 @@ class MagnonDispersion:
         """
         # Initialize matrix
         result = np.zeros((self.N, self.N), dtype=complex)
+        k = np.array(k)
 
         # Compute A(k)
         J = self.J(-k)
@@ -216,6 +221,7 @@ class MagnonDispersion:
         """
         # Initialize matrix
         result = np.zeros((self.N, self.N), dtype=complex)
+        k = np.array(k)
 
         # Compute B(k)
         J = self.J(-k)
@@ -238,6 +244,7 @@ class MagnonDispersion:
 
         where indices :math:`i` and :math:`j` correspond to the atoms in the exchange pair.
         """
+
         if self._C is None:
             self._C = np.zeros((self.N, self.N), dtype=complex)
 
@@ -280,14 +287,23 @@ class MagnonDispersion:
             Magnon energies for the vector ``k``.
         """
         # Diagonalize h matrix via Colpa
+        k = np.array(k)
         try:
             omegas, U = solve_via_colpa(self.h(k))
             omegas = omegas.real[: self.N]
         except ColpaFailed:
-            if zeros_to_none:
-                omegas = np.array([None] * self.N)
-            else:
-                omegas = np.zeros(self.N)
+            try:
+                omegas, U = solve_via_colpa(-self.h(k))
+                omegas = omegas.real[: self.N] * -1
+            except ColpaFailed:
+                if zeros_to_none:
+                    omegas = np.array([None] * self.N)
+                else:
+                    omegas = np.zeros(self.N)
+            # if zeros_to_none:
+            #     omegas = np.array([None] * self.N)
+            # else:
+            #     omegas = np.zeros(self.N)
 
         return omegas
 
@@ -372,7 +388,7 @@ if __name__ == "__main__":
     kp = model.kpoints  # Set custom k path
     kp.path = "G-M-K-G"
     # kp.path = "Mprime-G-M-K-Mprime-Kprime-G-K"
-    kp.n = 40
+    kp.n = 100
 
     spin = ["Ni1", 1, 0, 0]
     if spin is not None:
@@ -383,51 +399,61 @@ if __name__ == "__main__":
             print("here")
             atom.spin_vector = atom_spin
 
-    # Get the magnon dispersion
-    dispersion = MagnonDispersion(
-        model, Q=(0.138, 0, 0), n=[0, 0, 1], nodmi=True, noaniso=True
-    )
-    dispersion2 = MagnonDispersion(model, nodmi=True, noaniso=True)
+    # # Get the magnon dispersion
+    dispersion = MagnonDispersion(model, Q=(0.138, 0, 0), n=[0, 0, 1])
+    dispersion2 = MagnonDispersion(model)
+    KPOINT = [0.28282347, 0.16325446, 0.0]
+    print(dispersion2.omega(KPOINT))
+    print("h")
+    print_2d_array(dispersion2.h(KPOINT), ".4f")
+    print("A")
+    print_2d_array(dispersion2.A(KPOINT), ".4f")
+    print("B")
+    print_2d_array(dispersion2.B(KPOINT), ".4f")
+    print("C")
+    print_2d_array(dispersion2.C(), ".4f")
+    print("J")
+    print_2d_array(dispersion2.J(KPOINT)[0][0], ".4f")
 
     dispersion.compute(kp.points())
-    A = []
-    B = []
-    C = []
-    h = []
+    # A = []
+    # B = []
+    # C = []
+    # h = []
 
-    for point in kp.points():
-        A.append(dispersion.A(point))
-        B.append(dispersion.B(point))
-        C.append(dispersion.C())
-        h.append(dispersion.h(point))
-    h = np.array(h)
+    # for point in kp.points():
+    #     A.append(dispersion.A(point))
+    #     B.append(dispersion.B(point))
+    #     C.append(dispersion.C())
+    #     h.append(dispersion.h(point))
+    # h = np.array(h)
 
-    fig, ax = plt.subplots(15, 1, figsize=(5, 10))
+    # fig, ax = plt.subplots(15, 1, figsize=(5, 10))
 
-    fig.subplots_adjust(hspace=0)
-    ax[0].plot(kp.flatten_points(), np.array(A).real[:, 0, 0], label="A real")
-    ax[1].plot(kp.flatten_points(), np.array(A).imag[:, 0, 0], label="A imag")
-    ax[2].plot(kp.flatten_points(), np.array(B).real[:, 0, 0], label="B real")
-    ax[3].plot(kp.flatten_points(), np.array(B).imag[:, 0, 0], label="B imag")
-    ax[4].plot(kp.flatten_points(), np.array(C).real[:, 0, 0], label="C real")
-    ax[5].plot(kp.flatten_points(), np.array(C).imag[:, 0, 0], label="C imag")
-    ax[6].plot(kp.flatten_points(), h.real[:, 0, 0], color="red", label="h 0 0 real")
-    ax[7].plot(kp.flatten_points(), h.real[:, 0, 1], color="green", label="h 0 1 real")
-    ax[8].plot(kp.flatten_points(), h.real[:, 1, 0], color="black", label="h 1 0 real")
-    ax[9].plot(
-        kp.flatten_points(), h.real[:, 1, 1], color="magenta", label="h 1 1 real"
-    )
-    ax[10].plot(kp.flatten_points(), h.imag[:, 0, 0], color="red", label="h 0 0 imag")
-    ax[11].plot(kp.flatten_points(), h.imag[:, 0, 1], color="green", label="h 0 1 imag")
-    ax[12].plot(kp.flatten_points(), h.imag[:, 1, 0], color="black", label="h 1 0 imag")
-    ax[13].plot(
-        kp.flatten_points(), h.imag[:, 1, 1], color="magenta", label="h 1 1 imag"
-    )
-    ax[14].plot(
-        kp.flatten_points(),
-        np.array(A).real[:, 0, 0] - np.array(B).real[:, 0, 0],
-        label="A - B real",
-    )
+    # fig.subplots_adjust(hspace=0)
+    # ax[0].plot(kp.flatten_points(), np.array(A).real[:, 0, 0], label="A real")
+    # ax[1].plot(kp.flatten_points(), np.array(A).imag[:, 0, 0], label="A imag")
+    # ax[2].plot(kp.flatten_points(), np.array(B).real[:, 0, 0], label="B real")
+    # ax[3].plot(kp.flatten_points(), np.array(B).imag[:, 0, 0], label="B imag")
+    # ax[4].plot(kp.flatten_points(), np.array(C).real[:, 0, 0], label="C real")
+    # ax[5].plot(kp.flatten_points(), np.array(C).imag[:, 0, 0], label="C imag")
+    # ax[6].plot(kp.flatten_points(), h.real[:, 0, 0], color="red", label="h 0 0 real")
+    # ax[7].plot(kp.flatten_points(), h.real[:, 0, 1], color="green", label="h 0 1 real")
+    # ax[8].plot(kp.flatten_points(), h.real[:, 1, 0], color="black", label="h 1 0 real")
+    # ax[9].plot(
+    #     kp.flatten_points(), h.real[:, 1, 1], color="magenta", label="h 1 1 real"
+    # )
+    # ax[10].plot(kp.flatten_points(), h.imag[:, 0, 0], color="red", label="h 0 0 imag")
+    # ax[11].plot(kp.flatten_points(), h.imag[:, 0, 1], color="green", label="h 0 1 imag")
+    # ax[12].plot(kp.flatten_points(), h.imag[:, 1, 0], color="black", label="h 1 0 imag")
+    # ax[13].plot(
+    #     kp.flatten_points(), h.imag[:, 1, 1], color="magenta", label="h 1 1 imag"
+    # )
+    # ax[14].plot(
+    #     kp.flatten_points(),
+    #     np.array(A).real[:, 0, 0] - np.array(B).real[:, 0, 0],
+    #     label="A - B real",
+    # )
     # ax[0].set_ylabel("A real")
     # ax[1].set_ylabel("A imag")
     # ax[2].set_ylabel("B real")
@@ -442,31 +468,42 @@ if __name__ == "__main__":
     # ax[11].set_ylabel()
     # ax[12].set_ylabel()
     # ax[13].set_ylabel()
-    for num, i in enumerate(ax):
-        i.set_xlim(kp.coordinates()[0], kp.coordinates()[-1])
-        i.set_xticks(kp.coordinates(), kp.labels, fontsize=15)
-        plot_vertical_lines(i, kp.coordinates())
-        plot_horizontal_lines(i, 0)
-        i.legend(fontsize=8, loc="upper right")
-        if num != 14:
-            i.get_xaxis().set_visible(False)
-    plt.savefig("test.png", dpi=600, bbox_inches="tight")
-    plt.close()
+    # for num, i in enumerate(ax):
+    #     i.set_xlim(kp.coordinates()[0], kp.coordinates()[-1])
+    #     i.set_xticks(kp.coordinates(), kp.labels, fontsize=15)
+    #     plot_vertical_lines(i, kp.coordinates())
+    #     plot_horizontal_lines(i, 0)
+    #     i.legend(fontsize=8, loc="upper right")
+    #     if num != 14:
+    #         i.get_xaxis().set_visible(False)
+    # plt.savefig("test.png", dpi=600, bbox_inches="tight")
+    # plt.close()
 
     fig, ax = plt.subplots()
 
     dispersion2.compute(kp.points())
+
+    omega_plus = []
+    omega_minus = []
+    for point in kp.points():
+        omega_plus.append(dispersion.omega(point + dispersion.Q)[0])
+        omega_minus.append(dispersion.omega(point - dispersion.Q)[0])
+
+    # omega_plus = np.array(omega_plus)
+    # omega_minus = np.array(omega_minus)
 
     ax.set_xticks(kp.coordinates(), kp.labels, fontsize=15)
     ax.set_ylabel("E, meV", fontsize=15)
 
     plot_vertical_lines(ax, kp.coordinates())
     ax.plot(kp.flatten_points(), dispersion.omegas()[0], label="helix")
+    ax.plot(kp.flatten_points(), omega_plus, label="helix + k")
+    ax.plot(kp.flatten_points(), omega_minus, label="helix - k")
     ax.plot(kp.flatten_points(), dispersion2.omegas()[0], label="fm")
     ax.legend()
 
     ax.set_xlim(kp.flatten_points()[0], kp.flatten_points()[-1])
-    ax.set_ylim(-1, None)
+    # ax.set_ylim(-1, None)
     plot_horizontal_lines(ax, 0)
 
     plt.savefig(
@@ -474,3 +511,7 @@ if __name__ == "__main__":
         bbox_inches="tight",
         dpi=600,
     )
+
+
+# # problem point = [0.28524077, 0.49403396, 0.]
+# # for fm [0.28282347, 0.16325446, 0.]
