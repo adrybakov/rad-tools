@@ -84,6 +84,7 @@ def solve_via_colpa(D):
     try:
         # In Colpa article decomposition is K^{\dag}K, while numpy gives KK^{\dag}
         K = np.conjugate(np.linalg.cholesky(D)).T
+        from radtools.routines import print_2d_array
     except LinAlgError:
         raise ColpaFailed
 

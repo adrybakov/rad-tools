@@ -32,6 +32,13 @@ class MagnonDispersion:
         but not from atom to atom in (0, 0, 0) unit cell.
     n : (3,) |array_like|_, optional
         Global rotational axis. If None provided, then it is set to the direction of ``Q``.
+    nodmi : bool, default=False
+        If True, then DMI is not included in the dispersion.
+    noaniso : bool, default=False
+        If True, then anisotropy is not included in the dispersion.
+    custom_mask : func
+        Custom mask for the exchange parameter. Function which take (3,3) numpy:`ndarray`
+        as an input and returns (3,3) numpy:`ndarray` as an output.
 
     Attributes
     ----------
@@ -57,8 +64,16 @@ class MagnonDispersion:
         Defined from local spin directions.
     """
 
-    def __init__(self, model: ExchangeHamiltonian, Q=None, n=None):
-        self_omegas = None
+    def __init__(
+        self,
+        model: ExchangeHamiltonian,
+        Q=None,
+        n=None,
+        nodmi=False,
+        noaniso=False,
+        custom_mask=None,
+    ):
+        self._omegas = None
         self._C = None
         # Store the exchange model, but privately
         self._model = deepcopy(model)
@@ -74,7 +89,7 @@ class MagnonDispersion:
             if np.allclose([0, 0, 0], Q):
                 self.n = np.array([0, 0, 1])
             else:
-                self.n = Q / np.linalg.norm(Q)
+                self.n = self.Q / np.linalg.norm(self.Q)
         else:
             self.n = np.array(n, dtype=float) / np.linalg.norm(n)
 
@@ -87,7 +102,9 @@ class MagnonDispersion:
             self.indices_i,
             self.indices_j,
             self.dis_vectors,
-        ) = self._model.input_for_magnons()
+        ) = self._model.input_for_magnons(
+            nodmi=nodmi, noaniso=noaniso, custom_mask=custom_mask
+        )
 
         # Initialize spin vector, u vector and v vector arrays
         self.S = np.zeros((self.N, 3), dtype=float)
@@ -244,7 +261,6 @@ class MagnonDispersion:
         h = np.concatenate((left, right), axis=1)
         return h
 
-    # TODO Create compute() method and move all dispersion-related storage in the class. Make it iterable over omegas (not k points, but eigenvalues)
     def omega(self, k, zeros_to_none=False):
         r"""
         Computes magnon energies.
@@ -303,151 +319,157 @@ class MagnonDispersion:
 
 
 if __name__ == "__main__":
-    from radtools.io.tb2j import read_tb2j_model
-
-    model = read_tb2j_model("/Users/rybakov.ad/Desktop/exchange.out")
-    model.get_atom("Ni1").spin_vector = [0, 0, 1]
-    model.get_atom("Ni2").spin_vector = [0, 0, -1]
-    model.filter(max_distance=5)
-    for a1, a2, R, J in model:
-        print(R, model.get_distance(a1, a2, R))
-
-    dispersion = MagnonDispersion(model)
-
-    for dis in dispersion.dis_vectors:
-        print(dis)
-    for m in dispersion.J_matrices:
-        print_2d_array(m, ".4f")
-    KPOINT = np.array([1, 0, 0])
-    print(dispersion.J(KPOINT).shape)
-    for i in [0, 1]:
-        for j in [0, 1]:
-            print(f"{i} {j}")
-            print_2d_array(dispersion.J(KPOINT)[i][j], ".4f")
-
-    print("h")
-    print_2d_array(dispersion.h(KPOINT), ".4f")
-
-    print("A")
-    print_2d_array(dispersion.A(KPOINT), ".4f")
-
-    print("B")
-    print_2d_array(dispersion.B(KPOINT), ".4f")
-
-    print("C")
-    print_2d_array(dispersion.C(), ".4f")
-
     # from radtools.io.tb2j import read_tb2j_model
-    # from termcolor import cprint
 
-    # model = read_tb2j_model(
-    #     "debug/magnons/exchange.out",
-    #     bravais_type="HEX",
-    # )
-    # model.filter(max_distance=8)
-    # cprint(f"{model.variation} crystal detected", "green")
-    # cprint(f"Notation is {model.notation}", "green")
-    # model.kpoints.add_hs_point("Mprime", [0, 0.5, 0], "M$^{\prime}$")
-    # model.kpoints.add_hs_point("Kprime", [-1 / 3, 2 / 3, 0], "K$^{\prime}$")
-    # kp = model.kpoints  # Set custom k path
-    # kp.path = "G-M-K-G"
-    # # kp.path = "Mprime-G-M-K-Mprime-Kprime-G-K"
-    # kp.n = 40
+    # model = read_tb2j_model("/Users/rybakov.ad/Desktop/exchange.out")
+    # model.get_atom("Ni1").spin_vector = [0, 0, 1]
+    # model.get_atom("Ni2").spin_vector = [0, 0, -1]
+    # model.filter(max_distance=5)
+    # for a1, a2, R, J in model:
+    #     print(R, model.get_distance(a1, a2, R))
 
-    # spin = ["Ni1", 0, 1, 0]
-    # if spin is not None:
-    #     for i in range(len(spin) // 4):
-    #         atom_name = spin[4 * i]
-    #         atom = model.crystal.get_atom(atom_name)
-    #         atom_spin = list(map(float, spin[4 * i + 1 : 4 * i + 4]))
-    #         atom.spin_vector = atom_spin
+    # dispersion = MagnonDispersion(model)
 
-    # # Get the magnon dispersion
-    # dispersion = MagnonDispersion(model, Q=(0.138, 0, 0), n=[0, 0, 1])
-    # dispersion2 = MagnonDispersion(model)
+    # for dis in dispersion.dis_vectors:
+    #     print(dis)
+    # for m in dispersion.J_matrices:
+    #     print_2d_array(m, ".4f")
+    # KPOINT = np.array([0.5, 0, 0]) @ model.reciprocal_cell
+    # print(dispersion.J(KPOINT).shape)
+    # for i in [0, 1]:
+    #     for j in [0, 1]:
+    #         print(f"{i} {j}")
+    #         print_2d_array(dispersion.J(KPOINT)[i][j], ".4f")
 
-    # dispersion.compute(kp.points())
-    # A = []
-    # B = []
-    # C = []
-    # h = []
+    # print("h")
+    # print_2d_array(dispersion.h(KPOINT), ".4f")
 
-    # for point in kp.points():
-    #     A.append(dispersion.A(point))
-    #     B.append(dispersion.B(point))
-    #     C.append(dispersion.C())
-    #     h.append(dispersion.h(point))
-    # h = np.array(h)
+    # print("A")
+    # print_2d_array(dispersion.A(KPOINT), ".4f")
 
-    # fig, ax = plt.subplots(15, 1, figsize=(5, 10))
+    # print("B")
+    # print_2d_array(dispersion.B(KPOINT), ".4f")
 
-    # fig.subplots_adjust(hspace=0)
-    # ax[0].plot(kp.flatten_points(), np.array(A).real[:, 0, 0], label="A real")
-    # ax[1].plot(kp.flatten_points(), np.array(A).imag[:, 0, 0], label="A imag")
-    # ax[2].plot(kp.flatten_points(), np.array(B).real[:, 0, 0], label="B real")
-    # ax[3].plot(kp.flatten_points(), np.array(B).imag[:, 0, 0], label="B imag")
-    # ax[4].plot(kp.flatten_points(), np.array(C).real[:, 0, 0], label="C real")
-    # ax[5].plot(kp.flatten_points(), np.array(C).imag[:, 0, 0], label="C imag")
-    # ax[6].plot(kp.flatten_points(), h.real[:, 0, 0], color="red", label="h 0 0 real")
-    # ax[7].plot(kp.flatten_points(), h.real[:, 0, 1], color="green", label="h 0 1 real")
-    # ax[8].plot(kp.flatten_points(), h.real[:, 1, 0], color="black", label="h 1 0 real")
-    # ax[9].plot(
-    #     kp.flatten_points(), h.real[:, 1, 1], color="magenta", label="h 1 1 real"
-    # )
-    # ax[10].plot(kp.flatten_points(), h.imag[:, 0, 0], color="red", label="h 0 0 imag")
-    # ax[11].plot(kp.flatten_points(), h.imag[:, 0, 1], color="green", label="h 0 1 imag")
-    # ax[12].plot(kp.flatten_points(), h.imag[:, 1, 0], color="black", label="h 1 0 imag")
-    # ax[13].plot(
-    #     kp.flatten_points(), h.imag[:, 1, 1], color="magenta", label="h 1 1 imag"
-    # )
-    # ax[14].plot(
-    #     kp.flatten_points(),
-    #     np.array(A).real[:, 0, 0] - np.array(B).real[:, 0, 0],
-    #     label="A - B real",
-    # )
-    # # ax[0].set_ylabel("A real")
-    # # ax[1].set_ylabel("A imag")
-    # # ax[2].set_ylabel("B real")
-    # # ax[3].set_ylabel("B imag")
-    # # ax[4].set_ylabel("C real")
-    # # ax[5].set_ylabel("C imag")
-    # # ax[6].set_ylabel()
-    # # ax[7].set_ylabel()
-    # # ax[8].set_ylabel()
-    # # ax[9].set_ylabel()
-    # # ax[10].set_ylabel()
-    # # ax[11].set_ylabel()
-    # # ax[12].set_ylabel()
-    # # ax[13].set_ylabel()
-    # for num, i in enumerate(ax):
-    #     i.set_xlim(kp.coordinates()[0], kp.coordinates()[-1])
-    #     i.set_xticks(kp.coordinates(), kp.labels, fontsize=15)
-    #     plot_vertical_lines(i, kp.coordinates())
-    #     plot_horizontal_lines(i, 0)
-    #     i.legend(fontsize=8, loc="upper right")
-    #     if num != 14:
-    #         i.get_xaxis().set_visible(False)
-    # plt.savefig("test.png", dpi=600, bbox_inches="tight")
-    # plt.close()
+    # print("C")
+    # print_2d_array(dispersion.C(), ".4f")
 
-    # fig, ax = plt.subplots()
+    # print("omega")
+    # print(dispersion.omega(KPOINT))
 
-    # dispersion2.compute(kp.points())
+    from radtools.io.tb2j import read_tb2j_model
+    from termcolor import cprint
 
-    # ax.set_xticks(kp.coordinates(), kp.labels, fontsize=15)
-    # ax.set_ylabel("E, meV", fontsize=15)
+    model = read_tb2j_model(
+        "debug/magnons/exchange.out",
+        bravais_type="HEX",
+    )
+    model.filter(max_distance=7)
+    cprint(f"{model.variation} crystal detected", "green")
+    cprint(f"Notation is {model.notation}", "green")
+    model.kpoints.add_hs_point("Mprime", [0, 0.5, 0], "M$^{\prime}$")
+    model.kpoints.add_hs_point("Kprime", [-1 / 3, 2 / 3, 0], "K$^{\prime}$")
+    kp = model.kpoints  # Set custom k path
+    kp.path = "G-M-K-G"
+    # kp.path = "Mprime-G-M-K-Mprime-Kprime-G-K"
+    kp.n = 40
 
-    # plot_vertical_lines(ax, kp.coordinates())
-    # ax.plot(kp.flatten_points(), dispersion.omegas()[0], label="helix")
-    # ax.plot(kp.flatten_points(), dispersion2.omegas()[0], label="fm")
-    # ax.legend()
+    spin = ["Ni1", 1, 0, 0]
+    if spin is not None:
+        for i in range(len(spin) // 4):
+            atom_name = spin[4 * i]
+            atom = model.crystal.get_atom(atom_name)
+            atom_spin = list(map(float, spin[4 * i + 1 : 4 * i + 4]))
+            print("here")
+            atom.spin_vector = atom_spin
 
-    # ax.set_xlim(kp.flatten_points()[0], kp.flatten_points()[-1])
-    # ax.set_ylim(-1, None)
-    # plot_horizontal_lines(ax, 0)
+    # Get the magnon dispersion
+    dispersion = MagnonDispersion(
+        model, Q=(0.138, 0, 0), n=[0, 0, 1], nodmi=True, noaniso=True
+    )
+    dispersion2 = MagnonDispersion(model, nodmi=True, noaniso=True)
 
-    # plt.savefig(
-    #     f"magnon_dispersion.png",
-    #     bbox_inches="tight",
-    #     dpi=600,
-    # )
+    dispersion.compute(kp.points())
+    A = []
+    B = []
+    C = []
+    h = []
+
+    for point in kp.points():
+        A.append(dispersion.A(point))
+        B.append(dispersion.B(point))
+        C.append(dispersion.C())
+        h.append(dispersion.h(point))
+    h = np.array(h)
+
+    fig, ax = plt.subplots(15, 1, figsize=(5, 10))
+
+    fig.subplots_adjust(hspace=0)
+    ax[0].plot(kp.flatten_points(), np.array(A).real[:, 0, 0], label="A real")
+    ax[1].plot(kp.flatten_points(), np.array(A).imag[:, 0, 0], label="A imag")
+    ax[2].plot(kp.flatten_points(), np.array(B).real[:, 0, 0], label="B real")
+    ax[3].plot(kp.flatten_points(), np.array(B).imag[:, 0, 0], label="B imag")
+    ax[4].plot(kp.flatten_points(), np.array(C).real[:, 0, 0], label="C real")
+    ax[5].plot(kp.flatten_points(), np.array(C).imag[:, 0, 0], label="C imag")
+    ax[6].plot(kp.flatten_points(), h.real[:, 0, 0], color="red", label="h 0 0 real")
+    ax[7].plot(kp.flatten_points(), h.real[:, 0, 1], color="green", label="h 0 1 real")
+    ax[8].plot(kp.flatten_points(), h.real[:, 1, 0], color="black", label="h 1 0 real")
+    ax[9].plot(
+        kp.flatten_points(), h.real[:, 1, 1], color="magenta", label="h 1 1 real"
+    )
+    ax[10].plot(kp.flatten_points(), h.imag[:, 0, 0], color="red", label="h 0 0 imag")
+    ax[11].plot(kp.flatten_points(), h.imag[:, 0, 1], color="green", label="h 0 1 imag")
+    ax[12].plot(kp.flatten_points(), h.imag[:, 1, 0], color="black", label="h 1 0 imag")
+    ax[13].plot(
+        kp.flatten_points(), h.imag[:, 1, 1], color="magenta", label="h 1 1 imag"
+    )
+    ax[14].plot(
+        kp.flatten_points(),
+        np.array(A).real[:, 0, 0] - np.array(B).real[:, 0, 0],
+        label="A - B real",
+    )
+    # ax[0].set_ylabel("A real")
+    # ax[1].set_ylabel("A imag")
+    # ax[2].set_ylabel("B real")
+    # ax[3].set_ylabel("B imag")
+    # ax[4].set_ylabel("C real")
+    # ax[5].set_ylabel("C imag")
+    # ax[6].set_ylabel()
+    # ax[7].set_ylabel()
+    # ax[8].set_ylabel()
+    # ax[9].set_ylabel()
+    # ax[10].set_ylabel()
+    # ax[11].set_ylabel()
+    # ax[12].set_ylabel()
+    # ax[13].set_ylabel()
+    for num, i in enumerate(ax):
+        i.set_xlim(kp.coordinates()[0], kp.coordinates()[-1])
+        i.set_xticks(kp.coordinates(), kp.labels, fontsize=15)
+        plot_vertical_lines(i, kp.coordinates())
+        plot_horizontal_lines(i, 0)
+        i.legend(fontsize=8, loc="upper right")
+        if num != 14:
+            i.get_xaxis().set_visible(False)
+    plt.savefig("test.png", dpi=600, bbox_inches="tight")
+    plt.close()
+
+    fig, ax = plt.subplots()
+
+    dispersion2.compute(kp.points())
+
+    ax.set_xticks(kp.coordinates(), kp.labels, fontsize=15)
+    ax.set_ylabel("E, meV", fontsize=15)
+
+    plot_vertical_lines(ax, kp.coordinates())
+    ax.plot(kp.flatten_points(), dispersion.omegas()[0], label="helix")
+    ax.plot(kp.flatten_points(), dispersion2.omegas()[0], label="fm")
+    ax.legend()
+
+    ax.set_xlim(kp.flatten_points()[0], kp.flatten_points()[-1])
+    ax.set_ylim(-1, None)
+    plot_horizontal_lines(ax, 0)
+
+    plt.savefig(
+        f"magnon_dispersion.png",
+        bbox_inches="tight",
+        dpi=600,
+    )

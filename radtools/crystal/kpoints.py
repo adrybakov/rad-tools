@@ -5,6 +5,8 @@ General 3D lattice.
 from typing import Iterable
 import numpy as np
 
+from radtools.routines import absolute_to_relative
+
 __all__ = ["Kpoints"]
 
 
@@ -118,13 +120,13 @@ class Kpoints:
         if name in self.hs_names:
             raise ValueError(f"Point '{name}' already defined.")
 
-        if relative:
-            cell = np.array([self.b1, self.b2, self.b3])
-        else:
-            cell = np.eye(3)
+        if not relative:
+            coordinates = absolute_to_relative(
+                np.array([self.b1, self.b2, self.b3]), coordinates
+            )
 
         self.hs_names.append(name)
-        self.hs_coordinates[name] = np.array(coordinates) @ cell
+        self.hs_coordinates[name] = np.array(coordinates)
         self.hs_labels[name] = label
 
     @property

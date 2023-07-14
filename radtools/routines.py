@@ -662,7 +662,7 @@ def span_orthonormal_set(vec):
 
     if np.allclose(vec, [0, 0, -1]):
         return (
-            np.array([-1.0, 0.0, 0.0]),
+            np.array([1.0, 0.0, 0.0]),
             np.array([0.0, -1.0, 0.0]),
             np.array([0.0, 0.0, -1.0]),
         )

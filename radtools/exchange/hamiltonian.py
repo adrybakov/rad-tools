@@ -1362,12 +1362,22 @@ class ExchangeHamiltonian(Crystal):
             energy = energy[0]
         return energy
 
-    def input_for_magnons(self):
+    def input_for_magnons(self, nodmi=False, noaniso=False, custom_mask=None):
         r"""
         Input from Exchange model.
 
         This function prepare the list of exchange parameters to
         be used as an input for magnon dispersion calculation.
+
+        Parameters
+        ----------
+        nodmi : bool, default=False
+            If True, then DMI is not included in the dispersion.
+        noaniso : bool, default=False
+            If True, then anisotropy is not included in the dispersion.
+        custom_mask : func
+            Custom mask for the exchange parameter. Function which take (3,3) numpy:`ndarray`
+            as an input and returns (3,3) numpy:`ndarray` as an output.
 
         Returns
         -------
@@ -1384,7 +1394,15 @@ class ExchangeHamiltonian(Crystal):
         magnetic_atoms = self.magnetic_atoms
         atom_index = dict([(atom, i) for i, atom in enumerate(magnetic_atoms)])
         for atom1, atom2, R, J in self:
-            Jij.append(J.matrix)
+            if custom_mask is not None:
+                result = custom_mask(J.matrix)
+            else:
+                result = J.matrix
+                if nodmi:
+                    result -= J.dmi_matrix
+                if noaniso:
+                    result -= J.aniso
+            Jij.append(result)
             i.append(atom_index[atom1])
             j.append(atom_index[atom2])
             dij.append(self.get_vector(atom1, atom1, R))

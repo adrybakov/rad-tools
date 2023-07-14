@@ -66,7 +66,7 @@ def manager(
     cprint(f"{model.variation} crystal detected", "green")
 
     # Get k points of the model
-    kp = model.crystal.kpoints  # Set custom k path
+    kp = model.kpoints  # Set custom k path
     if path is not None:
         kp.path = path
 
@@ -94,7 +94,7 @@ def manager(
     if spin is not None:
         for i in range(len(spin) // 4):
             atom_name = spin[4 * i]
-            atom = model.crystal.get_atom(atom_name)
+            atom = model.get_atom(atom_name)
             atom_spin = list(map(float, spin[4 * i + 1 : 4 * i + 4]))
             atom.spin_vector = atom_spin
 
