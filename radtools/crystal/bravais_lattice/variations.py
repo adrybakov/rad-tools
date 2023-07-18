@@ -5,7 +5,16 @@ from radtools.routines import compare_numerically
 from radtools.routines import toradians
 
 
-def bct_variation(conv_a: float, conv_c: float):
+__all__ = [
+    "BCT_variation",
+    "ORCF_variation",
+    "RHL_variation",
+    "MCLC_variation",
+    "TRI_variation",
+]
+
+
+def BCT_variation(conv_a: float, conv_c: float):
     r"""
     Two variations of the BCT lattice.
 
@@ -38,7 +47,7 @@ def bct_variation(conv_a: float, conv_c: float):
         raise ValueError("a == c")
 
 
-def orcf_variation(conv_a: float, conv_b: float, conv_c: float, eps: float):
+def ORCF_variation(conv_a: float, conv_b: float, conv_c: float, eps: float):
     r"""
     Three variations of the ORCF lattice.
 
@@ -83,7 +92,7 @@ def orcf_variation(conv_a: float, conv_b: float, conv_c: float, eps: float):
         return "ORCF2"
 
 
-def rhl_variation(conv_alpha: float, eps: float):
+def RHL_variation(conv_alpha: float, eps: float):
     r"""
     Two variations of the RHL lattice.
 
@@ -117,7 +126,7 @@ def rhl_variation(conv_alpha: float, eps: float):
         raise ValueError(f"alpha == 90 with {eps} tolerance.")
 
 
-def mclc_variation(
+def MCLC_variation(
     conv_a: float,
     conv_b: float,
     conv_c: float,
@@ -192,11 +201,11 @@ def mclc_variation(
             return "MCLC5"
 
 
-def tri_variation(k_alpha: float, k_beta: float, k_gamma: float, eps: float):
+def TRI_variation(k_alpha: float, k_beta: float, k_gamma: float, eps: float):
     r"""
     Four variations of the TRI lattice.
 
-    Conditions :math:`k_{\alpha} \ne 90^{\circ}` and :math:`k_{\beta} \ne 90^{\circ}`are assumed.
+    Conditions :math:`k_{\alpha} \ne 90^{\circ}` and :math:`k_{\beta} \ne 90^{\circ}` are assumed.
 
     :math:`\text{TRI}_{1a} k_{\alpha} > 90^{\circ}, k_{\beta} > 90^{\circ}, k_{\gamma} > 90^{\circ}, k_{\gamma} = \min(k_{\alpha}, k_{\beta}, k_{\gamma})`
 

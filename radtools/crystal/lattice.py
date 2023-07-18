@@ -23,11 +23,11 @@ from radtools.crystal.constants import (
     DEFAULT_K_PATHS,
 )
 from radtools.crystal.bravais_lattice.variations import (
-    bct_variation,
-    orcf_variation,
-    rhl_variation,
-    mclc_variation,
-    tri_variation,
+    BCT_variation,
+    ORCF_variation,
+    RHL_variation,
+    MCLC_variation,
+    TRI_variation,
 )
 from radtools.crystal.bravais_lattice.hs_points import (
     CUB_hs_points,
@@ -46,7 +46,7 @@ from radtools.crystal.bravais_lattice.hs_points import (
     TRI_hs_points,
 )
 
-from radtools.crystal.bravais_lattice.unify import unify_cell
+from radtools.crystal.bravais_lattice.standardize import standardize_cell
 
 __all__ = ["Lattice"]
 
@@ -162,8 +162,8 @@ class Lattice:
         Angle between vectors :math:`a_1` and :math:`a_3`. In degrees.
     gamma : float, default=90
         Angle between vectors :math:`a_1` and :math:`a_2`. In degrees.
-    unify : bool, default True
-        Whether to unify the cell.
+    standardize : bool, default True
+        Whether to standardize the cell.
         The consistence of the predefined k paths is not guaranteed in the cell is not unified.
 
     Attributes
@@ -185,7 +185,7 @@ class Lattice:
         Computational materials science, 49(2), pp.299-312.
     """
 
-    def __init__(self, *args, unify=True, **kwargs) -> None:
+    def __init__(self, *args, standardize=True, **kwargs) -> None:
         self.eps_rel = REL_TOL
         self._cell = None
         self._type = None
@@ -230,9 +230,9 @@ class Lattice:
         self._artists = {}
         self._PLOT_NAMES = HS_PLOT_NAMES
 
-        self._set_cell(cell, unify=unify)
+        self._set_cell(cell, standardize=standardize)
 
-    # Real space parameters
+    # Primitive cell parameters
     @property
     def cell(self):
         r"""
@@ -258,7 +258,7 @@ class Lattice:
         return self._cell
 
     # For the child`s overriding
-    def _set_cell(self, new_cell, unify=True):
+    def _set_cell(self, new_cell, standardize=True):
         try:
             new_cell = np.array(new_cell)
         except:
@@ -268,9 +268,9 @@ class Lattice:
         self._cell = new_cell
         # Reset type
         self._type = None
-        # Unify cell
-        if unify:
-            self._cell = unify_cell(
+        # Standardize cell
+        if standardize:
+            self._cell = standardize_cell(
                 self._cell, self.type(), rtol=self.eps_rel, atol=self.eps
             )
 
@@ -420,6 +420,7 @@ class Lattice:
         """
         return self.a, self.b, self.c, self.alpha, self.beta, self.gamma
 
+    # Conventional cell parameters
     @property
     def conv_cell(self):
         r"""
@@ -562,6 +563,31 @@ class Lattice:
         """
 
         return volume(self.conv_a1, self.conv_a2, self.conv_a3)
+
+    @property
+    def conv_parameters(self):
+        r"""
+        Return conventional cell parameters.
+
+        :math:`(a, b, c, \alpha, \beta, \gamma)`
+
+        Returns
+        -------
+        a : float
+        b : float
+        c : float
+        alpha : float
+        beta : float
+        gamma : float
+        """
+        return (
+            self.conv_a,
+            self.conv_b,
+            self.conv_c,
+            self.conv_alpha,
+            self.conv_beta,
+            self.conv_gamma,
+        )
 
     # Reciprocal parameters
     @property
@@ -835,13 +861,13 @@ class Lattice:
         lattice_type = self.type()
 
         if lattice_type == "BCT":
-            result = bct_variation(self.conv_a, self.conv_c)
+            result = BCT_variation(self.conv_a, self.conv_c)
         elif lattice_type == "ORCF":
-            result = orcf_variation(self.conv_a, self.conv_b, self.conv_c, self.eps)
+            result = ORCF_variation(self.conv_a, self.conv_b, self.conv_c, self.eps)
         elif lattice_type == "RHL":
-            result = rhl_variation(self.conv_alpha, self.eps)
+            result = RHL_variation(self.conv_alpha, self.eps)
         elif lattice_type == "MCLC":
-            result = mclc_variation(
+            result = MCLC_variation(
                 self.conv_a,
                 self.conv_b,
                 self.conv_c,
@@ -850,7 +876,7 @@ class Lattice:
                 self.eps,
             )
         elif lattice_type == "TRI":
-            result = tri_variation(self.k_alpha, self.k_beta, self.k_gamma, self.eps)
+            result = TRI_variation(self.k_alpha, self.k_beta, self.k_gamma, self.eps)
         else:
             result = lattice_type
 

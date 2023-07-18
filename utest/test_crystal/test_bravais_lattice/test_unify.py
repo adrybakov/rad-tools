@@ -7,21 +7,21 @@ from hypothesis import given
 from hypothesis import strategies as st
 from scipy.spatial.transform import Rotation
 
-from radtools.crystal.bravais_lattice.unify import (
-    BCC_unify_cell,
-    BCT_unify_cell,
-    CUB_unify_cell,
-    FCC_unify_cell,
-    HEX_unify_cell,
-    MCL_unify_cell,
-    MCLC_unify_cell,
-    ORC_unify_cell,
-    ORCC_unify_cell,
-    ORCF_unify_cell,
-    ORCI_unify_cell,
-    RHL_unify_cell,
-    TET_unify_cell,
-    TRI_unify_cell,
+from radtools.crystal.bravais_lattice.standardize import (
+    BCC_standardize_cell,
+    BCT_standardize_cell,
+    CUB_standardize_cell,
+    FCC_standardize_cell,
+    HEX_standardize_cell,
+    MCL_standardize_cell,
+    MCLC_standardize_cell,
+    ORC_standardize_cell,
+    ORCC_standardize_cell,
+    ORCF_standardize_cell,
+    ORCI_standardize_cell,
+    RHL_standardize_cell,
+    TET_standardize_cell,
+    TRI_standardize_cell,
 )
 from radtools.crystal.bravais_lattice.constructor import (
     BCC,
@@ -81,14 +81,14 @@ def rotate(cell, r1, r2, r3):
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_CUB_unify_cell(r1, r2, r3, conv_a, order):
+def test_CUB_standardize_cell(r1, r2, r3, conv_a, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
         # Prepare cell
         cell = shuffle(rotate(CUB(conv_a, return_cell=True), r1, r2, r3), order)
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = CUB_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
+        cell = CUB_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -111,7 +111,7 @@ def test_CUB_unify_cell(r1, r2, r3, conv_a, order):
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_FCC_unify_cell(r1, r2, r3, conv_a, order):
+def test_FCC_standardize_cell(r1, r2, r3, conv_a, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
         # Prepare cell
         cell = shuffle(rotate(FCC(conv_a, return_cell=True), r1, r2, r3), order)
@@ -119,7 +119,7 @@ def test_FCC_unify_cell(r1, r2, r3, conv_a, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = FCC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
+        cell = FCC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -144,7 +144,7 @@ def test_FCC_unify_cell(r1, r2, r3, conv_a, order):
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_BCC_unify_cell(r1, r2, r3, conv_a, order):
+def test_BCC_standardize_cell(r1, r2, r3, conv_a, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
         # Prepare cell
         cell = shuffle(rotate(BCC(conv_a, return_cell=True), r1, r2, r3), order)
@@ -153,7 +153,7 @@ def test_BCC_unify_cell(r1, r2, r3, conv_a, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = BCC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
+        cell = BCC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -179,7 +179,7 @@ def test_BCC_unify_cell(r1, r2, r3, conv_a, order):
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_TET_unify_cell(r1, r2, r3, conv_a, conv_c, order):
+def test_TET_standardize_cell(r1, r2, r3, conv_a, conv_c, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
         # Prepare cell
         cell = shuffle(rotate(TET(conv_a, conv_c, return_cell=True), r1, r2, r3), order)
@@ -189,7 +189,7 @@ def test_TET_unify_cell(r1, r2, r3, conv_a, conv_c, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = TET_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
+        cell = TET_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -218,7 +218,7 @@ def test_TET_unify_cell(r1, r2, r3, conv_a, conv_c, order):
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_BCT_unify_cell(r1, r2, r3, conv_a, conv_c, order):
+def test_BCT_standardize_cell(r1, r2, r3, conv_a, conv_c, order):
     if (
         not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL)
         and min(conv_a, conv_c) / max(conv_a, conv_c) > REL_TOL
@@ -231,7 +231,7 @@ def test_BCT_unify_cell(r1, r2, r3, conv_a, conv_c, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = BCT_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
+        cell = BCT_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -259,7 +259,7 @@ def test_BCT_unify_cell(r1, r2, r3, conv_a, conv_c, order):
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_ORC_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
+def test_ORC_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
     if (
         not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL)
         and min(conv_a, conv_b, conv_c) / max(conv_a, conv_b, conv_c) > REL_TOL
@@ -273,7 +273,7 @@ def test_ORC_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = ORC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
+        cell = ORC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
         assert np.allclose(
@@ -299,7 +299,7 @@ def test_ORC_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_ORCF_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
+def test_ORCF_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
         min(conv_a, conv_b, conv_c) / max(conv_a, conv_b, conv_c) > REL_TOL
     ):
@@ -320,7 +320,7 @@ def test_ORCF_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = ORCF_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
+        cell = ORCF_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -350,7 +350,7 @@ def test_ORCF_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_ORCI_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
+def test_ORCI_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
         min(conv_a, conv_b, conv_c) / max(conv_a, conv_b, conv_c) > REL_TOL
     ):
@@ -378,7 +378,7 @@ def test_ORCI_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = ORCI_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
+        cell = ORCI_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -406,7 +406,7 @@ def test_ORCI_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_ORCC_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
+def test_ORCC_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
         min(conv_a, conv_b, conv_c) / max(conv_a, conv_b, conv_c) > REL_TOL
     ):
@@ -426,7 +426,7 @@ def test_ORCC_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
 
         old_det = np.linalg.det(cell)
 
-        cell = ORCC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
+        cell = ORCC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
         assert np.allclose(
             [a, b, c], [prim_a, prim_b, prim_c], rtol=REL_TOL, atol=ABS_TOL
@@ -452,7 +452,7 @@ def test_ORCC_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
     st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_HEX_unify_cell(r1, r2, r3, conv_a, conv_c, order):
+def test_HEX_standardize_cell(r1, r2, r3, conv_a, conv_c, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
         min(conv_a, conv_c) / max(conv_a, conv_c) > REL_TOL
     ):
@@ -467,7 +467,7 @@ def test_HEX_unify_cell(r1, r2, r3, conv_a, conv_c, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = HEX_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
+        cell = HEX_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -490,7 +490,7 @@ def test_HEX_unify_cell(r1, r2, r3, conv_a, conv_c, order):
     st.floats(min_value=MIN_ANGLE, max_value=120.0 - MIN_ANGLE),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_RHL_unify_cell(r1, r2, r3, conv_a, conv_alpha, order):
+def test_RHL_standardize_cell(r1, r2, r3, conv_a, conv_alpha, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
         # Prepare cell
         cell = shuffle(
@@ -505,7 +505,7 @@ def test_RHL_unify_cell(r1, r2, r3, conv_a, conv_alpha, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = RHL_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
+        cell = RHL_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -530,7 +530,7 @@ def test_RHL_unify_cell(r1, r2, r3, conv_a, conv_alpha, order):
     st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_MCL_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
+def test_MCL_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
         min(conv_a, conv_b, conv_c) / max(conv_a, conv_b, conv_c) > REL_TOL
     ):
@@ -552,7 +552,7 @@ def test_MCL_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = MCL_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
+        cell = MCL_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -577,7 +577,7 @@ def test_MCL_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
     st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_MCLC_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
+def test_MCLC_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL) and (
         min(conv_a, conv_b, conv_c) / max(conv_a, conv_b, conv_c) > REL_TOL
     ):
@@ -612,7 +612,7 @@ def test_MCLC_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
         old_det = np.linalg.det(cell)
 
         # Fix cell
-        cell = MCLC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
+        cell = MCLC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
         a, b, c, alpha, beta, gamma = param_from_cell(cell)
@@ -643,7 +643,7 @@ def test_MCLC_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
 #     st.floats(min_value=0.1, max_value=179.9),
 #     st.integers(min_value=0, max_value=n_order),
 # )
-# def test_TRI_unify_cell(
+# def test_TRI_standardize_cell(
 #     r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, conv_beta, conv_gamma, order
 # ):
 #     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL,atol=ABS_TOL):
@@ -660,7 +660,7 @@ def test_MCLC_unify_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, order):
 #         old_det = np.linalg.det(cell)
 #         # TODO: Decide the logic of parameter`s order
 #         # Fix cell
-#         cell = TRI_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
+#         cell = TRI_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
 #         # Check results
 #         a, b, c, alpha, beta, gamma = param_from_cell(cell)

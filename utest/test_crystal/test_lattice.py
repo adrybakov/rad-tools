@@ -74,7 +74,7 @@ def test_Lattice_cell_attributes(r1, r2, r3, a, b, c, alpha, beta, gamma):
             r2,
             r3,
         )
-        l = Lattice(cell, unify=False)
+        l = Lattice(cell, standardize=False)
         # TODO: fix accuracy in cell_from_param (sin, cos)
         # assert np.allclose(
         #     sorted([l.a, l.b, l.c]), sorted([a, b, c]), rtol=REL_TOL, atol=ABS_TOL
@@ -125,7 +125,7 @@ def test_Lattice_reciprocal_cell_attributes(r1, r2, r3, a, b, c, alpha, beta, ga
             r2,
             r3,
         )
-        l = Lattice(cell, unify=False)
+        l = Lattice(cell, standardize=False)
 
         assert np.allclose(
             [l.k_a, l.k_b, l.k_c],
@@ -172,7 +172,7 @@ def test_Lattice_eps(r1, r2, r3, a, b, c, alpha, beta, gamma, eps_rel):
             r2,
             r3,
         )
-        l = Lattice(cell, unify=False)
+        l = Lattice(cell, standardize=False)
         l.eps_rel = eps_rel
         assert l.eps_rel == eps_rel
         assert np.allclose(

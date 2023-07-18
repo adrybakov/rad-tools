@@ -136,9 +136,3 @@ def dipole_dipole_interaction(
         energy /= NM
 
     return energy * CONSTANT
-
-
-if __name__ == "__main__":
-    dipole_dipole_energy(
-        [[[1, 0, 0], [0, 0, 0]], [[1, 0, 0], [1, 0, 0]]], progress_bar=False
-    )

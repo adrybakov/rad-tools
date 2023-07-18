@@ -742,14 +742,3 @@ def lepage(
         return results
 
     return result
-
-
-if __name__ == "__main__":
-    cell = [
-        [1.0, 1.0, 1.0],
-        [1.0, 1.0, 1.0],
-        [1.0, 1.0, 1.0],
-    ]
-    from radtools.routines import param_from_cell
-
-    niggli(*param_from_cell(cell), verbose=True)

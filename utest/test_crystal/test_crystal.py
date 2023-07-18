@@ -19,7 +19,7 @@ def test_deepcopy():
     st.lists(st.floats(min_value=0, max_value=1), min_size=3, max_size=3),
 )
 def test_add_atom(name, position):
-    c = Crystal(cell=[[1, 0, 0], [0, 2, 0], [0, 0, 3]], unify=False)
+    c = Crystal(cell=[[1, 0, 0], [0, 2, 0], [0, 0, 3]], standardize=False)
     c.add_atom(name=name, position=position)
     assert c.atoms[0].name == name
     assert np.allclose(c.atoms[0].position, position)
@@ -52,7 +52,7 @@ def test_add_atom_raises():
 )
 def test_get_atom(name, position):
     position = np.array(position)
-    c = Crystal(cell=[[1, 0, 0], [0, 2, 0], [0, 0, 3]], unify=False)
+    c = Crystal(cell=[[1, 0, 0], [0, 2, 0], [0, 0, 3]], standardize=False)
     c.add_atom(name=name, position=position)
     c.add_atom(name, position=position * 2.0)
     atom = c.get_atom(name, 2)
@@ -97,7 +97,7 @@ def test_remove_atom():
 )
 def test_get_atom_coordinates(name, position, R):
     position = np.array(position)
-    c = Crystal(cell=[[1, 0, 0], [0, 2, 0], [0, 0, 3]], unify=False)
+    c = Crystal(cell=[[1, 0, 0], [0, 2, 0], [0, 0, 3]], standardize=False)
     c.add_atom(name=name, position=position)
     assert np.allclose(c.get_atom_coordinates(name, R=R), position + np.array(R))
     assert np.allclose(
@@ -116,7 +116,7 @@ def test_get_atom_coordinates(name, position, R):
 def test_get_vector(name1, position1, name2, position2, R):
     position1 = np.array(position1)
     position2 = np.array(position2)
-    c = Crystal(cell=[[1, 0, 0], [0, 2, 0], [0, 0, 3]], unify=False)
+    c = Crystal(cell=[[1, 0, 0], [0, 2, 0], [0, 0, 3]], standardize=False)
     c.add_atom(name=name1, position=position1)
     c.add_atom(name=name2, position=position2)
     assert np.allclose(
@@ -139,7 +139,7 @@ def test_get_vector(name1, position1, name2, position2, R):
 def test_get_distance(name1, position1, name2, position2, R):
     position1 = np.array(position1)
     position2 = np.array(position2)
-    c = Crystal(cell=[[1, 0, 0], [0, 2, 0], [0, 0, 3]], unify=False)
+    c = Crystal(cell=[[1, 0, 0], [0, 2, 0], [0, 0, 3]], standardize=False)
     c.add_atom(name=name1, position=position1)
     c.add_atom(name=name2, position=position2)
     assert np.allclose(

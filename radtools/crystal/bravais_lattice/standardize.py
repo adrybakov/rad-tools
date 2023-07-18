@@ -9,16 +9,32 @@ from radtools.crystal.constants import (
 )
 from radtools.routines import volume
 
-__all__ = ["unify_cell"]
+__all__ = [
+    "standardize_cell",
+    "CUB_standardize_cell",
+    "FCC_standardize_cell",
+    "BCC_standardize_cell",
+    "TET_standardize_cell",
+    "BCT_standardize_cell",
+    "ORC_standardize_cell",
+    "ORCF_standardize_cell",
+    "ORCI_standardize_cell",
+    "ORCC_standardize_cell",
+    "HEX_standardize_cell",
+    "RHL_standardize_cell",
+    "MCL_standardize_cell",
+    "MCLC_standardize_cell",
+    "TRI_standardize_cell",
+]
 
 
 # Main routine, serves as interface to all of them
-def unify_cell(cell, correct_lattice_type, rtol=REL_TOL, atol=ABS_TOL):
+def standardize_cell(cell, correct_lattice_type, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine it
     if required to ensure the unique choice of lattice vectors.
 
-    See :ref:`lattice` for the details.
+    See :ref:`lattice-standardization` for the details.
 
     Parameters
     ----------
@@ -39,26 +55,26 @@ def unify_cell(cell, correct_lattice_type, rtol=REL_TOL, atol=ABS_TOL):
 
     cell = np.array(cell)
     functions = {
-        "CUB": CUB_unify_cell,
-        "FCC": FCC_unify_cell,
-        "BCC": BCC_unify_cell,
-        "TET": TET_unify_cell,
-        "BCT": BCT_unify_cell,
-        "ORC": ORC_unify_cell,
-        "ORCF": ORCF_unify_cell,
-        "ORCI": ORCI_unify_cell,
-        "ORCC": ORCC_unify_cell,
-        "HEX": HEX_unify_cell,
-        "RHL": RHL_unify_cell,
-        "MCL": MCL_unify_cell,
-        "MCLC": MCLC_unify_cell,
-        "TRI": TRI_unify_cell,
+        "CUB": CUB_standardize_cell,
+        "FCC": FCC_standardize_cell,
+        "BCC": BCC_standardize_cell,
+        "TET": TET_standardize_cell,
+        "BCT": BCT_standardize_cell,
+        "ORC": ORC_standardize_cell,
+        "ORCF": ORCF_standardize_cell,
+        "ORCI": ORCI_standardize_cell,
+        "ORCC": ORCC_standardize_cell,
+        "HEX": HEX_standardize_cell,
+        "RHL": RHL_standardize_cell,
+        "MCL": MCL_standardize_cell,
+        "MCLC": MCLC_standardize_cell,
+        "TRI": TRI_standardize_cell,
     }
 
     return functions[correct_lattice_type](cell, rtol=rtol, atol=atol)
 
 
-def CUB_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
+def CUB_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the CUB lattice conditions.
 
@@ -84,7 +100,7 @@ def CUB_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     return np.array(cell)
 
 
-def FCC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
+def FCC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the FCC lattice conditions.
 
@@ -110,7 +126,7 @@ def FCC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     return np.array(cell)
 
 
-def BCC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
+def BCC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the BCC lattice conditions.
 
@@ -136,7 +152,7 @@ def BCC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     return np.array(cell)
 
 
-def TET_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
+def TET_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the TET lattice conditions.
 
@@ -169,7 +185,7 @@ def TET_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     return cell
 
 
-def BCT_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
+def BCT_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the BCT lattice conditions.
 
@@ -203,7 +219,7 @@ def BCT_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     return cell
 
 
-def ORC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
+def ORC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORC lattice conditions.
 
@@ -240,7 +256,7 @@ def ORC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     return cell
 
 
-def ORCF_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
+def ORCF_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORCF lattice conditions.
 
@@ -286,7 +302,7 @@ def ORCF_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     return cell
 
 
-def ORCI_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
+def ORCI_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORCI lattice conditions.
 
@@ -336,7 +352,7 @@ def ORCI_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     return cell
 
 
-def ORCC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
+def ORCC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORCC lattice conditions.
 
@@ -381,7 +397,7 @@ def ORCC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     return cell
 
 
-def HEX_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
+def HEX_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the HEX lattice conditions.
 
@@ -416,7 +432,7 @@ def HEX_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     return cell
 
 
-def RHL_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
+def RHL_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the RHL lattice conditions.
 
@@ -442,7 +458,7 @@ def RHL_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     return np.array(cell)
 
 
-def MCL_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
+def MCL_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the MCL lattice conditions.
 
@@ -488,7 +504,7 @@ def MCL_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     return cell
 
 
-def MCLC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
+def MCLC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the MCLC lattice conditions.
 
@@ -540,7 +556,7 @@ def MCLC_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
 
 
 # TODO
-def TRI_unify_cell(cell, rtol=REL_TOL, atol=ABS_TOL, resiprocal=False):
+def TRI_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL, resiprocal=False):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the TRI lattice conditions.
 

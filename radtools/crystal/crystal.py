@@ -42,8 +42,8 @@ class Crystal(Lattice):
         List of :py:class:`Atom` objects.
     relative : bool, default True
         Whether ``atoms`` positions are in relative coordinates.
-    unify : bool, default True
-        Whether to unify the lattice.
+    standardize : bool, default True
+        Whether to standardize the lattice.
     **kwargs
         Keyword arguments for :py:class:`.Lattice` initialization.
 
@@ -54,7 +54,12 @@ class Crystal(Lattice):
     """
 
     def __init__(
-        self, lattice: Lattice = None, atoms=None, relative=True, unify=True, **kwargs
+        self,
+        lattice: Lattice = None,
+        atoms=None,
+        relative=True,
+        standardize=True,
+        **kwargs,
     ) -> None:
         self.atoms = []
         if lattice is None:
@@ -64,7 +69,7 @@ class Crystal(Lattice):
             kwargs = {}
             kwargs["cell"] = lattice.cell
 
-        super().__init__(unify=unify, **kwargs)
+        super().__init__(standardize=standardize, **kwargs)
 
         if atoms is not None:
             for a in atoms:
@@ -117,9 +122,9 @@ class Crystal(Lattice):
         Notes
         -----
         New :py:class:`.Lattice` object is created each time you call this property.
-        It is created with ``unify=False`` parameter.
+        It is created with ``standardize=False`` parameter.
         """
-        return Lattice(self.cell, unify=False)
+        return Lattice(self.cell, standardize=False)
 
     def add_atom(self, new_atom: Union[Atom, str] = None, relative=True, **kwargs):
         r"""
@@ -373,8 +378,11 @@ class Crystal(Lattice):
             )
         )
 
+    # TODO
     def find_primitive_cell(self):
         r"""
+        NotImplementedError
+
         Detect primitive cell.
 
         Before the detection of the primitive cell the corresponding bravais lattice type may not

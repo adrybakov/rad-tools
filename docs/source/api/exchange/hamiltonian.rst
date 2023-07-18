@@ -83,24 +83,3 @@ Individual properties
     ExchangeHamiltonian.factor_one_half
     ExchangeHamiltonian.factor_two
     ExchangeHamiltonian.minus_sign
-
-Deprecated parameters
-=====================
-
-Usage of this parameters is deprecated. Usage of corresponding 
-:ref:`api_crystal` parameters is encouraged. Table of corresponding parameters:
-
-==================== =======================
-Deprecated parameter Corresponding parameter
-==================== =======================
-get_distance         crystal.get_distance
-get_bond_vector      crystal.get_vector
-get_atom_coordinates crystal.get_atom_coordinates
-==================== =======================
-
-
-.. autosummary::
-
-    ExchangeHamiltonian.get_distance
-    ExchangeHamiltonian.get_bond_vector
-    ExchangeHamiltonian.get_atom_coordinates

@@ -25,6 +25,7 @@ RAD-tools user guide
 
     library/lepage
     library/magnon-dispersion
+    library/lattice-standardization
 
 .. div:: logo-custom-text
     

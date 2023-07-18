@@ -18,9 +18,8 @@ Properties
 ==========
 
 .. hint:: 
-    All properties and methods of :ref:`api_lattice` are accessible directly from the crystal instance.
-    Unless they are defined directly for the :py:class:`.Crystal` and listed here.
-    The following interfaces are identical:
+    All properties and methods of :ref:`api_lattice` 
+    are accessible directly from the crystal instance:
 
     .. doctest::
 
@@ -28,7 +27,9 @@ Properties
         >>> c = rad.Crystal()
         >>> c.a
         1.0
-        >>> c.lattice.a
+        >>> c.b
+        1.0
+        >>> c.c
         1.0
 
 .. autosummary::
@@ -42,9 +43,10 @@ Atom methods
 
     Crystal.add_atom
     Crystal.remove_atom
+    Crystal.get_atom
 
-Positioning
-===========
+Positioning of atoms
+====================
 
 .. autosummary::
 
@@ -52,12 +54,11 @@ Positioning
     Crystal.get_distance
     Crystal.get_vector
 
-Defining the type
-=================
+Primitive cell
+==============
 
 .. autosummary::
 
-    Crystal.identify
     Crystal.find_primitive_cell
 
 Energy properties

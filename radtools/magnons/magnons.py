@@ -1,6 +1,6 @@
 from radtools.exchange.hamiltonian import ExchangeHamiltonian
 from radtools.exchange.parameter import ExchangeParameter
-from radtools.routines import span_orthonormal_set
+from radtools.routines import span_orthonormal_set, absolute_to_relative
 from radtools.crystal.atom import Atom
 from radtools.magnons.diagonalization import solve_via_colpa, ColpaFailed
 from radtools.routines import print_2d_array, plot_horizontal_lines, plot_vertical_lines
@@ -390,7 +390,7 @@ if __name__ == "__main__":
     # kp.path = "Mprime-G-M-K-Mprime-Kprime-G-K"
     kp.n = 100
 
-    spin = ["Ni1", 1, 0, 0]
+    spin = ["Ni1", 0, 0, 1]
     if spin is not None:
         for i in range(len(spin) // 4):
             atom_name = spin[4 * i]
@@ -400,7 +400,7 @@ if __name__ == "__main__":
             atom.spin_vector = atom_spin
 
     # # Get the magnon dispersion
-    dispersion = MagnonDispersion(model, Q=(0.138, 0, 0), n=[0, 0, 1])
+    dispersion = MagnonDispersion(model, Q=(0.12568743, 0.12568743, 0.0), n=[0, 1, 0])
     dispersion2 = MagnonDispersion(model)
     KPOINT = [0.28282347, 0.16325446, 0.0]
     print(dispersion2.omega(KPOINT))
@@ -494,11 +494,22 @@ if __name__ == "__main__":
 
     ax.set_xticks(kp.coordinates(), kp.labels, fontsize=15)
     ax.set_ylabel("E, meV", fontsize=15)
+    minval = 0
+    minval_i = 0
+    for i in range(len(kp.points())):
+        if (
+            dispersion2.omegas()[0][i] is not None
+            and dispersion2.omegas()[0][i] < minval
+        ):
+            minval = dispersion2.omegas()[0][i]
+            minval_i = i
+    print(kp.points()[minval_i])
+    print(absolute_to_relative(model.reciprocal_cell, kp.points()[minval_i]))
 
     plot_vertical_lines(ax, kp.coordinates())
     ax.plot(kp.flatten_points(), dispersion.omegas()[0], label="helix")
-    ax.plot(kp.flatten_points(), omega_plus, label="helix + k")
-    ax.plot(kp.flatten_points(), omega_minus, label="helix - k")
+    # ax.plot(kp.flatten_points(), omega_plus, label="helix + k")
+    # ax.plot(kp.flatten_points(), omega_minus, label="helix - k")
     ax.plot(kp.flatten_points(), dispersion2.omegas()[0], label="fm")
     ax.legend()
 
