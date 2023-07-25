@@ -1,18 +1,25 @@
-black
-isort
-pytest
-twine
+# Package dependencies
 numpy
 scipy
 matplotlib
 tqdm
 termcolor
+
+# Documentation
 Sphinx
 numpydoc
 sphinx-copybutton
 pydata-sphinx-theme
 sphinx-design
 sphinx-gallery
-urllib3
-scipy
+
+# PyPI
+twine
+
+# code-linters
+black
+isort
+
+# test suite
 hypothesis
+pytest
