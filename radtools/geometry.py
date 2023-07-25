@@ -6,6 +6,7 @@ from scipy.spatial.transform import Rotation
 
 from radtools.crystal.constants import ABS_TOL_ANGLE, ABS_TOL
 from radtools.constants import TODEGREES, TORADIANS
+from radtools.numerical import compare_numerically
 
 import numpy as np
 
