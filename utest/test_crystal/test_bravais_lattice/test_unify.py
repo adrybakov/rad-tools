@@ -48,9 +48,9 @@ from radtools.crystal.constants import (
     REL_TOL,
     REL_TOL_ANGLE,
 )
-from radtools.utils import todegrees, toradians
+from radtools.constants import TODEGREES, TORADIANS
 
-from radtools.crystal.utils import param_from_cell
+import radtools.crystal.cell as Cell
 
 
 n_order = 5
@@ -93,7 +93,7 @@ def test_CUB_standardize_cell(r1, r2, r3, conv_a, order):
         cell = CUB_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
-        a, b, c, alpha, beta, gamma = param_from_cell(cell)
+        a, b, c, alpha, beta, gamma = Cell.params(cell)
         assert np.allclose([a, b, c], [a, a, a], rtol=REL_TOL, atol=ABS_TOL)
         assert np.allclose(
             [alpha, beta, gamma],
@@ -124,7 +124,7 @@ def test_FCC_standardize_cell(r1, r2, r3, conv_a, order):
         cell = FCC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
-        a, b, c, alpha, beta, gamma = param_from_cell(cell)
+        a, b, c, alpha, beta, gamma = Cell.params(cell)
         assert np.allclose(
             [a, b, c], [prim_a, prim_a, prim_a], rtol=REL_TOL, atol=ABS_TOL
         )
@@ -150,7 +150,7 @@ def test_BCC_standardize_cell(r1, r2, r3, conv_a, order):
     if not np.allclose([r1, r2, r3], [0, 0, 0], rtol=REL_TOL, atol=ABS_TOL):
         # Prepare cell
         cell = shuffle(rotate(BCC(conv_a, return_cell=True), r1, r2, r3), order)
-        angle = acos(-1 / 3) * todegrees
+        angle = acos(-1 / 3) * TODEGREES
         prim_a = conv_a * sqrt(3) / 2
         old_det = np.linalg.det(cell)
 
@@ -158,7 +158,7 @@ def test_BCC_standardize_cell(r1, r2, r3, conv_a, order):
         cell = BCC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
-        a, b, c, alpha, beta, gamma = param_from_cell(cell)
+        a, b, c, alpha, beta, gamma = Cell.params(cell)
         assert np.allclose(
             [a, b, c], [prim_a, prim_a, prim_a], rtol=REL_TOL, atol=ABS_TOL
         )
@@ -194,7 +194,7 @@ def test_TET_standardize_cell(r1, r2, r3, conv_a, conv_c, order):
         cell = TET_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
-        a, b, c, alpha, beta, gamma = param_from_cell(cell)
+        a, b, c, alpha, beta, gamma = Cell.params(cell)
         assert np.allclose(
             [a, b, c],
             [prim_a, prim_a, prim_c],
@@ -236,10 +236,10 @@ def test_BCT_standardize_cell(r1, r2, r3, conv_a, conv_c, order):
         cell = BCT_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
-        a, b, c, alpha, beta, gamma = param_from_cell(cell)
-        alpha *= toradians
-        beta *= toradians
-        gamma *= toradians
+        a, b, c, alpha, beta, gamma = Cell.params(cell)
+        alpha *= TORADIANS
+        beta *= TORADIANS
+        gamma *= TORADIANS
         assert np.allclose([a, b, c], [prim, prim, prim], rtol=REL_TOL, atol=ABS_TOL)
         assert np.allclose(
             [alpha, beta, gamma],
@@ -277,7 +277,7 @@ def test_ORC_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
         # Fix cell
         cell = ORC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
         # Check results
-        a, b, c, alpha, beta, gamma = param_from_cell(cell)
+        a, b, c, alpha, beta, gamma = Cell.params(cell)
         assert np.allclose(
             [a, b, c], [prim_a, prim_b, prim_c], rtol=REL_TOL, atol=ABS_TOL
         )
@@ -313,11 +313,11 @@ def test_ORCF_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
         prim_a = sqrt(conv_b**2 + conv_c**2) / 2.0
         prim_b = sqrt(conv_a**2 + conv_c**2) / 2.0
         prim_c = sqrt(conv_a**2 + conv_b**2) / 2.0
-        prim_alpha = acos(conv_a**2 / 4.0 / prim_b / prim_c) * todegrees
+        prim_alpha = acos(conv_a**2 / 4.0 / prim_b / prim_c) * TODEGREES
         prim_alpha_twin = 180.0 - prim_alpha
-        prim_beta = acos(conv_b**2 / 4.0 / prim_a / prim_c) * todegrees
+        prim_beta = acos(conv_b**2 / 4.0 / prim_a / prim_c) * TODEGREES
         prim_beta_twin = 180.0 - prim_beta
-        prim_gamma = acos(conv_c**2 / 4.0 / prim_a / prim_b) * todegrees
+        prim_gamma = acos(conv_c**2 / 4.0 / prim_a / prim_b) * TODEGREES
         prim_gamma_twin = 180.0 - prim_gamma
         old_det = np.linalg.det(cell)
 
@@ -325,7 +325,7 @@ def test_ORCF_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
         cell = ORCF_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
-        a, b, c, alpha, beta, gamma = param_from_cell(cell)
+        a, b, c, alpha, beta, gamma = Cell.params(cell)
         assert np.allclose(
             [a, b, c], [prim_a, prim_b, prim_c], rtol=REL_TOL, atol=ABS_TOL
         )
@@ -364,17 +364,17 @@ def test_ORCI_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
         prim = sqrt(conv_a**2 + conv_b**2 + conv_c**2) / 2
         prim_alpha = (
             acos((conv_a**2 - conv_b**2 - conv_c**2) / 4.0 / prim**2)
-            * todegrees
+            * TODEGREES
         )
         prim_alpha_twin = 180.0 - prim_alpha
         prim_beta = (
             acos((-(conv_a**2) + conv_b**2 - conv_c**2) / 4.0 / prim**2)
-            * todegrees
+            * TODEGREES
         )
         prim_beta_twin = 180.0 - prim_beta
         prim_gamma = (
             acos((-(conv_a**2) - conv_b**2 + conv_c**2) / 4.0 / prim**2)
-            * todegrees
+            * TODEGREES
         )
         prim_gamma_twin = 180.0 - prim_gamma
         old_det = np.linalg.det(cell)
@@ -383,7 +383,7 @@ def test_ORCI_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
         cell = ORCI_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
-        a, b, c, alpha, beta, gamma = param_from_cell(cell)
+        a, b, c, alpha, beta, gamma = Cell.params(cell)
         assert np.allclose([a, b, c], [prim, prim, prim], rtol=REL_TOL, atol=ABS_TOL)
         assert np.allclose(
             alpha, prim_alpha, rtol=REL_TOL_ANGLE, atol=ABS_TOL_ANGLE
@@ -423,13 +423,13 @@ def test_ORCC_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
         prim_alpha = 90.0
         prim_beta = prim_alpha
         prim_gamma = (
-            acos((conv_a**2 - conv_b**2) / 4.0 / prim_a / prim_b) * todegrees
+            acos((conv_a**2 - conv_b**2) / 4.0 / prim_a / prim_b) * TODEGREES
         )
 
         old_det = np.linalg.det(cell)
 
         cell = ORCC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
-        a, b, c, alpha, beta, gamma = param_from_cell(cell)
+        a, b, c, alpha, beta, gamma = Cell.params(cell)
         assert np.allclose(
             [a, b, c], [prim_a, prim_b, prim_c], rtol=REL_TOL, atol=ABS_TOL
         )
@@ -472,7 +472,7 @@ def test_HEX_standardize_cell(r1, r2, r3, conv_a, conv_c, order):
         cell = HEX_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
-        a, b, c, alpha, beta, gamma = param_from_cell(cell)
+        a, b, c, alpha, beta, gamma = Cell.params(cell)
         assert np.allclose(
             [a, b, c], [prim_a, prim_b, prim_c], rtol=REL_TOL, atol=ABS_TOL
         )
@@ -510,7 +510,7 @@ def test_RHL_standardize_cell(r1, r2, r3, conv_a, conv_alpha, order):
         cell = RHL_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
-        a, b, c, alpha, beta, gamma = param_from_cell(cell)
+        a, b, c, alpha, beta, gamma = Cell.params(cell)
         assert np.allclose(
             [a, b, c], [prim_a, prim_b, prim_c], rtol=REL_TOL, atol=ABS_TOL
         )
@@ -557,7 +557,7 @@ def test_MCL_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, or
         cell = MCL_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
-        a, b, c, alpha, beta, gamma = param_from_cell(cell)
+        a, b, c, alpha, beta, gamma = Cell.params(cell)
         assert np.allclose(
             [a, b, c], [prim_a, prim_b, prim_c], rtol=REL_TOL, atol=ABS_TOL
         )
@@ -599,17 +599,17 @@ def test_MCLC_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, o
         prim_b = sqrt(conv_a**2 + conv_b**2) / 2
         prim_c = conv_c
         prim_alpha = (
-            acos(conv_b * conv_c * cos(conv_alpha * toradians) / 2.0 / prim_b / prim_c)
-            * todegrees
+            acos(conv_b * conv_c * cos(conv_alpha * TORADIANS) / 2.0 / prim_b / prim_c)
+            * TODEGREES
         )
         prim_alpha_twin = 180.0 - prim_alpha
         prim_beta = (
-            acos(conv_b * conv_c * cos(conv_alpha * toradians) / 2.0 / prim_a / prim_c)
-            * todegrees
+            acos(conv_b * conv_c * cos(conv_alpha * TORADIANS) / 2.0 / prim_a / prim_c)
+            * TODEGREES
         )
         prim_beta_twin = 180.0 - prim_beta
         prim_gamma = (
-            acos((conv_b**2 - conv_a**2) / 4.0 / prim_a / prim_b) * todegrees
+            acos((conv_b**2 - conv_a**2) / 4.0 / prim_a / prim_b) * TODEGREES
         )
         old_det = np.linalg.det(cell)
 
@@ -617,7 +617,7 @@ def test_MCLC_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, o
         cell = MCLC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
         # Check results
-        a, b, c, alpha, beta, gamma = param_from_cell(cell)
+        a, b, c, alpha, beta, gamma = Cell.params(cell)
         assert np.allclose(
             [a, b, c], [prim_a, prim_b, prim_c], rtol=REL_TOL, atol=ABS_TOL
         )
@@ -665,7 +665,7 @@ def test_MCLC_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, o
 #         cell = TRI_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
 
 #         # Check results
-#         a, b, c, alpha, beta, gamma = param_from_cell(cell)
+#         a, b, c, alpha, beta, gamma = Cell.params(cell)
 #         assert np.allclose(
 #             [a, b, c],
 #             [conv_a, conv_b, conv_c],

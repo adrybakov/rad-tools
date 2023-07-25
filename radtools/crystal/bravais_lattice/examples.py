@@ -1,6 +1,6 @@
 from math import cos, pi, sin
 
-from radtools.constants import toradians
+from radtools.constants import TORADIANS
 from radtools.crystal.constants import BRAVAIS_LATTICE_VARIATIONS
 
 from radtools.crystal.bravais_lattice.constructor import (
@@ -94,12 +94,12 @@ def lattice_example(
     elif lattice_name in ["mclc1", "mclc"]:
         return MCLC(pi, 1.4 * pi, 1.7 * pi, 80)
     elif lattice_name == "mclc2":
-        return MCLC(1.4 * pi * sin(75 * toradians), 1.4 * pi, 1.7 * pi, 75)
+        return MCLC(1.4 * pi * sin(75 * TORADIANS), 1.4 * pi, 1.7 * pi, 75)
     elif lattice_name == "mclc3":
         b = pi
         x = 1.1
         alpha = 78
-        ralpha = alpha * toradians
+        ralpha = alpha * TORADIANS
         c = b * (x**2) / (x**2 - 1) * cos(ralpha) * 1.8
         a = x * b * sin(ralpha)
         return MCLC(a, b, c, alpha)
@@ -107,7 +107,7 @@ def lattice_example(
         b = pi
         x = 1.2
         alpha = 65
-        ralpha = alpha * toradians
+        ralpha = alpha * TORADIANS
         c = b * (x**2) / (x**2 - 1) * cos(ralpha)
         a = x * b * sin(ralpha)
         return MCLC(a, b, c, alpha)
@@ -115,7 +115,7 @@ def lattice_example(
         b = pi
         x = 1.4
         alpha = 53
-        ralpha = alpha * toradians
+        ralpha = alpha * TORADIANS
         c = b * (x**2) / (x**2 - 1) * cos(ralpha) * 0.9
         a = x * b * sin(ralpha)
         return MCLC(a, b, c, alpha)

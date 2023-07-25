@@ -37,6 +37,9 @@
         "scipy",
         "termcolor",
         "tqdm",
-        "voronoi"
+        "voronoi",
+        "TORADIANS",
+        "TODEGREES"
     ],
+    "search.useIgnoreFiles": true,
 }

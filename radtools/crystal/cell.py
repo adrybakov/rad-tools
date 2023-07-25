@@ -2,17 +2,18 @@ from math import cos, pi, sin, sqrt
 
 import numpy as np
 
-from radtools.utils import angle, parallelepiped_check, volume
-from radtools.constants import toradians
+from radtools.geometry import angle, parallelepiped_check, volume
+from radtools.constants import TORADIANS
 
 __all__ = [
-    "reciprocal_cell",
-    "cell_from_param",
-    "param_from_cell",
+    "reciprocal",
+    "from_params",
+    "params",
+    "primitive",
 ]
 
 
-def reciprocal_cell(cell):
+def reciprocal(cell):
     r"""
     Computes reciprocal cell.
 
@@ -50,7 +51,7 @@ def reciprocal_cell(cell):
     return reciprocal_cell
 
 
-def cell_from_param(a=1.0, b=1.0, c=1.0, alpha=90.0, beta=90.0, gamma=90.0):
+def from_params(a=1.0, b=1.0, c=1.0, alpha=90.0, beta=90.0, gamma=90.0):
     r"""
     Return cell from lattice parameters.
 
@@ -92,9 +93,9 @@ def cell_from_param(a=1.0, b=1.0, c=1.0, alpha=90.0, beta=90.0, gamma=90.0):
     parallelepiped_check : Check if parameters could form a parallelepiped.
     """
     parallelepiped_check(a, b, c, alpha, beta, gamma, raise_error=True)
-    alpha = alpha * toradians
-    beta = beta * toradians
-    gamma = gamma * toradians
+    alpha = alpha * TORADIANS
+    beta = beta * TORADIANS
+    gamma = gamma * TORADIANS
     return np.array(
         [
             [a, 0, 0],
@@ -117,7 +118,7 @@ def cell_from_param(a=1.0, b=1.0, c=1.0, alpha=90.0, beta=90.0, gamma=90.0):
     )
 
 
-def param_from_cell(cell):
+def params(cell):
     r"""
     Return lattice parameters from cell.
 
@@ -158,3 +159,31 @@ def param_from_cell(cell):
         angle(cell[0], cell[2]),
         angle(cell[0], cell[1]),
     )
+
+
+# TODO
+def primitive(cell, atoms):
+    r"""
+    Compute primitive cell.
+
+    .. versionadded:: 0.8
+
+    Parameters
+    ----------
+    cell : (3, 3) |array_like|_
+        Cell matrix, rows are interpreted as vectors.
+    atoms : list of :py:class:`.Atom`
+        Atoms in the cell.
+        ``position`` attribute of the atom is interpreted as relative
+        position in the cell.
+
+    Returns
+    -------
+    primitive_cell : (3, 3) :numpy:`ndarray`
+        Primitive cell matrix, rows are interpreted as vectors.
+    primitive_atoms : list of :py:class:`.Atom`
+        Atoms in the primitive cell.
+        ``position`` attribute of the atom is interpreted as relative
+        position in the primitive cell.
+    """
+    raise NotImplementedError

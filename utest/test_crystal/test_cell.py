@@ -16,10 +16,10 @@ from radtools.crystal.constants import (
     REL_TOL,
     REL_TOL_ANGLE,
 )
-from radtools.utils import parallelepiped_check
+from radtools.geometry import parallelepiped_check
 
 
-from radtools.crystal.utils import param_from_cell, cell_from_param, reciprocal_cell
+import radtools.crystal.cell as Cell
 
 n_order = 5
 
@@ -51,8 +51,8 @@ def rotate(cell, r1, r2, r3):
         elements=st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH),
     ),
 )
-def test_param_from_cell(cell):
-    a, b, c, alpha, beta, gamma = param_from_cell(cell)
+def test_params_from_cell(cell):
+    a, b, c, alpha, beta, gamma = Cell.params(cell)
 
 
 @given(
@@ -65,9 +65,9 @@ def test_param_from_cell(cell):
 )
 def test_cell_from_param(a, b, c, alpha, beta, gamma):
     if parallelepiped_check(a, b, c, alpha, beta, gamma):
-        cell = cell_from_param(a, b, c, alpha, beta, gamma)
+        cell = Cell.from_params(a, b, c, alpha, beta, gamma)
         if (cell > MIN_LENGTH).all():
-            ap, bp, cp, alphap, betap, gammap = param_from_cell(cell)
+            ap, bp, cp, alphap, betap, gammap = Cell.params(cell)
             assert np.allclose([a, b, c], [ap, bp, cp], rtol=REL_TOL, atol=ABS_TOL)
             assert np.allclose(
                 [alpha, beta, gamma],
@@ -77,16 +77,16 @@ def test_cell_from_param(a, b, c, alpha, beta, gamma):
             )
     else:
         with pytest.raises(ValueError):
-            cell_from_param(a, b, c, alpha, beta, gamma)
+            Cell.from_params(a, b, c, alpha, beta, gamma)
 
 
 @pytest.mark.parametrize(
     "a, b, c, alpha, beta, gamma, cell",
     [(1, 1, 1, 90, 90, 90, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])],
 )
-def test_cell_from_param_example(a, b, c, alpha, beta, gamma, cell):
+def test_cell_from_params_example(a, b, c, alpha, beta, gamma, cell):
     assert (
-        cell_from_param(a, b, c, alpha, beta, gamma) - np.array(cell) < ABS_TOL
+        Cell.from_params(a, b, c, alpha, beta, gamma) - np.array(cell) < ABS_TOL
     ).all()
 
 
@@ -102,7 +102,7 @@ def test_cell_from_param_example(a, b, c, alpha, beta, gamma, cell):
     st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE),
     st.integers(min_value=0, max_value=n_order),
 )
-def test_reciprocal_cell(r1, r2, r3, a, b, c, alpha, beta, gamma, order):
+def test_reciprocal(r1, r2, r3, a, b, c, alpha, beta, gamma, order):
     if (
         parallelepiped_check(a, b, c, alpha, beta, gamma)
         # Maximum I can do right now.
@@ -110,9 +110,9 @@ def test_reciprocal_cell(r1, r2, r3, a, b, c, alpha, beta, gamma, order):
         and min(a, b, c) / max(a, b, c) > REL_TOL
     ):
         cell = shuffle(
-            rotate(cell_from_param(a, b, c, alpha, beta, gamma), r1, r2, r3), order
+            rotate(Cell.from_params(a, b, c, alpha, beta, gamma), r1, r2, r3), order
         )
-        rcell = reciprocal_cell(cell)
+        rcell = Cell.reciprocal(cell)
         product = np.diag(np.abs(rcell.T @ cell))
         correct_product = np.ones(3) * 2 * pi
         # Non  diagonal terms are close to zero. Hard to work them out. Try if you want to suffer.
@@ -129,5 +129,5 @@ def test_reciprocal_cell(r1, r2, r3, a, b, c, alpha, beta, gamma, order):
     ],
 )
 def test_reciprocal_cell_examples(cell, rec_cell):
-    rcell = reciprocal_cell(cell)
+    rcell = Cell.reciprocal(cell)
     assert np.allclose(rcell, np.array(rec_cell), rtol=REL_TOL, atol=ABS_TOL)

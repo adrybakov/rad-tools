@@ -2,8 +2,8 @@ from math import cos, sin, sqrt
 
 import numpy as np
 
-from radtools.constants import toradians
-from radtools.crystal.utils import cell_from_param, reciprocal_cell
+from radtools.constants import TORADIANS
+import radtools.crystal.cell as Cell
 from radtools.crystal.lattice import Lattice
 
 __all__ = [
@@ -347,7 +347,7 @@ def RHL(a: float, alpha: float, return_cell=False):
     if alpha >= 120:
         raise ValueError("alpha has to be < 120 degrees.")
 
-    alpha *= toradians
+    alpha *= TORADIANS
     cell = np.array(
         [
             [a * cos(alpha / 2), -a * sin(alpha / 2), 0],
@@ -395,7 +395,7 @@ def MCL(a: float, b: float, c: float, alpha: float, return_cell=False):
     if alpha > 90:
         alpha = 180 - alpha
 
-    alpha *= toradians
+    alpha *= TORADIANS
     cell = np.array([[a, 0, 0], [0, b, 0], [0, c * cos(alpha), c * sin(alpha)]])
     if return_cell:
         return cell
@@ -433,7 +433,7 @@ def MCLC(a: float, b: float, c: float, alpha: float, return_cell=False):
     if alpha > 90:
         alpha = 180.0 - alpha
 
-    alpha *= toradians
+    alpha *= TORADIANS
     cell = np.array(
         [
             [a / 2, b / 2, 0],
@@ -487,9 +487,9 @@ def TRI(
         Triclinic lattice or cell.
     """
 
-    cell = cell_from_param(a, b, c, alpha, beta, gamma)
+    cell = Cell.from_params(a, b, c, alpha, beta, gamma)
     if reciprocal:
-        cell = reciprocal_cell(cell)
+        cell = Cell.reciprocal(cell)
     if return_cell:
         return cell
     return Lattice(cell)

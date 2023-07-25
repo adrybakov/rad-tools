@@ -12,5 +12,5 @@ Constants
 .. autosummary::
     :toctree: generated/
 
-    todegrees
-    toradians
+    TODEGREES
+    TORADIANS

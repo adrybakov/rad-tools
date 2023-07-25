@@ -12,8 +12,8 @@ from mpl_toolkits.mplot3d import Axes3D, proj3d
 from scipy.spatial import Voronoi
 
 from radtools.crystal.identify import lepage
-from radtools.utils import angle, volume
-from radtools.crystal.utils import cell_from_param, reciprocal_cell
+from radtools.geometry import angle, volume
+import radtools.crystal.cell as Cell
 from radtools.crystal.kpoints import Kpoints
 from radtools.crystal.constants import (
     REL_TOL,
@@ -196,7 +196,7 @@ class Lattice:
             and "beta" in kwargs
             and "gamma" in kwargs
         ):
-            cell = cell_from_param(
+            cell = Cell.from_params(
                 kwargs["a"],
                 kwargs["b"],
                 kwargs["c"],
@@ -210,7 +210,7 @@ class Lattice:
             cell = np.array(args)
         elif len(args) == 6:
             a, b, c, alpha, beta, gamma = args
-            cell = cell_from_param(a, b, c, alpha, beta, gamma)
+            cell = Cell.from_params(a, b, c, alpha, beta, gamma)
         else:
             raise ValueError(
                 "Unable to identify input parameters. "
@@ -595,7 +595,7 @@ class Lattice:
             Reciprocal cell, rows are vectors, columns are coordinates.
         """
 
-        return reciprocal_cell(self.cell)
+        return Cell.reciprocal(self.cell)
 
     @property
     def b1(self):

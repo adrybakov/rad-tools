@@ -19,7 +19,6 @@ Utils
     parallelepiped_check
     absolute_to_relative
     span_orthonormal_set
-    plot_horizontal_lines
-    plot_vertical_lines
+    plot_hlines
+    plot_vlines
     custom_cmap
-    winwait

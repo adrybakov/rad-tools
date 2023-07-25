@@ -1,7 +1,7 @@
 import numpy as np
 
-from radtools.utils import compare_numerically
-from radtools.crystal.utils import param_from_cell
+from radtools.numerical import compare_numerically
+import radtools.crystal.cell as Cell
 from radtools.crystal.constants import (
     TRANSFORM_TO_CONVENTIONAL,
     REL_TOL,
@@ -175,7 +175,7 @@ def TET_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
 
     cell = np.array(cell)
 
-    a, b, c, alpha, beta, gamma = param_from_cell(cell)
+    a, b, c, alpha, beta, gamma = Cell.params(cell)
 
     if compare_numerically(a, "==", c, rtol=rtol, atol=atol):
         cell = [cell[2], cell[0], cell[1]]
@@ -207,9 +207,7 @@ def BCT_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     """
     cell = np.array(cell)
 
-    a, b, c, alpha, beta, gamma = param_from_cell(
-        TRANSFORM_TO_CONVENTIONAL["BCT"] @ cell
-    )
+    a, b, c, alpha, beta, gamma = Cell.params(TRANSFORM_TO_CONVENTIONAL["BCT"] @ cell)
 
     if compare_numerically(a, "==", c, rtol=rtol, atol=atol):
         cell = [cell[2], cell[0], cell[1]]
@@ -241,7 +239,7 @@ def ORC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     """
     cell = np.array(cell)
 
-    a, b, c, alpha, beta, gamma = param_from_cell(cell)
+    a, b, c, alpha, beta, gamma = Cell.params(cell)
 
     if compare_numerically(a, ">", b, rtol=rtol, atol=atol):
         # minus preserves right-hand order
@@ -277,7 +275,7 @@ def ORCF_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
         Primitive unit cell.
     """
     cell = np.array(cell)
-    a, b, c, alpha, beta, gamma = param_from_cell(cell)
+    a, b, c, alpha, beta, gamma = Cell.params(cell)
 
     if compare_numerically(a, "<", b, rtol=rtol, atol=atol):
         # minus preserves right-hand order
@@ -325,9 +323,7 @@ def ORCI_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
 
     cell = np.array(cell)
 
-    a, b, c, alpha, beta, gamma = param_from_cell(
-        TRANSFORM_TO_CONVENTIONAL["ORCI"] @ cell
-    )
+    a, b, c, alpha, beta, gamma = Cell.params(TRANSFORM_TO_CONVENTIONAL["ORCI"] @ cell)
 
     if compare_numerically(a, ">", b, rtol=rtol, atol=atol):
         # minus preserves right-hand order
@@ -373,7 +369,7 @@ def ORCC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
         Primitive unit cell.
     """
 
-    a, b, c, alpha, beta, gamma = param_from_cell(cell)
+    a, b, c, alpha, beta, gamma = Cell.params(cell)
 
     # a == c
     if compare_numerically(a, "==", c, rtol=rtol, atol=atol):
@@ -382,13 +378,11 @@ def ORCC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     elif compare_numerically(b, "==", c, rtol=rtol, atol=atol):
         cell = [cell[1], cell[2], cell[0]]
 
-    a, b, c, alpha, beta, gamma = param_from_cell(cell)
+    a, b, c, alpha, beta, gamma = Cell.params(cell)
 
     cell = np.array(cell)
 
-    a, b, c, alpha, beta, gamma = param_from_cell(
-        TRANSFORM_TO_CONVENTIONAL["ORCC"] @ cell
-    )
+    a, b, c, alpha, beta, gamma = Cell.params(TRANSFORM_TO_CONVENTIONAL["ORCC"] @ cell)
 
     if compare_numerically(a, ">", b, rtol=rtol, atol=atol):
         # minus preserves right-hand order
@@ -420,7 +414,7 @@ def HEX_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
         Primitive unit cell.
     """
     cell = np.array(cell)
-    a, b, c, alpha, beta, gamma = param_from_cell(cell)
+    a, b, c, alpha, beta, gamma = Cell.params(cell)
 
     # a == c
     if compare_numerically(beta, "==", 120.0, eps=ABS_TOL_ANGLE):
@@ -480,7 +474,7 @@ def MCL_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     """
 
     cell = np.array(cell)
-    a, b, c, alpha, beta, gamma = param_from_cell(cell)
+    a, b, c, alpha, beta, gamma = Cell.params(cell)
 
     # beta != 90
     if compare_numerically(beta, "!=", 90.0, eps=ABS_TOL_ANGLE):
@@ -489,13 +483,13 @@ def MCL_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     elif compare_numerically(gamma, "!=", 90.0, eps=ABS_TOL_ANGLE):
         cell = [cell[2], cell[0], cell[1]]
 
-    a, b, c, alpha, beta, gamma = param_from_cell(cell)
+    a, b, c, alpha, beta, gamma = Cell.params(cell)
 
     # alpha > 90
     if compare_numerically(alpha, ">", 90.0, eps=ABS_TOL_ANGLE):
         cell = [cell[0], cell[2], -cell[1]]
 
-    a, b, c, alpha, beta, gamma = param_from_cell(cell)
+    a, b, c, alpha, beta, gamma = Cell.params(cell)
 
     # b > c
     if compare_numerically(b, ">", c, rtol=rtol, atol=atol):
@@ -525,7 +519,7 @@ def MCLC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
         Primitive unit cell.
     """
 
-    a, b, c, alpha, beta, gamma = param_from_cell(cell)
+    a, b, c, alpha, beta, gamma = Cell.params(cell)
 
     # a == c
     if compare_numerically(a, "==", c, rtol=rtol, atol=atol):
@@ -535,18 +529,14 @@ def MCLC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
         cell = [cell[1], cell[2], cell[0]]
 
     cell = np.array(cell)
-    a, b, c, alpha, beta, gamma = param_from_cell(
-        TRANSFORM_TO_CONVENTIONAL["MCLC"] @ cell
-    )
+    a, b, c, alpha, beta, gamma = Cell.params(TRANSFORM_TO_CONVENTIONAL["MCLC"] @ cell)
 
     # alpha > 90
     if compare_numerically(alpha, ">", 90.0, eps=ABS_TOL_ANGLE):
         cell = [cell[0], cell[2], -cell[1]]
 
     cell = np.array(cell)
-    a, b, c, alpha, beta, gamma = param_from_cell(
-        TRANSFORM_TO_CONVENTIONAL["MCLC"] @ cell
-    )
+    a, b, c, alpha, beta, gamma = Cell.params(TRANSFORM_TO_CONVENTIONAL["MCLC"] @ cell)
 
     # b > c
     if compare_numerically(b, ">", c, rtol=rtol, atol=atol):

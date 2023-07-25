@@ -30,7 +30,7 @@ from radtools.crystal.constants import (
     MIN_LENGTH,
     REL_TOL,
 )
-from radtools.utils import toradians
+from radtools.constants import TORADIANS
 
 
 @given(st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH))
@@ -150,7 +150,7 @@ def test_HEX(a, c):
 )
 def test_RHL(a, alpha):
     cell = RHL(a, alpha, return_cell=True)
-    alpha *= toradians
+    alpha *= TORADIANS
     correct_cell = np.array(
         [
             [a * cos(alpha / 2), -a * sin(alpha / 2), 0],
@@ -178,7 +178,7 @@ def test_MCL(a, b, c, alpha):
     cell = MCL(a, b, c, alpha, return_cell=True)
     if alpha > 90:
         alpha = 180 - alpha
-    alpha *= toradians
+    alpha *= TORADIANS
     b, c = sorted([b, c])
     correct_cell = np.array(
         [
@@ -200,7 +200,7 @@ def test_MCLC(a, b, c, alpha):
     cell = MCLC(a, b, c, alpha, return_cell=True)
     if alpha > 90:
         alpha = 180.0 - alpha
-    alpha *= toradians
+    alpha *= TORADIANS
     b, c = sorted([b, c])
     correct_cell = np.array(
         [

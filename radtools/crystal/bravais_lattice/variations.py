@@ -1,7 +1,7 @@
 from math import cos, sin
 
-from radtools.utils import compare_numerically
-from radtools.constants import toradians
+from radtools.numerical import compare_numerically
+from radtools.constants import TORADIANS
 
 
 __all__ = [
@@ -181,7 +181,7 @@ def MCLC_variation(
             + f"  c = {conv_c}\n"
         )
 
-    conv_alpha *= toradians
+    conv_alpha *= TORADIANS
 
     if compare_numerically(k_gamma, "==", 90, eps):
         return "MCLC2"

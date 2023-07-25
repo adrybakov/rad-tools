@@ -6,17 +6,9 @@ from radtools.crystal.bravais_lattice.examples import (
 from radtools.crystal.constants import BRAVAIS_LATTICE_VARIATIONS
 
 import pytest
-from hypothesis import given, example, strategies as st, settings
-from hypothesis.extra.numpy import arrays as harrays
-import numpy as np
+from hypothesis import given, strategies as st
 
 from scipy.spatial.transform import Rotation
-
-
-from math import pi
-
-from radtools.utils import parallelepiped_check
-from radtools.crystal.utils import cell_from_param
 
 
 @pytest.mark.parametrize(

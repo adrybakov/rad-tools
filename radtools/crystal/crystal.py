@@ -1,13 +1,15 @@
-from math import floor, log10, sqrt
+from math import floor, log10
 from typing import Union
 
 import numpy as np
 
 from radtools.crystal.atom import Atom
 
+import radtools.crystal.cell as Cell
+
 from radtools.crystal.lattice import Lattice
 from radtools.crystal.properties import dipole_dipole_energy, dipole_dipole_interaction
-from radtools.utils import absolute_to_relative
+from radtools.geometry import absolute_to_relative
 
 
 class Crystal(Lattice):
@@ -378,17 +380,14 @@ class Crystal(Lattice):
             )
         )
 
-    # TODO
     def find_primitive_cell(self):
         r"""
-        NotImplementedError
-
         Detect primitive cell.
 
         Before the detection of the primitive cell the corresponding bravais lattice type may not
         be correct, since it is determined with the current cell, which is not necessary primitive one.
         """
-        raise NotImplementedError
+        self.cell, self.atoms = Cell.primitive(self.cell, self.atoms)
 
     def mag_dipdip_energy(self, na, nb, nc, progress_bar=True):
         r"""

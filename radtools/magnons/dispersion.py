@@ -1,5 +1,5 @@
 from radtools.exchange.hamiltonian import ExchangeHamiltonian
-from radtools.utils import span_orthonormal_set
+from radtools.geometry import span_orthonormal_set
 from radtools.magnons.diagonalization import solve_via_colpa, ColpaFailed
 
 from copy import deepcopy

@@ -6,7 +6,8 @@ from os.path import isfile, join, abspath
 from radtools.dos.dos import prepare_custom_pdos
 from radtools.dos.pdos import PDOS
 from radtools.dos.plotting import COLOURS
-from radtools.utils import plot_horizontal_lines, plot_vertical_lines, custom_cmap
+from radtools.decorate.axes import plot_hlines, plot_vlines
+from radtools.decorate.colormap import custom_cmap
 
 __all__ = [
     "plot_custom_fatbands",
@@ -163,14 +164,14 @@ def plot_fatbands(
                 axs[1].set_xticks(
                     k_points[0], k_points[1], fontsize=axes_labels_fontsize
                 )
-                plot_vertical_lines(axs[1], k_points[0])
+                plot_vlines(axs[1], k_points[0])
             else:
                 axs[1].set_xlabel("k path", fontsize=axes_labels_fontsize)
             axs[1].set_ylim(*tuple(ylim))
             axs[1].set_xlim(*tuple(xlim))
         if k_points is not None:
             axs[0].set_xticks(k_points[0], k_points[1], fontsize=axes_labels_fontsize)
-            plot_vertical_lines(axs[0], k_points[0])
+            plot_vlines(axs[0], k_points[0])
         else:
             axs[0].set_xlabel("k path", fontsize=axes_labels_fontsize)
         axs[0].set_ylim(*tuple(ylim))
@@ -230,9 +231,9 @@ def plot_fatbands(
             axs[0].set_title(projector, fontsize=title_fontsize)
 
         if efermi != 0:
-            plot_horizontal_lines(axs[0], 0)
+            plot_hlines(axs[0], 0)
             if pdos.spin_pol:
-                plot_horizontal_lines(axs[1], 0)
+                plot_hlines(axs[1], 0)
 
     for i, projector in enumerate(pdos):
         if separate:

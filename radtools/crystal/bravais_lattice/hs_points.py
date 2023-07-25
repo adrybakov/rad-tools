@@ -2,7 +2,7 @@ from math import cos, sin, tan
 
 import numpy as np
 
-from radtools.constants import toradians
+from radtools.constants import TORADIANS
 
 
 __all__ = [
@@ -371,7 +371,7 @@ def RHL_hs_points(variation, conv_alpha):
     kpoints : dict
         High-symmetry points.
     """
-    conv_alpha *= toradians
+    conv_alpha *= TORADIANS
 
     if variation == "RHL1":
         eta = (1 + 4 * cos(conv_alpha)) / (2 + 4 * cos(conv_alpha))
@@ -428,7 +428,7 @@ def MCL_hs_points(conv_b, conv_c, conv_alpha):
     kpoints : dict
         High-symmetry points.
     """
-    conv_alpha *= toradians
+    conv_alpha *= TORADIANS
 
     eta = (1 - conv_b * cos(conv_alpha) / conv_c) / (2 * sin(conv_alpha) ** 2)
     nu = 1 / 2 - eta * conv_c * cos(conv_alpha) / conv_b
@@ -477,7 +477,7 @@ def MCLC_hs_points(variation, conv_a, conv_b, conv_c, conv_alpha):
     kpoints : dict
         High-symmetry points.
     """
-    conv_alpha *= toradians
+    conv_alpha *= TORADIANS
     # Parameters
     if variation in ["MCLC1", "MCLC2"]:
         zeta = (2 - conv_b * cos(conv_alpha) / conv_c) / (4 * sin(conv_alpha) ** 2)

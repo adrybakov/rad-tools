@@ -14,8 +14,8 @@ from radtools.crystal.crystal import Crystal
 from radtools.exchange.parameter import ExchangeParameter
 from radtools.exchange.template import ExchangeTemplate
 from radtools.exchange.constants import PREDEFINED_NOTATIONS
-from radtools.utils import print_2d_array
-from radtools.constants import toradians
+from radtools.decorate.array import print_2d_array
+from radtools.constants import TORADIANS
 
 
 class NotationError(ValueError):
@@ -1330,8 +1330,8 @@ class ExchangeHamiltonian(Crystal):
         """
 
         # Compute spin direction
-        theta = np.array(theta) * toradians
-        phi = np.array(phi) * toradians
+        theta = np.array(theta) * TORADIANS
+        phi = np.array(phi) * TORADIANS
         if theta.shape == ():
             theta = np.array([theta])
         if phi.shape == ():

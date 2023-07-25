@@ -20,7 +20,7 @@ In the examples across the documentation it is expected to be imported in that w
 
 
 .. toctree:: 
-   :maxdepth: 2
+   :maxdepth: 1
 
    crystal/index
    exchange/index

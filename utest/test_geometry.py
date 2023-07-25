@@ -13,18 +13,12 @@ from radtools.crystal.constants import (
     MAX_LENGTH,
     MIN_ANGLE,
     MIN_LENGTH,
-    REL_TOL,
-    REL_TOL_ANGLE,
 )
-from radtools.utils import (
+from radtools.geometry import (
     absolute_to_relative,
     angle,
-    atom_mark_to_latex,
-    compare_numerically,
     parallelepiped_check,
-    rot_angle,
     span_orthonormal_set,
-    toradians,
     volume,
 )
 
@@ -50,17 +44,6 @@ def shuffle(cell, order):
 def rotate(cell, r1, r2, r3):
     R = Rotation.from_rotvec([r1, r2, r3]).as_matrix()
     return R.T @ cell
-
-
-@pytest.mark.parametrize(
-    "mark, new_mark",
-    [
-        ("Cr1", "$Cr_{1}$"),
-        ("Cr11", "$Cr_{11}$"),
-    ],
-)
-def test_atom_mark_to_latex(mark, new_mark):
-    assert atom_mark_to_latex(mark) == new_mark
 
 
 @pytest.mark.parametrize(
@@ -102,7 +85,7 @@ def test_angle(v1, v2):
 @given(st.floats(min_value=MIN_ANGLE, max_value=180.0 - MIN_ANGLE))
 def test_angle_values(alpha):
     v1 = np.array([1.0, 0.0, 0.0])
-    v2 = np.array([cos(alpha * toradians), sin(alpha * toradians), 0.0])
+    v2 = np.array([cos(alpha * TORADIANS), sin(alpha * TORADIANS), 0.0])
     assert abs(angle(v1, v2) - alpha) < ABS_TOL_ANGLE
 
 
@@ -190,44 +173,6 @@ def test_span_orthonormal_set(e3):
 
     # Check if the system is right-handed
     assert np.allclose(np.dot(e1p, np.cross(e2p, e3p)), 1)
-
-
-class TestRotAngle:
-    @pytest.mark.parametrize(
-        "x, y, angle",
-        [
-            (1, 0, 0),
-            (1, 1, 45),
-            (0, 1, 90),
-            (-1, 1, 135),
-            (-1, 0, 180),
-            (-1, -1, 225),
-            (0, -1, 270),
-            (1, -1, 315),
-        ],
-    )
-    def test_dummy(self, x, y, angle):
-        assert round(rot_angle(x, y, dummy=True), 4) == round(angle, 4)
-
-    @pytest.mark.parametrize(
-        "x, y, angle",
-        [
-            (1, 0, 0),
-            (1, 1, 45),
-            (0, 1, 90),
-            (-1, 1, -45),
-            (-1, 0, 0),
-            (-1, -1, 45),
-            (0, -1, 90),
-            (1, -1, -45),
-        ],
-    )
-    def test_not_dummy(self, x, y, angle):
-        assert round(rot_angle(x, y), 4) == round(angle, 4)
-
-    def test_ill_case(self):
-        with pytest.raises(ValueError):
-            rot_angle(0, 0)
 
 
 @given(

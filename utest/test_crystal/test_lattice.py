@@ -4,12 +4,8 @@ import numpy as np
 import pytest
 
 from radtools.crystal.lattice import Lattice
-from radtools.utils import (
-    todegrees,
-    parallelepiped_check,
-    print_2d_array,
-)
-from radtools.crystal.utils import cell_from_param
+from radtools.geometry import parallelepiped_check
+import radtools.crystal.cell as Cell
 from radtools.crystal.constants import ABS_TOL, REL_TOL
 from scipy.spatial.transform import Rotation
 from hypothesis import given, strategies as st, target
@@ -69,13 +65,13 @@ def test_Lattice_cell_attributes(r1, r2, r3, a, b, c, alpha, beta, gamma):
     ):
         # Prepare cell
         cell = rotate(
-            cell_from_param(a, b, c, alpha, beta, gamma),
+            Cell.from_params(a, b, c, alpha, beta, gamma),
             r1,
             r2,
             r3,
         )
         l = Lattice(cell, standardize=False)
-        # TODO: fix accuracy in cell_from_param (sin, cos)
+        # TODO: fix accuracy in Cell.from_params (sin, cos)
         # assert np.allclose(
         #     sorted([l.a, l.b, l.c]), sorted([a, b, c]), rtol=REL_TOL, atol=ABS_TOL
         # )
@@ -120,7 +116,7 @@ def test_Lattice_reciprocal_cell_attributes(r1, r2, r3, a, b, c, alpha, beta, ga
     ):
         # Prepare cell
         cell = rotate(
-            cell_from_param(a, b, c, alpha, beta, gamma),
+            Cell.from_params(a, b, c, alpha, beta, gamma),
             r1,
             r2,
             r3,
@@ -167,7 +163,7 @@ def test_Lattice_eps(r1, r2, r3, a, b, c, alpha, beta, gamma, eps_rel):
     ):
         # Prepare cell
         cell = rotate(
-            cell_from_param(a, b, c, alpha, beta, gamma),
+            Cell.from_params(a, b, c, alpha, beta, gamma),
             r1,
             r2,
             r3,
@@ -240,7 +236,7 @@ def test_cell():
     assert l.alpha == l.beta == l.gamma == 90
 
 
-def test_reciprocal_cell():
+def test_reciprocal():
     assert (
         l.reciprocal_cell == np.array([[2 * pi, 0, 0], [0, pi, 0], [0, 0, 2 / 3 * pi]])
     ).all()

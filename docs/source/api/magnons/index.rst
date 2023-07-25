@@ -12,12 +12,12 @@ Classes
 =======
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
     dispersion
 
-Functions
-=========
+Diagonalization
+===============
 
 .. autosummary::
     :toctree: generated/

@@ -13,7 +13,7 @@ import numpy as np
 from termcolor import cprint
 
 from radtools.dos.pdos import PDOSQE
-from radtools.utils import plot_horizontal_lines, plot_vertical_lines
+from radtools.decorate.axes import plot_hlines, plot_vlines
 
 PATTERN = "\\.pdos_atm\\#[0-9]*\\([a-zA-Z0-9]*\\)_wfc\\#[0-9]*\\([spdf_0-9j\\.]*\\)"
 
@@ -679,9 +679,9 @@ class DOSQE:
 
         # Eye-guide lines
         if efermi != 0:
-            plot_vertical_lines(ax, 0)
+            plot_vlines(ax, 0)
         if self.spin_pol:
-            plot_horizontal_lines(ax, 0)
+            plot_hlines(ax, 0)
 
         def fill(data, color, label):
             ax.fill_between(

@@ -9,7 +9,87 @@ from termcolor import cprint
 
 from radtools.io.internal import read_template
 from radtools.io.tb2j import read_tb2j_model
-from radtools.utils import atom_mark_to_latex, rot_angle
+
+
+def rot_angle(x, y, dummy=False):
+    r"""
+    Rotational angle from 2D vector.
+
+    Mathematically positive => counterclockwise.
+    From [0 to 360)
+
+    Parameters
+    ----------
+    x : float or int
+        x coordinate of a vector.
+    y : float or int
+        y coordinate of a vector.
+    """
+    # rot_cos = x / (x ** 2 + y ** 2) ** 0.5
+    # rot_angle = m.acos(rot_cos) / m.pi * 180
+    try:
+        sin = abs(y) / sqrt(x**2 + y**2)
+    except ZeroDivisionError:
+        raise ValueError("Angle is ill defined (x = y = 0).")
+    if x > 0:
+        if y > 0:
+            return asin(sin) / pi * 180
+        elif y == 0:
+            return 0
+        elif y < 0:
+            if not dummy:
+                return -asin(sin) / pi * 180
+            return 360 - asin(sin) / pi * 180
+    elif x == 0:
+        if y > 0:
+            return 90
+        elif y == 0:
+            raise ValueError("Angle is ill defined (x = y = 0).")
+        elif y < 0:
+            if not dummy:
+                return 90
+            return 270
+    elif x < 0:
+        if y > 0:
+            if not dummy:
+                return -asin(sin) / pi * 180
+            return 180 - asin(sin) / pi * 180
+        elif y == 0:
+            if not dummy:
+                return 0
+            return 180
+        elif y < 0:
+            if not dummy:
+                return asin(sin) / pi * 180
+            return 180 + asin(sin) / pi * 180
+
+
+def atom_mark_to_latex(mark):
+    r"""
+    Latexifier for atom marks.
+
+    Cr12 -> Cr\ :sub:`12`\.
+
+    Parameters
+    ----------
+    mark : str
+        Mark of atom.
+
+    Returns
+    -------
+    new_mark : str
+        Latex version of the mark.
+    """
+    numbers = "0123456789"
+    new_mark = "$"
+    insert_underline = False
+    for symbol in mark:
+        if symbol in numbers and not insert_underline:
+            insert_underline = True
+            new_mark += "_{"
+        new_mark += symbol
+    new_mark += "}$"
+    return new_mark
 
 
 def manager(

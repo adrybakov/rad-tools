@@ -3,7 +3,7 @@ import numpy as np
 
 from radtools.dos.pdos import PDOS
 
-from radtools.utils import plot_horizontal_lines, plot_vertical_lines
+from radtools.decorate.axes import plot_hlines, plot_vlines
 
 
 __all__ = ["COLOURS", "plot_projected"]
@@ -106,7 +106,7 @@ def plot_projected(
         else:
             ax.set_xlim(np.amin(pdos.energy), np.amax(pdos.energy))
         if efermi != 0:
-            plot_vertical_lines(ax, 0)
+            plot_vlines(ax, 0)
 
         if title is not None and (i == 0 or relative):
             ax.set_title(title, fontsize=title_fontsize)
@@ -116,7 +116,7 @@ def plot_projected(
 
     if relative:
         set_up_axis(ax, n - 1)
-        plot_horizontal_lines(ax, 0)
+        plot_hlines(ax, 0)
 
     for i, projector in enumerate(pdos):
         if not relative:
