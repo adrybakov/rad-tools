@@ -5,21 +5,9 @@ matplotlib
 tqdm
 termcolor
 
-# Documentation
-Sphinx
-numpydoc
-sphinx-copybutton
-pydata-sphinx-theme
-sphinx-design
-sphinx-gallery
-
 # PyPI
 twine
 
 # code-linters
 black
 isort
-
-# test suite
-hypothesis
-pytest

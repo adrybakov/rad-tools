@@ -1,0 +1,6 @@
+Sphinx
+numpydoc
+sphinx-copybutton
+pydata-sphinx-theme
+sphinx-design
+sphinx-gallery
