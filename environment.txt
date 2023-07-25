@@ -13,6 +13,6 @@ sphinx-copybutton
 pydata-sphinx-theme
 sphinx-design
 sphinx-gallery
-urllib3==1.26.15
+urllib3
 scipy
 hypothesis
