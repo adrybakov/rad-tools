@@ -1,0 +1,13 @@
+# Package dependencies
+numpy
+scipy
+matplotlib
+tqdm
+termcolor
+
+# PyPI
+twine
+
+# code-linters
+black
+isort

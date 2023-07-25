@@ -1,11 +1,6 @@
+Sphinx
 numpydoc
-sphinx_copybutton
+sphinx-copybutton
 pydata-sphinx-theme
 sphinx-design
 sphinx-gallery
-urllib3
-numpy
-scipy
-matplotlib
-tqdm
-termcolor

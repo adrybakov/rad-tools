@@ -8,7 +8,7 @@ sys.path.insert(0, abspath(".."))
 
 # Project information
 project = "rad-tools"
-copyright = "2022, Andrey Rybakov"
+copyright = "2022-2023, Andrey Rybakov"
 author = "Andrey Rybakov"
 
 # Project version

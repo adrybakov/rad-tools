@@ -10,3 +10,6 @@ It is expected to be used in two ways:
 
 * :ref:`As Python module <module-guide>`
 * :ref:`Via scripts <scripts-guide>` (i.e. usage from command line)
+
+.. note::
+  The script`s output is colored, however we respect `NO_COLOR <https://no-color.org/>`_.

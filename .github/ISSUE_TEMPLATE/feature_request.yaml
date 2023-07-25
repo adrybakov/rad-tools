@@ -1,0 +1,60 @@
+name: Feature request
+description: Suggest an idea for this project
+title: "[ENH]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this feature request!
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you missing?
+      description: Describe the problem you have
+      placeholder: A clear and concise description of what the problem is.
+    validations:
+      required: true
+  - type: textarea
+    id: desired-solution
+    attributes:
+      label: What would you like to have?
+      description: Describe the solution you'd like
+      placeholder: A clear and concise description of what you want to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Do you want to add anything?
+      description: Additional context
+      placeholder: Add any other context or screenshots about the feature request here.
+    validations:
+      required: false
+  - type: dropdown
+    id: os
+    attributes:
+      label: OS
+      description: What operating system are you using?
+      options:
+        - MacOS 
+        - Linux 
+        - Windows
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        Use command
+        ```bash 
+        python3 -c "exec('from radtools import __version__\nprint(__version__)')" 
+        ``` 
+        in your terminal to check the version of RAD-tools.
+  - type: input
+    id: version
+    attributes:
+      label: RAD-tools version
+      description: What version of our software are you running? 
+      placeholder: ex. 0.7.15
+    validations:
+      required: false 
