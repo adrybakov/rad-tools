@@ -12,7 +12,8 @@ from mpl_toolkits.mplot3d import Axes3D, proj3d
 from scipy.spatial import Voronoi
 
 from radtools.crystal.identify import lepage
-from radtools.routines import angle, cell_from_param, reciprocal_cell, volume
+from radtools.utils import angle, volume
+from radtools.crystal.utils import cell_from_param, reciprocal_cell
 from radtools.crystal.kpoints import Kpoints
 from radtools.crystal.constants import (
     REL_TOL,
@@ -170,13 +171,6 @@ class Lattice:
     ----------
     eps_rel : float, default 1e-4
         Relative error for the :ref:`rad-tools_lepage` algorithm.
-    kpoints : dist
-        Dictionary of the high symmetry points.
-        Coordinates are given in relative coordinates.
-
-        .. code-block:: python
-
-            kpoints = {"Name" : [k_x, k_y, k_z], ...}
 
     References
     ----------
@@ -776,7 +770,10 @@ class Lattice:
         r"""
         Epsilon parameter.
 
-        Defined from :py:attr:`.eps_rel` as :math:`\epsilon = \epsilon_{rel}\cdot V^{\frac{1}{3}}`.
+        Derived from :py:attr:`.eps_rel` as
+        .. math::
+
+            \epsilon = \epsilon_{rel}\cdot V^{\frac{1}{3}}
         """
 
         return self.eps_rel * self.unit_cell_volume ** (1 / 3.0)

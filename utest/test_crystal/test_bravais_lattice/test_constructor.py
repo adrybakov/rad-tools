@@ -30,7 +30,7 @@ from radtools.crystal.constants import (
     MIN_LENGTH,
     REL_TOL,
 )
-from radtools.routines import toradians
+from radtools.utils import toradians
 
 
 @given(st.floats(min_value=MIN_LENGTH, max_value=MAX_LENGTH))

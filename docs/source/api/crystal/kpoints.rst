@@ -1,8 +1,8 @@
 .. _api_kpoints:
 
-********
-K points
-********
+*******
+Kpoints
+*******
 
 .. currentmodule:: radtools
 
@@ -14,16 +14,28 @@ Class
 
     Kpoints
 
-Settings parameter
-==================
+Attributes
+==========
+* Kpoints.b1              
+* Kpoints.b2              
+* Kpoints.b3              
+* Kpoints.hs_names        
+* Kpoints.hs_coordinates  
+* Kpoints.hs_labels      
+
+Settings parameters    
+===================
 
 .. autosummary::
     :toctree: generated/
 
     Kpoints.n
+    Kpoints.path
+    Kpoints.path_string
+    Kpoints.add_hs_point
 
-Graph labels
-============
+Flattened graph labels
+======================
 
 .. autosummary::
     :toctree: generated/
@@ -31,8 +43,8 @@ Graph labels
     Kpoints.labels
     Kpoints.coordinates
 
-Full set of kpoints
-===================
+K points in the path
+====================
 
 .. autosummary::
     :toctree: generated/

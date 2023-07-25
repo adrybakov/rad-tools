@@ -1,5 +1,3 @@
-import matplotlib.pyplot as plt
-import numpy as np
 from termcolor import cprint
 from os.path import isfile, join, abspath
 from os import makedirs

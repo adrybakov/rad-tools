@@ -2,7 +2,7 @@ from math import cos, sin, tan
 
 import numpy as np
 
-from radtools.routines import toradians
+from radtools.constants import toradians
 
 
 __all__ = [

@@ -47,6 +47,14 @@ extlinks = {
         "https://numpy.org/doc/stable/reference/generated/numpy.%s.html",
         "numpy.%s",
     ),
+    "numpy": (
+        "https://numpy.org/doc/stable/reference/generated/numpy.%s.html",
+        "numpy.%s",
+    ),
+    "matplotlib": (
+        "https://matplotlib.org/stable/api/%s_api.html",
+        "matplotlib.%s",
+    ),
 }
 
 # todo

@@ -14,9 +14,6 @@ Class
 
     Crystal
 
-Properties
-==========
-
 .. hint:: 
     All properties and methods of :ref:`api_lattice` 
     are accessible directly from the crystal instance:
@@ -32,12 +29,10 @@ Properties
         >>> c.c
         1.0
 
-.. autosummary::
-
-    Crystal.lattice
 
 Atom methods
 ============
+* Crystal.atoms
 
 .. autosummary::
 
@@ -68,3 +63,10 @@ Energy properties
 
     Crystal.mag_dipdip_energy
     Crystal.converge_mag_dipdip_energy
+
+Lattice getter
+==============
+
+.. autosummary::
+
+    Crystal.lattice

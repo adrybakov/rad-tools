@@ -6,7 +6,7 @@
 Isolated routines
 *****************
 
-For the full reference see :ref:`api_routines`.
+For the full reference see :ref:`api_utils`.
 
 A number of routines are defined in this module. 
 Majority of them are used internally and are not intended for direct use.

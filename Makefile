@@ -27,10 +27,14 @@ clean:
 	-@rm -r docs/source/api/generated
 	-@rm -r docs/source/api/crystal/generated
 	-@rm -r docs/source/api/exchange/generated
+	-@rm -r docs/source/api/magnons/generated
 	-@rm -r docs/source/api/_autosummary
 	-@rm -r rad_tools.egg-info
 	-@rm -r build
 	-@rm -r dist
+	-@rm -r .venv/lib/python3.10/site-packages/radtools
+	-@rm -r .venv/lib/python3.10/site-packages/rad_tools*
+	-@rm -r .venv/bin/rad-*
 
 test: 
 	-@pytest -s

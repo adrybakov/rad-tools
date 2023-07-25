@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from radtools import __version__ as version
 from radtools.io.internal import read_template
 from radtools.io.tb2j import read_tb2j_model
-from radtools.magnons.magnons import MagnonDispersion
+from radtools.magnons.dispersion import MagnonDispersion
 
 
 def manager(

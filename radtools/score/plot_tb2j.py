@@ -9,7 +9,7 @@ from termcolor import cprint
 
 from radtools.io.internal import read_template
 from radtools.io.tb2j import read_tb2j_model
-from radtools.routines import atom_mark_to_latex, rot_angle
+from radtools.utils import atom_mark_to_latex, rot_angle
 
 
 def manager(

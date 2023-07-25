@@ -1,8 +1,7 @@
 from math import cos, sin
 
-from radtools.routines import compare_numerically
-
-from radtools.routines import toradians
+from radtools.utils import compare_numerically
+from radtools.constants import toradians
 
 
 __all__ = [

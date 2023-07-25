@@ -9,7 +9,7 @@ Self = TypeVar("Self", bound="ExchangeParameter")
 
 import numpy as np
 
-from radtools.routines import print_2d_array
+from radtools.utils import print_2d_array
 
 
 class ExchangeParameter:

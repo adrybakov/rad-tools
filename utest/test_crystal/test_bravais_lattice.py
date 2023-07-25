@@ -1,7 +1,7 @@
 import pytest
 
 from radtools.crystal.constants import BRAVAIS_LATTICE_VARIATIONS as lattice_names
-from radtools.crystal.bravais_lattice.utils import lattice_example
+from radtools.crystal.bravais_lattice.examples import lattice_example
 
 
 @pytest.mark.parametrize("name", lattice_names, ids=lattice_names)

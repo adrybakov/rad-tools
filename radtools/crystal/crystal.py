@@ -7,7 +7,7 @@ from radtools.crystal.atom import Atom
 
 from radtools.crystal.lattice import Lattice
 from radtools.crystal.properties import dipole_dipole_energy, dipole_dipole_interaction
-from radtools.routines import absolute_to_relative
+from radtools.utils import absolute_to_relative
 
 
 class Crystal(Lattice):

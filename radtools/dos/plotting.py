@@ -3,7 +3,7 @@ import numpy as np
 
 from radtools.dos.pdos import PDOS
 
-from radtools.routines import plot_horizontal_lines, plot_vertical_lines
+from radtools.utils import plot_horizontal_lines, plot_vertical_lines
 
 
 __all__ = ["COLOURS", "plot_projected"]

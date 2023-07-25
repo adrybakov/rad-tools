@@ -1,19 +1,9 @@
-from radtools.crystal.bravais_lattice.utils import (
+from radtools.crystal.bravais_lattice.examples import (
     lattice_example,
 )
 
-from radtools.routines import volume
 
-from radtools.crystal.lattice import Lattice
-
-from radtools.crystal.constants import (
-    BRAVAIS_LATTICE_VARIATIONS,
-    MAX_LENGTH,
-    MIN_LENGTH,
-    MIN_ANGLE,
-    REL_TOL,
-    ABS_TOL,
-)
+from radtools.crystal.constants import BRAVAIS_LATTICE_VARIATIONS
 
 import pytest
 from hypothesis import given, example, strategies as st, settings
@@ -25,7 +15,8 @@ from scipy.spatial.transform import Rotation
 
 from math import pi
 
-from radtools.routines import parallelepiped_check, cell_from_param
+from radtools.utils import parallelepiped_check
+from radtools.crystal.utils import cell_from_param
 
 
 @pytest.mark.parametrize(

@@ -1,6 +1,3 @@
-from tracemalloc import start
-
-
 class CalculationMap:
     r"""
     Mapper.

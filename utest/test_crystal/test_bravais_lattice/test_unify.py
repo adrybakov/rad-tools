@@ -48,7 +48,9 @@ from radtools.crystal.constants import (
     REL_TOL,
     REL_TOL_ANGLE,
 )
-from radtools.routines import param_from_cell, todegrees, toradians
+from radtools.utils import todegrees, toradians
+
+from radtools.crystal.utils import param_from_cell
 
 
 n_order = 5

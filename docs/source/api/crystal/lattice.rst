@@ -101,3 +101,15 @@ Plotting
     Lattice.savefig
     Lattice.show
     Lattice.clear
+
+Numerical accuracy
+==================
+
+* Lattice.eps_rel
+
+.. autosummary::
+    :toctree: generated/
+
+    Lattice.eps
+
+

@@ -1,11 +1,4 @@
 __all__ = [
-    "ATOM_TYPES",
-    "PEARSON_SYMBOLS",
-    "BRAVAIS_LATTICE_NAMES",
-    "BRAVAIS_LATTICE_VARIATIONS",
-    "TRANSFORM_TO_CONVENTIONAL",
-    "DEFAULT_K_PATHS",
-    "HS_PLOT_NAMES",
     "ABS_TOL",
     "REL_TOL",
     "MIN_LENGTH",
@@ -13,7 +6,33 @@ __all__ = [
     "ABS_TOL_ANGLE",
     "REL_TOL_ANGLE",
     "MIN_ANGLE",
+    "ATOM_TYPES",
+    "PEARSON_SYMBOLS",
+    "BRAVAIS_LATTICE_NAMES",
+    "BRAVAIS_LATTICE_VARIATIONS",
+    "TRANSFORM_TO_CONVENTIONAL",
+    "DEFAULT_K_PATHS",
+    "HS_PLOT_NAMES",
 ]
+
+# Length variables
+ABS_TOL = 1e-8  # Meant for the linear spatial variables
+REL_TOL = 1e-4  # Meant for the linear spatial variables
+# MIN_LENGTH is a direct consequence of the REL_TOL and ABS_TOL:
+# for l = MIN_LENGTH => ABS_TOL = l * REL_TOL
+MIN_LENGTH = ABS_TOL / REL_TOL
+# MAX_LENGTH is a direct consequence of the ABS_TOL:
+# Inverse of the MAX_LENGTH in the real space has to be meaningful
+# in the reciprocal space (< ABS_TOL).
+MAX_LENGTH = 1 / ABS_TOL
+
+# TODO Think how to connect angle tolerance with spatial tolerance.
+
+ABS_TOL_ANGLE = 1e-4  # Meant for the angular variables, in degrees.
+REL_TOL_ANGLE = 1e-2  # Meant for the angular variables.
+# MIN_ANGLE is a direct consequence of the REL_TOL_ANGLE and ABS_TOL_ANGLE:
+# for a = MIN_ANGLE => ABS_TOL_ANGLE = a * REL_TOL_ANGLE
+MIN_ANGLE = ABS_TOL_ANGLE / REL_TOL_ANGLE  # In degrees
 
 ATOM_TYPES = (
     "H",
@@ -135,25 +154,6 @@ ATOM_TYPES = (
     "Ts",
     "Og",
 )
-
-# Length variables
-ABS_TOL = 1e-8  # Meant for the linear spatial variables
-REL_TOL = 1e-4  # Meant for the linear spatial variables
-# MIN_LENGTH is a direct consequence of the REL_TOL and ABS_TOL:
-# for l = MIN_LENGTH => ABS_TOL = l * REL_TOL
-MIN_LENGTH = ABS_TOL / REL_TOL
-# MAX_LENGTH is a direct consequence of the ABS_TOL:
-# Inverse of the MAX_LENGTH in the real space has to be meaningful
-# in the reciprocal space (< ABS_TOL).
-MAX_LENGTH = 1 / ABS_TOL
-
-# TODO Think how to connect angle tolerance with spatial tolerance.
-
-ABS_TOL_ANGLE = 1e-4  # Meant for the angular variables, in degrees.
-REL_TOL_ANGLE = 1e-2  # Meant for the angular variables.
-# MIN_ANGLE is a direct consequence of the REL_TOL_ANGLE and ABS_TOL_ANGLE:
-# for a = MIN_ANGLE => ABS_TOL_ANGLE = a * REL_TOL_ANGLE
-MIN_ANGLE = ABS_TOL_ANGLE / REL_TOL_ANGLE  # In degrees
 
 
 PEARSON_SYMBOLS = {

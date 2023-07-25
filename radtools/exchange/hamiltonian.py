@@ -14,7 +14,8 @@ from radtools.crystal.crystal import Crystal
 from radtools.exchange.parameter import ExchangeParameter
 from radtools.exchange.template import ExchangeTemplate
 from radtools.exchange.constants import PREDEFINED_NOTATIONS
-from radtools.routines import toradians, print_2d_array
+from radtools.utils import print_2d_array
+from radtools.constants import toradians
 
 
 class NotationError(ValueError):
@@ -58,7 +59,9 @@ class ExchangeHamiltonian(Crystal):
     In user-specific cases it is the responsibility of the user to
     set the interpretation of the Hamiltonian`s notation.
 
-    For the predefined notations see :py:meth:`.notation`:
+    For the predefined notations see :py:meth:`.notation`.
+
+    Child of the :py:class:`.Crystal` class.
 
     Parameters
     ----------
@@ -69,12 +72,8 @@ class ExchangeHamiltonian(Crystal):
         One of the predefined notations or list of 5 bool.
         See :py:attr:`.notation` for details.
     **kwargs
-        Keyword arguments are passed to :py:class:`.Crystal` constructor.
+        Keyword arguments for the :py:class:`.Crystal` constructor.
 
-    Attributes
-    ----------
-    crystal : :py:class:`.Crystal`
-        Crystal on which the ExchangeHamiltonian is build.
     """
 
     def __init__(self, crystal: Crystal = None, notation=None, **kwargs) -> None:

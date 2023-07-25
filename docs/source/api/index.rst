@@ -28,7 +28,8 @@ In the examples across the documentation it is expected to be imported in that w
    dos
    io
    score
-   routines
+   utils
    custom-exceptions
+   constants
 
 

@@ -5,7 +5,7 @@ General 3D lattice.
 from typing import Iterable
 import numpy as np
 
-from radtools.routines import absolute_to_relative
+from radtools.utils import absolute_to_relative
 
 __all__ = ["Kpoints"]
 

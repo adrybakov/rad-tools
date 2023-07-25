@@ -32,10 +32,23 @@ Properties for computation
 * MagnonDispersion.u
 * MagnonDispersion.v
 
-Methods
-=======
+Hamiltonian and parts
+=====================
+
+.. autosummary::
+    :toctree: generated/
+
+    MagnonDispersion.J
+    MagnonDispersion.A
+    MagnonDispersion.B
+    MagnonDispersion.C
+    MagnonDispersion.h
+
+Eigenvalues
+===========
 
 .. autosummary::
     :toctree: generated/
 
     MagnonDispersion.omega
+    MagnonDispersion.omegas

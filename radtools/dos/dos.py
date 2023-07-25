@@ -13,7 +13,7 @@ import numpy as np
 from termcolor import cprint
 
 from radtools.dos.pdos import PDOSQE
-from radtools.routines import plot_horizontal_lines, plot_vertical_lines
+from radtools.utils import plot_horizontal_lines, plot_vertical_lines
 
 PATTERN = "\\.pdos_atm\\#[0-9]*\\([a-zA-Z0-9]*\\)_wfc\\#[0-9]*\\([spdf_0-9j\\.]*\\)"
 

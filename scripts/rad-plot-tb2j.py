@@ -1,6 +1,6 @@
 #! /usr/local/bin/python3
 
-from radtools.routines import winwait
+from radtools.utils import winwait
 from radtools.score.plot_tb2j import create_parser, manager
 
 if __name__ == "__main__":

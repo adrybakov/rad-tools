@@ -4,16 +4,16 @@ import numpy as np
 import pytest
 
 from radtools.crystal.lattice import Lattice
-from radtools.routines import (
+from radtools.utils import (
     todegrees,
-    cell_from_param,
     parallelepiped_check,
     print_2d_array,
 )
+from radtools.crystal.utils import cell_from_param
 from radtools.crystal.constants import ABS_TOL, REL_TOL
 from scipy.spatial.transform import Rotation
 from hypothesis import given, strategies as st, target
-from radtools.crystal.bravais_lattice.utils import lattice_example
+from radtools.crystal.bravais_lattice.examples import lattice_example
 from radtools.crystal.constants import (
     BRAVAIS_LATTICE_VARIATIONS,
     BRAVAIS_LATTICE_NAMES,

@@ -1,7 +1,6 @@
 from math import cos, pi, sin
 
-from radtools.crystal.lattice import Lattice
-from radtools.routines import toradians
+from radtools.constants import toradians
 from radtools.crystal.constants import BRAVAIS_LATTICE_VARIATIONS
 
 from radtools.crystal.bravais_lattice.constructor import (

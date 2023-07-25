@@ -4,7 +4,6 @@ Input-output from |TB2J|_.
 
 import numpy as np
 
-from radtools.crystal.atom import Atom
 from radtools.exchange.hamiltonian import ExchangeHamiltonian
 from radtools.exchange.parameter import ExchangeParameter
 from radtools.crystal.constants import REL_TOL

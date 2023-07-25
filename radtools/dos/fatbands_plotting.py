@@ -6,7 +6,7 @@ from os.path import isfile, join, abspath
 from radtools.dos.dos import prepare_custom_pdos
 from radtools.dos.pdos import PDOS
 from radtools.dos.plotting import COLOURS
-from radtools.routines import plot_horizontal_lines, plot_vertical_lines, custom_cmap
+from radtools.utils import plot_horizontal_lines, plot_vertical_lines, custom_cmap
 
 __all__ = [
     "plot_custom_fatbands",

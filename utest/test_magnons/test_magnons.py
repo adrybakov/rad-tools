@@ -2,7 +2,7 @@ import pytest
 
 import numpy as np
 
-from radtools.magnons.magnons import MagnonDispersion
+from radtools.magnons.dispersion import MagnonDispersion
 from radtools.exchange.hamiltonian import ExchangeHamiltonian
 from radtools.exchange.parameter import ExchangeParameter
 from radtools.crystal.bravais_lattice import lattice_example
