@@ -6,7 +6,7 @@ Installation
 
 Requirement for RAD-tools installation are:
 
-* |Python|_ itself (>=3.6)
+* |Python|_ itself (>=3.8)
 * |NumPy|_
 * |SciPy|_
 * |matplotlib|_
