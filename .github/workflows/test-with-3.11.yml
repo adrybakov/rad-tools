@@ -1,0 +1,43 @@
+name: Test with 3.11
+
+on:
+  pull_request:
+    branches: [ "stable" ]
+
+jobs:
+  unit-tests:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install package dependencies
+      run: pip install -r requirements.txt
+      
+    - name: Install utest dependencies
+      run: pip install -r utest/requirements.txt
+      
+    - name: Install docs dependencies
+      run: pip install -r docs/requirements.txt
+      
+    - name: Install the package
+      run: pip install . 
+    
+    - name: Run unit tests
+      run: make test
+      
+    - name: Make examples
+      run: make examples
+      
+    - name: Make pictures
+      run: make pictures
+      
+    - name: Build documentation
+      run: make html
+      
+    - name: Run doctests
+      run: make doctest
