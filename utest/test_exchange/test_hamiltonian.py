@@ -742,8 +742,8 @@ class TestExchangeHamiltonian:
         model.factor_one_half = False
         model.factor_two = False
         model.spin_normalized = True
-        assert model.ferromagnetic_energy() == -6
-        assert model.ferromagnetic_energy(theta=23, phi=234) == -6
+        assert np.allclose(model.ferromagnetic_energy(), -6)
+        assert np.allclose(model.ferromagnetic_energy(theta=23, phi=234), -6)
         model.add_bond(
             ExchangeParameter(iso=3, aniso=[[1, 0, 0], [0, 2, 0], [0, 0, -3]]),
             Cr2,
