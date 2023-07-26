@@ -79,7 +79,7 @@ def test_lepage(name):
             1e-3,
         )
     ],
-    ids=["crsbr", "nii2", "custom"],
+    ids=["crsbr", "nii2"],
 )
 def test_custom_lepage(cell, name, eps_rel):
     lattice = Lattice(cell)
