@@ -222,7 +222,7 @@ def plot(output_path="."):
             .replace("a", "")
             .replace("b", "")
             .replace("b", "")
-        )
+        ).lower()
         l = rad.lattice_example(name)
         for j, wtp in enumerate(wtps[name]):
             py_file = open(
