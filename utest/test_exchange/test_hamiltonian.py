@@ -750,10 +750,10 @@ class TestExchangeHamiltonian:
             Cr1,
             (0, 0, -1),
         )
-        assert model.ferromagnetic_energy() == -6
-        assert model.ferromagnetic_energy(theta=90) == -10
-        assert model.ferromagnetic_energy(theta=90, phi=90) == -11
-        assert model.ferromagnetic_energy(theta=90, phi=45) == -10.5
+        assert np.allclose(model.ferromagnetic_energy(), -6)
+        assert np.allclose(model.ferromagnetic_energy(theta=90), -10)
+        assert np.allclose(model.ferromagnetic_energy(theta=90, phi=90), -11)
+        assert np.allclose(model.ferromagnetic_energy(theta=90, phi=45), -10.5)
         assert (
             np.array([-6, -10, -11, -10.5])
             - model.ferromagnetic_energy(theta=[0, 90, 90, 90], phi=[0, 0, 90, 45])
@@ -765,7 +765,7 @@ class TestExchangeHamiltonian:
         ).reshape((32, 5))
         for new_notation in notations:
             model.notation = new_notation
-            assert model.ferromagnetic_energy() == -6
+            assert np.allclose(model.ferromagnetic_energy(), -6)
 
     def test_interface(self):
         model = ExchangeHamiltonian()
