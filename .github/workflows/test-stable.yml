@@ -1,0 +1,28 @@
+name: Test stable branch
+
+on: 
+  push:
+    branches: [ stable ]
+  pull_request:
+    branches: [ stable ]
+
+jobs:
+  test-38:
+    uses: adrybakov/rad-tools/.github/workflows/run-tests.yml@stable
+    with:
+      python-version: '3.8'
+
+  test-39:
+    uses: adrybakov/rad-tools/.github/workflows/run-tests.yml@stable
+    with:
+      python-version: '3.9'
+  
+  test-310:
+    uses: adrybakov/rad-tools/.github/workflows/run-tests.yml@stable
+    with:
+      python-version: '3.10'
+
+  test-311:
+    uses: adrybakov/rad-tools/.github/workflows/run-tests.yml@stable
+    with:
+      python-version: '3.11'

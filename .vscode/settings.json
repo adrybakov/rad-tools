@@ -1,6 +1,6 @@
 {
-    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python3",
-    "python.formatting.blackPath": "${workspaceFolder}/.venv/bin/black",
+    "python.defaultInterpreterPath": "${workspaceFolder}/.env3.11/bin/python3",
+    "python.formatting.blackPath": "${workspaceFolder}/.env3.11/bin/black",
     "python.formatting.provider": "black",
     "python.linting.enabled": true,
     "editor.formatOnType": false,
@@ -13,7 +13,7 @@
         "**/__pycache__": true,
         "**/.pytest_cache": true
     },
-    "python.envFile": "${workspaceFolder}/.venv",
+    "python.envFile": "${workspaceFolder}/.env3.11",
     "python.analysis.typeCheckingMode": "off",
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter"

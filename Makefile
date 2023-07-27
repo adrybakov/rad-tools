@@ -37,7 +37,7 @@ clean:
 	-@rm -r .venv/bin/rad-*
 
 test: 
-	-@pytest -s
+	@pytest -s
 
 install:
 	@pip install .
@@ -144,7 +144,7 @@ example-plot-dos-gallery:
 	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/noncollinear-so/ -ew -6.5 6.5 -ef -1.6372 -op docs/examples/rad-plot-dos/noncollinear-so/ 
 	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/noncollinear-so/ -ew -6.5 6.5 -ef -1.6372 -op docs/examples/rad-plot-dos/noncollinear-so/ -r -n
 
-examples: install example-plot-dos example-identify-wannier-centres example-make-template example-plot-tb2j example-extract-tb2j example-plot-dos-gallery
+examples: example-plot-dos example-identify-wannier-centres example-make-template example-plot-tb2j example-extract-tb2j example-plot-dos-gallery
 	@echo "Done"
 
 pictures:

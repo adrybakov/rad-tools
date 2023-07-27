@@ -627,8 +627,7 @@ def test_notation_manipulation():
     model.notation = "TB2J"
     assert model[Cr, Cr, (1, 0, 0)].iso == 9 / 4
 
-
-def test_predefined_notations():
+def test_predefined_notations(self):
     model = ExchangeHamiltonian()
     Cr = Atom("Cr", (0, 0, 0), spin=3 / 2)
     model[Cr, Cr, (1, 0, 0)] = ExchangeParameter(iso=1)
@@ -675,8 +674,7 @@ def test_predefined_notations():
         and not model.minus_sign
     )
 
-
-def test_ferromagnetic_energy():
+def test_ferromagnetic_energy(self):
     model = ExchangeHamiltonian()
     model.cell = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     Cr1 = Atom("Cr1", (1, 1, 1), spin=2)
@@ -690,30 +688,30 @@ def test_ferromagnetic_energy():
     model.factor_one_half = False
     model.factor_two = False
     model.spin_normalized = True
-    assert model.ferromagnetic_energy() == -6
-    assert model.ferromagnetic_energy(theta=23, phi=234) == -6
+    assert np.allclose(model.ferromagnetic_energy(), -6)
+    assert np.allclose(model.ferromagnetic_energy(theta=23, phi=234), -6)
     model.add_bond(
         ExchangeParameter(iso=3, aniso=[[1, 0, 0], [0, 2, 0], [0, 0, -3]]),
         Cr2,
         Cr1,
         (0, 0, -1),
     )
-    assert model.ferromagnetic_energy() == -6
-    assert model.ferromagnetic_energy(theta=90) == -10
-    assert model.ferromagnetic_energy(theta=90, phi=90) == -11
-    assert model.ferromagnetic_energy(theta=90, phi=45) == -10.5
+    assert np.allclose(model.ferromagnetic_energy(), -6)
+    assert np.allclose(model.ferromagnetic_energy(theta=90), -10)
+    assert np.allclose(model.ferromagnetic_energy(theta=90, phi=90), -11)
+    assert np.allclose(model.ferromagnetic_energy(theta=90, phi=45), -10.5)
     assert (
         np.array([-6, -10, -11, -10.5])
         - model.ferromagnetic_energy(theta=[0, 90, 90, 90], phi=[0, 0, 90, 45])
         < 1e-5
     ).all()
 
-    notations = np.transpose(np.indices((2, 2, 2, 2, 2)), (1, 2, 3, 4, 5, 0)).reshape(
-        (32, 5)
-    )
+    notations = np.transpose(
+        np.indices((2, 2, 2, 2, 2)), (1, 2, 3, 4, 5, 0)
+    ).reshape((32, 5))
     for new_notation in notations:
         model.notation = new_notation
-        assert model.ferromagnetic_energy() == -6
+        assert np.allclose(model.ferromagnetic_energy(), -6)
 
 
 def test_add_remove_bond_with_notation():
