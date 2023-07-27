@@ -627,7 +627,7 @@ def test_notation_manipulation():
     model.notation = "TB2J"
     assert model[Cr, Cr, (1, 0, 0)].iso == 9 / 4
 
-def test_predefined_notations(self):
+def test_predefined_notations():
     model = ExchangeHamiltonian()
     Cr = Atom("Cr", (0, 0, 0), spin=3 / 2)
     model[Cr, Cr, (1, 0, 0)] = ExchangeParameter(iso=1)
@@ -674,7 +674,7 @@ def test_predefined_notations(self):
         and not model.minus_sign
     )
 
-def test_ferromagnetic_energy(self):
+def test_ferromagnetic_energy():
     model = ExchangeHamiltonian()
     model.cell = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     Cr1 = Atom("Cr1", (1, 1, 1), spin=2)
