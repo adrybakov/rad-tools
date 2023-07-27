@@ -42,7 +42,7 @@ test:
 install:
 	@pip install .
 
-test-all: clean install test html doctest
+test-all: clean install test pictures examples html doctest
 	@echo "Done"
 
 
