@@ -133,7 +133,7 @@ def plot_projected(
                 label_up = f"{total_label} (up)"
                 label_down = f"{total_label} (down)"
             if relative:
-                if i == 0:
+                if i == 0 and total_label is not None:
                     ax.plot(
                         pdos.energy,
                         pdos.ldos[0],
@@ -170,24 +170,25 @@ def plot_projected(
                     # alpha=0.5,
                 )
             else:
-                ax.fill_between(
-                    pdos.energy,
-                    0,
-                    pdos.ldos[0],
-                    lw=0,
-                    color="blue",
-                    alpha=0.2,
-                    label=label_up,
-                )
-                ax.fill_between(
-                    pdos.energy,
-                    0,
-                    -pdos.ldos[1],
-                    lw=0,
-                    color="red",
-                    alpha=0.2,
-                    label=label_down,
-                )
+                if total_label is not None:
+                    ax.fill_between(
+                        pdos.energy,
+                        0,
+                        pdos.ldos[0],
+                        lw=0,
+                        color="blue",
+                        alpha=0.2,
+                        label=label_up,
+                    )
+                    ax.fill_between(
+                        pdos.energy,
+                        0,
+                        -pdos.ldos[1],
+                        lw=0,
+                        color="red",
+                        alpha=0.2,
+                        label=label_down,
+                    )
 
                 ax.plot(
                     pdos.energy,
@@ -211,7 +212,7 @@ def plot_projected(
             if total_label == "default":
                 total_label = pdos.projectors_group
             if relative:
-                if i == 0:
+                if i == 0 and total_label is not None:
                     ax.plot(
                         pdos.energy,
                         pdos.ldos,
@@ -232,15 +233,16 @@ def plot_projected(
                 )
 
             else:
-                ax.fill_between(
-                    pdos.energy,
-                    0,
-                    pdos.ldos,
-                    lw=0,
-                    color="black",
-                    alpha=0.3,
-                    label=total_label,
-                )
+                if total_label is not None:
+                    ax.fill_between(
+                        pdos.energy,
+                        0,
+                        pdos.ldos,
+                        lw=0,
+                        color="black",
+                        alpha=0.3,
+                        label=total_label,
+                    )
                 ax.plot(
                     pdos.energy,
                     pdos[projector],
