@@ -19,6 +19,25 @@ Classes
     atom
     kpoints
 
+Identification routines
+=======================
+
+.. autosummary::
+    :toctree: generated/
+
+    niggli
+    lepage
+
+Properties
+==========
+
+.. autosummary::
+    :toctree: generated/
+
+    dipole_dipole_energy
+    dipole_dipole_interaction
+
+
 Bravais lattices
 ================
 
@@ -105,21 +124,3 @@ Lattice variations
     RHL_variation
     MCLC_variation
     TRI_variation
-
-Identification routines
-=======================
-
-.. autosummary::
-    :toctree: generated/
-
-    niggli
-    lepage
-
-Properties
-==========
-
-.. autosummary::
-    :toctree: generated/
-
-    dipole_dipole_energy
-    dipole_dipole_interaction

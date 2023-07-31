@@ -23,7 +23,7 @@ Ground state input
 Two types of ground state is supported: 
 
 * arbitrary directions of spin in the unit cell (or supercell)
-* + single-Q incommensurate structure.
+* single-Q incommensurate structure.
 
 To define direction of spins in the supercell use :ref:`rad-plot-tb2j-magnons_spin` parameter:
 

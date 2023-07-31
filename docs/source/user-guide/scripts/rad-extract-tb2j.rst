@@ -9,7 +9,7 @@ Script for extracting of template-based Hamiltonian from
 
 .. versionchanged: 0.6 Renamed from ``tb2j-extractor.py``
 
-If :ref:`--output_name <rad-extract-tb2j_output-name>` is not provided the result is 
+If :ref:`--output_name <rad-extract-tb2j_output-name>` is not provided, then the result is 
 passed to the console, otherwise it is written to the file with first 3 lines 
 giving information about the source of exchange, date and time.
 

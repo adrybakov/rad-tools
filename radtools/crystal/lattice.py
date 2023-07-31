@@ -1673,23 +1673,29 @@ class Lattice:
         if normalize:
             cell /= volume(cell) ** (1 / 3.0)
 
-        for point in self.kpoints.hs_points:
+        for point in self.kpoints.hs_names:
             self._artists[artist_group].append(
                 ax.scatter(
-                    *tuple(self.kpoints[point] @ cell),
+                    *tuple(self.kpoints.hs_coordinates[point] @ cell),
                     s=36,
                     color=colour,
                 )
             )
+            if point == "S" and self.type() == "BCT":
+                label="$\\Sigma$"
+            elif point == "S1" and self.type() == "BCT":
+                label="$\\Sigma_1$"
+            else:
+                label=HS_PLOT_NAMES[point]
             self._artists[artist_group].append(
                 ax.text(
                     *tuple(
-                        self.kpoints[point] @ cell
+                        self.kpoints.hs_coordinates[point] @ cell
                         + 0.025 * cell[0]
                         + +0.025 * cell[1]
                         + 0.025 * cell[2]
                     ),
-                    self._PLOT_NAMES[point],
+                    label,
                     fontsize=20,
                     color=colour,
                 )
@@ -1706,15 +1712,15 @@ class Lattice:
                 )
             )
 
-        for subpath in self.path:
+        for subpath in self.kpoints.path:
             for i in range(len(subpath) - 1):
                 self._artists[artist_group].append(
                     ax.plot(
                         *tuple(
                             np.concatenate(
                                 (
-                                    self.kpoints[subpath[i]] @ cell,
-                                    self.kpoints[subpath[i + 1]] @ cell,
+                                    self.kpoints.hs_coordinates[subpath[i]] @ cell,
+                                    self.kpoints.hs_coordinates[subpath[i + 1]] @ cell,
                                 )
                             )
                             .reshape(2, 3)

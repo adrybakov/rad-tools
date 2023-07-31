@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from math import sqrt
+from math import sqrt, pi, asin
 from os import makedirs
 from os.path import abspath, join
 
@@ -9,6 +9,8 @@ from termcolor import cprint
 
 from radtools.io.internal import read_template
 from radtools.io.tb2j import read_tb2j_model
+
+from radtools.constants import TODEGREES
 
 
 def rot_angle(x, y, dummy=False):
@@ -33,13 +35,13 @@ def rot_angle(x, y, dummy=False):
         raise ValueError("Angle is ill defined (x = y = 0).")
     if x > 0:
         if y > 0:
-            return asin(sin) / pi * 180
+            return asin(sin) * TODEGREES
         elif y == 0:
             return 0
         elif y < 0:
             if not dummy:
-                return -asin(sin) / pi * 180
-            return 360 - asin(sin) / pi * 180
+                return -asin(sin) * TODEGREES
+            return 360 - asin(sin) * TODEGREES
     elif x == 0:
         if y > 0:
             return 90
@@ -52,16 +54,16 @@ def rot_angle(x, y, dummy=False):
     elif x < 0:
         if y > 0:
             if not dummy:
-                return -asin(sin) / pi * 180
-            return 180 - asin(sin) / pi * 180
+                return -asin(sin) * TODEGREES
+            return 180 - asin(sin) * TODEGREES
         elif y == 0:
             if not dummy:
                 return 0
             return 180
         elif y < 0:
             if not dummy:
-                return asin(sin) / pi * 180
-            return 180 + asin(sin) / pi * 180
+                return asin(sin) * TODEGREES
+            return 180 + asin(sin) * TODEGREES
 
 
 def atom_mark_to_latex(mark):
@@ -179,9 +181,9 @@ def manager(
         ax.set_ylabel("y, Angstroms")
 
         for atom1, atom2, R, J in model:
-            dis = model.crystal.get_distance(atom1, atom2, R)
-            x1, y1, z1 = model.crystal.get_atom_coordinates(atom1)
-            x2, y2, z2 = model.crystal.get_atom_coordinates(atom2, R)
+            dis = model.get_distance(atom1, atom2, R)
+            x1, y1, z1 = model.get_atom_coordinates(atom1, relative=False)
+            x2, y2, z2 = model.get_atom_coordinates(atom2, R, relative=False)
             xm = (x1 + x2) / 2
             ym = (y1 + y2) / 2
             zm = (z1 + z2) / 2

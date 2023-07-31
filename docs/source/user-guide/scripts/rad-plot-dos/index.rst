@@ -630,7 +630,8 @@ Labels for the custom plots.
 
 Amount of labels have to be the same as the amount of custom strings, or one more.
 If one more, then first one is interpreted as the label for the background 
-(Use "None" to switch it off).
+(Use "None" to switch it off). If the amount of argument is one more  and the first one is None, 
+then the label for the total PDOS is switched off and the total PDOS itself is not plotted.
 
 
 .. code-block:: text

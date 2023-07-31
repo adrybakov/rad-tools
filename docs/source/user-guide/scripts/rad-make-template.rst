@@ -52,7 +52,7 @@ produces the file with the full template:
 
 This template is very long since original TB2J file includes a lot of 
 interaction pairs, lets filter some of them and keep only the interactions 
-with the distance <= 8 Angstroms.
+with the distance less or equal 8 Angstroms.
 
 .. code-block:: bash
 
@@ -64,7 +64,8 @@ with the distance <= 8 Angstroms.
     :language: text
 
 For further usage of the template it is necessary to check if the 
-groups are assigned correctly and regroup if necessary.
+bounds are grouped correctly and regroup if necessary. 
+By default the bonds are grouped by distance.
 
 Check the :ref:`rad-make-template_arguments` section for more sorting options.
 

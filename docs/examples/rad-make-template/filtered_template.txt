@@ -1,5 +1,5 @@
 Template is created based on the file: docs/examples/rad-make-template/exchange.out
-on 29 June 2023 at 14:1:59 by rad-tools 0.7.14
+on 27 July 2023 at 16:47:29 by rad-tools 0.8.0.dev
 
 ====================
 Neighbors template:
@@ -8,24 +8,24 @@ i j R_a R_b R_c
 J1 $J_{1}$
 Ni1  Ni1    0  -1   0
 Ni1  Ni1    0   1   0
-Ni1  Ni1   -1   0   0
 Ni1  Ni1    1   0   0
-Ni1  Ni1   -1  -1   0
+Ni1  Ni1   -1   0   0
 Ni1  Ni1    1   1   0
+Ni1  Ni1   -1  -1   0
 --------------------
 J2 $J_{2}$
-Ni1  Ni1   -1   1   0
 Ni1  Ni1    1  -1   0
+Ni1  Ni1   -1   1   0
 Ni1  Ni1   -1  -2   0
 Ni1  Ni1    1   2   0
-Ni1  Ni1   -2  -1   0
 Ni1  Ni1    2   1   0
+Ni1  Ni1   -2  -1   0
 --------------------
 J3 $J_{3}$
 Ni1  Ni1    0  -2   0
 Ni1  Ni1    0   2   0
-Ni1  Ni1   -2   0   0
 Ni1  Ni1    2   0   0
+Ni1  Ni1   -2   0   0
 Ni1  Ni1   -2  -2   0
 Ni1  Ni1    2   2   0
 ====================
