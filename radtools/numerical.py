@@ -16,6 +16,19 @@ def compare_numerically(x, condition, y, eps=None, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Compare two numbers numerically.
 
+    The approach is taken from [1]_:
+
+    .. math::
+
+        \begin{matrix}
+            x < y  & x < y - \varepsilon \\
+            x > y  & y < x - \varepsilon \\
+            x \le y & \text{ not } (y < x - \varepsilon) \\
+            x \ge y & \text{ not } (x < y - \varepsilon) \\
+            x = y  & \text{ not } (x < y - \varepsilon \text{ or } y < x - \varepsilon) \\
+            x \ne y & x < y - \varepsilon \text{ or } y < x - \varepsilon
+        \end{matrix}
+        
     Parameters
     ----------
     x : float
@@ -25,7 +38,7 @@ def compare_numerically(x, condition, y, eps=None, rtol=REL_TOL, atol=ABS_TOL):
     y : float
         Second number.
     eps : float, optional
-        Tolerance. Used for the comparison if provided. If ``None``, the computed as:
+        Tolerance. Used for the comparison if provided. If ``None``, then computed as:
 
         .. code-block:: python
 
@@ -40,6 +53,13 @@ def compare_numerically(x, condition, y, eps=None, rtol=REL_TOL, atol=ABS_TOL):
     -------
     result: bool
         Whether the condition is satisfied.
+
+    References
+    ----------
+    .. [1] Grosse-Kunstleve, R.W., Sauter, N.K. and Adams, P.D., 2004.
+        Numerically stable algorithms for the computation of reduced unit cells.
+        Acta Crystallographica Section A: Foundations of Crystallography,
+        60(1), pp.1-6.
     """
 
     if eps is None:

@@ -4,8 +4,6 @@
 Exchange module
 ***************
 
-.. automodule:: radtools.exchange
-
 .. currentmodule:: radtools
 
 
@@ -18,3 +16,13 @@ Classes
     hamiltonian
     parameter
     template
+
+Constants
+=========
+
+.. currentmodule:: radtools.exchange.constants
+
+.. autosummary::
+    :toctree: generated/
+
+    PREDEFINED_NOTATIONS

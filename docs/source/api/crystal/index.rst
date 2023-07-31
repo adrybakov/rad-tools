@@ -18,6 +18,7 @@ Classes
     lattice
     atom
     kpoints
+    cell
 
 Identification routines
 =======================
@@ -124,3 +125,26 @@ Lattice variations
     RHL_variation
     MCLC_variation
     TRI_variation
+
+Constants 
+=========
+
+.. currentmodule:: radtools.crystal
+
+.. autosummary::
+    :toctree: generated/
+
+    ABS_TOL
+    REL_TOL
+    MIN_LENGTH
+    MAX_LENGTH
+    ABS_TOL_ANGLE
+    REL_TOL_ANGLE
+    MIN_ANGLE
+    ATOM_TYPES
+    PEARSON_SYMBOLS
+    BRAVAIS_LATTICE_NAMES
+    BRAVAIS_LATTICE_VARIATIONS
+    TRANSFORM_TO_CONVENTIONAL
+    DEFAULT_K_PATHS
+    HS_PLOT_NAMES
