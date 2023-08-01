@@ -6,6 +6,8 @@ All tools from the package.
 """
 
 __version__ = "0.8.0.dev"
+__doclink__ = "rad-tools.org"
+__git_commit__ = "3f7e509ed802064d06d7e7d76b546e6d4d3f46b6"
 
 from . import (
     crystal,
@@ -41,9 +43,3 @@ __all__.extend(score.__all__)
 __all__.extend(constants.__all__)
 __all__.extend(geometry.__all__)
 __all__.extend(numerical.__all__)
-
-
-if __name__ == "__main__":
-    local_variables = dict(locals())
-    for i in local_variables:
-        print(i)

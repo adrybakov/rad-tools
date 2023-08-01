@@ -58,6 +58,11 @@ check-pip:
 	@echo "\x1b[0m"
 	@grep "__version__" radtools/__init__.py
 	@echo "\x1b[33m"
+	@echo "  * Change git commit in __init__.py?"
+	@echo "\x1b[0m"
+	@grep "__git_commit__" radtools/__init__.py
+	@git log --decorate --oneline -1
+	@echo "\x1b[33m"
 	@echo "  * Release note?"
 	@echo "  * Commit all the changes?"
 	@echo "\x1b[0m"
