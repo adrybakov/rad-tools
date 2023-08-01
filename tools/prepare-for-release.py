@@ -1,6 +1,6 @@
 import git
 import sys
-from termcolor import colored
+from termcolor import colored, cprint
 from os.path import join, abspath
 from calendar import month_name
 from datetime import datetime
@@ -46,6 +46,12 @@ def update_init(repo: git.Repo):
             init_file_content[
                 l_i
             ] = f'__release_date__ = "{cd.day} {month_name[cd.month]} {cd.year}"\n'
+        # Get version
+        # TODO add rules for automatic version check
+        # dev -> stable
+        # check versus previous
+        if re.fullmatch("__version__.*\n", line):
+            version = line.split("=")[1].translate(str.maketrans("", "", '" \n'))
 
     # Write __init__.py
     init_file = open(init_file_path, "w")
@@ -53,6 +59,9 @@ def update_init(repo: git.Repo):
     init_file.close()
 
     print("Done")
+
+    # TODO: remove manual version check
+    cprint(f"Check the version: {version}", "yellow")
 
 
 def main():

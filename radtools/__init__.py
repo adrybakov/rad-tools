@@ -7,7 +7,7 @@ All tools from the package.
 
 __version__ = "0.8.0.dev"
 __doclink__ = "rad-tools.org"
-__git_hash__ = "dbe22008559d5c11f8d0e9de16f5f9d52a47f781"
+__git_hash__ = "d92e9f07ee622d3af86dafbf0ad1506bfa10ad34"
 __release_date__ = "1 August 2023"
 
 from . import (

@@ -1,6 +1,8 @@
 from argparse import ArgumentParser
 
 from radtools import __version__, __git_hash__, __doclink__, __release_date__
+from radtools.decorate.logo import logo
+
 
 if __name__ == "__main__":
     parser = ArgumentParser(
@@ -16,13 +18,12 @@ if __name__ == "__main__":
 
     if args.info:
         print(
-            "".join(
+            logo(
                 [
-                    f"rad-tools package\n",
-                    f"version {__version__}\n",
-                    f"Release date: {__release_date__}\n",
-                    f"Git hash: {__git_hash__}\n",
+                    f"Version: {__version__}",
+                    f"Release date: {__release_date__}",
+                    f"Git hash: {__git_hash__}",
                     f"Documentation: {__doclink__}",
-                ]
+                ],
             )
         )
