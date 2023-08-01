@@ -258,3 +258,21 @@ Verbose output, propagates to the called methods.
 .. code-block:: text
 
     default : False
+
+.. _rad-plot-tb2j-magnons_bravais-type:
+
+-bt, --bravais-type
+--------------------
+
+Bravais lattice type. 
+If not provided, the type is identified automatically.
+
+It does not force the Bravais lattice type on the model,
+but tries to reach the desired type by reducing the 
+numerical accuracy in the :py:func:`lepage` algorithm.
+
+.. code-block:: text
+
+    default : None
+    type : str
+    choices : CUB, FCC, BCC, TET, BCT, ORC, ORCF, ORCI, ORCC, HEX, RHL, MCL, MCLC, TRI
