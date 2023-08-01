@@ -1,7 +1,7 @@
 __all__ = ["logo"]
 
 
-def logo(info, line_length=71, volume=True):
+def logo(info, line_length=71, flat=False):
     """
     Logo generator for rad-tools package.
 
@@ -16,6 +16,8 @@ def logo(info, line_length=71, volume=True):
     line_length : int
         Length of the lines to be returned.
         Minimum value is 71.
+    flat : bool
+        Whether to return a flat logo or not.
 
     Returns
     -------
@@ -30,7 +32,7 @@ def logo(info, line_length=71, volume=True):
         "██║  ██║██║  ██║██████╔╝         ██║   ╚█████╔╝╚█████╔╝███████╗██████╔╝",
         "╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝          ╚═╝    ╚════╝  ╚════╝ ╚══════╝╚═════╝ ",
     ]
-    if not volume:
+    if flat:
         logo = [
             "██████   █████  ██████        ████████  █████   █████  ██       ██████ ",
             "██   ██ ██   ██ ██   ██          ██    ██   ██ ██   ██ ██      ██      ",
