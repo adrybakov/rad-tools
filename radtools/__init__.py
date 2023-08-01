@@ -7,7 +7,8 @@ All tools from the package.
 
 __version__ = "0.8.0.dev"
 __doclink__ = "rad-tools.org"
-__git_commit__ = "3f7e509ed802064d06d7e7d76b546e6d4d3f46b6"
+__git_hash__ = "0a4321d52c146ec776b3664acb1ded38f1377c5b"
+__release_date__ = "1 August 2023"
 
 from . import (
     crystal,
@@ -32,7 +33,7 @@ from .constants import *
 from .geometry import *
 from .numerical import *
 
-__all__ = []
+__all__ = ["__version__", "__doclink__", "__git_hash__", "__release_date__"]
 __all__.extend(crystal.__all__)
 __all__.extend(decorate.__all__)
 __all__.extend(dos.__all__)
