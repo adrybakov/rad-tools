@@ -45,16 +45,28 @@ body:
   - type: markdown
     attributes:
       value: |
-        Use command
+        Use command (version >= 0.8)
         ```bash 
-        python3 -c "exec('from radtools import __version__\nprint(__version__)')" 
+        python3 -m radtools --info 
         ``` 
-        in your terminal to check the version of RAD-tools.
+        or (version < 0.8)
+        ```bash
+        python3 -c "exec('from radtools import __version__\nprint(__version__)')" 
+        ```
+        in your terminal to check the version and commit hash of RAD-tools.
   - type: input
     id: version
     attributes:
       label: RAD-tools version
       description: What version of our software are you running? 
-      placeholder: ex. 0.7.15
+      placeholder: ex. 0.8.0
     validations:
       required: false 
+  - type: input
+    id: commit
+    attributes:
+      label: Git commit hash
+      description: What commit is the base for the release?
+      placeholder: only for versions > 0.8
+    validations:
+      required: false
