@@ -155,8 +155,5 @@ examples: example-plot-dos example-identify-wannier-centres example-make-templat
 pictures:
 	@python3 docs/source/user-guide/module/crystal/bravais-lattices/plot_all.py -op docs/source/user-guide/module/crystal/bravais-lattices/
 
-push: examples
-	@git push
-
 check-script-names:
-	@python3 check-script-names.py
+	@python3 tools/check-script-names.py
