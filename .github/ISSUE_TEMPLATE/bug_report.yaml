@@ -28,9 +28,9 @@ body:
       value: |
         Use command
         ```bash 
-        python3 -c "exec('from radtools import __version__\nprint(__version__)')" 
+        python3 -m radtools --info 
         ``` 
-        in your terminal to check the version of RAD-tools.
+        in your terminal to check the version and commit hash of RAD-tools.
   - type: input
     id: version
     attributes:
@@ -39,6 +39,14 @@ body:
       placeholder: ex. 0.7.15
     validations:
       required: true
+  - type: input
+    id: commit
+    attributes:
+      label: Git commit hash
+      description: What commit is the base for the release?
+      placeholder: only for versions > 0.8
+    validations:
+      required: false
   - type: input
     id: python-version
     attributes:
