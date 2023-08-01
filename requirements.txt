@@ -13,3 +13,6 @@ setuptools
 # code-linters
 black
 isort
+
+# dev-tools
+gitpython
