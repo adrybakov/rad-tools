@@ -233,6 +233,41 @@ def check_release_notes(version: str):
             )
 
 
+@envelope(message="Checking if everything is committed and pushed")
+def check_git_status(repo: git.Repo):
+    """
+    Check if everything is committed and pushed.
+
+    Parameters
+    ----------
+    repo : git.Repo
+        Git repository object.
+    """
+    status = repo.git.status()
+    if "nothing to commit, working tree clean" not in status:
+        sys.tracebacklimit = 0
+        raise FATAL(
+            "".join(
+                [
+                    colored("\nThere are uncommitted changes\n", "red"),
+                    "Please commit them:\n\n",
+                    status,
+                ]
+            )
+        )
+    if "Your branch is up to date with" not in status:
+        sys.tracebacklimit = 0
+        raise FATAL(
+            "".join(
+                [
+                    colored("\nThere are unpushed changes\n", "red"),
+                    "Please push them:\n\n",
+                    status,
+                ]
+            )
+        )
+
+
 def main(version: str):
     if version == "undefined":
         sys.tracebacklimit = 0
@@ -250,6 +285,8 @@ def main(version: str):
     repo = git.Repo(search_parent_directories=True)
 
     # check_active_branch(repo)
+
+    check_git_status(repo)
 
     update_init(repo, version=version)
 
