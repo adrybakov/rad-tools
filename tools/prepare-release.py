@@ -286,11 +286,11 @@ def main(version: str):
 
     # check_active_branch(repo)
 
+    check_release_notes(version=version)
+
     check_git_status(repo)
 
     update_init(repo, version=version)
-
-    check_release_notes(version=version)
 
     print(colored(f"{f'{version} ready to deploy':^40}", "green"))
     print(f"{'':=^40}")
