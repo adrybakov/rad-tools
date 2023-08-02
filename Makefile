@@ -60,7 +60,6 @@ check-pip:
 	@echo "\x1b[33m"
 	@git log --decorate --oneline -1
 	@echo "\x1b[33m"
-	@echo "  * Release note?"
 	@echo "  * Commit all the changes?"
 	@echo "\x1b[0m"
 	@git status
