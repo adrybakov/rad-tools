@@ -39,48 +39,13 @@ clean:
 test: 
 	@pytest -s
 
-install:
-	@pip install .
-
-test-all: clean install test pictures examples html doctest
+test-all: clean install test bravais-pictures examples html doctest
 	@echo "Done"
 
 
-VERSION := $(shell grep __version__ radtools/__init__.py | tr -d 'a-zA-Z =_":')
 .ONESHELL:
-check-pip:
-#	@echo "\x1b[33m"
-#	@echo "pip is disabled for your own safety"
-#	@echo "\x1b[0m"
-	@echo "\x1b[33m"
-	@echo "Have you done this?"
-	@echo "  * Change version in __init__.py?"
-	@echo "\x1b[0m"
-	@grep "__version__" radtools/__init__.py
-	@echo "\x1b[33m"
-	@git log --decorate --oneline -1
-	@echo "\x1b[33m"
-	@echo "  * Commit all the changes?"
-	@echo "\x1b[0m"
-	@git status
-	@echo "\x1b[33m"
-	@echo "  * Merge to the stable?"
-	@echo "  * Push to GitHub?"
-	@echo "\x1b[0m"
-	@git log --oneline --all --graph --decorate -10
-	@echo "\x1b[33m"
-	@echo "\x1b[31m"
-	@echo "\x1b[33m"
-	@echo Are all script arguments ok?
-	@echo "\x1b[0m"
-	@make check-script-names
-
-.ONESHELL:
-pip: check-pip
-#	@echo "\x1b[33m"
-#	@echo "pip is disabled for your own safety"
-#	@echo "\x1b[0m"
-	@read -p "Press Enter if yes:"
+pip: prepare-release
+	@read -p "Press Enter to publish to PyPi"
 	-@rm -r dist
 	-@rm -r build
 	-@rm -r radtools.egg-info
@@ -92,17 +57,26 @@ pip: check-pip
 help:
 	@echo "\x1b[31m"
 	@echo "Please specify what do you want to do!"
-	@echo "\x1b[32m"
+	@echo "\x1b[0m"
 	@echo "Available options are:"
+	@echo "    help - show this message"
 	@echo "    html - build the html docs"
 	@echo "    html-examples - update examples and build html docs"
 	@echo "    doctest - run doctests"
+	@echo "    test - execute unit tests"
 	@echo "    clean - clean all files from docs and pip routines"
-	@echo "    test - execute testing suite"
+	@echo "    test-all - execute testing suite"
 	@echo "    pip - publish the package to the PyPi index"
+	@echo "    example-plot-dos - update example of plotting DOS"
+	@echo "    example-identify-wannier-centres - update example of identifying wannier centres"
+	@echo "    example-make-template - update example of making template"
+	@echo "    example-plot-tb2j - update example of plotting tb2j"
+	@echo "    example-extract-tb2j - update example of extracting tb2j"
+	@echo "    example-plot-dos-gallery - update example of plotting DOS gallery"
 	@echo "    examples - update all examples"
-	@echo "    push - update examples and git push"
-	@echo "    check-script-names - check consistency of argument names in scripts"
+	@echo "    bravais-pictures - update pictures of bravais lattices"
+	@echo "    check-scripts - check consistency of argument names in scripts"
+	@echo "    prepare-release - prepare the package for release"
 	@echo "\x1b[0m"
 
 example-plot-dos:
@@ -148,10 +122,10 @@ example-plot-dos-gallery:
 examples: example-plot-dos example-identify-wannier-centres example-make-template example-plot-tb2j example-extract-tb2j example-plot-dos-gallery
 	@echo "Done"
 
-pictures:
+bravais-pictures:
 	@python3 docs/source/user-guide/module/crystal/bravais-lattices/plot_all.py -op docs/source/user-guide/module/crystal/bravais-lattices/
 
-check-script-names:
+check-scripts:
 	@python3 tools/check-scripts.py
 
 VERSION="undefined"
