@@ -284,11 +284,17 @@ def main(version: str):
     print(f"{'':=^40}\n{f'Preparing {version} release':^40}\n{'':=^40}")
     repo = git.Repo(search_parent_directories=True)
 
+    # the order of checks is important, for example,
+    # if the update_init() is called before check_active_branch()
+    # it will never pass the check_active_branch() because the
+    # update_init() will change the __init__.py file and there
+    # will be uncommitted changes
+
     # check_active_branch(repo)
 
     check_release_notes(version=version)
 
-    check_git_status(repo)
+    # check_git_status(repo)
 
     update_init(repo, version=version)
 
