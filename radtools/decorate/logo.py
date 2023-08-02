@@ -1,7 +1,9 @@
+from radtools import __version__, __git_hash__, __doclink__, __release_date__
+
 __all__ = ["logo"]
 
 
-def logo(info, line_length=71, flat=False):
+def logo(info=None, line_length=71, flat=False):
     """
     Logo generator for rad-tools package.
 
@@ -9,10 +11,13 @@ def logo(info, line_length=71, flat=False):
 
     Parameters
     ----------
-    info : list of str
+    info : list of str, optional
         Information about the package.
         will be displayed below the logo.
         Each element should not exceed 59 characters.
+        by default it displays the version, release date,
+        git hash and documentation link. You can pass th empty list
+        to display the logo only.
     line_length : int
         Length of the lines to be returned.
         Minimum value is 71.
@@ -24,6 +29,13 @@ def logo(info, line_length=71, flat=False):
     logo_info : str
         Logo and information about the package.
     """
+    if info is None:
+        info = [
+            f"Version: {__version__}",
+            f"Release date: {__release_date__}",
+            f"Git hash: {__git_hash__}",
+            f"Documentation: {__doclink__}",
+        ]
     logo = [
         "██████╗  █████╗ ██████╗       ████████╗ █████╗  █████╗ ██╗      ██████╗",
         "██╔══██╗██╔══██╗██╔══██╗      ╚══██╔══╝██╔══██╗██╔══██╗██║     ██╔════╝",
