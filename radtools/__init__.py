@@ -5,10 +5,10 @@ All tools from the package.
 |version|
 """
 
-__version__ = "0.8.0.dev"
+__version__ = "0.8.0"
 __doclink__ = "rad-tools.org"
-__git_hash__ = "d92e9f07ee622d3af86dafbf0ad1506bfa10ad34"
-__release_date__ = "1 August 2023"
+__git_hash__ = "b3fff84c857be32262e7bc49330985f975861c8e"
+__release_date__ = "2 August 2023"
 
 from . import (
     crystal,

@@ -58,9 +58,6 @@ check-pip:
 	@echo "\x1b[0m"
 	@grep "__version__" radtools/__init__.py
 	@echo "\x1b[33m"
-	@echo "  * Change git commit in __init__.py?"
-	@echo "\x1b[0m"
-	@grep "__git_commit__" radtools/__init__.py
 	@git log --decorate --oneline -1
 	@echo "\x1b[33m"
 	@echo "  * Release note?"
@@ -156,4 +153,8 @@ pictures:
 	@python3 docs/source/user-guide/module/crystal/bravais-lattices/plot_all.py -op docs/source/user-guide/module/crystal/bravais-lattices/
 
 check-script-names:
-	@python3 tools/check-script-names.py
+	@python3 tools/check-scripts.py
+
+VERSION="undefined"
+prepare-release:
+	@python3 -u tools/prepare-release.py -v $(VERSION)
