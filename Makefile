@@ -58,7 +58,7 @@ help:
 	@echo "\x1b[31m"
 	@echo "Please specify what do you want to do!"
 	@echo "\x1b[0m"
-	@echo "Available options are:"
+	@echo "Available options are:\n"
 	@echo "    help - show this message"
 	@echo "    html - build the html docs"
 	@echo "    html-examples - update examples and build html docs"
@@ -77,7 +77,7 @@ help:
 	@echo "    bravais-pictures - update pictures of bravais lattices"
 	@echo "    check-scripts - check consistency of argument names in scripts"
 	@echo "    prepare-release - prepare the package for release"
-	@echo "\x1b[0m"
+	@echo
 
 example-plot-dos:
 	-@rm -r docs/examples/rad-plot-dos/style-examples/*
