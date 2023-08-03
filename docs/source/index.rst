@@ -13,6 +13,7 @@ RAD-tools
     contribution
 
 :Release: |version|
+:Date: |release_date|
 
 **Useful links**:
 :ref:`Installation <rad-tools_installation>` |

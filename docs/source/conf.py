@@ -1,7 +1,7 @@
 import sys
 from os.path import abspath
 
-from radtools import __version__
+from radtools import __version__, __release_date__
 
 sys.path.insert(0, abspath(".."))
 
@@ -13,6 +13,7 @@ author = "Andrey Rybakov"
 
 # Project version
 version = __version__
+release_date = __release_date__
 
 
 # -- General configuration
@@ -157,6 +158,7 @@ variables_to_export = [
     "project",
     "copyright",
     "version",
+    "release_date",
 ]
 
 frozen_locals = dict(locals())
