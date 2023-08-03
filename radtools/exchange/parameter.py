@@ -3,7 +3,7 @@ Exchange parameter class.
 """
 
 # SELF is introduced in python 3.11, it is too fresh for my taste
-from typing import TypeVar, Union
+from typing import TypeVar
 
 Self = TypeVar("Self", bound="ExchangeParameter")
 

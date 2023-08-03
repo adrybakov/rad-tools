@@ -1,8 +1,8 @@
 .. _api_decorate:
 
-******************************
-Data presentation and plotting
-******************************
+********
+decorate
+********
 
 .. currentmodule:: radtools
 

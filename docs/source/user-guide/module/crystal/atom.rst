@@ -1,4 +1,4 @@
-.. _rad-tools_atom:
+.. _guide_crystal_atom:
 
 ****
 Atom

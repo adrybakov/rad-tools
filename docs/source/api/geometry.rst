@@ -1,7 +1,7 @@
 .. _api_geometry:
 
 ********
-Geometry
+geometry
 ********
 
 .. currentmodule:: radtools

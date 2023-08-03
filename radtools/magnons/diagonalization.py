@@ -1,19 +1,8 @@
 import numpy as np
 from numpy.linalg import LinAlgError
+from radtools.exceptions import ColpaFailed
 
 __all__ = ["solve_via_colpa"]
-
-
-class ColpaFailed(Exception):
-    r"""
-    Raised when Diagonalization via Colpa fails.
-    """
-
-    def __init__(self):
-        self.message = "Diagonalization via Colpa failed."
-
-    def __str__(self):
-        return self.message
 
 
 def solve_via_colpa(D):

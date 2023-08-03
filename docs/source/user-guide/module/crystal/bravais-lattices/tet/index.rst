@@ -1,4 +1,4 @@
-.. _lattice-tet:
+.. _guide_tet:
 
 ****************
 Tetragonal (TET)
@@ -66,4 +66,4 @@ Example structure
 Edge cases
 ==========
 
-If :math:`a = c`, then the lattice is :ref:`lattice-cub`.
+If :math:`a = c`, then the lattice is :ref:`guide_cub`.

@@ -27,7 +27,7 @@ def CUB_hs_points():
     r"""
     Get high-symmetry points for the CUB lattice.
 
-    See :ref:`lattice-cub` for the details.
+    See :ref:`guide_cub` for the details.
 
     Returns
     -------
@@ -47,7 +47,7 @@ def FCC_hs_points():
     r"""
     Get high-symmetry points for the FCC lattice.
 
-    See :ref:`lattice-fcc` for the details.
+    See :ref:`guide_fcc` for the details.
 
     Returns
     -------
@@ -69,7 +69,7 @@ def BCC_hs_points():
     r"""
     Get high-symmetry points for the CUB lattice.
 
-    See :ref:`lattice-bcc` for the details.
+    See :ref:`guide_bcc` for the details.
 
     Returns
     -------
@@ -89,7 +89,7 @@ def TET_hs_points():
     r"""
     Get high-symmetry points for the TET lattice.
 
-    See :ref:`lattice-tet` for the details.
+    See :ref:`guide_tet` for the details.
 
     Returns
     -------
@@ -110,7 +110,7 @@ def BCT_hs_points(variation, conv_a, conv_c):
     r"""
     Get high-symmetry points for the BCT lattice.
 
-    See :ref:`lattice-bct` for the details.
+    See :ref:`guide_bct` for the details.
 
     Parameters
     ----------
@@ -160,7 +160,7 @@ def ORC_hs_points():
     r"""
     Get high-symmetry points for the ORC lattice.
 
-    See :ref:`lattice-orc` for the details.
+    See :ref:`guide_orc` for the details.
 
     Returns
     -------
@@ -183,7 +183,7 @@ def ORCF_hs_points(variation, conv_a, conv_b, conv_c):
     r"""
     Get high-symmetry points for the ORCF lattice.
 
-    See :ref:`lattice-orcf` for the details.
+    See :ref:`guide_orcf` for the details.
 
     Parameters
     ----------
@@ -257,7 +257,7 @@ def ORCI_hs_points(conv_a, conv_b, conv_c):
     r"""
     Get high-symmetry points for the ORCI lattice.
 
-    See :ref:`lattice-orci` for the details.
+    See :ref:`guide_orci` for the details.
 
     Parameters
     ----------
@@ -300,7 +300,7 @@ def ORCC_hs_points(conv_a, conv_b):
     r"""
     Get high-symmetry points for the ORCC lattice.
 
-    See :ref:`lattice-orcc` for the details.
+    See :ref:`guide_orcc` for the details.
 
     Parameters
     ----------
@@ -335,7 +335,7 @@ def HEX_hs_points():
     r"""
     Get high-symmetry points for the HEX lattice.
 
-    See :ref:`lattice-hex` for the details.
+    See :ref:`guide_hex` for the details.
 
     Returns
     -------
@@ -357,7 +357,7 @@ def RHL_hs_points(variation, conv_alpha):
     r"""
     Get high-symmetry points for the RHL lattice.
 
-    See :ref:`lattice-rhl` for the details.
+    See :ref:`guide_rhl` for the details.
 
     Parameters
     ----------
@@ -412,7 +412,7 @@ def MCL_hs_points(conv_b, conv_c, conv_alpha):
     r"""
     Get high-symmetry points for the MCL lattice.
 
-    See :ref:`lattice-mcl` for the details.
+    See :ref:`guide_mcl` for the details.
 
     Parameters
     ----------
@@ -457,7 +457,7 @@ def MCLC_hs_points(variation, conv_a, conv_b, conv_c, conv_alpha):
     r"""
     Get high-symmetry points for the MCLC lattice.
 
-    See :ref:`lattice-mclc` for the details.
+    See :ref:`guide_mclc` for the details.
 
     Parameters
     ----------
@@ -619,7 +619,7 @@ def TRI_hs_points(variation):
     r"""
     Get high-symmetry points for the TRI lattice.
 
-    See :ref:`lattice-tri` for the details.
+    See :ref:`guide_tri` for the details.
 
     Parameters
     ----------

@@ -1,4 +1,4 @@
-.. _rad-tools_lattice:
+.. _guide_crystal_lattice:
 
 .. currentmodule:: radtools
 
@@ -221,7 +221,7 @@ To show the plot use :py:meth:`.Lattice.show` method:
     >>> lattice.show() # doctest: +SKIP
 
 More examples of the plots with the code snippets can be found in the 
-:ref:`rad-tools_bravais-lattices` guide.
+:ref:`guide_crystal_bravais-lattices` guide.
 
 Full list of the available plotting methods can be found in the
 :ref:`api_lattice` reference.
@@ -251,9 +251,9 @@ to access labels of the plot, flatten coordinates, whole list of k points, etc.
 .. note::
 
     For each Bravais lattice class there is a predefined path and set of 
-    kpoints in reciprocal space. See :ref:`rad-tools_bravais-lattices` for more details.
+    kpoints in reciprocal space. See :ref:`guide_crystal_bravais-lattices` for more details.
 
-For the full guide on how to use :py:class:`.Kpoints` class see :ref:`rad-tools_kpoints`.
+For the full guide on how to use :py:class:`.Kpoints` class see :ref:`guide_crystal_kpoints`.
 
 
 

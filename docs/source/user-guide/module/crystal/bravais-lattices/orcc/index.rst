@@ -1,4 +1,4 @@
-.. _lattice-orcc:
+.. _guide_orcc:
 
 ********************************
 Base-centred orthorhombic (ORCC)
@@ -83,7 +83,7 @@ TODO
 
 Edge cases
 ==========
-If :math:`a = b`, then the lattice is :ref:`lattice-tet`.
+If :math:`a = b`, then the lattice is :ref:`guide_tet`.
 
-If :math:`a = b = \sqrt{2} c`, then the lattice is :ref:`lattice-cub`.
+If :math:`a = b = \sqrt{2} c`, then the lattice is :ref:`guide_cub`.
 

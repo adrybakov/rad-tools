@@ -16,37 +16,7 @@ from radtools.exchange.template import ExchangeTemplate
 from radtools.exchange.constants import PREDEFINED_NOTATIONS
 from radtools.decorate.array import print_2d_array
 from radtools.constants import TORADIANS
-
-
-class NotationError(ValueError):
-    r"""
-    Raised when the notation (or individual property) is not defined.
-
-    Gives a summary of the notation (or individual property) and how to set it.
-
-    Parameters
-    ----------
-    name : str
-        Name of the corresponding attribute.
-
-    """
-
-    def __init__(self, name):
-        self.message = (
-            f"\n\nNotation`s interpretation is not set for the property {name}.\n"
-            + f"Set the notation first:\n"
-            + f"    ExchangeHamiltonian.{name} = True  "
-            + f"or  ExchangeHamiltonian.{name} = False\n\n"
-            + f"Note: When the attribute is set for the first time it sets the interpretation, "
-            + "afterwards it change the notation.\n\n"
-            + f"If you want to set the interpretation again, use \n"
-            + f"    ExchangeHamiltonian.set_interpretation({name} = True)"
-            + "\nor\n"
-            + f"    ExchangeHamiltonian.set_interpretation({name} = False)\n"
-        )
-
-    def __str__(self):
-        return self.message
+from radtools.exceptions import NotationError
 
 
 class ExchangeHamiltonian(Crystal):
@@ -1161,6 +1131,32 @@ class ExchangeHamiltonian(Crystal):
         new_model = deepcopy(self)
         new_model.force_symmetry(template=template)
         return new_model
+
+    def dump_txt(self, filename):
+        """
+        Save the Hamiltonian in a Human-readable format.
+
+        Parameters
+        ----------
+        filename : str
+            Name of the file for the Hamiltonian to be saved in.
+        """
+        raise NotImplementedError
+
+    def dump_pickle(self, filename):
+        """
+        Save the Hamiltonian in a binary format.
+
+        Parameters
+        ----------
+        filename : str
+            Name of the file for the Hamiltonian to be saved in.
+            ".pickle" is added automatically.
+        """
+        import pickle
+
+        with open(f"{filename}.pickle", "wb") as file:
+            pickle.dump(self, file)
 
     def summary_as_txt(
         self,

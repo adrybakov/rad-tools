@@ -90,6 +90,15 @@ Individual properties
     ExchangeHamiltonian.factor_two
     ExchangeHamiltonian.minus_sign
 
+Saving and loading
+==================
+
+.. autosummary::
+    :toctree: generated/
+
+    ExchangeHamiltonian.dump_txt
+    ExchangeHamiltonian.dump_pickle
+
 
 Crystal getter
 ==============

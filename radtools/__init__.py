@@ -1,8 +1,5 @@
 r"""
-All tools from the package.
-
-
-|version|
+RAD-tools
 """
 
 __version__ = "0.8.0"
@@ -21,6 +18,7 @@ from . import (
     constants,
     geometry,
     numerical,
+    exceptions,
 )
 from .crystal import *
 from .decorate import *

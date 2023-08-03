@@ -1,4 +1,4 @@
-.. _rad-tools_bravais-lattices:
+.. _guide_crystal_bravais-lattices:
 
 .. currentmodule:: radtools
 

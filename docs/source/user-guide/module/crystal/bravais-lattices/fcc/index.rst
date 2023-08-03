@@ -1,4 +1,4 @@
-.. _lattice-fcc:
+.. _guide_fcc:
 
 ************************
 Face-centred cubic (FCC)

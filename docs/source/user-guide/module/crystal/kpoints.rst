@@ -1,4 +1,4 @@
-.. _rad-tools_kpoints:
+.. _guide_crystal_kpoints:
 
 .. currentmodule:: radtools
 

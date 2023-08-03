@@ -1,4 +1,4 @@
-.. _lattice-mclc:
+.. _guide_mclc:
 
 ******************************
 Base-centred monoclinic (MCLC)

@@ -1,4 +1,4 @@
-.. _rad-tools_io-tb2j:
+.. _guide_io_tb2j:
 
 .. currentmodule:: radtools
 

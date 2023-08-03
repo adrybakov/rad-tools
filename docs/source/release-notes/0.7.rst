@@ -11,7 +11,7 @@ Whats new?
 Major change: name of the package for pip installation is kept the 
 same: "rad-tools". All imports in python code moved to "radtools".
 
-New module, which affected other modules as well: :ref:`rad-tools_crystal`.
+New module, which affected other modules as well: :ref:`guide_crystal`.
 
 
 

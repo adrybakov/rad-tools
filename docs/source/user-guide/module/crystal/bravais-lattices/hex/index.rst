@@ -1,4 +1,4 @@
-.. _lattice-hex:
+.. _guide_hex:
 
 ***************
 Hexagonal (HEX)

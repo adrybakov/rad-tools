@@ -1,8 +1,8 @@
 .. _api_score:
 
-****************
-Script interface
-****************
+*****
+score
+*****
 
 .. automodule:: radtools.score
 

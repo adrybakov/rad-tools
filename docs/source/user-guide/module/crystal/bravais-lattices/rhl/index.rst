@@ -1,4 +1,4 @@
-.. _lattice-rhl:
+.. _guide_rhl:
 
 ******************
 Rhombohedral (RHL)
@@ -123,9 +123,9 @@ Edge cases
 In rhombohedral lattice :math:`a = b = c` and :math:`\alpha = \beta = \gamma`, 
 thus three edge cases exist:
 
-If :math:`\alpha = 60^{\circ}`, then the lattice is :ref:`lattice-fcc`
+If :math:`\alpha = 60^{\circ}`, then the lattice is :ref:`guide_fcc`
 
 If :math:`\alpha \approx 109.47122063^{\circ}` (:math:`\cos(\alpha) = -1/3`), 
-then the lattice is :ref:`lattice-bcc`.
+then the lattice is :ref:`guide_bcc`.
 
-If :math:`\alpha = 90^{\circ}`, then the lattice is :ref:`lattice-cub`.
+If :math:`\alpha = 90^{\circ}`, then the lattice is :ref:`guide_cub`.

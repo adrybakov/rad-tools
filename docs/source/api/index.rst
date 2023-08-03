@@ -19,7 +19,8 @@ The main interface to the package may be imported as
 In the examples across the documentation it is expected to be imported in that way.
 
 
-.. toctree:: 
+.. toctree::
+   :caption: Modules
    :maxdepth: 1
 
    crystal/index

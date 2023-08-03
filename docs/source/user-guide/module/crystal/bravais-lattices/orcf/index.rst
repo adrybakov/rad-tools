@@ -1,4 +1,4 @@
-.. _lattice-orcf:
+.. _guide_orcf:
 
 ********************************
 Face-centred orthorhombic (ORCF)
@@ -197,6 +197,6 @@ TODO
 Edge cases
 ==========
 If :math:`a = b \ne c` or :math:`a = c \ne b` or :math:`b = c \ne a`, 
-then the lattice is :ref:`lattice-bct`.
+then the lattice is :ref:`guide_bct`.
 
-If :math:`a = b = c`, then the lattice is :ref:`lattice-fcc`.
+If :math:`a = b = c`, then the lattice is :ref:`guide_fcc`.

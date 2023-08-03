@@ -2,9 +2,9 @@
 
 .. currentmodule:: radtools
 
-**************
-Crystal module
-**************
+*******
+crystal
+*******
 
 .. versionadded:: 0.7
 

@@ -1,7 +1,7 @@
 .. _api_constants:
 
 *********
-Constants
+constants
 *********
 
 .. versionadded:: 0.8

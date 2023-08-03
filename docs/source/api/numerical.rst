@@ -1,8 +1,8 @@
 .. _api_numerical:
 
-******************
-Numerical accuracy
-******************
+*********
+numerical
+*********
 
 .. currentmodule:: radtools
 

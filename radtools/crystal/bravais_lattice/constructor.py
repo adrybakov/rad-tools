@@ -29,7 +29,7 @@ def CUB(a: float, return_cell=False):
     r"""
     Construct cubic primitive lattice.
 
-    See :ref:`lattice-cub` for the definition of primitive and conventional cells.
+    See :ref:`guide_cub` for the definition of primitive and conventional cells.
 
     Parameters
     ----------
@@ -54,7 +54,7 @@ def FCC(a: float, return_cell=False):
     r"""
     Construct face-centred cubic primitive lattice.
 
-    See :ref:`lattice-fcc` for the definition of primitive and conventional cells.
+    See :ref:`guide_fcc` for the definition of primitive and conventional cells.
 
     Parameters
     ----------
@@ -79,7 +79,7 @@ def BCC(a: float, return_cell=False):
     r"""
     Construct body-centred cubic primitive lattice.
 
-    See :ref:`lattice-bcc` for the definition of primitive and conventional cells.
+    See :ref:`guide_bcc` for the definition of primitive and conventional cells.
 
     Parameters
     ----------
@@ -106,7 +106,7 @@ def TET(a: float, c: float, return_cell=False):
     r"""
     Construct tetragonal primitive lattice.
 
-    See :ref:`lattice-tet` for the definition of primitive and conventional cells.
+    See :ref:`guide_tet` for the definition of primitive and conventional cells.
 
     Parameters
     ----------
@@ -133,7 +133,7 @@ def BCT(a: float, c: float, return_cell=False):
     r"""
     Construct body-centred tetragonal primitive lattice.
 
-    See :ref:`lattice-bct` for the definition of primitive and conventional cells.
+    See :ref:`guide_bct` for the definition of primitive and conventional cells.
 
     Parameters
     ----------
@@ -162,7 +162,7 @@ def ORC(a: float, b: float, c: float, return_cell=False):
     r"""
     Construct orthorhombic primitive lattice.
 
-    See :ref:`lattice-orc` for the definition of primitive and conventional cells.
+    See :ref:`guide_orc` for the definition of primitive and conventional cells.
 
     Order: :math:`a < b < c`. Input is reordered if necessary.
 
@@ -195,7 +195,7 @@ def ORCF(a: float, b: float, c: float, return_cell=False):
     r"""
     Construct face-centred orthorhombic primitive lattice.
 
-    See :ref:`lattice-orcf` for the definition of primitive and conventional cells.
+    See :ref:`guide_orcf` for the definition of primitive and conventional cells.
 
     Order: :math:`a < b < c`. Input is reordered if necessary.
 
@@ -228,7 +228,7 @@ def ORCI(a: float, b: float, c: float, return_cell=False):
     r"""
     Construct body-centred orthorhombic primitive lattice.
 
-    See :ref:`lattice-orci` for the definition of primitive and conventional cells.
+    See :ref:`guide_orci` for the definition of primitive and conventional cells.
 
     Order: :math:`a < b < c`. Input is reordered if necessary.
 
@@ -263,7 +263,7 @@ def ORCC(a: float, b: float, c: float, return_cell=False):
     r"""
     Construct base-centred orthorhombic primitive lattice.
 
-    See :ref:`lattice-orcc` for the definition of primitive and conventional cells.
+    See :ref:`guide_orcc` for the definition of primitive and conventional cells.
 
     Order: :math:`a < b < c`. Input is reordered if necessary.
 
@@ -296,7 +296,7 @@ def HEX(a: float, c: float, return_cell=False):
     r"""
     Construct hexagonal primitive lattice.
 
-    See :ref:`lattice-hex` for the definition of primitive and conventional cells.
+    See :ref:`guide_hex` for the definition of primitive and conventional cells.
 
     Parameters
     ----------
@@ -325,7 +325,7 @@ def RHL(a: float, alpha: float, return_cell=False):
     r"""
     Construct rhombohedral primitive lattice.
 
-    See :ref:`lattice-rhl` for the definition of primitive and conventional cells.
+    See :ref:`guide_rhl` for the definition of primitive and conventional cells.
 
     Condition :math:`\alpha < 120^{\circ}` is assumed.
 
@@ -368,7 +368,7 @@ def MCL(a: float, b: float, c: float, alpha: float, return_cell=False):
     r"""
     Construct monoclinic primitive lattice.
 
-    See :ref:`lattice-mcl` for the definition of primitive and conventional cells.
+    See :ref:`guide_mcl` for the definition of primitive and conventional cells.
 
     Order: :math:`b \le c`, :math:`\alpha < 90^{\circ}`. Input is reordered if necessary.
 
@@ -406,7 +406,7 @@ def MCLC(a: float, b: float, c: float, alpha: float, return_cell=False):
     r"""
     Construct base-centred monoclinic primitive lattice.
 
-    See :ref:`lattice-mclc` for the definition of primitive and conventional cells.
+    See :ref:`guide_mclc` for the definition of primitive and conventional cells.
 
     Order: :math:`b \le c`, :math:`\alpha < 90^{\circ}`. Input is reordered if necessary.
 
@@ -460,7 +460,7 @@ def TRI(
     r"""
     Construct triclinic primitive lattice.
 
-    See :ref:`lattice-tri` for the definition of primitive and conventional cells.
+    See :ref:`guide_tri` for the definition of primitive and conventional cells.
 
     Parameters
     ----------

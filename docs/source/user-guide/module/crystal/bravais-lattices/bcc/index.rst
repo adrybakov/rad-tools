@@ -1,4 +1,4 @@
-.. _lattice-bcc:
+.. _guide_bcc:
 
 *************************
 Body-centered cubic (BCC)

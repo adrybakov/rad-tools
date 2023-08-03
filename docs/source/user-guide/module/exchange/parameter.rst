@@ -1,4 +1,4 @@
-.. _rad-tools_parameter:
+.. _guide_exchange_parameter:
 
 .. currentmodule:: radtools
 

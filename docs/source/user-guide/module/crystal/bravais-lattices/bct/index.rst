@@ -1,4 +1,4 @@
-.. _lattice-bct:
+.. _guide_bct:
 
 *****************************
 Body-centred tetragonal (BCT)
@@ -129,4 +129,4 @@ BCT\ :sub:`2`
 Edge cases
 ==========
 
-If :math:`a = c` then the lattice is :ref:`lattice-bcc`.
+If :math:`a = c` then the lattice is :ref:`guide_bcc`.

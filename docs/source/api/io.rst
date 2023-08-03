@@ -1,8 +1,8 @@
 .. _api_io:
 
-************
-Input-output
-************
+**
+io
+**
 
 .. automodule:: radtools.io
 

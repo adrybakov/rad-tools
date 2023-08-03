@@ -1,8 +1,8 @@
 .. _api_dos:
 
-*******************************
-Density of state postprocessing
-*******************************
+***
+dos
+***
 
 .. automodule:: radtools.dos
 

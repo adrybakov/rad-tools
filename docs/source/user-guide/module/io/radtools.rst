@@ -1,4 +1,4 @@
-.. _rad-tools_io-radtools:
+.. _guide_io_radtools:
 
 .. currentmodule:: radtools
 

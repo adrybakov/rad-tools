@@ -1,4 +1,4 @@
-.. _rad-tools_routines:
+.. _guide_routines:
 
 .. currentmodule:: radtools
 

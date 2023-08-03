@@ -1,4 +1,4 @@
-.. _lattice-orc:
+.. _guide_orc:
 
 ******************
 Orthorhombic (ORC)
@@ -75,6 +75,6 @@ TODO
 Edge cases
 ==========
 If :math:`a = b \ne c` or :math:`a = c \ne b` or :math:`b = c \ne a`, 
-then the lattice is :ref:`lattice-tet`.
+then the lattice is :ref:`guide_tet`.
 
-If :math:`a = b = c`, then the lattice is :ref:`lattice-cub`.
+If :math:`a = b = c`, then the lattice is :ref:`guide_cub`.

@@ -1,4 +1,4 @@
-.. _lattice-cub:
+.. _guide_cub:
 
 ***********
 Cubic (CUB)

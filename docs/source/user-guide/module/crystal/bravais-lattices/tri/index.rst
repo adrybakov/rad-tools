@@ -1,4 +1,4 @@
-.. _lattice-tri:
+.. _guide_tri:
 
 ***************
 Triclinic (TRI)

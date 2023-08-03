@@ -19,21 +19,18 @@ class Crystal(Lattice):
     It is a child of Lattice class.
 
     Iterable over atoms. All attributes of the :py:class:`.Lattice`
-    are accessible directly from the crystal or from the lattice attribute,
-    i.e. the following lines are equivalent:
+    are accessible directly from the crystal:
 
     .. doctest::
 
         >>> import radtools as rad
         >>> cub = rad.lattice_example("CUB")
         >>> crystal = rad.Crystal(cub)
-        >>> crystal.lattice.pearson_symbol
-        'cP'
         >>> crystal.pearson_symbol
         'cP'
 
     For the full description of the lattice attributes and methods
-    see :ref:`rad-tools_lattice`.
+    see :ref:`guide_crystal_lattice`.
 
     Parameters
     ----------
@@ -114,7 +111,7 @@ class Crystal(Lattice):
         You can use it to play with the crystal`s lattice independently,
         but it will not affect the crystal itself.
 
-        See :ref:`rad-tools_lattice` for details.
+        See :ref:`guide_crystal_lattice` for details.
 
         Returns
         -------

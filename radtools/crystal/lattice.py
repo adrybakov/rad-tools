@@ -833,7 +833,7 @@ class Lattice:
         .. doctest::
 
             >>> import radtools as rad
-            >>> l = rad.lattice_example("cub")
+            >>> l = rad.lattice_example("CUB")
             >>> l.variation
             'CUB'
 
@@ -1682,11 +1682,11 @@ class Lattice:
                 )
             )
             if point == "S" and self.type() == "BCT":
-                label="$\\Sigma$"
+                label = "$\\Sigma$"
             elif point == "S1" and self.type() == "BCT":
-                label="$\\Sigma_1$"
+                label = "$\\Sigma_1$"
             else:
-                label=HS_PLOT_NAMES[point]
+                label = HS_PLOT_NAMES[point]
             self._artists[artist_group].append(
                 ax.text(
                     *tuple(

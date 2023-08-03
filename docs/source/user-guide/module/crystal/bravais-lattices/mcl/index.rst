@@ -1,4 +1,4 @@
-.. _lattice-mcl:
+.. _guide_mcl:
 
 ****************
 Monoclinic (MCL)
@@ -79,20 +79,20 @@ Edge cases
 ==========
 
 If (:math:`\alpha = 60^{\circ}` or :math:`\alpha = 120^{\circ}`) and :math:`b = c`, 
-then the lattice is :ref:`lattice-hex`.
+then the lattice is :ref:`guide_hex`.
 
 If (:math:`\alpha = 30^{\circ}` or :math:`\alpha = 150^{\circ}`
 or :math:`\alpha = 45^{\circ}` or :math:`\alpha = 145^{\circ}`) and :math:`b = c`, 
-then the lattice is :ref:`lattice-orcc`.
+then the lattice is :ref:`guide_orcc`.
 
 If (:math:`\alpha = 60^{\circ}` or :math:`\alpha = 120^{\circ}`) and :math:`a \ne b = c/2`, 
-then the lattice is :ref:`lattice-orc`.
+then the lattice is :ref:`guide_orc`.
 
-If :math:`a \ne b \ne c` and :math:`\alpha = 90^{\circ}`, then the lattice is :ref:`lattice-orc`.
+If :math:`a \ne b \ne c` and :math:`\alpha = 90^{\circ}`, then the lattice is :ref:`guide_orc`.
 
 If (:math:`\alpha = 60^{\circ}` or :math:`\alpha = 120^{\circ}`) and :math:`a = b = c/2`, 
-then the lattice is :ref:`lattice-tet`.
+then the lattice is :ref:`guide_tet`.
 
-If (:math:`a = b \ne c` or :math:`a = c \ne b` or :math:`b = c \ne a`) and :math:`\alpha = 90^{\circ}`, then the lattice is :ref:`lattice-tet`.
+If (:math:`a = b \ne c` or :math:`a = c \ne b` or :math:`b = c \ne a`) and :math:`\alpha = 90^{\circ}`, then the lattice is :ref:`guide_tet`.
 
-If :math:`a = b = c` and :math:`\alpha = 90^{\circ}`, then the lattice is :ref:`lattice-cub`.
+If :math:`a = b = c` and :math:`\alpha = 90^{\circ}`, then the lattice is :ref:`guide_cub`.

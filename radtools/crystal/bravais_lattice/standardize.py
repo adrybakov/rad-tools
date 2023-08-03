@@ -78,7 +78,7 @@ def CUB_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the CUB lattice conditions.
 
-    See :ref:`lattice-cub` for the details.
+    See :ref:`guide_cub` for the details.
 
     Parameters
     ----------
@@ -104,7 +104,7 @@ def FCC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the FCC lattice conditions.
 
-    See :ref:`lattice-fcc` for the details.
+    See :ref:`guide_fcc` for the details.
 
     Parameters
     ----------
@@ -130,7 +130,7 @@ def BCC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the BCC lattice conditions.
 
-    See :ref:`lattice-bcc` for the details.
+    See :ref:`guide_bcc` for the details.
 
     Parameters
     ----------
@@ -156,7 +156,7 @@ def TET_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the TET lattice conditions.
 
-    See :ref:`lattice-tet` for the details.
+    See :ref:`guide_tet` for the details.
 
     Parameters
     ----------
@@ -189,7 +189,7 @@ def BCT_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the BCT lattice conditions.
 
-    See :ref:`lattice-bct` for the details.
+    See :ref:`guide_bct` for the details.
 
     Parameters
     ----------
@@ -221,7 +221,7 @@ def ORC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORC lattice conditions.
 
-    See :ref:`lattice-orc` for the details.
+    See :ref:`guide_orc` for the details.
 
     Parameters
     ----------
@@ -258,7 +258,7 @@ def ORCF_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORCF lattice conditions.
 
-    See :ref:`lattice-orcf` for the details.
+    See :ref:`guide_orcf` for the details.
 
     Parameters
     ----------
@@ -304,7 +304,7 @@ def ORCI_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORCI lattice conditions.
 
-    See :ref:`lattice-orci` for the details.
+    See :ref:`guide_orci` for the details.
 
     Parameters
     ----------
@@ -352,7 +352,7 @@ def ORCC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the ORCC lattice conditions.
 
-    See :ref:`lattice-orcc` for the details.
+    See :ref:`guide_orcc` for the details.
 
     Parameters
     ----------
@@ -395,7 +395,7 @@ def HEX_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the HEX lattice conditions.
 
-    See :ref:`lattice-hex` for the details.
+    See :ref:`guide_hex` for the details.
 
     Parameters
     ----------
@@ -430,7 +430,7 @@ def RHL_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the RHL lattice conditions.
 
-    See :ref:`lattice-rhl` for the details.
+    See :ref:`guide_rhl` for the details.
 
     Parameters
     ----------
@@ -456,7 +456,7 @@ def MCL_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the MCL lattice conditions.
 
-    See :ref:`lattice-mcl` for the details.
+    See :ref:`guide_mcl` for the details.
 
     Parameters
     ----------
@@ -502,7 +502,7 @@ def MCLC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the MCLC lattice conditions.
 
-    See :ref:`lattice-mclc` for the details.
+    See :ref:`guide_mclc` for the details.
 
     Parameters
     ----------
@@ -550,7 +550,7 @@ def TRI_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL, resiprocal=False):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the TRI lattice conditions.
 
-    See :ref:`lattice-tri` for the details.
+    See :ref:`guide_tri` for the details.
 
     Parameters
     ----------

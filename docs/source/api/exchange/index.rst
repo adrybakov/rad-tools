@@ -1,8 +1,8 @@
 .. _api_exchange:
 
-***************
-Exchange module
-***************
+********
+exchange
+********
 
 .. currentmodule:: radtools
 

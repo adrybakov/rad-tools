@@ -1,6 +1,6 @@
 #! /usr/local/bin/python3
 
-from radtools.osfix import _winwait
+from radtools._osfix import _winwait
 from radtools.score.extract_tb2j import create_parser, manager
 
 if __name__ == "__main__":

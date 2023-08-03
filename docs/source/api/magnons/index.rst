@@ -1,7 +1,7 @@
 .. _api_magnons:
 
 *******
-Magnons
+magnons
 *******
 
 .. automodule:: radtools.magnons
