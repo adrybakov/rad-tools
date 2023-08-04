@@ -18,7 +18,7 @@ It is a child of the the :py:class:`.Lattice` and utilize
 Creation of the Crystal
 =======================
 
-Crystal constructor take two optional arguments:
+Crystal constructor takes two optional arguments:
 
 * ``lattice`` - instance of the :py:class:`.Lattice` class, which defines the unit cell.
 * ``atoms`` - list of the :py:class:`.Atom` instances, which defines the set of atoms in the unit cell.
