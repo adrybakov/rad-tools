@@ -45,10 +45,16 @@ def lattice_example(
         If no math found a list with available examples is returned.
     """
 
-    if (
-        not isinstance(lattice_name, str)
-        or lattice_name not in BRAVAIS_LATTICE_VARIATIONS
-    ):
+    correct_inputs = set(map(lambda x: x.lower(), BRAVAIS_LATTICE_VARIATIONS)).union(
+        set(
+            map(
+                lambda x: x.translate(str.maketrans("", "", "12345ab")).lower(),
+                BRAVAIS_LATTICE_VARIATIONS,
+            )
+        )
+    )
+
+    if not isinstance(lattice_name, str) or lattice_name.lower() not in correct_inputs:
         message = (
             f"There is no {lattice_name} Bravais lattice. Available examples are:\n"
         )

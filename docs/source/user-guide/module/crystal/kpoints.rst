@@ -17,22 +17,33 @@ It is used to generate full kpoints path both for calculation and for plotting.
 Creation
 ========
 
+Usually it is created from some :py:class`.Lattice` (or :py:class`.Crystal`):
+
+.. doctest::
+
+    >>> from radtools import Kpoints, lattice_example
+    >>> lattice = lattice_example("CUB")
+    >>> kp = lattice.kpoints
+    >>> kp.hs_names
+    ['G', 'M', 'R', 'X']
+
+However, it could be created explicitly:
+
 .. doctest::
 
     >>> from radtools import Kpoints
-    >>> points = {"Gamma": [0, 0, 0], "K": [0.5, 0.5, 0]}
-    >>> labels = {"Gamma" : R"$\Gamma$", "K" : "K"}
-    >>> kp = Kpoints(points, labels)
-
-Constructor can take two additional optional keyword arguments:
-
-* :py:attr:`.Kpoints.n`
-* :py:attr:`.Kpoints.path`
+    >>> b1, b2, b3 = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+    >>> names = ["G", "X"]
+    >>> coordinates = [[0,0,0], [0.5,0,0]]
+    >>> labels = [R"$\Gamma$", "X"]
+    >>> kp = Kpoints(b1, b2, b3, names=names, coordinates=coordinates, labels=labels)
+    >>> kp.hs_names
+    ['G', 'X']
 
 Settings
 ========
 
-After the creation it has two parameters, which can be set: 
+After the creation you can add high symmetry kpoints, set the amount of kpoints between them and path: 
 
 * :py:attr:`.Kpoints.n`
 
@@ -49,40 +60,53 @@ The amount of kpoints to be generated between each pair of high symmetry points 
 
 * :py:attr:`.Kpoints.path`
 
-The path itself. We use a specific format in the package: "Gamma-K-X|R-S".
+The path itself. We use a specific format in the package: "G-K-X|R-S".
 "-" separates high symmetry points in each subpath, "|" separates sections of the path.  
-In the example n points are generated between "Gamma" and "K", between "K" ans "X", 
+In the example n points are generated between "G" and "K", between "K" ans "X", 
 between "R" and "S", but not between "X" and "R".
 By default path is constructed from the list of points.
 
 .. doctest::
 
     >>> from radtools import Kpoints
-    >>> points = {"Gamma": [0, 0, 0], "K": [0.5, 0.5, 0], "X": [0.5, 0, 0], "R": [0.5, 0.5, 0.5]}
-    >>> labels = {"Gamma" : R"$\Gamma$", "K" : "K", "X" : "X", "R": "R"}
-    >>> kp = Kpoints(points, labels)
+    >>> b1, b2, b3 = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+    >>> names = ["G", "K", "X", "R"]
+    >>> coordinates = [[0, 0, 0], [0.5, 0.5, 0], [0.5, 0, 0], [0.5, 0.5, 0.5]]
+    >>> labels = ["$\Gamma$", "K", "X", "R"]
+    >>> kp = Kpoints(b1, b2, b3, names=names, coordinates=coordinates, labels=labels)
     >>> kp.path
-    [['Gamma', 'K', 'X', 'R']]
+    [['G', 'K', 'X', 'R']]
     >>> # It cause an Error, because high symmetry point "S" is not defined
-    >>> kp.path = "Gamma-K-X|R-S"
+    >>> kp.path = "G-K-X|R-S"
     Traceback (most recent call last):
     ...
     ValueError: Point 'S' is not defined. Defined points are:
-      Gamma : [0 0 0]
+      G : [0 0 0]
       K : [0.5 0.5 0. ]
       X : [0.5 0.  0. ]
       R : [0.5 0.5 0.5]
-    >>> kp.path = "Gamma-K-X|R-Gamma"
+    >>> kp.path = "G-K-X|R-G"
     >>> kp.path
-    [['Gamma', 'K', 'X'], ['R', 'Gamma']]
+    [['G', 'K', 'X'], ['R', 'G']]
+    >>> kp.add_hs_point(name="S", coordinates=[0.5, 0.5, 0.5], label="S")
+    >>> kp.path = "G-K-X|R-S"
+    >>> kp.path
+    [['G', 'K', 'X'], ['R', 'S']]
+    >>> kp.path_string
+    'G-K-X|R-S'
 
 .. note::
 
     Internally RAD-tools stores the path as a list of subpaths, where each subpath
-    is a list of high symmetry points. Ths format is also correct for assigning the path attribute.
+    is a list of high symmetry points. This format is also correct for assigning the path attribute.
 
-Properties for calculation
-==========================
+Usage
+=====
+
+Once the setting of the Kpoints are done, it can be used for calculation or plotting.
+
+Calculation
+-----------
 
 There is one property suitable for calculation: :py:attr:`Kpoints.points`. which is an array 
 of all generated kpoints. For each pair of high symmetry points it generates :py:attr:`Kpoints.n`
@@ -91,10 +115,12 @@ between them. The first and the last points are always the high symmetry points 
 .. doctest::
 
     >>> from radtools import Kpoints
-    >>> points = {"Gamma": [0, 0, 0], "K": [0.5, 0.5, 0], "X": [0.5, 0, 0]}
-    >>> labels = {"Gamma" : R"$\Gamma$", "K" : "K", "X" : "X"}
-    >>> kp = Kpoints(points, labels, n=4)
-    >>> kp.points
+    >>> b1, b2, b3 = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+    >>> names = ["G", "K", "X"]
+    >>> coordinates = [[0, 0, 0], [0.5, 0.5, 0], [0.5, 0, 0]]
+    >>> labels = ["$\Gamma$", "K", "X"]
+    >>> kp = Kpoints(b1, b2, b3, names=names, coordinates=coordinates, labels=labels, n=4)
+    >>> kp.points()
     array([[0. , 0. , 0. ],
            [0.1, 0.1, 0. ],
            [0.2, 0.2, 0. ],
@@ -127,33 +153,25 @@ between them. The first and the last points are always the high symmetry points 
                [0.5, 0.1, 0. ],
                [0.5, 0. , 0. ]]) # <--- X
 
-Properties for plotting
-=======================
+Plotting
+========
 
 For plotting there are three properties. Two of them are for the high symmetry points
-And describe the labels and position of ticks on the x-axis:
+and describe the labels and position of ticks on the x-axis:
 
 .. doctest::
 
-    >>> from radtools import Kpoints
-    >>> points = {"Gamma": [0, 0, 0], "K": [0.5, 0.5, 0], "X": [0.5, 0, 0]}
-    >>> labels = {"Gamma" : R"$\Gamma$", "K" : "K", "X" : "X"}
-    >>> kp = Kpoints(points, labels, n=4)
     >>> kp.labels
     ['$\\Gamma$', 'K', 'X']
     >>> import numpy as np
-    >>> np.around(kp.coordinates, decimals=4)    
+    >>> np.around(kp.coordinates(), decimals=4)    
     array([0.    , 0.7071, 1.2071])
 
 The third property gives the coordinates of the :py:attr:`.Kpoints.points` for the plot:
 
 .. doctest::
 
-    >>> from radtools import Kpoints
-    >>> points = {"Gamma": [0, 0, 0], "K": [0.5, 0.5, 0], "X": [0.5, 0, 0]}
-    >>> labels = {"Gamma" : R"$\Gamma$", "K" : "K", "X" : "X"}
-    >>> kp = Kpoints(points, labels, path="Gamma-K-X", n=4)
-    >>> for point in kp.flatten_points:
+    >>> for point in kp.flatten_points():
     ...     print(round(point, 4))
     ... 
     0.0
@@ -189,8 +207,8 @@ The third property gives the coordinates of the :py:attr:`.Kpoints.points` for t
 
 .. hint::
 
-    Repeated :py:attr:`.Kpoints.points` or :py:attr:`.Kpoints.flatten_points` can be used to restore
-    the position of high symmetry points in the path.
+    Repeated :py:attr:`.Kpoints.points` or :py:attr:`.Kpoints.flatten_points` 
+    can be used to restore the position of high symmetry points in the path.
     
 
 

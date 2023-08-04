@@ -983,12 +983,16 @@ class ExchangeHamiltonian(Crystal):
             if min_distance is not None and dis < min_distance:
                 bonds_for_removal.add((atom1, atom2, R))
 
-            if (
-                R_vector is not None
-                and R not in R_vector
-                and (-i, -j, -k) not in R_vector
-            ):
+            # This behaviour should depend on the notation of the Hamiltonian
+            condition = R_vector is not None and R not in R_vector
+            try:
+                if self.double_counting:
+                    condition = condition and (-i, -j, -k) not in R_vector
+            except NotationError:
+                pass
+            if condition:
                 bonds_for_removal.add((atom1, atom2, R))
+
             # Here names, not objects are compared, because in general
             # template only has information about names (or fullnames) and R.
             if (

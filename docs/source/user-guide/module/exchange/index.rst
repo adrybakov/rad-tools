@@ -392,21 +392,21 @@ Note, that it returns an independent instance of the :py:class:`.Crystal` class:
     >>> crystal = hamiltonian.crystal
     >>> crystal.cell
     array([[3.14159265, 0.        , 0.        ],
-        [0.        , 3.14159265, 0.        ],
-        [0.        , 0.        , 4.71238898]])
+           [0.        , 3.14159265, 0.        ],
+           [0.        , 0.        , 4.71238898]])
     >>> hamiltonian.cell
     array([[3.14159265, 0.        , 0.        ],
-        [0.        , 3.14159265, 0.        ],
-        [0.        , 0.        , 4.71238898]])
+           [0.        , 3.14159265, 0.        ],
+           [0.        , 0.        , 4.71238898]])
     >>> crystal.cell = [[1,0,0],[0,1,0],[0,0,1]]
     >>> crystal.cell
     array([[1, 0, 0],
-        [0, 1, 0],
-        [0, 0, 1]])
+           [0, 1, 0],
+           [0, 0, 1]])
     >>> hamiltonian.cell
     array([[3.14159265, 0.        , 0.        ],
-        [0.        , 3.14159265, 0.        ],
-        [0.        , 0.        , 4.71238898]])
+           [0.        , 3.14159265, 0.        ],
+           [0.        , 0.        , 4.71238898]])
 
 Creation of the Hamiltonian
 ===========================
@@ -528,7 +528,7 @@ Equivalent way to  add bond:
     >>> hamiltonian[Cr, "Cr", (2, 0, 0)] = rad.ExchangeParameter(iso=2)
     >>> hamiltonian[Cr, Cr, (1, 0, 0)].iso
     1.0
-    >>> hamiltonian[Cr, Cr, (1, 0, 0)].iso
+    >>> hamiltonian[Cr, Cr, (2, 0, 0)].iso
     2.0
 
 .. note::
@@ -739,8 +739,8 @@ the filtered copy of the :py:class:`.ExchangeHamiltonian`:
 
     >>> import radtools as rad
     >>> hamiltonian = rad.ExchangeHamiltonian()
-    >>> hamiltonian.add_atom("Cr", (0.25, 0.25, 0))
-    >>> hamiltonian.add_atom("Cr", (0.75, 0.75, 0))
+    >>> hamiltonian.add_atom("Cr", position=(0.25, 0.25, 0))
+    >>> hamiltonian.add_atom("Cr", position=(0.75, 0.75, 0))
     >>> bonds = [
     ...     (12, "Cr__1", "Cr__2", (0, 0, 0)),
     ...     (12, "Cr__2", "Cr__1", (0, 0, 0)),

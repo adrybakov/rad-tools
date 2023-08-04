@@ -99,7 +99,7 @@ def niggli(
     .. doctest::
 
         >>> import radtools as rad
-        >>> from radtools.routines import TODEGREES
+        >>> from radtools.constants import TODEGREES
         >>> from math import acos, sqrt
         >>> a = 3
         >>> b = sqrt(27)

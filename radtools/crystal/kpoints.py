@@ -94,12 +94,13 @@ class Kpoints:
 
         self._path = None
         if path is None:
-            path = ""
-            for i in self.hs_names:
-                if i != 0:
-                    path += "-"
-                path += i
-        self.path = path
+            if len(self.hs_names) > 0:
+                path = [self.hs_names[0]]
+            else:
+                path = []
+            for point in self.hs_names[1:]:
+                path.append(f"-{point}")
+        self.path = "".join(path)
 
     def add_hs_point(self, name, coordinates, label, relative=True):
         r"""

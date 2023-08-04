@@ -42,8 +42,6 @@ Creation of an Atom object is straightforward:
 All parameters, that can be passed to the constructor are listed
 in the api reference: :py:class:`.Atom`.
 
-
-
 The position of the atom can be changed by setting the position attribute:
 
 .. doctest::
@@ -51,6 +49,13 @@ The position of the atom can be changed by setting the position attribute:
     >>> atom.position = [1, 2, 3]
     >>> atom.position
     array([1., 2., 3.])
+
+.. note::
+
+    When Atom class is used by itself, the position is not considered to be
+    in relative or absolute coordinates. The interpretation of atom`s position
+    depends on the context. For example, when Atom is used in :py:class:`.Crystal`
+    object, the position is usually considered to be in relative coordinates.
 
 The atom type is automatically determined from the atom name and can not
 be changed directly. The atom name can be changed by setting the name 

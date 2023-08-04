@@ -10,17 +10,16 @@ For the full reference see :ref:`api_crystal`
 
 .. currentmodule:: radtools
 
-Crystal is a base class, which store the structure. 
-It is a child of the the :py:class:`.Lattice` and utilize  
+Crystal is a child of the the :py:class:`.Lattice` and utilize  
 :py:class:`.Atom` for the storage of atoms.
 
 
 Creation of the Crystal
 =======================
 
-Crystal constructor takes two optional arguments:
+To create a crystal you would typically need to define the lattice and the set of atoms:
 
-* ``lattice`` - instance of the :py:class:`.Lattice` class, which defines the unit cell.
+* ``lattice`` - instance of the :py:class:`.Lattice` class.
 * ``atoms`` - list of the :py:class:`.Atom` instances, which defines the set of atoms in the unit cell.
 
 .. doctest::
@@ -36,11 +35,11 @@ By default the :py:class:`.Crystal` is created with the cubic lattice (:math:`a 
 
     >>> from radtools import Crystal
     >>> crystal = Crystal()
-    >>> crystal.lattice.cell
-    array([[1, 0, 0],
-           [0, 1, 0],
-           [0, 0, 1]])
-    >>> crystal.lattice.identify()
+    >>> crystal.cell
+    array([[1., 0., 0.],
+           [0., 1., 0.],
+           [0., 0., 1.]])
+    >>> crystal.type()
     'CUB'
     >>> crystal.atoms
     []
@@ -48,24 +47,15 @@ By default the :py:class:`.Crystal` is created with the cubic lattice (:math:`a 
 Identification of the Bravais lattice type
 ==========================================
 
+Identification of the Bravais lattice type is in the same way as 
+for the :ref:`guide_crystal_lattice`. The only difference is that
+you may want to identify the primitive unit cell of the crystal first. By default
+the current unit cell is considered as primitive.
+
 .. warning::
 
     Primitive cell identification is not implemented yet. 
     Any cell is interpreted as primitive.
-
-When arbitrary crystal structure is considered the :py:attr:`.Crystal.lattice` is an instance of 
-the general :py:class:`.Lattice` class, where unit cell is interpreted as a primitive one
-and the type of the Bravais lattice is not defined.
-The process of the definition of the crystal type is divided in two steps: 
-
-* Define primitive cell of the :py:class:`.Crystal`
-    :py:meth:`.Crystal.find_primitive_cell`
-* Define the type of the Bravais lattice.
-    :py:meth:`.Crystal.identify`
-
-This routine is implemented in :py:meth:`.Crystal.identify` method. It calls for the 
-:py:meth:`.Crystal.find_primitive_cell` internally.
-
 
 Adding and removing atoms
 =========================
@@ -74,32 +64,37 @@ Adding atoms to the crystal is straightforward:
 
 .. doctest::
 
-    >>> from radtools import Crystal, Lattice, Atom
+    >>> from radtools import Crystal
     >>> crystal = Crystal()
-    >>> crystal.add_atom(Atom('Cr', (0.0, 0.0, 0.0)))
-    >>> crystal.add_atom(Atom('Cr', (0.5, 0.5, 0.5)))
+    >>> crystal.add_atom('Cr', position=(0.0, 0.0, 0.0))
+    >>> crystal.add_atom('Cr', position=(0.5, 0.5, 0.5))
     >>> for atom in crystal.atoms:
     ...    print(atom.fullname, atom.position)
     ...
     Cr__1 [0. 0. 0.]
     Cr__2 [0.5 0.5 0.5]
 
-By default atom coordinates are interpreted as absolute. 
+By default atom coordinates are interpreted as relative. 
 In order to add atom in the fractional coordinates
-the ``relative`` keyword argument should be set to ``True``:
+the ``relative`` keyword argument should be set to ``False``:
 
 .. doctest::
 
     >>> from radtools import Crystal, Lattice, Atom
     >>> lattice = Lattice(3.0, 3.0, 3.0, 90.0, 90.0, 90.0)
     >>> crystal = Crystal(lattice)
-    >>> crystal.add_atom(Atom('Cr', (0.0, 0.0, 0.0)), relative=True)
-    >>> crystal.add_atom(Atom('Cr', (0.5, 0.5, 0.5)), relative=True)
+    >>> crystal.add_atom(Atom('Cr', (0.0, 0.0, 0.0)), relative=False)
+    >>> crystal.add_atom(Atom('Cr', (1.5, 1.5, 1.5)), relative=False)
     >>> for atom in crystal.atoms:
     ...    print(atom.fullname, atom.position)
     ...
     Cr__1 [0. 0. 0.]
-    Cr__2 [1.5 1.5 1.5]
+    Cr__2 [0.5 0.5 0.5]
+
+.. note::   
+
+    :py:meth:`.Crystal.get_distance` and :py:meth:`.Crystal.get_vector` methods 
+    are the ones which returns absolute coordinates by default.
 
 Removing atoms is also straightforward:
 
@@ -118,10 +113,10 @@ Removing atoms is also straightforward:
     >>> crystal.remove_atom(atom)
     >>> crystal.atoms
     []
-    >>> crystal.add_atom(Atom("Cr", (0.0, 0.0, 0.0)))
-    >>> crystal.add_atom(Atom("Cr", (1.0, 0.0, 0.0)))
-    >>> crystal.add_atom(Atom("Cr", (1.0, 1.0, 0.0)))
-    >>> crystal.add_atom(Atom("Cr", (1.0, 1.0, 1.0)))
+    >>> crystal.add_atom("Cr", position = (0.0, 0.0, 0.0))
+    >>> crystal.add_atom("Cr", position = (1.0, 0.0, 0.0))
+    >>> crystal.add_atom("Cr", position = (1.0, 1.0, 0.0))
+    >>> crystal.add_atom("Cr", position = (1.0, 1.0, 1.0))
     >>> # Same as len(crystal.atoms)
     >>> len(crystal)
     4
@@ -147,7 +142,7 @@ There is a number of properties involving atom of the crystal you have access to
 
 ..doctest::
 
-    >>> from radtools import Crystal, Lattice, Atom
+    >>> from radtools import Crystal, Atom
     >>> crystal = Crystal()
     >>> crystal.add_atom(Atom('Cr', (0.0, 0.0, 0.0)))
     >>> atom1 = crystal.get_atom('Cr')
@@ -170,48 +165,47 @@ There is a number of properties involving atom of the crystal you have access to
 
 .. doctest::
 
-    >>> from radtools import Crystal, Lattice, Atom
+    >>> from radtools import Crystal, Lattice
     >>> lattice = Lattice([[2,0,0],[0,2,0],[0,0,2]]) 
     >>> crystal = Crystal(lattice)
-    >>> crystal.add_atom(Atom('Cr', (0.0, 0.5, 0.0)))
+    >>> crystal.add_atom('Cr', position = (0.0, 0.5, 0.0))
     >>> crystal.get_atom_coordinates('Cr')
     array([0. , 0.5, 0. ])
     >>> crystal.Cr.position
     array([0. , 0.5, 0. ])
-    >>> crystal.get_atom_coordinates('Cr', relative=True)
-    array([0.  , 0.25, 0.  ])
+    >>> crystal.get_atom_coordinates('Cr', relative=False)
+    array([0., 1., 0.])
 
 * :py:attr:`.Crystal.get_vector` - get vector from the atom1 to atom2 by name or by fullname.
 
 .. doctest::
 
-    >>> from radtools import Crystal, Lattice, Atom
-    >>> lattice = Lattice([[2,0,0],[0,2,0],[0,0,2]]) 
-    >>> crystal = Crystal(lattice)
-    >>> crystal.add_atom(Atom('Cr', (0.0, 0.5, 0.0)))
-    >>> crystal.add_atom(Atom('Cr', (0.5, 0.0, 0.0)))
+    >>> from radtools import Crystal
+    >>> crystal = Crystal(cell=[[2,0,0],[0,2,0],[0,0,2]])
+    >>> crystal.add_atom('Cr', position = (0.0, 0.5, 0.0))
+    >>> crystal.add_atom('Cr', position = (0.5, 0.0, 0.0))
+    >>> # Gives result in absolute coordinates
     >>> crystal.get_vector('Cr__1', 'Cr__2')
-    array([ 0.5, -0.5,  0. ])
+    array([ 1., -1.,  0.])
     >>> crystal.get_vector('Cr__1', 'Cr__2', relative=True)
-    array([ 0.25, -0.25,  0.  ])
+    array([ 0.5, -0.5,  0. ])
 
 * :py:attr:`.Crystal.get_distance` - get distance between atom1 and atom2 by name or by fullname.
 
 .. doctest::
 
-    >>> from radtools import Crystal, Lattice, Atom
-    >>> lattice = Lattice([[2,0,0],[0,2,0],[0,0,2]]) 
-    >>> crystal = Crystal(lattice)
-    >>> crystal.add_atom(Atom('Cr', (0.0, 0.5, 0.0)))
-    >>> crystal.add_atom(Atom('Cr', (0.5, 0.0, 0.0)))
+    >>> from radtools import Crystal
+    >>> crystal = Crystal(cell=[[2,0,0],[0,2,0],[0,0,2]])
+    >>> crystal.add_atom('Cr', position=(0.0, 0.5, 0.0))
+    >>> crystal.add_atom('Cr', position=(0.5, 0.0, 0.0))
     >>> print(f"{crystal.get_distance('Cr__1', 'Cr__2'):.4f}")
-    0.7071
+    1.4142
 
 
 Magnetic dipole-dipole interaction energy
 =========================================
 
-If spins of crystal`s atoms are defined, the magnetic dipole-dipole interaction energy
+If magnetic moments of crystal`s atoms are defined, the magnetic dipole-dipole interaction energy
 can be calculated. 
 
 Two functions are used for this purpose:
@@ -223,11 +217,10 @@ Two functions are used for this purpose:
 
 .. doctest::
 
-    >>> from radtools import Crystal, Lattice, Atom
-    >>> lattice = Lattice([[2,0,0],[0,2,0],[0,0,2]]) 
-    >>> crystal = Crystal(lattice)
-    >>> crystal.add_atom(Atom('Cr', (0.0, 0.5, 0.0)))
-    >>> crystal.add_atom(Atom('Cr', (0.5, 0.0, 0.0)))
+    >>> from radtools import Crystal
+    >>> crystal = Crystal(cell=[[2,0,0],[0,2,0],[0,0,2]])
+    >>> crystal.add_atom('Cr', position=(0.0, 0.25, 0.0))
+    >>> crystal.add_atom('Cr', position=(0.25, 0.0, 0.0))
     >>> energy = crystal.mag_dipdip_energy(1,1,1, progress_bar=False)
     Traceback (most recent call last):
     ...
@@ -255,10 +248,10 @@ Iterations and stuff
 
 .. doctest::
 
-    >>> from radtools import Crystal, Lattice, Atom
+    >>> from radtools import Crystal
     >>> crystal = Crystal()
-    >>> crystal.add_atom(Atom('Cr', (0.0, 0.0, 0.0)))
-    >>> crystal.add_atom(Atom('Cr', (0.5, 0.5, 0.5)))
+    >>> crystal.add_atom('Cr', position=(0.0, 0.0, 0.0))
+    >>> crystal.add_atom('Cr', position=(0.5, 0.5, 0.5))
     >>> for atom in crystal:
     ...    print(atom.fullname)
     ...
@@ -269,7 +262,7 @@ You can check if the atom is in the crystal:
 
 .. doctest::
 
-    >>> from radtools import Crystal, Lattice, Atom
+    >>> from radtools import Crystal, Atom
     >>> crystal = Crystal()
     >>> atom = Atom('Cr', (0.0, 0.0, 0.0))
     >>> crystal.add_atom(atom)
@@ -290,10 +283,10 @@ the :py:meth:`.Crystal.get_atom` method with ``return_all=False``):
 
 .. doctest::
 
-    >>> from radtools import Crystal, Lattice, Atom
+    >>> from radtools import Crystal
     >>> crystal = Crystal()
-    >>> crystal.add_atom(Atom('Cr', (0.0, 0.0, 0.0)))
-    >>> crystal.add_atom(Atom('Cr', (0.5, 0.5, 0.5)))
+    >>> crystal.add_atom('Cr', position=(0.0, 0.0, 0.0))
+    >>> crystal.add_atom('Cr', position=(0.5, 0.5, 0.5))
     >>> atom = crystal.Cr__1
     >>> atom.fullname
     'Cr__1'
@@ -311,10 +304,10 @@ the :py:meth:`.Crystal.get_atom` method with ``return_all=True``):
 
 .. doctest::
 
-    >>> from radtools import Crystal, Lattice, Atom
+    >>> from radtools import Crystal
     >>> crystal = Crystal()
-    >>> crystal.add_atom(Atom('Cr', (0.0, 0.0, 0.0)))
-    >>> crystal.add_atom(Atom('Cr', (0.5, 0.5, 0.5)))
+    >>> crystal.add_atom('Cr', position=(0.0, 0.0, 0.0))
+    >>> crystal.add_atom('Cr', position=(0.5, 0.5, 0.5))
     >>> atoms = crystal["Cr__1"]
     >>> atoms[0].fullname
     'Cr__1'
