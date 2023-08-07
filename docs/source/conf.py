@@ -56,6 +56,7 @@ extlinks = {
         "https://matplotlib.org/stable/api/%s_api.html",
         "matplotlib.%s",
     ),
+    "issue": ("https://github.com/adrybakov/rad-tools/issues/%s", "issue#%s"),
 }
 
 # todo
