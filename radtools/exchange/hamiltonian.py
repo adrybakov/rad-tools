@@ -1438,21 +1438,3 @@ class SpinHamiltonianIterator:
 
     def __iter__(self):
         return self
-
-
-if __name__ == "__main__":
-    model = SpinHamiltonian()
-    Cr = Atom("Cr", (0, 0, 0), spin=3 / 2)
-    model[Cr, Cr, (1, 0, 0)] = ExchangeParameter(iso=1)
-    assert model[Cr, Cr, (1, 0, 0)].iso == 1
-
-    model.notation = "standard"
-    assert model[Cr, Cr, (1, 0, 0)].iso == 1
-    model.notation = "standard"
-    assert model[Cr, Cr, (1, 0, 0)].iso == 1
-
-    assert model.double_counting
-    model.double_counting = False
-    assert model[Cr, Cr, (1, 0, 0)].iso == 2
-    model.double_counting = True
-    assert model[Cr, Cr, (1, 0, 0)].iso == 1

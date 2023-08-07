@@ -10,6 +10,6 @@ from radtools.exchange.constants import *
 __all__ = [
     "ExchangeParameter",
     "SpinHamiltonian",
-    "SpinHamiltonian",
+    "ExchangeHamiltonian",
     "ExchangeTemplate",
 ]
