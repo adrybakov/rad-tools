@@ -57,6 +57,9 @@ def print_2d_array(
         N = len(array)
         M = len(array[0])
 
+        # Fix issue#3
+        array[array == 0] = 0
+
         # Find the longest number, used for string formatting
         n = max(
             len(f"{np.amax(array.real):{fmt}}"), len(f"{np.amin(array.real):{fmt}}")
