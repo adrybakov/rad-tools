@@ -23,9 +23,13 @@
         "Andrey",
         "Angstrom",
         "Bravais",
+        "currentmodule",
+        "doctest",
+        "Kpoints",
         "lepage",
         "linalg",
         "magmom",
+        "mathbf",
         "matplotlib",
         "ndarray",
         "niggli",
@@ -36,10 +40,10 @@
         "Rybakov",
         "scipy",
         "termcolor",
-        "tqdm",
-        "voronoi",
+        "TODEGREES",
         "TORADIANS",
-        "TODEGREES"
+        "tqdm",
+        "voronoi"
     ],
     "search.useIgnoreFiles": true,
 }
