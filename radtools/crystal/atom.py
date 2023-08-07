@@ -34,7 +34,7 @@ class Atom:
         Custom index of an atom, used differently in different scenarios.
         Combination of :py:attr:`.name` and :py:attr:`.index`
         is meant to be unique, when an atom belongs to some group
-        (i.e. to :py:class:`.Crystal` or :py:class:`.ExchangeHamiltonian`).
+        (i.e. to :py:class:`.Crystal` or :py:class:`.SpinHamiltonian`).
     """
 
     def __init__(

@@ -9,12 +9,12 @@ For the full reference see :ref:`api_exchange`.
 .. currentmodule:: radtools
 
 Exchange module describes the spin Hamiltonian and is build around of the 
-:py:class:`.ExchangeHamiltonian` class. It stores bonds between :py:class:`.Atom` 
+:py:class:`.SpinHamiltonian` class. It stores bonds between :py:class:`.Atom` 
 :math:`i`, which is located in :math:`(0, 0, 0)` unit cell and :py:class:`.Atom` :math:`j`,
 which is located in :math:`(i, j, k)` unit cell and corresponding exchange parameters.
 
 The notation of the exchange Hamiltonian is an important issue, since without clear notation 
-exchange parameters does not make much sense. :py:class:`.ExchangeHamiltonian` can support any 
+exchange parameters does not make much sense. :py:class:`.SpinHamiltonian` can support any 
 notation out of the most common ones. Detailed description of the notation is given in 
 correspondent section: :ref:`guide_exchange_notation`. 
 We encourage you to read it once with full attention.
@@ -44,8 +44,8 @@ It has double-counting, spins are not normalized, and the exchange parameter is
 positive for ferromagnetic order.
 
 .. note::
-    The "standard" here does not mean that the :py:class:`.ExchangeHamiltonian` is
-    always has this notation. For example when :py:class:`.ExchangeHamiltonian` is
+    The "standard" here does not mean that the :py:class:`.SpinHamiltonian` is
+    always has this notation. For example when :py:class:`.SpinHamiltonian` is
     read from |TB2J|_ file (:py:func:`.read_tb2j_model`) it has the notation of TB2J.
 
 There are five properties, that has to be defined in order to describe the 
@@ -112,7 +112,7 @@ exchange Hamiltonian`s notation:
     of the Hamiltonian, so additional care is required when reading the literature.
 
 RAD-tools utilize those five properties in order to define the notation of the
-exchange Hamiltonian. During the creation of the ExchangeHamiltonian object the notation 
+exchange Hamiltonian. During the creation of the SpinHamiltonian object the notation 
 is deliberately not defined, because it depends on your interpretation. Therefore,
 the notation has to be defined explicitly by you. If the notation is not defined, 
 and the you are trying to use the properties and methods, which expect the notation
@@ -125,7 +125,7 @@ The notation could be defined in two ways:
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> hamiltonian.double_counting = True
     >>> hamiltonian.spin_normalized = False
     >>> hamiltonian.factor_one_half = False
@@ -137,7 +137,7 @@ The notation could be defined in two ways:
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> hamiltonian.notation = (True, False, False, True, True)
     >>> hamiltonian.notation
     H = -2 sum_{i,j} S_i J_ij S_j
@@ -160,12 +160,12 @@ the following redefinition of the notation or corresponding property will change
 parameters. See :ref:`Examples <guide_exchange_notation-examples>`.
 
 If you want to change the notation once is set, but keep the parameters intact use 
-:py:meth:`.ExchangeHamiltonian.set_interpretation` method:
+:py:meth:`.SpinHamiltonian.set_interpretation` method:
 
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> hamiltonian.double_counting = True
     >>> hamiltonian.spin_normalized = False
     >>> hamiltonian.factor_one_half = False
@@ -218,7 +218,7 @@ They could be set directly through the :py:attr:`.notation` property:
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> hamiltonian.notation = 'standard'
     >>> hamiltonian.notation
     H = -sum_{i,j} S_i J_ij S_j
@@ -247,7 +247,7 @@ Setting one of the predefined notations:
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> hamiltonian.notation = "standard"
     >>> hamiltonian.notation
     H = -sum_{i,j} S_i J_ij S_j
@@ -272,7 +272,7 @@ Setting the notation:
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> Cr = rad.Atom("Cr", spin=1.5)
     >>> hamiltonian.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
     >>> hamiltonian[Cr, Cr, (1, 0, 0)].iso
@@ -299,7 +299,7 @@ Setting individual properties:
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> Cr = rad.Atom("Cr", spin=1.5)
     >>> hamiltonian.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
     >>> hamiltonian[Cr, Cr, (1, 0, 0)].iso
@@ -320,7 +320,7 @@ Changing individual properties:
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> Cr = rad.Atom("Cr", spin=1.5)
     >>> hamiltonian.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
     >>> hamiltonian[Cr, Cr, (1, 0, 0)].iso
@@ -358,18 +358,18 @@ Crystal of the exchange Hamiltonian
 ===================================
 
 Exchange Hamiltonian need the crystal structure to be defined. 
-:py:class:`.ExchangeHamiltonian` is a child of :py:class:`.Crystal` and inherits all its
+:py:class:`.SpinHamiltonian` is a child of :py:class:`.Crystal` and inherits all its
 properties and methods. Thus, for the creation of the crystal structure we refer you to the 
 :ref:`guide_crystal_crystal` and :ref:`guide_crystal_atom` guides. 
 Any property, which is related to the structure is expected to be called directly from the 
-:py:class:`.ExchangeHamiltonian` instance. For example:
+:py:class:`.SpinHamiltonian` instance. For example:
 
 .. doctest::
 
     >>> import radtools as rad
     >>> lattice = rad.lattice_example("TET")
     >>> crystal = rad.Crystal(lattice)
-    >>> hamiltonian = rad.ExchangeHamiltonian(crystal)
+    >>> hamiltonian = rad.SpinHamiltonian(crystal)
     >>> hamiltonian.variation
     'TET'
     >>> hamiltonian.a1
@@ -380,7 +380,7 @@ Any property, which is related to the structure is expected to be called directl
            [0.        , 0.        , 4.71238898]])
 
 The crystal of the Exchange Hamiltonian can be access through the 
-:py:attr:`.ExchangeHamiltonian.crystal` attribute. 
+:py:attr:`.SpinHamiltonian.crystal` attribute. 
 Note, that it returns an independent instance of the :py:class:`.Crystal` class:
 
 .. doctest::
@@ -388,7 +388,7 @@ Note, that it returns an independent instance of the :py:class:`.Crystal` class:
     >>> import radtools as rad
     >>> lattice = rad.lattice_example("TET")
     >>> crystal = rad.Crystal(lattice)
-    >>> hamiltonian = rad.ExchangeHamiltonian(crystal)
+    >>> hamiltonian = rad.SpinHamiltonian(crystal)
     >>> crystal = hamiltonian.crystal
     >>> crystal.cell
     array([[3.14159265, 0.        , 0.        ],
@@ -415,12 +415,12 @@ The Hamiltonian could be created from the scratch or from the |TB2J|_ file.
 For the creation on the basis of the |TB2J|_ file see :py:func:`.read_tb2j_model`.
 Here we cover the creation from scratch.
 
-An instance of the :py:class:`.ExchangeHamiltonian` can be created as:
+An instance of the :py:class:`.SpinHamiltonian` can be created as:
 
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
 
 Constructor can take two optional parameters: 
 
@@ -431,28 +431,28 @@ Constructor can take two optional parameters:
     >>> import radtools as rad
     >>> lattice = rad.lattice_example("TET")
     >>> crystal = rad.Crystal(lattice)
-    >>> hamiltonian = rad.ExchangeHamiltonian(crystal)
+    >>> hamiltonian = rad.SpinHamiltonian(crystal)
 
 * ``notation``: notation of the Hamiltonian. See :ref:`guide_exchange_notation`.
 
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian(notation="standard")
+    >>> hamiltonian = rad.SpinHamiltonian(notation="standard")
 
-When the instance of the :py:class:`.ExchangeHamiltonian` is created,
+When the instance of the :py:class:`.SpinHamiltonian` is created,
 it is empty. It need to be filled with bonds and exchange parameters.
 
 Adding atoms
 ============
 
-Addition of atoms to the :py:class:`.ExchangeHamiltonian` is directly inherited from the
+Addition of atoms to the :py:class:`.SpinHamiltonian` is directly inherited from the
 :py:class:`.Crystal`:
 
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> len(hamiltonian.atoms)
     0
     >>> hamiltonian.add_atom("Cr", spin=1.5, position=(1,0,0))
@@ -460,14 +460,14 @@ Addition of atoms to the :py:class:`.ExchangeHamiltonian` is directly inherited 
     >>> len(hamiltonian.atoms)
     2
 
-However, removing an atom from the :py:class:`.ExchangeHamiltonian` and from the
-:py:class:`.Crystal` is different. When atom is removed from the :py:class:`.ExchangeHamiltonian`
+However, removing an atom from the :py:class:`.SpinHamiltonian` and from the
+:py:class:`.Crystal` is different. When atom is removed from the :py:class:`.SpinHamiltonian`
 all bonds, which are connected to it are removed as well. 
 
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> hamiltonian.add_atom("Cr", spin=1.5, position=(1,0,0))
     >>> hamiltonian.add_bond(rad.ExchangeParameter(iso=1), "Cr", "Cr", (1, 0, 0))
     >>> len(hamiltonian)
@@ -483,12 +483,12 @@ all bonds, which are connected to it are removed as well.
 Adding bonds
 ============
 
-The bond is added to the Hamiltonian with :py:meth:`.ExchangeHamiltonian.add_bond` method:
+The bond is added to the Hamiltonian with :py:meth:`.SpinHamiltonian.add_bond` method:
 
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> Cr = rad.Atom("Cr", spin=1.5)
     >>> hamiltonian.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
     >>> hamiltonian["Cr", "Cr", (1, 0, 0)].iso
@@ -498,7 +498,7 @@ The bond is added to the Hamiltonian with :py:meth:`.ExchangeHamiltonian.add_bon
 
     The bond is added to the Hamiltonian, but no atom is explicitly added to the crystal.
     You can skip the atom addition if you are using :py:class:`.Atom` instances, 
-    not the string literals in the :py:meth:`.ExchangeHamiltonian.add_bond` method.
+    not the string literals in the :py:meth:`.SpinHamiltonian.add_bond` method.
     The atom will be silently added to the system.
     When string literal is used, atom object is extracted from the exchange Hamiltonian, thus
     it has to be explicitly added first:
@@ -506,7 +506,7 @@ The bond is added to the Hamiltonian with :py:meth:`.ExchangeHamiltonian.add_bon
     .. doctest::
 
         >>> import radtools as rad
-        >>> hamiltonian = rad.ExchangeHamiltonian()
+        >>> hamiltonian = rad.SpinHamiltonian()
         >>> Cr = rad.Atom("Cr", spin=1.5)
         >>> hamiltonian.add_bond(rad.ExchangeParameter(iso=1), "Cr", "Cr", (1, 0, 0))
         Traceback (most recent call last):
@@ -522,7 +522,7 @@ Equivalent way to  add bond:
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> Cr = rad.Atom("Cr", spin=1.5)
     >>> hamiltonian[Cr, Cr, (1, 0, 0)] = rad.ExchangeParameter(iso=1)
     >>> hamiltonian[Cr, "Cr", (2, 0, 0)] = rad.ExchangeParameter(iso=2)
@@ -541,7 +541,7 @@ Equivalent way to  add bond:
     .. doctest::
 
         >>> import radtools as rad
-        >>> hamiltonian = rad.ExchangeHamiltonian()
+        >>> hamiltonian = rad.SpinHamiltonian()
         >>> Cr1 = rad.Atom("Cr", position=(0.5, 0, 0))
         >>> Cr2 = rad.Atom("Cr", position=(1, 0, 0))
         >>> hamiltonian.add_atom(Cr1)
@@ -557,12 +557,12 @@ Equivalent way to  add bond:
         >>> hamiltonian["Cr__1", "Cr__2", (1, 0, 0)].iso
         1.0
 
-To remove the bond use :py:meth:`.ExchangeHamiltonian.remove_bond` method:
+To remove the bond use :py:meth:`.SpinHamiltonian.remove_bond` method:
 
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> Cr = rad.Atom("Cr", spin=1.5)
     >>> hamiltonian.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
     >>> (Cr, Cr, (1, 0, 0)) in hamiltonian
@@ -580,7 +580,7 @@ Equivalent way to delete bond:
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> Cr = rad.Atom("Cr", spin=1.5)
     >>> hamiltonian.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
     >>> (Cr, Cr, (1, 0, 0)) in hamiltonian
@@ -607,7 +607,7 @@ Exchange Hamiltonian is iterable over bonds:
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> Cr = rad.Atom("Cr", spin=1.5)
     >>> hamiltonian.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
     >>> hamiltonian.add_bond(rad.ExchangeParameter(iso=2), Cr, Cr, (0, 1, 0))
@@ -622,7 +622,7 @@ It could be check for the presence of the bond:
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> Cr = rad.Atom("Cr", spin=1.5)
     >>> hamiltonian.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
     >>> (Cr, Cr, (1, 0, 0)) in hamiltonian
@@ -635,7 +635,7 @@ The exchange parameter could be accessed (and set) directly:
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> Cr = rad.Atom("Cr", spin=1.5)
     >>> hamiltonian[Cr, Cr, (1, 0, 0)] = rad.ExchangeParameter(iso=1)
     >>> hamiltonian[Cr, Cr, (1, 0, 0)].iso
@@ -646,7 +646,7 @@ The exchange parameter could be accessed (and set) directly:
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> Cr = rad.Atom("Cr", spin=1.5)
     >>> len(hamiltonian)
     0
@@ -662,13 +662,13 @@ Atom as a part of the key
 
 Atom object or string literal could be used to access atoms in the Hamiltonian. 
 String literal is the :py:attr:`.Atom.name` property of the atom if there is only 
-one atom with that name in the :py:attr:`ExchangeHamiltonian.crystal`. Otherwise 
+one atom with that name in the :py:attr:`SpinHamiltonian.crystal`. Otherwise 
 :py:attr:`.Atom.fullname` property of the atom has to be used.
 
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> hamiltonian.add_atom("Cr", spin=1.5, position=(0,0,0))
     >>> hamiltonian.add_bond(rad.ExchangeParameter(iso=1), "Cr", "Cr", (0, 1, 0))
     >>> for atom1, atom2, (i,j,k), J in hamiltonian:
@@ -684,14 +684,14 @@ one atom with that name in the :py:attr:`ExchangeHamiltonian.crystal`. Otherwise
     Cr__1 Cr__1 (0, 1, 0) 1.0
     Cr__1 Cr__2 (0, 0, 0) 2.0
 
-If you want to get an :py:class:`.Atom` instance from the :py:class:`.ExchangeHamiltonian`
-you can use :py:meth:`.ExchangeHamiltonian.get_atom` 
+If you want to get an :py:class:`.Atom` instance from the :py:class:`.SpinHamiltonian`
+you can use :py:meth:`.SpinHamiltonian.get_atom` 
 (:py:meth:`.Crystal.get_atom`) method:
 
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> hamiltonian.add_atom(rad.Atom("Cr", spin=1.5, position=(0,0,0)))
     >>> hamiltonian.add_atom(rad.Atom("Cr", spin=1.5, position=(1,0,0)))
     >>> hamiltonian.get_atom("Cr__1").fullname
@@ -703,12 +703,12 @@ Magnetic atoms
 ==============
 
 Atoms, which has at least one bond attached to them are called magnetic atoms.
-They could be accessed with :py:attr:`.ExchangeHamiltonian.magnetic_atoms` property:
+They could be accessed with :py:attr:`.SpinHamiltonian.magnetic_atoms` property:
 
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> hamiltonian.add_atom("Cr", spin=1.5, position=(0,0,0))
     >>> hamiltonian.add_atom("Cr", spin=1.5, position=(1,0,0))
     >>> hamiltonian.magnetic_atoms
@@ -731,14 +731,14 @@ Filtering the Hamiltonian
 Exchange Hamiltonian could be filtered by distance, template or set of (i,j,k) tuples 
 (R vectors).
 
-Use :py:meth:`.ExchangeHamiltonian.filter` to filter the instance of the
-:py:class:`.ExchangeHamiltonian` and :py:meth:`.ExchangeHamiltonian.filtered` to get
-the filtered copy of the :py:class:`.ExchangeHamiltonian`:
+Use :py:meth:`.SpinHamiltonian.filter` to filter the instance of the
+:py:class:`.SpinHamiltonian` and :py:meth:`.SpinHamiltonian.filtered` to get
+the filtered copy of the :py:class:`.SpinHamiltonian`:
 
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> hamiltonian.add_atom("Cr", position=(0.25, 0.25, 0))
     >>> hamiltonian.add_atom("Cr", position=(0.75, 0.75, 0))
     >>> bonds = [
@@ -812,7 +812,7 @@ Energy
 ======
 
 Ferromagnetic energy of the Hamiltonian could be calculated with
-:py:meth:`.ExchangeHamiltonian.ferromagnetic_energy` method:
+:py:meth:`.SpinHamiltonian.ferromagnetic_energy` method:
 
 .. note::
 
@@ -821,7 +821,7 @@ Ferromagnetic energy of the Hamiltonian could be calculated with
 .. doctest::
 
     >>> import radtools as rad
-    >>> hamiltonian = rad.ExchangeHamiltonian()
+    >>> hamiltonian = rad.SpinHamiltonian()
     >>> hamiltonian.add_atom("Cr", spin=1.5, position=(0,0,0))
     >>> hamiltonian.add_atom("Cr", spin=1.5, position=(1,0,0))
     >>> hamiltonian.add_bond(rad.ExchangeParameter(iso=1), "Cr__1", "Cr__1", (0, 1, 0))
@@ -839,6 +839,6 @@ Saving the Hamiltonian
 ======================
 
 The Hamiltonian could be saved in as a text file with 
-:py:meth:`.ExchangeHamiltonian.dump_txt` method. 
+:py:meth:`.SpinHamiltonian.dump_txt` method. 
 
-It can be serialized with :py:meth:`.ExchangeHamiltonian.dump_pickle` method.
+It can be serialized with :py:meth:`.SpinHamiltonian.dump_pickle` method.

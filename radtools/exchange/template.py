@@ -7,7 +7,7 @@ Write a tutorial with docstring here.
 
 class ExchangeTemplate:
     r"""
-    Store a template for the :py:class:`.ExchangeHamiltonian`.
+    Store a template for the :py:class:`.SpinHamiltonian`.
 
     In addition stores the technical details for plotting,
     orbital decomposition, etc.

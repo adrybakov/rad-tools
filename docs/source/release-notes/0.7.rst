@@ -21,21 +21,21 @@ Rename :py:func:`.read_exchange_model` to :py:func:`.read_tb2j_model`.
 
 Major design change in the :py:mod:`.exchange`:
 
-* Renamed :py:class:`ExchangeModel` to :py:class:`.ExchangeHamiltonian`
+* Renamed :py:class:`ExchangeModel` to :py:class:`.SpinHamiltonian`
 * Move from the concept (atom1, atom2, R) -> bond to the concept (atom1, atom2, R) -> J.
 * Made class :py:class:`.ExchangeParameter` from the :py:class:`Bond`.
-* Introduce new interface design for the :py:class:`.ExchangeHamiltonian`.
-* Iteration over :py:class:`.ExchangeHamiltonian` returns (atom1, atom2, R, J) instead of (atom1, atom2, R).
+* Introduce new interface design for the :py:class:`.SpinHamiltonian`.
+* Iteration over :py:class:`.SpinHamiltonian` returns (atom1, atom2, R, J) instead of (atom1, atom2, R).
 
 0.7.1
 -----
 
-Write correct behaviour of :py:class:`.ExchangeHamiltonian` with the :py:attr:`.ExchangeHamiltonian.double_counting`:
+Write correct behaviour of :py:class:`.SpinHamiltonian` with the :py:attr:`.SpinHamiltonian.double_counting`:
 
 .. doctest::
 
     >>> import radtools as rad
-    >>> m = rad.ExchangeHamiltonian()
+    >>> m = rad.SpinHamiltonian()
     >>> m.add_atom(rad.Atom("Cr", (0,0,0), spin=3/2))
     >>> m.add_bond(rad.ExchangeParameter(iso=1), "Cr", "Cr", (1,0,0))
     >>> # First time - only setting interpretation, no modification of values

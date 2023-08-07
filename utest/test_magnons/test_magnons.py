@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 
 from radtools.magnons.dispersion import MagnonDispersion
-from radtools.exchange.hamiltonian import ExchangeHamiltonian
+from radtools.exchange.hamiltonian import SpinHamiltonian
 from radtools.exchange.parameter import ExchangeParameter
 from radtools.crystal.bravais_lattice import lattice_example
 from radtools.crystal.atom import Atom
@@ -11,7 +11,7 @@ from math import cos
 
 
 def test_ferromagnetic():
-    model = ExchangeHamiltonian(lattice=lattice_example("CUB"))
+    model = SpinHamiltonian(lattice=lattice_example("CUB"))
     model.add_atom(Atom("Fe", (0, 0, 0), spin=[0, 0, 1]))
     J = ExchangeParameter(iso=1)
     model.add_bond(J, "Fe", "Fe", (1, 0, 0))

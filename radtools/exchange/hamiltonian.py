@@ -19,7 +19,7 @@ from radtools.constants import TORADIANS
 from radtools.exceptions import NotationError
 
 
-class ExchangeHamiltonian(Crystal):
+class SpinHamiltonian(Crystal):
     r"""
     Exchange Hamiltonian.
 
@@ -32,6 +32,12 @@ class ExchangeHamiltonian(Crystal):
     For the predefined notations see :py:meth:`.notation`.
 
     Child of the :py:class:`.Crystal` class.
+
+    .. versionchanged:: 0.8.0 Renamed from SpinHamiltonian to SpinHamiltonian.
+
+    Notes
+    -----
+    You can still use the old name, but it is deprecated and will be removed in the future.
 
     Parameters
     ----------
@@ -129,7 +135,7 @@ class ExchangeHamiltonian(Crystal):
         .. doctest::
 
             >>> import radtools as rad
-            >>> model = rad.ExchangeHamiltonian()
+            >>> model = rad.SpinHamiltonian()
             >>> model.notation = "standard"
             >>> model.notation
             H = -sum_{i,j} S_i J_ij S_j
@@ -154,7 +160,7 @@ class ExchangeHamiltonian(Crystal):
         .. doctest::
 
             >>> import radtools as rad
-            >>> model = rad.ExchangeHamiltonian()
+            >>> model = rad.SpinHamiltonian()
             >>> Cr = rad.Atom("Cr", spin=1.5)
             >>> model.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
             >>> model[Cr, Cr, (1, 0, 0)].iso
@@ -181,7 +187,7 @@ class ExchangeHamiltonian(Crystal):
         .. doctest::
 
             >>> import radtools as rad
-            >>> model = rad.ExchangeHamiltonian()
+            >>> model = rad.SpinHamiltonian()
             >>> Cr = rad.Atom("Cr", spin=1.5)
             >>> model.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
             >>> model[Cr, Cr, (1, 0, 0)].iso
@@ -202,7 +208,7 @@ class ExchangeHamiltonian(Crystal):
         .. doctest::
 
             >>> import radtools as rad
-            >>> model = rad.ExchangeHamiltonian()
+            >>> model = rad.SpinHamiltonian()
             >>> Cr = rad.Atom("Cr", spin=1.5)
             >>> model.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
             >>> model[Cr, Cr, (1, 0, 0)].iso
@@ -617,7 +623,7 @@ class ExchangeHamiltonian(Crystal):
         self._minus_sign = bool(new_value)
 
     def __iter__(self):
-        return ExchangeHamiltonianIterator(self)
+        return SpinHamiltonianIterator(self)
 
     def __contains__(self, key):
         atom1, atom2, R = key
@@ -774,7 +780,7 @@ class ExchangeHamiltonian(Crystal):
             >>> import radtools as rad
             >>> Cr = rad.Atom("Cr")
             >>> J = rad.ExchangeParameter(iso=1)
-            >>> model = rad.ExchangeHamiltonian(rad.Crystal())
+            >>> model = rad.SpinHamiltonian(rad.Crystal())
             >>> model[Cr, Cr, (1,0,0)] = J
             >>> (Cr, Cr, (1,0,0)) in model
             True
@@ -786,7 +792,7 @@ class ExchangeHamiltonian(Crystal):
             >>> import radtools as rad
             >>> Cr = rad.Atom("Cr")
             >>> J = rad.ExchangeParameter(iso=1)
-            >>> model = rad.ExchangeHamiltonian(rad.Crystal())
+            >>> model = rad.SpinHamiltonian(rad.Crystal())
             >>> model.add_bond(J, Cr, Cr, (1,0,0))
             >>> (Cr, Cr, (1,0,0)) in model
             True
@@ -842,7 +848,7 @@ class ExchangeHamiltonian(Crystal):
             >>> import radtools as rad
             >>> Cr = rad.Atom("Cr")
             >>> J = rad.ExchangeParameter(iso=1)
-            >>> model = rad.ExchangeHamiltonian(rad.Crystal())
+            >>> model = rad.SpinHamiltonian(rad.Crystal())
             >>> model[Cr, Cr, (1,0,0)] = J
             >>> (Cr, Cr, (1,0,0)) in model
             True
@@ -858,7 +864,7 @@ class ExchangeHamiltonian(Crystal):
             >>> import radtools as rad
             >>> Cr = rad.Atom("Cr")
             >>> J = rad.ExchangeParameter(iso=1)
-            >>> model = rad.ExchangeHamiltonian(rad.Crystal())
+            >>> model = rad.SpinHamiltonian(rad.Crystal())
             >>> model[Cr, Cr, (1,0,0)] = J
             >>> (Cr, Cr, (1,0,0)) in model
             True
@@ -1038,7 +1044,7 @@ class ExchangeHamiltonian(Crystal):
 
         Returns
         -------
-        filtered_model : :py:class:`.ExchangeHamiltonian`
+        filtered_model : :py:class:`.SpinHamiltonian`
             Exchange Hamiltonian after filtering.
 
         See Also
@@ -1124,7 +1130,7 @@ class ExchangeHamiltonian(Crystal):
 
         Returns
         -------
-        new_model : :py:class:`.ExchangeHamiltonian`
+        new_model : :py:class:`.SpinHamiltonian`
             Exchange Hamiltonian with forced symmetry.
 
         See Also
@@ -1409,8 +1415,12 @@ class ExchangeHamiltonian(Crystal):
         return Jij, i, j, dij
 
 
-class ExchangeHamiltonianIterator:
-    def __init__(self, exchange_model: ExchangeHamiltonian) -> None:
+class ExchangeHamiltonian(SpinHamiltonian):
+    pass
+
+
+class SpinHamiltonianIterator:
+    def __init__(self, exchange_model: SpinHamiltonian) -> None:
         self._bonds = list(
             map(
                 lambda x: (x[0], x[1], x[2], exchange_model._bonds[x]),
@@ -1431,7 +1441,7 @@ class ExchangeHamiltonianIterator:
 
 
 if __name__ == "__main__":
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     Cr = Atom("Cr", (0, 0, 0), spin=3 / 2)
     model[Cr, Cr, (1, 0, 0)] = ExchangeParameter(iso=1)
     assert model[Cr, Cr, (1, 0, 0)].iso == 1

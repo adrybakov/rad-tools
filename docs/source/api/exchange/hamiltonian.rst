@@ -1,7 +1,7 @@
 .. _api_hamiltonian:
 
 *******************
-ExchangeHamiltonian
+SpinHamiltonian
 *******************
 
 .. currentmodule:: radtools
@@ -12,7 +12,7 @@ Class
 .. autosummary::
     :toctree: generated/
 
-    ExchangeHamiltonian
+    SpinHamiltonian
 
 .. hint:: 
     All properties and methods of :ref:`api_crystal` are accessible directly 
@@ -25,7 +25,7 @@ Energy
 .. autosummary::
     :toctree: generated/
 
-    ExchangeHamiltonian.ferromagnetic_energy
+    SpinHamiltonian.ferromagnetic_energy
 
 Structure
 =========
@@ -33,9 +33,9 @@ Structure
 .. autosummary::
     :toctree: generated/
 
-    ExchangeHamiltonian.cell_list
-    ExchangeHamiltonian.number_spins_in_unit_cell   
-    ExchangeHamiltonian.space_dimensions
+    SpinHamiltonian.cell_list
+    SpinHamiltonian.number_spins_in_unit_cell   
+    SpinHamiltonian.space_dimensions
 
 Manipulation with the model
 ===========================
@@ -46,8 +46,8 @@ Adding elements
 .. autosummary::
     :toctree: generated/
 
-    ExchangeHamiltonian.add_atom
-    ExchangeHamiltonian.add_bond
+    SpinHamiltonian.add_atom
+    SpinHamiltonian.add_bond
 
 Removing elements
 -----------------
@@ -55,8 +55,8 @@ Removing elements
 .. autosummary::
     :toctree: generated/
 
-    ExchangeHamiltonian.remove_atom
-    ExchangeHamiltonian.remove_bond
+    SpinHamiltonian.remove_atom
+    SpinHamiltonian.remove_bond
 
 Filtering the model
 -------------------
@@ -64,10 +64,10 @@ Filtering the model
 .. autosummary::
     :toctree: generated/
 
-    ExchangeHamiltonian.filter
-    ExchangeHamiltonian.filtered
-    ExchangeHamiltonian.force_symmetry
-    ExchangeHamiltonian.forced_symmetry
+    SpinHamiltonian.filter
+    SpinHamiltonian.filtered
+    SpinHamiltonian.force_symmetry
+    SpinHamiltonian.forced_symmetry
 
 Notation
 ========
@@ -75,8 +75,8 @@ Notation
 .. autosummary::
     :toctree: generated/
 
-    ExchangeHamiltonian.notation
-    ExchangeHamiltonian.set_interpretation
+    SpinHamiltonian.notation
+    SpinHamiltonian.set_interpretation
 
 Individual properties
 ---------------------
@@ -84,11 +84,11 @@ Individual properties
 .. autosummary::
     :toctree: generated/
 
-    ExchangeHamiltonian.double_counting
-    ExchangeHamiltonian.spin_normalized
-    ExchangeHamiltonian.factor_one_half
-    ExchangeHamiltonian.factor_two
-    ExchangeHamiltonian.minus_sign
+    SpinHamiltonian.double_counting
+    SpinHamiltonian.spin_normalized
+    SpinHamiltonian.factor_one_half
+    SpinHamiltonian.factor_two
+    SpinHamiltonian.minus_sign
 
 Saving and loading
 ==================
@@ -96,8 +96,8 @@ Saving and loading
 .. autosummary::
     :toctree: generated/
 
-    ExchangeHamiltonian.dump_txt
-    ExchangeHamiltonian.dump_pickle
+    SpinHamiltonian.dump_txt
+    SpinHamiltonian.dump_pickle
 
 
 Crystal getter
@@ -106,4 +106,4 @@ Crystal getter
 .. autosummary::
     :toctree: generated/
 
-    ExchangeHamiltonian.crystal
+    SpinHamiltonian.crystal

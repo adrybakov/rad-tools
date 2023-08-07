@@ -140,3 +140,6 @@ check-scripts:
 VERSION="undefined"
 prepare-release:
 	@python3 -u tools/prepare-release.py -v $(VERSION)
+
+docs-pictures:
+	@python3 tools/plot-data-structure.py

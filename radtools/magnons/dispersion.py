@@ -1,4 +1,4 @@
-from radtools.exchange.hamiltonian import ExchangeHamiltonian
+from radtools.exchange.hamiltonian import SpinHamiltonian
 from radtools.geometry import span_orthonormal_set
 from radtools.magnons.diagonalization import solve_via_colpa, ColpaFailed
 
@@ -19,7 +19,7 @@ class MagnonDispersion:
 
     Parameters
     ----------
-    model : :py:class:`.ExchangeHamiltonian`
+    model : :py:class:`.SpinHamiltonian`
         Exchange Hamiltonian.
     Q : (3,) |array_like|_
         Ordering wave vector of the spin-spiral.
@@ -62,7 +62,7 @@ class MagnonDispersion:
 
     def __init__(
         self,
-        model: ExchangeHamiltonian,
+        model: SpinHamiltonian,
         Q=None,
         n=None,
         nodmi=False,
@@ -92,7 +92,7 @@ class MagnonDispersion:
         # Get the number of magnetic atoms
         self.N = len(self._model.magnetic_atoms)
 
-        # Get the exchange parameters, indices and vectors form the ExchangeHamiltonian
+        # Get the exchange parameters, indices and vectors form the SpinHamiltonian
         (
             self.J_matrices,
             self.indices_i,

@@ -21,7 +21,7 @@ point (``radtools``):
 
 .. doctest::
 
-    >>> from radtools import Crystal, print_2d_array, Cell, ExchangeHamiltonian
+    >>> from radtools import Crystal, print_2d_array, Cell, SpinHamiltonian
 
 Explicit imports are supported as well:
 
@@ -29,7 +29,7 @@ Explicit imports are supported as well:
 
     >>> from radtools.crystal import Crystal, Cell
     >>> from radtools.decorate import print_2d_array
-    >>> from radtools.exchange import ExchangeHamiltonian
+    >>> from radtools.exchange import SpinHamiltonian
 
 As well as the exact imports:
 
@@ -38,7 +38,7 @@ As well as the exact imports:
         >>> from radtools.crystal.crystal import Crystal
         >>> from radtools.crystal import cell as Cell
         >>> from radtools.decorate.array import print_2d_array
-        >>> from radtools.exchange.hamiltonian import ExchangeHamiltonian
+        >>> from radtools.exchange.hamiltonian import SpinHamiltonian
 
 The first method is recommended, as it is the most convenient and provides the most
 intuitive way of using the package. The third method is useful for the

@@ -30,14 +30,14 @@ class NotationError(ValueError):
         self.message = (
             f"\n\nNotation`s interpretation is not set for the property {name}.\n"
             + f"Set the notation first:\n"
-            + f"    ExchangeHamiltonian.{name} = True  "
-            + f"or  ExchangeHamiltonian.{name} = False\n\n"
+            + f"    SpinHamiltonian.{name} = True  "
+            + f"or  SpinHamiltonian.{name} = False\n\n"
             + f"Note: When the attribute is set for the first time it sets the interpretation, "
             + "afterwards it change the notation.\n\n"
             + f"If you want to set the interpretation again, use \n"
-            + f"    ExchangeHamiltonian.set_interpretation({name} = True)"
+            + f"    SpinHamiltonian.set_interpretation({name} = True)"
             + "\nor\n"
-            + f"    ExchangeHamiltonian.set_interpretation({name} = False)\n"
+            + f"    SpinHamiltonian.set_interpretation({name} = False)\n"
         )
 
     def __str__(self):

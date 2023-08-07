@@ -4,12 +4,12 @@ Input-output from |TB2J|_.
 
 import numpy as np
 
-from radtools.exchange.hamiltonian import ExchangeHamiltonian
+from radtools.exchange.hamiltonian import SpinHamiltonian
 from radtools.exchange.parameter import ExchangeParameter
 from radtools.crystal.constants import REL_TOL
 
 
-def read_tb2j_model(filename, quiet=True, bravais_type=None) -> ExchangeHamiltonian:
+def read_tb2j_model(filename, quiet=True, bravais_type=None) -> SpinHamiltonian:
     r"""
     Read exchange Hamiltonian from |TB2J|_ output file.
 
@@ -22,8 +22,8 @@ def read_tb2j_model(filename, quiet=True, bravais_type=None) -> ExchangeHamilton
 
     where spin vectors :math:`\boldsymbol{S}_i` are normalized to 1
     and double counting is present (both :math:`ij` and :math:`ji` are in the sum).
-    :py:class:`.ExchangeHamiltonian` can store exchange values in any notation.
-    One could check the notation by calling the attribute :py:attr:`.ExchangeHamiltonian.notation`.
+    :py:class:`.SpinHamiltonian` can store exchange values in any notation.
+    One could check the notation by calling the attribute :py:attr:`.SpinHamiltonian.notation`.
 
     This function reads and stores exchange parameters in the notation of Hamiltonian
     mentioned above.
@@ -50,7 +50,7 @@ def read_tb2j_model(filename, quiet=True, bravais_type=None) -> ExchangeHamilton
 
     Returns
     -------
-    model : :py:class:`.ExchangeHamiltonian`
+    model : :py:class:`.SpinHamiltonian`
         Exchange Hamiltonian build from |TB2J|_ file. With notation set to "TB2J".
 
     Raises
@@ -74,7 +74,7 @@ def read_tb2j_model(filename, quiet=True, bravais_type=None) -> ExchangeHamilton
     dmi_flag = "DMI:"
 
     file = open(filename, "r")
-    model = ExchangeHamiltonian(notation="TB2J")
+    model = SpinHamiltonian(notation="TB2J")
     line = True
 
     # Read everything before exchange
@@ -173,7 +173,7 @@ def read_tb2j_model(filename, quiet=True, bravais_type=None) -> ExchangeHamilton
             if line and dmi_flag in line:
                 dmi = tuple(map(float, line.translate(garbage).split()[-3:]))
 
-        # Adding info from the exchange block to the ExchangeHamiltonian structure
+        # Adding info from the exchange block to the SpinHamiltonian structure
         J = ExchangeParameter(iso=iso, aniso=aniso, dmi=dmi)
         model.add_bond(J, atom1, atom2, R)
         computed_distance = model.get_distance(atom1, atom2, R)

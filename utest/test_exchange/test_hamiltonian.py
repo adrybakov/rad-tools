@@ -4,14 +4,14 @@ import numpy as np
 import pytest
 
 from radtools.crystal.atom import Atom
-from radtools.exchange.hamiltonian import ExchangeHamiltonian, NotationError
+from radtools.exchange.hamiltonian import SpinHamiltonian, NotationError
 from radtools.exchange.parameter import ExchangeParameter
 from radtools.exchange.template import ExchangeTemplate
 
 
 # Legacy tests
 def test_iteration():
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     Cr1 = Atom("Cr1", (0.25, 0.25, 0))
     Cr2 = Atom("Cr2", (0.75, 0.75, 0))
     model.add_atom(Cr1)
@@ -40,7 +40,7 @@ def test_iteration():
 
 
 def test_contains():
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     Cr1 = Atom("Cr1", (0.25, 0.25, 0))
     Cr2 = Atom("Cr2", (0.75, 0.75, 0))
     model.add_atom(Cr1)
@@ -68,7 +68,7 @@ def test_contains():
 
 
 def test_getitem():
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     Cr1 = Atom("Cr1", (0.25, 0.25, 0))
     Cr2 = Atom("Cr2", (0.75, 0.75, 0))
     model.add_atom(Cr1)
@@ -97,7 +97,7 @@ def test_getitem():
 
 
 def test_cell_error():
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     with pytest.raises(ValueError):
         model.cell = [3, 4, 5]
     # TODO
@@ -106,7 +106,7 @@ def test_cell_error():
 
 
 def test_cell_list():
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     model.cell = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
     Cr1 = Atom("Cr1", (1, 6, 2))
     Cr2 = Atom("Cr2", (1, 3, 2))
@@ -126,7 +126,7 @@ def test_number_spins_in_unit_cell():
     Cr1 = Atom("Cr1", (1, 6, 2))
     Cr2 = Atom("Cr2", (1, 3, 5))
     Cr3 = Atom("Cr3", (1, 3, 3))
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     model.add_atom(Cr1)
     assert model.number_spins_in_unit_cell == 0
     model.add_bond(ExchangeParameter(iso=1), "Cr1", "Cr1", (1, 0, 0))
@@ -146,7 +146,7 @@ def test_number_spins_in_unit_cell():
 
 
 def test_space_dimensions():
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     model.cell = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
     Cr1 = Atom("Cr1", (0.1, 0.6, 0.2))
     Cr2 = Atom("Cr2", (0.1, 0.3, 0.5))
@@ -164,7 +164,7 @@ def test_space_dimensions():
 
 
 def test_add_bond():
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     Cr1 = Atom("Cr1", (2, 5, 1))
     Cr2 = Atom("Cr2", (4, 2, 1))
     Cr3 = Atom("Cr3", (5, 1, 8))
@@ -188,7 +188,7 @@ def test_add_bond():
 
 
 def test_remove_bond():
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     Cr1 = Atom("Cr1", (2, 5, 1))
     Cr2 = Atom("Cr2", (4, 2, 1))
     Cr3 = Atom("Cr3", (5, 1, 8))
@@ -220,7 +220,7 @@ def test_remove_bond():
 
 
 def test_add_atom():
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     assert len(model.magnetic_atoms) == 0
     Cr1 = Atom("Cr1", (2, 5, 1))
     model.add_atom(Cr1)
@@ -245,7 +245,7 @@ def test_add_atom():
 
 
 def test_remove_atom():
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     Cr1 = Atom("Cr1", (2, 5, 1))
     Cr2 = Atom("Cr2", (4, 2, 1))
     Cr3 = Atom("Cr3", (5, 1, 8))
@@ -273,7 +273,7 @@ def test_remove_atom():
 
 
 def test_get_atom_coordinates():
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     model.cell = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
     Cr1 = Atom("Cr1", (0.1, 0.6, 0.2))
     model.add_atom(Cr1)
@@ -329,7 +329,7 @@ def test_get_atom_coordinates():
 
 
 def test_get_bond_vector():
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     model.cell = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
     Cr1 = Atom("Cr1", (0.1, 0.6, 0.2))
     Cr2 = Atom("Cr2", (0.1, 0.3, 0.4))
@@ -342,7 +342,7 @@ def test_get_bond_vector():
 
 
 def test_get_distance():
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     model.cell = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
     Cr1 = Atom("Cr1", (0.1, 0.6, 0.2))
     Cr2 = Atom("Cr2", (0.1, 0.3, 0.4))
@@ -355,7 +355,7 @@ def test_get_distance():
 
 
 def test_filter():
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     Cr1 = Atom("Cr1", (0.25, 0.25, 0))
     Cr2 = Atom("Cr2", (0.75, 0.75, 0))
     bonds = [
@@ -442,7 +442,7 @@ def test_force_symmetry():
     template1 = ExchangeTemplate()
     template2 = ExchangeTemplate()
     template3 = ExchangeTemplate()
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     Cr1 = Atom("Cr1", (0.25, 0.25, 0))
     Cr2 = Atom("Cr2", (0.75, 0.75, 0))
     bonds = [
@@ -559,7 +559,7 @@ def test_force_symmetry():
 
 
 def test_notation_manipulation():
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     Cr = Atom("Cr", (0, 0, 0), spin=3 / 2)
     model[Cr, Cr, (1, 0, 0)] = ExchangeParameter(iso=1)
     assert model[Cr, Cr, (1, 0, 0)].iso == 1
@@ -629,7 +629,7 @@ def test_notation_manipulation():
 
 
 def test_predefined_notations():
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     Cr = Atom("Cr", (0, 0, 0), spin=3 / 2)
     model[Cr, Cr, (1, 0, 0)] = ExchangeParameter(iso=1)
     assert model[Cr, Cr, (1, 0, 0)].iso == 1
@@ -677,7 +677,7 @@ def test_predefined_notations():
 
 
 def test_ferromagnetic_energy():
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     model.cell = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     Cr1 = Atom("Cr1", (1, 1, 1), spin=2)
     Cr2 = Atom("Cr2", (1, 1, 1), spin=2)
@@ -717,7 +717,7 @@ def test_ferromagnetic_energy():
 
 
 def test_add_remove_bond_with_notation():
-    model = ExchangeHamiltonian()
+    model = SpinHamiltonian()
     Cr1 = Atom("Cr1", (2, 5, 1))
     Cr2 = Atom("Cr2", (4, 2, 1))
     bond = ExchangeParameter(iso=1)

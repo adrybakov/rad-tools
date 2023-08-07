@@ -8,7 +8,7 @@ Custom Exceptions
 
 .. currentmodule:: radtools.exceptions
 
-ExchangeHamiltonian Exceptions
+SpinHamiltonian Exceptions
 ==============================
 .. autosummary::
     :toctree: generated/
