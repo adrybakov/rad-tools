@@ -2,7 +2,7 @@ r"""
 Input-output for the files related with this package.
 """
 
-from radtools.exchange.template import ExchangeTemplate
+from radtools.spinham.template import ExchangeTemplate
 
 
 def read_template(filename):

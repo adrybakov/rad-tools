@@ -4,18 +4,18 @@ Input-output from |TB2J|_.
 
 import numpy as np
 
-from radtools.exchange.hamiltonian import SpinHamiltonian
-from radtools.exchange.parameter import ExchangeParameter
+from radtools.spinham.hamiltonian import SpinHamiltonian
+from radtools.spinham.parameter import ExchangeParameter
 from radtools.crystal.constants import REL_TOL
 
 
 def read_tb2j_model(filename, quiet=True, bravais_type=None) -> SpinHamiltonian:
     r"""
-    Read exchange Hamiltonian from |TB2J|_ output file.
+    Read spin Hamiltonian from |TB2J|_ output file.
 
     .. versionchanged:: 0.7
 
-    In |TB2J|_ exchange Hamiltonian is define in a following notation:
+    In |TB2J|_ spin Hamiltonian is define in a following notation:
 
     .. math::
         H = -\sum_{i,j} \hat{\boldsymbol{S}}_i \cdot \boldsymbol{J}_{i,j} \hat{\boldsymbol{S}}_j
@@ -51,7 +51,7 @@ def read_tb2j_model(filename, quiet=True, bravais_type=None) -> SpinHamiltonian:
     Returns
     -------
     model : :py:class:`.SpinHamiltonian`
-        Exchange Hamiltonian build from |TB2J|_ file. With notation set to "TB2J".
+        Spin Hamiltonian build from |TB2J|_ file. With notation set to "TB2J".
 
     Raises
     ------

@@ -1,4 +1,4 @@
-from radtools.exchange.hamiltonian import SpinHamiltonian
+from radtools.spinham.hamiltonian import SpinHamiltonian
 from radtools.geometry import span_orthonormal_set
 from radtools.magnons.diagonalization import solve_via_colpa, ColpaFailed
 
@@ -20,7 +20,7 @@ class MagnonDispersion:
     Parameters
     ----------
     model : :py:class:`.SpinHamiltonian`
-        Exchange Hamiltonian.
+        Spin Hamiltonian.
     Q : (3,) |array_like|_
         Ordering wave vector of the spin-spiral.
         In relative coordinates with respect to the model`s reciprocal cell.

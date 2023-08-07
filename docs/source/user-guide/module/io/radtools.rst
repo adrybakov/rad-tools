@@ -8,7 +8,7 @@ RAD-tools interface
 
 Yes, it is interface to itself.
 
-Function :py:func:`read_template` reads exchange Hamiltonian template file 
+Function :py:func:`read_template` reads spin Hamiltonian template file 
 and constructs :py:class:`ExchangeTemplate` from it.
 
 Here is full template file specification:
@@ -18,7 +18,7 @@ Here is full template file specification:
 
 Template specification
 ======================
-Template file helps to choose particular bonds for filtering of exchange Hamiltonian 
+Template file helps to choose particular bonds for filtering of spin Hamiltonian 
 or for extracting model with grouped parameters 
 (i.e. :math:`J_1`, :math:`J_2`, ...).
 

@@ -29,7 +29,7 @@ Explicit imports are supported as well:
 
     >>> from radtools.crystal import Crystal, Cell
     >>> from radtools.decorate import print_2d_array
-    >>> from radtools.exchange import SpinHamiltonian
+    >>> from radtools.spinham import SpinHamiltonian
 
 As well as the exact imports:
 
@@ -38,7 +38,7 @@ As well as the exact imports:
         >>> from radtools.crystal.crystal import Crystal
         >>> from radtools.crystal import cell as Cell
         >>> from radtools.decorate.array import print_2d_array
-        >>> from radtools.exchange.hamiltonian import SpinHamiltonian
+        >>> from radtools.spinham.hamiltonian import SpinHamiltonian
 
 The first method is recommended, as it is the most convenient and provides the most
 intuitive way of using the package. The third method is useful for the
@@ -65,7 +65,7 @@ Below examples of usage and the main concept descriptions are available for each
 .. toctree::
     :maxdepth: 2
     
-    exchange/index
+    spinham/index
     crystal/index
     routines
     io/index

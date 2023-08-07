@@ -1,4 +1,4 @@
-.. _guide_exchange_parameter:
+.. _guide_spinham_parameter:
 
 .. currentmodule:: radtools
 

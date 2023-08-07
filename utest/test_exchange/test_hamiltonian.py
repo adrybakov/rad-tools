@@ -4,9 +4,9 @@ import numpy as np
 import pytest
 
 from radtools.crystal.atom import Atom
-from radtools.exchange.hamiltonian import SpinHamiltonian, NotationError
-from radtools.exchange.parameter import ExchangeParameter
-from radtools.exchange.template import ExchangeTemplate
+from radtools.spinham.hamiltonian import SpinHamiltonian, NotationError
+from radtools.spinham.parameter import ExchangeParameter
+from radtools.spinham.template import ExchangeTemplate
 
 
 # Legacy tests

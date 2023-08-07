@@ -103,7 +103,7 @@ including name and extension of the file.
 
 -R, --R-vector
 --------------
-R vectors for filtering the exchange Hamiltonian.
+R vectors for filtering the spin Hamiltonian.
 
 In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to). 
 Atom 1 is always located in (0, 0, 0) unit cell, while atom 2 is located in 

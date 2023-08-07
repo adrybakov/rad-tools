@@ -52,7 +52,7 @@ Add arguments :ref:`--scale-data <rad-plot-tb2j_scale-data>` and
 
 0.0.0.5
 -------
-Fix the problem with the :py:mod:`.exchange` docs. 
+Fix the problem with the :py:mod:`.spinham` docs. 
 
 0.0.0.4
 -------

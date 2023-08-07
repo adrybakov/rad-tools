@@ -2,7 +2,7 @@ from math import sqrt
 
 import pytest
 
-from radtools.exchange.parameter import ExchangeParameter
+from radtools.spinham.parameter import ExchangeParameter
 
 import numpy as np
 

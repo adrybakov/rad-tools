@@ -11,7 +11,7 @@ from . import (
     crystal,
     decorate,
     dos,
-    exchange,
+    spinham,
     io,
     magnons,
     score,
@@ -23,7 +23,7 @@ from . import (
 from .crystal import *
 from .decorate import *
 from .dos import *
-from .exchange import *
+from .spinham import *
 from .io import *
 from .magnons import *
 from .score import *
@@ -35,7 +35,7 @@ __all__ = ["__version__", "__doclink__", "__git_hash__", "__release_date__"]
 __all__.extend(crystal.__all__)
 __all__.extend(decorate.__all__)
 __all__.extend(dos.__all__)
-__all__.extend(exchange.__all__)
+__all__.extend(spinham.__all__)
 __all__.extend(io.__all__)
 __all__.extend(magnons.__all__)
 __all__.extend(score.__all__)

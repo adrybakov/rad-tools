@@ -1,10 +1,10 @@
-.. _guide_exchange:
+.. _guide_spinham:
 
 ********
 Exchange
 ********
 
-For the full reference see :ref:`api_exchange`.
+For the full reference see :ref:`api_spinham`.
 
 .. currentmodule:: radtools
 
@@ -13,13 +13,13 @@ Exchange module describes the spin Hamiltonian and is build around of the
 :math:`i`, which is located in :math:`(0, 0, 0)` unit cell and :py:class:`.Atom` :math:`j`,
 which is located in :math:`(i, j, k)` unit cell and corresponding exchange parameters.
 
-The notation of the exchange Hamiltonian is an important issue, since without clear notation 
+The notation of the spin Hamiltonian is an important issue, since without clear notation 
 exchange parameters does not make much sense. :py:class:`.SpinHamiltonian` can support any 
 notation out of the most common ones. Detailed description of the notation is given in 
-correspondent section: :ref:`guide_exchange_notation`. 
+correspondent section: :ref:`guide_spinham_notation`. 
 We encourage you to read it once with full attention.
 
-The main building block of the exchange Hamiltonian is exchange parameter 
+The main building block of the spin Hamiltonian is exchange parameter 
 (:math:`\boldsymbol{J}`). It is implemented in a separate class :py:class:`.ExchangeParameter`.
 For the guide on exchange parameter see:
 
@@ -29,7 +29,7 @@ For the guide on exchange parameter see:
     parameter
 
 
-.. _guide_exchange_notation:
+.. _guide_spinham_notation:
 
 Notation
 ========
@@ -49,7 +49,7 @@ positive for ferromagnetic order.
     read from |TB2J|_ file (:py:func:`.read_tb2j_model`) it has the notation of TB2J.
 
 There are five properties, that has to be defined in order to describe the 
-exchange Hamiltonian`s notation:
+spin Hamiltonian`s notation:
 
 * :py:attr:`.double_counting`
     Whether both pairs :math:`(i, j)` and :math:`(j, i)` are included in the sum. 
@@ -91,7 +91,7 @@ exchange Hamiltonian`s notation:
 
     
 * :py:attr:`.spin_normalized`
-    :math:`\boldsymbol{S}_i` in the exchange Hamiltonian is viewed as spin operator 
+    :math:`\boldsymbol{S}_i` in the spin Hamiltonian is viewed as spin operator 
     or as classical spin vector. In the latter case it could be normalized to 1 or not. 
     In case of normalisation exchange parameter absorbs the factor 
     :math:`\vert\boldsymbol{S}_i\vert \vert\boldsymbol{S}_j\vert`.
@@ -112,7 +112,7 @@ exchange Hamiltonian`s notation:
     of the Hamiltonian, so additional care is required when reading the literature.
 
 RAD-tools utilize those five properties in order to define the notation of the
-exchange Hamiltonian. During the creation of the SpinHamiltonian object the notation 
+spin Hamiltonian. During the creation of the SpinHamiltonian object the notation 
 is deliberately not defined, because it depends on your interpretation. Therefore,
 the notation has to be defined explicitly by you. If the notation is not defined, 
 and the you are trying to use the properties and methods, which expect the notation
@@ -157,7 +157,7 @@ The notation could be defined in two ways:
 
 Once the notation or any of the individual properties are set, 
 the following redefinition of the notation or corresponding property will change exchange
-parameters. See :ref:`Examples <guide_exchange_notation-examples>`.
+parameters. See :ref:`Examples <guide_spinham_notation-examples>`.
 
 If you want to change the notation once is set, but keep the parameters intact use 
 :py:meth:`.SpinHamiltonian.set_interpretation` method:
@@ -238,7 +238,7 @@ They could be set directly through the :py:attr:`.notation` property:
     Spin vectors are not normalized.
     (True, False, False, False, False)
 
-.. _guide_exchange_notation-examples:
+.. _guide_spinham_notation-examples:
 
 Examples
 --------
@@ -354,10 +354,10 @@ Changing individual properties:
     >>> hamiltonian[Cr, Cr, (1, 0, 0)].iso
     -4.5
 
-Crystal of the exchange Hamiltonian
+Crystal of the spin Hamiltonian
 ===================================
 
-Exchange Hamiltonian need the crystal structure to be defined. 
+Spin Hamiltonian need the crystal structure to be defined. 
 :py:class:`.SpinHamiltonian` is a child of :py:class:`.Crystal` and inherits all its
 properties and methods. Thus, for the creation of the crystal structure we refer you to the 
 :ref:`guide_crystal_crystal` and :ref:`guide_crystal_atom` guides. 
@@ -379,7 +379,7 @@ Any property, which is related to the structure is expected to be called directl
            [0.        , 3.14159265, 0.        ],
            [0.        , 0.        , 4.71238898]])
 
-The crystal of the Exchange Hamiltonian can be access through the 
+The crystal of the Spin Hamiltonian can be access through the 
 :py:attr:`.SpinHamiltonian.crystal` attribute. 
 Note, that it returns an independent instance of the :py:class:`.Crystal` class:
 
@@ -433,7 +433,7 @@ Constructor can take two optional parameters:
     >>> crystal = rad.Crystal(lattice)
     >>> hamiltonian = rad.SpinHamiltonian(crystal)
 
-* ``notation``: notation of the Hamiltonian. See :ref:`guide_exchange_notation`.
+* ``notation``: notation of the Hamiltonian. See :ref:`guide_spinham_notation`.
 
 .. doctest::
 
@@ -500,7 +500,7 @@ The bond is added to the Hamiltonian with :py:meth:`.SpinHamiltonian.add_bond` m
     You can skip the atom addition if you are using :py:class:`.Atom` instances, 
     not the string literals in the :py:meth:`.SpinHamiltonian.add_bond` method.
     The atom will be silently added to the system.
-    When string literal is used, atom object is extracted from the exchange Hamiltonian, thus
+    When string literal is used, atom object is extracted from the spin Hamiltonian, thus
     it has to be explicitly added first:
 
     .. doctest::
@@ -592,7 +592,7 @@ Equivalent way to delete bond:
 Structure of the Hamiltonian
 ============================
 
-Main idea of the exchange Hamiltonian structure could be expressed as 
+Main idea of the spin Hamiltonian structure could be expressed as 
 
 .. code-block:: text
 
@@ -602,7 +602,7 @@ where ``atom1`` and ``atom2`` are instances of :py:class:`.Atom`, ``(i,j,k)`` is
 integers, which defines the unit cell, and ``exchange_parameter`` is an instance of
 :py:class:`.ExchangeParameter`. 
 
-Exchange Hamiltonian is iterable over bonds:
+Spin Hamiltonian is iterable over bonds:
 
 .. doctest::
 
@@ -728,7 +728,7 @@ They could be accessed with :py:attr:`.SpinHamiltonian.magnetic_atoms` property:
 Filtering the Hamiltonian
 =========================
 
-Exchange Hamiltonian could be filtered by distance, template or set of (i,j,k) tuples 
+Spin Hamiltonian could be filtered by distance, template or set of (i,j,k) tuples 
 (R vectors).
 
 Use :py:meth:`.SpinHamiltonian.filter` to filter the instance of the

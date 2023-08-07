@@ -24,7 +24,7 @@ In the examples across the documentation it is expected to be imported in that w
    :maxdepth: 1
 
    crystal/index
-   exchange/index
+   spinham/index
    magnons/index
    dos
    io

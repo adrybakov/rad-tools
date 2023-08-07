@@ -50,12 +50,12 @@ Template file
 =============
 
 Exchange template file (see :ref:`template-draft`) can be used to force the symmetry of the model or
-to filter the exchange Hamiltonian.
+to filter the spin Hamiltonian.
 
 Filtering of the model
 ======================
 
-For filtering the exchange Hamiltonian there are a few options available:
+For filtering the spin Hamiltonian there are a few options available:
 
     * :ref:`--max_distance <rad-plot-tb2j_max-distance>`
     * :ref:`--min_distance <rad-plot-tb2j_min-distance>`
@@ -187,7 +187,7 @@ Whether to force the symmetry of the template on the Hamiltonian.
 
 -R, --R-vector
 --------------
-R vectors for filtering the exchange Hamiltonian.
+R vectors for filtering the spin Hamiltonian.
 
 In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to). 
 Atom 1 is always located in (0, 0, 0) unit cell, while atom 2 is located in 

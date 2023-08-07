@@ -27,6 +27,7 @@ clean:
 	-@rm -r docs/source/api/generated
 	-@rm -r docs/source/api/crystal/generated
 	-@rm -r docs/source/api/exchange/generated
+	-@rm -r docs/source/api/spinham/generated
 	-@rm -r docs/source/api/magnons/generated
 	-@rm -r docs/source/api/_autosummary
 	-@rm -r rad_tools.egg-info

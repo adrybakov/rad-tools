@@ -3,8 +3,8 @@ import pytest
 import numpy as np
 
 from radtools.magnons.dispersion import MagnonDispersion
-from radtools.exchange.hamiltonian import SpinHamiltonian
-from radtools.exchange.parameter import ExchangeParameter
+from radtools.spinham.hamiltonian import SpinHamiltonian
+from radtools.spinham.parameter import ExchangeParameter
 from radtools.crystal.bravais_lattice import lattice_example
 from radtools.crystal.atom import Atom
 from math import cos

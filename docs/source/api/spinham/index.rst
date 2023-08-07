@@ -1,8 +1,8 @@
-.. _api_exchange:
+.. _api_spinham:
 
-********
-exchange
-********
+*******
+spinham
+*******
 
 .. currentmodule:: radtools
 
@@ -20,7 +20,7 @@ Classes
 Constants
 =========
 
-.. currentmodule:: radtools.exchange.constants
+.. currentmodule:: radtools.spinham.constants
 
 .. autosummary::
     :toctree: generated/

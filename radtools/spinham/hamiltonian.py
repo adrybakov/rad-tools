@@ -1,5 +1,5 @@
 r"""
-Exchange module.
+Spin Hamiltonian module.
 
 Write a tutorial with docstring here.
 """
@@ -11,9 +11,9 @@ import numpy as np
 
 from radtools.crystal.atom import Atom
 from radtools.crystal.crystal import Crystal
-from radtools.exchange.parameter import ExchangeParameter
-from radtools.exchange.template import ExchangeTemplate
-from radtools.exchange.constants import PREDEFINED_NOTATIONS
+from radtools.spinham.parameter import ExchangeParameter
+from radtools.spinham.template import ExchangeTemplate
+from radtools.spinham.constants import PREDEFINED_NOTATIONS
 from radtools.decorate.array import print_2d_array
 from radtools.constants import TORADIANS
 from radtools.exceptions import NotationError
@@ -21,9 +21,9 @@ from radtools.exceptions import NotationError
 
 class SpinHamiltonian(Crystal):
     r"""
-    Exchange Hamiltonian.
+    Spin Hamiltonian.
 
-    By default the notation of the exchange Hamiltonian is not defined
+    By default the notation of the spin Hamiltonian is not defined
     and could be different in different context.
     However, in could always be checked via :py:attr:`.notation`.
     In user-specific cases it is the responsibility of the user to
@@ -42,7 +42,7 @@ class SpinHamiltonian(Crystal):
     Parameters
     ----------
     crystal : :py:class:`.Crystal`, optional
-        Crystal on which the exchange Hamiltonian is build.
+        Crystal on which the spin Hamiltonian is build.
         By default it is cubic (:math:`a=1`) lattice with no atoms.
     notation : str or tuple of bool, optional
         One of the predefined notations or list of 5 bool.
@@ -1018,7 +1018,7 @@ class SpinHamiltonian(Crystal):
         self, max_distance=None, min_distance=None, template=None, R_vector=None
     ):
         r"""
-        Create filtered exchange Hamiltonian based on the given conditions.
+        Create filtered spin Hamiltonian based on the given conditions.
 
         The result will be defined by logical conjugate of the conditions.
         Saying so the filtering will be performed for each given condition
@@ -1045,7 +1045,7 @@ class SpinHamiltonian(Crystal):
         Returns
         -------
         filtered_model : :py:class:`.SpinHamiltonian`
-            Exchange Hamiltonian after filtering.
+            Spin Hamiltonian after filtering.
 
         See Also
         --------
@@ -1131,7 +1131,7 @@ class SpinHamiltonian(Crystal):
         Returns
         -------
         new_model : :py:class:`.SpinHamiltonian`
-            Exchange Hamiltonian with forced symmetry.
+            Spin Hamiltonian with forced symmetry.
 
         See Also
         --------
@@ -1179,17 +1179,17 @@ class SpinHamiltonian(Crystal):
         dmi=False,
     ):
         r"""
-        Return exchange Hamiltonian based on the template file in .txt format.
+        Return spin Hamiltonian based on the template file in .txt format.
 
         Parameters
         ----------
         template : :py:class:`.ExchangeTemplate`
-            Template of the desired exchange Hamiltonian.
+            Template of the desired spin Hamiltonian.
             (see :ref:`rad-make-template`)
         accuracy : int, default 4
             Accuracy for the exchange values
         force_symmetry: bool, default False
-            Whether to force the symmetry of the template on the exchange Hamiltonian.
+            Whether to force the symmetry of the template on the spin Hamiltonian.
             If ``False`` then each individual bond is written, otherwise
             exchange parameters of the template are written.
         isotropic : bool, default False
