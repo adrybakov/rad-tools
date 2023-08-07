@@ -4,8 +4,36 @@
 Version 0.8
 ***********
 
-**Date:** 06 June 2023
+**Date:** 07 August 2023
 
 Whats new?
 ----------
-Major change: Restructure the class hierarchy: 
+Restructure the class hierarchy: 
+
+* :py:class:`.Lattice` is now a parent of the :py:class:`.Crystal` class.
+* :py:class:`.Crystal` is now a parent of the :py:class:`.SpinHamiltonian` class.
+
+Rename module ``exchange`` to ``spinham``. The idea is to focus on the general spin 
+Hamiltonian, which is not limited to exchange interactions. :py:class:`.ExchangeHamiltonian`
+is now :py:class:`.SpinHamiltonian`. The name ``ExchangeHamiltonian`` is still available
+as an alias for backwards compatibility.
+
+Introduce new module: :ref:`api_magnons`. This module envelope magnon-related logic.
+Corresponding script :ref:`rad-plot-tb2j-magnons` plots magnon dispersion from |TB2J|_
+file.
+
+``routines`` module is separated into different modules, which are grouped by the logic:
+
+* ``api_geometry``
+* ``api_decorate``
+* ``api_numerical``
+
+All custom exceptions are gathered in the :ref:`api_exceptions` module. As the amount of 
+custom exceptions is intended to be small, they are placed in the one file.
+
+On contrary, the constants are placed in the corresponding ``constants.py`` 
+files across submodules.
+
+Fully functional :py:class:`.Kpoints` class is introduced. It covers the details of the high
+symmetry points and paths for the Brillouin zone. The class offers simple interface to
+generate k-points mesh and to plot the paths.

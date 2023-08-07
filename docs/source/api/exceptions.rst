@@ -1,8 +1,8 @@
-.. _api_custom-exceptions:
+.. _api_exceptions:
 
-*****************
-Custom Exceptions
-*****************
+**********
+exceptions
+**********
 
 .. versionadded:: 0.7
 

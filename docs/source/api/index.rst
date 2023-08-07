@@ -32,7 +32,7 @@ In the examples across the documentation it is expected to be imported in that w
    geometry
    numerical
    decorate
-   custom-exceptions
+   exceptions
    constants
 
 
