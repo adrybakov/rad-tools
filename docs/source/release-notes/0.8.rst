@@ -24,9 +24,9 @@ file.
 
 ``routines`` module is separated into different modules, which are grouped by the logic:
 
-* ``api_geometry``
-* ``api_decorate``
-* ``api_numerical``
+* :ref:`api_geometry`
+* :ref:`api_decorate`
+* :ref:`api_numerical`
 
 All custom exceptions are gathered in the :ref:`api_exceptions` module. As the amount of 
 custom exceptions is intended to be small, they are placed in the one file.

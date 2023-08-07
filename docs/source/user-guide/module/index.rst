@@ -5,18 +5,19 @@ Module guide
 ************
 
 Module guide is directed at the users, who wants to use the package as python library. 
-It describes the the main modules of the package and their functionality, 
-providing extensive examples of usage. The main objective of the module guide is to
-introduce the package and provide examples of usage. 
+The main objective of the module guide is to
+familiarise you with the package and provide examples of usage. 
 
-Data structure
-==============
+If you want to use command-line interface check out the :ref:`scripts-guide`.
+
+Data structure and import 
+=========================
 
 RAD-tools is a collection of submodules, which combine the classes and functions
 with the same topic. For the full reference of the submodules, please refer to the
 :ref:`api`.
 
-All public methods of each submodule are exposed to the main import 
+All public methods of each submodule are exposed to the main entry 
 point (``radtools``):
 
 .. doctest::
@@ -40,11 +41,13 @@ As well as the exact imports:
         >>> from radtools.decorate.array import print_2d_array
         >>> from radtools.spinham.hamiltonian import SpinHamiltonian
 
-The first method is recommended, as it is the most convenient and provides the most
-intuitive way of using the package. The third method is useful for the
+The first method is recommended for the user, as it is the most convenient 
+and provides the most intuitive way of using the package. 
+
+The third method is useful for the
 advanced users, who wants to :ref:`contribute <rad-tools_contribute>` to the package.
 
-In the examples of this guide, the first method is used, unless stated otherwise.
+In the examples of this guide, the first import method is used, unless stated otherwise.
 
 Relation between classes
 ------------------------
@@ -60,10 +63,10 @@ The relations between the classes could be roughly illustrated by the following 
 Submodules
 ==========
 
-Below examples of usage and the main concept descriptions are available for each submodule:
+For the detailed guide on each submodule please refer to the corresponding page:
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     
     spinham/index
     crystal/index

@@ -1,8 +1,8 @@
 .. _guide_spinham:
 
-********
-Exchange
-********
+****************
+Spin Hamiltonian
+****************
 
 For the full reference see :ref:`api_spinham`.
 
@@ -786,7 +786,7 @@ the filtered copy of the :py:class:`.SpinHamiltonian`:
     >>> for atom1, atom2, R, J in filtered_hamiltonian:
     ...     print(atom1.fullname, atom2.fullname, R, J.iso)
     ...
-    Cr__2 Cr__1 (2, 2, 0) 12.0    
+    Cr__2 Cr__1 (2, 2, 0) 12.0
     Cr__1 Cr__2 (-2, -2, 0) 12.0
     >>> filtered_hamiltonian = hamiltonian.filtered(R_vector=[(0, 0, 0), (1, 0, 0)])
     >>> for atom1, atom2, R, J in filtered_hamiltonian:
