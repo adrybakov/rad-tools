@@ -6,6 +6,8 @@ spinham
 
 .. currentmodule:: radtools
 
+.. versionchanged:: 0.8.0 Renamed from ``exchange`` to ``spinham``
+
 
 Classes
 =======
