@@ -66,7 +66,7 @@ Submodules
 For the detailed guide on each submodule please refer to the corresponding page:
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
     
     spinham/index
     crystal/index

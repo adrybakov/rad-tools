@@ -2,9 +2,9 @@
 
 .. currentmodule:: radtools
 
-******************
-Exchange Parameter
-******************
+*****************
+ExchangeParameter
+*****************
 
 For the full reference see :ref:`api_parameter`
 
@@ -52,15 +52,17 @@ The following import statements are equivalent:
 
 .. doctest::
 
+    >>> # Exact import
     >>> from radtools.spinham.parameter import ExchangeParameter
+    >>> # Explicit import
     >>> from radtools.spinham import ExchangeParameter
+    >>> # Recommended import
     >>> from radtools import ExchangeParameter
 
 Creation
 ========
 
-It is created as any instance of a python class. 
-The constructor takes the following arguments:
+The constructor of :py:class:`.ExchangeParameter` takes the following arguments:
 
 * :py:attr:`.matrix` - the :math:`3 \times 3` matrix of the exchange parameter.
 * :py:attr:`.iso` - the isotropic part of the exchange parameter.

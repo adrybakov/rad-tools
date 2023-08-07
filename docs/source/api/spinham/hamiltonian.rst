@@ -1,4 +1,4 @@
-.. _api_hamiltonian:
+.. _api_spin-hamiltonian:
 
 *******************
 SpinHamiltonian
