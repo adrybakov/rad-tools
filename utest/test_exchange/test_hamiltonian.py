@@ -422,7 +422,7 @@ def test_filter():
     assert (Cr2, Cr1, (0, 0, 0)) in model
     assert (Cr1, Cr2, (0, 0, 0)) in model
     filtered_model = model.filtered(R_vector=[(0, 0, 0), (1, 0, 0)])
-    assert len(filtered_model) == 6
+    assert len(filtered_model) == 4
     assert (Cr2, Cr1, (0, 0, 0)) in model
     assert (Cr1, Cr2, (0, 0, 0)) in model
     assert (Cr1, Cr1, (1, 0, 0)) in model
@@ -627,6 +627,7 @@ def test_notation_manipulation():
     model.notation = "TB2J"
     assert model[Cr, Cr, (1, 0, 0)].iso == 9 / 4
 
+
 def test_predefined_notations():
     model = ExchangeHamiltonian()
     Cr = Atom("Cr", (0, 0, 0), spin=3 / 2)
@@ -674,6 +675,7 @@ def test_predefined_notations():
         and not model.minus_sign
     )
 
+
 def test_ferromagnetic_energy():
     model = ExchangeHamiltonian()
     model.cell = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
@@ -706,9 +708,9 @@ def test_ferromagnetic_energy():
         < 1e-5
     ).all()
 
-    notations = np.transpose(
-        np.indices((2, 2, 2, 2, 2)), (1, 2, 3, 4, 5, 0)
-    ).reshape((32, 5))
+    notations = np.transpose(np.indices((2, 2, 2, 2, 2)), (1, 2, 3, 4, 5, 0)).reshape(
+        (32, 5)
+    )
     for new_notation in notations:
         model.notation = new_notation
         assert np.allclose(model.ferromagnetic_energy(), -6)

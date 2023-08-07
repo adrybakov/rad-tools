@@ -100,7 +100,8 @@ class Kpoints:
                 path = []
             for point in self.hs_names[1:]:
                 path.append(f"-{point}")
-        self.path = "".join(path)
+            path = "".join(path)
+        self.path = path
 
     def add_hs_point(self, name, coordinates, label, relative=True):
         r"""
