@@ -14,9 +14,9 @@ def test_ferromagnetic():
     model = SpinHamiltonian(lattice=lattice_example("CUB"))
     model.add_atom(Atom("Fe", (0, 0, 0), spin=[0, 0, 1]))
     J = ExchangeParameter(iso=1)
-    model.add_bond(J, "Fe", "Fe", (1, 0, 0))
-    model.add_bond(J, "Fe", "Fe", (0, 1, 0))
-    model.add_bond(J, "Fe", "Fe", (0, 0, 1))
+    model.add_bond("Fe", "Fe", (1, 0, 0), J=J)
+    model.add_bond("Fe", "Fe", (0, 1, 0), J=J)
+    model.add_bond("Fe", "Fe", (0, 0, 1), J=J)
     model.notation = "standard"
 
     dispersion = MagnonDispersion(model)

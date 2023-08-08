@@ -31,7 +31,7 @@ def test_iteration():
         (-2.35, Cr1, Cr2, (-2, -2, 0)),
     ]
     for iso, atom1, atom2, R in bonds:
-        model.add_bond(ExchangeParameter(iso=iso), atom1, atom2, R)
+        model.add_bond(atom1, atom2, R, iso=iso)
     for i, (atom1, atom2, R, J) in enumerate(model):
         assert isinstance(atom1, Atom)
         assert isinstance(atom2, Atom)
@@ -60,7 +60,7 @@ def test_contains():
         (12, Cr1, Cr2, (-2, -2, 0)),
     ]
     for iso, atom1, atom2, R in bonds:
-        model.add_bond(ExchangeParameter(iso=iso), atom1, atom2, R)
+        model.add_bond(atom1, atom2, R, iso=iso)
     assert (Cr1, Cr2, (0, 0, 0)) in model
     assert (Cr2, Cr2, (1, 0, 0)) in model
     assert (Cr1, Cr2, (4, 0, 0)) not in model
@@ -88,7 +88,7 @@ def test_getitem():
         (12, Cr1, Cr2, (-2, -2, 0)),
     ]
     for iso, atom1, atom2, R in bonds:
-        model.add_bond(ExchangeParameter(iso=iso), atom1, atom2, R)
+        model.add_bond(atom1, atom2, R, iso=iso)
     assert model[(Cr1, Cr2, (0, 0, 0))].iso == 12
     assert model[(Cr2, Cr2, (1, 0, 0))].iso == 12
     assert model[(Cr1, Cr2, (-2, -2, 0))].iso == 12
@@ -111,9 +111,9 @@ def test_cell_list():
     Cr1 = Atom("Cr1", (1, 6, 2))
     Cr2 = Atom("Cr2", (1, 3, 2))
     Cr3 = Atom("Cr3", (1, 6, 2))
-    model.add_bond(ExchangeParameter(iso=1), Cr1, Cr2, (0, 0, 0))
-    model.add_bond(ExchangeParameter(iso=2), Cr1, Cr3, (0, -1, 0))
-    model.add_bond(ExchangeParameter(iso=3), Cr2, Cr1, (0, 0, -3))
+    model.add_bond(Cr1, Cr2, (0, 0, 0), iso=1)
+    model.add_bond(Cr1, Cr3, (0, -1, 0), iso=2)
+    model.add_bond(Cr2, Cr1, (0, 0, -3), iso=3)
     cells = model.cell_list.tolist()
     cells = [tuple(i) for i in cells]
     assert len(cells) == 3
@@ -129,13 +129,13 @@ def test_number_spins_in_unit_cell():
     model = SpinHamiltonian()
     model.add_atom(Cr1)
     assert model.number_spins_in_unit_cell == 0
-    model.add_bond(ExchangeParameter(iso=1), "Cr1", "Cr1", (1, 0, 0))
+    model.add_bond("Cr1", "Cr1", (1, 0, 0), iso=1)
     assert model.number_spins_in_unit_cell == 1
     model.add_atom(Cr2)
     assert model.number_spins_in_unit_cell == 1
     model.add_atom(Cr3)
     assert model.number_spins_in_unit_cell == 1
-    model.add_bond(ExchangeParameter(iso=1), "Cr2", "Cr3", (0, 0, 0))
+    model.add_bond("Cr2", "Cr3", (0, 0, 0), iso=1)
     assert model.number_spins_in_unit_cell == 3
     model.remove_atom(Cr1)
     assert model.number_spins_in_unit_cell == 2
@@ -151,9 +151,9 @@ def test_space_dimensions():
     Cr1 = Atom("Cr1", (0.1, 0.6, 0.2))
     Cr2 = Atom("Cr2", (0.1, 0.3, 0.5))
     Cr3 = Atom("Cr3", (0.1, 0.3, 0.3))
-    model.add_bond(ExchangeParameter(iso=1), Cr1, Cr2, (0, 0, 0))
-    model.add_bond(ExchangeParameter(iso=2), Cr1, Cr3, (0, -1, 0))
-    model.add_bond(ExchangeParameter(iso=3), Cr2, Cr1, (0, 0, -3))
+    model.add_bond(Cr1, Cr2, (0, 0, 0), iso=1)
+    model.add_bond(Cr1, Cr3, (0, -1, 0), iso=2)
+    model.add_bond(Cr2, Cr1, (0, 0, -3), iso=3)
     x_min, y_min, z_min, x_max, y_max, z_max = model.space_dimensions
     assert x_min == 1
     assert y_min == -7
@@ -172,14 +172,14 @@ def test_add_bond():
     bond13 = ExchangeParameter(iso=13)
     bond23 = ExchangeParameter(iso=23)
     bond31 = ExchangeParameter(iso=31)
-    model.add_bond(bond12, Cr1, Cr2, (0, 0, 0))
-    model.add_bond(bond23, Cr2, Cr3, (0, 0, 0))
-    model.add_bond(bond31, Cr3, Cr1, (0, 0, 0))
+    model.add_bond(Cr1, Cr2, (0, 0, 0), J=bond12)
+    model.add_bond(Cr2, Cr3, (0, 0, 0), J=bond23)
+    model.add_bond(Cr3, Cr1, (0, 0, 0), J=bond31)
     assert len(model) == 3
     assert (Cr1, Cr2, (0, 0, 0)) in model
     assert (Cr2, Cr3, (0, 0, 0)) in model
     assert (Cr3, Cr1, (0, 0, 0)) in model
-    model.add_bond(bond13, Cr1, Cr3, (0, 0, 0))
+    model.add_bond(Cr1, Cr3, (0, 0, 0), J=bond13)
     assert len(model) == 4
     assert (Cr1, Cr2, (0, 0, 0)) in model
     assert (Cr2, Cr3, (0, 0, 0)) in model
@@ -196,10 +196,10 @@ def test_remove_bond():
     bond13 = ExchangeParameter(iso=13)
     bond23 = ExchangeParameter(iso=23)
     bond31 = ExchangeParameter(iso=31)
-    model.add_bond(bond12, Cr1, Cr2, (0, 0, 0))
-    model.add_bond(bond23, Cr2, Cr3, (0, 0, 0))
-    model.add_bond(bond31, Cr3, Cr1, (0, 0, 0))
-    model.add_bond(bond13, Cr1, Cr3, (0, 0, 0))
+    model.add_bond(Cr1, Cr2, (0, 0, 0), J=bond12)
+    model.add_bond(Cr2, Cr3, (0, 0, 0), J=bond23)
+    model.add_bond(Cr3, Cr1, (0, 0, 0), J=bond31)
+    model.add_bond(Cr1, Cr3, (0, 0, 0), J=bond13)
     assert len(model) == 4
     assert (Cr1, Cr2, (0, 0, 0)) in model
     assert (Cr2, Cr3, (0, 0, 0)) in model
@@ -253,10 +253,10 @@ def test_remove_atom():
     bond13 = ExchangeParameter(iso=13)
     bond23 = ExchangeParameter(iso=23)
     bond31 = ExchangeParameter(iso=31)
-    model.add_bond(bond12, Cr1, Cr2, (0, 0, 0))
-    model.add_bond(bond23, Cr2, Cr3, (0, 0, 0))
-    model.add_bond(bond31, Cr3, Cr1, (0, 0, 0))
-    model.add_bond(bond13, Cr1, Cr3, (0, 0, 0))
+    model.add_bond(Cr1, Cr2, (0, 0, 0), J=bond12)
+    model.add_bond(Cr2, Cr3, (0, 0, 0), J=bond23)
+    model.add_bond(Cr3, Cr1, (0, 0, 0), J=bond31)
+    model.add_bond(Cr1, Cr3, (0, 0, 0), J=bond13)
     assert len(model) == 4
     assert (Cr1, Cr2, (0, 0, 0)) in model
     assert (Cr2, Cr3, (0, 0, 0)) in model
@@ -373,7 +373,7 @@ def test_filter():
         (12, Cr1, Cr2, (-2, -2, 0)),
     ]
     for iso, atom1, atom2, R in bonds:
-        model.add_bond(ExchangeParameter(iso=iso), atom1, atom2, R)
+        model.add_bond(atom1, atom2, R, iso=iso)
     assert len(model) == 12
     assert (Cr1, Cr2, (0, 0, 0)) in model
     assert (Cr2, Cr1, (0, 0, 0)) in model
@@ -454,7 +454,7 @@ def test_force_symmetry():
         ([[1, 2, 0], [2, 1, 2], [0, -2, 0]], Cr2, Cr2, (-1, 0, 0)),
     ]
     for matrix, atom1, atom2, R in bonds:
-        model.add_bond(ExchangeParameter(matrix=matrix), atom1, atom2, R)
+        model.add_bond(atom1, atom2, R, matrix=matrix)
 
     template1.names = {
         "J1": [("Cr1", "Cr2", (0, 0, 0)), ("Cr2", "Cr1", (0, 0, 0))],
@@ -506,7 +506,7 @@ def test_force_symmetry():
         == np.array([[1, 3, 0], [3, 1, 1.5], [0, -1.5, 0]])
     ).all()
     for matrix, atom1, atom2, R in bonds:
-        model.add_bond(ExchangeParameter(matrix=matrix), atom1, atom2, R)
+        model.add_bond(atom1, atom2, R, matrix=matrix)
     model.force_symmetry(template=template2)
     assert len(model) == 5
     assert (
@@ -533,7 +533,7 @@ def test_force_symmetry():
     assert (Cr2, Cr2, (-1, 0, 0)) not in model
 
     for matrix, atom1, atom2, R in bonds:
-        model.add_bond(ExchangeParameter(matrix=matrix), atom1, atom2, R)
+        model.add_bond(atom1, atom2, R, matrix=matrix)
     model.force_symmetry(template=template3)
     assert len(model) == 4
     assert (
@@ -682,9 +682,9 @@ def test_ferromagnetic_energy():
     Cr1 = Atom("Cr1", (1, 1, 1), spin=2)
     Cr2 = Atom("Cr2", (1, 1, 1), spin=2)
     Cr3 = Atom("Cr3", (1, 1, 1), spin=2)
-    model.add_bond(ExchangeParameter(iso=1), Cr1, Cr2, (0, 0, 0))
-    model.add_bond(ExchangeParameter(iso=2), Cr1, Cr3, (0, -1, 0))
-    model.add_bond(ExchangeParameter(iso=3), Cr2, Cr1, (0, 0, -3))
+    model.add_bond(Cr1, Cr2, (0, 0, 0), iso=1)
+    model.add_bond(Cr1, Cr3, (0, -1, 0), iso=2)
+    model.add_bond(Cr2, Cr1, (0, 0, -3), iso=3)
     model.double_counting = False
     model.minus_sign = True
     model.factor_one_half = False
@@ -693,10 +693,11 @@ def test_ferromagnetic_energy():
     assert np.allclose(model.ferromagnetic_energy(), -6)
     assert np.allclose(model.ferromagnetic_energy(theta=23, phi=234), -6)
     model.add_bond(
-        ExchangeParameter(iso=3, aniso=[[1, 0, 0], [0, 2, 0], [0, 0, -3]]),
         Cr2,
         Cr1,
         (0, 0, -1),
+        iso=3,
+        aniso=[[1, 0, 0], [0, 2, 0], [0, 0, -3]],
     )
     assert np.allclose(model.ferromagnetic_energy(), -6)
     assert np.allclose(model.ferromagnetic_energy(theta=90), -10)
@@ -722,7 +723,7 @@ def test_add_remove_bond_with_notation():
     Cr2 = Atom("Cr2", (4, 2, 1))
     bond = ExchangeParameter(iso=1)
     model.double_counting = False
-    model.add_bond(bond, Cr1, Cr2, (0, 0, 0))
+    model.add_bond(Cr1, Cr2, (0, 0, 0), J=bond)
     assert (Cr1, Cr2, (0, 0, 0)) in model
     assert (Cr2, Cr1, (0, 0, 0)) not in model
     model.remove_bond(Cr1, Cr2, (0, 0, 0))
@@ -730,7 +731,7 @@ def test_add_remove_bond_with_notation():
     assert (Cr2, Cr1, (0, 0, 0)) not in model
 
     model.double_counting = True
-    model.add_bond(bond, Cr1, Cr2, (0, 0, 0))
+    model.add_bond(Cr1, Cr2, (0, 0, 0), J=bond)
     assert (Cr1, Cr2, (0, 0, 0)) in model
     assert (Cr2, Cr1, (0, 0, 0)) in model
     model.remove_bond(Cr2, Cr1, (0, 0, 0))
