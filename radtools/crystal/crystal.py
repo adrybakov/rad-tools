@@ -129,7 +129,7 @@ class Crystal(Lattice):
         r"""
         Add atom to the crystal.
 
-        If ``new_atom```s literal and index are the same as of some atom of the crystal,
+        If name and index of the ``new_atom`` are the same as of some atom of the crystal,
         then ``new_atom`` is not added.
 
         If index of ``new_atom`` is not defined, it is set.

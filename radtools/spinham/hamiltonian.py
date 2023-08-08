@@ -162,7 +162,7 @@ class SpinHamiltonian(Crystal):
             >>> import radtools as rad
             >>> model = rad.SpinHamiltonian()
             >>> Cr = rad.Atom("Cr", spin=1.5)
-            >>> model.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
+            >>> model.add_bond(Cr, Cr, (1, 0, 0), iso=1)
             >>> model[Cr, Cr, (1, 0, 0)].iso
             1.0
             >>> # For the first time interpretation is set,
@@ -189,7 +189,7 @@ class SpinHamiltonian(Crystal):
             >>> import radtools as rad
             >>> model = rad.SpinHamiltonian()
             >>> Cr = rad.Atom("Cr", spin=1.5)
-            >>> model.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
+            >>> model.add_bond(Cr, Cr, (1, 0, 0), iso=1)
             >>> model[Cr, Cr, (1, 0, 0)].iso
             1.0
             >>> # For the first time interpretation is set,
@@ -210,7 +210,7 @@ class SpinHamiltonian(Crystal):
             >>> import radtools as rad
             >>> model = rad.SpinHamiltonian()
             >>> Cr = rad.Atom("Cr", spin=1.5)
-            >>> model.add_bond(rad.ExchangeParameter(iso=1), Cr, Cr, (1, 0, 0))
+            >>> model.add_bond(Cr, Cr, (1, 0, 0), iso=1)
             >>> model[Cr, Cr, (1, 0, 0)].iso
             1.0
             >>> model.notation = "standard"
@@ -399,7 +399,7 @@ class SpinHamiltonian(Crystal):
         bonds = list(self)
         for atom1, atom2, (i, j, k), J in bonds:
             if (atom2, atom1, (-i, -j, -k)) not in self:
-                self.add_bond(J.T, atom2, atom1, (-i, -j, -k))
+                self.add_bond(atom2, atom1, (-i, -j, -k), J=J.T)
 
     def _ensure_no_double_counting(self):
         r"""
@@ -427,7 +427,7 @@ class SpinHamiltonian(Crystal):
                     self.remove_bond(atom2, atom1, (-i, -j, -k))
             else:
                 if (atom2, atom1, (-i, -j, -k)) not in self:
-                    self.add_bond(J.T, atom2, atom1, (-i, -j, -k))
+                    self.add_bond(atom2, atom1, (-i, -j, -k), J=J.T)
                     self.remove_bond(atom1, atom2, (i, j, k))
 
     @double_counting.setter
@@ -767,9 +767,11 @@ class SpinHamiltonian(Crystal):
         return x_min, y_min, z_min, x_max, y_max, z_max
 
     def __setitem__(self, key, value):
-        self.add_bond(value, *key)
+        self.add_bond(*key, value)
 
-    def add_bond(self, J: ExchangeParameter, atom1: Atom, atom2: Atom, R):
+    def add_bond(
+        self, atom1: Atom, atom2: Atom, R, J: ExchangeParameter = None, **kwargs
+    ):
         r"""
         Add one bond to the Hamiltonian.
 
@@ -785,7 +787,7 @@ class SpinHamiltonian(Crystal):
             >>> (Cr, Cr, (1,0,0)) in model
             True
 
-        It is the same as
+        It is equivalent to
 
         .. doctest::
 
@@ -793,14 +795,12 @@ class SpinHamiltonian(Crystal):
             >>> Cr = rad.Atom("Cr")
             >>> J = rad.ExchangeParameter(iso=1)
             >>> model = rad.SpinHamiltonian(rad.Crystal())
-            >>> model.add_bond(J, Cr, Cr, (1,0,0))
+            >>> model.add_bond(Cr, Cr, (1,0,0), J=J)
             >>> (Cr, Cr, (1,0,0)) in model
             True
 
         Parameters
         ----------
-        J : :py:class:`.ExchangeParameter`
-            An instance of :py:class:`ExchangeParameter`.
         atom1 : :py:class:`Atom` or str
             Atom object in (0, 0, 0) unit cell.
             str works only if atom is already in the Hamiltonian.
@@ -810,6 +810,11 @@ class SpinHamiltonian(Crystal):
         R : tuple of ints
             Vector of the unit cell for atom2.
             In the relative coordinates (i,j,k).
+        J : :py:class:`.ExchangeParameter`, optional
+            An instance of :py:class:`ExchangeParameter`.
+        ** kwargs
+            Keyword arguments for the constructor of :py:class:`ExchangeParameter`.
+            Ignored if J is given.
         """
 
         if isinstance(atom1, str):
@@ -821,6 +826,9 @@ class SpinHamiltonian(Crystal):
             atom2 = self.get_atom(atom2)
         elif atom2 not in self.atoms:
             self.add_atom(atom2)
+
+        if J is None:
+            J = ExchangeParameter(**kwargs)
 
         self._bonds[(atom1, atom2, R)] = J
 

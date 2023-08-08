@@ -5,7 +5,6 @@ Input-output from |TB2J|_.
 import numpy as np
 
 from radtools.spinham.hamiltonian import SpinHamiltonian
-from radtools.spinham.parameter import ExchangeParameter
 from radtools.crystal.constants import REL_TOL
 
 
@@ -174,8 +173,7 @@ def read_tb2j_model(filename, quiet=True, bravais_type=None) -> SpinHamiltonian:
                 dmi = tuple(map(float, line.translate(garbage).split()[-3:]))
 
         # Adding info from the exchange block to the SpinHamiltonian structure
-        J = ExchangeParameter(iso=iso, aniso=aniso, dmi=dmi)
-        model.add_bond(J, atom1, atom2, R)
+        model.add_bond(atom1, atom2, R, iso=iso, aniso=aniso, dmi=dmi)
         computed_distance = model.get_distance(atom1, atom2, R)
         if abs(computed_distance - distance) > 0.001 and not quiet:
             print(
