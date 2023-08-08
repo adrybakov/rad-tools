@@ -31,3 +31,13 @@ Axes
 
     plot_hlines
     plot_vlines
+
+Logo and info
+=============
+
+.. autosummary::
+    :toctree: generated/
+
+    logo
+    stamp_line
+    license

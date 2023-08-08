@@ -1,6 +1,9 @@
+from calendar import month_name
+from datetime import datetime
+
 from radtools import __version__, __git_hash__, __doclink__, __release_date__
 
-__all__ = ["logo"]
+__all__ = ["logo", "stamp_line", "license"]
 
 
 def logo(info=None, line_length=71, flat=False):
@@ -35,6 +38,7 @@ def logo(info=None, line_length=71, flat=False):
             f"Release date: {__release_date__}",
             f"Git hash: {__git_hash__}",
             f"Documentation: {__doclink__}",
+            f"Licence: MIT License",
         ]
     logo = [
         "██████╗  █████╗ ██████╗       ████████╗ █████╗  █████╗ ██╗      ██████╗",
@@ -88,3 +92,78 @@ def logo(info=None, line_length=71, flat=False):
 
     logo_info = [f"{x:^{line_length}}\n" for x in logo_info]
     return "".join(logo_info)[:-1]
+
+
+def stamp_line(datetime=True, version=True, githash=False, doclink=False):
+    """
+    Return one-line information about the package.
+
+    Parameters
+    ----------
+    datetime : bool, default True
+        Whether to include the release date or not.
+    version : bool, default True
+        Whether to include the version number or not.
+    githash : bool, default False
+        Whether to include the git hash or not.
+    doclink : bool, default False
+        Whether to include the documentation link or not.
+
+    Returns
+    -------
+    info : str
+        Information about the package.
+    """
+
+    line = []
+    if datetime:
+        cd = datetime.now()
+        line.append(
+            f"on {cd.day} {month_name[cd.month]} {cd.year}"
+            + f" at {cd.hour}:{cd.minute}:{cd.second} "
+        )
+    line.append("by rad-tools ")
+    if version:
+        line.append(f"{version} ")
+    if githash:
+        line.append(f"({githash}) ")
+    if doclink:
+        line.append(f"Documentation: {doclink}")
+    return "".join(line)
+
+
+def license():
+    """
+    Return the license of the package.
+
+    Returns
+    -------
+    license : str
+        License of the package.
+    """
+    license = [
+        "MIT License\n",
+        "\n",
+        "Copyright (c) 2022-2023 Andrey Rybakov\n",
+        "\n",
+        "Permission is hereby granted, free of charge, to any person obtaining a copy\n",
+        'of this software and associated documentation files (the "Software"), to deal\n',
+        "in the Software without restriction, including without limitation the rights\n",
+        "to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n",
+        "copies of the Software, and to permit persons to whom the Software is\n",
+        "furnished to do so, subject to the following conditions:\n",
+        "\n",
+        "The above copyright notice and this permission notice shall be included in all\n",
+        "copies or substantial portions of the Software.\n",
+        "\n",
+        'THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n',
+        "IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n",
+        "FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n",
+        "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n",
+        "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n",
+        "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n",
+        "SOFTWARE.\n",
+        "",
+    ]
+
+    return "".join(license)
