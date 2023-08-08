@@ -36,27 +36,27 @@ Write correct behaviour of :py:class:`.SpinHamiltonian` with the :py:attr:`.Spin
 
     >>> import radtools as rad
     >>> m = rad.SpinHamiltonian()
-    >>> m.add_atom(rad.Atom("Cr", (0,0,0), spin=3/2))
-    >>> m.add_bond(rad.ExchangeParameter(iso=1), "Cr", "Cr", (1,0,0))
+    >>> m.add_atom("Cr", position=(0, 0, 0), spin=3/2)
+    >>> m.add_bond("Cr", "Cr", (1, 0, 0), iso=1)
     >>> # First time - only setting interpretation, no modification of values
     >>> m.notation = "standard"
-    >>> m["Cr", "Cr", (1,0,0)].iso 
+    >>> m["Cr", "Cr", (1, 0, 0)].iso 
     1.0
-    >>> m["Cr", "Cr", (-1,0,0)].iso 
+    >>> m["Cr", "Cr", (-1, 0, 0)].iso 
     1.0
     >>> m.double_counting
     True
     >>> m.double_counting = False
-    >>> m["Cr", "Cr", (1,0,0)].iso 
+    >>> m["Cr", "Cr", (1, 0, 0)].iso 
     2.0
-    >>> ("Cr", "Cr", (1,0,0)) in m
+    >>> ("Cr", "Cr", (1, 0, 0)) in m
     True
-    >>> ("Cr", "Cr", (-1,0,0)) in m
+    >>> ("Cr", "Cr", (-1, 0, 0)) in m
     False
     >>> m.double_counting = True
-    >>> m["Cr", "Cr", (1,0,0)].iso 
+    >>> m["Cr", "Cr", (1, 0, 0)].iso 
     1.0
-    >>> ("Cr", "Cr", (-1,0,0)) in m
+    >>> ("Cr", "Cr", (-1, 0, 0)) in m
     True
 
 
