@@ -54,6 +54,7 @@
         "scipy",
         "spinham",
         "spinw",
+        "subpaths",
         "symm",
         "symm_matrix",
         "termcolor",
