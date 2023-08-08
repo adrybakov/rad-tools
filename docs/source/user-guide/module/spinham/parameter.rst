@@ -81,6 +81,12 @@ the other parameters are used to calculate the matrix.
            [0., 1., 0.],
            [0., 0., 1.]]))
 
+For the full list of constructor parameters see 
+:py:class:`.ExchangeParameter` documentation.
+
+String representation
+=====================
+
 For the exchange parameter convenient string representation is defined:
 
 .. doctest::
