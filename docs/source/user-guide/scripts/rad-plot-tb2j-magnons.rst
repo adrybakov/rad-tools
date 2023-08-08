@@ -9,7 +9,7 @@ Script for plotting magnon dispersion from |TB2J|_ results.
 .. versionadded:: 0.7.12 
 
 Scrip plots magnon dispersion spectra following the algorithm described in 
-:ref:`rad-tools_magnon-dispersion-method`.
+:ref:`library_magnon-dispersion-method`.
 
 It requires |TB2J|_ output file "exchange.out" and 
 the information about the magnetic ground state.

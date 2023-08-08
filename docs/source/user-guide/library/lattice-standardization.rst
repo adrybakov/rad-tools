@@ -1,4 +1,4 @@
-.. _lattice-standardization:
+.. _library_lattice-standardization:
 
 *********************************
 Standardization of lattice`s cell

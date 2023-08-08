@@ -1,4 +1,4 @@
-.. _rad-tools_lepage:
+.. _library_lepage:
 
 ****************
 LePage algorithm

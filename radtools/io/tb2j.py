@@ -44,7 +44,7 @@ def read_tb2j_model(filename, quiet=True, bravais_type=None) -> SpinHamiltonian:
     bravais_type : str, default None
         Expected bravais lattice type. If ``None``, the lattice type is identified
         automatically. See :py:meth:`.Crystal.identify` for more details.
-        The bravais lattice type is reached by reducing the accuracy for the :ref:`rad-tools_lepage`.
+        The bravais lattice type is reached by reducing the accuracy for the :ref:`library_lepage`.
         If the desired lattice type is not reached, the error is raised.
 
     Returns

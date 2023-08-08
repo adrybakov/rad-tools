@@ -1,4 +1,4 @@
-.. _rad-tools_magnon-dispersion-method:
+.. _library_magnon-dispersion-method:
 
 *****************
 Magnon dispersion
