@@ -6,7 +6,7 @@ Monoclinic (MCL)
 
 **Pearson symbol**: mP
 
-Monoclinic lattice is described by the class :py:class:`.MCL`.
+**Constructor**:  :py:func:`.MCL`.
 
 It is defined by four parameter: :math:`a`, :math:`b`, :math:`c` and :math:`\alpha` 
 with primitive and conventional lattice:
@@ -37,7 +37,7 @@ Example structure
 =================
 
 
-**Default kpath**: :math:`\Gamma-Y-H-C-E-M_1-A-X-H_1\vert M-D-Z\vert Y-D`.
+**Default kpath**: :math:`\mathrm{\Gamma-Y-H-C-E-M_1-A-X-H_1\vert M-D-Z\vert Y-D}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30

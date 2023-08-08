@@ -6,7 +6,7 @@ Tetragonal (TET)
 
 **Pearson symbol**: tP
 
-Tetragonal lattice is described by the class :py:class:`.TET`.
+**Constructor**:  :py:func:`.TET`.
 
 It is defined by two parameters: :math:`a` and :math:`c` 
 with primitive and conventional lattice:
@@ -28,7 +28,7 @@ One example is predefined: ``tet`` with :math:`a = \pi` and :math:`c = 1.5\pi`
 Example structure
 =================
 
-**Default kpath**: :math:`\Gamma-X-M-\Gamma-Z-R-A-Z\vert X-R\vert M-A`.
+**Default kpath**: :math:`\mathrm{\Gamma-X-M-\Gamma-Z-R-A-Z\vert X-R\vert M-A}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30

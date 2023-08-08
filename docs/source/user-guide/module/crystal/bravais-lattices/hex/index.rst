@@ -6,7 +6,7 @@ Hexagonal (HEX)
 
 **Pearson symbol**: hP
 
-Hexagonal lattice is described by the class :py:class:`.HEX`.
+**Constructor**:  :py:func:`.HEX`.
 
 It is defined by two parameter: :math:`a` and :math:`c` 
 with primitive and conventional lattice:
@@ -28,7 +28,7 @@ One example is predefined: ``hex`` with :math:`a = \pi` and :math:`c = 2\pi`.
 Example structure
 =================
 
-**Default kpath**: :math:`\Gamma-M-K-\Gamma-A-L-H-A\vert L-M\vert K-H`.
+**Default kpath**: :math:`\mathrm{\Gamma-M-K-\Gamma-A-L-H-A\vert L-M\vert K-H}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30

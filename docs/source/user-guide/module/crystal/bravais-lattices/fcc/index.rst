@@ -6,7 +6,7 @@ Face-centred cubic (FCC)
 
 **Pearson symbol**: cF
 
-Face-centered cubic lattice is described by the class :py:class:`.FCC`.
+**Constructor**:  :py:func:`.FCC`.
 
 It is defined by one parameter: :math:`a` with conventional lattice:
 
@@ -37,7 +37,7 @@ One example is predefined: ``fcc`` with :math:`a = \pi`.
 Example structure
 =================
 
-**Default kpath**: :math:`\Gamma-X-W-K-\Gamma-L-U-W-L-K\vert U-X`.
+**Default kpath**: :math:`\mathrm{\Gamma-X-W-K-\Gamma-L-U-W-L-K\vert U-X}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30

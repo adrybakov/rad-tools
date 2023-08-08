@@ -38,6 +38,7 @@ Properties
     dipole_dipole_energy
     dipole_dipole_interaction
 
+.. _api_bravais-lattices:
 
 Bravais lattices
 ================

@@ -6,7 +6,7 @@ Triclinic (TRI)
 
 **Pearson symbol**: aP
 
-Triclinic lattice is described by the class :py:class:`.TRI`.
+**Constructor**:  :py:func:`.TRI`.
 
 It is defined by six parameters: :math:`a`, :math:`b`, :math:`c` and
 :math:`\alpha`, :math:`\beta`, :math:`\gamma`.
@@ -54,7 +54,7 @@ Example structures
 TRI\ :sub:`1a`
 --------------
 
-**Default kpath**: :math:`\Gamma-Y-F-L-I\vert I_1-Z-F_1\vert Y-X_1\vert X-\Gamma-N\vert M-\Gamma`.
+**Default kpath**: :math:`\mathrm{\Gamma-Y-F-L-I\vert I_1-Z-F_1\vert Y-X_1\vert X-\Gamma-N\vert M-\Gamma}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30
@@ -91,7 +91,7 @@ TRI\ :sub:`1a`
 TRI\ :sub:`2a`
 --------------
 
-**Default kpath**: :math:`\Gamma-Y-F-L-I\vert I_1-Z-F_1\vert Y-X_1\vert X-\Gamma-N\vert M-\Gamma`.
+**Default kpath**: :math:`\mathrm{\Gamma-Y-F-L-I\vert I_1-Z-F_1\vert Y-X_1\vert X-\Gamma-N\vert M-\Gamma}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30
@@ -128,7 +128,7 @@ TRI\ :sub:`2a`
 TRI\ :sub:`1b`
 --------------
 
-**Default kpath**: :math:`\Gamma-Y-F-L-I\vert I_1-Z-F_1\vert Y-X_1\vert X-\Gamma-N\vert M-\Gamma`.
+**Default kpath**: :math:`\mathrm{\Gamma-Y-F-L-I\vert I_1-Z-F_1\vert Y-X_1\vert X-\Gamma-N\vert M-\Gamma}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30
@@ -165,7 +165,7 @@ TRI\ :sub:`1b`
 TRI\ :sub:`2b`
 --------------
 
-**Default kpath**: :math:`\Gamma-Y-F-L-I\vert I_1-Z-F_1\vert Y-X_1\vert X-\Gamma-N\vert M-\Gamma`.
+**Default kpath**: :math:`\mathrm{\Gamma-Y-F-L-I\vert I_1-Z-F_1\vert Y-X_1\vert X-\Gamma-N\vert M-\Gamma}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30

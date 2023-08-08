@@ -6,7 +6,7 @@ Body-centred tetragonal (BCT)
 
 **Pearson symbol**: tI
 
-Body-centered tetragonal lattice is described by the class :py:class:`.BCT`.
+**Constructor**:  :py:func:`.BCT`.
 
 It is defined by two parameters: :math:`a` and :math:`c` 
 with conventional lattice:
@@ -55,7 +55,7 @@ Example structures
 BCT\ :sub:`1`
 -------------
 
-**Default kpath**: :math:`\Gamma-X-M-\Gamma-Z-P-N-Z_1-M\vert X-P`.
+**Default kpath**: :math:`\mathrm{\Gamma-X-M-\Gamma-Z-P-N-Z_1-M\vert X-P}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30
@@ -92,7 +92,7 @@ BCT\ :sub:`1`
 BCT\ :sub:`2`
 -------------
 
-**Default kpath**: :math:`\Gamma-X-Y-\Sigma-\Gamma-Z-\Sigma_1-N-P-Y_1-Z\vert X-P`.
+**Default kpath**: :math:`\mathrm{\Gamma-X-Y-\Sigma-\Gamma-Z-\Sigma_1-N-P-Y_1-Z\vert X-P}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30

@@ -6,7 +6,7 @@ Body-centred orthorhombic (ORCI)
 
 **Pearson symbol**: oI
 
-Body-centered orthorombic lattice is described by the class :py:class:`.ORCI`.
+**Constructor**:  :py:func:`.ORCI`.
 
 
 It is defined by three parameter: :math:`a`, :math:`b` and :math:`c` 
@@ -42,7 +42,7 @@ One example is predefined: ``orci`` with
 Example structure
 =================
 
-**Default kpath**: :math:`\Gamma-X-L-T-W-R-X_1-Z-\Gamma-Y-S-W\vert L_1-Y\vert Y_1-Z`.
+**Default kpath**: :math:`\mathrm{\Gamma-X-L-T-W-R-X_1-Z-\Gamma-Y-S-W\vert L_1-Y\vert Y_1-Z}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30

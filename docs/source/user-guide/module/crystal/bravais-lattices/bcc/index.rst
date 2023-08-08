@@ -6,7 +6,7 @@ Body-centered cubic (BCC)
 
 **Pearson symbol**: cI
 
-Body-centered cubic lattice is described by the class :py:class:`.BCC`.
+**Constructor**:  :py:func:`.BCC`.
 
 It is defined by one parameter: :math:`a` with conventional lattice:
 
@@ -37,7 +37,7 @@ One example is predefined: ``bcc`` with :math:`a = \pi`.
 Example structure
 =================
 
-**Default kpath**: :math:`\Gamma-H-N-\Gamma-P-H\vert P-N`.
+**Default kpath**: :math:`\mathrm{\Gamma-H-N-\Gamma-P-H\vert P-N}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30

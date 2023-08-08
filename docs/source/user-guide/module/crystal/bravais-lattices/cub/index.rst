@@ -6,7 +6,7 @@ Cubic (CUB)
 
 **Pearson symbol**: cP
 
-Cubic lattice is described by the class :py:class:`.CUB`.
+**Constructor**:  :py:func:`.CUB`.
 
 It is defined by one parameter: :math:`a` with primitive and conventional lattice:
 
@@ -27,7 +27,7 @@ One example is predefined: ``cub`` with :math:`a = \pi`.
 Example structure
 =================
 
-**Default kpath**: :math:`\Gamma-X-M-\Gamma-R-X\vert M-R`.
+**Default kpath**: :math:`\mathrm{\Gamma-X-M-\Gamma-R-X\vert M-R}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30

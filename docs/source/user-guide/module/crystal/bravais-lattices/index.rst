@@ -6,13 +6,50 @@ Bravais lattices
 
 .. currentmodule:: radtools
 
-For the full reference see :ref:`api_lattice`
+For the full reference see :ref:`api_crystal`
 
 Bravais lattice notation follows Setyawan and Curtarolo [1]_.
 
-For each type of Bravais lattice a class defined, for some classes there are 
-several variations of lattice, each of which are treated under same class 
-(see :py:attr:`.Lattice.variation`).
+Each Bravais lattice is an instance of :py:class:`.Lattice` class.
+
+
+For each Bravais lattice system there is a function defined, which constructs
+the instance of :py:class:`.Lattice` class from the parameters. For the names of the 
+constructors and corresponding parameters see the :ref:`tables below <table_bravais-lattices>` 
+(for full reference see :ref:`api_bravais-lattices`). Before the main table we present
+an example of the usage of the constructor for the cubic lattice.
+
+Import
+======
+
+.. doctest::
+
+    >>> # Exact import
+    >>> from radtools.crystal.bravais_lattice.constructor import CUB
+    >>> # Explicit import
+    >>> from radtools.crystal import CUB
+    >>> # Recommended import
+    >>> from radtools import CUB
+
+Creation
+========
+
+.. doctest::
+
+    >>> lattice = CUB(1)
+    >>> lattice.parameters
+    (1.0, 1.0, 1.0, 90.0, 90.0, 90.0)
+
+Constructor can be used to get the cell instead of the lattice:
+
+    >>> cell = CUB(1, return_cell=True)
+    >>> cell
+    array([[1, 0, 0],
+           [0, 1, 0],
+           [0, 0, 1]])
+
+Predefined examples
+===================
 
 For each type and variation a predefined example of the lattice is available. 
 It could be accessed in a following way:
@@ -24,91 +61,133 @@ It could be accessed in a following way:
     >>> cubic_example.variation
     'CUB'
 
-Each Bravais Lattice is created by the parameters 
-:math:`a`, :math:`b`, :math:`c`, :math:`\alpha`, :math:`\beta`, :math:`\gamma`,
-which corresponds to the conventional lattice. However, attributes of the class 
-``a``, ``b``, ``c``, ``alpha``, ``beta``, ``gamma`` 
-return parameters of the primitive lattice. Conventional lattice may be accessed through
-the attributes ``conv_cell``, ``conv_a``, ``conv_b``, ``conv_c``, 
-``conv_alpha``, ``conv_beta``, ``conv_gamma`` .
+.. _table_bravais-lattices:
 
+Individual docs
+===============
 
-Creation
---------
-Bravais lattice can be created by the instantiation of corresponding class.
-For the predefined bravais lattice examples one may use 
-:py:func:`.lattice_example` function. 
-
-From the set of lattice parameters (:math:`a`, :math:`c`, :math:`c`,
-:math:`\alpha`, :math:`\beta`, :math:`\gamma`) or unit ``cell`` 
-(interpreted as primitive cell) one may create the bravais lattice with 
-:py:func:`.bravais_lattice_from_param` and :py:func:`bravais_lattice_from_cell`.
+For the documentation of each Bravais lattice system see the following pages:
 
 Cubic lattice system
 --------------------
-Predefined examples: ``cub``, ``fcc``, ``bcc``.
 
 .. toctree::
-    :maxdepth: 1
+    :hidden:
     
     cub/index
     fcc/index
     bcc/index
 
+=================  ==========  ===============  ================
+Name               Examples    Parameters       Constructor
+=================  ==========  ===============  ================
+:ref:`guide_cub`   ``cub``     :math:`a`        :py:func:`.CUB`
+:ref:`guide_fcc`   ``fcc``     :math:`a`        :py:func:`.FCC`
+:ref:`guide_bcc`   ``bcc``     :math:`a`        :py:func:`.BCC`
+=================  ==========  ===============  ================
+
 Tetragonal lattice system
 -------------------------
 
-Predefined examples: ``tet``, ``bct1``, ``bct2``.
-
 .. toctree::
-    :maxdepth: 1
+    :hidden:
     
     tet/index
     bct/index
 
+=================  ==========  ===============  ================
+Name               Examples    Parameters       Constructor
+=================  ==========  ===============  ================
+:ref:`guide_tet`   ``tet``     :math:`a`,       :py:func:`.TET`         
+                               :math:`c`   
+:ref:`guide_bct`   ``bct``,    :math:`a`,       :py:func:`.BCT`
+                   ``bct1``,   :math:`c`
+                   ``bct2`` 
+=================  ==========  ===============  ================
+
 Orthorhombic lattice system
 ---------------------------
 
-Predefined examples: ``orc``, ``orcf1``, ``orcf2``, ``orcf3``, ``orci``, ``orcc``.
-
 .. toctree::
-    :maxdepth: 1
+    :hidden:
     
     orc/index
     orcf/index
     orci/index
     orcc/index
 
+=================  ==========  ===============  ================
+Name               Examples    Parameters       Constructor
+=================  ==========  ===============  ================
+:ref:`guide_orc`   ``orc``     :math:`a`,       :py:func:`.ORC`         
+                               :math:`b`,
+                               :math:`c`   
+:ref:`guide_orcf`  ``orcf``,   :math:`a`,       :py:func:`.ORCF`         
+                   ``orcf1``,  :math:`b`,
+                   ``orcf2``,  :math:`c`
+                   ``orcf3``   
+:ref:`guide_orci`  ``orci``    :math:`a`,       :py:func:`.ORCI`         
+                               :math:`b`,
+                               :math:`c`  
+:ref:`guide_orcc`  ``orcc``    :math:`a`,       :py:func:`.ORCC`         
+                               :math:`b`,
+                               :math:`c`  
+=================  ==========  ===============  ================
+
 Hexagonal lattice system
 ------------------------
 
-Predefined examples: ``hex``.
-
 .. toctree::
-    :maxdepth: 1
+    :hidden:
     
     hex/index
+
+=================  ==========  ===============  ================
+Name               Examples    Parameters       Constructor
+=================  ==========  ===============  ================
+:ref:`guide_hex`   ``hex``     :math:`a`,       :py:func:`.HEX`         
+                               :math:`c`   
+=================  ==========  ===============  ================
 
 Rhombohedral lattice system
 ---------------------------
 
-Predefined examples: ``rhl1``, ``rhl2``
-
 .. toctree::
-    :maxdepth: 1
+    :hidden:
     
     rhl/index
+
+=================  ==========  ===============  ================
+Name               Examples    Parameters       Constructor
+=================  ==========  ===============  ================
+:ref:`guide_rhl`   ``rhl``,    :math:`a`,       :py:func:`.RHL`         
+                   ``rhl1``,   :math:`c`
+                   ``rhl2``    
+=================  ==========  ===============  ================
 
 Monoclinic lattice system
 -------------------------
 
-Predefined examples: ``mcl``, ``mclc1``, ``mclc2``, ``mclc3``, ``mclc4``, ``mclc5``.
-
 .. toctree::
-    :maxdepth: 1
+    :hidden:
 
     mcl/index
     mclc/index
+
+=================  ==========  ===============  ================
+Name               Examples    Parameters       Constructor
+=================  ==========  ===============  ================
+:ref:`guide_mcl`   ``mcl``     :math:`a`,       :py:func:`.MCL`         
+                               :math:`b`,
+                               :math:`c`,  
+                               :math:`\alpha` 
+:ref:`guide_mclc`  ``mclc``,   :math:`a`,       :py:func:`.MCLC`         
+                   ``mclc1``,  :math:`b`,
+                   ``mclc2``,  :math:`c`,
+                   ``mclc3``,  :math:`\alpha`
+                   ``mclc4``,
+                   ``mclc5``   
+=================  ==========  ===============  ================
 
 Triclinic lattice system
 ------------------------
@@ -116,10 +195,20 @@ Triclinic lattice system
 Predefined examples: ``tri1a``, ``tri1b``, ``tri2a``, ``tri2b``.
 
 .. toctree::
-    :maxdepth: 1
+    :hidden:
 
     tri/index
 
+=================  ==========  ===============  ================
+Name               Examples    Parameters       Constructor
+=================  ==========  ===============  ================
+:ref:`guide_tri`   ``tri1a``,  :math:`a`,       :py:func:`.TRI`         
+                   ``tri1b``,  :math:`b`,
+                   ``tri2a``,  :math:`c`,  
+                   ``tri2b``   :math:`\alpha`, 
+                               :math:`\beta`,
+                               :math:`\gamma`
+=================  ==========  ===============  ================
 
 References
 ==========

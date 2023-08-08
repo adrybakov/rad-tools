@@ -6,7 +6,7 @@ Base-centred orthorhombic (ORCC)
 
 **Pearson symbol**: oS
 
-Base-centered orthorombic lattice is described by the class :py:class:`.ORCC`.
+**Constructor**:  :py:func:`.ORCC`.
 
 
 It is defined by three parameter: :math:`a`, :math:`b` and :math:`c` 
@@ -42,7 +42,7 @@ One example is predefined: ``orcc`` with
 Example structure
 =================
 
-**Default kpath**: :math:`\Gamma-X-S-R-A-Z-\Gamma-Y-X_1-A_1-T-Y\vert Z-T`.
+**Default kpath**: :math:`\mathrm{\Gamma-X-S-R-A-Z-\Gamma-Y-X_1-A_1-T-Y\vert Z-T}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30

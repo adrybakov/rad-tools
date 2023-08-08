@@ -6,7 +6,7 @@ Orthorhombic (ORC)
 
 **Pearson symbol**: oP
 
-Orthorombic lattice is described by the class :py:class:`.ORC`.
+**Constructor**:  :py:func:`.ORC`.
 
 
 It is defined by three parameter: :math:`a`, :math:`b` and :math:`c` 
@@ -32,7 +32,7 @@ One example is predefined: ``orc`` with
 Example structure
 =================
 
-**Default kpath**: :math:`\Gamma-X-S-Y-\Gamma-Z-U-R-T-Z\vert Y-T\vert U-X\vert S-R`.
+**Default kpath**: :math:`\mathrm{\Gamma-X-S-Y-\Gamma-Z-U-R-T-Z\vert Y-T\vert U-X\vert S-R}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30

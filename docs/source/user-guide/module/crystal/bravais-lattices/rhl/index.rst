@@ -6,7 +6,7 @@ Rhombohedral (RHL)
 
 **Pearson symbol**: hR
 
-Rhombohedral lattice is described by the class :py:class:`.RHL`.
+**Constructor**:  :py:func:`.RHL`.
 
 It is defined by two parameter: :math:`a` and :math:`\alpha` 
 with primitive and conventional lattice:
@@ -46,7 +46,7 @@ Example structure
 RHL\ :sub:`1`
 -------------
 
-**Default kpath**: :math:`\Gamma-L-B_1\vert B-Z-\Gamma-X\vert Q-F-P_1-Z\vert L-P`.
+**Default kpath**: :math:`\mathrm{\Gamma-L-B_1\vert B-Z-\Gamma-X\vert Q-F-P_1-Z\vert L-P}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30
@@ -83,7 +83,7 @@ RHL\ :sub:`1`
 RHL\ :sub:`2`
 -------------
 
-**Default kpath**: :math:`\Gamma-P-Z-Q-\Gamma-F-P_1-Q_1-L-Z`.
+**Default kpath**: :math:`\mathrm{\Gamma-P-Z-Q-\Gamma-F-P_1-Q_1-L-Z}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30

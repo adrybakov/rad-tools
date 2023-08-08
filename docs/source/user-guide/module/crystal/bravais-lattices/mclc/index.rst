@@ -6,7 +6,7 @@ Base-centred monoclinic (MCLC)
 
 **Pearson symbol**: mS
 
-Base-centered monoclinic lattice is described by the class :py:class:`.MCLC`.
+**Constructor**:  :py:func:`.MCLC`.
 
 It is defined by four parameter: :math:`a`, :math:`b`, :math:`c` and :math:`\alpha` 
 with conventional lattice:
@@ -117,7 +117,7 @@ Example structures
 MCLC\ :sub:`1`
 --------------
 
-**Default kpath**: :math:`\Gamma-Y-F-L-I\vert I_1-Z-F_1\vert Y-X_1\vert X-\Gamma-N\vert M-\Gamma`.
+**Default kpath**: :math:`\mathrm{\Gamma-Y-F-L-I\vert I_1-Z-F_1\vert Y-X_1\vert X-\Gamma-N\vert M-\Gamma}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30
@@ -154,7 +154,7 @@ MCLC\ :sub:`1`
 MCLC\ :sub:`2`
 --------------
 
-**Default kpath**: :math:`\Gamma-Y-F-L-I\vert I_1-Z-F_1\vert N-\Gamma-M`.
+**Default kpath**: :math:`\mathrm{\Gamma-Y-F-L-I\vert I_1-Z-F_1\vert N-\Gamma-M}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30
@@ -191,7 +191,7 @@ MCLC\ :sub:`2`
 MCLC\ :sub:`3`
 --------------
 
-**Default kpath**: :math:`\Gamma-Y-F-H-Z-I-F_1\vert H_1-Y_1-X-\Gamma-N\vert M-\Gamma`.
+**Default kpath**: :math:`\mathrm{\Gamma-Y-F-H-Z-I-F_1\vert H_1-Y_1-X-\Gamma-N\vert M-\Gamma}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30
@@ -228,7 +228,7 @@ MCLC\ :sub:`3`
 MCLC\ :sub:`4`
 --------------
 
-**Default kpath**: :math:`\Gamma-Y-F-H-Z-I\vert H_1-Y_1-X-\Gamma-N\vert M-\Gamma`.
+**Default kpath**: :math:`\mathrm{\Gamma-Y-F-H-Z-I\vert H_1-Y_1-X-\Gamma-N\vert M-\Gamma}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30
@@ -265,7 +265,7 @@ MCLC\ :sub:`4`
 MCLC\ :sub:`5`
 --------------
 
-**Default kpath**: :math:`\Gamma-Y-F-L-I\vert I_1-Z-H-F_1\vert H_1-Y_1-X-\Gamma-N\vert M-\Gamma`.
+**Default kpath**: :math:`\mathrm{\Gamma-Y-F-L-I\vert I_1-Z-H-F_1\vert H_1-Y_1-X-\Gamma-N\vert M-\Gamma}`.
 
 .. list-table:: Brillouin zone and default kpath
     :widths: 70 30
