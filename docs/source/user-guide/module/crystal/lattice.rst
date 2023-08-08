@@ -8,15 +8,25 @@ Lattice
 
 For the full reference see :ref:`api_lattice`
 
-This guide describe attributes and methods of the general lattice class.
-Each Bravais lattice class is a child of :py:class:`.Lattice`, 
-thus all it`s method and attribute are available. For the description of each 
-Bravais lattice class see:
+Every Bravais lattice is an instance of the :py:class:`.Lattice` class.
+For the guide about Bravais lattices see :ref:`guide_crystal_bravais-lattices`.
+This page describes the :py:class:`.Lattice` class and its methods.
 
-.. toctree::
-    :maxdepth: 2
-    
-    bravais-lattices/index
+Import 
+======
+
+    >>> # Exact import
+    >>> from radtools.crystal.lattice import Lattice
+    >>> # Explicit import
+    >>> from radtools.crystal import Lattice
+    >>> # Recommended import
+    >>> from radtools import Lattice
+
+For the examples in this page we need additional import and some predefined variables:
+
+.. doctest::
+
+    >>> from radtools import lattice_example
 
 Creation
 ========
@@ -27,7 +37,6 @@ Lattice can be created in three different ways:
 
 .. doctest::
 
-    >>> from radtools import Lattice
     >>> cell = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     >>> lattice = Lattice(cell)
     >>> lattice.cell
@@ -35,11 +44,26 @@ Lattice can be created in three different ways:
            [0, 1, 0],
            [0, 0, 1]])
 
+When a lattice created from the cell orientation of the cell is respected,
+however the lattice vectors may be renamed. 
+See :ref:`library_lattice-standardization` for details.
+
+Creation may change the angles and the lengths of the cell vectors.
+It preserve the volume, right- or left- handedness, lattice type and variation
+of the cell.
+
+The lattice vector`s lengths are preserved as a set.
+
+The angles between the lattice vectors are preserved as a set with possible
+changes of the form: :math:`angle \rightarrow 180 - angle`.
+
+The returned cell may not be the same as the input one, but it is translational
+equivalent.
+
 * From three lattice vectors :math:`\vec{a}_1`, :math:`\vec{a}_2`, :math:`\vec{a}_3`:
 
 .. doctest::
     
-        >>> from radtools import Lattice
         >>> a1 = [1, 0, 0]
         >>> a2 = [0, 1, 0]
         >>> a3 = [0, 0, 1]
@@ -53,7 +77,6 @@ Lattice can be created in three different ways:
 
 .. doctest::
     
-        >>> from radtools import Lattice
         >>> lattice = Lattice(1, 1, 1, 90, 90, 90)
         >>> import numpy as np
         >>> np.round(lattice.cell, decimals=1)
@@ -68,19 +91,44 @@ Bravais lattice type is lazily identified when it is needed:
 
 .. doctest::
     
-        >>> from radtools import Lattice
         >>> lattice = Lattice(1, 1, 1, 90, 90, 90)
         >>> lattice.type()
         'CUB'
 
-Identification procedure is realised in the :py:func:`.lepage` function. 
-For the algorithm description and reference see :ref:`rad-tools_lepage`.
+Identification procedure is implemented in the :py:func:`.lepage` function. 
+For the algorithm description and reference see :ref:`library_lepage`.
 
 .. note::
     
-    Lattice identification is not a trivial task. 
+    Lattice identification is not a trivial task and may be time consuming.
     The algorithm is based on the assumption that the lattice`s unit cell is primitive.
 
+    By default the lattice type is identified during the creation of the lattice 
+    (It is required for the lattice standardization). Therefore, the creation of the
+    lattice may be time consuming. To avoid this, you can disable the standardization
+    of the cell via the ``standardize=False`` argument:
+
+    .. doctest::
+    
+        >>> lattice = Lattice(1, 1, 1, 90, 90, 90, standardize=False)
+
+    Note that the predefined paths and k points for the lattice are not guaranteed to 
+    be correct and reproducible if the lattice is not standardized.
+
+Variation of the lattice
+========================
+Some of the Bravais lattice types have several variations.
+
+To check the variation of the lattice use :py:attr:`.Lattice.variation` attribute:
+
+.. doctest::
+
+    >>> lattice = lattice_example("BCT")
+    >>> lattice.variation
+    'BCT1'
+    >>> lattice = Lattice(1, 1, 1, 90, 90, 90)
+    >>> lattice.variation
+    'CUB'
 
 Reference attributes
 ====================
@@ -90,7 +138,6 @@ based on the Bravais type:
 
 .. doctest::
 
-    >>> from radtools import Lattice
     >>> lattice = Lattice([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
     >>> lattice.pearson_symbol
     'cP'
@@ -108,7 +155,6 @@ All lattice parameters can be accessed as attributes:
 
 .. doctest::
 
-    >>> from radtools import Lattice
     >>> lattice = Lattice([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
     >>> lattice.a1  
     array([1, 0, 0])
@@ -141,7 +187,6 @@ All lattice parameters can be accessed as attributes:
 
 .. doctest::
 
-    >>> from radtools import Lattice
     >>> from math import pi
     >>> lattice = Lattice([[2*pi, 0, 0], [0, 2*pi, 0], [0, 0, 2*pi]])
     >>> lattice.b1
@@ -154,11 +199,11 @@ All lattice parameters can be accessed as attributes:
     array([[1., 0., 0.],
            [0., 1., 0.],
            [0., 0., 1.]])
-    >>> print(f"{lattice.k_a:.4f}")
+    >>> round(lattice.k_a, 4)
     1.0000
-    >>> print(f"{lattice.k_b:.4f}")
+    >>> round(lattice.k_b, 4)
     1.0000
-    >>> print(f"{lattice.k_c:.4f}")
+    >>> round(lattice.k_c, 4)
     1.0000
     >>> lattice.k_alpha
     90.0
@@ -167,21 +212,11 @@ All lattice parameters can be accessed as attributes:
     >>> lattice.k_gamma
     90.0
 
-Variation of the lattice
-========================
-Some of the Bravais lattice types have several variations.
+.. hint::
 
-To check the variation of the lattice use :py:attr:`.Lattice.variation` attribute:
-
-.. doctest::
-
-    >>> from radtools import lattice_example, Lattice
-    >>> lattice = lattice_example("BCT")
-    >>> lattice.variation
-    'BCT1'
-    >>> lattice = Lattice(1, 1, 1, 90, 90, 90)
-    >>> lattice.variation
-    'CUB'
+    Not all properties of the lattice are listed here (for examples the once 
+    for the conventional cell are not even mentioned). 
+    See :ref:`api_lattice` for the full list of properties.
 
 Plotting of the lattice
 =======================
@@ -191,7 +226,6 @@ and Brillouin zone can be plotted using :py:meth:`.Lattice.plot` method:
 
 .. doctest::
 
-    >>> from radtools import lattice_example
     >>> lattice = lattice_example("BCT")
     >>> lattice.plot("brillouin")
     >>> lattice.plot("kpath")
@@ -213,12 +247,13 @@ K points
 
 Path in reciprocal space and k points for plotting and calculation are 
 implemented in a separate class :py:class:`.Kpoints`. It is expected to be accessed 
-through the :py:attr:`.Lattice.kpoints` attribute. Note that it is store in the lattice itself,
-so the you can work with kpoints through the lattice instance or through the kpoints instance:
+through the :py:attr:`.Lattice.kpoints` attribute. Note that you can work with 
+kpoints from the instance of the :py:class:`.Lattice`, since the instance of the 
+:py:class:`.Kpoints` class is created when the property is accessed for the first 
+time and stored internally for the future:
 
 .. doctest::
 
-    >>> from radtools import Lattice
     >>> lattice = Lattice(1, 1, 1, 90, 90, 90)
     >>> lattice.kpoints.add_hs_point("CP", [0.5, 0.5, 0.5], label="Custom label")
     >>> lattice.kpoints.path = "G-X|M-CP-X"
@@ -237,6 +272,7 @@ so the you can work with kpoints through the lattice instance or through the kpo
 
     For each Bravais lattice type there is a predefined path and set of 
     kpoints in reciprocal space. See :ref:`guide_crystal_bravais-lattices` for more details.
+    The unit cell has to be standardized to use the predefined paths and kpoints.
 
 For the full guide on how to use :py:class:`.Kpoints` class see :ref:`guide_crystal_kpoints`.
 

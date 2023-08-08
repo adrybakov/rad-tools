@@ -109,18 +109,10 @@ class Lattice:
     r"""
     General 3D lattice.
 
-    In absence of the atoms (which is always the case for the lattice)
-    and additional lattice points. Every cell is primitive, since lattice points are
-    constructed form the translations. Therefore, general Lattice class does not
-    dos not distinguishes between primitive and conventional lattice as in the
-    Bravais Lattice. Therefore only cell attribute is present and it is always
-    interpreted as the primitive unit cell. In the case of the Bravais lattice additional
-    attribute conv_cell appears.
+    When created from the cell orientation of the cell is respected,
+    however the lattice vectors may be renamed with respect to [1]_.
 
-    When created from the cell orientation of the cell is respected, however the lattice vectors are renamed
-    with respect to [1]_.
-
-    This function may change the angles and the lengths of the cell.
+    Creation may change the angles and the lengths of the cell vectors.
     It preserve the volume, right- or left- handedness, lattice type and variation
     of the cell.
 
@@ -170,7 +162,7 @@ class Lattice:
     Attributes
     ----------
     eps_rel : float, default 1e-4
-        Relative error for the :ref:`rad-tools_lepage` algorithm.
+        Relative error for the :ref:`library_lepage` algorithm.
 
     References
     ----------
@@ -211,6 +203,8 @@ class Lattice:
         elif len(args) == 6:
             a, b, c, alpha, beta, gamma = args
             cell = Cell.from_params(a, b, c, alpha, beta, gamma)
+        elif len(args) == 0 and len(kwargs) == 0:
+            cell = np.eye(3)
         else:
             raise ValueError(
                 "Unable to identify input parameters. "
@@ -785,7 +779,7 @@ class Lattice:
         Parameters
         ----------
         eps_rel : float, optional
-            Relative error for the :ref:`rad-tools_lepage` algorithm.
+            Relative error for the :ref:`library_lepage` algorithm.
 
         Returns
         -------
