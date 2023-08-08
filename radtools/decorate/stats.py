@@ -94,13 +94,13 @@ def logo(info=None, line_length=71, flat=False):
     return "".join(logo_info)[:-1]
 
 
-def stamp_line(datetime=True, version=True, githash=False, doclink=False):
+def stamp_line(date_time=True, version=True, githash=False, doclink=False):
     """
     Return one-line information about the package.
 
     Parameters
     ----------
-    datetime : bool, default True
+    date_time : bool, default True
         Whether to include the release date or not.
     version : bool, default True
         Whether to include the version number or not.
@@ -116,7 +116,7 @@ def stamp_line(datetime=True, version=True, githash=False, doclink=False):
     """
 
     line = []
-    if datetime:
+    if date_time:
         cd = datetime.now()
         line.append(
             f"on {cd.day} {month_name[cd.month]} {cd.year}"
@@ -124,11 +124,11 @@ def stamp_line(datetime=True, version=True, githash=False, doclink=False):
         )
     line.append("by rad-tools ")
     if version:
-        line.append(f"{version} ")
+        line.append(f"{__version__} ")
     if githash:
-        line.append(f"({githash}) ")
+        line.append(f"(githash {__git_hash__}) ")
     if doclink:
-        line.append(f"Documentation: {doclink}")
+        line.append(f"Documentation: {__doclink__}")
     return "".join(line)
 
 

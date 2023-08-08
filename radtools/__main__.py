@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 
-from radtools.decorate.logo import logo
+from radtools.decorate.stats import logo
 
 
 if __name__ == "__main__":
