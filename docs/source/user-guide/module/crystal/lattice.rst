@@ -200,11 +200,11 @@ All lattice parameters can be accessed as attributes:
            [0., 1., 0.],
            [0., 0., 1.]])
     >>> round(lattice.k_a, 4)
-    1.0000
+    1.0
     >>> round(lattice.k_b, 4)
-    1.0000
+    1.0
     >>> round(lattice.k_c, 4)
-    1.0000
+    1.0
     >>> lattice.k_alpha
     90.0
     >>> lattice.k_beta
