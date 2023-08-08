@@ -21,8 +21,6 @@ html-examples:
 
 doctest: 
 	@$(SPHINXBUILD) -b doctest "docs/$(SOURCEDIR)" "docs/$(BUILDDIR)" $(SPHINXOPTS) $(O)
-	-@rm hamiltonian.pickle
-	-@rm hamiltonian.txt
 
 clean:
 	-@rm -r docs/build
