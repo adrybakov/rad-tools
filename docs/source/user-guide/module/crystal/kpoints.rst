@@ -14,6 +14,24 @@ of a particular path of a given lattice.
 It is used to generate full kpoints path both for calculation and for plotting.
 
 
+Import
+======
+
+.. doctest::
+
+    >>> # Exact import
+    >>> from radtools.crystal.kpoints import Kpoints
+    >>> # Explicit import
+    >>> from radtools.crystal import Kpoints
+    >>> # Recommended import
+    >>> from radtools import Kpoints
+
+For the examples in this page we need additional import and some predefined variables:
+
+.. doctest::
+
+    >>> from radtools import lattice_example
+
 Creation
 ========
 
@@ -21,7 +39,6 @@ Usually it is created from some :py:class`.Lattice` (or :py:class`.Crystal`):
 
 .. doctest::
 
-    >>> from radtools import Kpoints, lattice_example
     >>> lattice = lattice_example("CUB")
     >>> kp = lattice.kpoints
     >>> kp.hs_names
@@ -31,44 +48,75 @@ However, it could be created explicitly:
 
 .. doctest::
 
-    >>> from radtools import Kpoints
     >>> b1, b2, b3 = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     >>> names = ["G", "X"]
-    >>> coordinates = [[0,0,0], [0.5,0,0]]
+    >>> coordinates = [[0, 0, 0], [0.5, 0, 0]]
     >>> labels = [R"$\Gamma$", "X"]
     >>> kp = Kpoints(b1, b2, b3, names=names, coordinates=coordinates, labels=labels)
     >>> kp.hs_names
     ['G', 'X']
 
-Settings
-========
+For the full list of constructor parameters see 
+:py:class:`.Kpoints` documentation.
 
-After the creation you can add high symmetry kpoints, set the amount of kpoints between them and path: 
+High-symmetry points
+====================
 
-* :py:attr:`.Kpoints.n`
+Information about high symmetry points is accessible through the following properties:
 
-The amount of kpoints to be generated between each pair of high symmetry points in the path.
+* :py:attr:`.Kpoints.hs_names`
+
+List of names of high symmetry points.
 
 .. doctest::
 
-    >>> # Default value is 100
-    >>> kp.n
-    100
-    >>> kp.n = 10
-    >>> kp.n
-    10
+    >>> kp.hs_names
+    ['G', 'X']
 
-* :py:attr:`.Kpoints.path`
+* :py:attr:`.Kpoints.hs_coordinates`
 
-The path itself. We use a specific format in the package: "G-K-X|R-S".
+Dictionary of coordinates of high symmetry points.
+
+.. doctest::
+
+    >>> kp.hs_coordinates
+    {'G': array([0, 0, 0]), 'X': array([0.5, 0. , 0. ])}
+
+* :py:attr:`.Kpoints.hs_labels`
+
+Dictionary of labels of high symmetry points. Usually used for plotting.
+
+.. doctest::
+
+    >>> kp.hs_labels
+    {'G': '$\\Gamma$', 'X': 'X'}
+
+Adding a point
+==============
+
+.. doctest::
+
+    >>> kp.add_hs_point(name="M", coordinates=[0.5, 0.5, 0], label="M")
+    >>> kp.hs_names
+    ['G', 'X', 'M']
+    >>> kp.hs_coordinates
+    {'G': array([0, 0, 0]), 'X': array([0.5, 0. , 0. ]), 'M': array([0.5, 0.5, 0. ])}
+    >>> kp.hs_labels
+    {'G': '$\\Gamma$', 'X': 'X', 'M': 'M'}
+
+Path
+====
+
+The path is the route in the reciprocal space, defined by the high symmetry points.
+
+We use a specific format in the package: "G-K-X|R-S".
 "-" separates high symmetry points in each subpath, "|" separates sections of the path.  
 In the example n points are generated between "G" and "K", between "K" ans "X", 
 between "R" and "S", but not between "X" and "R".
-By default path is constructed from the list of points.
+By default path is constructed from the list of high symmetry points.
 
 .. doctest::
 
-    >>> from radtools import Kpoints
     >>> b1, b2, b3 = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     >>> names = ["G", "K", "X", "R"]
     >>> coordinates = [[0, 0, 0], [0.5, 0.5, 0], [0.5, 0, 0], [0.5, 0.5, 0.5]]
@@ -100,10 +148,25 @@ By default path is constructed from the list of points.
     Internally RAD-tools stores the path as a list of subpaths, where each subpath
     is a list of high symmetry points. This format is also correct for assigning the path attribute.
 
+Configuration
+=============
+
+The amount of kpoints to be generated between each pair of high symmetry points in the path
+is controlled by the :py:attr:`.Kpoints.n` property.
+
+.. doctest::
+
+    >>> # Default value is 100
+    >>> kp.n
+    100
+    >>> kp.n = 10
+    >>> kp.n
+    10
+
 Usage
 =====
 
-Once the setting of the Kpoints are done, it can be used for calculation or plotting.
+Once the configuration of the Kpoints are done, it can be used for calculation or plotting.
 
 Calculation
 -----------
@@ -114,7 +177,6 @@ between them. The first and the last points are always the high symmetry points 
 
 .. doctest::
 
-    >>> from radtools import Kpoints
     >>> b1, b2, b3 = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     >>> names = ["G", "K", "X"]
     >>> coordinates = [[0, 0, 0], [0.5, 0.5, 0], [0.5, 0, 0]]
