@@ -1,9 +1,10 @@
 .. _guide_crystal_bravais-lattices:
 
-.. currentmodule:: radtools
-
+****************
 Bravais lattices
-================
+****************
+
+.. currentmodule:: radtools
 
 For the full reference see :ref:`api_lattice`
 

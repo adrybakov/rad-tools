@@ -4,19 +4,22 @@
 Crystal
 *******
 
+.. currentmodule:: radtools
+
 .. versionadded:: 0.7
 
 For the full reference see :ref:`api_crystal-module`
 
-.. currentmodule:: radtools
 
-Crystal module describe the crystal structure of the material. 
-Fot the guide to each of the classes of this module see:
+Crystal module describe the crystal structure of the material, which 
+consists of the lattice and the atoms. For the detailed guides see:
 
 .. toctree::
-    :maxdepth: 2
+    :caption: Individual guides on 
+    :maxdepth: 1
     
     crystal
     lattice
     atom
     kpoints
+    bravais-lattices/index

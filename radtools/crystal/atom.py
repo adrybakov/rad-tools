@@ -56,7 +56,7 @@ class Atom:
             self.index = index
 
         # Set position
-        self._position = np.array([0, 0, 0])
+        self._position = np.array([0.0, 0.0, 0.0])
         if position is not None:
             self.position = np.array(position)
 
