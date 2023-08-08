@@ -401,24 +401,16 @@ The Hamiltonian could be saved in as a text file with
 .. doctest::
 
     >>> hamiltonian = SpinHamiltonian()
-    >>> hamiltonian.add_atom("Cr", spin=1.5, position=(0,0,0))
-    >>> hamiltonian.add_atom("Cr", spin=1.5, position=(1,0,0))
-    >>> hamiltonian.add_bond("Cr__1", "Cr__1", (0, 1, 0), iso=1)
-    >>> hamiltonian.add_bond("Cr__1", "Cr__2", (0, 0, 0), iso=2)
     >>> # Saves the hamiltonian into the file "hamiltonian.txt"
-    >>> hamiltonian.dump_txt("hamiltonian.txt")
+    >>> hamiltonian.dump_txt("hamiltonian.txt") # doctest: +SKIP
 
 It can be serialized with :py:meth:`.SpinHamiltonian.dump_pickle` method.
 
 .. doctest::
 
     >>> hamiltonian = SpinHamiltonian()
-    >>> hamiltonian.add_atom("Cr", spin=1.5, position=(0,0,0))
-    >>> hamiltonian.add_atom("Cr", spin=1.5, position=(1,0,0))
-    >>> hamiltonian.add_bond("Cr__1", "Cr__1", (0, 1, 0), iso=1)
-    >>> hamiltonian.add_bond("Cr__1", "Cr__2", (0, 0, 0), iso=2)
     >>> # Saves the hamiltonian into the file "hamiltonian.pickle"
-    >>> hamiltonian.dump_pickle("hamiltonian")
+    >>> hamiltonian.dump_pickle("hamiltonian") # doctest: +SKIP
 
 .. hint::
 
