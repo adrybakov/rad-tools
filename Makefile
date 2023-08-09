@@ -46,6 +46,9 @@ clean:
 	-@rm -r .env3.8/lib/python3.8/site-packages/rad_tools*
 	-@rm -r .env3.8/bin/rad-*
 
+install:
+	@python3 -m pip install .
+
 test: 
 	@pytest -s
 
