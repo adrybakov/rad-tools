@@ -34,7 +34,7 @@ def standardize_cell(cell, correct_lattice_type, rtol=REL_TOL, atol=ABS_TOL):
     Analyse arbitrary cell and redefine it
     if required to ensure the unique choice of lattice vectors.
 
-    See :ref:`library_lattice-standardization` for the details.
+    See :ref:`docs for each Bravais lattice <table_bravais-lattices>` for the details.
 
     Parameters
     ----------
