@@ -4,23 +4,35 @@
 RAD-tools user guide
 ********************
 
+Getting started
+===============
+
 .. toctree::
-    :caption: Getting started
     :maxdepth: 1
     
     start/about
     start/installation
     start/quickstart
 
+Scripts
+=======
+
 .. toctree::
-    :caption: Usage 
     :maxdepth: 2
 
     scripts/index
+
+Python library
+==============
+.. toctree::
+    :maxdepth: 3
+
     module/index
 
+Library
+=======
+
 .. toctree::
-    :caption: Library
     :maxdepth: 1
 
     library/lepage
