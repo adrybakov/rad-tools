@@ -128,7 +128,7 @@ def angle(v1, v2, radians=False):
     Raises
     ------
     ValueError
-        If one of the vectors is zero vector (or both). Norm is compare against
+        If one of the vectors is zero vector (or both). Norm is compared against
         :numpy:`finfo`\ (float).eps.
     """
 
@@ -244,15 +244,15 @@ def parallelepiped_check(a, b, c, alpha, beta, gamma, raise_error=False):
     return result
 
 
-def absolute_to_relative(cell, absolute):
+def absolute_to_relative(basis, vector):
     r"""
-    Compute relative coordinates with respect to the unit cell.
+    Compute relative coordinates of the vector with respect to the basis.
 
     Parameters
     ----------
-    cell : (3, 3) |array_like|_
+    basis : (3, 3) |array_like|_
         Lattice vectors.
-    absolute : (3,) |array_like|_
+    vector : (3,) |array_like|_
         Absolute coordinates.
 
     Returns
@@ -262,11 +262,11 @@ def absolute_to_relative(cell, absolute):
     """
 
     # Three vectors of the cell
-    v1 = np.array(cell[0], dtype=float)
-    v2 = np.array(cell[1], dtype=float)
-    v3 = np.array(cell[2], dtype=float)
+    v1 = np.array(basis[0], dtype=float)
+    v2 = np.array(basis[1], dtype=float)
+    v3 = np.array(basis[2], dtype=float)
 
-    v = np.array(absolute, dtype=float)
+    v = np.array(vector, dtype=float)
     if (v == np.zeros(3)).all():
         return np.zeros(3)
 
