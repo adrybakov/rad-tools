@@ -308,15 +308,15 @@ def main(version: str):
     # update_init() will change the __init__.py file and there
     # will be uncommitted changes
 
-    # check_active_branch(repo)
+    check_active_branch(repo)
 
-    # check_release_notes(version=version)
+    check_release_notes(version=version)
 
-    # check_git_status(repo)
+    check_git_status(repo)
 
-    # update_init(repo, version=version)
+    update_init(repo, version=version)
 
-    # make_tag(repo, version=version)
+    make_tag(repo, version=version)
 
     print(colored(f"{f'{version} ready to deploy':^40}", "green"))
     print(f"{'':=^40}")
