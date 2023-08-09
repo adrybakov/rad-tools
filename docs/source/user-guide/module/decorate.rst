@@ -1,22 +1,35 @@
-.. _guide_routines:
+.. _guide_decorate:
+
+******************
+Decoration of data
+******************
+
+For the full reference see :ref:`api_decorate`.
 
 .. currentmodule:: radtools
 
-*****************
-Isolated routines
-*****************
+This module contains functions to decorate data for plotting or printing. 
+It does not fall into the scope of intended functionality of the package,
+but is included for convenience.
 
-For the full reference see :ref:`api_utils`.
+Import
+======
 
-A number of routines are defined in this module. 
-Majority of them are used internally and are not intended for direct use.
+.. doctest::
 
-In this guide we describe only the routines, which are intended for direct use.
+    >>> # Exact import
+    >>> from radtools.decorate.array import print_2d_array
+    >>> # Explicit import
+    >>> from radtools.decorate import print_2d_array
+    >>> # Recommended import
+    >>> from radtools import print_2d_array
 
-Data presentation
-=================
+2D arrays
+=========
 
-:py:func:`.print_2d_array` - print 2D array in a nice table format.
+This function can take any numerical 2D or 1D array and print it in a nice
+format. It is useful for debugging and printing of results.
+
 
 It provides custom formatting, colour highlighting:
 
@@ -176,3 +189,94 @@ Empty arrays
     >>> rad.print_2d_array([[]])
     None
 
+Axis lines
+==========
+
+Two shortcuts with the common linestyle are defined for convenience:
+
+.. doctest::
+
+    >>> from radtools import plot_hlines, plot_vlines # doctest: +SKIP
+    >>> import matplotlib.pyplot as plt # doctest: +SKIP
+    >>> fig, ax = plt.subplots() # doctest: +SKIP
+    >>> plot_hlines(ax, [1, 2, 3]) # doctest: +SKIP
+    >>> plot_vlines(ax, [1, 2, 3]) # doctest: +SKIP
+    >>> # You can pass any keyword arguments to the underlying matplotlib function
+    >>> plot_hlines(ax, [1, 2, 3], color="red", linewidth=2) # doctest: +SKIP
+
+Colormap
+========
+
+Another shortcut is defined for the custom colormap:
+
+.. doctest::
+
+    >>> from radtools import custom_cmap # doctest: +SKIP
+    >>> colormap = custom_cmap("#e0218a", "#2e1b25") # doctest: +SKIP
+
+Logo and stats
+==============
+
+Three functions are defined for printing the logo and stats of the package:
+
+Logo
+----
+
+.. doctest::
+
+    >>> from radtools import logo
+    >>> print(logo()) # doctest: +SKIP
+    ██████╗  █████╗ ██████╗       ████████╗ █████╗  █████╗ ██╗      ██████╗
+    ██╔══██╗██╔══██╗██╔══██╗      ╚══██╔══╝██╔══██╗██╔══██╗██║     ██╔════╝
+    ██████╔╝███████║██║  ██║█████╗   ██║   ██║  ██║██║  ██║██║     ╚═█████╗
+    ██╔══██╗██╔══██║██║  ██║╚════╝   ██║   ██║  ██║██║  ██║██║       ╚══██║
+    ██║  ██║██║  ██║██████╔╝         ██║   ╚█████╔╝╚█████╔╝███████╗██████╔╝
+    ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝          ╚═╝    ╚════╝  ╚════╝ ╚══════╝╚═════╝ 
+                                                                ▄   ▄      
+                          Version: 0.8.0                        █▀█▀█      
+                    Release date: 2 August 2023                 █▄█▄█      
+        Git hash: 9c9b087fa02be0cafdadaef6ec1c7926fe36e3d6       ███   ▄▄  
+                   Documentation: rad-tools.org                  ████ █  █ 
+                       Licence: MIT License                      ████    █ 
+                                                                 ▀▀▀▀▀▀▀▀  
+
+
+One-line summary
+----------------
+
+.. doctest::
+
+    >>> from radtools import stamp_line
+    >>> print(stamp_line()) # doctest: +SKIP
+    on 9 August 2023 at 16:50:17 by rad-tools 0.8.0
+    >>> print(stamp_line(doclink=True)) # doctest: +SKIP
+    on 9 August 2023 at 16:51:0 by rad-tools 0.8.0 Documentation: rad-tools.org
+
+License
+-------
+
+.. doctest::
+
+    >>> from radtools import license
+    >>> print(license()) # doctest: +SKIP
+    MIT License
+
+    Copyright (c) 2022-2023 Andrey Rybakov
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.

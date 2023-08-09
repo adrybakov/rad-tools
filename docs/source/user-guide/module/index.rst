@@ -66,13 +66,13 @@ Submodules
 For the detailed guide on each submodule please refer to the corresponding page:
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     
     spinham/index
     crystal/index
-    routines
     io/index
     geometry
     numerical
+    decorate
 
     
