@@ -45,7 +45,7 @@ The first method is recommended for the user, as it is the most convenient
 and provides the most intuitive way of using the package. 
 
 The third method is useful for the
-advanced users, who wants to :ref:`contribute <rad-tools_contribute>` to the package.
+advanced users, who wants to :ref:`contribute <contribute>` to the package.
 
 In the examples of this guide, the first import method is used, unless stated otherwise.
 

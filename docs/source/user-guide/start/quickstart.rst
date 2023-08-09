@@ -37,3 +37,5 @@ check out :ref:`scripts-guide`.
 If you want to use RAD-tools in your python scripts 
 check out :ref:`module-guide`. 
 For the full reference of modules, classes and methods see :ref:`api`.
+If you want to check some of the algorithms used in RAD-tools 
+check out Library section in :ref:`user guide <user-guide>`.

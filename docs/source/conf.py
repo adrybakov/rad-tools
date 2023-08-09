@@ -219,6 +219,8 @@ custom_links = {
         "Array interface",
         "https://numpy.org/doc/stable/reference/arrays.interface.html#object.__array_interface__",
     ),
+    "RAD-repo": ("RAD-tools repository", "https://github.com/adrybakov/rad-tools"),
+    "numpydoc": ("numpydoc", "https://numpydoc.readthedocs.io/en/latest/format.html"),
 }
 
 

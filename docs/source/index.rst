@@ -10,7 +10,7 @@ RAD-tools
     User Guide <user-guide/index>
     api/index
     release-notes/index
-    contribution
+    contribute/index
 
 :Release: |version|
 :Date: |release_date|
@@ -79,11 +79,11 @@ RAD-tools
         Contributor's Guide
         ^^^^^^^^^^^^^^^^^^^
 
-        Work in progress.
+        Every kind of contribution is welcomed!
 
         +++
 
-        .. button-ref:: contribution
+        .. button-ref:: contribute/index
             :expand:
             :color: primary
             :click-parent:
