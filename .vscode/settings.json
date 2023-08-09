@@ -74,6 +74,7 @@
         "symm",
         "symm_matrix",
         "termcolor",
+        "toctree",
         "TODEGREES",
         "TORADIANS",
         "tqdm",
