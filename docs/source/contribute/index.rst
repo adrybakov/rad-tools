@@ -7,8 +7,8 @@ Contributor`s guide
 We welcome the contribution to the package! 
 
 It is not necessary to be a programmer to contribute. 
-You can help us with the documentation, 
-:ref:`contribute_feature` and :ref:`contribute_bug`.
+You can help us with the documentation, :ref:`new features <contribute_feature>` 
+and :ref:`finding bugs <contribute_bug>`.
 
 .. toctree::
    :hidden:
@@ -116,4 +116,3 @@ Once you are ready with your contribution,
 push your changes to your forked repository and create a pull request.
 Please add the description to the pull request. 
 Mention the issue number if it is related to any.
-

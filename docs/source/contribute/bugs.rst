@@ -18,24 +18,24 @@ repository of the project: |RAD-repo|_
 Then click on the "Issues" tab. 
 
 .. figure:: img/issue-1.png
-    :target: ../../_images/issue-1.png
+    :target: ../_images/issue-1.png
     :align: center
 
 Click on the "New issue" button:
 
 .. figure:: img/issue-2.png
-    :target: ../../_images/issue-2.png
+    :target: ../_images/issue-2.png
     :align: center
 
 You will see two prepared template for the issues. Click on the "Get started" for the
 "Bug report" template:
 
 .. figure:: img/issue-3.png
-    :target: ../../_images/issue-3.png
+    :target: ../_images/issue-3.png
     :align: center
 
 Fill in the template and click on the "Submit new issue" button:
 
 .. figure:: img/bug.png
-    :target: ../../_images/bug.png
+    :target: ../_images/bug.png
     :align: center
