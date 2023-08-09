@@ -54,6 +54,11 @@ def compare_numerically(x, condition, y, eps=None, rtol=REL_TOL, atol=ABS_TOL):
     result: bool
         Whether the condition is satisfied.
 
+    Raises
+    ------
+    ValueError
+        If ``condition`` is not one of "<", ">", "<=", ">=", "==", "!=".
+
     References
     ----------
     .. [1] Grosse-Kunstleve, R.W., Sauter, N.K. and Adams, P.D., 2004.
@@ -77,3 +82,5 @@ def compare_numerically(x, condition, y, eps=None, rtol=REL_TOL, atol=ABS_TOL):
         return not (x < y - eps or y < x - eps)
     if condition == "!=":
         return x < y - eps or y < x - eps
+
+    raise ValueError(f'Condition must be one of "<", ">", "<=", ">=", "==", "!=".')

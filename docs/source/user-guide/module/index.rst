@@ -73,5 +73,6 @@ For the detailed guide on each submodule please refer to the corresponding page:
     routines
     io/index
     geometry
+    numerical
 
     
