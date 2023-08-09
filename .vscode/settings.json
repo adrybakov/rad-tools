@@ -25,6 +25,7 @@
         "aniso",
         "asymm",
         "asymm_matrix",
+        "atol",
         "bmatrix",
         "boldsymbol",
         "Bravais",
@@ -52,6 +53,7 @@
         "pytest",
         "radtools",
         "rightarrow",
+        "rtol",
         "Rybakov",
         "scipy",
         "Seitz",
@@ -65,6 +67,7 @@
         "TORADIANS",
         "tqdm",
         "Traceback",
+        "varepsilon",
         "voronoi"
     ],
     "search.useIgnoreFiles": true,
