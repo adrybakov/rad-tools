@@ -74,5 +74,6 @@ For the detailed guide on each submodule please refer to the corresponding page:
     geometry
     numerical
     decorate
+    score
 
     
