@@ -72,5 +72,6 @@ For the detailed guide on each submodule please refer to the corresponding page:
     crystal/index
     routines
     io/index
+    geometry
 
     
