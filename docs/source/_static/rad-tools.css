@@ -10,11 +10,17 @@ html[data-theme="dark"] {
 }
 
 h1 {
-  color: #272B3A;
+  color: #000201;
 }
 
 h2 {
-  color: #575286;
+  color: #082F18;
+
+  letter-spacing: -.03em;
+}
+
+h3 {
+  color: #0C4526;
 
   letter-spacing: -.03em;
 }
