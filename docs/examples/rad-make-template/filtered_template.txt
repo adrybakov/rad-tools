@@ -1,5 +1,5 @@
 Template is created based on the file: docs/examples/rad-make-template/exchange.out
-on 27 July 2023 at 16:47:29 by rad-tools 0.8.0.dev
+on 9 August 2023 at 20:2:40 by rad-tools 0.8.0
 
 ====================
 Neighbors template:

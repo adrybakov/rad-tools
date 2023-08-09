@@ -590,6 +590,7 @@ def test_MCLC_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, o
             ),
             order,
         )
+
         conv_b, conv_c = sorted([conv_b, conv_c])
         if conv_alpha > 90.0:
             conv_alpha = 180.0 - conv_alpha
