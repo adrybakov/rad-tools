@@ -34,6 +34,7 @@
         "currentmodule",
         "custom_cmap",
         "doclink",
+        "docstrings",
         "doctest",
         "Dzyaloshinskii",
         "fullname",
@@ -66,6 +67,7 @@
         "Rybakov",
         "scipy",
         "Seitz",
+        "solve_via_colpa",
         "spinham",
         "spinw",
         "subpaths",
@@ -76,9 +78,9 @@
         "TORADIANS",
         "tqdm",
         "Traceback",
+        "utest",
         "varepsilon",
-        "voronoi",
-        "solve_via_colpa"
+        "voronoi"
     ],
     "search.useIgnoreFiles": true,
 }
