@@ -28,7 +28,7 @@ def solve_via_colpa(D):
 
     G : (2N, 2N) :numpy:`ndarray`
         Transformation matrix, which change the basis from the original set of bosonic 
-        operators :math:`\boldsymbol{a}_{\boldsymbol{k}}`to the set of 
+        operators :math:`\boldsymbol{a}_{\boldsymbol{k}}` to the set of 
         new bosonic operators :math:`\boldsymbol{c}_{\boldsymbol{k}}` which diagonalize
         the Hamiltonian which corresponds to the grand-dynamical matrix ``D``:
         

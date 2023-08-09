@@ -1,6 +1,7 @@
 from radtools.spinham.hamiltonian import SpinHamiltonian
 from radtools.geometry import span_orthonormal_set
 from radtools.magnons.diagonalization import solve_via_colpa, ColpaFailed
+from radtools.crystal.kpoints import Kpoints
 
 from copy import deepcopy
 
@@ -69,7 +70,6 @@ class MagnonDispersion:
         noaniso=False,
         custom_mask=None,
     ):
-        self._omegas = None
         self._C = None
         # Store the exchange model, but privately
         self._model = deepcopy(model)
@@ -298,12 +298,15 @@ class MagnonDispersion:
             If True, then return ``None`` instead of 0 if Colpa fails.
         """
 
-        if self._omegas is None:
-            self._omegas = []
+        data = []
 
-            for point in kpoints:
-                self._omegas.append(self.omega(point, zeros_to_none=zeros_to_none))
+        if isinstance(kpoints, Kpoints):
+            kpoints = kpoints.points()
 
-            self._omegas = np.array(self._omegas).T
+        for point in kpoints:
+            data.append(self.omega(point, zeros_to_none=zeros_to_none))
 
-        return self._omegas
+        return np.array(data).T
+
+    def __call__(self, *args, **kwargs):
+        return self.omegas(*args, **kwargs)

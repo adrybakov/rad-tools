@@ -71,6 +71,7 @@ For the detailed guide on each submodule please refer to the corresponding page:
     spinham/index
     crystal/index
     io/index
+    magnons/index
     geometry
     numerical
     decorate

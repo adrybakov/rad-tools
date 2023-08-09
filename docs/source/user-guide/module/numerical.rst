@@ -57,7 +57,7 @@ Condition        Numerical condition
 
 
 References
-----------
+==========
 .. [1] Grosse-Kunstleve, R.W., Sauter, N.K. and Adams, P.D., 2004.
     Numerically stable algorithms for the computation of reduced unit cells.
     Acta Crystallographica Section A: Foundations of Crystallography,
