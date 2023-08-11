@@ -6,6 +6,8 @@ decorate
 
 .. currentmodule:: radtools
 
+.. versionadded:: 0.8.0
+
 
 2D arrays
 =========
