@@ -4,9 +4,9 @@
 magnons
 *******
 
-.. automodule:: radtools.magnons
-
 .. currentmodule:: radtools
+
+.. versionadded:: 0.8.0
 
 Classes
 =======
