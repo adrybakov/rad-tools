@@ -37,6 +37,7 @@ Library
 
     library/lepage
     library/magnon-dispersion
+    library/spinham-notation
 
 .. div:: logo-custom-text
     

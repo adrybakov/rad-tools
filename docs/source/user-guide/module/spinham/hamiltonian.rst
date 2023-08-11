@@ -506,12 +506,12 @@ It supports the following operations:
     False
 
 
-.. _guide_spinham_notation-examples:
+.. _library_spinham_notation-examples:
 
 Notation examples
 =================
 
-For the detailed explanation of the notation see :ref:`guide_spinham_notation`.
+For the detailed explanation of the notation see :ref:`library_spinham_notation`.
 
 Setting
 -------
