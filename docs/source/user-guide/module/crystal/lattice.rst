@@ -84,8 +84,8 @@ equivalent.
                [0., 1., 0.],
                [0., 0., 1.]])
 
-Identification of the lattice
-=============================
+Lattice type
+============
 
 Bravais lattice type is lazily identified when it is needed:
 

@@ -242,14 +242,14 @@ def ORC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     a, b, c, alpha, beta, gamma = Cell.params(cell)
 
     if compare_numerically(a, ">", b, rtol=rtol, atol=atol):
-        # minus preserves right-hand order
+        # minus preserves the handedness of the cell
         cell = [cell[1], cell[0], -cell[2]]
         a, b = b, a
     if compare_numerically(a, ">", c, rtol=rtol, atol=atol):
         cell = [cell[2], cell[0], cell[1]]
     elif compare_numerically(b, ">", c, rtol=rtol, atol=atol):
-        # minus preserves right-hand order
-        cell = [cell[0], cell[2], -cell[1]]
+        # minus preserves the handedness of the cell
+        cell = [cell[0], -cell[2], cell[1]]
 
     return cell
 
@@ -278,23 +278,13 @@ def ORCF_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     a, b, c, alpha, beta, gamma = Cell.params(cell)
 
     if compare_numerically(a, "<", b, rtol=rtol, atol=atol):
-        # minus preserves right-hand order
-        # abc - > bca
-        cell = [cell[1], cell[2], cell[0]]
-        if compare_numerically(b, "<", c, rtol=rtol, atol=atol):
-            # minus preserves right-hand order
-            # bca -> -cba
-            cell = [-cell[1], cell[0], cell[2]]
-        elif compare_numerically(c, "<", a, rtol=rtol, atol=atol):
-            # minus preserves right-hand order
-            # bca -> b-ac
-            cell = [cell[0], -cell[2], cell[1]]
-    elif compare_numerically(a, "<", c, rtol=rtol, atol=atol):
-        # abc -> cab
+        # minus preserves the handedness of the cell
+        cell = [cell[1], cell[0], -cell[2]]
+        a, b = b, a
+    if compare_numerically(a, "<", c, rtol=rtol, atol=atol):
         cell = [cell[2], cell[0], cell[1]]
     elif compare_numerically(b, "<", c, rtol=rtol, atol=atol):
-        # minus preserves right-hand order
-        # abc -> a-cb
+        # minus preserves the handedness of the cell
         cell = [cell[0], -cell[2], cell[1]]
 
     return cell
@@ -326,23 +316,13 @@ def ORCI_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     a, b, c, alpha, beta, gamma = Cell.params(TRANSFORM_TO_CONVENTIONAL["ORCI"] @ cell)
 
     if compare_numerically(a, ">", b, rtol=rtol, atol=atol):
-        # minus preserves right-hand order
-        # abc - > bca
-        cell = [cell[1], cell[2], cell[0]]
-        if compare_numerically(b, ">", c, rtol=rtol, atol=atol):
-            # minus preserves right-hand order
-            # bca -> -cba
-            cell = [-cell[1], cell[0], cell[2]]
-        elif compare_numerically(c, ">", a, rtol=rtol, atol=atol):
-            # minus preserves right-hand order
-            # bca -> b-ac
-            cell = [cell[0], -cell[2], cell[1]]
-    elif compare_numerically(a, ">", c, rtol=rtol, atol=atol):
-        # abc -> cab
+        # minus preserves the handedness of the cell
+        cell = [cell[1], cell[0], -cell[2]]
+        a, b = b, a
+    if compare_numerically(a, ">", c, rtol=rtol, atol=atol):
         cell = [cell[2], cell[0], cell[1]]
     elif compare_numerically(b, ">", c, rtol=rtol, atol=atol):
-        # minus preserves right-hand order
-        # abc -> a-cb
+        # minus preserves the handedness of the cell
         cell = [cell[0], -cell[2], cell[1]]
 
     return cell
@@ -385,7 +365,7 @@ def ORCC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     a, b, c, alpha, beta, gamma = Cell.params(TRANSFORM_TO_CONVENTIONAL["ORCC"] @ cell)
 
     if compare_numerically(a, ">", b, rtol=rtol, atol=atol):
-        # minus preserves right-hand order
+        # minus preserves the handedness of the cell
         cell = [-cell[1], cell[0], cell[2]]
 
     return cell

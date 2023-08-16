@@ -8,7 +8,7 @@ Bravais lattices
 
 For the full reference see :ref:`api_crystal`
 
-Bravais lattice notation follows Setyawan and Curtarolo [1]_.
+Bravais lattice notation and standardization follows Setyawan and Curtarolo [1]_.
 
 Each Bravais lattice is an instance of :py:class:`.Lattice` class.
 
@@ -60,6 +60,11 @@ It could be accessed in a following way:
     >>> cubic_example = rad.lattice_example("cub")
     >>> cubic_example.variation
     'CUB'
+
+.. hint::
+
+    Capitalization of the name of the lattice example is not important:
+    ``CUB``, ``cub`` and ``Cub`` are equivalent.
 
 .. _table_bravais-lattices:
 

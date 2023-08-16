@@ -6,27 +6,46 @@ Body-centered cubic (BCC)
 
 **Pearson symbol**: cI
 
-**Constructor**:  :py:func:`.BCC`.
+**Constructor**:  :py:func:`.BCC`
 
 It is defined by one parameter: :math:`a` with conventional lattice:
 
 .. math::
 
-    \boldsymbol{a}_1 = (a, 0, 0)
-
-    \boldsymbol{a}_2 = (0, a, 0)
-
-    \boldsymbol{a}_3 = (0, 0, a)
+    \begin{matrix}
+    \boldsymbol{a}_1 &=& (a, &0, &0)\\
+    \boldsymbol{a}_2 &=& (0, &a, &0)\\
+    \boldsymbol{a}_3 &=& (0, &0, &a)
+    \end{matrix}
 
 And primitive lattice:
 
 .. math::
 
-    \boldsymbol{a}_1 = (-a/2, a/2, a/2)
+    \begin{matrix}
+    \boldsymbol{a}_1 &=& (-a/2,& a/2,& a/2)\\
+    \boldsymbol{a}_2 &=& (a/2, &-a/2,& a/2)\\
+    \boldsymbol{a}_3 &=& (a/2, &a/2, &-a/2)
+    \end{matrix}
 
-    \boldsymbol{a}_2 = (a/2, -a/2, a/2)
+Cell standardization
+====================
 
-    \boldsymbol{a}_3 = (a/2, a/2, -a/2)
+No standardization is performed.
+
+K-path
+======
+
+:math:`\mathrm{\Gamma-H-N-\Gamma-P-H\vert P-N}`
+
+=======================  ==============================  ==============================  ==============================
+Point                    :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbol{b}_2`  :math:`\times\boldsymbol{b}_3`
+=======================  ==============================  ==============================  ==============================
+:math:`\mathrm{\Gamma}`  :math:`0`                       :math:`0`                       :math:`0`
+:math:`\mathrm{H}`       :math:`1/2`                     :math:`-1/2`                    :math:`1/2`
+:math:`\mathrm{P}`       :math:`1/4`                     :math:`1/4`                     :math:`1/4`
+:math:`\mathrm{N}`       :math:`0`                       :math:`0`                       :math:`1/2`
+=======================  ==============================  ==============================  ==============================
 
 Variations
 ==========
@@ -34,39 +53,29 @@ Variations
 There are no variations for body-centered cubic lattice. 
 One example is predefined: ``bcc`` with :math:`a = \pi`.
 
-Example structure
-=================
+Examples
+========
 
-**Default kpath**: :math:`\mathrm{\Gamma-H-N-\Gamma-P-H\vert P-N}`.
+* Brillouin zone and default kpath
 
-.. list-table:: Brillouin zone and default kpath
-    :widths: 70 30
-    :header-rows: 1
+.. literalinclude:: bcc_brillouin.py
+    :language: py
 
-    * - Picture
-      - Code
-    * - .. figure:: bcc_brillouin.png 
-            :target: ../../../../../_images/bcc_brillouin.png 
-      - .. literalinclude:: bcc_brillouin.py
-            :language: py
+.. figure:: bcc_brillouin.png 
+    :target: ../../../../../_images/bcc_brillouin.png
 
-.. list-table:: Primitive and conventional cell
-    :header-rows: 1
+* Primitive and conventional cell
 
-    * - Picture
-      - Code
-    * - .. figure:: bcc_real.png 
-            :target: ../../../../../_images/bcc_real.png 
-      - .. literalinclude:: bcc_real.py
-            :language: py
+.. literalinclude:: bcc_real.py
+    :language: py
 
-.. list-table:: Wigner-Seitz cell
-    :widths: 70 30
-    :header-rows: 1
+.. figure:: bcc_real.png 
+    :target: ../../../../../_images/bcc_real.png 
 
-    * - Picture
-      - Code
-    * - .. figure:: bcc_wigner-seitz.png 
-            :target: ../../../../../_images/bcc_wigner-seitz.png 
-      - .. literalinclude:: bcc_wigner-seitz.py
-            :language: py
+* Wigner-Seitz cell
+
+.. literalinclude:: bcc_wigner-seitz.py
+    :language: py
+
+.. figure:: bcc_wigner-seitz.png 
+    :target: ../../../../../_images/bcc_wigner-seitz.png 

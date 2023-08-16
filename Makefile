@@ -136,7 +136,7 @@ examples: example-plot-dos example-identify-wannier-centres example-make-templat
 	@echo "Done"
 
 bravais-pictures:
-	@python3 docs/source/user-guide/module/crystal/bravais-lattices/plot_all.py -op docs/source/user-guide/module/crystal/bravais-lattices/
+	@python3 tools/plot-bravais-lattices.py
 
 check-scripts:
 	@python3 tools/check-scripts.py

@@ -6,28 +6,154 @@ Face-centred orthorhombic (ORCF)
 
 **Pearson symbol**: oF
 
-**Constructor**:  :py:func:`.ORCF`.
+**Constructor**:  :py:func:`.ORCF`
 
 It is defined by three parameters: :math:`a`, :math:`b` and :math:`c` 
 with conventional lattice:
 
 .. math::
 
-        \boldsymbol{a}_1 = (a, 0, 0)
-
-        \boldsymbol{a}_2 = (0, b, 0)
-
-        \boldsymbol{a}_3 = (0, 0, c)
+    \begin{matrix}
+    \boldsymbol{a}_1 &=& (a, &0, &0)\\
+    \boldsymbol{a}_2 &=& (0, &b, &0)\\
+    \boldsymbol{a}_3 &=& (0, &0, &c)
+    \end{matrix}
 
 And primitive lattice:
 
 .. math::
 
-    \boldsymbol{a}_1 = (0, b/2, c/2)
+    \begin{matrix}
+    \boldsymbol{a}_1 &=& (0, &b/2, &c/2)\\
+    \boldsymbol{a}_2 &=& (a/2, &0, &c/2)\\
+    \boldsymbol{a}_3 &=& (a/2, &b/2, &0)
+    \end{matrix}
 
-    \boldsymbol{a}_2 = (a/2, 0, c/2)
+Cell standardization
+====================
 
-    \boldsymbol{a}_3 = (a/2, b/2, 0)
+Lengths of the lattice vectors of the conventional cell have to satisfy 
+:math:`\vert\boldsymbol{a}_1\vert < \vert\boldsymbol{a}_2\vert < \vert\boldsymbol{a}_3\vert`.
+That means that lattice vectors of the primitive cell have to satisfy:
+:math:`\vert\boldsymbol{a}_1\vert > \vert\boldsymbol{a}_2\vert > \vert\boldsymbol{a}_3\vert`.
+
+
+If this condition is not satisfied, then the lattice is transformed to the standard form. 
+We use the primitive lattice vectors for the standardization:
+
+First we order first two vectors by length:
+
+* If :math:`\vert\boldsymbol{a}_1\vert < \vert\boldsymbol{a}_2\vert`
+
+.. math::
+
+    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+    (\boldsymbol{a}_2, \boldsymbol{a}_1, -\boldsymbol{a}_3)
+
+Then we find a correct place for the third vector:
+
+* If :math:`\vert\boldsymbol{a}_1\vert < \vert\boldsymbol{a}_3\vert`
+
+.. math::
+
+    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+    (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
+
+* If :math:`\vert\boldsymbol{a}_2\vert < \vert\boldsymbol{a}_3\vert`
+
+.. math::
+
+    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+    (\boldsymbol{a}_1, -\boldsymbol{a}_3, \boldsymbol{a}_2)
+
+.. note::
+
+    The third lattice vector is multiplied by :math:`-1` in some cases to 
+    preserve the handedness of the cell.
+
+K-path
+======
+
+ORCF\ :sub:`1`
+--------------
+
+:math:`\mathrm{\Gamma-Y-T-Z-\Gamma-X-A_1-Y\vert T-X_1\vert X-A-Z\vert L-\Gamma}`
+
+.. math::
+
+    \begin{matrix}
+    \zeta = \dfrac{1 + a^2/b^2 - a^2/c^2}{4} &
+    \eta = \dfrac{1 + a^2/b^2 + a^2/c^2}{4}
+    \end{matrix}
+
+=========================  ==============================  ==============================  ==============================
+Point                      :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbol{b}_2`  :math:`\times\boldsymbol{b}_3`
+=========================  ==============================  ==============================  ==============================
+:math:`\mathrm{\Gamma}`    :math:`0`                       :math:`0`                       :math:`0`
+:math:`\mathrm{A}`         :math:`1/2`                     :math:`1/2 + \zeta`             :math:`\zeta`
+:math:`\mathrm{A_1}`       :math:`1/2`                     :math:`1/2 - \zeta`             :math:`1-\zeta`
+:math:`\mathrm{L}`         :math:`1/2`                     :math:`1/2`                     :math:`1/2`
+:math:`\mathrm{T}`         :math:`1`                       :math:`1/2`                     :math:`1/2`
+:math:`\mathrm{X}`         :math:`0`                       :math:`\eta`                    :math:`\eta`
+:math:`\mathrm{X_1}`       :math:`1`                       :math:`1-\eta`                  :math:`1-\eta`
+:math:`\mathrm{Y}`         :math:`1/2`                     :math:`0`                       :math:`1/2`
+:math:`\mathrm{Z}`         :math:`1/2`                     :math:`1/2`                     :math:`0`
+=========================  ==============================  ==============================  ==============================
+
+ORCF\ :sub:`2`
+--------------
+
+:math:`\mathrm{\Gamma-Y-C-D-X-\Gamma-Z-D_1-H-C\vert C_1-Z\vert X-H_1\vert H-Y\vert L-\Gamma}`
+
+.. math::
+
+    \begin{matrix}
+    \eta = \dfrac{1 + a^2/b^2 - a^2/c^2}{4} &
+    \delta = \dfrac{1 + b^2/a^2 - b^2/c^2}{4} &
+    \phi = \dfrac{1 + c^2/b^2 - c^2/a^2}{4} 
+    \end{matrix}
+
+=========================  ==============================  ==============================  ==============================
+Point                      :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbol{b}_2`  :math:`\times\boldsymbol{b}_3`
+=========================  ==============================  ==============================  ==============================
+:math:`\mathrm{\Gamma}`    :math:`0`                       :math:`0`                       :math:`0`
+:math:`\mathrm{C}`         :math:`1/2`                     :math:`1/2 - \eta`              :math:`1 - \eta`
+:math:`\mathrm{C_1}`       :math:`1/2`                     :math:`1/2 + \eta`              :math:`\eta`
+:math:`\mathrm{D}`         :math:`1/2-\delta`              :math:`1/2`                     :math:`1 - \delta`
+:math:`\mathrm{D_1}`       :math:`1/2+\delta`              :math:`1/2`                     :math:`\delta`
+:math:`\mathrm{L}`         :math:`1/2`                     :math:`1/2`                     :math:`1/2`
+:math:`\mathrm{H}`         :math:`1 - \phi`                :math:`1/2 - \phi`              :math:`1/2`
+:math:`\mathrm{H_1}`       :math:`\phi`                    :math:`1/2 + \phi`              :math:`1/2`
+:math:`\mathrm{X}`         :math:`0`                       :math:`1/2`                     :math:`1/2`
+:math:`\mathrm{Y}`         :math:`1/2`                     :math:`0`                       :math:`1/2`
+:math:`\mathrm{Z}`         :math:`1/2`                     :math:`1/2`                     :math:`0`
+=========================  ==============================  ==============================  ==============================
+
+ORCF\ :sub:`3`
+--------------
+
+:math:`\mathrm{\Gamma-Y-T-Z-\Gamma-X-A_1-Y\vert X-A-Z\vert L-\Gamma}`
+
+.. math::
+
+    \begin{matrix}
+    \zeta = \dfrac{1 + a^2/b^2 - a^2/c^2}{4} &
+    \eta = \dfrac{1 + a^2/b^2 + a^2/c^2}{4}
+    \end{matrix}
+
+=========================  ==============================  ==============================  ==============================
+Point                      :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbol{b}_2`  :math:`\times\boldsymbol{b}_3`
+=========================  ==============================  ==============================  ==============================
+:math:`\mathrm{\Gamma}`    :math:`0`                       :math:`0`                       :math:`0`
+:math:`\mathrm{A}`         :math:`1/2`                     :math:`1/2 + \zeta`             :math:`\zeta`
+:math:`\mathrm{A_1}`       :math:`1/2`                     :math:`1/2 - \zeta`             :math:`1-\zeta`
+:math:`\mathrm{L}`         :math:`1/2`                     :math:`1/2`                     :math:`1/2`
+:math:`\mathrm{T}`         :math:`1`                       :math:`1/2`                     :math:`1/2`
+:math:`\mathrm{X}`         :math:`0`                       :math:`\eta`                    :math:`\eta`
+:math:`\mathrm{X_1}`       :math:`1`                       :math:`1-\eta`                  :math:`1-\eta`
+:math:`\mathrm{Y}`         :math:`1/2`                     :math:`0`                       :math:`1/2`
+:math:`\mathrm{Z}`         :math:`1/2`                     :math:`1/2`                     :math:`0`
+=========================  ==============================  ==============================  ==============================
 
 Variations
 ==========
@@ -40,7 +166,6 @@ For the examples of variations
 * :math:`b = \dfrac{c}{\sqrt{c^2 - 1}}`
 
 * :math:`c > \sqrt{2}`
-
 
 First condition defines in ORCF\ :sub:`3` lattice and ensures
 ordering of lattice parameters :math:`b > a`. 
@@ -75,124 +200,89 @@ ORCF\ :sub:`3`
 Predefined example: ``orcf3`` with 
 :math:`a = \pi`, :math:`b = 5\pi/4` and :math:`c = 5\pi/3`.
 
-Example structures
-==================
+Examples
+========
 
 ORCF\ :sub:`1`
 --------------
 
-**Default kpath**: :math:`\mathrm{\Gamma-Y-T-Z-\Gamma-X-A_1-Y\vert T-X_1\vert X-A-Z\vert L-\Gamma}`.
+* Brillouin zone and default kpath
 
-.. list-table:: Brillouin zone and default kpath
-    :widths: 70 30
-    :header-rows: 1
+.. literalinclude:: orcf1_brillouin.py
+    :language: py
 
-    * - Picture
-      - Code
-    * - .. figure:: orcf1_brillouin.png 
-            :target: ../../../../../_images/orcf1_brillouin.png 
-      - .. literalinclude:: orcf1_brillouin.py
-            :language: py
+.. figure:: orcf1_brillouin.png 
+    :target: ../../../../../_images/orcf1_brillouin.png 
 
-.. list-table:: Primitive and conventional cell
-    :header-rows: 1
+* Primitive and conventional cell
 
-    * - Picture
-      - Code
-    * - .. figure:: orcf1_real.png 
-            :target: ../../../../../_images/orcf1_real.png 
-      - .. literalinclude:: orcf1_real.py
-            :language: py
+.. literalinclude:: orcf1_real.py
+    :language: py
 
-.. list-table:: Wigner-Seitz cell
-    :widths: 70 30
-    :header-rows: 1
+.. figure:: orcf1_real.png 
+    :target: ../../../../../_images/orcf1_real.png 
 
-    * - Picture
-      - Code
-    * - .. figure:: orcf1_wigner-seitz.png 
-            :target: ../../../../../_images/orcf1_wigner-seitz.png 
-      - .. literalinclude:: orcf1_wigner-seitz.py
-            :language: py
+* Wigner-Seitz cell
+
+.. literalinclude:: orcf1_wigner-seitz.py
+    :language: py
+
+.. figure:: orcf1_wigner-seitz.png 
+    :target: ../../../../../_images/orcf1_wigner-seitz.png 
 
 ORCF\ :sub:`2`
 --------------
 
-**Default kpath**: :math:`\mathrm{\Gamma-Y-C-D-X-\Gamma-Z-D_1-H-C\vert C_1-Z\vert X-H_1\vert H-Y\vert L-\Gamma}`.
+* Brillouin zone and default kpath
 
-.. list-table:: Brillouin zone and default kpath
-    :widths: 70 30
-    :header-rows: 1
+.. literalinclude:: orcf2_brillouin.py
+    :language: py
 
-    * - Picture
-      - Code
-    * - .. figure:: orcf2_brillouin.png 
-            :target: ../../../../../_images/orcf2_brillouin.png 
-      - .. literalinclude:: orcf2_brillouin.py
-            :language: py
+.. figure:: orcf2_brillouin.png 
+    :target: ../../../../../_images/orcf2_brillouin.png 
 
-.. list-table:: Primitive and conventional cell
-    :header-rows: 1
+* Primitive and conventional cell
 
-    * - Picture
-      - Code
-    * - .. figure:: orcf2_real.png 
-            :target: ../../../../../_images/orcf2_real.png 
-      - .. literalinclude:: orcf2_real.py
-            :language: py
+.. literalinclude:: orcf2_real.py
+    :language: py
 
-.. list-table:: Wigner-Seitz cell
-    :widths: 70 30
-    :header-rows: 1
+.. figure:: orcf2_real.png 
+    :target: ../../../../../_images/orcf2_real.png 
 
-    * - Picture
-      - Code
-    * - .. figure:: orcf2_wigner-seitz.png 
-            :target: ../../../../../_images/orcf2_wigner-seitz.png 
-      - .. literalinclude:: orcf2_wigner-seitz.py
-            :language: py
+* Wigner-Seitz cell
 
+.. literalinclude:: orcf2_wigner-seitz.py
+    :language: py
+
+.. figure:: orcf2_wigner-seitz.png 
+    :target: ../../../../../_images/orcf2_wigner-seitz.png 
 
 ORCF\ :sub:`3`
 --------------
 
-**Default kpath**: :math:`\mathrm{\Gamma-Y-T-Z-\Gamma-X-A_1-Y\vert X-A-Z\vert L-\Gamma}`.
+* Brillouin zone and default kpath
 
-.. list-table:: Brillouin zone and default kpath
-    :widths: 70 30
-    :header-rows: 1
+.. literalinclude:: orcf3_brillouin.py
+    :language: py
 
-    * - Picture
-      - Code
-    * - .. figure:: orcf3_brillouin.png 
-            :target: ../../../../../_images/orcf3_brillouin.png 
-      - .. literalinclude:: orcf3_brillouin.py
-            :language: py
+.. figure:: orcf3_brillouin.png 
+    :target: ../../../../../_images/orcf3_brillouin.png 
 
-.. list-table:: Primitive and conventional cell
-    :header-rows: 1
+* Primitive and conventional cell
 
-    * - Picture
-      - Code
-    * - .. figure:: orcf3_real.png 
-            :target: ../../../../../_images/orcf3_real.png 
-      - .. literalinclude:: orcf3_real.py
-            :language: py
+.. literalinclude:: orcf3_real.py
+    :language: py
 
-.. list-table:: Wigner-Seitz cell
-    :widths: 70 30
-    :header-rows: 1
+.. figure:: orcf3_real.png 
+    :target: ../../../../../_images/orcf3_real.png 
 
-    * - Picture
-      - Code
-    * - .. figure:: orcf3_wigner-seitz.png 
-            :target: ../../../../../_images/orcf3_wigner-seitz.png 
-      - .. literalinclude:: orcf3_wigner-seitz.py
-            :language: py
+* Wigner-Seitz cell
 
-Ordering of lattice parameters
-==============================
-TODO
+.. literalinclude:: orcf3_wigner-seitz.py
+    :language: py
+
+.. figure:: orcf3_wigner-seitz.png 
+    :target: ../../../../../_images/orcf3_wigner-seitz.png 
 
 Edge cases
 ==========

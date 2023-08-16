@@ -6,18 +6,56 @@ Hexagonal (HEX)
 
 **Pearson symbol**: hP
 
-**Constructor**:  :py:func:`.HEX`.
+**Constructor**:  :py:func:`.HEX`
 
 It is defined by two parameter: :math:`a` and :math:`c` 
 with primitive and conventional lattice:
 
 .. math::
 
-    \boldsymbol{a}_1 = (a/2, -a\sqrt{3}, 0)
+    \begin{matrix}
+    \boldsymbol{a}_1 &=& (a/2, &-a\sqrt{3}, &0)\\
+    \boldsymbol{a}_2 &=& (a/2, &a\sqrt{3}, &0)\\
+    \boldsymbol{a}_3 &=& (0, &0, &c)
+    \end{matrix}
 
-    \boldsymbol{a}_2 = (a/2, a\sqrt{3}, 0)
+Cell standardization
+====================
 
-    \boldsymbol{a}_3 = (0, 0, c)
+Angle between first two lattice vectors (:math:`\gamma`) has to be equal to :math:`120^{\circ}`.
+
+If this condition is not satisfied, then the lattice is transformed to the standard form:
+
+
+* If :math:`\beta = 120^{\circ}`
+
+.. math::
+
+    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+    (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
+
+* If :math:`\alpha = 120^{\circ}`
+
+.. math::
+
+    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+    (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
+
+K-path
+======
+
+:math:`\mathrm{\Gamma-M-K-\Gamma-A-L-H-A\vert L-M\vert K-H}`
+
+=========================  ==============================  ==============================  ==============================
+Point                      :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbol{b}_2`  :math:`\times\boldsymbol{b}_3`
+=========================  ==============================  ==============================  ==============================
+:math:`\mathrm{\Gamma}`    :math:`0`                       :math:`0`                       :math:`0`
+:math:`\mathrm{A}`         :math:`0`                       :math:`0`                       :math:`1/2`
+:math:`\mathrm{H}`         :math:`1/3`                     :math:`1/3`                     :math:`1/2`
+:math:`\mathrm{K}`         :math:`1/3`                     :math:`1/3`                     :math:`0`
+:math:`\mathrm{L}`         :math:`1/2`                     :math:`0`                       :math:`1/2`
+:math:`\mathrm{M}`         :math:`1/2`                     :math:`0`                       :math:`0`
+=========================  ==============================  ==============================  ==============================
 
 Variations
 ==========
@@ -25,39 +63,29 @@ Variations
 There are no variations for hexagonal lattice. 
 One example is predefined: ``hex`` with :math:`a = \pi` and :math:`c = 2\pi`.
 
-Example structure
-=================
+Examples
+========
 
-**Default kpath**: :math:`\mathrm{\Gamma-M-K-\Gamma-A-L-H-A\vert L-M\vert K-H}`.
+* Brillouin zone and default kpath
 
-.. list-table:: Brillouin zone and default kpath
-    :widths: 70 30
-    :header-rows: 1
+.. literalinclude:: hex_brillouin.py
+    :language: py
 
-    * - Picture
-      - Code
-    * - .. figure:: hex_brillouin.png 
-            :target: ../../../../../_images/hex_brillouin.png 
-      - .. literalinclude:: hex_brillouin.py
-            :language: py
+.. figure:: hex_brillouin.png 
+    :target: ../../../../../_images/hex_brillouin.png 
 
-.. list-table:: Primitive and conventional cell
-    :header-rows: 1
+* Primitive and conventional cell
 
-    * - Picture
-      - Code
-    * - .. figure:: hex_real.png 
-            :target: ../../../../../_images/hex_real.png 
-      - .. literalinclude:: hex_real.py
-            :language: py
+.. literalinclude:: hex_real.py
+    :language: py
 
-.. list-table:: Wigner-Seitz cell
-    :widths: 70 30
-    :header-rows: 1
+.. figure:: hex_real.png 
+    :target: ../../../../../_images/hex_real.png 
 
-    * - Picture
-      - Code
-    * - .. figure:: hex_wigner-seitz.png 
-            :target: ../../../../../_images/hex_wigner-seitz.png 
-      - .. literalinclude:: hex_wigner-seitz.py
-            :language: py
+* Wigner-Seitz cell
+
+.. literalinclude:: hex_wigner-seitz.py
+    :language: py
+
+.. figure:: hex_wigner-seitz.png 
+    :target: ../../../../../_images/hex_wigner-seitz.png 

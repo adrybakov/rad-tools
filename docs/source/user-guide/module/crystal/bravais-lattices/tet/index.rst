@@ -6,18 +6,56 @@ Tetragonal (TET)
 
 **Pearson symbol**: tP
 
-**Constructor**:  :py:func:`.TET`.
+**Constructor**:  :py:func:`.TET`
 
 It is defined by two parameters: :math:`a` and :math:`c` 
 with primitive and conventional lattice:
 
 .. math::
 
-    \boldsymbol{a}_1 = (a, 0, 0)
+    \begin{matrix}
+    \boldsymbol{a}_1 &=& (a, &0, &0)\\
+    \boldsymbol{a}_2 &=& (0, &a, &0)\\
+    \boldsymbol{a}_3 &=& (0, &0, &c)
+    \end{matrix}
 
-    \boldsymbol{a}_2 = (0, a, 0)
+Cell standardization
+====================
 
-    \boldsymbol{a}_3 = (0, 0, c)
+Length of third lattice vector has to be different from the first two. 
+If this condition is not satisfied, 
+then the lattice is transformed to the standard form:
+
+* If :math:`\vert\boldsymbol{a}_1\vert = \vert\boldsymbol{a}_3\vert \ne \vert\boldsymbol{a}_2\vert`
+
+.. math::
+    
+    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+    (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
+
+* If :math:`\vert\boldsymbol{a}_2\vert = \vert\boldsymbol{a}_3\vert \ne \vert\boldsymbol{a}_1\vert`
+
+.. math::
+    
+    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+    (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
+
+
+K-path
+======
+
+:math:`\mathrm{\Gamma-X-M-\Gamma-Z-R-A-Z\vert X-R\vert M-A}`
+
+=======================  ==============================  ==============================  ==============================
+Point                    :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbol{b}_2`  :math:`\times\boldsymbol{b}_3`
+=======================  ==============================  ==============================  ==============================
+:math:`\mathrm{\Gamma}`  :math:`0`                       :math:`0`                       :math:`0`
+:math:`\mathrm{A}`       :math:`1/2`                     :math:`1/2`                     :math:`1/2`
+:math:`\mathrm{M}`       :math:`1/2`                     :math:`1/2`                     :math:`0`
+:math:`\mathrm{R}`       :math:`0`                       :math:`1/2`                     :math:`1/2`
+:math:`\mathrm{X}`       :math:`0`                       :math:`1/2`                     :math:`0`
+:math:`\mathrm{Z}`       :math:`0`                       :math:`0`                       :math:`1/2`
+=======================  ==============================  ==============================  ==============================
 
 Variations
 ==========
@@ -25,42 +63,32 @@ Variations
 There are no variations for tetragonal lattice. 
 One example is predefined: ``tet`` with :math:`a = \pi` and :math:`c = 1.5\pi`
 
-Example structure
-=================
+Examples
+========
 
-**Default kpath**: :math:`\mathrm{\Gamma-X-M-\Gamma-Z-R-A-Z\vert X-R\vert M-A}`.
+* Brillouin zone and default kpath
 
-.. list-table:: Brillouin zone and default kpath
-    :widths: 70 30
-    :header-rows: 1
+.. literalinclude:: tet_brillouin.py
+    :language: py
 
-    * - Picture
-      - Code
-    * - .. figure:: tet_brillouin.png 
-            :target: ../../../../../_images/tet_brillouin.png 
-      - .. literalinclude:: tet_brillouin.py
-            :language: py
+.. figure:: tet_brillouin.png 
+    :target: ../../../../../_images/tet_brillouin.png 
 
-.. list-table:: Primitive and conventional cell
-    :header-rows: 1
+* Primitive and conventional cell
 
-    * - Picture
-      - Code
-    * - .. figure:: tet_real.png 
-            :target: ../../../../../_images/tet_real.png 
-      - .. literalinclude:: tet_real.py
-            :language: py
+.. literalinclude:: tet_real.py
+    :language: py
 
-.. list-table:: Wigner-Seitz cell
-    :widths: 70 30
-    :header-rows: 1
+.. figure:: tet_real.png 
+    :target: ../../../../../_images/tet_real.png 
 
-    * - Picture
-      - Code
-    * - .. figure:: tet_wigner-seitz.png 
-            :target: ../../../../../_images/tet_wigner-seitz.png 
-      - .. literalinclude:: tet_wigner-seitz.py
-            :language: py
+* Wigner-Seitz cell
+
+.. literalinclude:: tet_wigner-seitz.py
+    :language: py
+
+.. figure:: tet_wigner-seitz.png 
+    :target: ../../../../../_images/tet_wigner-seitz.png 
 
 
 Edge cases

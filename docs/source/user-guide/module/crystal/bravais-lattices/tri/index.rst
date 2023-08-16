@@ -6,7 +6,7 @@ Triclinic (TRI)
 
 **Pearson symbol**: aP
 
-**Constructor**:  :py:func:`.TRI`.
+**Constructor**:  :py:func:`.TRI`
 
 It is defined by six parameters: :math:`a`, :math:`b`, :math:`c` and
 :math:`\alpha`, :math:`\beta`, :math:`\gamma`.
@@ -14,12 +14,91 @@ with primitive and conventional lattice:
 
 .. math::
 
-    \boldsymbol{a}_1 = (a, 0, 0)
+    \begin{matrix}
+    \boldsymbol{a}_1 = (a, 0, 0)\\
+    \boldsymbol{a}_2 = (b\cos\gamma, b\sin\gamma, 0)\\
+    \boldsymbol{a}_3 = (c\cos\beta, \dfrac{c(\cos\alpha - \cos\beta\cos\gamma)}{\sin\gamma}, \dfrac{c}{\sin\gamma}\sqrt{\sin^2\gamma - \cos^2\alpha - \cos^2\beta + 2\cos\alpha\cos\beta\cos\gamma})
+    \end{matrix}
 
-    \boldsymbol{a}_2 = (b\cos(\gamma), b\sin(\gamma), 0)
+Cell standardization
+====================
 
-    \boldsymbol{a}_3 = (c\cos(\beta), \frac{c(\cos(\alpha) - \cos(\beta)\cos(\gamma))}{\sin{\gamma}}, \frac{c}{\sin(\gamma)}\sqrt{\sin^2(\gamma) - \cos^2(\alpha) - \cos^2(\beta) + 2\cos(\alpha)\cos(\beta)\cos(\gamma)})
+TODO. At the moment no standardization is performed.
 
+K-path
+======
+
+TRI\ :sub:`1a`
+--------------
+
+:math:`\mathrm{X-\Gamma-Y\vert L-\Gamma-Z\vert N-\Gamma-M\vert R-\Gamma}`
+
+=======================  ==============================  ==============================  ==============================
+Point                    :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbol{b}_2`  :math:`\times\boldsymbol{b}_3`
+=======================  ==============================  ==============================  ==============================
+:math:`\mathrm{\Gamma}`  :math:`0`                       :math:`0`                       :math:`0`
+:math:`\mathrm{L}`       :math:`1/2`                     :math:`1/2`                     :math:`0`
+:math:`\mathrm{M}`       :math:`0`                       :math:`1/2`                     :math:`1/2`
+:math:`\mathrm{N}`       :math:`1/2`                     :math:`0`                       :math:`1/2`
+:math:`\mathrm{R}`       :math:`1/2`                     :math:`1/2`                     :math:`1/2`
+:math:`\mathrm{X}`       :math:`1/2`                     :math:`0`                       :math:`0`
+:math:`\mathrm{Y}`       :math:`0`                       :math:`1/2`                     :math:`0`
+:math:`\mathrm{Z}`       :math:`0`                       :math:`0`                       :math:`1/2`
+=======================  ==============================  ==============================  ==============================
+
+TRI\ :sub:`2a`
+--------------
+
+:math:`\mathrm{X-\Gamma-Y\vert L-\Gamma-Z\vert N-\Gamma-M\vert R-\Gamma}`
+
+=======================  ==============================  ==============================  ==============================
+Point                    :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbol{b}_2`  :math:`\times\boldsymbol{b}_3`
+=======================  ==============================  ==============================  ==============================
+:math:`\mathrm{\Gamma}`  :math:`0`                       :math:`0`                       :math:`0`
+:math:`\mathrm{L}`       :math:`1/2`                     :math:`1/2`                     :math:`0`
+:math:`\mathrm{M}`       :math:`0`                       :math:`1/2`                     :math:`1/2`
+:math:`\mathrm{N}`       :math:`1/2`                     :math:`0`                       :math:`1/2`
+:math:`\mathrm{R}`       :math:`1/2`                     :math:`1/2`                     :math:`1/2`
+:math:`\mathrm{X}`       :math:`1/2`                     :math:`0`                       :math:`0`
+:math:`\mathrm{Y}`       :math:`0`                       :math:`1/2`                     :math:`0`
+:math:`\mathrm{Z}`       :math:`0`                       :math:`0`                       :math:`1/2`
+=======================  ==============================  ==============================  ==============================
+
+TRI\ :sub:`1b`
+--------------
+
+:math:`\mathrm{X-\Gamma-Y\vert L-\Gamma-Z\vert N-\Gamma-M\vert R-\Gamma}`
+
+=======================  ==============================  ==============================  ==============================
+Point                    :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbol{b}_2`  :math:`\times\boldsymbol{b}_3`
+=======================  ==============================  ==============================  ==============================
+:math:`\mathrm{\Gamma}`  :math:`0`                       :math:`0`                       :math:`0`
+:math:`\mathrm{L}`       :math:`1/2`                     :math:`-1/2`                    :math:`0`
+:math:`\mathrm{M}`       :math:`0`                       :math:`0`                       :math:`1/2`
+:math:`\mathrm{N}`       :math:`-1/2`                    :math:`-1/2`                    :math:`1/2`
+:math:`\mathrm{R}`       :math:`0`                       :math:`-1/2`                    :math:`1/2`
+:math:`\mathrm{X}`       :math:`0`                       :math:`-1/2`                    :math:`0`
+:math:`\mathrm{Y}`       :math:`1/2`                     :math:`0`                       :math:`0`
+:math:`\mathrm{Z}`       :math:`-1/2`                    :math:`0`                       :math:`1/2`
+=======================  ==============================  ==============================  ==============================
+
+TRI\ :sub:`2b`
+--------------
+
+:math:`\mathrm{X-\Gamma-Y\vert L-\Gamma-Z\vert N-\Gamma-M\vert R-\Gamma}`
+
+=======================  ==============================  ==============================  ==============================
+Point                    :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbol{b}_2`  :math:`\times\boldsymbol{b}_3`
+=======================  ==============================  ==============================  ==============================
+:math:`\mathrm{\Gamma}`  :math:`0`                       :math:`0`                       :math:`0`
+:math:`\mathrm{L}`       :math:`1/2`                     :math:`-1/2`                    :math:`0`
+:math:`\mathrm{M}`       :math:`0`                       :math:`0`                       :math:`1/2`
+:math:`\mathrm{N}`       :math:`-1/2`                    :math:`-1/2`                    :math:`1/2`
+:math:`\mathrm{R}`       :math:`0`                       :math:`-1/2`                    :math:`1/2`
+:math:`\mathrm{X}`       :math:`0`                       :math:`-1/2`                    :math:`0`
+:math:`\mathrm{Y}`       :math:`1/2`                     :math:`0`                       :math:`0`
+:math:`\mathrm{Z}`       :math:`-1/2`                    :math:`0`                       :math:`1/2`
+=======================  ==============================  ==============================  ==============================
 
 Variations
 ==========
@@ -48,157 +127,113 @@ TRI\ :sub:`2b`
 
 In definition of the examples we cheated and defined them through reciprocal lattice parameters.
 
-Example structures
-==================
+Examples
+========
 
 TRI\ :sub:`1a`
 --------------
 
-**Default kpath**: :math:`\mathrm{\Gamma-Y-F-L-I\vert I_1-Z-F_1\vert Y-X_1\vert X-\Gamma-N\vert M-\Gamma}`.
+* Brillouin zone and default kpath
 
-.. list-table:: Brillouin zone and default kpath
-    :widths: 70 30
-    :header-rows: 1
+.. literalinclude:: tri1a_brillouin.py
+    :language: py
 
-    * - Picture
-      - Code
-    * - .. figure:: tri1a_brillouin.png 
-            :target: ../../../../../_images/tri1a_brillouin.png 
-      - .. literalinclude:: tri1a_brillouin.py
-            :language: py
+.. figure:: tri1a_brillouin.png 
+    :target: ../../../../../_images/tri1a_brillouin.png 
 
-.. list-table:: Primitive and conventional cell
-    :header-rows: 1
+* Primitive and conventional cell
 
-    * - Picture
-      - Code
-    * - .. figure:: tri1a_real.png 
-            :target: ../../../../../_images/tri1a_real.png 
-      - .. literalinclude:: tri1a_real.py
-            :language: py
+.. literalinclude:: tri1a_real.py
+    :language: py
 
-.. list-table:: Wigner-Seitz cell
-    :widths: 70 30
-    :header-rows: 1
+.. figure:: tri1a_real.png 
+    :target: ../../../../../_images/tri1a_real.png 
 
-    * - Picture
-      - Code
-    * - .. figure:: tri1a_wigner-seitz.png 
-            :target: ../../../../../_images/tri1a_wigner-seitz.png 
-      - .. literalinclude:: tri1a_wigner-seitz.py
-            :language: py
+* Wigner-Seitz cell
+
+.. literalinclude:: tri1a_wigner-seitz.py
+    :language: py
+
+.. figure:: tri1a_wigner-seitz.png 
+    :target: ../../../../../_images/tri1a_wigner-seitz.png 
 
 TRI\ :sub:`2a`
 --------------
 
-**Default kpath**: :math:`\mathrm{\Gamma-Y-F-L-I\vert I_1-Z-F_1\vert Y-X_1\vert X-\Gamma-N\vert M-\Gamma}`.
+* Brillouin zone and default kpath
 
-.. list-table:: Brillouin zone and default kpath
-    :widths: 70 30
-    :header-rows: 1
+.. literalinclude:: tri2a_brillouin.py
+    :language: py
 
-    * - Picture
-      - Code
-    * - .. figure:: tri2a_brillouin.png 
-            :target: ../../../../../_images/tri2a_brillouin.png 
-      - .. literalinclude:: tri2a_brillouin.py
-            :language: py
+.. figure:: tri2a_brillouin.png 
+    :target: ../../../../../_images/tri2a_brillouin.png 
 
-.. list-table:: Primitive and conventional cell
-    :header-rows: 1
+* Primitive and conventional cell
 
-    * - Picture
-      - Code
-    * - .. figure:: tri2a_real.png 
-            :target: ../../../../../_images/tri2a_real.png 
-      - .. literalinclude:: tri2a_real.py
-            :language: py
+.. literalinclude:: tri2a_real.py
+    :language: py
 
-.. list-table:: Wigner-Seitz cell
-    :widths: 70 30
-    :header-rows: 1
+.. figure:: tri2a_real.png 
+    :target: ../../../../../_images/tri2a_real.png 
 
-    * - Picture
-      - Code
-    * - .. figure:: tri2a_wigner-seitz.png 
-            :target: ../../../../../_images/tri2a_wigner-seitz.png 
-      - .. literalinclude:: tri2a_wigner-seitz.py
-            :language: py
+* Wigner-Seitz cell
+
+.. literalinclude:: tri2a_wigner-seitz.py
+    :language: py
+
+.. figure:: tri2a_wigner-seitz.png 
+    :target: ../../../../../_images/tri2a_wigner-seitz.png 
 
 TRI\ :sub:`1b`
 --------------
 
-**Default kpath**: :math:`\mathrm{\Gamma-Y-F-L-I\vert I_1-Z-F_1\vert Y-X_1\vert X-\Gamma-N\vert M-\Gamma}`.
+* Brillouin zone and default kpath
 
-.. list-table:: Brillouin zone and default kpath
-    :widths: 70 30
-    :header-rows: 1
+.. literalinclude:: tri1b_brillouin.py
+    :language: py
 
-    * - Picture
-      - Code
-    * - .. figure:: tri1b_brillouin.png 
-            :target: ../../../../../_images/tri1b_brillouin.png 
-      - .. literalinclude:: tri1b_brillouin.py
-            :language: py
+.. figure:: tri1b_brillouin.png 
+    :target: ../../../../../_images/tri1b_brillouin.png 
 
-.. list-table:: Primitive and conventional cell
-    :header-rows: 1
+* Primitive and conventional cell
 
-    * - Picture
-      - Code
-    * - .. figure:: tri1b_real.png 
-            :target: ../../../../../_images/tri1b_real.png 
-      - .. literalinclude:: tri1b_real.py
-            :language: py
+.. literalinclude:: tri1b_real.py
+    :language: py
 
-.. list-table:: Wigner-Seitz cell
-    :widths: 70 30
-    :header-rows: 1
+.. figure:: tri1b_real.png 
+    :target: ../../../../../_images/tri1b_real.png 
 
-    * - Picture
-      - Code
-    * - .. figure:: tri1b_wigner-seitz.png 
-            :target: ../../../../../_images/tri1b_wigner-seitz.png 
-      - .. literalinclude:: tri1b_wigner-seitz.py
-            :language: py
+* Wigner-Seitz cell
+
+.. literalinclude:: tri1b_wigner-seitz.py
+    :language: py
+
+.. figure:: tri1b_wigner-seitz.png 
+    :target: ../../../../../_images/tri1b_wigner-seitz.png 
 
 TRI\ :sub:`2b`
 --------------
 
-**Default kpath**: :math:`\mathrm{\Gamma-Y-F-L-I\vert I_1-Z-F_1\vert Y-X_1\vert X-\Gamma-N\vert M-\Gamma}`.
+* Brillouin zone and default kpath
 
-.. list-table:: Brillouin zone and default kpath
-    :widths: 70 30
-    :header-rows: 1
+.. literalinclude:: tri2b_brillouin.py
+    :language: py
 
-    * - Picture
-      - Code
-    * - .. figure:: tri2b_brillouin.png 
-            :target: ../../../../../_images/tri2b_brillouin.png 
-      - .. literalinclude:: tri2b_brillouin.py
-            :language: py
+.. figure:: tri2b_brillouin.png 
+    :target: ../../../../../_images/tri2b_brillouin.png 
 
-.. list-table:: Primitive and conventional cell
-    :header-rows: 1
+* Primitive and conventional cell
 
-    * - Picture
-      - Code
-    * - .. figure:: tri2b_real.png 
-            :target: ../../../../../_images/tri2b_real.png 
-      - .. literalinclude:: tri2b_real.py
-            :language: py
+.. literalinclude:: tri2b_real.py
+    :language: py
 
-.. list-table:: Wigner-Seitz cell
-    :widths: 70 30
-    :header-rows: 1
+.. figure:: tri2b_real.png 
+    :target: ../../../../../_images/tri2b_real.png 
 
-    * - Picture
-      - Code
-    * - .. figure:: tri2b_wigner-seitz.png 
-            :target: ../../../../../_images/tri2b_wigner-seitz.png 
-      - .. literalinclude:: tri2b_wigner-seitz.py
-            :language: py
+* Wigner-Seitz cell
 
-Ordering of parameters
-======================
-TODO
+.. literalinclude:: tri2b_wigner-seitz.py
+    :language: py
+
+.. figure:: tri2b_wigner-seitz.png 
+    :target: ../../../../../_images/tri2b_wigner-seitz.png 

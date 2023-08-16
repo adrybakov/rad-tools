@@ -6,17 +6,22 @@ Cubic (CUB)
 
 **Pearson symbol**: cP
 
-**Constructor**:  :py:func:`.CUB`.
+**Constructor**:  :py:func:`.CUB`
 
 It is defined by one parameter: :math:`a` with primitive and conventional lattice:
 
 .. math::
 
-    \boldsymbol{a}_1 = (a, 0, 0)
+    \begin{matrix}
+    \boldsymbol{a}_1 &=& (a, &0, &0)\\
+    \boldsymbol{a}_2 &=& (0, &a, &0)\\
+    \boldsymbol{a}_3 &=& (0, &0, &a)
+    \end{matrix}
 
-    \boldsymbol{a}_2 = (0, a, 0)
+Cell standardization
+====================
 
-    \boldsymbol{a}_3 = (0, 0, a)
+No standardization is required.
 
 Variations
 ==========
@@ -24,39 +29,44 @@ Variations
 There are no variations for cubic lattice. 
 One example is predefined: ``cub`` with :math:`a = \pi`.
 
-Example structure
-=================
+K-path
+======
 
-**Default kpath**: :math:`\mathrm{\Gamma-X-M-\Gamma-R-X\vert M-R}`.
+:math:`\mathrm{\Gamma-X-M-\Gamma-R-X\vert M-R}`.
 
-.. list-table:: Brillouin zone and default kpath
-    :widths: 70 30
-    :header-rows: 1
+=======================  ==============================  ==============================  ==============================
+Point                    :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbol{b}_2`  :math:`\times\boldsymbol{b}_3`
+=======================  ==============================  ==============================  ==============================
+:math:`\mathrm{\Gamma}`  :math:`0`                       :math:`0`                       :math:`0`
+:math:`\mathrm{M}`       :math:`1/2`                     :math:`1/2`                     :math:`0`
+:math:`\mathrm{R}`       :math:`1/2`                     :math:`1/2`                     :math:`1/2`
+:math:`\mathrm{X}`       :math:`0`                       :math:`1/2`                     :math:`0`
+=======================  ==============================  ==============================  ==============================
 
-    * - Picture
-      - Code
-    * - .. figure:: cub_brillouin.png 
-            :target: ../../../../../_images/cub_brillouin.png 
-      - .. literalinclude:: cub_brillouin.py
-            :language: py
+Examples
+========
 
-.. list-table:: Primitive and conventional cell
-    :header-rows: 1
+* Brillouin zone and default kpath
 
-    * - Picture
-      - Code
-    * - .. figure:: cub_real.png 
-            :target: ../../../../../_images/cub_real.png 
-      - .. literalinclude:: cub_real.py
-            :language: py
+.. literalinclude:: cub_brillouin.py 
+    :language: py
 
-.. list-table:: Wigner-Seitz cell
-    :widths: 70 30
-    :header-rows: 1
+.. figure:: cub_brillouin.png 
+    :target: ../../../../../_images/cub_brillouin.png 
 
-    * - Picture
-      - Code
-    * - .. figure:: cub_wigner-seitz.png 
-            :target: ../../../../../_images/cub_wigner-seitz.png 
-      - .. literalinclude:: cub_wigner-seitz.py
-            :language: py
+* Primitive and conventional cell
+
+.. literalinclude:: cub_real.py
+    :language: py
+
+.. figure:: cub_real.png 
+    :target: ../../../../../_images/cub_real.png 
+
+* Wigner-Seitz cell
+
+.. literalinclude:: cub_wigner-seitz.py
+    :language: py
+
+.. figure:: cub_wigner-seitz.png 
+    :target: ../../../../../_images/cub_wigner-seitz.png 
+

@@ -6,30 +6,281 @@ Base-centred monoclinic (MCLC)
 
 **Pearson symbol**: mS
 
-**Constructor**:  :py:func:`.MCLC`.
+**Constructor**:  :py:func:`.MCLC`
 
 It is defined by four parameter: :math:`a`, :math:`b`, :math:`c` and :math:`\alpha` 
 with conventional lattice:
 
 .. math::
 
-    \boldsymbol{a}_1 = (a, 0, 0)
-
-    \boldsymbol{a}_2 = (0, b, 0)
-
-    \boldsymbol{a}_3 = (0, c\cos(\alpha), c\sin(\alpha))
+    \begin{matrix}
+    \boldsymbol{a}_1 &=& (a, &0, &0)\\
+    \boldsymbol{a}_2 &=& (0, &b, &0)\\
+    \boldsymbol{a}_3 &=& (0, &c\cos\alpha, &c\sin\alpha)
+    \end{matrix}
 
 And primitive lattice:
 
 .. math::
 
-    \boldsymbol{a}_1 = (a/2, b/2, 0)
-
-    \boldsymbol{a}_2 = (-a/2, b/2, 0)
-
-    \boldsymbol{a}_3 = (0, c\cos(\alpha), c\sin(\alpha))
+    \begin{matrix}
+    \boldsymbol{a}_1 &=& (a/2, &b/2, &0)\\
+    \boldsymbol{a}_2 &=& (-a/2, &b/2, &0)\\
+    \boldsymbol{a}_3 &=& (0, &c\cos\alpha, &c\sin\alpha)
+    \end{matrix}
 
 Order of parameters: :math:`b \le c`, :math:`\alpha < 90^{\circ}`.
+
+Cell standardization
+====================
+
+Length of the third vector of the primitive lattice has to be different from the 
+length of the other two lattice vectors.
+
+Angle between second and third lattice vectors of conventional lattice (:math:`\alpha`) 
+has to be less then :math:`90^{\circ}`.
+
+Length of the second lattice vector of the conventional lattice has to be less or 
+equal to the length of the third lattice vector.
+
+If these conditions are not satisfied, then the lattice is transformed to the standard form:
+
+First we ensure the length of the third vector is different from the length of the other two vectors.
+For this step we use vectors of the primitive lattice:
+
+* If :math:`\vert\boldsymbol{a}_1\vert = \vert\boldsymbol{a}_3\vert`:
+
+.. math::
+
+    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+    (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
+
+* If :math:`\vert\boldsymbol{a}_2\vert = \vert\boldsymbol{a}_3\vert`:
+
+.. math::
+
+    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+    (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
+
+Then we ensure the :math:`\alpha < 90^{\circ}`. For this step we use vectors of the conventional lattice:
+
+* If :math:`\alpha > 90^{\circ}`:
+
+.. math::
+
+    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+    (\boldsymbol{a}_1, \boldsymbol{a}_3, -\boldsymbol{a}_2)
+
+Finally, we ensure the :math:`b \le c`. For this step we use vectors of the conventional lattice:
+
+* If :math:`b > c`:
+
+.. math::
+
+    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+    (-\boldsymbol{a}_1, \boldsymbol{a}_3, \boldsymbol{a}_2)
+
+.. note::
+
+    First and second lattice vectors are multiplied by :math:`-1` in some cases to 
+    preserve the handedness of the cell.
+
+K-path
+======
+
+MCLC\ :sub:`1`
+--------------
+
+:math:`\mathrm{\Gamma-Y-F-L-I\vert I_1-Z-F_1\vert Y-X_1\vert X-\Gamma-N\vert M-\Gamma}`
+
+.. math::
+
+    \begin{matrix}
+    \zeta = \dfrac{2 - b\cos\alpha/c}{4\sin^2\alpha} &
+    \eta = 1/2 + 2\zeta c\cos\alpha/b \\
+    \psi = 3/4 - \dfrac{a^2}{4b^2\sin^2\alpha} &
+    \phi = \psi + (3/4-\psi)b\cos\alpha/c
+    \end{matrix}
+
+=========================  ==============================  ==============================  ==============================
+Point                      :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbol{b}_2`  :math:`\times\boldsymbol{b}_3`
+=========================  ==============================  ==============================  ==============================
+:math:`\mathrm{\Gamma}`    :math:`0`                       :math:`0`                       :math:`0`
+:math:`\mathrm{N}`         :math:`1/2`                     :math:`0`                       :math:`0`
+:math:`\mathrm{N_1}`       :math:`0`                       :math:`-1/2`                    :math:`0`
+:math:`\mathrm{F}`         :math:`1-\zeta`                 :math:`1-\zeta`                 :math:`1-\eta`
+:math:`\mathrm{F_1}`       :math:`\zeta`                   :math:`\zeta`                   :math:`\eta`
+:math:`\mathrm{F_2}`       :math:`-\zeta`                  :math:`-\zeta`                  :math:`1-\eta`
+:math:`\mathrm{F_3}`       :math:`1-\zeta`                 :math:`-\zeta`                  :math:`1-\eta`
+:math:`\mathrm{I}`         :math:`\phi`                    :math:`1-\phi`                  :math:`1/2`
+:math:`\mathrm{I_1}`       :math:`1-\phi`                  :math:`\phi-1`                  :math:`1/2`
+:math:`\mathrm{L}`         :math:`1/2`                     :math:`1/2`                     :math:`1/2`
+:math:`\mathrm{M}`         :math:`1/2`                     :math:`0`                       :math:`1/2`
+:math:`\mathrm{X}`         :math:`1-\psi`                  :math:`\psi-1`                  :math:`0`
+:math:`\mathrm{X_1}`       :math:`\psi`                    :math:`1-\psi`                  :math:`0`
+:math:`\mathrm{X_2}`       :math:`\psi-1`                  :math:`-\psi`                   :math:`0`
+:math:`\mathrm{Y}`         :math:`1/2`                     :math:`1/2`                     :math:`0`
+:math:`\mathrm{Y_1}`       :math:`-1/2`                    :math:`-1/2`                    :math:`0`
+:math:`\mathrm{Z}`         :math:`0`                       :math:`0`                       :math:`1/2`
+=========================  ==============================  ==============================  ==============================
+
+
+MCLC\ :sub:`2`
+--------------
+
+:math:`\mathrm{\Gamma-Y-F-L-I\vert I_1-Z-F_1\vert N-\Gamma-M}`
+
+.. math::
+
+    \begin{matrix}
+    \zeta = \dfrac{2 - b\cos\alpha/c}{4\sin^2\alpha} &
+    \eta = 1/2 + 2\zeta c\cos\alpha/b \\
+    \psi = 3/4 - \dfrac{a^2}{4b^2\sin^2\alpha} &
+    \phi = \psi + (3/4-\psi)b\cos\alpha/c
+    \end{matrix}
+
+=========================  ==============================  ==============================  ==============================
+Point                      :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbol{b}_2`  :math:`\times\boldsymbol{b}_3`
+=========================  ==============================  ==============================  ==============================
+:math:`\mathrm{\Gamma}`    :math:`0`                       :math:`0`                       :math:`0`
+:math:`\mathrm{N}`         :math:`1/2`                     :math:`0`                       :math:`0`
+:math:`\mathrm{N_1}`       :math:`0`                       :math:`-1/2`                    :math:`0`
+:math:`\mathrm{F}`         :math:`1-\zeta`                 :math:`1-\zeta`                 :math:`1-\eta`
+:math:`\mathrm{F_1}`       :math:`\zeta`                   :math:`\zeta`                   :math:`\eta`
+:math:`\mathrm{F_2}`       :math:`-\zeta`                  :math:`-\zeta`                  :math:`1-\eta`
+:math:`\mathrm{F_3}`       :math:`1-\zeta`                 :math:`-\zeta`                  :math:`1-\eta`
+:math:`\mathrm{I}`         :math:`\phi`                    :math:`1-\phi`                  :math:`1/2`
+:math:`\mathrm{I_1}`       :math:`1-\phi`                  :math:`\phi-1`                  :math:`1/2`
+:math:`\mathrm{L}`         :math:`1/2`                     :math:`1/2`                     :math:`1/2`
+:math:`\mathrm{M}`         :math:`1/2`                     :math:`0`                       :math:`1/2`
+:math:`\mathrm{X}`         :math:`1-\psi`                  :math:`\psi-1`                  :math:`0`
+:math:`\mathrm{X_1}`       :math:`\psi`                    :math:`1-\psi`                  :math:`0`
+:math:`\mathrm{X_2}`       :math:`\psi-1`                  :math:`-\psi`                   :math:`0`
+:math:`\mathrm{Y}`         :math:`1/2`                     :math:`1/2`                     :math:`0`
+:math:`\mathrm{Y_1}`       :math:`-1/2`                    :math:`-1/2`                    :math:`0`
+:math:`\mathrm{Z}`         :math:`0`                       :math:`0`                       :math:`1/2`
+=========================  ==============================  ==============================  ==============================
+
+MCLC\ :sub:`3`
+--------------
+
+:math:`\mathrm{\Gamma-Y-F-H-Z-I-F_1\vert H_1-Y_1-X-\Gamma-N\vert M-\Gamma}`
+
+.. math::
+
+    \begin{matrix}
+    \mu = \dfrac{1+b^2/a^2}{4} &
+    \delta = \dfrac{bc\cos\alpha}{2a^2} &
+    \zeta = \mu - 1/4 + \dfrac{1 - b\cos\alpha/c}{4\sin^2\alpha} \\
+    \eta = 1/2 + 2\zeta c \cos\alpha/b &
+    \phi = 1 + \zeta - 2\mu &
+    \psi = \eta - 2\delta
+    \end{matrix}
+
+=========================  ==============================  ==============================  ==============================
+Point                      :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbol{b}_2`  :math:`\times\boldsymbol{b}_3`
+=========================  ==============================  ==============================  ==============================
+:math:`\mathrm{\Gamma}`    :math:`0`                       :math:`0`                       :math:`0`
+:math:`\mathrm{F}`         :math:`1-\phi`                  :math:`1-\phi`                  :math:`1-\psi`
+:math:`\mathrm{F_1}`       :math:`\phi`                    :math:`\phi-1`                  :math:`\psi`
+:math:`\mathrm{F_2}`       :math:`1-\phi`                  :math:`-\phi`                   :math:`1-\psi`
+:math:`\mathrm{H}`         :math:`\zeta`                   :math:`\zeta`                   :math:`\eta`
+:math:`\mathrm{H_1}`       :math:`1-\zeta`                 :math:`-\zeta`                  :math:`1-\eta`
+:math:`\mathrm{H_2}`       :math:`-\zeta`                  :math:`-\zeta`                  :math:`1-\eta`
+:math:`\mathrm{I}`         :math:`1/2`                     :math:`-1/2`                    :math:`1/2` 
+:math:`\mathrm{M}`         :math:`1/2`                     :math:`0`                       :math:`1/2`
+:math:`\mathrm{N}`         :math:`1/2`                     :math:`0`                       :math:`0`
+:math:`\mathrm{N_1}`       :math:`0`                       :math:`-1/2`                    :math:`0`
+:math:`\mathrm{X}`         :math:`1/2`                     :math:`-1/2`                    :math:`0`
+:math:`\mathrm{Y}`         :math:`\mu`                     :math:`\mu`                     :math:`\delta`
+:math:`\mathrm{Y_1}`       :math:`1-\mu`                   :math:`-\mu`                    :math:`-\delta`
+:math:`\mathrm{Y_2}`       :math:`-\mu`                    :math:`-\mu`                    :math:`-\delta`
+:math:`\mathrm{Y_3}`       :math:`\mu`                     :math:`\mu-1`                   :math:`\delta`
+:math:`\mathrm{Z}`         :math:`0`                       :math:`0`                       :math:`1/2`                   
+=========================  ==============================  ==============================  ==============================
+
+
+MCLC\ :sub:`4`
+--------------
+
+:math:`\mathrm{\Gamma-Y-F-H-Z-I\vert H_1-Y_1-X-\Gamma-N\vert M-\Gamma}`
+
+.. math::
+
+    \begin{matrix}
+    \mu = \dfrac{1+b^2/a^2}{4} &
+    \delta = \dfrac{bc\cos\alpha}{2a^2} &
+    \zeta = \mu - 1/4 + \dfrac{1 - b\cos\alpha/c}{4\sin^2\alpha} \\
+    \eta = 1/2 + 2\zeta c \cos\alpha/b &
+    \phi = 1 + \zeta - 2\mu &
+    \psi = \eta - 2\delta
+    \end{matrix}
+
+=========================  ==============================  ==============================  ==============================
+Point                      :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbol{b}_2`  :math:`\times\boldsymbol{b}_3`
+=========================  ==============================  ==============================  ==============================
+:math:`\mathrm{\Gamma}`    :math:`0`                       :math:`0`                       :math:`0`
+:math:`\mathrm{F}`         :math:`1-\phi`                  :math:`1-\phi`                  :math:`1-\psi`
+:math:`\mathrm{F_1}`       :math:`\phi`                    :math:`\phi-1`                  :math:`\psi`
+:math:`\mathrm{F_2}`       :math:`1-\phi`                  :math:`-\phi`                   :math:`1-\psi`
+:math:`\mathrm{H}`         :math:`\zeta`                   :math:`\zeta`                   :math:`\eta`
+:math:`\mathrm{H_1}`       :math:`1-\zeta`                 :math:`-\zeta`                  :math:`1-\eta`
+:math:`\mathrm{H_2}`       :math:`-\zeta`                  :math:`-\zeta`                  :math:`1-\eta`
+:math:`\mathrm{I}`         :math:`1/2`                     :math:`-1/2`                    :math:`1/2` 
+:math:`\mathrm{M}`         :math:`1/2`                     :math:`0`                       :math:`1/2`
+:math:`\mathrm{N}`         :math:`1/2`                     :math:`0`                       :math:`0`
+:math:`\mathrm{N_1}`       :math:`0`                       :math:`-1/2`                    :math:`0`
+:math:`\mathrm{X}`         :math:`1/2`                     :math:`-1/2`                    :math:`0`
+:math:`\mathrm{Y}`         :math:`\mu`                     :math:`\mu`                     :math:`\delta`
+:math:`\mathrm{Y_1}`       :math:`1-\mu`                   :math:`-\mu`                    :math:`-\delta`
+:math:`\mathrm{Y_2}`       :math:`-\mu`                    :math:`-\mu`                    :math:`-\delta`
+:math:`\mathrm{Y_3}`       :math:`\mu`                     :math:`\mu-1`                   :math:`\delta`
+:math:`\mathrm{Z}`         :math:`0`                       :math:`0`                       :math:`1/2`                   
+=========================  ==============================  ==============================  ==============================
+
+
+
+MCLC\ :sub:`5`
+--------------
+
+:math:`\mathrm{\Gamma-Y-F-L-I\vert I_1-Z-H-F_1\vert H_1-Y_1-X-\Gamma-N\vert M-\Gamma}`
+
+.. math::
+
+    \begin{matrix}
+    \zeta = \dfrac{b^2/a^2 + \dfrac{1 - b\cos\alpha/c}{\sin^2\alpha}}{4} &
+    \eta = 1/2 + 2\zeta c\cos\alpha/b \\
+    \mu = \eta/2 + \dfrac{b^2}{4a^2} - \dfrac{bc\cos\alpha}{2a^2} &
+    \nu = 2\mu - \zeta \\
+    \omega = \dfrac{(4\nu - 1 - b^2\sin^2\alpha/a^2)c}{2b\cos\alpha} &
+    \delta = \zeta c \cos\alpha/b + \omega/2 - 1/4 &
+    \rho = 1 - \zeta a^2/b^2
+    \end{matrix}
+
+=========================  ==============================  ==============================  ==============================
+Point                      :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbol{b}_2`  :math:`\times\boldsymbol{b}_3`
+=========================  ==============================  ==============================  ==============================
+:math:`\mathrm{\Gamma}`    :math:`0`                       :math:`0`                       :math:`0`
+:math:`\mathrm{F}`         :math:`\nu`                     :math:`\nu`                     :math:`\omega`
+:math:`\mathrm{F_1}`       :math:`1-\nu`                   :math:`-\nu`                    :math:`1-\omega`
+:math:`\mathrm{F_2}`       :math:`\nu`                     :math:`\nu-1`                   :math:`\omega`
+:math:`\mathrm{H}`         :math:`\zeta`                   :math:`\zeta`                   :math:`\eta`
+:math:`\mathrm{H_1}`       :math:`1-\zeta`                 :math:`-\zeta`                  :math:`1-\eta`
+:math:`\mathrm{H_2}`       :math:`-\zeta`                  :math:`-\zeta`                  :math:`1-\eta`
+:math:`\mathrm{I}`         :math:`\rho`                    :math:`1-\rho`                  :math:`1/2`
+:math:`\mathrm{I_1}`       :math:`1-\rho`                  :math:`\rho-1`                  :math:`1/2`
+:math:`\mathrm{L}`         :math:`1/2`                     :math:`1/2`                     :math:`1/2`
+:math:`\mathrm{M}`         :math:`1/2`                     :math:`0`                       :math:`1/2`
+:math:`\mathrm{N}`         :math:`1/2`                     :math:`0`                       :math:`0`
+:math:`\mathrm{N_1}`       :math:`0`                       :math:`-1/2`                    :math:`0`
+:math:`\mathrm{X}`         :math:`1/2`                     :math:`-1/2`                    :math:`0`
+:math:`\mathrm{Y}`         :math:`\mu`                     :math:`\mu`                     :math:`\delta`
+:math:`\mathrm{Y_1}`       :math:`1-\mu`                   :math:`-\mu`                    :math:`-\delta`
+:math:`\mathrm{Y_2}`       :math:`-\mu`                    :math:`-\mu`                    :math:`-\delta`
+:math:`\mathrm{Y_3}`       :math:`\mu`                     :math:`\mu-1`                   :math:`\delta`
+:math:`\mathrm{Z}`         :math:`0`                       :math:`0`                       :math:`1/2`
+=========================  ==============================  ==============================  ==============================
+
 
 Variations
 ==========
@@ -64,7 +315,6 @@ And the ordering condition :math:`b \le c` gives:
 
 For MCLC\ :sub:`3` (MCLC\ :sub:`5`) we choose parameters in a same way as for MCLC\ :sub:`4`, 
 but with :math:`c > \frac{x^2}{x^2 - 1}b\cos(\alpha)` (:math:`c < \frac{x^2}{x^2 - 1}b\cos(\alpha)`)
-
 
 MCLC\ :sub:`1`
 --------------
@@ -111,199 +361,140 @@ Predefined example with :math:`b = \pi`, :math:`x = 1.4`, :math:`\alpha = 53^{\c
 :math:`c = 0.9\cdot 11\cdot\cos(53)\cdot\pi/6` and :math:`\alpha = 53^{\circ}`
 
 
-Example structures
-==================
+Examples
+========
 
 MCLC\ :sub:`1`
 --------------
 
-**Default kpath**: :math:`\mathrm{\Gamma-Y-F-L-I\vert I_1-Z-F_1\vert Y-X_1\vert X-\Gamma-N\vert M-\Gamma}`.
+* Brillouin zone and default kpath
 
-.. list-table:: Brillouin zone and default kpath
-    :widths: 70 30
-    :header-rows: 1
+.. literalinclude:: mclc1_brillouin.py
+    :language: py
 
-    * - Picture
-      - Code
-    * - .. figure:: mclc1_brillouin.png 
-            :target: ../../../../../_images/mclc1_brillouin.png 
-      - .. literalinclude:: mclc1_brillouin.py
-            :language: py
+.. figure:: mclc1_brillouin.png 
+    :target: ../../../../../_images/mclc1_brillouin.png 
 
-.. list-table:: Primitive and conventional cell
-    :header-rows: 1
+* Primitive and conventional cell
 
-    * - Picture
-      - Code
-    * - .. figure:: mclc1_real.png 
-            :target: ../../../../../_images/mclc1_real.png 
-      - .. literalinclude:: mclc1_real.py
-            :language: py
+.. literalinclude:: mclc1_real.py
+    :language: py
 
-.. list-table:: Wigner-Seitz cell
-    :widths: 70 30
-    :header-rows: 1
+.. figure:: mclc1_real.png 
+    :target: ../../../../../_images/mclc1_real.png 
 
-    * - Picture
-      - Code
-    * - .. figure:: mclc1_wigner-seitz.png 
-            :target: ../../../../../_images/mclc1_wigner-seitz.png 
-      - .. literalinclude:: mclc1_wigner-seitz.py
-            :language: py
+* Wigner-Seitz cell
+
+.. literalinclude:: mclc1_wigner-seitz.py
+    :language: py
+
+.. figure:: mclc1_wigner-seitz.png 
+    :target: ../../../../../_images/mclc1_wigner-seitz.png 
 
 MCLC\ :sub:`2`
 --------------
 
-**Default kpath**: :math:`\mathrm{\Gamma-Y-F-L-I\vert I_1-Z-F_1\vert N-\Gamma-M}`.
+* Brillouin zone and default kpath
 
-.. list-table:: Brillouin zone and default kpath
-    :widths: 70 30
-    :header-rows: 1
+.. literalinclude:: mclc2_brillouin.py
+    :language: py
 
-    * - Picture
-      - Code
-    * - .. figure:: mclc2_brillouin.png 
-            :target: ../../../../../_images/mclc2_brillouin.png 
-      - .. literalinclude:: mclc2_brillouin.py
-            :language: py
+.. figure:: mclc2_brillouin.png 
+    :target: ../../../../../_images/mclc2_brillouin.png 
 
-.. list-table:: Primitive and conventional cell
-    :header-rows: 1
+* Primitive and conventional cell
 
-    * - Picture
-      - Code
-    * - .. figure:: mclc2_real.png 
-            :target: ../../../../../_images/mclc2_real.png 
-      - .. literalinclude:: mclc2_real.py
-            :language: py
+.. literalinclude:: mclc2_real.py
+    :language: py
 
-.. list-table:: Wigner-Seitz cell
-    :widths: 70 30
-    :header-rows: 1
+.. figure:: mclc2_real.png 
+    :target: ../../../../../_images/mclc2_real.png 
 
-    * - Picture
-      - Code
-    * - .. figure:: mclc2_wigner-seitz.png 
-            :target: ../../../../../_images/mclc2_wigner-seitz.png 
-      - .. literalinclude:: mclc2_wigner-seitz.py
-            :language: py
+* Wigner-Seitz cell
+
+.. literalinclude:: mclc2_wigner-seitz.py
+    :language: py
+
+.. figure:: mclc2_wigner-seitz.png 
+    :target: ../../../../../_images/mclc2_wigner-seitz.png 
 
 MCLC\ :sub:`3`
 --------------
 
-**Default kpath**: :math:`\mathrm{\Gamma-Y-F-H-Z-I-F_1\vert H_1-Y_1-X-\Gamma-N\vert M-\Gamma}`.
+* Brillouin zone and default kpath
 
-.. list-table:: Brillouin zone and default kpath
-    :widths: 70 30
-    :header-rows: 1
+.. literalinclude:: mclc3_brillouin.py
+    :language: py
 
-    * - Picture
-      - Code
-    * - .. figure:: mclc3_brillouin.png 
-            :target: ../../../../../_images/mclc3_brillouin.png 
-      - .. literalinclude:: mclc3_brillouin.py
-            :language: py
+.. figure:: mclc3_brillouin.png 
+    :target: ../../../../../_images/mclc3_brillouin.png 
 
-.. list-table:: Primitive and conventional cell
-    :header-rows: 1
+* Primitive and conventional cell
 
-    * - Picture
-      - Code
-    * - .. figure:: mclc3_real.png 
-            :target: ../../../../../_images/mclc3_real.png 
-      - .. literalinclude:: mclc3_real.py
-            :language: py
+.. literalinclude:: mclc3_real.py
+    :language: py
 
-.. list-table:: Wigner-Seitz cell
-    :widths: 70 30
-    :header-rows: 1
+.. figure:: mclc3_real.png 
+    :target: ../../../../../_images/mclc3_real.png 
 
-    * - Picture
-      - Code
-    * - .. figure:: mclc3_wigner-seitz.png 
-            :target: ../../../../../_images/mclc3_wigner-seitz.png 
-      - .. literalinclude:: mclc3_wigner-seitz.py
-            :language: py
+* Wigner-Seitz cell
+
+.. literalinclude:: mclc3_wigner-seitz.py
+    :language: py
+
+.. figure:: mclc3_wigner-seitz.png 
+    :target: ../../../../../_images/mclc3_wigner-seitz.png 
 
 MCLC\ :sub:`4`
 --------------
 
-**Default kpath**: :math:`\mathrm{\Gamma-Y-F-H-Z-I\vert H_1-Y_1-X-\Gamma-N\vert M-\Gamma}`.
+* Brillouin zone and default kpath
 
-.. list-table:: Brillouin zone and default kpath
-    :widths: 70 30
-    :header-rows: 1
+.. literalinclude:: mclc4_brillouin.py
+    :language: py
 
-    * - Picture
-      - Code
-    * - .. figure:: mclc4_brillouin.png 
-            :target: ../../../../../_images/mclc4_brillouin.png 
-      - .. literalinclude:: mclc4_brillouin.py
-            :language: py
+.. figure:: mclc4_brillouin.png 
+    :target: ../../../../../_images/mclc4_brillouin.png 
 
-.. list-table:: Primitive and conventional cell
-    :header-rows: 1
+* Primitive and conventional cell
 
-    * - Picture
-      - Code
-    * - .. figure:: mclc4_real.png 
-            :target: ../../../../../_images/mclc4_real.png 
-      - .. literalinclude:: mclc4_real.py
-            :language: py
+.. literalinclude:: mclc4_real.py
+    :language: py
 
-.. list-table:: Wigner-Seitz cell
-    :widths: 70 30
-    :header-rows: 1
+.. figure:: mclc4_real.png 
+    :target: ../../../../../_images/mclc4_real.png 
 
-    * - Picture
-      - Code
-    * - .. figure:: mclc4_wigner-seitz.png 
-            :target: ../../../../../_images/mclc4_wigner-seitz.png 
-      - .. literalinclude:: mclc4_wigner-seitz.py
-            :language: py
+* Wigner-Seitz cell
+
+.. literalinclude:: mclc4_wigner-seitz.py
+    :language: py
+
+.. figure:: mclc4_wigner-seitz.png 
+    :target: ../../../../../_images/mclc4_wigner-seitz.png 
 
 MCLC\ :sub:`5`
 --------------
 
-**Default kpath**: :math:`\mathrm{\Gamma-Y-F-L-I\vert I_1-Z-H-F_1\vert H_1-Y_1-X-\Gamma-N\vert M-\Gamma}`.
+* Brillouin zone and default kpath
 
-.. list-table:: Brillouin zone and default kpath
-    :widths: 70 30
-    :header-rows: 1
+.. literalinclude:: mclc5_brillouin.py
+    :language: py
 
-    * - Picture
-      - Code
-    * - .. figure:: mclc5_brillouin.png 
-            :target: ../../../../../_images/mclc5_brillouin.png 
-      - .. literalinclude:: mclc5_brillouin.py
-            :language: py
+.. figure:: mclc5_brillouin.png 
+    :target: ../../../../../_images/mclc5_brillouin.png 
 
-.. list-table:: Primitive and conventional cell
-    :header-rows: 1
+* Primitive and conventional cell
 
-    * - Picture
-      - Code
-    * - .. figure:: mclc5_real.png 
-            :target: ../../../../../_images/mclc5_real.png 
-      - .. literalinclude:: mclc5_real.py
-            :language: py
+.. literalinclude:: mclc5_real.py
+    :language: py
 
-.. list-table:: Wigner-Seitz cell
-    :widths: 70 30
-    :header-rows: 1
+.. figure:: mclc5_real.png 
+    :target: ../../../../../_images/mclc5_real.png 
 
-    * - Picture
-      - Code
-    * - .. figure:: mclc5_wigner-seitz.png 
-            :target: ../../../../../_images/mclc5_wigner-seitz.png 
-      - .. literalinclude:: mclc5_wigner-seitz.py
-            :language: py
+* Wigner-Seitz cell
 
+.. literalinclude:: mclc5_wigner-seitz.py
+    :language: py
 
-Ordering of lattice parameters
-==============================
-TODO
-
-Edge cases
-==========
-TODO
+.. figure:: mclc5_wigner-seitz.png 
+    :target: ../../../../../_images/mclc5_wigner-seitz.png 

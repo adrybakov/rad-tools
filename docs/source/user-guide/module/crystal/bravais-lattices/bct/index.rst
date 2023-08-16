@@ -6,28 +6,100 @@ Body-centred tetragonal (BCT)
 
 **Pearson symbol**: tI
 
-**Constructor**:  :py:func:`.BCT`.
+**Constructor**:  :py:func:`.BCT`
 
 It is defined by two parameters: :math:`a` and :math:`c` 
 with conventional lattice:
 
 .. math::
 
-    \boldsymbol{a}_1 = (a, 0, 0)
-
-    \boldsymbol{a}_2 = (0, a, 0)
-
-    \boldsymbol{a}_3 = (0, 0, c)
+    \begin{matrix}
+    \boldsymbol{a}_1 &=& (a, &0, &0)\\
+    \boldsymbol{a}_2 &=& (0, &a, &0)\\
+    \boldsymbol{a}_3 &=& (0, &0, &c)
+    \end{matrix}
 
 And primitive lattice:
 
 .. math::
 
-    \boldsymbol{a}_1 = (-a/2, a/2, c/2)
+    \begin{matrix}
+    \boldsymbol{a}_1 &=& (-a/2, &a/2, &c/2)\\
+    \boldsymbol{a}_2 &=& (a/2, &-a/2, &c/2)\\
+    \boldsymbol{a}_3 &=& (a/2, &a/2, &-c/2)
+    \end{matrix}
 
-    \boldsymbol{a}_2 = (a/2, -a/2, c/2)
+Cell standardization
+====================
+ 
+Length of third lattice vector of the conventional cell has to be different from the first two. 
+If this condition is not satisfied, 
+then the lattice is transformed to the standard form:
 
-    \boldsymbol{a}_3 = (a/2, a/2, -c/2)
+* If :math:`\vert\boldsymbol{a}_1\vert = \vert\boldsymbol{a}_3\vert \ne \vert\boldsymbol{a}_2\vert`
+
+.. math::
+    
+    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+    (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
+
+* If :math:`\vert\boldsymbol{a}_2\vert = \vert\boldsymbol{a}_3\vert \ne \vert\boldsymbol{a}_1\vert`
+
+.. math::
+    
+    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+    (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
+
+K-path
+======
+
+BCT\ :sub:`1`
+-------------
+
+:math:`\mathrm{\Gamma-X-M-\Gamma-Z-P-N-Z_1-M\vert X-P}`
+
+.. math::
+
+    \eta = \dfrac{1 + c^2/a^2}{4}
+
+=======================  ==============================  ==============================  ==============================
+Point                    :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbol{b}_2`  :math:`\times\boldsymbol{b}_3`
+=======================  ==============================  ==============================  ==============================
+:math:`\mathrm{\Gamma}`  :math:`0`                       :math:`0`                       :math:`0`
+:math:`\mathrm{M}`       :math:`-1/2`                    :math:`1/2`                     :math:`1/2`
+:math:`\mathrm{N}`       :math:`0`                       :math:`1/2`                     :math:`0`
+:math:`\mathrm{P}`       :math:`1/4`                     :math:`1/4`                     :math:`1/4`
+:math:`\mathrm{X}`       :math:`0`                       :math:`0`                       :math:`1/2`
+:math:`\mathrm{Z}`       :math:`\eta`                    :math:`\eta`                    :math:`-\eta`
+:math:`\mathrm{Z}_1`     :math:`-\eta`                   :math:`1-\eta`                  :math:`\eta`
+=======================  ==============================  ==============================  ==============================
+
+BCT\ :sub:`2`
+-------------
+
+:math:`\mathrm{\Gamma-X-Y-\Sigma-\Gamma-Z-\Sigma_1-N-P-Y_1-Z\vert X-P}`
+
+.. math::
+
+    \begin{matrix}
+    \eta = \dfrac{1 + a^2/c^2}{4} &
+    \zeta = \dfrac{a^2}{2c^2}
+    \end{matrix}
+
+=========================  ==============================  ==============================  ==============================
+Point                      :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbol{b}_2`  :math:`\times\boldsymbol{b}_3`
+=========================  ==============================  ==============================  ==============================
+:math:`\mathrm{\Gamma}`    :math:`0`                       :math:`0`                       :math:`0`
+:math:`\mathrm{N}`         :math:`0`                       :math:`1/2`                     :math:`0`
+:math:`\mathrm{P}`         :math:`1/4`                     :math:`1/4`                     :math:`1/4`
+:math:`\mathrm{\Sigma}`    :math:`-\eta`                   :math:`\eta`                    :math:`\eta`
+:math:`\mathrm{\Sigma_1}`  :math:`\eta`                    :math:`1-\eta`                  :math:`-\eta`
+:math:`\mathrm{X}`         :math:`0`                       :math:`0`                       :math:`1/2`
+:math:`\mathrm{Y}`         :math:`-\zeta`                  :math:`\zeta`                   :math:`1/2`
+:math:`\mathrm{Y}_1`       :math:`1/2`                     :math:`1/2`                     :math:`-\zeta`
+:math:`\mathrm{Z}`         :math:`1/2`                     :math:`1/2`                     :math:`-1/2`
+=========================  ==============================  ==============================  ==============================
+
 
 Variations
 ==========
@@ -49,82 +121,63 @@ BCT\ :sub:`2`
 Predefined example: ``bct2`` with :math:`a = \pi` and :math:`c = 1.5\pi`.
 
 
-Example structures
-==================
+Examples
+========
 
 BCT\ :sub:`1`
 -------------
 
-**Default kpath**: :math:`\mathrm{\Gamma-X-M-\Gamma-Z-P-N-Z_1-M\vert X-P}`.
+* Brillouin zone and default kpath
 
-.. list-table:: Brillouin zone and default kpath
-    :widths: 70 30
-    :header-rows: 1
+.. literalinclude:: bct1_brillouin.py
+    :language: py
 
-    * - Picture
-      - Code
-    * - .. figure:: bct1_brillouin.png 
-            :target: ../../../../../_images/bct1_brillouin.png 
-      - .. literalinclude:: bct1_brillouin.py
-            :language: py
+.. figure:: bct1_brillouin.png 
+    :target: ../../../../../_images/bct1_brillouin.png 
 
-.. list-table:: Primitive and conventional cell
-    :header-rows: 1
+* Primitive and conventional cell
+    
+.. literalinclude:: bct1_real.py
+    :language: py
 
-    * - Picture
-      - Code
-    * - .. figure:: bct1_real.png 
-            :target: ../../../../../_images/bct1_real.png 
-      - .. literalinclude:: bct1_real.py
-            :language: py
+.. figure:: bct1_real.png 
+    :target: ../../../../../_images/bct1_real.png 
 
-.. list-table:: Wigner-Seitz cell
-    :widths: 70 30
-    :header-rows: 1
+* Wigner-Seitz cell
 
-    * - Picture
-      - Code
-    * - .. figure:: bct1_wigner-seitz.png 
-            :target: ../../../../../_images/bct1_wigner-seitz.png 
-      - .. literalinclude:: bct1_wigner-seitz.py
-            :language: py
+.. literalinclude:: bct1_wigner-seitz.py
+    :language: py
+
+.. figure:: bct1_wigner-seitz.png 
+    :target: ../../../../../_images/bct1_wigner-seitz.png 
 
 BCT\ :sub:`2`
 -------------
 
-**Default kpath**: :math:`\mathrm{\Gamma-X-Y-\Sigma-\Gamma-Z-\Sigma_1-N-P-Y_1-Z\vert X-P}`.
 
-.. list-table:: Brillouin zone and default kpath
-    :widths: 70 30
-    :header-rows: 1
+* Brillouin zone and default kpath
 
-    * - Picture
-      - Code
-    * - .. figure:: bct2_brillouin.png 
-            :target: ../../../../../_images/bct2_brillouin.png 
-      - .. literalinclude:: bct2_brillouin.py
-            :language: py
+.. literalinclude:: bct2_brillouin.py
+    :language: py
 
-.. list-table:: Primitive and conventional cell
-    :header-rows: 1
+.. figure:: bct2_brillouin.png 
+    :target: ../../../../../_images/bct2_brillouin.png 
 
-    * - Picture
-      - Code
-    * - .. figure:: bct2_real.png 
-            :target: ../../../../../_images/bct2_real.png 
-      - .. literalinclude:: bct2_real.py
-            :language: py
+* Primitive and conventional cell
 
-.. list-table:: Wigner-Seitz cell
-    :widths: 70 30
-    :header-rows: 1
+.. literalinclude:: bct2_real.py
+    :language: py
 
-    * - Picture
-      - Code
-    * - .. figure:: bct2_wigner-seitz.png 
-            :target: ../../../../../_images/bct2_wigner-seitz.png 
-      - .. literalinclude:: bct2_wigner-seitz.py
-            :language: py
+.. figure:: bct2_real.png 
+    :target: ../../../../../_images/bct2_real.png 
+
+* Wigner-Seitz cell
+
+.. literalinclude:: bct2_wigner-seitz.py
+    :language: py
+
+.. figure:: bct2_wigner-seitz.png 
+    :target: ../../../../../_images/bct2_wigner-seitz.png 
 
 Edge cases
 ==========

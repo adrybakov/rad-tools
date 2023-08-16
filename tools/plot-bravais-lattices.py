@@ -1,10 +1,15 @@
 from argparse import ArgumentParser
-from os.path import join
+import os
 import radtools as rad
 import matplotlib.pyplot as plt
 
+ROOT_DIR = "."
+OUTPUT_PATH = os.path.join(
+    ROOT_DIR, "docs", "source", "user-guide", "module", "crystal", "bravais-lattices"
+)
 
-def plot(output_path="."):
+
+def plot():
     elev = {
         "CUB": [28, 28, 28],
         "FCC": [23, 28, 46],
@@ -212,27 +217,17 @@ def plot(output_path="."):
     }
 
     for i, name in enumerate(names):
-        output_subname = (
-            name.replace("1", "")
-            .replace("2", "")
-            .replace("3", "")
-            .replace("4", "")
-            .replace("5", "")
-            .replace("a", "")
-            .replace("a", "")
-            .replace("b", "")
-            .replace("b", "")
-        ).lower()
+        output_subname = (name.translate(str.maketrans("", "", "12345ab"))).lower()
         l = rad.lattice_example(name)
         for j, wtp in enumerate(wtps[name]):
             py_file = open(
-                join(
-                    output_path, output_subname, f"{name.lower()}_{names[name][j]}.py"
+                os.path.join(
+                    OUTPUT_PATH, output_subname, f"{name.lower()}_{names[name][j]}.py"
                 ),
                 "w",
             )
             py_file.write(
-                f'import radtools as rad\n\nl = rad.lattice_example(f"{name}")\n'
+                f'import radtools as rad\n\nl = rad.lattice_example("{name}")\n'
             )
             for data in wtp:
                 if len(wtp) == 1:
@@ -242,25 +237,16 @@ def plot(output_path="."):
                     if data == "conventional":
                         l.plot(data, colour="black", label=data)
                         py_file.write(
-                            f"l.plot(\n"
-                            + f'    "{data}",\n'
-                            + f'    label="{data}",\n'
-                            + '    colour="black"\n'
-                            + ")\n"
+                            f'l.plot("{data}", label="{data}", colour="black")\n'
                         )
                     else:
                         l.plot(data, label=data)
-                        py_file.write(
-                            f"l.plot(\n"
-                            + f'    "{data}",\n'
-                            + f'    label="{data}",\n'
-                            + ")\n"
-                        )
+                        py_file.write(f'l.plot("{data}", label="{data}")\n')
                     py_file.write("l.legend()\n")
                     l.legend()
             l.savefig(
-                join(
-                    output_path, output_subname, f"{name.lower()}_{names[name][j]}.png"
+                os.path.join(
+                    OUTPUT_PATH, output_subname, f"{name.lower()}_{names[name][j]}.png"
                 ),
                 elev=elev[name][j],
                 azim=azim[name][j],
@@ -270,13 +256,9 @@ def plot(output_path="."):
             plt.close()
             py_file.write(
                 "# Save an image:\n"
-                + "l.savefig(\n"
-                + f'    "{name.lower()}_{names[name][j]}.png",\n'
-                + f"    elev={elev[name][j]},\n"
-                + f"    azim={azim[name][j]},\n"
-                + "    dpi=300,\n"
-                + '   bbox_inches="tight",\n'
-                + ")\n"
+                + f'l.savefig("{name.lower()}_{names[name][j]}.png", '
+                + f"elev={elev[name][j]}, azim={azim[name][j]}, "
+                + f'dpi=300, bbox_inches="tight")\n'
             )
             py_file.write(
                 "# Interactive plot:\n"
@@ -289,16 +271,4 @@ def plot(output_path="."):
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument(
-        "-op",
-        "--output-path",
-        metavar="path",
-        type=str,
-        default=".",
-        help="Folder for output.",
-    )
-
-    args = parser.parse_args()
-
-    plot(args.output_path)
+    plot()
