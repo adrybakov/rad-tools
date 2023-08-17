@@ -1186,147 +1186,6 @@ class SpinHamiltonian(Crystal):
         with open(f"{filename}.pickle", "wb") as file:
             pickle.dump(self, file)
 
-    def summary_as_txt(
-        self,
-        template: ExchangeTemplate,
-        decimals=4,
-        form_model=False,
-        isotropic=False,
-        anisotropic=False,
-        matrix=False,
-        dmi=False,
-    ):
-        r"""
-        Return spin Hamiltonian based on the template file in .txt format.
-
-        Parameters
-        ----------
-        template : :py:class:`.ExchangeTemplate`
-            Template of the desired spin Hamiltonian.
-            (see :ref:`rad-make-template`)
-        accuracy : int, default 4
-            Accuracy for the exchange values
-        form_model: bool, default False
-            Whether to form the model based on the template.
-            If ``False`` then each individual bond is written, otherwise
-            exchange parameters of the template are written.
-        isotropic : bool, default False
-            Whether to output isotropic exchange.
-        anisotropic : bool, default False
-            Whether to output anisotropic exchange.
-        matrix : bool, default False
-            Whether to output whole matrix exchange.
-        dmi : bool, default False
-            Whether to output DMI exchange.
-
-        Returns
-        -------
-        summary : str
-            Exchange information as a string.
-        """
-
-        if form_model:
-            self.form_model(template=template)
-        else:
-            self.filter(template=template)
-        summary = ""
-        for name in template.names:
-            scalar_written = False
-            for atom1, atom2, R in template.names[name]:
-                # Get values from the model
-                atom1 = self.get_atom(atom1)
-                atom2 = self.get_atom(atom2)
-                J = self[atom1, atom2, R]
-
-                if not form_model:
-                    # Write the values
-                    summary += (
-                        f"{atom1:3} {atom2:3} "
-                        + f"({R[0]:2.0f}, {R[1]:2.0f}, {R[2]:2.0f})\n"
-                    )
-                    if isotropic:
-                        summary += f"    Isotropic: {J.iso:.{decimals}f}\n"
-                    if anisotropic:
-                        summary += (
-                            f"    Anisotropic:\n"
-                            + print_2d_array(
-                                J.aniso,
-                                fmt=f"{decimals+3}.{decimals}f",
-                                borders=False,
-                                shift=7,
-                                print_result=False,
-                            )
-                            + "\n"
-                        )
-                    if matrix:
-                        summary += (
-                            f"    Matrix:\n"
-                            + print_2d_array(
-                                J.matrix,
-                                fmt=f"{decimals+3}.{decimals}f",
-                                borders=False,
-                                shift=7,
-                                print_result=False,
-                            )
-                            + "\n"
-                        )
-                    if dmi:
-                        summary += (
-                            f"    |DMI|: {J.dmi_module:.{decimals}f}\n"
-                            + f"    |DMI/J|: {J.rel_dmi:.{decimals}f}\n"
-                            + f"    DMI: {J.dmi[0]:.{decimals}f} "
-                            + f"{J.dmi[1]:.{decimals}f} "
-                            + f"{J.dmi[2]:.{decimals}f}\n"
-                        )
-                    summary += "\n"
-                else:
-                    if not scalar_written:
-                        scalar_written = True
-                        summary += f"{name}\n"
-                        if isotropic:
-                            summary += f"    Isotropic: {J.iso:.{decimals}f}\n"
-                        if anisotropic:
-                            summary += (
-                                f"    Anisotropic:\n"
-                                + print_2d_array(
-                                    J.aniso,
-                                    fmt=f"{decimals+3}.{decimals}f",
-                                    borders=False,
-                                    shift=7,
-                                    print_result=False,
-                                )
-                                + "\n"
-                            )
-                        if matrix:
-                            summary += (
-                                f"    Matrix:\n"
-                                + print_2d_array(
-                                    J.matrix,
-                                    fmt=f"{decimals+3}.{decimals}f",
-                                    borders=False,
-                                    shift=7,
-                                    print_result=False,
-                                )
-                                + "\n"
-                            )
-                        if dmi:
-                            summary += (
-                                f"    |DMI|: {J.dmi_module:.{decimals}f}\n"
-                                + f"    |DMI/J|: {J.rel_dmi:.{decimals}f}\n"
-                            )
-                    if dmi:
-                        summary += (
-                            f"    DMI: {J.dmi[0]:{decimals+3}.{decimals}f} "
-                            + f"{J.dmi[1]:{decimals+3}.{decimals}f} "
-                            + f"{J.dmi[2]:{decimals+3}.{decimals}f} "
-                            + f"({atom1:3} {atom2:3} "
-                            + f"{R[0]:2.0f} {R[1]:2.0f} {R[2]:2.0f})\n"
-                        )
-            if form_model:
-                summary += "\n"
-
-        return summary
-
     def ferromagnetic_energy(self, theta=0, phi=0):
         r"""
         Compute energy of the Hamiltonian assuming ferromagnetic state.
@@ -1466,6 +1325,7 @@ def dump_spinham_txt(
     dmi=True,
     template=None,
     decimals=4,
+    additional_stats=None,
 ):
     """
     Save the Hamiltonian in a Human-readable format.
@@ -1488,6 +1348,9 @@ def dump_spinham_txt(
         based on the template.
     decimals : int, default 4
         Number of decimals to be printed (only for the exchange values).
+    additional_stats : str, optional
+        Additional info, which will be printed right after the logo, before the
+        main separator.
     """
 
     main_separator = "=" * 80 + "\n"
@@ -1497,6 +1360,8 @@ def dump_spinham_txt(
 
     spinham_txt.append(main_separator)
     spinham_txt.append(logo(date_time=True, line_length=80) + "\n")
+    if additional_stats is not None:
+        spinham_txt.append(additional_stats)
     spinham_txt.append(main_separator)
     spinham_txt.append(TXT_FLAGS["cell"] + "\n")
     spinham_txt.append(

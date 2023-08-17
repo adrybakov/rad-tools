@@ -19,12 +19,12 @@ Several filtering options are supported for the case of TB2J-based template file
 .. important::
 
     When template file is made on the base of TB2J file it is grouped by distance.
-    you can control the eps for distance comparison via :ref:`rad-make-template_eps`.
+    You can control the eps for distance comparison via :ref:`rad-make-template_eps`.
 
 
 Usage example
 =============
-Example is based on the exchange.out file from the
+Example is based on the "exchange.out" file from the
 :examples:`examples folder <rad-make-template>`. 
 
 Minimal usage scenario creates template draft`s with the command
@@ -33,9 +33,6 @@ Minimal usage scenario creates template draft`s with the command
 .. code-block:: bash
 
     rad-make-template.py
-
-For more advance user-case the file exchange.out from 
-:examples:`examples folder <rad-make-template>` is used. 
 
 The code:
 

@@ -14,15 +14,15 @@ from radtools.io.tb2j import read_tb2j_model
 def manager(
     input_filename,
     template_file=None,
-    output_name="extracted_exchange.txt",
+    output_name=None,
     decimals=4,
     form_model=False,
-    isotropic=False,
-    anisotropic=False,
-    matrix=False,
-    dmi=False,
-    all=False,
+    no_anisotropic=False,
+    no_matrix=False,
+    nodmi=False,
     verbose=False,
+    max_distance=None,
+    min_distance=None,
 ):
     r"""
     :ref:`rad-extract-tb2j` script.
@@ -40,17 +40,11 @@ def manager(
         )
 
     # Create the output directory if it does not exist
-    if split(output_name)[0] != "":
+    if output_name is not None and split(output_name)[0] != "":
         makedirs(split(output_name)[0], exist_ok=True)
 
     # Get current date and time
     cd = datetime.now()
-
-    if all:
-        isotropic = True
-        anisotropic = True
-        matrix = True
-        dmi = True
 
     # Read the model and the template
     model = read_tb2j_model(input_filename, quiet=not verbose)
@@ -59,33 +53,32 @@ def manager(
     else:
         template = None
 
-    # Get the summary of the model
-    summary_txt = model.summary_as_txt(
+    model.filter(
+        max_distance=max_distance,
+        min_distance=min_distance,
         template=template,
-        decimals=decimals,
-        form_model=form_model,
-        isotropic=isotropic,
-        anisotropic=anisotropic,
-        matrix=matrix,
-        dmi=dmi,
     )
 
-    # Write the summary to the file
+    # Remove template if no model formation is required
+    if not form_model:
+        template = None
+
+    # Write the summary to the file or print it
+    model.dump_txt(
+        filename=output_name,
+        anisotropic=not no_anisotropic,
+        matrix=not no_matrix,
+        dmi=not nodmi,
+        template=template,
+        decimals=decimals,
+        additional_stats=f"Exchange values are extracted from:\n"
+        + f"{abspath(input_filename)}\n",
+    )
     if output_name is not None:
-        with open(output_name, "w") as out_file:
-            out_file.write(
-                f"Exchange values are extracted from: {input_filename}\n"
-                + f"on {cd.day} {month_name[cd.month]} {cd.year}"
-                + f" at {cd.hour}:{cd.minute}:{cd.second} by rad-tools {version}\n\n"
-            )
-            out_file.write(summary_txt)
         cprint(
             f"Extracted exchange info is in " + f"{abspath(output_name)}",
             "green",
         )
-    # Print the summary to the terminal
-    else:
-        print(f"{summary_txt}")
 
 
 def create_parser():
@@ -116,7 +109,7 @@ def create_parser():
         "--output-name",
         metavar="filename",
         type=str,
-        default="extracted_exchange.txt",
+        default=None,
         help="Seedname for the output files.",
     )
     parser.add_argument(
@@ -135,37 +128,24 @@ def create_parser():
         help="Whether to form the model from the template.",
     )
     parser.add_argument(
-        "-i",
-        "--isotropic",
-        action="store_true",
-        default=False,
-        help="Whether to output isotropic exchange.",
-    )
-    parser.add_argument(
-        "-a",
-        "--anisotropic",
+        "-noa",
+        "--no-anisotropic",
         action="store_true",
         default=False,
         help="Whether to output anisotropic exchange.",
     )
     parser.add_argument(
-        "-m",
-        "--matrix",
+        "-nom",
+        "--no-matrix",
         action="store_true",
         default=False,
         help="Whether to output whole matrix exchange.",
     )
     parser.add_argument(
-        "-dmi",
+        "-nodmi",
         action="store_true",
         default=False,
         help="Whether to output DMI exchange.",
-    )
-    parser.add_argument(
-        "-all",
-        action="store_true",
-        default=False,
-        help="Whether to all types of exchange.",
     )
     parser.add_argument(
         "-v",
@@ -173,6 +153,22 @@ def create_parser():
         action="store_true",
         default=False,
         help="Verbose output, propagates to the called methods.",
+    )
+    parser.add_argument(
+        "-maxd",
+        "--max-distance",
+        metavar="distance",
+        type=float,
+        default=None,
+        help="(<=) Maximum distance.",
+    )
+    parser.add_argument(
+        "-mind",
+        "--min-distance",
+        metavar="distance",
+        type=float,
+        default=None,
+        help="(>=) Minimum distance.",
     )
 
     return parser

@@ -39,7 +39,7 @@ Change the behaviour of the drawing in
 
 0.2.6
 -----
-Add :ref:`-dmi <rad-extract-tb2j_dmi>` flag
+Add :ref:`-dmi <rad-extract-tb2j_nodmi>` flag
 to :ref:`tb2j-refractor.py <rad-extract-tb2j>` script.
 
 0.2.5

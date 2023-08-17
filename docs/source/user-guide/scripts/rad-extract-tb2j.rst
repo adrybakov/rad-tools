@@ -10,8 +10,7 @@ Script for extracting of template-based Hamiltonian from
 .. versionchanged: 0.6 Renamed from ``tb2j-extractor.py``
 
 If :ref:`--output_name <rad-extract-tb2j_output-name>` is not provided, then the result is 
-passed to the console, otherwise it is written to the file with first 3 lines 
-giving information about the source of exchange, date and time.
+printed to the console, otherwise it is written to the text file.
 
 Exchange types
 ==============
@@ -19,14 +18,12 @@ Exchange types
 There are several options to control which exchange types are included in 
 the summary:
 
-* :ref:`--isotropic <rad-extract-tb2j_isotropic>`
-* :ref:`--anisotropic <rad-extract-tb2j_anisotropic>`
-* :ref:`--dmi <rad-extract-tb2j_dmi>`
-* :ref:`--matrix <rad-extract-tb2j_matrix>`
-* :ref:`--all <rad-extract-tb2j_all>`
+* :ref:`--no-anisotropic <rad-extract-tb2j_no-anisotropic>`
+* :ref:`--nodmi <rad-extract-tb2j_nodmi>`
+* :ref:`--no-matrix <rad-extract-tb2j_no-matrix>`
 
-Format of the output block for each exchange type is provided in the 
-:ref:`arguments <rad-extract-tb2j_arguments>` section.
+Isotropic exchange is always included in the output. By default everything is
+included.
 
 Usage example
 =============
@@ -36,27 +33,29 @@ Example is based on the files from
 
 There are two modes in which exchange summary can be printed: 
 
-* with the symmetry of the template and 
-* with the Hamiltonian filtered based on the template.
+* With the model of the template
+* Full Hamiltonian
 
-In the first case the symmetry of the template is forced on the Hamiltonian and 
-exchange output is grouped based on the names provided in the template:
+In the first case the model of the template template is constructed from the Hamiltonian 
+and exchange output is grouped based on the names provided in the template:
 
 .. code-block:: bash
 
-    rad-extract-tb2j.py -all -fm -if exchange.out -tf template.txt -on summary_forced_symmetry
+    rad-extract-tb2j.py -fm -if exchange.out -tf template.txt -on summary_formed_model.txt
 
 .. dropdown:: summary with forced symmetry
 
-   .. literalinclude:: /../examples/rad-extract-tb2j/summary_forced_symmetry.txt
+   .. literalinclude:: /../examples/rad-extract-tb2j/summary_formed_model.txt
     :language: text
 
-In the second case exchange summary is printed for every bond in the 
-template file and no additional symmetry constrains are assumed on the Hamiltonian:
+In the second case exchange summary is printed for every bond in the Hamiltonian. 
+Hamiltonian is filtered with the :ref:`--max-distance <rad-extract-tb2j_max-distance>`,
+:ref:`--min-distance <rad-extract-tb2j_min-distance>` and 
+:ref:`--template-file <rad-extract-tb2j_template-file>`.
 
 .. code-block:: bash
 
-    rad-extract-tb2j.py -all -if exchange.out -tf template.txt -on summary
+    rad-extract-tb2j.py -if exchange.out -tf template.txt -on summary.txt
 
 .. dropdown:: summary without forced symmetry
 
@@ -137,29 +136,12 @@ Whether to form the model based on the template.
     default : False
     type : bool
 
+.. versionchanged:: 0.8.0 Renamed from "-fs"/"--force-symmetry".
 
-.. _rad-extract-tb2j_isotropic:
+.. _rad-extract-tb2j_no-anisotropic:
 
--i, --isotropic
----------------
-Whether to output isotropic exchange.
-
-.. code-block:: text
-
-    default : False
-    type : bool
-
-Section format:
-
-.. code-block:: text
-
-        Isotropic: J
-
-
-.. _rad-extract-tb2j_anisotropic:
-
--a, --anisotropic
------------------
+-noa, --no-anisotropic
+----------------------
 Whether to output anisotropic exchange.
 
 .. code-block:: text
@@ -167,20 +149,12 @@ Whether to output anisotropic exchange.
     default : False
     type : bool
 
-Section format:
+.. versionchanged:: 0.8.0 Renamed from "-a"/"--anisotropic".
 
-.. code-block:: text
+.. _rad-extract-tb2j_no-matrix:
 
-        Anisotropic: 
-            Jxx Jxy Jxz
-            Jxy Jyy Jyz
-            Jxz Jyz Jzz
-
-
-.. _rad-extract-tb2j_matrix:
-
--m, --matrix
-------------
+-nom, --no-matrix
+-----------------
 Whether to output the whole matrix of exchange.
 
 .. code-block:: text
@@ -188,20 +162,12 @@ Whether to output the whole matrix of exchange.
     default : False
     type : bool
 
-Section format:
+.. versionchanged:: 0.8.0 Renamed from "-m"/"--matrix".
 
-.. code-block:: text
+.. _rad-extract-tb2j_nodmi:
 
-        Matrix: 
-            Jxx Jxy Jxz
-            Jyx Jyy Jyz
-            Jzx Jzy Jzz
-
-
-.. _rad-extract-tb2j_dmi:
-
--dmi
-----
+-nodmi
+------
 Whether to output DMI exchange.
 
 .. code-block:: text
@@ -209,35 +175,7 @@ Whether to output DMI exchange.
     default : False
     type : bool
 
-Section format in the case of forced symmetry:
-
-.. code-block:: text
-
-        |DMI|: |DMI|
-        |DMI/J|: |DMI/J|
-        DMI: DMI_x DMI_y DMI_z (Atom1 Atom2 Ra Rb Rc)
-        ...
-
-Otherwise:
-
-.. code-block:: text
-
-        |DMI|: |DMI|
-        |DMI/J|: |DMI/J|
-        DMI: DMI_x DMI_y DMI_z
-
-
-.. _rad-extract-tb2j_all:
-
--all
-----
-Whether to output all types of exchange.
-
-.. code-block:: text
-
-    default : False
-    type : bool
-
+.. versionchanged:: 0.8.0 Renamed from "-dmi".
 
 .. _rad-extract-tb2j_verbose:
 
@@ -248,3 +186,33 @@ Verbose output, propagates to the called methods.
 .. code-block:: text
 
     default : False
+
+.. _rad-extract-tb2j_max-distance:
+
+-maxd, --max-distance
+---------------------
+(<=) Maximum distance.
+
+All the bonds with the distance between atom 1 and atom 2 
+greater than maximum distance are excluded from the model.
+
+.. code-block:: text
+
+    default : None
+
+.. versionadded:: 0.8.0
+
+.. _rad-extract-tb2j_min-distance:
+
+-mind, --min-distance
+---------------------
+(>=) Minimum distance.
+
+All the bonds with the distance between atom 1 and atom 2 
+lower than minimum distance are excluded from the Hamiltonian.
+
+.. code-block:: text
+
+    default : None
+
+.. versionadded:: 0.8.0

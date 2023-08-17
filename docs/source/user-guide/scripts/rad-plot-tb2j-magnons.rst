@@ -57,10 +57,10 @@ Filtering of the model
 
 For filtering the spin Hamiltonian there are a few options available:
 
-    * :ref:`--max_distance <rad-plot-tb2j_max-distance>`
-    * :ref:`--min_distance <rad-plot-tb2j_min-distance>`
-    * :ref:`--R-vector <rad-plot-tb2j_R-vector>`
-    * :ref:`--template <rad-plot-tb2j_template-file>`
+* :ref:`--max_distance <rad-plot-tb2j_max-distance>`
+* :ref:`--min_distance <rad-plot-tb2j_min-distance>`
+* :ref:`--R-vector <rad-plot-tb2j_R-vector>`
+* :ref:`--template <rad-plot-tb2j_template-file>`
 
 .. _rad-plot-tb2j-magnons_arguments:
 

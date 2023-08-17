@@ -151,24 +151,24 @@ to reproduce particular spin Hamiltonian:
 
 .. code-block:: bash
 
-    rad-plot-tb2j.py -if exchange.out -tf template.txt -fm -dc -sa 1.2 -sd 1.2 -t "Forced symmetry exchange" -on exchange_forced_symmetry
+    rad-plot-tb2j.py -if exchange.out -tf template.txt -fm -dc -sa 1.2 -sd 1.2 -t "Forced symmetry exchange" -on exchange_formed_model
 
-.. figure:: /../examples/rad-plot-tb2j/exchange_forced_symmetry.iso.png
+.. figure:: /../examples/rad-plot-tb2j/exchange_formed_model.iso.png
     :align: center
 
-    exchange_forced_symmetry.iso.png
+    exchange_formed_model.iso.png
 
 .. dropdown:: DMI and distances
 
-    .. figure:: /../examples/rad-plot-tb2j/exchange_forced_symmetry.dmi.png
+    .. figure:: /../examples/rad-plot-tb2j/exchange_formed_model.dmi.png
         :align: center
 
-        exchange_forced_symmetry.dmi.png
+        exchange_formed_model.dmi.png
 
-    .. figure:: /../examples/rad-plot-tb2j/exchange_forced_symmetry.distance.png
+    .. figure:: /../examples/rad-plot-tb2j/exchange_formed_model.distance.png
         :align: center
 
-        exchange_forced_symmetry.distance.png
+        exchange_formed_model.distance.png
 
 Only one exchange parameter is present in the template file, 
 therefore the model is filtered with respect to the template 

@@ -115,12 +115,12 @@ example-plot-tb2j:
 	@rad-plot-tb2j.py -if docs/examples/rad-plot-tb2j/exchange.out -op docs/examples/rad-plot-tb2j/
 	@rad-plot-tb2j.py -if docs/examples/rad-plot-tb2j/exchange.out -op docs/examples/rad-plot-tb2j/  -on exchange_filtered -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange"
 	@rad-plot-tb2j.py -if docs/examples/rad-plot-tb2j/exchange.out -op docs/examples/rad-plot-tb2j/  -on exchange_template -wtp iso -tf docs/examples/rad-plot-tb2j/template.txt -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange"
-	@rad-plot-tb2j.py -if docs/examples/rad-plot-tb2j/exchange.out -op docs/examples/rad-plot-tb2j/  -on exchange_forced_symmetry -tf docs/examples/rad-plot-tb2j/template.txt -fm -dc -sa 1.2 -sd 1.2 -t "Forced symmetry exchange"
+	@rad-plot-tb2j.py -if docs/examples/rad-plot-tb2j/exchange.out -op docs/examples/rad-plot-tb2j/  -on exchange_formed_model -tf docs/examples/rad-plot-tb2j/template.txt -fm -dc -sa 1.2 -sd 1.2 -t "Forced symmetry exchange"
 	@rad-plot-tb2j.py -if docs/examples/rad-plot-tb2j/exchange.out -op docs/examples/rad-plot-tb2j/  -on exchange_R -wtp iso -R 1 0 0 1 1 0 0 1 0 -1 0 0 -1 -1 0 0 -1 0 -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange"
 	
 example-extract-tb2j:
-	@rad-extract-tb2j.py -if docs/examples/rad-extract-tb2j/exchange.out -tf docs/examples/rad-extract-tb2j/template.txt -on docs/examples/rad-extract-tb2j/summary_forced_symmetry.txt -all -fm
-	@rad-extract-tb2j.py -if docs/examples/rad-extract-tb2j/exchange.out -tf docs/examples/rad-extract-tb2j/template.txt -on docs/examples/rad-extract-tb2j/summary.txt -all
+	@rad-extract-tb2j.py -if docs/examples/rad-extract-tb2j/exchange.out -tf docs/examples/rad-extract-tb2j/template.txt -on docs/examples/rad-extract-tb2j/summary_formed_model.txt -fm
+	@rad-extract-tb2j.py -if docs/examples/rad-extract-tb2j/exchange.out -tf docs/examples/rad-extract-tb2j/template.txt -on docs/examples/rad-extract-tb2j/summary.txt
 
 example-plot-dos-gallery:
 	@rad-plot-dos.py -ip docs/examples/rad-plot-dos/collinear/ -ew -6.5 6.5 -ef -1.7806 -op docs/examples/rad-plot-dos/collinear/ 
