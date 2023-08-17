@@ -222,23 +222,23 @@ def test_add_atom():
     Cr1 = Atom("Cr1", (2, 5, 1))
     model.add_atom(Cr1)
     assert len(model.magnetic_atoms) == 0
-    assert len(model.crystal.atoms) == 1
+    assert len(model.atoms) == 1
     Cr2 = Atom("Cr2", (4, 2, 1))
     model.add_atom(Cr2)
     assert len(model.magnetic_atoms) == 0
-    assert len(model.crystal.atoms) == 2
-    assert model.crystal.get_atom("Cr1").position[0] == 2
-    assert model.crystal.get_atom("Cr1").position[1] == 5
-    assert model.crystal.get_atom("Cr1").position[2] == 1
-    assert model.crystal.get_atom("Cr2").position[0] == 4
-    assert model.crystal.get_atom("Cr2").position[1] == 2
-    assert model.crystal.get_atom("Cr2").position[2] == 1
+    assert len(model.atoms) == 2
+    assert model.get_atom("Cr1").position[0] == 2
+    assert model.get_atom("Cr1").position[1] == 5
+    assert model.get_atom("Cr1").position[2] == 1
+    assert model.get_atom("Cr2").position[0] == 4
+    assert model.get_atom("Cr2").position[1] == 2
+    assert model.get_atom("Cr2").position[2] == 1
     model.remove_atom(Cr2)
     Cr2 = Atom("Cr2", (4, 3, 1))
     model.add_atom(Cr2)
-    assert model.crystal.get_atom("Cr2").position[0] == 4
-    assert model.crystal.get_atom("Cr2").position[1] == 3
-    assert model.crystal.get_atom("Cr2").position[2] == 1
+    assert model.get_atom("Cr2").position[0] == 4
+    assert model.get_atom("Cr2").position[1] == 3
+    assert model.get_atom("Cr2").position[2] == 1
 
 
 def test_remove_atom():
