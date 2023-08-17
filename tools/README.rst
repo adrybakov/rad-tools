@@ -28,3 +28,13 @@ plot-data-structure.py
 -----------------------
 
 Plot the data structure of the package. 
+
+plot-bravais-lattice.py
+-----------------------
+
+Plot all examples of the bravais lattice.
+
+plot-notation.py
+----------------
+
+Plot notation tree picture.
