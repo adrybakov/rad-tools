@@ -117,6 +117,7 @@ def check_arguments(names, script_files, doc_files):
     ok_message = []
     error_message = []
     for n_i, name in enumerate(names):
+        error_submessage = []
         # Parse scripts
         script_arguments = []
         script_file = open(script_files[n_i], "r")
@@ -178,10 +179,6 @@ def check_arguments(names, script_files, doc_files):
         ]
         if len(docs_arguments) != len(script_arguments):
             all_args_fine = False
-            error_message.append(message[0])
-            error_message.append(colored(message[1], "red"))
-        else:
-            ok_message.append("".join(message))
 
         for a_i, argument in enumerate(script_arguments):
             try:
@@ -191,7 +188,7 @@ def check_arguments(names, script_files, doc_files):
                     or f"{docs_links[a_i]}" in argument
                 ):
                     all_args_fine = False
-                    error_message.append(
+                    error_submessage.append(
                         colored(
                             f"Problem:\n"
                             + f"    Index: {a_i+1}\n"
@@ -204,7 +201,7 @@ def check_arguments(names, script_files, doc_files):
 
             except IndexError:
                 all_args_fine = False
-                error_message.append(
+                error_submessage.append(
                     colored(
                         f"Problem:\n"
                         + f"    Index: {a_i+1}\n"
@@ -213,9 +210,14 @@ def check_arguments(names, script_files, doc_files):
                         "red",
                     )
                 )
+
         if all_args_fine:
-            ok_message.append(colored(f"All arguments are fine\n", "green"))
+            ok_message.append("".join(message))
+            ok_message.append(colored(f"All arguments are fine\n", "green") + "\n")
         else:
+            error_message.append(message[0])
+            error_message.append(colored(message[1], "red"))
+            error_message.extend(error_submessage)
             error_message.append("\n")
 
     return "".join(ok_message), "".join(error_message)
@@ -226,6 +228,7 @@ if __name__ == "__main__":
     ok_message, second_error_message = check_arguments(names, scripts, docs)
     error_message += second_error_message
 
+    print(ok_message)
     if len(error_message) != 0:
         import sys
 
