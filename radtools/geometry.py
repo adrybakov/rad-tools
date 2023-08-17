@@ -46,6 +46,11 @@ def volume(*args):
         .. math::
             V = abc\sqrt{1+2\cos(\alpha)\cos(\beta)\cos(\gamma)-\cos^2(\alpha)-\cos^2(\beta)-\cos^2(\gamma)}
 
+    Notes
+    -----
+
+    Volume can be negative if the three vectors are not right-handed.
+
     Parameters
     ----------
     v1 : (3,) |array_like|_
@@ -91,14 +96,14 @@ def volume(*args):
             - cos(beta) ** 2
             - cos(gamma) ** 2
         )
-        return abs(a * b * c * sqrt(sq_root))
+        return a * b * c * sqrt(sq_root)
     else:
         raise ValueError(
             "Unable to identify input. "
             + "Supported: one (3,3) array_like, or three (3,) array_like, or 6 floats."
         )
 
-    return abs(np.linalg.det(cell))
+    return np.linalg.det(cell)
 
 
 def angle(v1, v2, radians=False):

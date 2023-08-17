@@ -526,7 +526,7 @@ def MCLC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
 
 
 # TODO
-def TRI_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL, resiprocal=False):
+def TRI_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the TRI lattice conditions.
 
@@ -540,8 +540,6 @@ def TRI_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL, resiprocal=False):
         Relative tolerance for numerical comparison.
     atol : float, default ``ABS_TOL``
         Absolute tolerance for numerical comparison.
-    resiprocal : bool, default False
-        Whether to interpret input as reciprocal cell.
 
     Returns
     -------
@@ -549,4 +547,89 @@ def TRI_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL, resiprocal=False):
         Primitive unit cell.
     """
 
-    return np.array(cell)
+    # Compute reciprocal cell
+    rcell = Cell.reciprocal(cell)
+
+    a, b, c, alpha, beta, gamma = Cell.params(rcell)
+
+    if (
+        compare_numerically(alpha, "==", 90.0)
+        or compare_numerically(beta, "==", 90.0)
+        or compare_numerically(gamma, "==", 90.0)
+    ):
+        if compare_numerically(alpha, "==", 90.0):
+            rcell = [rcell[1], rcell[2], rcell[0]]
+        elif compare_numerically(beta, "==", 90.0):
+            rcell = [rcell[2], rcell[0], rcell[1]]
+
+        a, b, c, alpha, beta, gamma = Cell.params(rcell)
+
+        if (
+            compare_numerically(alpha, ">", 90.0)
+            and compare_numerically(beta, "<", 90.0)
+            or compare_numerically(alpha, "<", 90.0)
+            and compare_numerically(beta, ">", 90.0)
+        ):
+            rcell = [rcell[1], -rcell[0], rcell[2]]
+
+    else:
+        if (
+            compare_numerically(alpha, ">", 90.0)
+            and compare_numerically(beta, ">", 90.0)
+            and compare_numerically(gamma, "<", 90.0)
+        ):
+            rcell = [-rcell[0], -rcell[1], rcell[2]]
+        elif (
+            compare_numerically(alpha, ">", 90.0)
+            and compare_numerically(beta, "<", 90.0)
+            and compare_numerically(gamma, ">", 90.0)
+        ):
+            rcell = [-rcell[0], rcell[1], -rcell[2]]
+        elif (
+            compare_numerically(alpha, ">", 90.0)
+            and compare_numerically(beta, "<", 90.0)
+            and compare_numerically(gamma, "<", 90.0)
+        ):
+            rcell = [rcell[0], -rcell[1], -rcell[2]]
+        elif (
+            compare_numerically(alpha, "<", 90.0)
+            and compare_numerically(beta, ">", 90.0)
+            and compare_numerically(gamma, ">", 90.0)
+        ):
+            rcell = [rcell[0], -rcell[1], -rcell[2]]
+        elif (
+            compare_numerically(alpha, "<", 90.0)
+            and compare_numerically(beta, ">", 90.0)
+            and compare_numerically(gamma, "<", 90.0)
+        ):
+            rcell = [-rcell[0], rcell[1], -rcell[2]]
+        elif (
+            compare_numerically(alpha, "<", 90.0)
+            and compare_numerically(beta, "<", 90.0)
+            and compare_numerically(gamma, ">", 90.0)
+        ):
+            rcell = [-rcell[0], -rcell[1], rcell[2]]
+
+        a, b, c, alpha, beta, gamma = Cell.params(rcell)
+
+        if compare_numerically(min(alpha, beta, gamma), ">", 90.0):
+            if compare_numerically(alpha, "<", beta) and compare_numerically(
+                alpha, "<", gamma
+            ):
+                rcell = [rcell[1], rcell[2], rcell[0]]
+            elif compare_numerically(beta, "<", alpha) and compare_numerically(
+                beta, "<", gamma
+            ):
+                rcell = [rcell[2], rcell[0], rcell[1]]
+        if compare_numerically(max(alpha, beta, gamma), "<", 90.0):
+            if compare_numerically(alpha, ">", beta) and compare_numerically(
+                alpha, ">", gamma
+            ):
+                rcell = [rcell[1], rcell[2], rcell[0]]
+            elif compare_numerically(beta, ">", alpha) and compare_numerically(
+                beta, ">", gamma
+            ):
+                rcell = [rcell[2], rcell[0], rcell[1]]
+
+    # Recompute back to the real-space cell
+    return Cell.reciprocal(rcell)

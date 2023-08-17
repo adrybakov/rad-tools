@@ -97,9 +97,9 @@ MCLC\ :sub:`1`
 
     \begin{matrix}
     \zeta = \dfrac{2 - b\cos\alpha/c}{4\sin^2\alpha} &
-    \eta = 1/2 + 2\zeta c\cos\alpha/b \\
-    \psi = 3/4 - \dfrac{a^2}{4b^2\sin^2\alpha} &
-    \phi = \psi + (3/4-\psi)b\cos\alpha/c
+    \eta = \dfrac{1}{2} + \dfrac{2\zeta c\cos\alpha}{b} \\
+    \psi = \dfrac{3}{4} - \dfrac{a^2}{4b^2\sin^2\alpha} &
+    \phi = \psi + \dfrac{(3/4-\psi)b\cos\alpha}{c}
     \end{matrix}
 
 =========================  ==============================  ==============================  ==============================
@@ -134,9 +134,9 @@ MCLC\ :sub:`2`
 
     \begin{matrix}
     \zeta = \dfrac{2 - b\cos\alpha/c}{4\sin^2\alpha} &
-    \eta = 1/2 + 2\zeta c\cos\alpha/b \\
-    \psi = 3/4 - \dfrac{a^2}{4b^2\sin^2\alpha} &
-    \phi = \psi + (3/4-\psi)b\cos\alpha/c
+    \eta = \dfrac{1}{2} + \dfrac{2\zeta c\cos\alpha}{b} \\
+    \psi = \dfrac{3}{4} - \dfrac{a^2}{4b^2\sin^2\alpha} &
+    \phi = \psi + \dfrac{(3/4-\psi)b\cos\alpha}{c}
     \end{matrix}
 
 =========================  ==============================  ==============================  ==============================
@@ -171,8 +171,8 @@ MCLC\ :sub:`3`
     \begin{matrix}
     \mu = \dfrac{1+b^2/a^2}{4} &
     \delta = \dfrac{bc\cos\alpha}{2a^2} &
-    \zeta = \mu - 1/4 + \dfrac{1 - b\cos\alpha/c}{4\sin^2\alpha} \\
-    \eta = 1/2 + 2\zeta c \cos\alpha/b &
+    \zeta = \mu - \dfrac{1}{4} + \dfrac{1 - b\cos\alpha/c}{4\sin^2\alpha} \\
+    \eta = \dfrac{1}{2} + \dfrac{2\zeta c \cos\alpha}{b} &
     \phi = 1 + \zeta - 2\mu &
     \psi = \eta - 2\delta
     \end{matrix}
@@ -210,8 +210,8 @@ MCLC\ :sub:`4`
     \begin{matrix}
     \mu = \dfrac{1+b^2/a^2}{4} &
     \delta = \dfrac{bc\cos\alpha}{2a^2} &
-    \zeta = \mu - 1/4 + \dfrac{1 - b\cos\alpha/c}{4\sin^2\alpha} \\
-    \eta = 1/2 + 2\zeta c \cos\alpha/b &
+    \zeta = \mu - \dfrac{1}{4} + \dfrac{1 - b\cos\alpha/c}{4\sin^2\alpha} \\
+    \eta = \dfrac{1}{2} + \dfrac{2\zeta c \cos\alpha}{b} &
     \phi = 1 + \zeta - 2\mu &
     \psi = \eta - 2\delta
     \end{matrix}
@@ -248,13 +248,13 @@ MCLC\ :sub:`5`
 .. math::
 
     \begin{matrix}
-    \zeta = \dfrac{b^2/a^2 + \dfrac{1 - b\cos\alpha/c}{\sin^2\alpha}}{4} &
-    \eta = 1/2 + 2\zeta c\cos\alpha/b \\
-    \mu = \eta/2 + \dfrac{b^2}{4a^2} - \dfrac{bc\cos\alpha}{2a^2} &
+    \zeta = \dfrac{b^2}{4a^2} + \dfrac{1 - b\cos\alpha/c}{4\sin^2\alpha} &
+    \eta = \dfrac{1}{2} + \dfrac{2\zeta c\cos\alpha}{b} \\
+    \mu = \dfrac{\eta}{2} + \dfrac{b^2}{4a^2} - \dfrac{bc\cos\alpha}{2a^2} &
     \nu = 2\mu - \zeta \\
     \omega = \dfrac{(4\nu - 1 - b^2\sin^2\alpha/a^2)c}{2b\cos\alpha} &
-    \delta = \zeta c \cos\alpha/b + \omega/2 - 1/4 &
-    \rho = 1 - \zeta a^2/b^2
+    \delta = \dfrac{\zeta c \cos\alpha}{b} + \dfrac{\omega}{2} - \dfrac{1}{4} &
+    \rho = 1 - \dfrac{\zeta a^2}{b^2}
     \end{matrix}
 
 =========================  ==============================  ==============================  ==============================

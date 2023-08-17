@@ -82,7 +82,7 @@ K-path
 
     \begin{matrix}
     \eta = \dfrac{1 - b\cos\alpha / c}{2\sin^2\alpha} &
-    \nu = 1/2 - \eta c\cos\alpha/b
+    \nu = \dfrac{1}{2} - \dfrac{\eta c\cos\alpha}{b}
     \end{matrix}
 
 =========================  ==============================  ==============================  ==============================

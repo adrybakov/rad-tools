@@ -2,7 +2,7 @@ from math import cos, pi, sin
 
 import numpy as np
 import pytest
-from hypothesis import given
+from hypothesis import given, example
 from hypothesis import strategies as st
 from hypothesis.extra.numpy import arrays as harrays
 from scipy.spatial.transform import Rotation
@@ -106,8 +106,10 @@ def test_volume_example(args, result, eps):
 
 
 # no need to test the vectors - they take the same route as the cell
-# it ht e vectors will move from rows to columns it is not a problem as well
+# it the vectors will move from rows to columns it is not a problem as well
 # since the volume of the cell is its determinant
+@example(np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]))
+@example(np.array([[-1, 0, 0], [0, 1, 0], [0, 0, 1]]))
 @given(
     harrays(
         float,
@@ -120,8 +122,11 @@ def test_volume_example(args, result, eps):
 )
 def test_volume_with_cell(cell):
     # Its an "or" condition
-    if ((np.abs(cell) > MIN_LENGTH) + (cell == 0)).all():
-        assert volume(cell) >= 0
+    if ((np.abs(cell) > MIN_LENGTH) + (cell == np.zeros(cell.shape))).all():
+        if np.linalg.det(cell) > 0:
+            assert volume(cell) >= 0
+        else:
+            assert volume(cell) <= 0
 
 
 @given(

@@ -16,7 +16,8 @@ with primitive and conventional lattice:
     \begin{matrix}
     \boldsymbol{a}_1 &=& (a\cos(\alpha / 2), &-a\sin(\alpha/2), &0)\\
     \boldsymbol{a}_2 &=& (a\cos(\alpha / 2), &a\sin(\alpha/2), &0)\\
-    \boldsymbol{a}_3 &=& \left(\frac{\cos(\alpha)}{\cos(\alpha/2)}\right., &0, &\left.a\sqrt{1 - \frac{\cos^2(\alpha)}{\cos^2(\alpha/2)}}\right)
+    \boldsymbol{a}_3 &=& \left(\dfrac{\cos\alpha}{\cos(\alpha/2)}\right., 
+    &0, &\left.a\sqrt{1 - \dfrac{\cos^2\alpha}{\cos^2(\alpha/2)}}\right)
     \end{matrix}
 
 Cell standardization
@@ -36,7 +37,7 @@ RHL\ :sub:`1`
 
     \begin{matrix}
     \eta = \dfrac{1 + 4\cos\alpha}{2 + 4\cos\alpha} &
-    \nu = 3/4 - \eta/2
+    \nu = \dfrac{3-2\eta}{4}
     \end{matrix}
 
 =========================  ==============================  ==============================  ==============================
@@ -65,7 +66,7 @@ RHL\ :sub:`2`
 
     \begin{matrix}
     \eta = \dfrac{1}{2\tan^2(\alpha/2)} & 
-    \nu = 3/4 - \eta/2
+    \nu = \dfrac{3-2\eta}{4}
     \end{matrix}
 
 =========================  ==============================  ==============================  ==============================
