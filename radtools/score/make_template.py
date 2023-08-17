@@ -9,6 +9,7 @@ from termcolor import cprint
 
 from radtools import __version__ as version
 from radtools.io.tb2j import read_tb2j_model
+from radtools.decorate.stats import logo
 
 
 def manager(
@@ -30,6 +31,8 @@ def manager(
     correspond to the arguments of the script.
     """
 
+    n_sep = 80
+
     # Create the output directory if it does not exist
     if split(output_name)[0] != "":
         makedirs(split(output_name)[0], exist_ok=True)
@@ -50,42 +53,33 @@ def manager(
 
     # Template draft
     template = (
-        "=" * 20
+        "=" * n_sep
         + "\n"
         + "Neighbors template:\n"
         + "i j R_a R_b R_c\n"
-        + "-" * 20
+        + "-" * n_sep
         + "\n"
         + "J1 $J_1$\n"
         + "atom1 atom2  0  0  0\n"
         + "atom1 atom2  1  0  0\n"
         + "atom1 atom1 -1  0  2\n"
-        + "-" * 20
+        + "-" * n_sep
         + "\n"
         + "J2\n"
         + "atom2 atom1  9  5 -3\n"
         + "atom1 atom2  1  4  0\n"
         + "atom2 atom2  1  0  2\n"
-        + "=" * 20
+        + "=" * n_sep
         + "\n"
     )
     with open(output_name, "w") as file:
+        file.write("=" * n_sep + "\n" + logo(date_time=True, line_length=n_sep) + "\n")
         # Write the draft
         if input_filename is None:
-            file.write(
-                f"Template is created "
-                + f"on {cd.day} {month_name[cd.month]} {cd.year}"
-                + f" at {cd.hour}:{cd.minute}:{cd.second} by rad-tools {version}\n\n"
-            )
-
             file.write(template)
         # Create the template based on the input file
         else:
-            file.write(
-                f"Template is created based on the file: {input_filename}\n"
-                + f"on {cd.day} {month_name[cd.month]} {cd.year}"
-                + f" at {cd.hour}:{cd.minute}:{cd.second} by rad-tools {version}\n\n"
-            )
+            file.write(f"Template is created based on the file:\n{input_filename}\n")
 
             # Read and filter the model
             model = read_tb2j_model(input_filename, quiet=not verbose)
@@ -95,11 +89,11 @@ def manager(
 
             # Write header
             file.write(
-                "=" * 20
+                "=" * n_sep
                 + "\n"
                 + "Neighbors template:\n"
                 + "i j R_a R_b R_c\n"
-                + "-" * 20
+                + "-" * n_sep
                 + "\n"
             )
 
@@ -111,7 +105,7 @@ def manager(
                         atom1.name,
                         atom2.name,
                         R,
-                        model.crystal.get_distance(atom1, atom2, R),
+                        model.get_distance(atom1, atom2, R),
                     )
                 )
 
@@ -134,14 +128,14 @@ def manager(
                 # If distance is different, start a new group and write the bond
                 else:
                     j += 1
-                    file.write("-" * 20 + "\n")
+                    file.write("-" * n_sep + "\n")
                     file.write(f"J{j} " + "$J_{" + f"{j}" + "}$\n")
                     file.write(
                         f"{atom1:4} {atom2:4} "
                         + f"{R[0]:3.0f} {R[1]:3.0f} {R[2]:3.0f}\n"
                     )
 
-            file.write("=" * 20 + "\n")
+            file.write("=" * n_sep + "\n")
     cprint(
         f"Template draft is in " + f"{abspath(output_name)}, grouped by distance",
         "blue",
