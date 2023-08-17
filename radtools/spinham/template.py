@@ -3,6 +3,7 @@ Exchange template.
 
 Write a tutorial with docstring here.
 """
+__all__ = ["ExchangeTemplate"]
 
 
 class ExchangeTemplate:

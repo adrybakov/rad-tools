@@ -1,7 +1,7 @@
 r"""
 Exchange parameter class.
 """
-
+__all__ = ["ExchangeParameter"]
 # SELF is introduced in python 3.11, it is too fresh for my taste
 from typing import TypeVar
 

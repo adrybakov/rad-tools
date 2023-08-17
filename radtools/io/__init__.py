@@ -6,7 +6,9 @@ data structures from the input data of the external programs,
 as well as from the internal-specified formats.
 """
 
-from .internal import read_template
-from .tb2j import read_tb2j_model
+from .internal import *
+from .tb2j import *
 
-__all__ = ["read_template", "read_tb2j_model"]
+__all__ = []
+__all__.extend(internal.__all__)
+__all__.extend(tb2j.__all__)

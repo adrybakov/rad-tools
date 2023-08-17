@@ -1,6 +1,7 @@
 r"""
 Input-output from |TB2J|_.
 """
+__all__ = ["read_tb2j_model"]
 
 import numpy as np
 

@@ -2,6 +2,8 @@ r"""
 Input-output for the files related with this package.
 """
 
+__all__ = ["read_template"]
+
 from radtools.spinham.template import ExchangeTemplate
 
 

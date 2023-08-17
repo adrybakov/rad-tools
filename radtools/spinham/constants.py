@@ -1,3 +1,8 @@
+__all__ = [
+    "PREDEFINED_NOTATIONS",
+    "TXT_FLAGS",
+]
+
 PREDEFINED_NOTATIONS = {
     "standard": (True, False, False, False, True),
     "tb2j": (True, True, False, False, True),
@@ -10,7 +15,12 @@ TXT_FLAGS = {
     "magmoms": "Magnetic moments of magnetic atoms:",
     "spins": "Spin of magnetic atoms:",
     "spinham": "Spin Hamiltonian:",
+    "iso": "Isotropic exchange:",
     "matrix": "Full exchange matrix:",
     "dmi": "DMI vector:",
+    "dmis": "DMI vectors:",
+    "dmi_module": "DMI module:",
+    "dmi_relative": "|DMI| / |J_iso|:",
     "aniso": "Symmetric anisotropic exchange:",
+    "spinmodel": "Spin model:",
 }

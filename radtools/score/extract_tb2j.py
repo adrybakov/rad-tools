@@ -13,7 +13,7 @@ from radtools.io.tb2j import read_tb2j_model
 
 def manager(
     input_filename,
-    template_file,
+    template_file=None,
     output_name="extracted_exchange.txt",
     decimals=4,
     form_model=False,
@@ -33,6 +33,12 @@ def manager(
     correspond to the arguments of the script.
     """
 
+    if form_model and template_file is None:
+        raise ValueError(
+            "Template file is required for forming the model from the template."
+            + "--form-model implies --template-file"
+        )
+
     # Create the output directory if it does not exist
     if split(output_name)[0] != "":
         makedirs(split(output_name)[0], exist_ok=True)
@@ -48,7 +54,10 @@ def manager(
 
     # Read the model and the template
     model = read_tb2j_model(input_filename, quiet=not verbose)
-    template = read_template(template_file)
+    if template_file is not None:
+        template = read_template(template_file)
+    else:
+        template = None
 
     # Get the summary of the model
     summary_txt = model.summary_as_txt(
