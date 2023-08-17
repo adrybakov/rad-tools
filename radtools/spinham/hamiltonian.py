@@ -17,6 +17,9 @@ from radtools.exceptions import NotationError
 from radtools.spinham.constants import PREDEFINED_NOTATIONS
 from radtools.spinham.parameter import ExchangeParameter
 from radtools.spinham.template import ExchangeTemplate
+from radtools.decorate.stats import logo
+from radtools.decorate.array import print_2d_array
+from radtools.spinham.constants import TXT_FLAGS
 
 
 class SpinHamiltonian(Crystal):
@@ -1150,16 +1153,184 @@ class SpinHamiltonian(Crystal):
         new_model.force_symmetry(template=template)
         return new_model
 
-    def dump_txt(self, filename):
+    def dump_txt(
+        self,
+        filename=None,
+        anisotropic=True,
+        matrix=True,
+        dmi=True,
+    ):
         """
         Save the Hamiltonian in a Human-readable format.
 
         Parameters
         ----------
-        filename : str
+        filename : str, optional
             Name of the file for the Hamiltonian to be saved in.
+            If not given, the Hamiltonian will be printed in the console.
+        anisotropic : bool, default True
+            Whether to output anisotropic exchange.
+        matrix : bool, default True
+            Whether to output whole matrix exchange.
+        dmi : bool, default True
+            Whether to output DMI exchange.
         """
-        raise NotImplementedError
+
+        main_separator = "=" * 80 + "\n"
+        separator = "-" * 80 + "\n"
+        spinham_txt = []
+
+        spinham_txt.append(main_separator)
+        spinham_txt.append(logo(date_time=True, line_length=80) + "\n")
+        spinham_txt.append(main_separator)
+        spinham_txt.append(TXT_FLAGS["cell"] + "\n")
+        spinham_txt.append(
+            print_2d_array(
+                self.cell,
+                borders=False,
+                fmt="^.8f",
+                print_result=False,
+                header_row=["x", "y", "z"],
+            )
+            + "\n"
+        )
+        spinham_txt.append(main_separator)
+        spinham_txt.append(TXT_FLAGS["atoms"] + "\n")
+        header_column = []
+        header_row = [
+            f"Index Name",
+            "a1 (rel)",
+            "a2 (rel)",
+            "a3 (rel)",
+            "x",
+            "y",
+            "z",
+        ]
+        atom_data = np.zeros((len(self.atoms), 6))
+        for a_i, atom in enumerate(self.atoms):
+            header_column.append(f"{atom.index:<5} {atom.name:<4}")
+            atom_data[a_i, :3] = self.get_atom_coordinates(atom, relative=True)
+            atom_data[a_i, 3:] = self.get_atom_coordinates(atom, relative=False)
+        spinham_txt.append(
+            print_2d_array(
+                atom_data,
+                borders=False,
+                fmt="^.8f",
+                print_result=False,
+                header_row=header_row,
+                header_column=header_column,
+            )
+            + "\n"
+        )
+        spinham_txt.append(main_separator)
+
+        write_spins = True
+        write_magmoms = True
+        for atom in self.magnetic_atoms:
+            try:
+                atom.magmom
+            except ValueError:
+                write_magmoms = False
+            try:
+                atom.spin
+                atom.spin_vector
+            except ValueError:
+                write_spins = False
+        if write_magmoms:
+            spinham_txt.append(TXT_FLAGS["magmoms"] + "\n")
+            header_column = []
+            header_row = [f"Index Name", "m_x", "m_y", "m_z"]
+            magmom_data = np.zeros((len(self.magnetic_atoms), 3))
+            for a_i, atom in enumerate(self.magnetic_atoms):
+                header_column.append(f"{atom.index:<5} {atom.name:<4}")
+                magmom_data[a_i] = atom.magmom
+            spinham_txt.append(
+                print_2d_array(
+                    magmom_data,
+                    borders=False,
+                    fmt="^.8f",
+                    print_result=False,
+                    header_row=header_row,
+                    header_column=header_column,
+                )
+                + "\n"
+            )
+            spinham_txt.append(main_separator)
+        if write_spins:
+            spinham_txt.append(TXT_FLAGS["spins"] + "\n")
+            header_column = []
+            header_row = [f"Index Name", "S", "S_x", "S_y", "S_z"]
+            spin_data = np.zeros((len(self.magnetic_atoms), 4))
+            for a_i, atom in enumerate(self.magnetic_atoms):
+                header_column.append(f"{atom.index:<5} {atom.name:<4}")
+                spin_data[a_i, 0] = atom.spin
+                spin_data[a_i, 1:] = atom.spin_vector
+            spinham_txt.append(
+                print_2d_array(
+                    spin_data,
+                    borders=False,
+                    fmt="^.8f",
+                    print_result=False,
+                    header_row=header_row,
+                    header_column=header_column,
+                )
+                + "\n"
+            )
+            spinham_txt.append(main_separator)
+
+        spinham_txt.append(TXT_FLAGS["spinham"] + "\n")
+        spinham_txt.append(
+            f"{'Atom1':6} {'Atom2':6} (  i,   j,   k) {'J_iso':^10} {'Distance':^10}\n"
+        )
+        bonds_data = []
+        for atom1, atom2, R in self._bonds:
+            data_entry = []
+            J = self._bonds[atom1, atom2, R]
+            distance = self.get_distance(atom1, atom2, R)
+            atom1 = f"{atom1.name}({atom1.index})"
+            atom2 = f"{atom2.name}({atom2.index})"
+            data_entry.append(separator)
+            data_entry.append(
+                f"{atom1:6} {atom2:6} "
+                + f"({R[0]:>3}, {R[1]:>3}, {R[2]:>3}) "
+                + f"{J.iso:^10.4f} "
+                + f"{distance:^10.4f}\n"
+            )
+            if matrix:
+                data_entry.append(TXT_FLAGS["matrix"] + "\n")
+                data_entry.append(
+                    print_2d_array(
+                        J.matrix, fmt="8.4f", borders=False, print_result=False
+                    )
+                    + "\n"
+                )
+            if dmi:
+                data_entry.append(TXT_FLAGS["dmi"] + "\n")
+                data_entry.append(
+                    print_2d_array(J.dmi, fmt="8.4f", borders=False, print_result=False)
+                    + "\n"
+                )
+            if anisotropic:
+                data_entry.append(TXT_FLAGS["aniso"] + "\n")
+                data_entry.append(
+                    print_2d_array(
+                        J.aniso, fmt="8.4f", borders=False, print_result=False
+                    )
+                    + "\n"
+                )
+            bonds_data.append(["".join(data_entry), distance])
+        bonds_data = sorted(bonds_data, key=lambda x: x[1])
+        bonds_data = [x[0] for x in bonds_data]
+        spinham_txt.append("".join(bonds_data))
+        spinham_txt.append(main_separator)
+
+        spinham_txt = "".join(spinham_txt)
+        if filename is not None:
+            file = open(filename, "w")
+            file.write(spinham_txt)
+            file.close()
+        else:
+            print(spinham_txt)
 
     def dump_pickle(self, filename):
         """
@@ -1446,3 +1617,16 @@ class SpinHamiltonianIterator:
 
     def __iter__(self):
         return self
+
+
+if __name__ == "__main__":
+    from radtools import read_tb2j_model, read_template
+
+    ham = read_tb2j_model(
+        "/Users/rybakov.ad/Projects/rad-tools/docs/examples/rad-extract-tb2j/exchange.out"
+    )
+    template = read_template(
+        "/Users/rybakov.ad/Projects/rad-tools/docs/examples/rad-extract-tb2j/template.txt"
+    )
+
+    ham.dump_txt("test.txt")

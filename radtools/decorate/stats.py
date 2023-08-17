@@ -6,7 +6,7 @@ from radtools import __doclink__, __git_hash__, __release_date__, __version__
 __all__ = ["logo", "stamp_line", "license"]
 
 
-def logo(info=None, line_length=71, flat=False):
+def logo(info=None, line_length=71, flat=False, date_time=False):
     """
     Logo generator for rad-tools package.
 
@@ -26,6 +26,8 @@ def logo(info=None, line_length=71, flat=False):
         Minimum value is 71.
     flat : bool
         Whether to return a flat logo or not.
+    date_time : bool, default False
+        Whether to include the date and time to the standard info or not.
 
     Returns
     -------
@@ -35,11 +37,18 @@ def logo(info=None, line_length=71, flat=False):
     if info is None:
         info = [
             f"Version: {__version__}",
+            f"Documentation: {__doclink__}",
             f"Release date: {__release_date__}",
             f"Git hash: {__git_hash__}",
-            f"Documentation: {__doclink__}",
             f"Licence: MIT License",
         ]
+        if date_time:
+            cd = datetime.now()
+            info.append("")
+            info.append(
+                f"Generated on {cd.day} {month_name[cd.month]} {cd.year}"
+                + f" at {cd.hour}:{cd.minute}:{cd.second} "
+            )
     logo = [
         "██████╗  █████╗ ██████╗       ████████╗ █████╗  █████╗ ██╗      ██████╗",
         "██╔══██╗██╔══██╗██╔══██╗      ╚══██╔══╝██╔══██╗██╔══██╗██║     ██╔════╝",
@@ -74,7 +83,7 @@ def logo(info=None, line_length=71, flat=False):
     logo_info = [f"{x:^{N}}" for x in logo]
     if len(info) > 0:
         if len(info) <= len(cat):
-            before = (len(cat) - len(info)) // 2
+            before = (len(cat) - len(info)) // 2 + (len(cat) - len(info)) % 2
             after = len(cat) - len(info) - before
             for i in range(len(cat)):
                 if i < before or i >= len(cat) - after:
