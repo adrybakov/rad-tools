@@ -12,10 +12,53 @@ def solve_via_colpa(D):
 
     Algorithm itself is described in section 3, Remark 1 of [1]_.
 
+    Solves the Bogoliubov Hamiltonian of the form:
+
+    .. math::
+
+        \hat{H} = \sum_{r^{\prime}, r = 1}^m 
+        \hat{\alpha}_{r^{\prime}}^{\dagger}\boldsymbol{\Delta}_1^{r^{\prime}r}\hat{\alpha}_r +
+        \hat{\alpha}_{r^{\prime}}^{\dagger}\boldsymbol{\Delta}_2^{r^{\prime}r}\hat{\alpha}_{m+r}^{\dagger} + 
+        \hat{\alpha}_{m+r^{\prime}}^{\dagger}\boldsymbol{\Delta}_3^{r^{\prime}r}\hat{\alpha}_r + 
+        \hat{\alpha}_{m+r^{\prime}}^{\dagger}\boldsymbol{\Delta}_4^{r^{\prime}r}\hat{\alpha}_{m+r}^{\dagger}
+
+    In a matrix form the Hamiltonian is:
+
+    .. math::
+
+        \hat{H} = \boldsymbol{\hat{a}}^{\dagger} \boldsymbol{D} \boldsymbol{\hat{a}}
+    
+    where
+
+    .. math:: 
+
+        \boldsymbol{\hat{a}} =
+        \begin{pmatrix}
+            \hat{\alpha}_1 \\
+            \cdots \\
+            \hat{\alpha}_m \\
+            \hat{\alpha}_{m+1} \\
+            \cdots \\
+            \hat{\alpha}_{2m} \\
+        \end{pmatrix}
+
+    After diagonalization the Hamiltonian is:
+
+    .. math::
+
+        \hat{H} = \boldsymbol{\hat{c}}^{\dagger} \boldsymbol{E} \boldsymbol{\hat{c}}
+
     Parameters
     ----------
     D : (2N, 2N) |array_like|_
         Grand dynamical matrix. Must be Hermitian and positive-defined.
+
+        .. math::
+
+            \boldsymbol{D} = \begin{pmatrix}
+                \boldsymbol{\Delta_1} & \boldsymbol{\Delta_2} \\
+                \boldsymbol{\Delta_3} & \boldsymbol{\Delta_4}
+            \end{pmatrix}
 
     Returns
     -------
@@ -25,32 +68,23 @@ def solve_via_colpa(D):
         Last N eigenvalues are sorted in ascending order.
         In the case of diagonalization of the magnon Hamiltonian
         first N eigenvalues are the same as last N eigenvalues, but
-        in reversed order.
+        in reversed order. It is an array of the diagonal elements of the 
+        diagonal matrix :math:`\boldsymbol{E}` from the diagonalized Hamiltonian.
 
     G : (2N, 2N) :numpy:`ndarray`
         Transformation matrix, which change the basis from the original set of bosonic 
-        operators :math:`\boldsymbol{a}_{\boldsymbol{k}}` to the set of 
-        new bosonic operators :math:`\boldsymbol{c}_{\boldsymbol{k}}` which diagonalize
-        the Hamiltonian which corresponds to the grand-dynamical matrix ``D``:
+        operators :math:`\boldsymbol{\hat{a}}` to the set of 
+        new bosonic operators :math:`\boldsymbol{\hat{c}}` which diagonalize
+        the Hamiltonian:
         
         .. math::
 
-            \boldsymbol{c}_{\boldsymbol{k}} = \boldsymbol{G} \boldsymbol{a}_{\boldsymbol{k}}
-
-        where (same for :math:`\boldsymbol{c}_{\boldsymbol{k}}`)
-
-        .. math:: 
-
-            \boldsymbol{a}_{\boldsymbol{k}} =
-            \begin{pmatrix}
-                \boldsymbol{\alpha}_{\boldsymbol{k}} \\
-                \boldsymbol{\alpha}_{-\boldsymbol{k}}^{\dagger}
-            \end{pmatrix}
+            \boldsymbol{\hat{c}} = \boldsymbol{G} \boldsymbol{\hat{a}}
 
     Notes
     -----
 
-    Let :math:`\boldsymbol{E}` be the diagonal matrix of eigenvalues ``E``.
+    Let :math:`\boldsymbol{E}` be the diagonal matrix of eigenvalues ``E``, then:
 
     .. math::
 
