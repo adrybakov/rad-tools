@@ -56,19 +56,19 @@ def manager(
         "=" * n_sep
         + "\n"
         + "Neighbors template:\n"
-        + "i j R_a R_b R_c\n"
+        + f"Atom1 Atom2 {'i':>3} {'j':>3} {'k':>3}\n"
         + "-" * n_sep
         + "\n"
         + "J1 $J_1$\n"
-        + "atom1 atom2  0  0  0\n"
-        + "atom1 atom2  1  0  0\n"
-        + "atom1 atom1 -1  0  2\n"
+        + f"atom1 atom2 {0:3} {0:3} {0:3}\n"
+        + f"atom1 atom2 {1:3} {0:3} {0:3}\n"
+        + f"atom1 atom1 {-1:3} {0:3} {2:3}\n"
         + "-" * n_sep
         + "\n"
         + "J2\n"
-        + "atom2 atom1  9  5 -3\n"
-        + "atom1 atom2  1  4  0\n"
-        + "atom2 atom2  1  0  2\n"
+        + f"atom2 atom1 {9:3} {5:3} {-3:3}\n"
+        + f"atom1 atom2 {1:3} {4:3} {0:3}\n"
+        + f"atom2 atom2 {1:3} {0:3} {2:3}\n"
         + "=" * n_sep
         + "\n"
     )
@@ -92,7 +92,7 @@ def manager(
                 "=" * n_sep
                 + "\n"
                 + "Neighbors template:\n"
-                + "i j R_a R_b R_c\n"
+                + f"Atom1 Atom2 {'i':>3} {'j':>3} {'k':>3}\n"
                 + "-" * n_sep
                 + "\n"
             )
@@ -115,14 +115,14 @@ def manager(
             j = 1
             file.write(f"J{j} " + "$J_{" + f"{j}" + "}$\n")
             file.write(
-                f"{data[0][0]:4} {data[0][1]:4} "
+                f"{data[0][0]:5} {data[0][1]:5} "
                 + f"{data[0][2][0]:3.0f} {data[0][2][1]:3.0f} {data[0][2][2]:3.0f}\n"
             )
             for i, (atom1, atom2, R, distance) in enumerate(data[1:]):
                 # If distance is the same as the previous one, write the bond
                 if abs(distance - data[i][3]) < eps:
                     file.write(
-                        f"{atom1:4} {atom2:4} "
+                        f"{atom1:5} {atom2:5} "
                         + f"{R[0]:3.0f} {R[1]:3.0f} {R[2]:3.0f}\n"
                     )
                 # If distance is different, start a new group and write the bond
@@ -131,7 +131,7 @@ def manager(
                     file.write("-" * n_sep + "\n")
                     file.write(f"J{j} " + "$J_{" + f"{j}" + "}$\n")
                     file.write(
-                        f"{atom1:4} {atom2:4} "
+                        f"{atom1:5} {atom2:5} "
                         + f"{R[0]:3.0f} {R[1]:3.0f} {R[2]:3.0f}\n"
                     )
 
