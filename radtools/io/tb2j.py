@@ -4,8 +4,8 @@ Input-output from |TB2J|_.
 
 import numpy as np
 
-from radtools.spinham.hamiltonian import SpinHamiltonian
 from radtools.crystal.constants import REL_TOL
+from radtools.spinham.hamiltonian import SpinHamiltonian
 
 
 def read_tb2j_model(filename, quiet=True, bravais_type=None) -> SpinHamiltonian:

@@ -1,7 +1,7 @@
 from calendar import month_name
 from datetime import datetime
 
-from radtools import __version__, __git_hash__, __doclink__, __release_date__
+from radtools import __doclink__, __git_hash__, __release_date__, __version__
 
 __all__ = ["logo", "stamp_line", "license"]
 

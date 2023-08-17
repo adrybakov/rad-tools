@@ -1,14 +1,11 @@
 from math import cos, sqrt
 
-
+import numpy as np
 from scipy.spatial.transform import Rotation
 
-
-from radtools.crystal.constants import ABS_TOL_ANGLE, ABS_TOL
 from radtools.constants import TODEGREES, TORADIANS
+from radtools.crystal.constants import ABS_TOL, ABS_TOL_ANGLE
 from radtools.numerical import compare_numerically
-
-import numpy as np
 
 __all__ = [
     "volume",

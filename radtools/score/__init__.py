@@ -41,9 +41,9 @@ from .extract_tb2j import manager as extract_tb2j
 from .identify_wannier_centres import manager as identify_wannier_centres
 from .make_template import manager as make_template
 from .plot_dos import manager as plot_dos
+from .plot_fatbands import manager as plot_fatbands
 from .plot_tb2j import manager as plot_tb2j
 from .plot_tb2j_magnons import manager as plot_tb2j_magnons
-from .plot_fatbands import manager as plot_fatbands
 
 __all__ = [
     "identify_wannier_centres",

@@ -1,13 +1,14 @@
+from os.path import abspath, isfile, join
+
 import matplotlib.pyplot as plt
 import numpy as np
 from termcolor import cprint
-from os.path import isfile, join, abspath
 
+from radtools.decorate.axes import plot_hlines, plot_vlines
+from radtools.decorate.colormap import custom_cmap
 from radtools.dos.dos import prepare_custom_pdos
 from radtools.dos.pdos import PDOS
 from radtools.dos.plotting import COLOURS
-from radtools.decorate.axes import plot_hlines, plot_vlines
-from radtools.decorate.colormap import custom_cmap
 
 __all__ = [
     "plot_custom_fatbands",

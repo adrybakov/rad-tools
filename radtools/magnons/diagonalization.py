@@ -1,5 +1,6 @@
 import numpy as np
 from numpy.linalg import LinAlgError
+
 from radtools.exceptions import ColpaFailed
 
 __all__ = ["solve_via_colpa"]

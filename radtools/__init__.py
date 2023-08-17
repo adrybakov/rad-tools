@@ -8,28 +8,28 @@ __git_hash__ = "9c9b087fa02be0cafdadaef6ec1c7926fe36e3d6"
 __release_date__ = "2 August 2023"
 
 from . import (
+    constants,
     crystal,
     decorate,
     dos,
-    spinham,
+    exceptions,
+    geometry,
     io,
     magnons,
-    score,
-    constants,
-    geometry,
     numerical,
-    exceptions,
+    score,
+    spinham,
 )
+from .constants import *
 from .crystal import *
 from .decorate import *
 from .dos import *
-from .spinham import *
+from .geometry import *
 from .io import *
 from .magnons import *
-from .score import *
-from .constants import *
-from .geometry import *
 from .numerical import *
+from .score import *
+from .spinham import *
 
 __all__ = ["__version__", "__doclink__", "__git_hash__", "__release_date__"]
 __all__.extend(crystal.__all__)

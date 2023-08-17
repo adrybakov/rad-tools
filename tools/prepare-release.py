@@ -1,11 +1,12 @@
-import git
-import sys
-from termcolor import colored, cprint
 import os
+import re
+import sys
+from argparse import ArgumentParser
 from calendar import month_name
 from datetime import datetime
-import re
-from argparse import ArgumentParser
+
+import git
+from termcolor import colored, cprint
 
 
 class FATAL(Exception):

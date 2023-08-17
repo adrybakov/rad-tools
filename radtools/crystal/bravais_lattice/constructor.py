@@ -2,8 +2,8 @@ from math import cos, sin, sqrt
 
 import numpy as np
 
-from radtools.constants import TORADIANS
 import radtools.crystal.cell as Cell
+from radtools.constants import TORADIANS
 from radtools.crystal.lattice import Lattice
 
 __all__ = [

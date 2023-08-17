@@ -1,10 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from radtools.dos.pdos import PDOS
-
 from radtools.decorate.axes import plot_hlines, plot_vlines
-
+from radtools.dos.pdos import PDOS
 
 __all__ = ["COLOURS", "plot_projected"]
 

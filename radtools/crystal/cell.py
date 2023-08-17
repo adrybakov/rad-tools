@@ -2,8 +2,8 @@ from math import cos, pi, sin, sqrt
 
 import numpy as np
 
-from radtools.geometry import angle, parallelepiped_check, volume
 from radtools.constants import TORADIANS
+from radtools.geometry import angle, parallelepiped_check, volume
 
 __all__ = [
     "reciprocal",

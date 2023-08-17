@@ -1,15 +1,13 @@
-from radtools.spinham.hamiltonian import SpinHamiltonian
-from radtools.geometry import span_orthonormal_set
-from radtools.magnons.diagonalization import solve_via_colpa, ColpaFailed
-from radtools.crystal.kpoints import Kpoints
-
 from copy import deepcopy
-
-
-from scipy.spatial.transform import Rotation
-import numpy as np
 from math import sqrt
 
+import numpy as np
+from scipy.spatial.transform import Rotation
+
+from radtools.crystal.kpoints import Kpoints
+from radtools.geometry import span_orthonormal_set
+from radtools.magnons.diagonalization import ColpaFailed, solve_via_colpa
+from radtools.spinham.hamiltonian import SpinHamiltonian
 
 __all__ = ["MagnonDispersion"]
 

@@ -1,7 +1,9 @@
-from argparse import ArgumentParser
 import os
-import radtools as rad
+from argparse import ArgumentParser
+
 import matplotlib.pyplot as plt
+
+import radtools as rad
 
 ROOT_DIR = "."
 OUTPUT_PATH = os.path.join(

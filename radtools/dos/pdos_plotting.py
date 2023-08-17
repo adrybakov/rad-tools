@@ -1,12 +1,11 @@
-from termcolor import cprint
-from os.path import isfile, join, abspath
 from os import makedirs
+from os.path import abspath, isfile, join
+
+from termcolor import cprint
 from tqdm import tqdm
 
-from radtools.dos.pdos import PDOS
-
 from radtools.dos.dos import prepare_custom_pdos
-
+from radtools.dos.pdos import PDOS
 from radtools.dos.plotting import COLOURS, plot_projected
 
 __all__ = [

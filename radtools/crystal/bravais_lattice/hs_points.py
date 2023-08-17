@@ -4,7 +4,6 @@ import numpy as np
 
 from radtools.constants import TORADIANS
 
-
 __all__ = [
     "CUB_hs_points",
     "FCC_hs_points",

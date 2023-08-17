@@ -9,14 +9,14 @@ from typing import Iterable, Tuple
 
 import numpy as np
 
+from radtools.constants import TORADIANS
 from radtools.crystal.atom import Atom
 from radtools.crystal.crystal import Crystal
+from radtools.decorate.array import print_2d_array
+from radtools.exceptions import NotationError
+from radtools.spinham.constants import PREDEFINED_NOTATIONS
 from radtools.spinham.parameter import ExchangeParameter
 from radtools.spinham.template import ExchangeTemplate
-from radtools.spinham.constants import PREDEFINED_NOTATIONS
-from radtools.decorate.array import print_2d_array
-from radtools.constants import TORADIANS
-from radtools.exceptions import NotationError
 
 
 class SpinHamiltonian(Crystal):

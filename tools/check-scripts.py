@@ -1,6 +1,7 @@
 from os import walk
-from os.path import join, split, abspath
-from termcolor import cprint, colored
+from os.path import abspath, join, split
+
+from termcolor import colored, cprint
 
 ROOT_DIR = "."
 INTERFACE_DIR = abspath(join(ROOT_DIR, "scripts"))

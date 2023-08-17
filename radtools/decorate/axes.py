@@ -1,6 +1,5 @@
 from typing import Iterable
 
-
 __all__ = ["plot_hlines", "plot_vlines"]
 
 

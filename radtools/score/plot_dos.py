@@ -5,15 +5,13 @@ from os.path import abspath, join
 from termcolor import cprint
 
 from radtools.dos.dos import DOSQE, detect_seednames
-
-from radtools.dos.plotting import COLOURS
-
 from radtools.dos.pdos_plotting import (
-    plot_custom_pdos,
-    plot_orbital_resolved,
     plot_atom_resolved,
     plot_atom_to_total,
+    plot_custom_pdos,
+    plot_orbital_resolved,
 )
+from radtools.dos.plotting import COLOURS
 
 
 def manager(

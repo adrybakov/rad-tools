@@ -3,6 +3,7 @@ General 3D lattice.
 """
 
 from typing import Iterable
+
 import numpy as np
 
 from radtools.geometry import absolute_to_relative

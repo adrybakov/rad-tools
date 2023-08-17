@@ -1,8 +1,7 @@
 from math import cos, sin
 
-from radtools.numerical import compare_numerically
 from radtools.constants import TORADIANS
-
+from radtools.numerical import compare_numerically
 
 __all__ = [
     "BCT_variation",

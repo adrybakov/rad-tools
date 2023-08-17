@@ -1,6 +1,7 @@
+import os
+
 import matplotlib.pyplot as plt
 from matplotlib.colors import to_rgb
-import os
 
 ROOT_DIR = "."
 

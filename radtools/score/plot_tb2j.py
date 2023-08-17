@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from math import sqrt, pi, asin
+from math import asin, pi, sqrt
 from os import makedirs
 from os.path import abspath, join
 
@@ -7,10 +7,9 @@ import numpy as np
 from matplotlib import pyplot as plt
 from termcolor import cprint
 
+from radtools.constants import TODEGREES
 from radtools.io.internal import read_template
 from radtools.io.tb2j import read_tb2j_model
-
-from radtools.constants import TODEGREES
 
 
 def rot_angle(x, y, dummy=False):

@@ -3,10 +3,8 @@ from typing import Union
 
 import numpy as np
 
-from radtools.crystal.atom import Atom
-
 import radtools.crystal.cell as Cell
-
+from radtools.crystal.atom import Atom
 from radtools.crystal.lattice import Lattice
 from radtools.crystal.properties import dipole_dipole_energy, dipole_dipole_interaction
 from radtools.geometry import absolute_to_relative

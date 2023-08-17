@@ -1,7 +1,7 @@
-from .examples import *
-from .standardize import *
 from .constructor import *
+from .examples import *
 from .hs_points import *
+from .standardize import *
 from .variations import *
 
 __all__ = []

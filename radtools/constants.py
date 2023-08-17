@@ -9,8 +9,6 @@ BLUE = "#274DD1"
 PURPLE = "#DC5CFF"
 
 TODEGREES = 180.0 / pi
-"""Convert radians to degrees."""
 
 
 TORADIANS = pi / 180.0
-"""Convert degrees to radians."""

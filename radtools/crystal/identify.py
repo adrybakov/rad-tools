@@ -7,14 +7,11 @@ from math import acos, cos, floor, log10, sqrt
 import numpy as np
 from termcolor import cprint
 
+import radtools.crystal.cell as Cell
+from radtools.constants import TODEGREES, TORADIANS
+from radtools.decorate.array import print_2d_array
 from radtools.geometry import volume
 from radtools.numerical import compare_numerically
-from radtools.decorate.array import print_2d_array
-
-
-from radtools.constants import TODEGREES, TORADIANS
-
-import radtools.crystal.cell as Cell
 
 __all__ = ["niggli", "lepage"]
 

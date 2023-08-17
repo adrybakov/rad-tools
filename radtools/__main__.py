@@ -2,7 +2,6 @@ from argparse import ArgumentParser
 
 from radtools.decorate.stats import logo
 
-
 if __name__ == "__main__":
     parser = ArgumentParser(
         description="rad-tools package",

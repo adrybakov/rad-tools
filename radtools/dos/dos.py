@@ -4,16 +4,14 @@ DOS
 import re
 from os import walk
 from os.path import join
-
 from typing import Iterable
 
 import matplotlib.pyplot as plt
 import numpy as np
-
 from termcolor import cprint
 
-from radtools.dos.pdos import PDOSQE
 from radtools.decorate.axes import plot_hlines, plot_vlines
+from radtools.dos.pdos import PDOSQE
 
 PATTERN = "\\.pdos_atm\\#[0-9]*\\([a-zA-Z0-9]*\\)_wfc\\#[0-9]*\\([spdf_0-9j\\.]*\\)"
 

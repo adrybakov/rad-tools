@@ -11,43 +11,42 @@ from matplotlib.patches import FancyArrowPatch
 from mpl_toolkits.mplot3d import Axes3D, proj3d
 from scipy.spatial import Voronoi
 
-from radtools.crystal.identify import lepage
-from radtools.geometry import angle, volume
 import radtools.crystal.cell as Cell
-from radtools.crystal.kpoints import Kpoints
-from radtools.crystal.constants import (
-    REL_TOL,
-    PEARSON_SYMBOLS,
-    BRAVAIS_LATTICE_NAMES,
-    TRANSFORM_TO_CONVENTIONAL,
-    HS_PLOT_NAMES,
-    DEFAULT_K_PATHS,
-)
-from radtools.crystal.bravais_lattice.variations import (
-    BCT_variation,
-    ORCF_variation,
-    RHL_variation,
-    MCLC_variation,
-    TRI_variation,
-)
 from radtools.crystal.bravais_lattice.hs_points import (
+    BCC_hs_points,
+    BCT_hs_points,
     CUB_hs_points,
     FCC_hs_points,
-    BCC_hs_points,
-    TET_hs_points,
-    BCT_hs_points,
-    ORC_hs_points,
-    ORCF_hs_points,
-    ORCI_hs_points,
-    ORCC_hs_points,
     HEX_hs_points,
-    RHL_hs_points,
     MCL_hs_points,
     MCLC_hs_points,
+    ORC_hs_points,
+    ORCC_hs_points,
+    ORCF_hs_points,
+    ORCI_hs_points,
+    RHL_hs_points,
+    TET_hs_points,
     TRI_hs_points,
 )
-
 from radtools.crystal.bravais_lattice.standardize import standardize_cell
+from radtools.crystal.bravais_lattice.variations import (
+    BCT_variation,
+    MCLC_variation,
+    ORCF_variation,
+    RHL_variation,
+    TRI_variation,
+)
+from radtools.crystal.constants import (
+    BRAVAIS_LATTICE_NAMES,
+    DEFAULT_K_PATHS,
+    HS_PLOT_NAMES,
+    PEARSON_SYMBOLS,
+    REL_TOL,
+    TRANSFORM_TO_CONVENTIONAL,
+)
+from radtools.crystal.identify import lepage
+from radtools.crystal.kpoints import Kpoints
+from radtools.geometry import angle, volume
 
 __all__ = ["Lattice"]
 

@@ -1,24 +1,23 @@
 from math import cos, pi, sin
 
 from radtools.constants import TORADIANS
-from radtools.crystal.constants import BRAVAIS_LATTICE_VARIATIONS
-
 from radtools.crystal.bravais_lattice.constructor import (
+    BCC,
+    BCT,
     CUB,
     FCC,
-    BCC,
-    TET,
-    BCT,
-    ORC,
-    ORCF,
-    ORCI,
-    ORCC,
     HEX,
-    RHL,
     MCL,
     MCLC,
+    ORC,
+    ORCC,
+    ORCF,
+    ORCI,
+    RHL,
+    TET,
     TRI,
 )
+from radtools.crystal.constants import BRAVAIS_LATTICE_VARIATIONS
 
 __all__ = [
     "lattice_example",
