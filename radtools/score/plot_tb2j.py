@@ -107,7 +107,7 @@ def manager(
     scale_atoms=1,
     scale_data=1,
     title=None,
-    force_symmetry=False,
+    form_model=False,
     verbose=False,
 ):
     r"""
@@ -123,8 +123,8 @@ def manager(
     makedirs(output_path, exist_ok=True)
 
     # Check input parameters for consistency
-    if force_symmetry and template_file is None:
-        raise ValueError("--force-symmetry option requires a template file.")
+    if form_model and template_file is None:
+        raise ValueError("--form-model option requires a template file.")
 
     if distance is not None:
         min_distance = distance
@@ -145,8 +145,8 @@ def manager(
         template = read_template(template_file)
     else:
         template = None
-    if force_symmetry:
-        model.force_symmetry(template=template)
+    if form_model:
+        model.form_model(template=template)
 
     # Filter the model
     model.filter(
@@ -406,8 +406,8 @@ def create_parser():
         help="Title for the plots.",
     )
     parser.add_argument(
-        "-fs",
-        "--force-symmetry",
+        "-fm",
+        "--form-model",
         default=False,
         action="store_true",
         help="Force the Exchange model to have the symmetry of the template.",

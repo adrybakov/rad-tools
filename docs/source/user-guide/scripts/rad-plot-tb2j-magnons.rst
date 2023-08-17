@@ -49,7 +49,7 @@ It is given in absolute coordinate in a real space. Only the direction of the ve
 Template file
 =============
 
-Exchange template file (see :ref:`template-draft`) can be used to force the symmetry of the model or
+Exchange template file (see :ref:`template-draft`) can be used to forme the model or
 to filter the spin Hamiltonian.
 
 Filtering of the model
@@ -172,11 +172,11 @@ Path in reciprocal space for the magnon dispersion.
     default : None
     type : str
 
-.. _rad-plot-tb2j-magnons_force-symmetry:
+.. _rad-plot-tb2j-magnons_form-model:
 
--fs, --force-symmetry
+-fm, --form-model
 ---------------------
-Whether to force the symmetry of the template on the Hamiltonian.
+Whether to form the model based on the template.
 
 .. code-block:: text
 

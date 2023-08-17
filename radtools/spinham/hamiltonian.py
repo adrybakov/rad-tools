@@ -1078,7 +1078,7 @@ class SpinHamiltonian(Crystal):
         return filtered_model
 
     # TODO rewrite with new template logic (J1 through getattr)
-    def force_symmetry(self, template):
+    def form_model(self, template):
         r"""
         Force the Hamiltonian to have the symmetries of the template.
 
@@ -1087,6 +1087,8 @@ class SpinHamiltonian(Crystal):
         but the length of the DMI vector is scaled.
 
         This method modifies an instance on which it was called.
+
+        .. versionchanged:: 0.8.0 Renamed from ``force_symmetry``
 
         Parameters
         ----------
@@ -1146,11 +1148,11 @@ class SpinHamiltonian(Crystal):
 
         See Also
         --------
-        force_symmetry: Modifies current object.
+        form_model: Modifies current object.
         """
 
         new_model = deepcopy(self)
-        new_model.force_symmetry(template=template)
+        new_model.form_model(template=template)
         return new_model
 
     def dump_txt(
@@ -1351,7 +1353,7 @@ class SpinHamiltonian(Crystal):
         self,
         template: ExchangeTemplate,
         decimals=4,
-        force_symmetry=False,
+        form_model=False,
         isotropic=False,
         anisotropic=False,
         matrix=False,
@@ -1367,8 +1369,8 @@ class SpinHamiltonian(Crystal):
             (see :ref:`rad-make-template`)
         accuracy : int, default 4
             Accuracy for the exchange values
-        force_symmetry: bool, default False
-            Whether to force the symmetry of the template on the spin Hamiltonian.
+        form_model: bool, default False
+            Whether to form the model based on the template.
             If ``False`` then each individual bond is written, otherwise
             exchange parameters of the template are written.
         isotropic : bool, default False
@@ -1386,8 +1388,8 @@ class SpinHamiltonian(Crystal):
             Exchange information as a string.
         """
 
-        if force_symmetry:
-            self.force_symmetry(template=template)
+        if form_model:
+            self.form_model(template=template)
         else:
             self.filter(template=template)
         summary = ""
@@ -1399,7 +1401,7 @@ class SpinHamiltonian(Crystal):
                 atom2 = self.get_atom(atom2)
                 J = self[atom1, atom2, R]
 
-                if not force_symmetry:
+                if not form_model:
                     # Write the values
                     summary += (
                         f"{atom1:3} {atom2:3} "
@@ -1483,7 +1485,7 @@ class SpinHamiltonian(Crystal):
                             + f"({atom1:3} {atom2:3} "
                             + f"{R[0]:2.0f} {R[1]:2.0f} {R[2]:2.0f})\n"
                         )
-            if force_symmetry:
+            if form_model:
                 summary += "\n"
 
         return summary

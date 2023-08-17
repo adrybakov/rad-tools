@@ -44,7 +44,7 @@ exchange output is grouped based on the names provided in the template:
 
 .. code-block:: bash
 
-    rad-extract-tb2j.py -all -fs -if exchange.out -tf template.txt -on summary_forced_symmetry
+    rad-extract-tb2j.py -all -fm -if exchange.out -tf template.txt -on summary_forced_symmetry
 
 .. dropdown:: summary with forced symmetry
 
@@ -126,11 +126,11 @@ Decimals after the comma for the exchange values.
 
 .. versionchanged:: 0.5.17 Renamed from "-acc"/"--accuracy".
 
-.. _rad-extract-tb2j_force-symmetry:
+.. _rad-extract-tb2j_form-model:
 
--fs, --force-symmetry
+-fm, --form-model
 ---------------------
-Whether to force the symmetry of the template on the Hamiltonian.
+Whether to form the model based on the template.
 
 .. code-block:: text
 

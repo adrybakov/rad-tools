@@ -16,7 +16,7 @@ def manager(
     template_file,
     output_name="extracted_exchange.txt",
     decimals=4,
-    force_symmetry=False,
+    form_model=False,
     isotropic=False,
     anisotropic=False,
     matrix=False,
@@ -54,7 +54,7 @@ def manager(
     summary_txt = model.summary_as_txt(
         template=template,
         decimals=decimals,
-        force_symmetry=force_symmetry,
+        form_model=form_model,
         isotropic=isotropic,
         anisotropic=anisotropic,
         matrix=matrix,
@@ -119,11 +119,11 @@ def create_parser():
         help="Decimals after the comma for the exchange values.",
     )
     parser.add_argument(
-        "-fs",
-        "--force-symmetry",
+        "-fm",
+        "--form-model",
         action="store_true",
         default=False,
-        help="Whether to force the symmetry of the template on the model.",
+        help="Whether to form the model from the template.",
     )
     parser.add_argument(
         "-i",

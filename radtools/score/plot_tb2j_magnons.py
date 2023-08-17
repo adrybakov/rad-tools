@@ -23,7 +23,7 @@ def manager(
     spiral_vector=None,
     rotation_axis=None,
     path=None,
-    force_symmetry=False,
+    form_model=False,
     R_vector=None,
     max_distance=None,
     min_distance=None,
@@ -48,8 +48,8 @@ def manager(
     cd = datetime.now()
 
     # Check input parameters for consistency
-    if force_symmetry and template_file is None:
-        raise ValueError("--force-symmetry option requires a template file.")
+    if form_model and template_file is None:
+        raise ValueError("--form-model option requires a template file.")
 
     # Translate sequence of numbers to R vectors
     if R_vector is not None:
@@ -80,8 +80,8 @@ def manager(
         template = read_template(template_file)
     else:
         template = None
-    if force_symmetry:
-        model.force_symmetry(template=template)
+    if form_model:
+        model.form_model(template=template)
 
     # Filter the model
     model.filter(
@@ -252,11 +252,11 @@ def create_parser():
         help="Path in reciprocal space for the magnon dispersion.",
     )
     parser.add_argument(
-        "-fs",
-        "--force-symmetry",
+        "-fm",
+        "--form-model",
         action="store_true",
         default=False,
-        help="Whether to force the symmetry of the template on the model.",
+        help="Whether to form the model based on the template.",
     )
     parser.add_argument(
         "-R",

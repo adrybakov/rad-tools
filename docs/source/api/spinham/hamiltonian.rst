@@ -66,7 +66,7 @@ Filtering the model
 
     SpinHamiltonian.filter
     SpinHamiltonian.filtered
-    SpinHamiltonian.force_symmetry
+    SpinHamiltonian.form_model
     SpinHamiltonian.forced_symmetry
 
 Notation

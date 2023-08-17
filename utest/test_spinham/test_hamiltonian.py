@@ -435,7 +435,7 @@ def test_filter():
     assert len(filtered_model) == 1
 
 
-def test_force_symmetry():
+def test_form_model():
     template1 = ExchangeTemplate()
     template2 = ExchangeTemplate()
     template3 = ExchangeTemplate()
@@ -475,7 +475,7 @@ def test_force_symmetry():
         "J2": [("Cr1", "Cr1", (1, 0, 0)), ("Cr1", "Cr1", (-1, 0, 0))],
     }
 
-    model.force_symmetry(template=template1)
+    model.form_model(template=template1)
     assert len(model) == 6
     assert (
         model[(Cr1, Cr2, (0, 0, 0))].matrix
@@ -504,7 +504,7 @@ def test_force_symmetry():
     ).all()
     for matrix, atom1, atom2, R in bonds:
         model.add_bond(atom1, atom2, R, matrix=matrix)
-    model.force_symmetry(template=template2)
+    model.form_model(template=template2)
     assert len(model) == 5
     assert (
         model[(Cr1, Cr2, (0, 0, 0))].matrix
@@ -531,7 +531,7 @@ def test_force_symmetry():
 
     for matrix, atom1, atom2, R in bonds:
         model.add_bond(atom1, atom2, R, matrix=matrix)
-    model.force_symmetry(template=template3)
+    model.form_model(template=template3)
     assert len(model) == 4
     assert (
         model[(Cr1, Cr2, (0, 0, 0))].matrix

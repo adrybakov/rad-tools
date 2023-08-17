@@ -22,14 +22,14 @@ When exchange model is read from the TB2J exchange file the order of bonds is
 kept as the insert order of the python's dicts.
 
 Remove double-bonds argument from :ref:`rad-plot-tb2j.py <rad-plot-tb2j>` 
-script and add :ref:`--force-symmetry <rad-plot-tb2j_force-symmetry>` argument, 
-which force the symmetry of the template to the plotted model.
+script and add :ref:`--form-model <rad-plot-tb2j_form-model>` argument, 
+which form the model based on the template.
 
 
 0.5.1
 -----
 
-Bugfix in :py:meth:`.force_symmetry`.
+Bugfix in :py:meth:`.form_model`.
 
 0.5.2
 -----
@@ -81,7 +81,7 @@ Plot atoms in 0 0 0 unit cell in colour for
 0.5.14
 ------
 Bugfix in :ref:`rad-plot-tb2j.py <rad-plot-tb2j>` script.
-Problem with :ref:`--force-symmetry <rad-plot-tb2j_force-symmetry>` if there is filtering by non-template parameters.
+Problem with :ref:`--form-model <rad-plot-tb2j_form-model>` if there is filtering by non-template parameters.
 
 0.5.15
 ------

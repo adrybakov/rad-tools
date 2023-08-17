@@ -404,6 +404,10 @@ The Hamiltonian could be saved in as a text file with
     >>> # Saves the hamiltonian into the file "hamiltonian.txt"
     >>> hamiltonian.dump_txt("hamiltonian.txt") # doctest: +SKIP
 
+The format of the file is inspired by the output files of the |TB2J|_ code.
+Isotropic exchange is always written. DMI, full matrix and symmetric anisotropic 
+exchange can be removed from the output.
+
 It can be serialized with :py:meth:`.SpinHamiltonian.dump_pickle` method.
 
 .. doctest::

@@ -146,12 +146,12 @@ Modifying the Hamiltonian
 -------------------------
 
 By default ``rad-plot-tb2j.py`` displays the bonds as it is in the model.
-:ref:`-fs <rad-plot-tb2j_force-symmetry>` argument helps
+:ref:`-fm <rad-plot-tb2j_form-model>` argument helps
 to reproduce particular spin Hamiltonian:
 
 .. code-block:: bash
 
-    rad-plot-tb2j.py -if exchange.out -tf template.txt -fs -dc -sa 1.2 -sd 1.2 -t "Forced symmetry exchange" -on exchange_forced_symmetry
+    rad-plot-tb2j.py -if exchange.out -tf template.txt -fm -dc -sa 1.2 -sd 1.2 -t "Forced symmetry exchange" -on exchange_forced_symmetry
 
 .. figure:: /../examples/rad-plot-tb2j/exchange_forced_symmetry.iso.png
     :align: center
@@ -179,7 +179,7 @@ of the DMI vector is scaled to the medium value.
 
 .. note::
 
-    When :ref:`--force-symmetry <rad-plot-tb2j_force-symmetry>` argument is provided
+    When :ref:`--form-model <rad-plot-tb2j_form-model>` argument is provided
     :ref:`--template-file <rad-plot-tb2j_template-file>` is required.
 
 .. _rad-plot-tb2j_arguments:
@@ -380,9 +380,9 @@ Title is displayed in the picture.
     default : None
 
 
-.. _rad-plot-tb2j_force-symmetry:
+.. _rad-plot-tb2j_form-model:
 
--fs, --force-symmetry
+-fm, --form-model
 ---------------------
 Force the spin Hamiltonian to have the symmetry of the template.
 
