@@ -446,7 +446,6 @@ def MCLC(a: float, b: float, c: float, alpha: float, return_cell=False):
     return Lattice(cell)
 
 
-# TODO work out the order of the vectors
 def TRI(
     a: float,
     b: float,

@@ -4,7 +4,6 @@ from termcolor import colored
 __all__ = ["print_2d_array"]
 
 
-# TODO Add headers and footer. Add blanks for empty cells.
 def print_2d_array(
     array,
     fmt=">.2f",

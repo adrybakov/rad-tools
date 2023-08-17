@@ -100,9 +100,6 @@ def test_cell_error():
     model = SpinHamiltonian()
     with pytest.raises(ValueError):
         model.cell = [3, 4, 5]
-    # TODO
-    # with pytest.raises(ValueError):
-    #     model.cell = [3, 4, 5]
 
 
 def test_cell_list():

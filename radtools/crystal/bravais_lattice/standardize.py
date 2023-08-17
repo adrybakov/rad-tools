@@ -525,7 +525,6 @@ def MCLC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     return cell
 
 
-# TODO
 def TRI_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
     r"""
     Analyse arbitrary cell and redefine vectors if required to satisfy the TRI lattice conditions.
