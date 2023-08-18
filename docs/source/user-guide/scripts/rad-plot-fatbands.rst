@@ -53,7 +53,6 @@ detect it automatically in the
 
     default : None
 
-.. versionchanged:: 0.5.21 from "filpdos" to "seedname".
 
 
 .. _rad-plot-fatbands_output-path:
@@ -79,13 +78,12 @@ By default the whole energy range present in the files is plotted.
 
     default : None
 
-Renamed in version 0.5.21: from "window" to "energy-window".
 
 
 .. _rad-plot-fatbands_k-window:
 
 -kw, --k-window
---------------
+---------------
 K-point window for the plots.
 
 By default whole range present in the files is plotted.
@@ -171,14 +169,13 @@ Whether to save the data as txt files.
 
 --custom
 --------
-Custom PDOS plot. See :ref:`rad-plot-fatbands_custom-plots` for info.
+Custom PDOS plot. 
 
 .. code-block:: text
 
     default : None
     nargs : any
 
-.. versionadded:: 0.7.5
 
 
 .. _rad-plot-fatbands_colours:
@@ -197,7 +194,6 @@ the values of the :ref:`rad-plot-fatbands_custom`.
     default : None
     nargs : any
 
-.. versionadded:: 0.7.5
 
 
 .. _rad-plot-fatbands_labels:
@@ -217,7 +213,6 @@ then the label for the total PDOS is switched off and the total PDOS itself is n
     default : None
     nargs : any
 
-.. versionadded:: 0.7.6
 
 
 .. _rad-plot-fatbands_axes-labels-fontsize:
@@ -231,7 +226,6 @@ Fontsize of the labes of the axes.
     default : 14
     type : int
 
-.. versionadded:: 0.7.8
 
 
 .. _rad-plot-fatbands_legend-fontsize:
@@ -245,7 +239,6 @@ Fontsize of the legend.
     default : 12
     type : int
 
-.. versionadded:: 0.7.8
 
 
 .. _rad-plot-fatbands_title-fontsize:

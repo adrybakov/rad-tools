@@ -25,7 +25,7 @@ Ground state properties
 Properties for computation
 ==========================
 
-* MagnonDispersion.J
+* MagnonDispersion.J_matrices
 * MagnonDispersion.i
 * MagnonDispersion.j
 * MagnonDispersion.d

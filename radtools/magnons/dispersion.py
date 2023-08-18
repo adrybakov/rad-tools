@@ -32,8 +32,8 @@ class MagnonDispersion:
     noaniso : bool, default=False
         If True, then anisotropy is not included in the dispersion.
     custom_mask : func
-        Custom mask for the exchange parameter. Function which take (3,3) numpy:`ndarray`
-        as an input and returns (3,3) numpy:`ndarray` as an output.
+        Custom mask for the exchange parameter. Function which take (3,3) :numpy:`ndarray`
+        as an input and returns (3,3) :numpy:`ndarray` as an output.
 
     Attributes
     ----------
@@ -43,7 +43,7 @@ class MagnonDispersion:
         Global rotational axis.
     N : int
         Number of magnetic atoms.
-    J : (M,) :numpy:`ndarray`
+    J_matrices : (M,) :numpy:`ndarray`
         Exchange parameters.
     i : (M,) :numpy:`ndarray`
         Indices of the first atom in the exchange pair.
@@ -275,7 +275,7 @@ class MagnonDispersion:
         except ColpaFailed:
             # Try to solve for positive semidefinite matrix
             try:
-                omegas, U = solve_via_colpa(h + np.diag(1e-8 * np.ones(2*self.N)))
+                omegas, U = solve_via_colpa(h + np.diag(1e-8 * np.ones(2 * self.N)))
                 omegas = omegas.real[: self.N]
             except ColpaFailed:
                 # Try to solve for negative defined matrix
