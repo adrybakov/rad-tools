@@ -143,21 +143,21 @@ class SpinHamiltonian(Crystal):
             >>> model = rad.SpinHamiltonian()
             >>> model.notation = "standard"
             >>> print(model.notation_string)
-            H = - sum_{i,j} S_i J_ij S_j
+            H = - \sum_{i,j} S_i J_{ij} S_j
             Double counting is present.
             Spin vectors are not normalized.
             >>> model.notation
             (True, False, -1.0)
             >>> model.notation = "TB2J"
             >>> print(model.notation_string)
-            H = - sum_{i,j} S_i J_ij S_j
+            H = - \sum_{i,j} e_i J_{ij} e_j
             Double counting is present.
             Spin vectors are normalized to 1.
             >>> model.notation
             (True, True, -1.0)
             >>> model.notation = "SpinW"
             >>> print(model.notation_string)
-            H = sum_{i,j} S_i J_ij S_j
+            H = \sum_{i,j} S_i J_{ij} S_j
             Double counting is present.
             Spin vectors are not normalized.
             >>> model.notation
@@ -308,13 +308,16 @@ class SpinHamiltonian(Crystal):
             else:
                 text_result += f"{self.factor} "
 
-        text_result += "sum_{"
+        text_result += "\sum_{"
         if self.double_counting:
-            text_result += "i,j} "
+            text_result += "i,j}"
         else:
-            text_result += "i>=j} "
+            text_result += "i>=j}"
 
-        text_result += "S_i J_ij S_j\n"
+        if self.spin_normalized:
+            text_result += " e_i J_{ij} e_j\n"
+        else:
+            text_result += " S_i J_{ij} S_j\n"
 
         if self.double_counting:
             text_result += "Double counting is present.\n"
@@ -1352,6 +1355,11 @@ def dump_spinham_txt(
             + "\n"
         )
         spinham_txt.append(main_separator)
+
+    spinham_txt.append(TXT_FLAGS["notation"] + "\n")
+    spinham_txt.append(f"{spinham.notation}\n")
+    spinham_txt.append(spinham.notation_string + "\n")
+    spinham_txt.append(main_separator)
 
     if template is None:
         spinham_txt.append(TXT_FLAGS["spinham"] + "\n")

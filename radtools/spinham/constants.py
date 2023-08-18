@@ -28,4 +28,5 @@ TXT_FLAGS = {
     "klabels": "Labels:",
     "dispersion": "Magnon dispersion:",
     "separate": "Data are in the file:",
+    "notation": "Notation of Hamiltonian:",
 }

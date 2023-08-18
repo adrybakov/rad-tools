@@ -539,7 +539,7 @@ The notation could be defined in three ways:
     >>> hamiltonian.notation
     (True, False, -2.0)
     >>> print(hamiltonian.notation_string)
-    H = -2 sum_{i,j} S_i J_ij S_j
+    H = -2 \sum_{i,j} S_i J_{ij} S_j
     Double counting is present.
     Spin vectors are not normalized.
     >>> hamiltonian.double_counting
@@ -559,21 +559,21 @@ The notation could be defined in three ways:
     >>> hamiltonian.notation
     (True, False, -1.0)
     >>> print(hamiltonian.notation_string)
-    H = - sum_{i,j} S_i J_ij S_j
+    H = - \sum_{i,j} S_i J_{ij} S_j
     Double counting is present.
     Spin vectors are not normalized.
     >>> hamiltonian.notation = 'tb2j'
     >>> hamiltonian.notation
     (True, True, -1.0)
     >>> print(hamiltonian.notation_string)
-    H = - sum_{i,j} S_i J_ij S_j
+    H = - \sum_{i,j} e_i J_{ij} e_j
     Double counting is present.
     Spin vectors are normalized to 1.
     >>> hamiltonian.notation = 'spinw'
     >>> hamiltonian.notation
     (True, False, 1.0)
     >>> print(hamiltonian.notation_string)
-    H = sum_{i,j} S_i J_ij S_j
+    H = \sum_{i,j} S_i J_{ij} S_j
     Double counting is present.
     Spin vectors are not normalized.
 
@@ -619,14 +619,14 @@ If you want to reset the notation once it is set, but keep the parameters intact
     >>> hamiltonian.notation
     (True, False, -2.0)
     >>> print(hamiltonian.notation_string)
-    H = -2 sum_{i,j} S_i J_ij S_j
+    H = -2 \sum_{i,j} S_i J_{ij} S_j
     Double counting is present.
     Spin vectors are not normalized.
     >>> hamiltonian.set_interpretation(double_counting=False, spin_normalized=True)
     >>> hamiltonian.notation
     (False, True, -2.0)
     >>> print(hamiltonian.notation_string)
-    H = -2 sum_{i>=j} S_i J_ij S_j
+    H = -2 \sum_{i>=j} e_i J_{ij} e_j
     No double counting.
     Spin vectors are normalized to 1.
 

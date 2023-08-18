@@ -11,7 +11,7 @@
         Git hash: 9c9b087fa02be0cafdadaef6ec1c7926fe36e3d6       ███   ▄▄       
                        Licence: MIT License                      ████ █  █      
                                                                  ████    █      
-              Generated on 18 August 2023 at 19:50:4             ▀▀▀▀▀▀▀▀       
+              Generated on 19 August 2023 at 0:13:51             ▀▀▀▀▀▀▀▀       
 Exchange values are extracted from:
 /Users/rybakov.ad/Projects/rad-tools/docs/examples/rad-extract-tb2j/exchange.out
 ================================================================================
@@ -30,6 +30,12 @@ Atoms:
 Magnetic moments of magnetic atoms:
  Index Name     m_x         m_y        m_z    
  1     Ni1  -0.00010000 -0.00010000 1.43680000
+================================================================================
+Notation of Hamiltonian:
+(True, True, -1.0)
+H = - sum_{i,j} e_i J_{ij} e_j
+Double counting is present.
+Spin vectors are normalized to 1.
 ================================================================================
 Spin Hamiltonian:
 Atom1  Atom2  (  i,   j,   k)  J_iso   Distance
