@@ -148,4 +148,4 @@ prepare-release:
 
 docs-pictures:
 	@python3 tools/plot-data-structure.py
-	@python3 tools/plot-notations.py
+	@python3 tools/plot-notation.py

@@ -28,13 +28,15 @@ def plot_notation():
         color="grey",
     )
     text_style = dict(va="center", ha="center", fontsize=14)
-    delta = 5
-    ylim = (0, 31)
-    xlim = (0.7 * delta, 6.9 * delta)
+    delta = 6
+    yrange = 25
+    ylim = (0, yrange)
+    xlim = (0.7 * delta, 5.7 * delta)
+    factor_message = ["Factor $\dfrac{1}{2}$", "Factor 2", "No Factor"]
     fig, ax = plt.subplots(figsize=(xlim[1] / 2, ylim[1] / 2))
     ax.text(
         delta,
-        31 / 2,
+        yrange / 2,
         "???",
         va="center",
         ha="right",
@@ -46,12 +48,18 @@ def plot_notation():
         ),
     )
     for dcount in range(2):
-        dcount_pos = 31 / 4 * (1 + 2 * dcount)
+        dcount_pos = yrange / 4 * (1 + 2 * dcount)
         message = "Double\ncounting" if dcount else "No\ndouble\ncounting"
         ax.text(2 * delta, dcount_pos, message, **text_style)
-        ax.quiver(delta + 0.5, 31 / 2, delta - 1.7, dcount_pos - 31 / 2, **quiver_style)
+        ax.quiver(
+            delta + 0.5,
+            yrange / 2,
+            delta - 1.7,
+            dcount_pos - yrange / 2,
+            **quiver_style,
+        )
         for snorm in range(2):
-            snorm_pos = 31 / 8 * (1 + 4 * dcount + 2 * snorm)
+            snorm_pos = yrange / 8 * (1 + 4 * dcount + 2 * snorm)
             message = "Spin\nnormalized" if snorm else "Spin\nnot\nnormalized"
             ax.text(3 * delta, snorm_pos, message, **text_style)
             ax.quiver(
@@ -61,73 +69,68 @@ def plot_notation():
                 dcount_pos - snorm_pos,
                 **quiver_style,
             )
-            for onehalf in range(2):
-                onehalf_pos = 31 / 16 * (1 + 8 * dcount + 4 * snorm + 2 * onehalf)
+            for factor in range(3):
+                factor_pos = yrange / 24 * (1 + 12 * dcount + 6 * snorm + 2 * factor)
+
                 message = (
-                    "Factor $\dfrac{1}{2}$" if onehalf else "No\nfactor $\dfrac{1}{2}$"
+                    "Factor $\dfrac{1}{2}$"
+                    if factor
+                    else 1
+                    if 1
+                    else "No\nfactor $\dfrac{1}{2}$"
                 )
-                ax.text(4 * delta, onehalf_pos, message, **text_style)
+                ax.text(4 * delta, factor_pos, factor_message[factor], **text_style)
                 ax.quiver(
                     3 * delta + 1.5,
                     snorm_pos,
                     delta - 2.7,
-                    snorm_pos - onehalf_pos,
+                    snorm_pos - factor_pos,
                     **quiver_style,
                 )
-                for two in range(2):
-                    two_pos = (
-                        31 / 32 * (1 + 16 * dcount + 8 * snorm + 4 * onehalf + 2 * two)
-                    )
-                    message = "Factor 2" if two else "No\nfactor 2"
-                    ax.text(5 * delta, two_pos, message, **text_style)
-                    ax.quiver(
-                        4 * delta + 1.2,
-                        onehalf_pos,
-                        delta - 2.3,
-                        onehalf_pos - two_pos,
-                        **quiver_style,
-                    )
-
-                    ax.quiver(5 * delta + 1.2, two_pos, 2, 0, **quiver_style)
-                    hamiltonian = ""
-                    energy = 1.0
-                    if two and not onehalf:
-                        hamiltonian += "2"
-                        energy *= 2
-                    if onehalf and not two:
-                        hamiltonian += "$\dfrac{1}{2}$"
-                        energy *= 0.5
-                    if dcount:
-                        hamiltonian += "$\sum_{ij}$"
-                        energy *= 2
-                    else:
-                        hamiltonian += "$\sum_{i<j}$"
-                    if int(energy) != energy:
-                        energy = f"{energy}"
-                    else:
-                        energy = f"{energy:.0f}"
-                    if snorm:
-                        hamiltonian += "$e_i\ J_{ij}\ e_j$"
-                        conv_factor = f"{energy}"
-                    else:
-                        hamiltonian += "$S_i\ J_{ij}\ S_j$"
-                        conv_factor = (
-                            f"{energy}" + R"$\cdot\vert S_i\vert \vert S_j\vert$"
-                        )
-                    hamiltonian += f" = {conv_factor}"
-                    ax.text(
-                        5 * delta + 3.5,
-                        two_pos,
-                        hamiltonian,
-                        va="center",
-                        ha="left",
-                        fontsize=15,
-                        bbox=dict(
-                            boxstyle="round",
-                            ec=(*colors[conv_factor], 1),
-                            fc=(*colors[conv_factor], 0.5),
-                        ),
-                    )
+                hamiltonian = ""
+                energy = 1.0
+                if factor == 0:
+                    hamiltonian += "$\dfrac{1}{2}$"
+                    energy *= 0.5
+                if factor == 1:
+                    hamiltonian += "2"
+                    energy *= 2
+                if dcount:
+                    hamiltonian += "$\sum_{ij}$"
+                    energy *= 2
+                else:
+                    hamiltonian += "$\sum_{i<j}$"
+                if int(energy) != energy:
+                    energy = f"{energy}"
+                else:
+                    energy = f"{energy:.0f}"
+                if snorm:
+                    hamiltonian += "$e_i\ J_{ij}\ e_j$"
+                    conv_factor = f"{energy}"
+                else:
+                    hamiltonian += "$S_i\ J_{ij}\ S_j$"
+                    conv_factor = f"{energy}" + R"$\cdot\vert S_i\vert \vert S_j\vert$"
+                hamiltonian += f" = {conv_factor}"
+                ax.text(
+                    4 * delta + 3.5,
+                    factor_pos,
+                    hamiltonian,
+                    va="center",
+                    ha="left",
+                    fontsize=15,
+                    bbox=dict(
+                        boxstyle="round",
+                        ec=(*colors[conv_factor], 1),
+                        fc=(*colors[conv_factor], 0.5),
+                    ),
+                )
+                ax.quiver(
+                    4 * delta + 1.4,
+                    factor_pos,
+                    1.7,
+                    0,
+                    **quiver_style,
+                )
 
     ax.set_ylim(*ylim)
     ax.set_xlim(*xlim)
