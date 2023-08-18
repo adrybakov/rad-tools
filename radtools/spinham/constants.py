@@ -23,4 +23,9 @@ TXT_FLAGS = {
     "dmi_relative": "|DMI| / |J_iso|:",
     "aniso": "Symmetric anisotropic exchange:",
     "spinmodel": "Spin model:",
+    "kpath": "K-path:",
+    "kpoints": "Points (in relative coordinates):",
+    "klabels": "Labels:",
+    "dispersion": "Magnon dispersion:",
+    "separate": "Data are in the file:"
 }

@@ -1,6 +1,4 @@
 from argparse import ArgumentParser
-from calendar import month_name
-from datetime import datetime
 from os import makedirs
 from os.path import abspath, join
 
@@ -12,6 +10,10 @@ from radtools import __version__ as version
 from radtools.io.internal import read_template
 from radtools.io.tb2j import read_tb2j_model
 from radtools.magnons.dispersion import MagnonDispersion
+from radtools.decorate.stats import logo
+from radtools.spinham.constants import TXT_FLAGS
+from radtools.decorate.array import print_2d_array
+from radtools.decorate.axes import plot_hlines
 
 
 def manager(
@@ -31,6 +33,9 @@ def manager(
     interactive=False,
     verbose=False,
     bravais_type=None,
+    join_output=False,
+    nodmi=False,
+    no_anisotropic=False,
 ):
     r"""
     :ref:`rad-plot-tb2j-magnons` script.
@@ -44,12 +49,11 @@ def manager(
     # Create the output directory if it does not exist
     makedirs(output_path, exist_ok=True)
 
-    # Get current date and time
-    cd = datetime.now()
-
     # Check input parameters for consistency
     if form_model and template_file is None:
-        raise ValueError("--form-model option requires a template file.")
+        raise ValueError(
+            "--form-model option requires a template file (--template-filename)."
+        )
 
     # Translate sequence of numbers to R vectors
     if R_vector is not None:
@@ -58,15 +62,15 @@ def manager(
         )
         R_vector = list(map(tuple, R_vector.tolist()))
 
-    # Read the model
-    model = read_tb2j_model(
+    # Read the spinham
+    spinham = read_tb2j_model(
         input_filename, quiet=not verbose, bravais_type=bravais_type
     )
 
-    cprint(f"{model.variation} crystal detected", "green")
+    cprint(f"{spinham.variation} crystal detected", "green")
 
-    # Get k points of the model
-    kp = model.kpoints
+    # Get k points of the spinham
+    kp = spinham.kpoints
     # Set custom k path
     if path is not None:
         kp.path = path
@@ -81,34 +85,38 @@ def manager(
         template = read_template(template_file)
     else:
         template = None
+
+    # Form the spinham based on the template or filter it
     if form_model:
-        model.form_model(template=template)
+        spinham.form_model(template=template)
+    else:
+        spinham.filter(
+            min_distance=min_distance,
+            max_distance=max_distance,
+            R_vector=R_vector,
+            template=template,
+        )
 
-    # Filter the model
-    model.filter(
-        min_distance=min_distance,
-        max_distance=max_distance,
-        R_vector=R_vector,
-        template=template,
-    )
-
+    # Set the spin of the atoms
     if spin is not None:
         for i in range(len(spin) // 4):
             atom_name = spin[4 * i]
-            atom = model.get_atom(atom_name)
+            atom = spinham.get_atom(atom_name)
             atom_spin = list(map(float, spin[4 * i + 1 : 4 * i + 4]))
             atom.spin_vector = atom_spin
 
     # Get the magnon dispersion
-    dispersion = MagnonDispersion(model, Q=spiral_vector, n=rotation_axis)
+    dispersion = MagnonDispersion(
+        spinham,
+        Q=spiral_vector,
+        n=rotation_axis,
+        nodmi=nodmi,
+        noaniso=no_anisotropic,
+    )
 
     fig, ax = plt.subplots()
 
-    omegas = []
-    for point in kp.points():
-        omegas.append(dispersion.omega(point))
-
-    omegas = np.array(omegas).T
+    omegas = dispersion(kp)
 
     ax.set_xticks(kp.coordinates(), kp.labels, fontsize=15)
     ax.set_ylabel("E, meV", fontsize=15)
@@ -126,44 +134,149 @@ def manager(
         ax.plot(kp.flatten_points(), omega)
 
     ax.set_xlim(kp.flatten_points()[0], kp.flatten_points()[-1])
-    ax.set_ylim(0, None)
+    plot_hlines(ax, [0])
 
     if save_txt:
-        header = (
-            f"Magnon dispersion is computed based on the file: {input_filename}\n"
-            + f"on {cd.day} {month_name[cd.month]} {cd.year}"
-            + f" at {cd.hour}:{cd.minute}:{cd.second} by rad-tools {version}\n\n"
-        )
-        header += f"\nSpins:\n"
-        for atom in model.magnetic_atoms:
-            header += f"  {atom.name} : {atom.spin_vector}\n"
+        main_separator = "=" * 80 + "\n"
+        info = [
+            main_separator,
+            logo(date_time=True, line_length=80),
+            f"\nMagnon dispersion is computed based on the file:\n{input_filename}\n",
+        ]
+        if template_file is not None:
+            info.append(f"With template file:\n{template_file}\n")
 
-        header += f"\nDetected Bravais lattice: {model.variation}\n"
+        info.append(main_separator)
+        info.append(TXT_FLAGS["cell"] + "\n")
+        info.append(
+            print_2d_array(
+                spinham.cell,
+                borders=False,
+                fmt="^.8f",
+                print_result=False,
+                header_row=["x", "y", "z"],
+            )
+            + "\n"
+        )
+        info.append(f"Detected Bravais lattice: {spinham.variation}\n")
+        info.append(main_separator)
+        info.append(TXT_FLAGS["atoms"] + "\n")
+        header_column = []
+        header_row = [
+            f"Index Name",
+            "a1 (rel)",
+            "a2 (rel)",
+            "a3 (rel)",
+            "S_x",
+            "S_y",
+            "S_z",
+        ]
+        atom_data = np.zeros((len(spinham.magnetic_atoms), 6))
+        for a_i, atom in enumerate(spinham.magnetic_atoms):
+            header_column.append(f"{atom.index:<5} {atom.name:<4}")
+            atom_data[a_i, :3] = spinham.get_atom_coordinates(atom, relative=True)
+            atom_data[a_i, 3:] = atom.spin_vector
+        info.append(
+            print_2d_array(
+                atom_data,
+                borders=False,
+                fmt="^.8f",
+                print_result=False,
+                header_row=header_row,
+                header_column=header_column,
+            )
+            + "\n"
+        )
 
         if spiral_vector is not None:
-            header += f"\nSpiral vector: {dispersion.Q} (relative: {spiral_vector})\n"
-            header += f"Rotation axis: {dispersion.n}\n"
+            info.append(f"Spiral vector: {dispersion.Q} (relative: {spiral_vector})\n")
+            info.append(f"Rotation axis: {dispersion.n}\n")
 
-        header += f"\nK path: {kp.path_string}\n" + f"\nK points: \n"
-        for name in kp._hs_points:
-            header += f"  {name} : {kp._hs_coordinates[name]}\n"
+        info.append(main_separator)
+        info.append(TXT_FLAGS["kpath"] + "\n")
+        info.append(f"  {kp.path_string}\n")
+        info.append(TXT_FLAGS["kpoints"] + "\n")
+        names_data = []
+        header_column = []
+        for name in kp.hs_names:
+            header_column.append(f"{name:<6}")
+            names_data.append(kp.hs_coordinates[name])
+        info.append(
+            print_2d_array(
+                names_data,
+                borders=False,
+                fmt=">.8f",
+                print_result=False,
+                header_column=header_column,
+            )
+            + "\n"
+        )
 
-        header += "\nLabels: \n"
+        info.append(TXT_FLAGS["klabels"] + "\n")
+        labels_data = []
+        header_column = []
         for i in range(len(kp.labels)):
-            header += f"  {kp.labels[i]} : {kp.coordinates()[i]:.8f}\n"
+            header_column.append(f"{kp.labels[i]:<10}")
+            labels_data.append([kp.coordinates()[i]])
+        info.append(
+            print_2d_array(
+                labels_data,
+                borders=False,
+                fmt=">.8f",
+                print_result=False,
+                header_column=header_column,
+            )
+            + "\n"
+        )
+        info.append(main_separator)
+        info.append(TXT_FLAGS["dispersion"] + "\n")
 
-        header += "\nMagnon dispersion header:\ncoordinate"
+        header = ["Coordinate"]
         for i in range(omegas.shape[0]):
-            header += f' {f"omega_{i}":>14}'
-        header += f"    {'k_x':>10} {'k_y':>10} {'k_z':>10}"
+            header.append(f' {f"omega_{i}":>14}')
+        header.append(f"    {'b1 (rel)':>10} {'b2 (rel)':>10} {'b3 (rel)':>10}")
+        header.append(f"    {'k_x (abs)':>10} {'k_y (abs)':>10} {'k_z (abs)':>10}")
+        info.append("".join(header))
 
-        with open(join(output_path, f"{output_name}_info.txt"), "w") as file:
-            file.write(header)
+        if not join_output:
+            filename = f"{output_name}_data.txt"
+            info.extend(
+                [
+                    "\n",
+                    TXT_FLAGS["separate"],
+                    "\n",
+                    abspath(join(output_path, filename)),
+                ]
+            )
+            info = "".join(info)
+            with open(join(output_path, f"{output_name}_info.txt"), "w") as file:
+                file.write(info)
+            info = ""
+            comments = "#"
+        else:
+            info = "".join(info)
+            filename = f"{output_name}.txt"
+            comments = ""
 
         np.savetxt(
-            join(output_path, f"{output_name}.txt"),
-            np.concatenate(([kp.flatten_points()], omegas, kp.points().T), axis=0).T,
-            fmt="%.8f" + " %.8e" * omegas.shape[0] + "   " + " %.8f" * 3,
+            join(output_path, filename),
+            np.concatenate(
+                (
+                    [kp.flatten_points()],
+                    omegas,
+                    kp.points(relative=True).T,
+                    kp.points(relative=False).T,
+                ),
+                axis=0,
+            ).T,
+            fmt="%.8f"
+            + " %.8e" * omegas.shape[0]
+            + "   "
+            + " %.8f" * 3
+            + "   "
+            + " %.8f" * 3,
+            header=info,
+            comments=comments,
         )
     if interactive:
         plt.show()
@@ -224,7 +337,7 @@ def create_parser():
         type=str,
         nargs="*",
         default=None,
-        help="Spin of the atoms in the model.",
+        help="Spin of the atoms in the spinham.",
     )
     parser.add_argument(
         "-Q",
@@ -257,7 +370,7 @@ def create_parser():
         "--form-model",
         action="store_true",
         default=False,
-        help="Whether to form the model based on the template.",
+        help="Whether to form the spinham based on the template.",
     )
     parser.add_argument(
         "-R",
@@ -266,7 +379,7 @@ def create_parser():
         type=int,
         nargs="*",
         default=None,
-        help="R vectors for filtering the model.",
+        help="R vectors for filtering the spinham.",
     )
     parser.add_argument(
         "-maxd",
@@ -328,6 +441,26 @@ def create_parser():
         type=str,
         default=None,
         help="Bravais lattice type. If not provided, the type is identified automatically.",
+    )
+    parser.add_argument(
+        "-jo",
+        "--join-output",
+        action="store_true",
+        default=None,
+        help="Whether to join the output files into a single file.",
+    )
+    parser.add_argument(
+        "-nodmi",
+        action="store_true",
+        default=False,
+        help="Whether to ignore DMI in the spinham.",
+    )
+    parser.add_argument(
+        "-noa",
+        "--no-anisotropic",
+        action="store_true",
+        default=False,
+        help="Whether to ignore anisotropic symmetric exchange in the spinham.",
     )
 
     return parser

@@ -268,19 +268,33 @@ class MagnonDispersion:
         """
         # Diagonalize h matrix via Colpa
         k = np.array(k)
+        h = self.h(k)
         try:
-            omegas, U = solve_via_colpa(self.h(k))
+            omegas, U = solve_via_colpa(h)
             omegas = omegas.real[: self.N]
         except ColpaFailed:
-            # Try to solve for negative-defined matrix
+            # Try to solve for positive semidefinite matrix
             try:
-                omegas, U = solve_via_colpa(-self.h(k))
-                omegas = omegas.real[: self.N] * -1
+                omegas, U = solve_via_colpa(h + np.diag(1e-8 * np.ones(2*self.N)))
+                omegas = omegas.real[: self.N]
             except ColpaFailed:
-                if zeros_to_none:
-                    omegas = np.array([None] * self.N)
-                else:
-                    omegas = np.zeros(self.N)
+                # Try to solve for negative defined matrix
+                try:
+                    omegas, U = solve_via_colpa(-h)
+                    omegas = omegas.real[: self.N] * -1
+                except ColpaFailed:
+                    # Try to solve for negative semidefinite matrix
+                    try:
+                        omegas, U = solve_via_colpa(
+                            -h - np.diag(1e-8 * np.ones(h.shape[0]))
+                        )
+                        omegas = omegas.real[: self.N] * -1
+                    except ColpaFailed:
+                        # If all fails, return None or 0
+                        if zeros_to_none:
+                            omegas = np.array([None] * self.N)
+                        else:
+                            omegas = np.zeros(self.N)
 
         return omegas
 

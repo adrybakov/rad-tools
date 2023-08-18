@@ -276,3 +276,33 @@ numerical accuracy in the :py:func:`lepage` algorithm.
     default : None
     type : str
     choices : CUB, FCC, BCC, TET, BCT, ORC, ORCF, ORCI, ORCC, HEX, RHL, MCL, MCLC, TRI
+
+.. _rad-plot-tb2j-magnons_join-output:
+
+-jo, --join-output
+------------------
+Whether to join the output files into a single file.
+
+.. code-block:: text
+
+    default : False
+
+.. _rad-plot-tb2j-magnons_nodmi:
+
+-nodmi
+------
+Whether to ignore DMI in the spinham.
+
+.. code-block:: text
+
+    default : False
+
+.. _rad-plot-tb2j-magnons_no-anisotropic:
+
+-noa, --no-anisotropic
+----------------------
+Whether to ignore anisotropic symmetric exchange in the spinham.
+
+.. code-block:: text
+
+    default : False
