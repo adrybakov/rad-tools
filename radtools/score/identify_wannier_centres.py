@@ -7,7 +7,7 @@ import numpy as np
 from termcolor import cprint
 
 
-def manager(filename, span, output_path, output_name):
+def manager(input_filename, span, output_path, output_name):
     r"""
     :ref:`rad-identify-wannier-centres` script.
 
@@ -19,7 +19,7 @@ def manager(filename, span, output_path, output_name):
 
     # Get the output path and the output name from the input filename
     # if they are not specified
-    head, tail = split(filename)
+    head, tail = split(input_filename)
     if output_path is None:
         output_path = head
     if output_name is None:
@@ -30,7 +30,7 @@ def manager(filename, span, output_path, output_name):
 
     # Read atoms and centres
     atom_counter = {}
-    with open(filename, "r") as file:
+    with open(input_filename, "r") as file:
         # Read the number of atoms and centres
         n = int(file.readline())
 
@@ -106,8 +106,11 @@ def manager(filename, span, output_path, output_name):
 def create_parser():
     parser = ArgumentParser()
     parser.add_argument(
-        "filename",
+        "-if",
+        "--input-filename",
+        metavar="filename",
         type=str,
+        required=True,
         help="Relative or absolute path to the _centres.xyz file",
     )
     parser.add_argument(

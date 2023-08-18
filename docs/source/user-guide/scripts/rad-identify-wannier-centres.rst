@@ -74,10 +74,10 @@ where all centres are correctly identified.
 Arguments
 =========
 
-.. _rad-identify-wannier-centres_filename:
+.. _rad-identify-wannier-centres_input-filename:
 
-filename
---------
+-if, --input-filename
+---------------------
 Relative or absolute path to the "_centres.xyz" file
 
 Identified Wannier centres are stored in the "filename_identified" file.
@@ -85,6 +85,8 @@ Identified Wannier centres are stored in the "filename_identified" file.
 .. code-block:: text
 
     required
+
+.. versionchanged:: 0.8.0 Renamed from ``filename``
 
 .. _rad-identify-wannier-centres_span:
 
