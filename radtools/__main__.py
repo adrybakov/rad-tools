@@ -4,7 +4,7 @@ from radtools.decorate.stats import logo
 
 if __name__ == "__main__":
     parser = ArgumentParser(
-        description="rad-tools package",
+        description="RAD-tools package",
     )
     parser.add_argument(
         "--info",

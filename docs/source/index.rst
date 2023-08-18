@@ -98,4 +98,4 @@ please give a credit to the developers by citing the package:
 
 .. code-block::
         
-    rad-tools package, rad-tools.org
+    RAD-tools package, rad-tools.org
