@@ -45,28 +45,25 @@ First we find the third lattice vector of the primitive cell.
 For this step we use lattice vectors of the primitive cell:
 
 * If :math:`\vert\boldsymbol{a}_1\vert = \vert\boldsymbol{a}_3\vert`
+    .. math::
 
-.. math::
-
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
-    (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
 
 * If :math:`\vert\boldsymbol{a}_2\vert = \vert\boldsymbol{a}_3\vert`
+    .. math::
 
-.. math::
-
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
-    (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
 
 Then we order first two lattice vector. 
 For this step we use lattice vectors of the conventional cell:
 
 * If :math:`\vert\boldsymbol{a}_1\vert > \vert\boldsymbol{a}_2\vert`
+    .. math::
 
-.. math::
-
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
-    (-\boldsymbol{a}_2, \boldsymbol{a}_1, \boldsymbol{a}_3)
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (-\boldsymbol{a}_2, \boldsymbol{a}_1, \boldsymbol{a}_3)
 
 .. note::
 
@@ -108,24 +105,24 @@ One example is predefined: ``orcc`` with
 Examples
 ========
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: orcc_brillouin.py
     :language: py
 
 .. figure:: orcc_brillouin.png 
     :target: ../../../../../_images/orcc_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: orcc_real.py
     :language: py
 
 .. figure:: orcc_real.png 
     :target: ../../../../../_images/orcc_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: orcc_wigner-seitz.py
     :language: py
 

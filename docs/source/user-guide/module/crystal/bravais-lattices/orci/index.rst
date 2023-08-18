@@ -44,24 +44,21 @@ If this condition is not satisfied, then the lattice is transformed to the stand
 First we order first two vectors by length:
 
 * If :math:`\vert\boldsymbol{a}_1\vert > \vert\boldsymbol{a}_2\vert`
+    .. math::
 
-.. math::
-
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow (\boldsymbol{a}_2, \boldsymbol{a}_1, -\boldsymbol{a}_3)
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow (\boldsymbol{a}_2, \boldsymbol{a}_1, -\boldsymbol{a}_3)
 
 Then we find a correct place for the third vector:
 
 * If :math:`\vert\boldsymbol{a}_1\vert > \vert\boldsymbol{a}_3\vert`
+    .. math::
 
-.. math::
-
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
 
 * If :math:`\vert\boldsymbol{a}_2\vert > \vert\boldsymbol{a}_3\vert`
+    .. math::
 
-.. math::
-
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow (\boldsymbol{a}_1, -\boldsymbol{a}_3, \boldsymbol{a}_2)
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow (\boldsymbol{a}_1, -\boldsymbol{a}_3, \boldsymbol{a}_2)
 
 .. note::
 
@@ -111,24 +108,24 @@ One example is predefined: ``orci`` with
 Examples
 ========
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: orci_brillouin.py
     :language: py
 
 .. figure:: orci_brillouin.png 
     :target: ../../../../../_images/orci_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: orci_real.py
     :language: py
 
 .. figure:: orci_real.png 
     :target: ../../../../../_images/orci_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: orci_wigner-seitz.py
     :language: py
 

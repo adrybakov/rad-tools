@@ -27,18 +27,16 @@ If this condition is not satisfied,
 then the lattice is transformed to the standard form:
 
 * If :math:`\vert\boldsymbol{a}_1\vert = \vert\boldsymbol{a}_3\vert \ne \vert\boldsymbol{a}_2\vert`
-
-.. math::
-    
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
-    (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
+    .. math::
+        
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
 
 * If :math:`\vert\boldsymbol{a}_2\vert = \vert\boldsymbol{a}_3\vert \ne \vert\boldsymbol{a}_1\vert`
-
-.. math::
-    
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
-    (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
+    .. math::
+        
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
 
 
 K-path
@@ -66,24 +64,24 @@ One example is predefined: ``tet`` with :math:`a = \pi` and :math:`c = 1.5\pi`
 Examples
 ========
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: tet_brillouin.py
     :language: py
 
 .. figure:: tet_brillouin.png 
     :target: ../../../../../_images/tet_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: tet_real.py
     :language: py
 
 .. figure:: tet_real.png 
     :target: ../../../../../_images/tet_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: tet_wigner-seitz.py
     :language: py
 

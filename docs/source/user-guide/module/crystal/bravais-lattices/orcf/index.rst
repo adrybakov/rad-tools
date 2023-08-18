@@ -44,27 +44,24 @@ We use the primitive lattice vectors for the standardization:
 First we order first two vectors by length:
 
 * If :math:`\vert\boldsymbol{a}_1\vert < \vert\boldsymbol{a}_2\vert`
+    .. math::
 
-.. math::
-
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
-    (\boldsymbol{a}_2, \boldsymbol{a}_1, -\boldsymbol{a}_3)
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_2, \boldsymbol{a}_1, -\boldsymbol{a}_3)
 
 Then we find a correct place for the third vector:
 
 * If :math:`\vert\boldsymbol{a}_1\vert < \vert\boldsymbol{a}_3\vert`
+    .. math::
 
-.. math::
-
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
-    (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
 
 * If :math:`\vert\boldsymbol{a}_2\vert < \vert\boldsymbol{a}_3\vert`
+    .. math::
 
-.. math::
-
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
-    (\boldsymbol{a}_1, -\boldsymbol{a}_3, \boldsymbol{a}_2)
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_1, -\boldsymbol{a}_3, \boldsymbol{a}_2)
 
 .. note::
 
@@ -206,24 +203,24 @@ Examples
 ORCF\ :sub:`1`
 --------------
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: orcf1_brillouin.py
     :language: py
 
 .. figure:: orcf1_brillouin.png 
     :target: ../../../../../_images/orcf1_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: orcf1_real.py
     :language: py
 
 .. figure:: orcf1_real.png 
     :target: ../../../../../_images/orcf1_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: orcf1_wigner-seitz.py
     :language: py
 
@@ -233,24 +230,24 @@ ORCF\ :sub:`1`
 ORCF\ :sub:`2`
 --------------
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: orcf2_brillouin.py
     :language: py
 
 .. figure:: orcf2_brillouin.png 
     :target: ../../../../../_images/orcf2_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: orcf2_real.py
     :language: py
 
 .. figure:: orcf2_real.png 
     :target: ../../../../../_images/orcf2_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: orcf2_wigner-seitz.py
     :language: py
 
@@ -260,24 +257,24 @@ ORCF\ :sub:`2`
 ORCF\ :sub:`3`
 --------------
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: orcf3_brillouin.py
     :language: py
 
 .. figure:: orcf3_brillouin.png 
     :target: ../../../../../_images/orcf3_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: orcf3_real.py
     :language: py
 
 .. figure:: orcf3_real.png 
     :target: ../../../../../_images/orcf3_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: orcf3_wigner-seitz.py
     :language: py
 

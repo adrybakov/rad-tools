@@ -49,36 +49,32 @@ First we ensure the length of the third vector is different from the length of t
 For this step we use vectors of the primitive lattice:
 
 * If :math:`\vert\boldsymbol{a}_1\vert = \vert\boldsymbol{a}_3\vert`:
+    .. math::
 
-.. math::
-
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
-    (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
 
 * If :math:`\vert\boldsymbol{a}_2\vert = \vert\boldsymbol{a}_3\vert`:
+    .. math::
 
-.. math::
-
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
-    (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
 
 Then we ensure the :math:`\alpha < 90^{\circ}`. For this step we use vectors of the conventional lattice:
 
 * If :math:`\alpha > 90^{\circ}`:
+    .. math::
 
-.. math::
-
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
-    (\boldsymbol{a}_1, \boldsymbol{a}_3, -\boldsymbol{a}_2)
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_1, \boldsymbol{a}_3, -\boldsymbol{a}_2)
 
 Finally, we ensure the :math:`b \le c`. For this step we use vectors of the conventional lattice:
 
 * If :math:`b > c`:
+    .. math::
 
-.. math::
-
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
-    (-\boldsymbol{a}_1, \boldsymbol{a}_3, \boldsymbol{a}_2)
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (-\boldsymbol{a}_1, \boldsymbol{a}_3, \boldsymbol{a}_2)
 
 .. note::
 
@@ -367,24 +363,24 @@ Examples
 MCLC\ :sub:`1`
 --------------
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc1_brillouin.py
     :language: py
 
 .. figure:: mclc1_brillouin.png 
     :target: ../../../../../_images/mclc1_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc1_real.py
     :language: py
 
 .. figure:: mclc1_real.png 
     :target: ../../../../../_images/mclc1_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc1_wigner-seitz.py
     :language: py
 
@@ -394,24 +390,24 @@ MCLC\ :sub:`1`
 MCLC\ :sub:`2`
 --------------
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc2_brillouin.py
     :language: py
 
 .. figure:: mclc2_brillouin.png 
     :target: ../../../../../_images/mclc2_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc2_real.py
     :language: py
 
 .. figure:: mclc2_real.png 
     :target: ../../../../../_images/mclc2_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc2_wigner-seitz.py
     :language: py
 
@@ -421,24 +417,24 @@ MCLC\ :sub:`2`
 MCLC\ :sub:`3`
 --------------
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc3_brillouin.py
     :language: py
 
 .. figure:: mclc3_brillouin.png 
     :target: ../../../../../_images/mclc3_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc3_real.py
     :language: py
 
 .. figure:: mclc3_real.png 
     :target: ../../../../../_images/mclc3_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc3_wigner-seitz.py
     :language: py
 
@@ -448,24 +444,24 @@ MCLC\ :sub:`3`
 MCLC\ :sub:`4`
 --------------
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc4_brillouin.py
     :language: py
 
 .. figure:: mclc4_brillouin.png 
     :target: ../../../../../_images/mclc4_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc4_real.py
     :language: py
 
 .. figure:: mclc4_real.png 
     :target: ../../../../../_images/mclc4_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc4_wigner-seitz.py
     :language: py
 
@@ -475,24 +471,24 @@ MCLC\ :sub:`4`
 MCLC\ :sub:`5`
 --------------
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc5_brillouin.py
     :language: py
 
 .. figure:: mclc5_brillouin.png 
     :target: ../../../../../_images/mclc5_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc5_real.py
     :language: py
 
 .. figure:: mclc5_real.png 
     :target: ../../../../../_images/mclc5_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc5_wigner-seitz.py
     :language: py
 

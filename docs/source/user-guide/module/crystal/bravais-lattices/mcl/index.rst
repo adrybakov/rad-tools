@@ -37,36 +37,32 @@ If these conditions are not satisfied, then the lattice is transformed to the st
 First we ensure the :math:`\beta = 90^{\circ}` and :math:`\gamma = 90^{\circ}`:
 
 * If :math:`\beta \ne 90^{\circ}`:
+    .. math::
 
-.. math::
-
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
-    (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
 
 * If :math:`\gamma \ne 90^{\circ}`:
+    .. math::
 
-.. math::
-
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
-    (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
 
 Then we ensure the :math:`\alpha < 90^{\circ}`:
 
 * If :math:`\alpha > 90^{\circ}`:
+    .. math::
 
-.. math::
-
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
-    (\boldsymbol{a}_1, \boldsymbol{a}_3, -\boldsymbol{a}_2)
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_1, \boldsymbol{a}_3, -\boldsymbol{a}_2)
 
 Finally, we ensure the :math:`b \le c`:
 
 * If :math:`b > c`:
+    .. math::
 
-.. math::
-
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
-    (-\boldsymbol{a}_1, \boldsymbol{a}_3, \boldsymbol{a}_2)
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (-\boldsymbol{a}_1, \boldsymbol{a}_3, \boldsymbol{a}_2)
 
 .. note::
 
@@ -116,24 +112,24 @@ MCL(pi, 1.3 * pi, 1.6 * pi, alpha=75)
 
 Examples
 ========
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: mcl_brillouin.py
     :language: py
 
 .. figure:: mcl_brillouin.png 
     :target: ../../../../../_images/mcl_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: mcl_real.py
     :language: py
 
 .. figure:: mcl_real.png 
     :target: ../../../../../_images/mcl_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: mcl_wigner-seitz.py
     :language: py
 

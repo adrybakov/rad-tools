@@ -107,24 +107,24 @@ Examples
 RHL\ :sub:`1`
 -------------
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: rhl1_brillouin.py
     :language: py
 
 .. figure:: rhl1_brillouin.png 
     :target: ../../../../../_images/rhl1_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: rhl1_real.py
     :language: py
 
 .. figure:: rhl1_real.png 
     :target: ../../../../../_images/rhl1_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: rhl1_wigner-seitz.py
     :language: py
 
@@ -134,24 +134,24 @@ RHL\ :sub:`1`
 RHL\ :sub:`2`
 -------------
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: rhl2_brillouin.py
     :language: py
 
 .. figure:: rhl2_brillouin.png 
     :target: ../../../../../_images/rhl2_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: rhl2_real.py
     :language: py
 
 .. figure:: rhl2_real.png 
     :target: ../../../../../_images/rhl2_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: rhl2_wigner-seitz.py
     :language: py
 

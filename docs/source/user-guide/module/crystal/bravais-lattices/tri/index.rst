@@ -43,28 +43,25 @@ Last two cases
 First we check for the last two cases:
 
 * If :math:`k_{\alpha} = 90^{\circ}` 
-
-.. math::
-    
-    (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
-    (\boldsymbol{b}_2, \boldsymbol{b}_3, \boldsymbol{b}_1)
+    .. math::
+        
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+        (\boldsymbol{b}_2, \boldsymbol{b}_3, \boldsymbol{b}_1)
 
 * If :math:`k_{\beta} = 90^{\circ}`
-
-.. math::
-    
-    (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
-    (\boldsymbol{b}_3, \boldsymbol{b}_1, \boldsymbol{b}_2)
+    .. math::
+        
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+        (\boldsymbol{b}_3, \boldsymbol{b}_1, \boldsymbol{b}_2)
 
 If one of the last two conditions were met, then now we have :math:`k_{\gamma} = 90^{\circ}`.
 We need to choose appropriate values for the remaining two angles:
 
 * If :math:`k_{\alpha} > 90^{\circ}` and :math:`k_{\beta} < 90^{\circ}` or :math:`k_{\alpha} < 90^{\circ}` and :math:`k_{\beta} > 90^{\circ}`:
-
-.. math::
-    
-    (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
-    (\boldsymbol{b}_2, -\boldsymbol{b}_1, \boldsymbol{b}_3)
+    .. math::
+        
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+        (\boldsymbol{b}_2, -\boldsymbol{b}_1, \boldsymbol{b}_3)
 
 First two cases
 ---------------
@@ -74,81 +71,71 @@ First we ensure that all angles are :math:`> 90^{\circ}` or :math:`< 90^{\circ}`
 
 
 * If :math:`k_{\alpha} > 90^{\circ}` and :math:`k_{\beta} > 90^{\circ}` and :math:`k_{\gamma} < 90^{\circ}`:
-
-.. math::
-    
-    (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
-    (-\boldsymbol{b}_1, -\boldsymbol{b}_2, \boldsymbol{b}_3)
+    .. math::
+        
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+        (-\boldsymbol{b}_1, -\boldsymbol{b}_2, \boldsymbol{b}_3)
 
 * If :math:`k_{\alpha} > 90^{\circ}` and :math:`k_{\beta} < 90^{\circ}` and :math:`k_{\gamma} > 90^{\circ}`:
-
-.. math::
-    
-    (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
-    (-\boldsymbol{b}_1, \boldsymbol{b}_2, -\boldsymbol{b}_3)
+    .. math::
+        
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+        (-\boldsymbol{b}_1, \boldsymbol{b}_2, -\boldsymbol{b}_3)
 
 * If :math:`k_{\alpha} > 90^{\circ}` and :math:`k_{\beta} < 90^{\circ}` and :math:`k_{\gamma} < 90^{\circ}`:
-
-.. math::
-    
-    (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
-    (\boldsymbol{b}_1, -\boldsymbol{b}_2, -\boldsymbol{b}_3)
+    .. math::
+        
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+        (\boldsymbol{b}_1, -\boldsymbol{b}_2, -\boldsymbol{b}_3)
 
 * If :math:`k_{\alpha} < 90^{\circ}` and :math:`k_{\beta} > 90^{\circ}` and :math:`k_{\gamma} > 90^{\circ}`:
-
-.. math::
-    
-    (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
-    (\boldsymbol{b}_1, -\boldsymbol{b}_2, -\boldsymbol{b}_3)
+    .. math::
+        
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+        (\boldsymbol{b}_1, -\boldsymbol{b}_2, -\boldsymbol{b}_3)
 
 * If :math:`k_{\alpha} < 90^{\circ}` and :math:`k_{\beta} > 90^{\circ}` and :math:`k_{\gamma} < 90^{\circ}`:
-
-.. math::
-    
-    (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
-    (-\boldsymbol{b}_1, \boldsymbol{b}_2, -\boldsymbol{b}_3)
+    .. math::
+        
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+        (-\boldsymbol{b}_1, \boldsymbol{b}_2, -\boldsymbol{b}_3)
 
 * If :math:`k_{\alpha} < 90^{\circ}` and :math:`k_{\beta} < 90^{\circ}` and :math:`k_{\gamma} > 90^{\circ}`:
-
-.. math::
-    
-    (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
-    (-\boldsymbol{b}_1, -\boldsymbol{b}_2, \boldsymbol{b}_3)
+    .. math::
+        
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+        (-\boldsymbol{b}_1, -\boldsymbol{b}_2, \boldsymbol{b}_3)
 
 As the last step we reorder the reciprocal vectors:
 
 Reordering if all angles are :math:`> 90^{\circ}`:
 
 * If :math:`k_{\alpha} = min(k_{\alpha}, k_{\beta}, k_{\gamma})`, then:
-
-.. math::
-    
-    (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
-    (\boldsymbol{b}_2, \boldsymbol{b}_3, \boldsymbol{b}_1)
+    .. math::
+        
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+        (\boldsymbol{b}_2, \boldsymbol{b}_3, \boldsymbol{b}_1)
 
 * If :math:`k_{\beta} = min(k_{\alpha}, k_{\beta}, k_{\gamma})`, then:
-
-.. math::
-    
-    (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
-    (\boldsymbol{b}_3, \boldsymbol{b}_1, \boldsymbol{b}_2)
+    .. math::
+        
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+        (\boldsymbol{b}_3, \boldsymbol{b}_1, \boldsymbol{b}_2)
 
 
 Reordering if all angles are :math:`< 90^{\circ}`:
 
 * If :math:`k_{\alpha} = max(k_{\alpha}, k_{\beta}, k_{\gamma})`, then:
-
-.. math::
-    
-    (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
-    (\boldsymbol{b}_2, \boldsymbol{b}_3, \boldsymbol{b}_1)
+    .. math::
+        
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+        (\boldsymbol{b}_2, \boldsymbol{b}_3, \boldsymbol{b}_1)
 
 * If :math:`k_{\beta} = max(k_{\alpha}, k_{\beta}, k_{\gamma})`, then:
-
-.. math::
-    
-    (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
-    (\boldsymbol{b}_3, \boldsymbol{b}_1, \boldsymbol{b}_2)
+    .. math::
+        
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+        (\boldsymbol{b}_3, \boldsymbol{b}_1, \boldsymbol{b}_2)
 
 
 K-path
@@ -259,24 +246,24 @@ Examples
 TRI\ :sub:`1a`
 --------------
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: tri1a_brillouin.py
     :language: py
 
 .. figure:: tri1a_brillouin.png 
     :target: ../../../../../_images/tri1a_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: tri1a_real.py
     :language: py
 
 .. figure:: tri1a_real.png 
     :target: ../../../../../_images/tri1a_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: tri1a_wigner-seitz.py
     :language: py
 
@@ -286,24 +273,24 @@ TRI\ :sub:`1a`
 TRI\ :sub:`2a`
 --------------
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: tri2a_brillouin.py
     :language: py
 
 .. figure:: tri2a_brillouin.png 
     :target: ../../../../../_images/tri2a_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: tri2a_real.py
     :language: py
 
 .. figure:: tri2a_real.png 
     :target: ../../../../../_images/tri2a_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: tri2a_wigner-seitz.py
     :language: py
 
@@ -313,24 +300,24 @@ TRI\ :sub:`2a`
 TRI\ :sub:`1b`
 --------------
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: tri1b_brillouin.py
     :language: py
 
 .. figure:: tri1b_brillouin.png 
     :target: ../../../../../_images/tri1b_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: tri1b_real.py
     :language: py
 
 .. figure:: tri1b_real.png 
     :target: ../../../../../_images/tri1b_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: tri1b_wigner-seitz.py
     :language: py
 
@@ -340,24 +327,24 @@ TRI\ :sub:`1b`
 TRI\ :sub:`2b`
 --------------
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: tri2b_brillouin.py
     :language: py
 
 .. figure:: tri2b_brillouin.png 
     :target: ../../../../../_images/tri2b_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: tri2b_real.py
     :language: py
 
 .. figure:: tri2b_real.png 
     :target: ../../../../../_images/tri2b_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: tri2b_wigner-seitz.py
     :language: py
 

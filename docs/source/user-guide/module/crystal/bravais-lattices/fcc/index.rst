@@ -60,24 +60,24 @@ Point                    :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbo
 Examples
 ========
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: fcc_brillouin.py
     :language: py
 
 .. figure:: fcc_brillouin.png 
     :target: ../../../../../_images/fcc_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: fcc_real.py
     :language: py
 
 .. figure:: fcc_real.png 
     :target: ../../../../../_images/fcc_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: fcc_wigner-seitz.py
     :language: py
 

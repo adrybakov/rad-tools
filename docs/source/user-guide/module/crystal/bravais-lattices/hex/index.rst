@@ -28,18 +28,16 @@ If this condition is not satisfied, then the lattice is transformed to the stand
 
 
 * If :math:`\beta = 120^{\circ}`
+    .. math::
 
-.. math::
-
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
-    (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
 
 * If :math:`\alpha = 120^{\circ}`
+    .. math::
 
-.. math::
-
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
-    (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
 
 K-path
 ======
@@ -66,24 +64,24 @@ One example is predefined: ``hex`` with :math:`a = \pi` and :math:`c = 2\pi`.
 Examples
 ========
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: hex_brillouin.py
     :language: py
 
 .. figure:: hex_brillouin.png 
     :target: ../../../../../_images/hex_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: hex_real.py
     :language: py
 
 .. figure:: hex_real.png 
     :target: ../../../../../_images/hex_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: hex_wigner-seitz.py
     :language: py
 

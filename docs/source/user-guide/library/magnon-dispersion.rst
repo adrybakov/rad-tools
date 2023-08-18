@@ -28,21 +28,18 @@ will return set of positive eigenfrequencies. In three cases, when positive defi
 is not satisfied, we define special strategies for the :py:class:`.MagnonDispersion`:
 
 * It is positive semidefinite, but not positive definite. 
-
-In that case following [1]_ we add small positive number (:math:`10^{-8}`) to the 
-diagonal of the matrix :math:`\boldsymbol{h}(\boldsymbol{k})` and then diagonalize it.
+    In that case following [1]_ we add small positive number (:math:`10^{-8}`) to the 
+    diagonal of the matrix :math:`\boldsymbol{h}(\boldsymbol{k})` and then diagonalize it.
 
 * If it is negative definite.
-
-We multiply the matrix by :math:`-1`, diagonalize it
-and multiply the result by :math:`-1`. In that way the result will be a set of negative 
-eigenfrequencies, which are not correct magnon energies, but can give you an idea of the 
-magnetic structure stability. 
+    We multiply the matrix by :math:`-1`, diagonalize it
+    and multiply the result by :math:`-1`. In that way the result will be a set of negative 
+    eigenfrequencies, which are not correct magnon energies, but can give you an idea of the 
+    magnetic structure stability. 
 
 * If it is negative semidefinite, but not negative definite.
-
-In that case we add small negative number (:math:`-10^{-8}`) to the
-diagonal of the matrix :math:`\boldsymbol{h}(\boldsymbol{k})` and then follow previous case.
+    In that case we add small negative number (:math:`-10^{-8}`) to the
+    diagonal of the matrix :math:`\boldsymbol{h}(\boldsymbol{k})` and then follow previous case.
 
 In all other cases the :py:class:`.MagnonDispersion` will return ``0`` or ``None``.
 

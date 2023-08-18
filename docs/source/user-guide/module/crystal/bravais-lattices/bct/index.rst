@@ -37,18 +37,16 @@ If this condition is not satisfied,
 then the lattice is transformed to the standard form:
 
 * If :math:`\vert\boldsymbol{a}_1\vert = \vert\boldsymbol{a}_3\vert \ne \vert\boldsymbol{a}_2\vert`
-
-.. math::
-    
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
-    (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
+    .. math::
+        
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
 
 * If :math:`\vert\boldsymbol{a}_2\vert = \vert\boldsymbol{a}_3\vert \ne \vert\boldsymbol{a}_1\vert`
-
-.. math::
-    
-    (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
-    (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
+    .. math::
+        
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
 
 K-path
 ======
@@ -127,24 +125,24 @@ Examples
 BCT\ :sub:`1`
 -------------
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: bct1_brillouin.py
     :language: py
 
 .. figure:: bct1_brillouin.png 
     :target: ../../../../../_images/bct1_brillouin.png 
 
-* Primitive and conventional cell
-    
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: bct1_real.py
     :language: py
 
 .. figure:: bct1_real.png 
     :target: ../../../../../_images/bct1_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: bct1_wigner-seitz.py
     :language: py
 
@@ -155,24 +153,24 @@ BCT\ :sub:`2`
 -------------
 
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: bct2_brillouin.py
     :language: py
 
 .. figure:: bct2_brillouin.png 
     :target: ../../../../../_images/bct2_brillouin.png 
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: bct2_real.py
     :language: py
 
 .. figure:: bct2_real.png 
     :target: ../../../../../_images/bct2_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: bct2_wigner-seitz.py
     :language: py
 

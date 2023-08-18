@@ -56,24 +56,24 @@ One example is predefined: ``bcc`` with :math:`a = \pi`.
 Examples
 ========
 
-* Brillouin zone and default kpath
-
+Brillouin zone and default kpath
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: bcc_brillouin.py
     :language: py
 
 .. figure:: bcc_brillouin.png 
     :target: ../../../../../_images/bcc_brillouin.png
 
-* Primitive and conventional cell
-
+Primitive and conventional cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: bcc_real.py
     :language: py
 
 .. figure:: bcc_real.png 
     :target: ../../../../../_images/bcc_real.png 
 
-* Wigner-Seitz cell
-
+Wigner-Seitz cell
+^^^^^^^^^^^^^^^^^
 .. literalinclude:: bcc_wigner-seitz.py
     :language: py
 
