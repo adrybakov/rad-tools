@@ -18,8 +18,8 @@ positive for ferromagnetic order.
     always has this notation. For example when :py:class:`.SpinHamiltonian` is
     read from |TB2J|_ file (:py:func:`.read_tb2j_model`) it has the notation of TB2J.
 
-There are five properties, that has to be defined in order to describe the 
-spin Hamiltonian`s notation:
+Notation of the spin Hamiltonian is defined with two properties and the numerical 
+factor before the sum. The properties are:
 
 * :py:attr:`.double_counting`
     Whether both pairs :math:`(i, j)` and :math:`(j, i)` are included in the sum. 
@@ -65,15 +65,18 @@ spin Hamiltonian`s notation:
     or as classical spin vector. It could be normalized to 1 or not. 
     In case of normalisation exchange parameter absorbs the factor 
     :math:`\vert\boldsymbol{S}_i\vert \vert\boldsymbol{S}_j\vert`.
-* :py:attr:`.factor_one_half`
+
+Numerical :py:attr:`.factor` in general can be arbitrary, but in practice only three cases are defining it:
+
+* Factor :math:`\dfrac{1}{2}`
     Factor :math:`1/2` is sometimes included in order to correct for double counting. If 
     it is included, then it is simply written before the sum sign. It is usually used
     when double counting is present.
-* :py:attr:`.factor_two`
+* Factor :math:`2`
     Factor :math:`2` is sometimes included in order to account for double counting. If 
     it is included, then it is simply written before the sum sign. It is usually used
     when double counting is avoided.
-* :py:attr:`.minus_sign`
+* Minus sign
     Whether the minus sign is included in the Hamiltonian. 
 
 .. caution::
@@ -81,7 +84,7 @@ spin Hamiltonian`s notation:
     We would like to note that not all authors are thoughtful with the definition
     of the Hamiltonian, so additional care is required when reading the literature.
 
-RAD-tools utilize those five properties in order to define the notation of the
+RAD-tools utilize those properties in order to define the notation of the
 spin Hamiltonian. During the creation of the :py:class:`.SpinHamiltonian` object the 
 notation is deliberately not defined, because it depends on your interpretation. 
 Therefore, the notation has to be defined explicitly by you. If the notation is not 
@@ -94,8 +97,8 @@ Conversion of the notation
 ==========================
 
 In the figure below we illustrate the problem of the notation. The picture describe the 
-whole notation tree, if the no minus sign is present (:py:attr:`.SpinHamiltonian.minus_sign`
-is ``False``). Click on the picture to enlarge it.
+whole notation tree, if the no minus sign is present (:py:attr:`.SpinHamiltonian.factor` 
+is positive). Click on the picture to enlarge it.
 
 .. figure:: ../../img/notation-tree.png
     :target: ../../_images/notation-tree.png
@@ -115,9 +118,9 @@ The rule for the conversion from notation one (N1) to the notation two (N2) is t
 
 * Follow the notation tree for each notation. Obtain factor one :math:`f_1` and factor two :math:`f_2`.
 
-* If in the notation one minus sign is written (i.e. positive exchange parameter means ferromagnetic alignment), multiply the factor :math:`f_1` by :math:`-1`.
+* If in the notation one (N1) minus sign is written (i.e. positive exchange parameter means ferromagnetic alignment), multiply the factor :math:`f_1` by :math:`-1`.
 
-* If in the notation two minus sign is written (i.e. positive exchange parameter means ferromagnetic alignment), multiply the factor :math:`f_2` by :math:`-1`.
+* If in the notation two (N2) minus sign is written (i.e. positive exchange parameter means ferromagnetic alignment), multiply the factor :math:`f_2` by :math:`-1`.
 
 * compute conversion factor :math:`f` for the exchange parameters as
 
@@ -125,9 +128,13 @@ The rule for the conversion from notation one (N1) to the notation two (N2) is t
 
     f = \dfrac{f_1}{f_2}
 
-* Multiply exchange parameters in the notation one by the conversion factor :math:`f`.
+* Multiply exchange parameters in the notation one (N1) by the conversion factor :math:`f`.
 
-The result are the exchange parameters in the notation two.
+The result are the exchange parameters in the notation two (N2):
+
+.. math::
+
+    J_{N2} = \dfrac{f_1}{f_2} J_{N1}
 
 
 
@@ -135,13 +142,13 @@ Predefined notations
 ====================
 
 There are three predefined notations in the RAD-tools. Each predefined notation is a 
-tuple of five ``bool``, which correspond to the five properties of the notation.
+tuple of two ``bool`` and one ``float``, which correspond to the three properties of the notation.
 
 .. hint::
-    Order: (double counting, spin normalized, factor 1/2, factor 2, minus sign).
+    Order: (double counting, spin normalized, factor).
 
 * Standard
-    (True, False, False, False, True)
+    (True, False, -1)
 
     .. math::
         H = -\sum_{i,j} \hat{\boldsymbol{S}}_i \cdot \boldsymbol{J}_{i,j} \cdot \hat{\boldsymbol{S}}_j
@@ -149,7 +156,7 @@ tuple of five ``bool``, which correspond to the five properties of the notation.
     where double counting is present (:math:`ij` and :math:`ji` is in the sum).
     Spin vectors are **not** normalized.
 * |TB2J|_
-    (True, True, False, False, True)
+    (True, True, -1)
 
     .. math::
         H = -\sum_{i,j} \hat{\boldsymbol{S}}_i \cdot \boldsymbol{J}_{i,j} \cdot \hat{\boldsymbol{S}}_j
@@ -157,7 +164,7 @@ tuple of five ``bool``, which correspond to the five properties of the notation.
     where double counting is present (:math:`ij` and :math:`ji` is in the sum).
     Spin vectors are normalized to 1.
 * SpinW
-    (True, False, False, False, False)
+    (True, False, 1)
 
     .. math::
         H = \sum_{i,j} \hat{\boldsymbol{S}}_i \cdot \boldsymbol{J}_{i,j} \cdot \hat{\boldsymbol{S}}_j

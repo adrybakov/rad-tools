@@ -86,9 +86,15 @@ Individual properties
 
     SpinHamiltonian.double_counting
     SpinHamiltonian.spin_normalized
-    SpinHamiltonian.factor_one_half
-    SpinHamiltonian.factor_two
-    SpinHamiltonian.minus_sign
+    SpinHamiltonian.factor
+
+Human readable representation
+-----------------------------
+
+.. autosummary::
+    :toctree: generated/
+
+    SpinHamiltonian.notation_string
 
 Saving and loading
 ==================

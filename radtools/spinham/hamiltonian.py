@@ -49,8 +49,8 @@ class SpinHamiltonian(Crystal):
     crystal : :py:class:`.Crystal`, optional
         Crystal on which the spin Hamiltonian is build.
         By default it is cubic (:math:`a=1`) lattice with no atoms.
-    notation : str or tuple of bool, optional
-        One of the predefined notations or list of 5 bool.
+    notation : str or tuple of two bool and one float, optional
+        One of the predefined notations or tuple with custom notation.
         See :py:attr:`.notation` for details.
     **kwargs
         Keyword arguments for the :py:class:`.Crystal` constructor.
@@ -69,9 +69,7 @@ class SpinHamiltonian(Crystal):
         # Notation settings
         self._double_counting = None
         self._spin_normalized = None
-        self._factor_one_half = None
-        self._factor_two = None
-        self._minus_sign = None
+        self._factor = None
         if notation is not None:
             self.notation = notation
 
@@ -82,20 +80,22 @@ class SpinHamiltonian(Crystal):
     @property
     def notation(self):
         r"""
-        Return a string with a simple comment about the Hamiltonian notation.
+        Tuple of the notation.
 
         It can be set with a
 
         * string
             One of the predefined notations: "standard", "TB2J", "SpinW"
-        * iterable with 5 elements
-            Each element is converted to bool and the parameters are set with values.
-            Order: (double counting, spin normalized, factor 1/2, factor 2, minus sign).
+
+        * iterable with 3 elements
+            First two elements are converted to ``bool``,
+            third element is interpreted as a float.
+            Order: (double counting, spin normalized, factor).
 
         Predefined notations:
 
         * Standard
-            (True, False, False, False, True)
+            (True, False, -1)
 
             .. math::
                 H = -\sum_{i,j} \hat{\boldsymbol{S}}_i \cdot \boldsymbol{J}_{i,j} \hat{\boldsymbol{S}}_j
@@ -103,7 +103,7 @@ class SpinHamiltonian(Crystal):
             where double counting is present (:math:`ij` and :math:`ji` is in the sum).
             Spin vectors are **not** normalized.
         * |TB2J|_
-            (True, True, False, False, True)
+            (True, True, -1)
 
             .. math::
                 H = -\sum_{i,j} \hat{\boldsymbol{S}}_i \cdot \boldsymbol{J}_{i,j} \hat{\boldsymbol{S}}_j
@@ -111,7 +111,7 @@ class SpinHamiltonian(Crystal):
             where double counting is present (:math:`ij` and :math:`ji` is in the sum).
             Spin vectors are normalized to 1.
         * SpinW
-            (True, False, False, False, False)
+            (True, False, 1)
 
             .. math::
                 H = \sum_{i,j} \hat{\boldsymbol{S}}_i \cdot \boldsymbol{J}_{i,j} \hat{\boldsymbol{S}}_j
@@ -126,12 +126,12 @@ class SpinHamiltonian(Crystal):
 
         Returns
         -------
-        notation : (5,) tuple of bool
-            ``True``/``False`` values of notation properties:
+        notation : (3,) tuple of two bool and one float
+            Values of notation properties:
 
             .. code-block:: python
 
-                (double_counting, spin_normalized, factor_one_half, factor_two, minus_sign)
+                (double_counting, spin_normalized, factor)
 
         Examples
         --------
@@ -142,23 +142,26 @@ class SpinHamiltonian(Crystal):
             >>> import radtools as rad
             >>> model = rad.SpinHamiltonian()
             >>> model.notation = "standard"
-            >>> model.notation
-            H = -sum_{i,j} S_i J_ij S_j
+            >>> print(model.notation_string)
+            H = - sum_{i,j} S_i J_ij S_j
             Double counting is present.
             Spin vectors are not normalized.
-            (True, False, False, False, True)
-            >>> model.notation = "TB2J"
             >>> model.notation
-            H = -sum_{i,j} S_i J_ij S_j
+            (True, False, -1.0)
+            >>> model.notation = "TB2J"
+            >>> print(model.notation_string)
+            H = - sum_{i,j} S_i J_ij S_j
             Double counting is present.
             Spin vectors are normalized to 1.
-            (True, True, False, False, True)
-            >>> model.notation = "SpinW"
             >>> model.notation
+            (True, True, -1.0)
+            >>> model.notation = "SpinW"
+            >>> print(model.notation_string)
             H = sum_{i,j} S_i J_ij S_j
             Double counting is present.
             Spin vectors are not normalized.
-            (True, False, False, False, False)
+            >>> model.notation
+            (True, False, 1.0)
 
         Setting the notation:
 
@@ -199,12 +202,12 @@ class SpinHamiltonian(Crystal):
             1.0
             >>> # For the first time interpretation is set,
             >>> # values of exchange are not changed
-            >>> model.minus_sign = True
+            >>> model.factor = -1
             >>> model[Cr, Cr, (1, 0, 0)].iso
             1.0
             >>> # Once the property is set the values
             >>> # are changing if the property is changed again.
-            >>> model.minus_sign = False
+            >>> model.factor = 1
             >>> model[Cr, Cr, (1, 0, 0)].iso
             -1.0
 
@@ -221,51 +224,89 @@ class SpinHamiltonian(Crystal):
             >>> model.notation = "standard"
             >>> model[Cr, Cr, (1, 0, 0)].iso
             1.0
-            >>> model.double_counting, model.spin_normalized, model.factor_one_half, model.factor_two, model.minus_sign
-            (True, False, False, False, True)
-            >>> model.minus_sign = False
+            >>> model.double_counting, model.spin_normalized, model.factor
+            (True, False, -1.0)
+            >>> model.factor = 1
             >>> model[Cr, Cr, (1, 0, 0)].iso
             -1.0
-            >>> model.factor_one_half, model.factor_two
-            (False, False)
-            >>> model.factor_one_half = True
+            >>> model.factor
+            1.0
+            >>> model.factor = 1/2
             >>> model[Cr, Cr, (1, 0, 0)].iso
             -2.0
-            >>> model.factor_one_half, model.factor_two
-            (True, False)
-            >>> model.factor_two = True
+            >>> model.factor
+            0.5
+            >>> model.factor = 2
             >>> model[Cr, Cr, (1, 0, 0)].iso
-            -1.0
-            >>> # Note that the values are switched to False,
-            >>> # since factor one half and two are cancelling each other
-            >>> model.factor_one_half, model.factor_two
-            (False, False)
+            -0.5
             >>> model.spin_normalized = True
             >>> model[Cr, Cr, (1, 0, 0)].iso
-            -2.25
+            -1.125
             >>> model.double_counting = False
             >>> model[Cr, Cr, (1, 0, 0)].iso
-            -4.5
+            -2.25
 
 
         See Also
         --------
         double_counting
         spin_normalized
-        factor_one_half
-        factor_two
-        minus_sign
+        factor
         set_interpretation
         """
 
-        text_result = "H = "
-        if self.minus_sign:
-            text_result += "-"
+        return (self.double_counting, self.spin_normalized, self.factor)
 
-        if self.factor_one_half and not self._factor_two:
-            text_result += "1/2 "
-        if self._factor_two and not self.factor_one_half:
-            text_result += "2 "
+    @notation.setter
+    def notation(self, new_notation):
+        # Set the notation from predefined notations
+        if isinstance(new_notation, str):
+            new_notation = new_notation.lower()
+            if new_notation not in PREDEFINED_NOTATIONS:
+                raise ValueError(
+                    f"Predefine notations are: "
+                    + f"{list(PREDEFINED_NOTATIONS)}, got: {new_notation}"
+                )
+            new_notation = PREDEFINED_NOTATIONS[new_notation]
+        # Set the notation from five values, converted to bool
+        elif isinstance(new_notation, Iterable) and len(new_notation) == 3:
+            new_notation = (
+                bool(new_notation[0]),
+                bool(new_notation[1]),
+                float(new_notation[2]),
+            )
+        else:
+            raise ValueError(
+                "New notation has to be either a string "
+                + "or an iterable with three elements, "
+                + f"got: {new_notation}"
+            )
+        (self.double_counting, self.spin_normalized, self.factor) = new_notation
+
+    @property
+    def notation_string(self):
+        r"""
+        Human-readable representation of the notation.
+
+        Returns
+        -------
+        notation_string : str
+            Human-readable representation of the notation.
+        """
+
+        text_result = "H = "
+
+        if self.factor != 1:
+            if self.factor == -1:
+                text_result += "- "
+            elif self.factor == int(self.factor):
+                text_result += f"{self.factor:.0f} "
+            elif self.factor == 0.5:
+                text_result += "1/2 "
+            elif self.factor == -0.5:
+                text_result += "-1/2 "
+            else:
+                text_result += f"{self.factor} "
 
         text_result += "sum_{"
         if self.double_counting:
@@ -285,51 +326,10 @@ class SpinHamiltonian(Crystal):
         else:
             text_result += "Spin vectors are not normalized."
 
-        print(text_result)
-
-        return (
-            self.double_counting,
-            self.spin_normalized,
-            self.factor_one_half,
-            self.factor_two,
-            self.minus_sign,
-        )
-
-    @notation.setter
-    def notation(self, new_notation):
-        # Set the notation from predefined notations
-        if isinstance(new_notation, str):
-            new_notation = new_notation.lower()
-            if new_notation not in PREDEFINED_NOTATIONS:
-                raise ValueError(
-                    f"Predefine notations are: "
-                    + f"{list(PREDEFINED_NOTATIONS)}, got: {new_notation}"
-                )
-            new_notation = PREDEFINED_NOTATIONS[new_notation]
-        # Set the notation from five values, converted to bool
-        elif isinstance(new_notation, Iterable) and len(new_notation) == 5:
-            new_notation = tuple(map(bool, new_notation))
-        else:
-            raise ValueError(
-                "New notation has to be either a string "
-                + "or an iterable with five elements, "
-                + f"got: {new_notation}"
-            )
-        (
-            self.double_counting,
-            self.spin_normalized,
-            self.factor_one_half,
-            self.factor_two,
-            self.minus_sign,
-        ) = new_notation
+        return text_result
 
     def set_interpretation(
-        self,
-        double_counting: bool = None,
-        spin_normalized: bool = None,
-        factor_one_half: bool = None,
-        factor_two: bool = None,
-        minus_sign: bool = None,
+        self, double_counting: bool = None, spin_normalized: bool = None, factor=None
     ):
         r"""
         Set the interpretation of the Hamiltonian`s notation.
@@ -341,29 +341,22 @@ class SpinHamiltonian(Crystal):
         ----------
         double_counting : bool, optional
         spin_normalized : bool, optional
-        factor_one_half : bool, optional
-        factor_two : bool, optional
-        minus_sign : bool, optional
+        factor : float or int, optional
 
         See Also
         --------
         double_counting
         spin_normalized
-        factor_one_half
-        factor_two
-        minus_sign
+        factor
+        notation
         """
 
         if double_counting is not None:
             self._double_counting = bool(double_counting)
         if spin_normalized is not None:
             self._spin_normalized = bool(spin_normalized)
-        if factor_one_half is not None:
-            self._factor_one_half = bool(factor_one_half)
-        if factor_two is not None:
-            self._factor_two = bool(factor_two)
-        if minus_sign is not None:
-            self._minus_sign = bool(minus_sign)
+        if factor is not None:
+            self._factor = factor
 
     @property
     def double_counting(self) -> bool:
@@ -500,17 +493,17 @@ class SpinHamiltonian(Crystal):
         self._spin_normalized = bool(new_value)
 
     @property
-    def factor_one_half(self) -> bool:
+    def factor(self) -> float:
         r"""
-        Whether factor 1/2 is present in the Hamiltonian.
+        Whether any factor is present in the Hamiltonian.
 
         Access this attribute to check the current notation of the Hamiltonian,
         set this attribute to change the notation of the Hamiltonian.
 
         Returns
         -------
-        factor_one_half : bool
-            ``True`` if factor 1/2 is present, ``False`` otherwise.
+        factor : float
+            value of the factor before the sum in the Hamiltonian.
 
         Raises
         ------
@@ -523,109 +516,20 @@ class SpinHamiltonian(Crystal):
             without the modification of the parameters.
         """
 
-        if self._factor_one_half is None:
-            raise NotationError("factor_one_half")
-        return self._factor_one_half
+        if self._factor is None:
+            raise NotationError("factor")
+        return self._factor
 
-    @factor_one_half.setter
-    def factor_one_half(self, new_value: bool):
-        if self._factor_one_half is not None:
-            factor = 1
-            if self._factor_one_half and not new_value:
-                factor = 0.5
-            elif not self._factor_one_half and new_value:
-                factor = 2
-            if factor != 1:
-                for atom1, atom2, R, J in self:
-                    self[atom1, atom2, R] = J * factor
-        self._factor_one_half = bool(new_value)
-        if self._factor_one_half and self.factor_two:
-            self._factor_one_half = False
-            self._factor_two = False
-
-    @property
-    def factor_two(self) -> bool:
-        r"""
-        Whether factor 2 is present in the Hamiltonian.
-
-        Access this attribute to check the current notation of the Hamiltonian,
-        set this attribute to change the notation of the Hamiltonian.
-
-        Returns
-        -------
-        factor_two : bool
-            ``True`` if factor 2 is present, ``False`` otherwise.
-
-        Raises
-        ------
-        :py:exc:`.NotationError`
-            If the interpretation of the Hamiltonian`s notation is not set.
-
-        See Also
-        --------
-        set_interpretation : to change the interpretation of the Hamiltonian`s notation
-            without the modification of the parameters.
-        """
-
-        if self._factor_two is None:
-            raise NotationError("factor_two")
-        return self._factor_two
-
-    @factor_two.setter
-    def factor_two(self, new_value: bool):
-        if self._factor_two is not None:
-            factor = 1
-            if self._factor_two and not new_value:
-                factor = 2
-            elif not self._factor_two and new_value:
-                factor = 0.5
-            if factor != 1:
-                for atom1, atom2, R, J in self:
-                    self[atom1, atom2, R] = J * factor
-        self._factor_two = bool(new_value)
-        if self._factor_one_half and self.factor_two:
-            self._factor_one_half = False
-            self._factor_two = False
-
-    @property
-    def minus_sign(self) -> bool:
-        r"""
-        Whether the minus sign is present in the Hamiltonian.
-
-        Access this attribute to check the current notation of the Hamiltonian,
-        set this attribute to change the notation of the Hamiltonian.
-
-        Returns
-        -------
-        minus_sign : bool
-            ``True`` if minus sign is present, ``False`` otherwise.
-
-        Raises
-        ------
-        :py:exc:`.NotationError`
-            If the interpretation of the Hamiltonian`s notation is not set.
-
-        See Also
-        --------
-        set_interpretation : to change the interpretation of the Hamiltonian`s notation
-            without the modification of the parameters.
-        """
-
-        if self._minus_sign is None:
-            raise NotationError("minus_sign")
-        return self._minus_sign
-
-    @minus_sign.setter
-    def minus_sign(self, new_value: bool):
-        if self._minus_sign is not None:
-            factor = 1
-            if self._minus_sign ^ new_value:
-                factor = -1
+    @factor.setter
+    def factor(self, new_factor: bool):
+        if self._factor is not None:
+            factor = self._factor / new_factor
 
             if factor != 1:
                 for atom1, atom2, R, J in self:
                     self[atom1, atom2, R] = J * factor
-        self._minus_sign = bool(new_value)
+
+        self._factor = float(new_factor)
 
     def __iter__(self):
         return SpinHamiltonianIterator(self)
@@ -1192,7 +1096,7 @@ class SpinHamiltonian(Crystal):
 
         Notes
         -----
-        Notation of the Hamiltonian nas to be known.
+        Notation of the Hamiltonian has to be known.
         See :py:meth:`.set_interpretation` and :py:attr:`.notation`.
 
         Parameters
@@ -1223,21 +1127,12 @@ class SpinHamiltonian(Crystal):
             [np.cos(phi) * np.sin(theta), np.sin(phi) * np.sin(theta), np.cos(theta)]
         )
 
-        # compute factor from notation
-        factor = 1
-        if self.minus_sign:
-            factor *= -1
-        if self.factor_one_half:
-            factor /= 2
-        if self.factor_two:
-            factor *= 2
-
         energy = np.zeros((3, 3), dtype=float)
         for atom1, atom2, R, J in self:
             if self.spin_normalized:
-                energy += factor * J.matrix
+                energy += self.factor * J.matrix
             else:
-                energy += factor * J.matrix * atom1.spin * atom2.spin
+                energy += self.factor * J.matrix * atom1.spin * atom2.spin
 
         energy = np.einsum("ni,ij,jn->n", spin_direction.T, energy, spin_direction)
         if len(energy) == 1:

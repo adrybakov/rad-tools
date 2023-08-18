@@ -566,11 +566,7 @@ def test_notation_manipulation():
     with pytest.raises(NotationError):
         model.spin_normalized
     with pytest.raises(NotationError):
-        model.factor_one_half
-    with pytest.raises(NotationError):
-        model.factor_two
-    with pytest.raises(NotationError):
-        model.minus_sign
+        model.factor
 
     model.notation = "standard"
     assert model[Cr, Cr, (1, 0, 0)].iso == 1
@@ -594,29 +590,24 @@ def test_notation_manipulation():
     model.spin_normalized = False
     assert model[Cr, Cr, (1, 0, 0)].iso == 1
 
-    assert not model.factor_one_half
-    assert not model.factor_two
-    model.factor_one_half = True
+    assert model.factor == -1.0
+    model.factor = -1 / 2
     assert model[Cr, Cr, (1, 0, 0)].iso == 2
-    model.factor_one_half = False
+    model.factor = -1
     assert model[Cr, Cr, (1, 0, 0)].iso == 1
-    model.factor_two = True
+    model.factor = -2
     assert model[Cr, Cr, (1, 0, 0)].iso == 0.5
-    model.factor_two = False
-    assert model[Cr, Cr, (1, 0, 0)].iso == 1
-    model.factor_one_half = True
+    model.factor = -1 / 2
     assert model[Cr, Cr, (1, 0, 0)].iso == 2
-    model.factor_two = True
-    assert model[Cr, Cr, (1, 0, 0)].iso == 1
-    model.factor_two = False
-    assert model[Cr, Cr, (1, 0, 0)].iso == 1
-    model.factor_one_half = False
+    model.factor = -2
+    assert model[Cr, Cr, (1, 0, 0)].iso == 0.5
+    model.factor = -1
     assert model[Cr, Cr, (1, 0, 0)].iso == 1
 
-    assert model.minus_sign
-    model.minus_sign = False
+    assert model.factor == -1
+    model.factor = 1
     assert model[Cr, Cr, (1, 0, 0)].iso == -1
-    model.minus_sign = True
+    model.factor = -1
     assert model[Cr, Cr, (1, 0, 0)].iso == 1
 
     model.notation = "SpinW"
@@ -636,41 +627,19 @@ def test_predefined_notations():
     with pytest.raises(NotationError):
         model.spin_normalized
     with pytest.raises(NotationError):
-        model.factor_one_half
-    with pytest.raises(NotationError):
-        model.factor_two
-    with pytest.raises(NotationError):
-        model.minus_sign
+        model.factor
 
     model.notation = "standard"
     assert model[Cr, Cr, (1, 0, 0)].iso == 1
-    assert (
-        model.double_counting
-        and not model.spin_normalized
-        and not model.factor_one_half
-        and not model.factor_two
-        and model.minus_sign
-    )
+    assert model.double_counting and not model.spin_normalized and model.factor == -1
 
     model.notation = "TB2J"
     assert model[Cr, Cr, (1, 0, 0)].iso == 9 / 4
-    assert (
-        model.double_counting
-        and model.spin_normalized
-        and not model.factor_one_half
-        and not model.factor_two
-        and model.minus_sign
-    )
+    assert model.double_counting and model.spin_normalized and model.factor == -1
 
     model.notation = "SpinW"
     assert model[Cr, Cr, (1, 0, 0)].iso == -1
-    assert (
-        model.double_counting
-        and not model.spin_normalized
-        and not model.factor_one_half
-        and not model.factor_two
-        and not model.minus_sign
-    )
+    assert model.double_counting and not model.spin_normalized and model.factor == 1
 
 
 def test_ferromagnetic_energy():
@@ -683,10 +652,8 @@ def test_ferromagnetic_energy():
     model.add_bond(Cr1, Cr3, (0, -1, 0), iso=2)
     model.add_bond(Cr2, Cr1, (0, 0, -3), iso=3)
     model.double_counting = False
-    model.minus_sign = True
-    model.factor_one_half = False
-    model.factor_two = False
     model.spin_normalized = True
+    model.factor = -1
     assert np.allclose(model.ferromagnetic_energy(), -6)
     assert np.allclose(model.ferromagnetic_energy(theta=23, phi=234), -6)
     model.add_bond(
@@ -705,13 +672,11 @@ def test_ferromagnetic_energy():
         - model.ferromagnetic_energy(theta=[0, 90, 90, 90], phi=[0, 0, 90, 45])
         < 1e-5
     ).all()
-
-    notations = np.transpose(np.indices((2, 2, 2, 2, 2)), (1, 2, 3, 4, 5, 0)).reshape(
-        (32, 5)
-    )
-    for new_notation in notations:
-        model.notation = new_notation
-        assert np.allclose(model.ferromagnetic_energy(), -6)
+    for double_counting in [True, False]:
+        for spin_normalized in [True, False]:
+            for factor in [-1, -0.5, -2, 1, 0.5, 2]:
+                model.notation = (double_counting, spin_normalized, factor)
+                assert np.allclose(model.ferromagnetic_energy(), -6)
 
 
 def test_add_remove_bond_with_notation():

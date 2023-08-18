@@ -528,31 +528,27 @@ The notation could be defined in three ways:
     >>> hamiltonian = SpinHamiltonian()
     >>> hamiltonian.double_counting = True
     >>> hamiltonian.spin_normalized = False
-    >>> hamiltonian.factor_one_half = False
-    >>> hamiltonian.factor_two = True
-    >>> hamiltonian.minus_sign = True
+    >>> hamiltonian.factor = -1
 
 * By setting the :py:attr:`.notation` property directly with the tuple of five ``bool``:
 
 .. doctest::
 
     >>> hamiltonian = SpinHamiltonian()
-    >>> hamiltonian.notation = (True, False, False, True, True)
+    >>> hamiltonian.notation = (True, False, -2)
     >>> hamiltonian.notation
+    (True, False, -2.0)
+    >>> print(hamiltonian.notation_string)
     H = -2 sum_{i,j} S_i J_ij S_j
     Double counting is present.
     Spin vectors are not normalized.
-    (True, False, False, True, True)
     >>> hamiltonian.double_counting
     True
     >>> hamiltonian.spin_normalized
     False
-    >>> hamiltonian.factor_one_half
-    False
-    >>> hamiltonian.factor_two
-    True
-    >>> hamiltonian.minus_sign
-    True
+    >>> hamiltonian.factor
+    -2.0
+
 
 * By setting the :py:attr:`.notation` property directly with the string:
 
@@ -561,22 +557,25 @@ The notation could be defined in three ways:
     >>> hamiltonian = SpinHamiltonian()
     >>> hamiltonian.notation = 'standard'
     >>> hamiltonian.notation
-    H = -sum_{i,j} S_i J_ij S_j
+    (True, False, -1.0)
+    >>> print(hamiltonian.notation_string)
+    H = - sum_{i,j} S_i J_ij S_j
     Double counting is present.
     Spin vectors are not normalized.
-    (True, False, False, False, True)
     >>> hamiltonian.notation = 'tb2j'
     >>> hamiltonian.notation
-    H = -sum_{i,j} S_i J_ij S_j
+    (True, True, -1.0)
+    >>> print(hamiltonian.notation_string)
+    H = - sum_{i,j} S_i J_ij S_j
     Double counting is present.
     Spin vectors are normalized to 1.
-    (True, True, False, False, True)
     >>> hamiltonian.notation = 'spinw'
     >>> hamiltonian.notation
+    (True, False, 1.0)
+    >>> print(hamiltonian.notation_string)
     H = sum_{i,j} S_i J_ij S_j
     Double counting is present.
     Spin vectors are not normalized.
-    (True, False, False, False, False)
 
 Changing
 --------
@@ -591,15 +590,15 @@ parameters. For example:
     >>> hamiltonian.add_bond(Cr, Cr, (1, 0, 0), iso=1)
     >>> hamiltonian[Cr, Cr, (1, 0, 0)].iso
     1.0
-    >>> hamiltonian.notation = (True, False, False, False, True)
+    >>> hamiltonian.notation = (True, False, -1)
     >>> hamiltonian[Cr, Cr, (1, 0, 0)].iso
     1.0
     >>> # Normalize spins
-    >>> hamiltonian.notation = (True, True, False, False, True)
+    >>> hamiltonian.notation = (True, True, -1)
     >>> hamiltonian[Cr, Cr, (1, 0, 0)].iso
     2.25
     >>> # Remove minus sign in the Hamiltonian definition
-    >>> hamiltonian.notation = (True, True, False, False, False)
+    >>> hamiltonian.notation = (True, True, 1)
     >>> hamiltonian[Cr, Cr, (1, 0, 0)].iso
     -2.25
 
@@ -608,7 +607,7 @@ The rule for the notation change is simple: Conserve the value of energy.
 Resetting
 ---------
 
-If you want to reset the notation once is set, but keep the parameters intact use 
+If you want to reset the notation once it is set, but keep the parameters intact use 
 :py:meth:`.SpinHamiltonian.set_interpretation` method:
 
 .. doctest::
@@ -616,20 +615,20 @@ If you want to reset the notation once is set, but keep the parameters intact us
     >>> hamiltonian = SpinHamiltonian()
     >>> hamiltonian.double_counting = True
     >>> hamiltonian.spin_normalized = False
-    >>> hamiltonian.factor_one_half = False
-    >>> hamiltonian.factor_two = True
-    >>> hamiltonian.minus_sign = True
+    >>> hamiltonian.factor = -2
     >>> hamiltonian.notation
+    (True, False, -2.0)
+    >>> print(hamiltonian.notation_string)
     H = -2 sum_{i,j} S_i J_ij S_j
     Double counting is present.
     Spin vectors are not normalized.
-    (True, False, False, True, True)
     >>> hamiltonian.set_interpretation(double_counting=False, spin_normalized=True)
     >>> hamiltonian.notation
+    (False, True, -2.0)
+    >>> print(hamiltonian.notation_string)
     H = -2 sum_{i>=j} S_i J_ij S_j
     No double counting.
     Spin vectors are normalized to 1.
-    (False, True, False, True, True)
 
 Double counting
 ---------------
@@ -665,45 +664,28 @@ Spin normalization
     (True, -4.5)
     >>> hamiltonian.spin_normalized = False
 
-Minus sign
+Factor
 ----------
 
     >>> hamiltonian[Cr, Cr, (1, 0, 0)].iso
     1.0
-    >>> hamiltonian.minus_sign, hamiltonian.ferromagnetic_energy()
-    (True, -4.5)
-    >>> hamiltonian.minus_sign = False
+    >>> hamiltonian.factor, hamiltonian.ferromagnetic_energy()
+    (-1.0, -4.5)
+    >>> hamiltonian.factor = 1
     >>> hamiltonian[Cr, Cr, (1, 0, 0)].iso
     -1.0
-    >>> hamiltonian.minus_sign, hamiltonian.ferromagnetic_energy()
-    (False, -4.5)
-    >>> hamiltonian.minus_sign = True
-
-Factor 2 and 1/2
-----------------
-
-Those two factors are mutually exclusive. If both are set to ``True`` or ``False`` then
-they both are set to ``False``. For example:
-
-.. doctest::
-
+    >>> hamiltonian.factor, hamiltonian.ferromagnetic_energy()
+    (1.0, -4.5)
+    >>> hamiltonian.factor = -2
     >>> hamiltonian[Cr, Cr, (1, 0, 0)].iso
-    1.0
-    >>> hamiltonian.factor_one_half, hamiltonian.factor_two, hamiltonian.ferromagnetic_energy()
-    (False, False, -4.5)
-    >>> hamiltonian.factor_one_half = True
+    0.5
+    >>> hamiltonian.factor, hamiltonian.ferromagnetic_energy()
+    (-2.0, -4.5)
+    >>> hamiltonian.factor = -0.5
     >>> hamiltonian[Cr, Cr, (1, 0, 0)].iso
     2.0
-    >>> hamiltonian.factor_one_half, hamiltonian.factor_two, hamiltonian.ferromagnetic_energy()
-    (True, False, -4.5)
-    >>> hamiltonian.factor_two = True
-    >>> hamiltonian[Cr, Cr, (1, 0, 0)].iso
-    1.0
-    >>> # Note that the values are switched to False,
-    >>> # since factor one half and two are cancelling each other out
-    >>> hamiltonian.factor_one_half, hamiltonian.factor_two, hamiltonian.ferromagnetic_energy()
-    (False, False, -4.5)
-
+    >>> hamiltonian.factor, hamiltonian.ferromagnetic_energy()
+    (-0.5, -4.5)
 
 Crystal of the spin Hamiltonian
 ===============================
@@ -749,7 +731,3 @@ the :py:class:`.Crystal` class:
     array([[3.14159265, 0.        , 0.        ],
            [0.        , 3.14159265, 0.        ],
            [0.        , 0.        , 4.71238898]])
-
-
-
-

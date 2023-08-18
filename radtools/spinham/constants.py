@@ -4,9 +4,9 @@ __all__ = [
 ]
 
 PREDEFINED_NOTATIONS = {
-    "standard": (True, False, False, False, True),
-    "tb2j": (True, True, False, False, True),
-    "spinw": (True, False, False, False, False),
+    "standard": (True, False, -1),
+    "tb2j": (True, True, -1),
+    "spinw": (True, False, 1),
 }
 
 TXT_FLAGS = {
@@ -27,5 +27,5 @@ TXT_FLAGS = {
     "kpoints": "Points (in relative coordinates):",
     "klabels": "Labels:",
     "dispersion": "Magnon dispersion:",
-    "separate": "Data are in the file:"
+    "separate": "Data are in the file:",
 }

@@ -287,6 +287,4 @@ class TestReadSpinHamiltonian:
     def test_notation(self):
         assert self.model.double_counting == True
         assert self.model.spin_normalized == True
-        assert self.model.factor_one_half == False
-        assert self.model.factor_two == False
-        assert self.model.minus_sign == True
+        assert self.model.factor == -1
