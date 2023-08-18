@@ -31,6 +31,7 @@ Examples of predefined plots for each type of calculations
 (all commands for the command line are executed from "docs/examples/rad-plot-dos" folder):
 
 .. toctree::
+    :caption: Usage examples
     :maxdepth: 1
 
     collinear
@@ -45,7 +46,7 @@ Common remarks
 ==============
 
 Script tries to detect all seednames present 
-in :ref:`rad-plot-dos_input-path` by default, 
+in :ref:`rad-plot-dos_input-folder` by default, 
 unless :ref:`rad-plot-dos_seedname` option specifies 
 particular seedname to work with.
 
@@ -165,7 +166,7 @@ Suffix is a combination of any number of the following words:
     :ref:`rad-plot-dos_separate` option contribute to the suffix in both cases, 
     but affects only the :ref:`rad-plot-dos_predefined-plots`.
 
-The structure of the :ref:`output folder <rad-plot-dos_output-path>` is the following:
+The structure of the :ref:`output folder <rad-plot-dos_output-name>` is the following:
 
 .. code-block:: text
 
@@ -369,44 +370,22 @@ Each seedname folder has the structure:
         └── output_name_2
 
 
-Usage example
-=============
-Minimal possible input is:
-
-.. code-block:: bash
-
-    rad-plot-dos.py 
-
-It will try to detect PDOS output files in the current directory and plot them.
-
-To choose energy window use an 
-option :ref:`rad-plot-dos_energy-window`:
-
-.. code-block:: bash
-
-    rad-plot-dos.py -ew -10 5
-
-To choose :ref:`input <rad-plot-dos_input-path>` or 
-:ref:`output <rad-plot-dos_output-path>` path use:
-
-.. code-block:: bash
-
-    rad-plot-dos.py -ip "input_path" -op "output_path" -ew -10 5
-
 .. _rad-plot-dos_arguments:
 
 Arguments
 =========
 
-.. _rad-plot-dos_input-path:
+.. _rad-plot-dos_input-folder:
 
--ip, --input-path
------------------
+-if, --input-folder
+-------------------
 Relative or absolute path to the folder with PDOS files.
 
 .. code-block:: text
 
     default : current directory (".")
+
+.. versionchanged:: 0.8.0 Renamed from ``input_path``
 
 
 .. _rad-plot-dos_seedname:
@@ -420,7 +399,7 @@ as specified in the QE projwfc.x input file (filpdos).
 
 If it is not provided the script tries to 
 detect it automatically in the 
-:ref:`rad-plot-dos_input-path` folder.
+:ref:`rad-plot-dos_input-folder` folder.
 
 .. code-block:: text
 
@@ -429,9 +408,9 @@ detect it automatically in the
 .. versionchanged:: 0.5.21 from "filpdos" to "seedname".
 
 
-.. _rad-plot-dos_output-path:
+.. _rad-plot-dos_output-name:
 
--op, --output-path
+-on, --output-name
 ------------------
 Relative or absolute path to the folder for saving outputs.
 

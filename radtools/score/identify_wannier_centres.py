@@ -1,13 +1,13 @@
 #! /usr/local/bin/python3
 
 from argparse import ArgumentParser
-from os.path import join, split
+import os
 
 import numpy as np
 from termcolor import cprint
 
 
-def manager(input_filename, span, output_path, output_name):
+def manager(input_filename, span=0.1, output_name=""):
     r"""
     :ref:`rad-identify-wannier-centres` script.
 
@@ -19,11 +19,17 @@ def manager(input_filename, span, output_path, output_name):
 
     # Get the output path and the output name from the input filename
     # if they are not specified
-    head, tail = split(input_filename)
-    if output_path is None:
-        output_path = head
-    if output_name is None:
-        output_name = tail + "_identified"
+    head, tail = os.path.split(input_filename)
+    out_head, out_tail = os.path.split(output_name)
+    if len(out_head) == 0:
+        out_head = head
+    if len(out_tail) == 0:
+        out_tail = tail + "_identified"
+
+    # Create the output directory if it does not exist
+    os.makedirs(out_head, exist_ok=True)
+
+    output_name = os.path.join(out_head, out_tail)
 
     # Set the default separation tolerance for the span
     separation_tolerance = 10e-8
@@ -81,7 +87,7 @@ def manager(input_filename, span, output_path, output_name):
             centre[0] = name
 
     # Write the output
-    with open(join(output_path, output_name), "w") as file:
+    with open(output_name, "w") as file:
         file.write(f"{len(atoms) + len(centres):6.0f}\n")
         file.write(f"{file_stats}")
         for centre, coordinate in centres:
@@ -100,7 +106,7 @@ def manager(input_filename, span, output_path, output_name):
                 + f"{coordinate[2]:14.8f}"
                 + f"   ->   {atom}\n"
             )
-    cprint(f"Results are in {join(output_path, output_name)}", "blue")
+    cprint(f"Results are in {os.path.abspath(output_name)}", "blue")
 
 
 def create_parser():
@@ -121,17 +127,10 @@ def create_parser():
         help="Distance tolerance between centre and atom. (in Angstroms)",
     )
     parser.add_argument(
-        "-op",
-        "--output-path",
-        type=str,
-        default=None,
-        help="Relative or absolute path to the folder for saving outputs.",
-    )
-    parser.add_argument(
         "-on",
         "--output-name",
         type=str,
-        default=None,
+        default="",
         help="Seedname for the output files.",
     )
     return parser

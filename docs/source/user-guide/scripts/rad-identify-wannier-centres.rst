@@ -33,7 +33,7 @@ Lets run the code:
 
 .. code-block:: bash
 
-    rad-identify-wannier-centres.py example_centres.xyz
+    rad-identify-wannier-centres.py -if example_centres.xyz
 
 This command creates an output file "example_centre.xyz_identified" 
 in the directory of the input file with the following content:
@@ -57,7 +57,7 @@ all the atoms:
 
 .. code-block:: bash
 
-    rad-identify-wannier-centres.py example_centres.xyz --span 0.11 --output-name example_centres.xyz_bigger_span
+    rad-identify-wannier-centres.py -if example_centres.xyz --span 0.11 --output-name example_centres.xyz_bigger_span
 
 This command produces example_centres.xyz_bigger_span file:
 
@@ -100,18 +100,6 @@ Distance tolerance between centre and atom. (in Angstroms)
 .. code-block:: text
 
     default : 0.1
-
-.. _rad-identify-wannier-centres_output-path:
-
--op, --output-path
-------------------
-Relative or absolute path to the folder for saving outputs.
-
-.. code-block:: text
-
-    default : the directory of the input file
-
-See also: :ref:`example <output-notes>`.
 
 .. _rad-identify-wannier-centres_output-name:
 

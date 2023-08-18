@@ -1,6 +1,5 @@
 from argparse import ArgumentParser
-from os import makedirs
-from os.path import abspath, join
+import os
 
 from termcolor import cprint
 
@@ -15,9 +14,9 @@ from radtools.dos.plotting import COLOURS
 
 
 def manager(
-    input_path,
+    input_folder,
     seedname=None,
-    output_path=".",
+    output_name="",
     energy_window=None,
     dos_window=None,
     efermi=0.0,
@@ -45,8 +44,9 @@ def manager(
     correspond to the arguments of the script.
     """
 
-    # Create the output directory if it does not exist
-    makedirs(output_path, exist_ok=True)
+    out_head, out_tail = os.path.split(output_name)
+    if len(out_head) == 0:
+        out_head = input_folder
 
     if colours is None:
         colours = COLOURS
@@ -63,7 +63,7 @@ def manager(
 
     # Detect seednames if not provided.
     if seedname is None:
-        seednames = detect_seednames(input_path)
+        seednames = detect_seednames(input_folder)
         print(f"Following DOS seednames (filpdos) are detected:")
         for item in seednames:
             cprint(f"   * {item}", "green", attrs=["bold"])
@@ -78,12 +78,12 @@ def manager(
             attrs=["bold"],
         )
         # Preparations
-        output_root = join(output_path, f"{seedname}{suffix}")
+        output_root = os.path.join(out_head, f"{out_tail}{seedname}{suffix}")
         if output_root != "":
-            makedirs(output_root, exist_ok=True)
+            os.makedirs(output_root, exist_ok=True)
 
         # Load DOS data.
-        dos = DOSQE(seedname, input_path, energy_window=energy_window, efermi=efermi)
+        dos = DOSQE(seedname, input_folder, energy_window=energy_window, efermi=efermi)
         print(f"{dos.casename} case detected.")
         for atom in dos.atoms:
             print(f"  {len(dos.atom_numbers(atom))} {atom} detected")
@@ -110,7 +110,7 @@ def manager(
             # Plot PDOS vs DOS
             cprint("Total DOS vs total PDOS", "green")
             dos.plot_pdos_tot(
-                output_name=join(output_root, "pdos-vs-dos"),
+                output_name=os.path.join(output_root, "pdos-vs-dos"),
                 interactive=interactive,
                 efermi=efermi,
                 xlim=energy_window,
@@ -120,7 +120,10 @@ def manager(
                 axes_labels_fontsize=axes_labels_fontsize,
                 title_fontsize=title_fontsize,
             )
-            cprint(f"Result is in {abspath(join(output_root, 'pdos-vs-dos'))}", "blue")
+            cprint(
+                f"Result is in {os.path.abspath(os.path.join(output_root, 'pdos-vs-dos'))}",
+                "blue",
+            )
 
             # Plot PDOS for each atom/wfc
             plot_orbital_resolved(dos=dos, **pdos_parameters, separate=separate)
@@ -140,8 +143,8 @@ def create_parser():
         description="Script for visualisation of density of states."
     )
     parser.add_argument(
-        "-ip",
-        "--input-path",
+        "-if",
+        "--input-folder",
         metavar="path",
         type=str,
         default=".",
@@ -156,11 +159,11 @@ def create_parser():
         help="Prefix for input files with PDOS(E).",
     )
     parser.add_argument(
-        "-op",
-        "--output-path",
+        "-on",
+        "--output-name",
         metavar="path",
         type=str,
-        default=".",
+        default="",
         help="Relative or absolute path to the folder for saving outputs.",
     )
     parser.add_argument(

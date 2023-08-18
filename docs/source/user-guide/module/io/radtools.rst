@@ -24,7 +24,7 @@ or for extracting model with grouped parameters
 
 Here is the draft of the template file which is provided by the script:
 
-.. literalinclude:: ../../../../examples/rad-make-template/template_demo.txt
+.. literalinclude:: ../../../../examples/rad-make-template/template.txt
     :language: text
     :linenos:   
 

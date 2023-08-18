@@ -107,22 +107,6 @@ standard output stream.
 
 See also: :ref:`example <output-notes>`.
 
-.. _rad-plot-tb2j-magnons_output-path:
-
--op, --output-path
-------------------
-Relative or absolute path to the folder for saving outputs.
-
-If the folder does not exist then it is created from the specified path.
-The creation is applied recursively to the path, starting from the right
-until the existing folder is reached.
-
-.. code-block:: text
-
-    default : current directory
-
-See also: :ref:`example <output-notes>`.
-
 .. _rad-plot-tb2j-magnons_spin:
 
 -s, --spin

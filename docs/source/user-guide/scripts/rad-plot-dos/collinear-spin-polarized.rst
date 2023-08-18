@@ -10,14 +10,14 @@ Default style
 
 .. code-block:: bash
 
-    rad-plot-dos.py -ip collinear-spin-polarized/ -ew -6.5 6.5 -ef -1.7810 -op collinear-spin-polarized/
+    rad-plot-dos.py -if collinear-spin-polarized/ -ew -6.5 6.5 -ef -1.7810 
 
 Relative style, normalized
 --------------------------
 
 .. code-block:: bash
 
-    rad-plot-dos.py -ip collinear-spin-polarized/ -ew -6.5 6.5 -ef -1.7810 -op collinear-spin-polarized/ -r -n
+    rad-plot-dos.py -if collinear-spin-polarized/ -ew -6.5 6.5 -ef -1.7810  -r -n
 
 pdos-vs-dos
 ===========

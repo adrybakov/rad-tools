@@ -11,7 +11,7 @@
         Git hash: 9c9b087fa02be0cafdadaef6ec1c7926fe36e3d6       ███   ▄▄       
                        Licence: MIT License                      ████ █  █      
                                                                  ████    █      
-              Generated on 17 August 2023 at 23:7:0              ▀▀▀▀▀▀▀▀       
+              Generated on 18 August 2023 at 19:50:3             ▀▀▀▀▀▀▀▀       
 Exchange values are extracted from:
 /Users/rybakov.ad/Projects/rad-tools/docs/examples/rad-extract-tb2j/exchange.out
 ================================================================================

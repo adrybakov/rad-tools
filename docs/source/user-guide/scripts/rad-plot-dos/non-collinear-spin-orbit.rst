@@ -10,14 +10,14 @@ Default style
 
 .. code-block:: bash
 
-    rad-plot-dos.py -ip noncollinear-so/ -ew -6.5 6.5 -ef -1.6372 -op noncollinear-so/
+    rad-plot-dos.py -if noncollinear-so/ -ew -6.5 6.5 -ef -1.6372 
 
 Relative style, normalized
 --------------------------
 
 .. code-block:: bash
 
-    rad-plot-dos.py -ip noncollinear-so/ -ew -6.5 6.5 -ef -1.6372 -op noncollinear-so/ -r -n
+    rad-plot-dos.py -if noncollinear-so/ -ew -6.5 6.5 -ef -1.6372  -r -n
 
 pdos-vs-dos
 ===========

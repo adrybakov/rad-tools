@@ -1,6 +1,5 @@
 from argparse import ArgumentParser
-from os import makedirs
-from os.path import abspath, join
+import os
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -20,7 +19,6 @@ def manager(
     input_filename,
     template_file,
     output_name="magnon_dispersion",
-    output_path=".",
     spin=None,
     spiral_vector=None,
     rotation_axis=None,
@@ -46,8 +44,17 @@ def manager(
     correspond to the arguments of the script.
     """
 
+    head, tail = os.path.split(input_filename)
+    out_head, out_tail = os.path.split(output_name)
+    if len(out_head) == 0:
+        out_head = head
+    if len(out_tail) == 0:
+        out_tail = "magnon_dispersion"
+
+    output_name = os.path.join(out_head, out_tail)
+
     # Create the output directory if it does not exist
-    makedirs(output_path, exist_ok=True)
+    os.makedirs(out_head, exist_ok=True)
 
     # Check input parameters for consistency
     if form_model and template_file is None:
@@ -245,11 +252,11 @@ def manager(
                     "\n",
                     TXT_FLAGS["separate"],
                     "\n",
-                    abspath(join(output_path, filename)),
+                    os.path.abspath(filename),
                 ]
             )
             info = "".join(info)
-            with open(join(output_path, f"{output_name}_info.txt"), "w") as file:
+            with open(f"{output_name}_info.txt", "w") as file:
                 file.write(info)
             info = ""
             comments = "#"
@@ -259,7 +266,7 @@ def manager(
             comments = ""
 
         np.savetxt(
-            join(output_path, filename),
+            filename,
             np.concatenate(
                 (
                     [kp.flatten_points()],
@@ -282,12 +289,12 @@ def manager(
         plt.show()
     else:
         plt.savefig(
-            join(output_path, f"{output_name}.png"),
+            f"{output_name}.png",
             bbox_inches="tight",
             dpi=600,
         )
         cprint(
-            f"Results are in {abspath(output_name)}, seedname: {output_name}.", "blue"
+            f"Results are in {os.path.abspath(out_head)}, seedname: {out_tail}.", "blue"
         )
 
 
@@ -321,14 +328,6 @@ def create_parser():
         type=str,
         default="magnon_dispersion",
         help="Seedname for the output files.",
-    )
-    parser.add_argument(
-        "-op",
-        "--output-path",
-        metavar="path",
-        type=str,
-        default=".",
-        help="Relative or absolute path to the folder for saving outputs.",
     )
     parser.add_argument(
         "-s",

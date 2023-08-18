@@ -1,6 +1,5 @@
 from argparse import ArgumentParser
-from os import makedirs
-from os.path import join
+import os
 
 from termcolor import cprint
 
@@ -10,9 +9,9 @@ from radtools.dos.plotting import COLOURS
 
 
 def manager(
-    input_path,
+    input_folder,
     seedname=None,
-    output_path=".",
+    output_name="",
     energy_window=None,
     k_window=None,
     efermi=0.0,
@@ -38,15 +37,16 @@ def manager(
     correspond to the arguments of the script.
     """
 
-    # Create the output directory if it does not exist
-    makedirs(output_path, exist_ok=True)
+    out_head, out_tail = os.path.split(output_name)
+    if len(out_head) == 0:
+        out_head = input_folder
 
     if colours is None:
         colours = COLOURS
 
     # Detect seednames if not provided.
     if seedname is None:
-        seednames = detect_seednames(input_path)
+        seednames = detect_seednames(input_folder)
         print(f"Following DOS seednames (filpdos) are detected:")
         for item in seednames:
             cprint(f"   * {item}", "green", attrs=["bold"])
@@ -61,12 +61,12 @@ def manager(
             attrs=["bold"],
         )
         # Preparations
-        output_root = join(output_path, f"{seedname}")
+        output_root = os.path.join(out_head, f"{out_tail}{seedname}")
         if output_root != "":
-            makedirs(output_root, exist_ok=True)
+            os.makedirs(output_root, exist_ok=True)
 
         # Load DOS data.
-        dos = DOSQE(seedname, input_path, energy_window=energy_window, efermi=efermi)
+        dos = DOSQE(seedname, input_folder, energy_window=energy_window, efermi=efermi)
         print(f"{dos.casename} case detected.")
         for atom in dos.atoms:
             print(f"  {len(dos.atom_numbers(atom))} {atom} detected")
@@ -94,8 +94,8 @@ def manager(
 def create_parser():
     parser = ArgumentParser(description="Script for visualisation of fatbands.")
     parser.add_argument(
-        "-ip",
-        "--input-path",
+        "-if",
+        "--input-folder",
         metavar="path",
         type=str,
         default=".",
@@ -110,11 +110,11 @@ def create_parser():
         help="Prefix for input files with PDOS(E).",
     )
     parser.add_argument(
-        "-op",
-        "--output-path",
-        metavar="path",
+        "-on",
+        "--output-name",
+        metavar="name",
         type=str,
-        default=".",
+        default="",
         help="Relative or absolute path to the folder for saving outputs.",
     )
     parser.add_argument(

@@ -41,3 +41,10 @@ generate k-points mesh and to plot the paths.
 :py:func:`.print_2d_array` now supports headers and footers both for rows and columns.
 
 :ref:`rad-identify-wannier-centres_input-filename` is no longer a positional one.
+
+Concept ``output_path`` + ``output_name`` is changed to the concept of ``output_name``.
+In all scripts the argument ``output_path`` is removed and the argument ``output_name``
+is added. In different scripts the argument ``output_name`` could mean the file or folder.
+For the user the usage is the same.
+
+In all scripts the output now is saved at the same place where the input is located.

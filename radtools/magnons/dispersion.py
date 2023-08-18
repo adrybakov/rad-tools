@@ -295,7 +295,7 @@ class MagnonDispersion:
                             omegas = np.array([None] * self.N)
                         else:
                             omegas = np.zeros(self.N)
-
+        omegas[np.abs(omegas) <= 1e-8] = 0
         return omegas
 
     def omegas(self, kpoints, zeros_to_none=False):

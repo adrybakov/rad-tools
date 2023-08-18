@@ -11,7 +11,7 @@
         Git hash: 9c9b087fa02be0cafdadaef6ec1c7926fe36e3d6       ███   ▄▄       
                        Licence: MIT License                      ████ █  █      
                                                                  ████    █      
-              Generated on 17 August 2023 at 23:6:35             ▀▀▀▀▀▀▀▀       
+             Generated on 18 August 2023 at 19:49:42             ▀▀▀▀▀▀▀▀       
 Template is created based on the file:
 docs/examples/rad-make-template/exchange.out
 ================================================================================

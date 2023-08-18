@@ -25,10 +25,10 @@ It supports the result of the calculation from:
 Arguments
 =========
 
-.. _rad-plot-fatbands_input-path:
+.. _rad-plot-fatbands_input-folder:
 
--ip, --input-path
------------------
+-if, --input-folder
+-------------------
 Relative or absolute path to the folder with PDOS files.
 
 .. code-block:: text
@@ -47,7 +47,7 @@ as specified in the QE projwfc.x input file (filpdos).
 
 If it is not provided the script tries to 
 detect it automatically in the 
-:ref:`rad-plot-fatbands_input-path` folder.
+:ref:`rad-plot-fatbands_input-folder` folder.
 
 .. code-block:: text
 
@@ -55,15 +55,17 @@ detect it automatically in the
 
 
 
-.. _rad-plot-fatbands_output-path:
+.. _rad-plot-fatbands_output-name:
 
--op, --output-path
+-on, --output-name
 ------------------
-Relative or absolute path to the folder for saving outputs.
+Relative or absolute name to the folder for saving outputs.
 
 .. code-block:: text
 
     default : current directory (".")
+
+See also :ref:`output-notes`.
 
 
 .. _rad-plot-fatbands_energy-window:

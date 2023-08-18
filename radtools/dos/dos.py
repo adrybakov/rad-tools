@@ -48,10 +48,10 @@ class DOSQE:
     """
 
     def __init__(
-        self, seedname: str, input_path: str, energy_window=None, efermi=0
+        self, seedname: str, input_folder: str, energy_window=None, efermi=0
     ) -> None:
         self.seedname = seedname
-        self._input_path = input_path
+        self._input_folder = input_folder
 
         # Case and whether DOS is k resolved
         self._k_resolved = None
@@ -119,7 +119,7 @@ class DOSQE:
         # Detect the case
         if self._case is None:
             # Read header
-            with open(join(f"{self._input_path}", f"{self.seedname}.pdos_tot")) as file:
+            with open(join(f"{self._input_folder}", f"{self.seedname}.pdos_tot")) as file:
                 header = file.readline().lower().split()
 
             if "dos(e)" in header and "pdos(e)" in header:
@@ -151,7 +151,7 @@ class DOSQE:
                     "Unable to detect case, analysed header:\n"
                     + f"{header}\n"
                     + f"of the file:\n"
-                    + f"{join(f'{self._input_path}', f'{self.seedname}.pdos_tot')}"
+                    + f"{join(f'{self._input_folder}', f'{self.seedname}.pdos_tot')}"
                 )
 
         return self._case
@@ -182,7 +182,7 @@ class DOSQE:
 
         if self._k_resolved is None:
             # Check for k-resolved
-            with open(join(f"{self._input_path}", f"{self.seedname}.pdos_tot")) as file:
+            with open(join(f"{self._input_folder}", f"{self.seedname}.pdos_tot")) as file:
                 self._k_resolved = "ik" in file.readline().lower().split()
 
         return self._k_resolved
@@ -190,7 +190,7 @@ class DOSQE:
     def _extract_energy(self):
         # Load data
         dos = np.loadtxt(
-            join(f"{self._input_path}", f"{self.seedname}.pdos_tot"), skiprows=1
+            join(f"{self._input_folder}", f"{self.seedname}.pdos_tot"), skiprows=1
         ).T
 
         # Load energy
@@ -213,7 +213,7 @@ class DOSQE:
         if self._filenames is None:
             # Get list of files in the folder
             all_filenames = []
-            for dirpath, dirnames, filenames in walk(self._input_path):
+            for dirpath, dirnames, filenames in walk(self._input_folder):
                 all_filenames.extend(filenames)
                 break
 
@@ -308,7 +308,7 @@ class DOSQE:
 
         # Load data
         dos = np.loadtxt(
-            join(self._input_path, f"{self.seedname}.pdos_tot"), skiprows=1
+            join(self._input_folder, f"{self.seedname}.pdos_tot"), skiprows=1
         ).T
 
         if self.case == 2:
@@ -362,7 +362,7 @@ class DOSQE:
 
         # Load data
         dos = np.loadtxt(
-            join(f"{self._input_path}", f"{self.seedname}.pdos_tot"), skiprows=1
+            join(f"{self._input_folder}", f"{self.seedname}.pdos_tot"), skiprows=1
         ).T
 
         if self.case == 2:
@@ -569,7 +569,7 @@ class DOSQE:
                     )
                 # Load and sum data
                 path = join(
-                    self._input_path,
+                    self._input_folder,
                     f"{self.seedname}.pdos_atm#{atom_number}({atom})_wfc#{wfc_number}({wfc})",
                 )
                 if i == 0 and j == 0:
@@ -748,24 +748,24 @@ class DOSIterator:
         return self
 
 
-def detect_seednames(input_path):
+def detect_seednames(input_folder):
     r"""
     Analyze input folder, detects seednames for the dos output files.
 
     Parameters
     ----------
-    input_path : str
+    input_folder : str
         Directory with DOS files.
 
     Returns
     -------
     seednames : list
-        List of seednames found in ``input_path``.
+        List of seednames found in ``input_folder``.
     """
 
     # Get list of files in the folder
     files = []
-    for dirpath, dirnames, filenames in walk(input_path):
+    for dirpath, dirnames, filenames in walk(input_folder):
         files.extend(filenames)
         break
 

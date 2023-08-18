@@ -1,7 +1,6 @@
 from argparse import ArgumentParser
 from math import asin, pi, sqrt
-from os import makedirs
-from os.path import abspath, join
+import os
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -95,7 +94,6 @@ def atom_mark_to_latex(mark):
 
 def manager(
     input_filename,
-    output_path=".",
     output_name="exchange",
     what_to_plot="iso",
     draw_cells=False,
@@ -119,8 +117,17 @@ def manager(
     correspond to the arguments of the script.
     """
 
+    head, tail = os.path.split(input_filename)
+    out_head, out_tail = os.path.split(output_name)
+    if len(out_head) == 0:
+        out_head = head
+    if len(out_tail) == 0:
+        out_tail = "exchange"
+
+    output_name = os.path.join(out_head, out_tail)
+
     # Create the output directory if it does not exist
-    makedirs(output_path, exist_ok=True)
+    os.makedirs(out_head, exist_ok=True)
 
     # Check input parameters for consistency
     if form_model and template_file is None:
@@ -290,9 +297,9 @@ def manager(
         if title is not None:
             ax.set_title(title, fontsize=1.5 * fontsize)
 
-        png_path = join(output_path, f"{output_name}.{wtp}.png")
+        png_path = f"{output_name}.{wtp}.png"
         plt.savefig(png_path, dpi=400, bbox_inches="tight")
-        cprint(f"2D plot with {wtp} is in {abspath(png_path)}", "blue")
+        cprint(f"2D plot with {wtp} is in {os.path.abspath(png_path)}", "blue")
 
 
 def create_parser():
@@ -306,14 +313,6 @@ def create_parser():
         required=True,
         help="Relative or absolute path to the 'exchange.out' file,"
         + "including the name and extension of the file itself.",
-    )
-    parser.add_argument(
-        "-op",
-        "--output-path",
-        metavar="path",
-        type=str,
-        default=".",
-        help="Relative or absolute path to the folder for saving outputs.",
     )
     parser.add_argument(
         "-on",
