@@ -213,7 +213,7 @@ class DOSQE:
         if self._filenames is None:
             # Get list of files in the folder
             all_filenames = []
-            for dirpath, dirnames, filenames in walk(self._input_folder):
+            for _, _, filenames in walk(self._input_folder):
                 all_filenames.extend(filenames)
                 break
 
@@ -765,7 +765,7 @@ def detect_seednames(input_folder):
 
     # Get list of files in the folder
     files = []
-    for dirpath, dirnames, filenames in walk(input_folder):
+    for _, _, filenames in walk(input_folder):
         files.extend(filenames)
         break
 

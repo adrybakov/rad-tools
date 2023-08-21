@@ -44,7 +44,7 @@ def manager(
     correspond to the arguments of the script.
     """
 
-    head, tail = os.path.split(input_filename)
+    head, _ = os.path.split(input_filename)
     out_head, out_tail = os.path.split(output_name)
     if len(out_head) == 0:
         out_head = head
@@ -54,7 +54,8 @@ def manager(
     output_name = os.path.join(out_head, out_tail)
 
     # Create the output directory if it does not exist
-    os.makedirs(out_head, exist_ok=True)
+    if out_head != "":
+        os.makedirs(out_head, exist_ok=True)
 
     # Check input parameters for consistency
     if form_model and template_file is None:

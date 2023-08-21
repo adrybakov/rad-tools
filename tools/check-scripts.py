@@ -38,20 +38,20 @@ def prepare_files():
 
     # Get filenames of the script interface
     interface = []
-    for dirpath, dirnames, filenames in walk(INTERFACE_DIR):
+    for _, _, filenames in walk(INTERFACE_DIR):
         interface.extend(filenames)
         break
 
     # Get filenames of the script implementation
     implementation = []
-    for dirpath, dirnames, filenames in walk(CORE_DIR):
+    for _, _, filenames in walk(CORE_DIR):
         implementation.extend(filenames)
         break
 
     # Get filenames of the script docs
     docs_files = []
     docs_dirs = []
-    for dirpath, dirnames, filenames in walk(DOCS_DIR):
+    for _, dirnames, filenames in walk(DOCS_DIR):
         docs_files.extend(filenames)
         docs_dirs.extend(dirnames)
         break

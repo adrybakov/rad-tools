@@ -1,8 +1,7 @@
 from argparse import ArgumentParser
 from calendar import month_name
 from datetime import datetime
-from os import makedirs
-from os.path import abspath, split
+import os
 
 import numpy as np
 from termcolor import cprint
@@ -33,9 +32,15 @@ def manager(
 
     n_sep = 80
 
+    out_head, out_tail = os.path.split(output_name)
+    if len(out_tail) == 0:
+        out_tail = "template.txt"
+
+    output_name = os.path.join(out_head, out_tail)
+
     # Create the output directory if it does not exist
-    if split(output_name)[0] != "":
-        makedirs(split(output_name)[0], exist_ok=True)
+    if out_head != "":
+        os.makedirs(out_head, exist_ok=True)
 
     # Get current date and time
     cd = datetime.now()
@@ -79,7 +84,9 @@ def manager(
             file.write(template)
         # Create the template based on the input file
         else:
-            file.write(f"Template is created based on the file:\n{input_filename}\n")
+            file.write(
+                f"Template is created based on the file:\n{os.path.abspath(input_filename)}\n"
+            )
 
             # Read and filter the model
             model = read_tb2j_model(input_filename, quiet=not verbose)
@@ -137,7 +144,8 @@ def manager(
 
             file.write("=" * n_sep + "\n")
     cprint(
-        f"Template draft is in " + f"{abspath(output_name)}, grouped by distance",
+        f"Template draft is in "
+        + f"{os.path.abspath(output_name)}, grouped by distance",
         "blue",
     )
     cprint(f"Do not forget to correct the template draft to your needs!", "yellow")

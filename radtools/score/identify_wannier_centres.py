@@ -27,7 +27,8 @@ def manager(input_filename, span=0.1, output_name=""):
         out_tail = tail + "_identified"
 
     # Create the output directory if it does not exist
-    os.makedirs(out_head, exist_ok=True)
+    if out_head != "":
+        os.makedirs(out_head, exist_ok=True)
 
     output_name = os.path.join(out_head, out_tail)
 

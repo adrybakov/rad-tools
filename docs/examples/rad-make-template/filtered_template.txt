@@ -11,9 +11,9 @@
         Git hash: 9c9b087fa02be0cafdadaef6ec1c7926fe36e3d6       ███   ▄▄       
                        Licence: MIT License                      ████ █  █      
                                                                  ████    █      
-             Generated on 18 August 2023 at 19:49:43             ▀▀▀▀▀▀▀▀       
+             Generated on 21 August 2023 at 18:18:56             ▀▀▀▀▀▀▀▀       
 Template is created based on the file:
-docs/examples/rad-make-template/exchange.out
+/Users/rybakov.ad/Projects/rad-tools/docs/examples/rad-make-template/exchange.out
 ================================================================================
 Neighbors template:
 Atom1 Atom2   i   j   k

@@ -114,9 +114,9 @@ first exchange neighbour, using different options:
 
 .. code-block:: bash
 
-    rad-plot-tb2j.py -if exchange.out -wtp iso -maxd 5 -dc -sa 1.2 u-sd 1.2 -t "First neighbour exchange" -on exchange_filtered
+    rad-plot-tb2j.py -if exchange.out -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange" -on exchange_filtered
     rad-plot-tb2j.py -if exchange.out -wtp iso -tf template.txt -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange" -on exchange_template
-    rad-plot-tb2j.py -if exchange.out -wtp iso -R 1 0 0 1 1 0  0 1 0 -1 1 0 -1 0 0 -1 -1 0 0 -1 0 1 -1 0 -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange" -on exchange_R
+    rad-plot-tb2j.py -if exchange.out -wtp iso -R 1 0 0  1 1 0  0 1 0  -1 0 0  -1 -1 0  0 -1 0  -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange" -on exchange_R
 
 where template file is the following:
 

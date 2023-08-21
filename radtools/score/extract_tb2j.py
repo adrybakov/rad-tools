@@ -1,8 +1,5 @@
 from argparse import ArgumentParser
-from calendar import month_name
-from datetime import datetime
-from os import makedirs
-from os.path import abspath, split
+import os
 
 from termcolor import cprint
 
@@ -39,12 +36,19 @@ def manager(
             + "--form-model implies --template-file"
         )
 
-    # Create the output directory if it does not exist
-    if output_name is not None and split(output_name)[0] != "":
-        makedirs(split(output_name)[0], exist_ok=True)
+    head, _ = os.path.split(input_filename)
+    if output_name is not None:
+        out_head, out_tail = os.path.split(output_name)
+        if len(out_head) == 0:
+            out_head = head
+        if len(out_tail) == 0:
+            out_tail = "spinham.txt"
 
-    # Get current date and time
-    cd = datetime.now()
+        output_name = os.path.join(out_head, out_tail)
+
+        # Create the output directory if it does not exist
+        if out_head != "":
+            os.makedirs(out_head, exist_ok=True)
 
     # Read the model and the template
     model = read_tb2j_model(input_filename, quiet=not verbose)
@@ -59,6 +63,17 @@ def manager(
         template=template,
     )
 
+    additional_stats = (
+        f"Exchange values are extracted from:\n"
+        + f"{os.path.abspath(input_filename)}\n"
+    )
+    if template_file is not None:
+        additional_stats += (
+            f"Template used for "
+            + ("filtering" if not form_model else "model formation")
+            + ":\n"
+            + f"{os.path.abspath(template_file)}\n"
+        )
     # Remove template if no model formation is required
     if not form_model:
         template = None
@@ -71,12 +86,11 @@ def manager(
         dmi=not nodmi,
         template=template,
         decimals=decimals,
-        additional_stats=f"Exchange values are extracted from:\n"
-        + f"{abspath(input_filename)}\n",
+        additional_stats=additional_stats,
     )
     if output_name is not None:
         cprint(
-            f"Extracted exchange info is in " + f"{abspath(output_name)}",
+            f"Extracted exchange info is in " + f"{os.path.abspath(output_name)}",
             "green",
         )
 

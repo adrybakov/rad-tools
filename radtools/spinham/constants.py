@@ -29,4 +29,5 @@ TXT_FLAGS = {
     "dispersion": "Magnon dispersion:",
     "separate": "Data are in the file:",
     "notation": "Notation of Hamiltonian:",
+    "bonds": "Bonds:",
 }

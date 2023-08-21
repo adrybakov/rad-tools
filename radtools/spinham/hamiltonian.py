@@ -1457,6 +1457,17 @@ def dump_spinham_txt(
                     spinham_txt.append(
                         f"   ({atom1:6} {atom2:6} {i:>3}, {j:>3}, {k:>3})\n"
                     )
+            else:
+                spinham_txt.append(TXT_FLAGS["bonds"] + "\n")
+                spinham_txt.append(f"   {'Atom1':6} {'Atom2':6}   i,   j,   k\n")
+                for atom1, atom2, (i, j, k) in bonds:
+                    atom1 = spinham.get_atom(atom1)
+                    atom2 = spinham.get_atom(atom2)
+                    atom1 = f"{atom1.name}({atom1.index})"
+                    atom2 = f"{atom2.name}({atom2.index})"
+                    spinham_txt.append(
+                        f"   {atom1:6} {atom2:6} {i:>3}, {j:>3}, {k:>3}\n"
+                    )
     spinham_txt.append(main_separator)
     spinham_txt = "".join(spinham_txt)
     if filename is not None:

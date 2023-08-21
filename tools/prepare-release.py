@@ -137,7 +137,7 @@ def check_release_notes(version: str):
     # (major, minor, rest)
     major, minor, rest = tuple(map(int, version.split(".")[:3]))
 
-    for dirpath, dirnames, filenames in os.walk(path):
+    for _, _, filenames in os.walk(path):
         break
     # (major, minor)
     files = []

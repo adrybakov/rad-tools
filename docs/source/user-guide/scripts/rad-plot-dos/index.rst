@@ -58,23 +58,29 @@ There are two main plot style:
 * Default
     PDOS of each projector appears on the separate plot within the same figure.
 
+    .. code-block:: bash
 
-.. figure:: /../examples/rad-plot-dos/style-examples/csp/custom.png
-    :align: center
-    :target: ../../../../../../_images/custom.png
+        rad-plot-dos.py --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
 
-    Default style
+    .. figure:: /../examples/rad-plot-dos/style-examples/csp/custom.png
+        :align: center
+        :target: ../../../_images/custom.png
+
+        Default style
 
 * Relative (:ref:`rad-plot-dos_relative`)
     PDOS of all projectors appear on the same plot, 
     PDOS of each projector starts at the end of the previous projector`s PDOS.
 
+    .. code-block:: bash
 
-.. figure:: /../examples/rad-plot-dos/style-examples/csp-relative/custom.png
-    :align: center
-    :target: ../../../../../../_images/custom1.png
+        rad-plot-dos.py -r --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
 
-    Relative style
+    .. figure:: /../examples/rad-plot-dos/style-examples/csp-relative/custom.png
+        :align: center
+        :target: ../../../_images/custom1.png
+
+        Relative style
 
 Each of these styles could be modified by the following "substyles":
 
@@ -83,47 +89,70 @@ Each of these styles could be modified by the following "substyles":
     Local DOS could be the sum of all PDOS, as well as total PDOS
     (see :ref:`rad-plot-dos_background-total`).
 
-.. figure:: /../examples/rad-plot-dos/style-examples/csp-normalized/custom.png
-    :align: center
-    :target: ../../../../../../_images/custom2.png
+    .. code-block:: bash
 
-    With default style
+        rad-plot-dos.py -n --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
 
-.. figure:: /../examples/rad-plot-dos/style-examples/csp-relative-normalized/custom.png
-    :align: center
-    :target: ../../../../../../_images/custom3.png
+    .. figure:: /../examples/rad-plot-dos/style-examples/csp-normalized/custom.png
+        :align: center
+        :target: ../../../_images/custom2.png
 
-    With relative style
+        With default style
+
+    .. code-block:: bash
+
+        rad-plot-dos.py -r -n --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
+
+    .. figure:: /../examples/rad-plot-dos/style-examples/csp-relative-normalized/custom.png
+        :align: center
+        :target: ../../../_images/custom3.png
+
+        With relative style
 
 * Total as a background (:ref:`rad-plot-dos_background-total`)
     Total PDOS is used as the background values instead 
     of the sum of the PDOS from the plot (which is used by default).
 
-.. figure:: /../examples/rad-plot-dos/style-examples/csp-vstotal/custom.png
-    :align: center
-    :target: ../../../../../../_images/custom4.png
+    .. code-block:: bash
 
-    With default style
+        rad-plot-dos.py -bt --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
 
-.. figure:: /../examples/rad-plot-dos/style-examples/csp-relative-vstotal/custom.png
-    :align: center
-    :target: ../../../../../../_images/custom5.png
+    .. figure:: /../examples/rad-plot-dos/style-examples/csp-vstotal/custom.png
+        :align: center
+        :target: ../../../_images/custom4.png
 
-    With relative style
+        With default style
+
+    .. code-block:: bash
+
+        rad-plot-dos.py -r -bt --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
+
+    .. figure:: /../examples/rad-plot-dos/style-examples/csp-relative-vstotal/custom.png
+        :align: center
+        :target: ../../../_images/custom5.png
+
+        With relative style
 
 * Both of them
+    .. code-block:: bash
 
-.. figure:: /../examples/rad-plot-dos/style-examples/csp-normalized-vstotal/custom.png
-    :align: center
-    :target: ../../../../../../_images/custom6.png
+        rad-plot-dos.py -n -bt --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
 
-    With default style
+    .. figure:: /../examples/rad-plot-dos/style-examples/csp-normalized-vstotal/custom.png
+        :align: center
+        :target: ../../../_images/custom6.png
 
-.. figure:: /../examples/rad-plot-dos/style-examples/csp-relative-normalized-vstotal/custom.png
-    :align: center
-    :target: ../../../../../../_images/custom7.png
+        With default style
 
-    With relative style
+    .. code-block:: bash
+
+        rad-plot-dos.py -r -n -bt --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
+
+    .. figure:: /../examples/rad-plot-dos/style-examples/csp-relative-normalized-vstotal/custom.png
+        :align: center
+        :target: ../../../_images/custom7.png
+
+        With relative style
 
 In addition one could modify the colours used in the 
 :ref:`relative <rad-plot-dos_relative>` or :ref:`custom <rad-plot-dos_custom-plots>` plots

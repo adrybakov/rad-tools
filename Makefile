@@ -80,61 +80,11 @@ help:
 	@echo "    clean - clean all files from docs and pip routines"
 	@echo "    test-all - execute testing suite"
 	@echo "    pip - publish the package to the PyPi index"
-	@echo "    example-plot-dos - update example of plotting DOS"
-	@echo "    example-identify-wannier-centres - update example of identifying wannier centres"
-	@echo "    example-make-template - update example of making template"
-	@echo "    example-plot-tb2j - update example of plotting tb2j"
-	@echo "    example-extract-tb2j - update example of extracting tb2j"
-	@echo "    example-plot-dos-gallery - update example of plotting DOS gallery"
-	@echo "    examples - update all examples"
+	@echo "    examples - update examples for all scripts"
 	@echo "    bravais-pictures - update pictures of bravais lattices"
 	@echo "    check-scripts - check consistency of argument names in scripts"
 	@echo "    prepare-release - prepare the package for release"
 	@echo
-
-example-plot-dos:
-	-@rm -r docs/examples/rad-plot-dos/style-examples/*
-	@rad-plot-dos.py -if docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -7 -2 --custom "Ni (d)" "I (p)" -on docs/examples/rad-plot-dos/style-examples/
-	@rad-plot-dos.py -if docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -7 -2 --custom "Ni (d)" "I (p)" -on docs/examples/rad-plot-dos/style-examples/ -n
-	@rad-plot-dos.py -if docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -7 -2 --custom "Ni (d)" "I (p)" -on docs/examples/rad-plot-dos/style-examples/ -bt
-	@rad-plot-dos.py -if docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -7 -2 --custom "Ni (d)" "I (p)" -on docs/examples/rad-plot-dos/style-examples/ -n -bt
-	@rad-plot-dos.py -if docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -7 -2 --custom "Ni (d)" "I (p)" -on docs/examples/rad-plot-dos/style-examples/ -r
-	@rad-plot-dos.py -if docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -7 -2 --custom "Ni (d)" "I (p)" -on docs/examples/rad-plot-dos/style-examples/ -r -n
-	@rad-plot-dos.py -if docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -7 -2 --custom "Ni (d)" "I (p)" -on docs/examples/rad-plot-dos/style-examples/ -r -bt
-	@rad-plot-dos.py -if docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -7 -2 --custom "Ni (d)" "I (p)" -on docs/examples/rad-plot-dos/style-examples/ -r -n -bt
-
-example-identify-wannier-centres:
-	@rad-identify-wannier-centres.py -if docs/examples/rad-identify-wannier-centres/example_centres.xyz
-	@rad-identify-wannier-centres.py -if docs/examples/rad-identify-wannier-centres/example_centres.xyz --span 0.11 --output-name example_centres.xyz_bigger_span
-
-example-make-template:
-	@rad-make-template.py
-	@rad-make-template.py -if docs/examples/rad-make-template/exchange.out -on docs/examples/rad-make-template/full_template.txt
-	@rad-make-template.py -if docs/examples/rad-make-template/exchange.out -on docs/examples/rad-make-template/filtered_template.txt -maxd 8
-
-example-plot-tb2j:
-	@rad-plot-tb2j.py -if docs/examples/rad-plot-tb2j/exchange.out
-	@rad-plot-tb2j.py -if docs/examples/rad-plot-tb2j/exchange.out  -on exchange_filtered -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange"
-	@rad-plot-tb2j.py -if docs/examples/rad-plot-tb2j/exchange.out  -on exchange_template -wtp iso -tf docs/examples/rad-plot-tb2j/template.txt -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange"
-	@rad-plot-tb2j.py -if docs/examples/rad-plot-tb2j/exchange.out  -on exchange_formed_model -tf docs/examples/rad-plot-tb2j/template.txt -fm -dc -sa 1.2 -sd 1.2 -t "Forced symmetry exchange"
-	@rad-plot-tb2j.py -if docs/examples/rad-plot-tb2j/exchange.out  -on exchange_R -wtp iso -R 1 0 0 1 1 0 0 1 0 -1 0 0 -1 -1 0 0 -1 0 -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange"
-	
-example-extract-tb2j:
-	@rad-extract-tb2j.py -if docs/examples/rad-extract-tb2j/exchange.out -tf docs/examples/rad-extract-tb2j/template.txt -on docs/examples/rad-extract-tb2j/summary_formed_model.txt -fm
-	@rad-extract-tb2j.py -if docs/examples/rad-extract-tb2j/exchange.out -tf docs/examples/rad-extract-tb2j/template.txt -on docs/examples/rad-extract-tb2j/summary.txt
-
-example-plot-dos-gallery:
-	@rad-plot-dos.py -if docs/examples/rad-plot-dos/collinear/ -ew -6.5 6.5 -ef -1.7806 
-	@rad-plot-dos.py -if docs/examples/rad-plot-dos/collinear/ -ew -6.5 6.5 -ef -1.7806 -r -n
-	@rad-plot-dos.py -if docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -6.5 6.5 -ef -1.7810 
-	@rad-plot-dos.py -if docs/examples/rad-plot-dos/collinear-spin-polarized/ -ew -6.5 6.5 -ef -1.7810 -r -n
-	@rad-plot-dos.py -if docs/examples/rad-plot-dos/noncollinear-nonso/ -ew -6.5 6.5 -ef -1.7810 
-	@rad-plot-dos.py -if docs/examples/rad-plot-dos/noncollinear-nonso/ -ew -6.5 6.5 -ef -1.7810 -r -n
-	@rad-plot-dos.py -if docs/examples/rad-plot-dos/noncollinear-so/ -ew -6.5 6.5 -ef -1.6372 
-	@rad-plot-dos.py -if docs/examples/rad-plot-dos/noncollinear-so/ -ew -6.5 6.5 -ef -1.6372 -r -n
-
-examples: example-plot-dos example-identify-wannier-centres example-make-template example-plot-tb2j example-extract-tb2j example-plot-dos-gallery
-	@echo "Done"
 
 bravais-pictures:
 	@python3 tools/plot-bravais-lattices.py
@@ -153,3 +103,7 @@ docs-pictures:
 NAME="None"
 new-scripts:
 	@python3 tools/new-script.py -n $(NAME)
+
+SCRIPT="all"
+examples: 
+	@python3 tools/plot-script-guide.py -s $(SCRIPT) 

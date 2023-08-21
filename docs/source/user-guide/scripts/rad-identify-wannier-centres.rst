@@ -39,11 +39,6 @@ This command creates an output file "example_centre.xyz_identified"
 in the directory of the input file with the following content:
 
 .. literalinclude:: /../examples/rad-identify-wannier-centres/example_centres.xyz_identified
-
-and produces the following output in the console:
-
-.. literalinclude:: /../examples/rad-identify-wannier-centres/console_output.txt
-   :language: text
     
 which means that two centres are not identified. 
 The script provides the distance to the closest atom 
