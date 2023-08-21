@@ -8,6 +8,8 @@ from datetime import datetime
 import git
 from termcolor import colored, cprint
 
+N = 60
+
 
 class FATAL(Exception):
     pass
@@ -61,7 +63,7 @@ def envelope(message: str):
             print(f"{f'{message}'} ... ")
             func(*args, **kwargs)
             print(colored("Done", "green"))
-            print(f"{'':=^40}")
+            print(f"{'':=^{N}}")
 
         return inner
 
@@ -331,7 +333,7 @@ def main(version: str):
             )
         )
 
-    print(f"{'':=^40}\n{f'Preparing {version} release':^40}\n{'':=^40}")
+    print(f"{'':=^{N}}\n{f'Preparing {version} release':^{N}}\n{'':=^{N}}")
     repo = git.Repo(search_parent_directories=True)
 
     # the order of checks is important, for example,
@@ -350,8 +352,8 @@ def main(version: str):
 
     make_tag(repo, version=version)
 
-    print(colored(f"{f'{version} ready to deploy':^40}", "green"))
-    print(f"{'':=^40}")
+    print(colored(f"{f'{version} ready to deploy':^{N}}", "green"))
+    print(f"{'':=^{N}}")
 
 
 if __name__ == "__main__":
