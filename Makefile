@@ -58,7 +58,7 @@ test-all: clean install test bravais-pictures examples html doctest
 
 .ONESHELL:
 pip: prepare-release
-	@read -p "Press Enter to publish to PyPi"
+	@read -p "Press Enter to publish to PyPI"
 	-@rm -r dist
 	-@rm -r build
 	-@rm -r radtools.egg-info
