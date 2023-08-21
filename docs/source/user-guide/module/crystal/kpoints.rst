@@ -104,6 +104,8 @@ Adding a point
     >>> kp.hs_labels
     {'G': '$\\Gamma$', 'X': 'X', 'M': 'M'}
 
+.. _guide_crystal_kpoints-path:
+
 Path
 ====
 

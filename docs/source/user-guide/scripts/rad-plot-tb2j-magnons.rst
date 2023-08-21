@@ -4,11 +4,11 @@
 rad-plot-tb2j-magnons.py
 ************************
 
-Script for plotting magnon dispersion from |TB2J|_ results.
+Script for plotting magnon dispersion from |TB2J|_ "exchange.out" file.
 
 .. versionadded:: 0.7.12 
 
-Scrip plots magnon dispersion spectra following the algorithm described in 
+Script plots magnon dispersion spectra following the algorithm described in 
 :ref:`library_magnon-dispersion-method`.
 
 It requires |TB2J|_ output file "exchange.out" and 
@@ -20,49 +20,104 @@ Example is based on the files from
 Ground state input
 ==================
 
-Two types of ground state is supported: 
+Ground state is defined by two sets of parameters:
 
-* arbitrary directions of spin in the unit cell (or supercell)
-* single-Q incommensurate structure.
+* Directions of spin in the unit cell (or supercell)
+    To define direction of spins in the supercell use :ref:`rad-plot-tb2j-magnons_spin` 
+    parameter. You need to use the names of the atoms in the "exchange.out" file. Each name
+    has to be followed by three numbers, separated by spaces. The numbers represent the x, y,
+    and z components of the spin vector:
 
-To define direction of spins in the supercell use :ref:`rad-plot-tb2j-magnons_spin` parameter:
+    .. code-block::
 
-.. code-block:: bash
+        -s Cr1 0 0 1 Cr2 0 0 1
 
-    rad-plot-tb2j-magnons.py -if exchange.out -s Cr1 0 0 1 Cr2 0 0 1
+
+* Spin-spiral vector. (single-Q incommensurate structure).
+    Spin spiral is defined by two parameters, each parameter is a vector: 
+
+    * :math:`\vec{Q}` (:ref:`rad-plot-tb2j-magnons_spiral-vector`)
+        It is relative to the model reciprocal cell.
+
+    * Global rotation axis :math:`\vec{n}` (:ref:`rad-plot-tb2j-magnons_rotation-axis`)
+        It is given in absolute coordinate in a real space. Only the direction of the vector matters.
 
 In the input file "exchange.out" six atoms are present: Br1, Cr1, S1, Br2, Cr2, S2.
-Only Cr1 and Cr2 have exchange interaction between them. Therefore, it is neccesary to specify
+Only Cr1 and Cr2 have exchange interaction between them. Therefore, it is necessary to specify
 spin vectors for Cr1 and Cr2. You can specify spin vectors for all atoms, but it is not
 necessary.
-
-Spin spiral is defined by two vectors: 
-
-* :math:`\vec{Q}` (:ref:`rad-plot-tb2j-magnons_spiral-vector`)
-
-It is relative to the model reciprocal cell.
-
-* Global rotation axis :math:`\vec{n}` (:ref:`rad-plot-tb2j-magnons_rotation-axis`)
-
-It is given in absolute coordinate in a real space. Only the direction of the vector matters.
 
 Template file
 =============
 
-Exchange template file (see :ref:`template-draft`) can be used to forme the model or
-to filter the spin Hamiltonian.
+Exchange template file (see :ref:`template-draft`) can be used to form the model or
+to filter the spin Hamiltonian. Formation of the model means that the exchange parameters 
+from the |TB2J|_ are averaged over the individual bonds following the 
+:ref:`specification <template-draft>` of the template.
 
 Filtering of the model
 ======================
 
 For filtering the spin Hamiltonian there are a few options available:
 
-* :ref:`--max_distance <rad-plot-tb2j_max-distance>`
-* :ref:`--min_distance <rad-plot-tb2j_min-distance>`
-* :ref:`--R-vector <rad-plot-tb2j_R-vector>`
-* :ref:`--template <rad-plot-tb2j_template-file>`
+* :ref:`--max_distance <rad-plot-tb2j-magnons_max-distance>`
+* :ref:`--min_distance <rad-plot-tb2j-magnons_min-distance>`
+* :ref:`--R-vector <rad-plot-tb2j-magnons_R-vector>`
+* :ref:`--template <rad-plot-tb2j-magnons_template-file>`
 
 .. _rad-plot-tb2j-magnons_arguments:
+
+Control of parameters
+=====================
+
+You can "turn off" parts of the full exchange matrix:
+
+* :ref:`--nodmi <rad-plot-tb2j-magnons_nodmi>`
+    Ignore DMI in the spinham.
+
+* :ref:`-noa/--no-anisotropic <rad-plot-tb2j-magnons_no-anisotropic>`
+    Ignore anisotropic symmetric exchange in the spinham.
+
+Examples
+========
+
+CrSBr
+=====
+
+CrSBr is a ferromagnet with two magnetic sites in the unit cell. The minimum input is 
+the "exchange.out" file and the spin vectors for the two Cr atoms:
+
+.. code-block:: bash
+
+    rad-plot-tb2j-magnons.py -if exchange.out -s Cr1 0 0 1.5 Cr2 0 0 1.5 -on CrSBr
+
+.. figure:: ../../../examples/rad-plot-tb2j-magnons/CrSBr.png
+    :target: ../../../_images/CrSBr.png
+    :align: center
+
+    Magnon dispersion for CrSBr.
+
+Default k-path was detected based on the symmetry (:ref:`guide_orc`) of the lattice.
+
+.. hint::
+
+    Sometimes due to numerical inaccuracies detected symmetry of the lattice is not the one
+    that you expect. In that case you may want to use :ref:`--bravais-type <rad-plot-tb2j-magnons_bravais-type>`
+    argument. With this argument the script tries to reduce numerical accuracy to match the desired 
+    Bravais lattice type. If it fails, then check your lattice, maybe it is not the one you expect.
+
+You can customise the k-path using :ref:`--k-path <rad-plot-tb2j-magnons_k-path>` argument
+(see :ref:`guide_crystal_kpoints-path` for details):
+
+.. code-block:: bash
+
+    rad-plot-tb2j-magnons.py -if exchange.out -s Cr1 0 0 1.5 Cr2 0 0 1.5 -kp G-X-S-Y-G -on CrSBr-custom-path
+
+.. figure:: ../../../examples/rad-plot-tb2j-magnons/CrSBr-custom-path.png
+    :target: ../../../_images/CrSBr-custom-path.png
+    :align: center
+
+    Magnon dispersion for CrSBr with custom path.
 
 Arguments
 =========
@@ -145,10 +200,10 @@ Direction of global rotation axis. In absolute coordinates in real space.
     type : float
     nargs : 3
     
-.. _rad-plot-tb2j-magnons_path:
+.. _rad-plot-tb2j-magnons_k-path:
 
--p, --path
-----------
+-kp, --k-path
+-------------
 Path in reciprocal space for the magnon dispersion.
 
 .. code-block:: text

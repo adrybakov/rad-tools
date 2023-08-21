@@ -22,7 +22,7 @@ def manager(
     spin=None,
     spiral_vector=None,
     rotation_axis=None,
-    path=None,
+    k_path=None,
     form_model=False,
     R_vector=None,
     max_distance=None,
@@ -80,8 +80,8 @@ def manager(
     # Get k points of the spinham
     kp = spinham.kpoints
     # Set custom k path
-    if path is not None:
-        kp.path = path
+    if k_path is not None:
+        kp.path = k_path
 
     if verbose:
         print("Predefined high symmetry k points:")
@@ -358,8 +358,8 @@ def create_parser():
         help="Direction of global rotation axis. In absolute coordinates in real space.",
     )
     parser.add_argument(
-        "-p",
-        "--path",
+        "-kp",
+        "--k-path",
         metavar="k-path",
         type=str,
         default=None,
