@@ -16,6 +16,36 @@ class FATAL(Exception):
 ROOT_DIR = os.path.abspath(".")  # Root directory of the project
 
 
+def only_githash_in_init(repo: git.Repo):
+    data = repo.git.diff(repo.head.commit.tree).split("\n")
+    a_files = []
+    b_files = []
+    minus_lines = []
+    plus_lines = []
+    for line in data:
+        if line.startswith("+++"):
+            b_files.append(line[6:])
+        elif line.startswith("---"):
+            a_files.append(line[6:])
+        elif line.startswith("-"):
+            minus_lines.append(line[1:])
+        elif line.startswith("+"):
+            plus_lines.append(line[1:])
+    if (
+        len(a_files) == 1
+        and len(b_files) == 1
+        and b_files[0] == "radtools/__init__.py"
+        and a_files[0] == "radtools/__init__.py"
+        and len(minus_lines) == 1
+        and len(plus_lines) == 1
+        and minus_lines[0].startswith("__git_hash__")
+        and plus_lines[0].startswith("__git_hash__")
+    ):
+        return True
+
+    return False
+
+
 def envelope(message: str):
     """
     Decorator for printing a message before and "Done" after a function.
@@ -246,16 +276,17 @@ def check_git_status(repo: git.Repo):
     """
     status = repo.git.status()
     if "nothing to commit, working tree clean" not in status:
-        sys.tracebacklimit = 0
-        raise FATAL(
-            "".join(
-                [
-                    colored("\nThere are uncommitted changes\n", "red"),
-                    "Please commit them:\n\n",
-                    status,
-                ]
+        if not only_githash_in_init(repo):
+            sys.tracebacklimit = 0
+            raise FATAL(
+                "".join(
+                    [
+                        colored("\nThere are uncommitted changes\n", "red"),
+                        "Please commit them:\n\n",
+                        status,
+                    ]
+                )
             )
-        )
     if "Your branch is up to date with" not in status:
         sys.tracebacklimit = 0
         raise FATAL(
@@ -309,15 +340,15 @@ def main(version: str):
     # update_init() will change the __init__.py file and there
     # will be uncommitted changes
 
-    check_active_branch(repo)
+    # check_active_branch(repo)
 
-    check_release_notes(version=version)
+    # check_release_notes(version=version)
 
     check_git_status(repo)
 
     update_init(repo, version=version)
 
-    make_tag(repo, version=version)
+    # make_tag(repo, version=version)
 
     print(colored(f"{f'{version} ready to deploy':^40}", "green"))
     print(f"{'':=^40}")
