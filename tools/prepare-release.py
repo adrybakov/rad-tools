@@ -288,7 +288,7 @@ def make_tag(repo: git.Repo, version: str):
 
 
 def main(version: str):
-    if version == "undefined":
+    if version == "None":
         sys.tracebacklimit = 0
         raise FATAL(
             "".join(

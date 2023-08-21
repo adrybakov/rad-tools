@@ -142,10 +142,14 @@ bravais-pictures:
 check-scripts:
 	@python3 tools/check-scripts.py
 
-VERSION="undefined"
+VERSION="None"
 prepare-release:
 	@python3 -u tools/prepare-release.py -v $(VERSION)
 
 docs-pictures:
 	@python3 tools/plot-data-structure.py
 	@python3 tools/plot-notation.py
+
+NAME="None"
+new-scripts:
+	@python3 tools/new-script.py -n $(NAME)
