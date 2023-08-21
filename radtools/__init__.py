@@ -4,8 +4,8 @@ RAD-tools
 
 __version__ = "0.8.0"
 __doclink__ = "rad-tools.org"
-__git_hash__ = "9c9b087fa02be0cafdadaef6ec1c7926fe36e3d6"
-__release_date__ = "2 August 2023"
+__git_hash__ = "d15ca7442fc1f016be199c47590a6502c47673ce"
+__release_date__ = "21 August 2023"
 
 from . import (
     constants,
