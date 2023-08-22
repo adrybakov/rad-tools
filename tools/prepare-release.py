@@ -221,7 +221,7 @@ def check_release_notes(version: str):
     found_note = False
     for line in file:
         line = line.translate(str.maketrans("", "", " \n"))
-        if re.fullmatch(f"v{major}.{minor}.{rest}", line) or (
+        if re.fullmatch(f"{major}.{minor}.{rest}", line) or (
             re.fullmatch("Whatsnew\?", line) and rest == 0
         ):
             found_note = True
