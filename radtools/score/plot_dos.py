@@ -306,7 +306,7 @@ def create_parser():
         default=".",
         metavar="path",
         type=str,
-        help="Relative or absolute path to the folder with PDOS files.",
+        help='Relative or absolute path to the folder with PDOS files.',
     )
     parser.add_argument(
         "-s",
@@ -314,7 +314,7 @@ def create_parser():
         default=None,
         metavar="name",
         type=str,
-        help="Prefix for input files with PDOS(E).",
+        help='Prefix for input files with PDOS(E).',
     )
     parser.add_argument(
         "-on",
@@ -322,7 +322,7 @@ def create_parser():
         default="",
         metavar="path",
         type=str,
-        help="Relative or absolute path to the folder for saving outputs.",
+        help='Relative or absolute path to the folder for saving outputs.',
     )
     parser.add_argument(
         "-ew",
@@ -331,7 +331,7 @@ def create_parser():
         metavar=("min", "max"),
         type=float,
         nargs=2,
-        help="Energy window for the plots.",
+        help='Energy window for the plots.',
     )
     parser.add_argument(
         "-dw",
@@ -340,7 +340,7 @@ def create_parser():
         metavar=("min", "max"),
         type=float,
         nargs=2,
-        help="DOS window for the plots.",
+        help='DOS window for the plots.',
     )
     parser.add_argument(
         "-ef",
@@ -348,63 +348,63 @@ def create_parser():
         default=0.0,
         metavar="energy",
         type=float,
-        help="Fermi energy.",
+        help='Fermi energy.',
     )
     parser.add_argument(
         "-sep",
         "--separate",
         default=False,
         action="store_true",
-        help="Whether to plot projected DOS for each atom of the same type separately.",
+        help='Whether to plot projected DOS for each atom of the same type separately.',
     )
     parser.add_argument(
         "-r",
         "--relative",
         default=False,
         action="store_true",
-        help="Whether to use relative style.",
+        help='Whether to use relative style.',
     )
     parser.add_argument(
         "-n",
         "--normalize",
         default=False,
         action="store_true",
-        help="Whether to normalized PDOS values to 1.",
+        help='Whether to normalized PDOS values to 1.',
     )
     parser.add_argument(
         "-v",
         "--verbose",
         default=False,
         action="store_true",
-        help="Verbose output, propagates to the called methods.",
+        help='Verbose output, propagates to the called methods.',
     )
     parser.add_argument(
         "-i",
         "--interactive",
         default=False,
         action="store_true",
-        help="Interactive plotting.",
+        help='Interactive plotting.',
     )
     parser.add_argument(
         "-sp",
         "--save-pickle",
         default=False,
         action="store_true",
-        help="Whether to save figures as .pickle files.",
+        help='Whether to save figures as .pickle files.',
     )
     parser.add_argument(
         "-st",
         "--save-txt",
         default=False,
         action="store_true",
-        help="Whether to save some data as txt files.",
+        help='Whether to save some data as txt files.',
     )
     parser.add_argument(
         "-bt",
         "--background-total",
         default=False,
         action="store_true",
-        help="Whether to use total PDOS as the background for all plots.",
+        help='Whether to use total PDOS as the background for all plots.',
     )
     parser.add_argument(
         "--custom",
@@ -412,7 +412,7 @@ def create_parser():
         metavar="description",
         type=str,
         nargs="*",
-        help="Custom PDOS plot. See :ref:`rad-plot-dos_custom-plots` for info.",
+        help='Custom PDOS plot. See :ref:`rad-plot-dos_custom-plots` for info.',
     )
     parser.add_argument(
         "-cls",
@@ -420,7 +420,7 @@ def create_parser():
         default=None,
         type=str,
         nargs="*",
-        help="Colours for the relative and custom plots.",
+        help='Colours for the relative and custom plots.',
     )
     parser.add_argument(
         "-lbs",
@@ -428,7 +428,7 @@ def create_parser():
         default=None,
         type=str,
         nargs="*",
-        help="Labels for the custom plots.",
+        help='Labels for the custom plots.',
     )
     parser.add_argument(
         "-lfs",
@@ -436,7 +436,7 @@ def create_parser():
         default=12,
         metavar="fontsize",
         type=int,
-        help="Fontsize of the legend.",
+        help='Fontsize of the legend.',
     )
     parser.add_argument(
         "-alfs",
@@ -444,7 +444,7 @@ def create_parser():
         default=14,
         metavar="fontsize",
         type=int,
-        help="Fontsize of the labes of the axes.",
+        help='Fontsize of the labes of the axes.',
     )
     parser.add_argument(
         "-tfs",
@@ -452,7 +452,7 @@ def create_parser():
         default=18,
         metavar="fontsize",
         type=int,
-        help="Fontsize of the title.",
+        help='Fontsize of the title.',
     )
 
     return parser

@@ -329,6 +329,7 @@ def main(script="all", debug=False):
                 # Write help
                 file.write(f"        help='{docs[parameter][0].strip()}',\n    )\n")
             file.write("\n    return parser\n")
+        print(f"Updated {script}")
 
 
 if __name__ == "__main__":
