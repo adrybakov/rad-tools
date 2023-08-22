@@ -168,93 +168,83 @@ def manager(
 
 
 def create_parser():
-    parser = ArgumentParser(
-        description="Script for extracting of template-based model from TB2J results."
-    )
 
+    parser = ArgumentParser()
     parser.add_argument(
         "-if",
         "--input-filename",
-        metavar="filename",
-        type=str,
         required=True,
-        help="Relative or absolute path to the 'exchange.out' file, "
-        + "including the name and extension of the file itself.",
+        type=str,
+        help='Relative or absolute path to the "exchange.out" file,',
     )
     parser.add_argument(
         "-tf",
         "--template-file",
-        metavar="filename",
-        type=str,
         default=None,
-        help="Relative or absolute path to the template file, "
-        + "including the name and extension of the file.",
+        type=str,
+        help='Relative or absolute path to the template file,',
     )
     parser.add_argument(
         "-on",
         "--output-name",
-        metavar="filename",
-        type=str,
         default=None,
-        help="Seedname for the output files.",
+        type=str,
+        help='Name of the output files.',
     )
     parser.add_argument(
         "-d",
         "--decimals",
-        metavar="n",
-        type=int,
         default=4,
-        help="Decimals after the comma for the exchange values.",
+        type=int,
+        help='Decimals after the comma for the exchange values.',
     )
     parser.add_argument(
         "-fm",
         "--form-model",
-        action="store_true",
         default=False,
-        help="Whether to form the model from the template.",
+        action="store_true",
+        help='Whether to form the model from the template.',
     )
     parser.add_argument(
         "-noa",
         "--no-anisotropic",
-        action="store_true",
         default=False,
-        help="Whether to output anisotropic exchange.",
+        action="store_true",
+        help='Whether to output anisotropic exchange.',
     )
     parser.add_argument(
         "-nom",
         "--no-matrix",
-        action="store_true",
         default=False,
-        help="Whether to output whole matrix exchange.",
+        action="store_true",
+        help='Whether to output whole matrix exchange.',
     )
     parser.add_argument(
         "-nodmi",
-        action="store_true",
         default=False,
-        help="Whether to output DMI exchange.",
+        action="store_true",
+        help='Whether to output DMI exchange.',
     )
     parser.add_argument(
         "-v",
         "--verbose",
-        action="store_true",
         default=False,
-        help="Verbose output, propagates to the called methods.",
+        action="store_true",
+        help='Verbose output, propagates to the called methods.',
     )
     parser.add_argument(
         "-maxd",
         "--max-distance",
-        metavar="distance",
-        type=float,
         default=None,
-        help="(<=) Maximum distance.",
+        type=float,
+        help='(<=) Maximum distance.',
     )
     parser.add_argument(
         "-mind",
         "--min-distance",
-        metavar="distance",
-        type=float,
         default=None,
-        help="(>=) Minimum distance.",
+        type=float,
+        help='(>=) Minimum distance.',
     )
 
     return parser

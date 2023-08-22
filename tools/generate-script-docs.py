@@ -72,10 +72,8 @@ def parse_manager(scriptfile, debug=False):
     read_parameters = True
     current_parameter = None
     types = {}
-    print(line)
     while read_parameters:
         line = scriptfile.readline()
-        print(line)
         if line.startswith(" " * 4) and line[4] != " ":
             if ":" in line and line.split(":")[0].replace(" ", "") in parameters:
                 current_parameter = line.split(":")[0].replace(" ", "")
@@ -316,7 +314,7 @@ def main(script="all", debug=False):
                     for choice in choices[parameter]:
                         file.write(f"            {choice},\n")
                     file.write("        ],\n")
-                file.write(f'        help="{docs[parameter][0].strip()}",\n    )\n')
+                file.write(f"        help='{docs[parameter][0].strip()}',\n    )\n")
             file.write("\n    return parser\n")
 
 
