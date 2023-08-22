@@ -115,6 +115,119 @@ def manager(
     :ref:`User Guide <rad-plot-tb2j>`.
     Parameters of the function directly
     correspond to the arguments of the script.
+
+    Parameters
+    ----------
+    input_filename : str
+        Relative or absolute path to the "exchange.out" file, including name and extension of the file.
+
+        Console argument: ``-if`` / ``--input-filename``
+
+        Metavar: "filename"
+    output_name : str, default "exchange"
+        Seedname for the output files.
+
+        Output files have the following name structure:
+        "output-name.display-data-type.png"
+
+        See also: :ref:`example <output-notes>`.
+
+        Console argument: ``-on`` / ``--output-name``
+
+        Metavar: "filename"
+    what_to_plot : str, default "iso"
+        Type of data for display.
+
+        Specifying the data to be displayed in the graphs.
+        Everything is displayed by default, each value in a separate picture.
+        Currently available for display: Isotropic exchange parameter, distance, \|DMI\|.
+
+        Console argument: ``-wtp`` / ``--what-to-plot``
+
+        Choices: "all", "iso", "distance", "dmi"
+    draw_cells : bool, default False
+        Whether to draw the cells.
+
+        If specified then the shapes of all cells
+        presented in the model (after filtering) are drawn. (0, 0, 0) is red.
+
+        Console argument: ``-dc`` / ``--draw-cells``
+    min_distance : float, default None
+        (>=) Minimum distance.
+
+        All the bonds with the distance between atom 1 and atom 2
+        lower than minimum distance are excluded from the model.
+
+        Console argument: ``-mind`` / ``--min-distance``
+
+        Metavar: "distance"
+    max_distance : float, default None
+        (<=) Maximum distance.
+
+        All the bonds with the distance between atom 1 and atom 2
+        greater than maximum distance are excluded from the model.
+
+        Console argument: ``-maxd`` / ``--max-distance``
+
+        Metavar: "distance"
+    distance : float, default None
+        (=) Exact distance.
+
+        Only the bonds with the exact distance remains in the model.
+        There is no point in specifying maximum or minimum distance when
+        this parameter is provided.
+
+        Console argument: ``-d`` / ``--distance``
+
+        Metavar: "distance"
+    template_file : str, default None
+        Relative or absolute path to the template file, including the name and extension of the file.
+
+        Console argument: ``-tf`` / ``--template-file``
+
+        Metavar: "filename"
+    R_vector : list of int, optional
+        R vectors for filtering the spin Hamiltonian.
+
+        In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to).
+        Atom 1 is always located in (0, 0, 0) unit cell, while atom 2 is located in
+        R = (i, j, k) unit cell. This parameter tells the script to keep only the
+        bonds for which atom 2 is located in one of specified R supercells.
+        Supercells are specified by a set of integers separated by spaces.
+        They are grouped by three starting from the left and forms a set
+        of R vectors. If the last group contains 1 or 2 integers they are ignored.
+
+        Console argument: ``-R`` / ``--R-vector``
+
+        Metavar: "i1 j1 k1 i2 j2 k2 ..."
+    scale_atoms : float, default 1
+        Scale for the size of atom marks.
+
+        Use it if you want to make atom marks bigger (>1) or smaller (<1).
+        Has to be positive.
+
+        Console argument: ``-sa`` / ``--scale-atoms``
+    scale_data : float, default 1
+        Scale for the size of data text.
+
+        Use it if you want to make data text marks bigger (>1) or smaller (<1).
+        Has to be positive.
+
+        Console argument: ``-sd`` / ``--scale-data``
+    title : str, optional
+        Title for the plots.
+
+        Title is displayed in the picture.
+
+        Console argument: ``-t`` / ``--title``
+    form_model : bool, default False
+        Force the spin Hamiltonian to have the symmetry of the template.
+
+        Console argument: ``-fm`` / ``--form-model``
+    verbose : bool, default False
+        Verbose output, propagates to the called methods.
+
+        Console argument: ``-v`` / ``--verbose``
     """
 
     head, _ = os.path.split(input_filename)
@@ -304,120 +417,119 @@ def manager(
 
 
 def create_parser():
-    parser = ArgumentParser(description="Script for visualization of TB2J results")
 
+    parser = ArgumentParser()
     parser.add_argument(
         "-if",
         "--input-filename",
+        required=True,
         metavar="filename",
         type=str,
-        required=True,
-        help="Relative or absolute path to the 'exchange.out' file,"
-        + "including the name and extension of the file itself.",
+        help='Relative or absolute path to the "exchange.out" file, including name and extension of the file.',
     )
     parser.add_argument(
         "-on",
         "--output-name",
+        default="exchange",
         metavar="filename",
         type=str,
-        default="exchange",
-        help="Seedname for the output files.",
+        help='Seedname for the output files.',
     )
     parser.add_argument(
         "-wtp",
         "--what-to-plot",
-        metavar="value",
+        default="iso",
         type=str,
-        choices=["all", "iso", "distance", "dmi"],
-        default="all",
-        help="Type of data for display.",
+        choices=[
+            "all",
+             "iso",
+             "distance",
+             "dmi",
+        ],
+        help='Type of data for display.',
     )
     parser.add_argument(
         "-dc",
         "--draw-cells",
-        action="store_true",
         default=False,
-        help="Whether to draw the cells.",
-    )
-    parser.add_argument(
-        "-R",
-        "--R-vector",
-        metavar="R1a R1b R1c",
-        type=int,
-        nargs="*",
-        default=None,
-        help="R vectors for filtering the model.",
-    )
-    parser.add_argument(
-        "-maxd",
-        "--max-distance",
-        metavar="distance",
-        type=float,
-        default=None,
-        help="(<=) Maximum distance.",
+        action="store_true",
+        help='Whether to draw the cells.',
     )
     parser.add_argument(
         "-mind",
         "--min-distance",
+        default=None,
         metavar="distance",
         type=float,
+        help='(>=) Minimum distance.',
+    )
+    parser.add_argument(
+        "-maxd",
+        "--max-distance",
         default=None,
-        help="(>=) Minimum distance.",
+        metavar="distance",
+        type=float,
+        help='(<=) Maximum distance.',
     )
     parser.add_argument(
         "-d",
         "--distance",
+        default=None,
         metavar="distance",
         type=float,
-        default=None,
-        help="(=) Exact distance.",
+        help='(=) Exact distance.',
     )
     parser.add_argument(
         "-tf",
         "--template-file",
+        default=None,
         metavar="filename",
         type=str,
+        help='Relative or absolute path to the template file, including the name and extension of the file.',
+    )
+    parser.add_argument(
+        "-R",
+        "--R-vector",
         default=None,
-        help="Relative or absolute path to the template file, "
-        + "including the name and extension of the file.",
+        metavar="i1 j1 k1 i2 j2 k2 ...",
+        type=int,
+        nargs="*",
+        help='R vectors for filtering the spin Hamiltonian.',
     )
     parser.add_argument(
         "-sa",
         "--scale-atoms",
-        metavar="factor",
         default=1,
         type=float,
-        help="Scale for the size of atom marks.",
+        help='Scale for the size of atom marks.',
     )
     parser.add_argument(
         "-sd",
         "--scale-data",
-        metavar="factor",
         default=1,
         type=float,
-        help="Scale for the size of data text.",
+        help='Scale for the size of data text.',
     )
     parser.add_argument(
         "-t",
         "--title",
-        metavar="title",
         default=None,
         type=str,
-        help="Title for the plots.",
+        help='Title for the plots.',
     )
     parser.add_argument(
         "-fm",
         "--form-model",
         default=False,
         action="store_true",
-        help="Force the Exchange model to have the symmetry of the template.",
+        help='Force the spin Hamiltonian to have the symmetry of the template.',
     )
     parser.add_argument(
         "-v",
         "--verbose",
-        action="store_true",
         default=False,
-        help="Verbose output, propagates to the called methods.",
+        action="store_true",
+        help='Verbose output, propagates to the called methods.',
     )
 
     return parser

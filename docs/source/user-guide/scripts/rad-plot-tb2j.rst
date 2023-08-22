@@ -191,12 +191,12 @@ Arguments
 
 -if, --input-filename
 ---------------------
-Relative or absolute path to the "exchange.out" file, 
-including name and extension of the file.
+Relative or absolute path to the "exchange.out" file, including name and extension of the file.
 
 .. code-block:: text
 
     required
+    type: str
 
 
 .. _rad-plot-tb2j_output-name:
@@ -208,11 +208,12 @@ Seedname for the output files.
 Output files have the following name structure:
 "output-name.display-data-type.png"
 
+See also: :ref:`example <output-notes>`.
+
 .. code-block:: text
 
-    default : exchange
-
-See also: :ref:`example <output-notes>`.
+    default: "exchange"
+    type: str
 
 
 .. _rad-plot-tb2j_what-to-plot:
@@ -221,13 +222,14 @@ See also: :ref:`example <output-notes>`.
 --------------------
 Type of data for display.
 
-Specifying the data to be displayed in the graphs. 
-Everything is displayed by default, each value in a separate picture. 
+Specifying the data to be displayed in the graphs.
+Everything is displayed by default, each value in a separate picture.
 Currently available for display: Isotropic exchange parameter, distance, \|DMI\|.
 
 .. code-block:: text
 
-    default : all
+    default: "iso"
+    type: str
 
 
 .. _rad-plot-tb2j_draw-cells:
@@ -236,45 +238,13 @@ Currently available for display: Isotropic exchange parameter, distance, \|DMI\|
 -----------------
 Whether to draw the cells.
 
-If specified then the shapes of all cells 
+If specified then the shapes of all cells
 presented in the model (after filtering) are drawn. (0, 0, 0) is red.
 
 .. code-block:: text
 
-    default : False
-
-
-.. _rad-plot-tb2j_R-vector:
-
--R, --R-vector
---------------
-R vectors for filtering the spin Hamiltonian.
-
-In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to). 
-Atom 1 is always located in (0, 0, 0) unit cell, while atom 2 is located in 
-R = (i, j, k) unit cell. This parameter tells the script to keep only the 
-bonds for which atom 2 is located in one of specified R supercells. 
-Supercells are specified by a set of integers separated by spaces. 
-They are grouped by three starting from the left and forms a set 
-of R vectors. If the last group contains 1 or 2 integers they are ignored.
-
-.. code-block:: text
-
-    default : None
-
-
-.. _rad-plot-tb2j_max-distance:
-
--maxd, --max-distance
----------------------
-(<=) Maximum distance.
-
-All the bonds with the distance between atom 1 and atom 2 
-greater than maximum distance are excluded from the model.
-
-.. code-block:: text
-
-    default : None
+    default: False
+    type: bool
 
 
 .. _rad-plot-tb2j_min-distance:
@@ -283,12 +253,28 @@ greater than maximum distance are excluded from the model.
 ---------------------
 (>=) Minimum distance.
 
-All the bonds with the distance between atom 1 and atom 2 
+All the bonds with the distance between atom 1 and atom 2
 lower than minimum distance are excluded from the model.
 
 .. code-block:: text
 
-    default : None
+    optional
+    type: float
+
+
+.. _rad-plot-tb2j_max-distance:
+
+-maxd, --max-distance
+---------------------
+(<=) Maximum distance.
+
+All the bonds with the distance between atom 1 and atom 2
+greater than maximum distance are excluded from the model.
+
+.. code-block:: text
+
+    optional
+    type: float
 
 
 .. _rad-plot-tb2j_distance:
@@ -298,28 +284,45 @@ lower than minimum distance are excluded from the model.
 (=) Exact distance.
 
 Only the bonds with the exact distance remains in the model.
+There is no point in specifying maximum or minimum distance when
+this parameter is provided.
 
 .. code-block:: text
 
-    default : None
-
-.. hint::
-    There is no point in specifying maximum or minimum distance when 
-    this parameter is provided.
+    optional
+    type: float
 
 
 .. _rad-plot-tb2j_template-file:
 
 -tf, --template-file
 --------------------
-Relative or absolute path to the template file, 
-including the name and extension of the file.
+Relative or absolute path to the template file, including the name and extension of the file.
 
 .. code-block:: text
 
-    default : None
+    optional
+    type: str
 
-See also: :ref:`template <rad-make-template>`
+
+.. _rad-plot-tb2j_R-vector:
+
+-R, --R-vector
+--------------
+R vectors for filtering the spin Hamiltonian.
+
+In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to).
+Atom 1 is always located in (0, 0, 0) unit cell, while atom 2 is located in
+R = (i, j, k) unit cell. This parameter tells the script to keep only the
+bonds for which atom 2 is located in one of specified R supercells.
+Supercells are specified by a set of integers separated by spaces.
+They are grouped by three starting from the left and forms a set
+of R vectors. If the last group contains 1 or 2 integers they are ignored.
+
+.. code-block:: text
+
+    optional
+    type: list of int
 
 
 .. _rad-plot-tb2j_scale-atoms:
@@ -328,12 +331,13 @@ See also: :ref:`template <rad-make-template>`
 ------------------
 Scale for the size of atom marks.
 
-Use it if you want to make atom marks bigger (>1) or smaller (<1). 
+Use it if you want to make atom marks bigger (>1) or smaller (<1).
 Has to be positive.
 
 .. code-block:: text
 
-    default : 1
+    default: 1
+    type: float
 
 
 .. _rad-plot-tb2j_scale-data:
@@ -342,12 +346,13 @@ Has to be positive.
 -----------------
 Scale for the size of data text.
 
-Use it if you want to make data text marks bigger (>1) or smaller (<1). 
+Use it if you want to make data text marks bigger (>1) or smaller (<1).
 Has to be positive.
 
 .. code-block:: text
 
-    default : 1
+    default: 1
+    type: float
 
 
 .. _rad-plot-tb2j_title:
@@ -360,18 +365,20 @@ Title is displayed in the picture.
 
 .. code-block:: text
 
-    default : None
+    optional
+    type: str
 
 
 .. _rad-plot-tb2j_form-model:
 
 -fm, --form-model
----------------------
+-----------------
 Force the spin Hamiltonian to have the symmetry of the template.
 
 .. code-block:: text
 
-    default : False
+    default: False
+    type: bool
 
 
 .. _rad-plot-tb2j_verbose:
@@ -382,5 +389,6 @@ Verbose output, propagates to the called methods.
 
 .. code-block:: text
 
-    default : False
- 
+    default: False
+    type: bool
+
