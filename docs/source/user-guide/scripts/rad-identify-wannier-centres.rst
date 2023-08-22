@@ -73,13 +73,14 @@ Arguments
 
 -if, --input-filename
 ---------------------
-Relative or absolute path to the "_centres.xyz" file
+Relative or absolute path to the "*_centres.xyz" file
 
 Identified Wannier centres are stored in the "filename_identified" file.
 
 .. code-block:: text
 
     required
+    type: str
 
 .. versionchanged:: 0.8.0 Renamed from ``filename``
 
@@ -89,12 +90,13 @@ Identified Wannier centres are stored in the "filename_identified" file.
 ----------
 Distance tolerance between centre and atom. (in Angstroms)
 
-.. hint::
-    If some centres remain unidentified try to increase the span.
+If some centres remain unidentified try to increase the span.
 
 .. code-block:: text
 
-    default : 0.1
+    default: 0.1
+    type: float
+
 
 .. _rad-identify-wannier-centres_output-name:
 
@@ -102,8 +104,10 @@ Distance tolerance between centre and atom. (in Angstroms)
 ------------------
 Seedname for the output files.
 
+See also: :ref:`example <output-notes>`
+
 .. code-block:: text
 
-    default : Name of the input file + "_identified"
+    default: ""
+    type: str
 
-See also: :ref:`example <output-notes>`.

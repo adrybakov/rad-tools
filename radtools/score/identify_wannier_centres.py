@@ -15,6 +15,31 @@ def manager(input_filename, span=0.1, output_name=""):
     :ref:`User Guide <rad-identify-wannier-centres>`.
     Parameters of the function directly
     correspond to the arguments of the script.
+
+    Parameters
+    ----------
+    input_filename : str
+        Relative or absolute path to the "*_centres.xyz" file
+
+        Identified Wannier centres are stored in the "filename_identified" file.
+
+        Console argument: ``-if`` / ``--input-filename``
+
+        Metavar: "filename"
+
+        .. versionchanged:: 0.8.0 Renamed from ``filename``
+    span : float, default 0.1
+        Distance tolerance between centre and atom. (in Angstroms)
+
+        If some centres remain unidentified try to increase the span.
+
+        Console argument: ``-s`` / ``--span``
+    output_name : str, default ""
+        Seedname for the output files.
+
+        See also: :ref:`example <output-notes>`
+
+        Console argument: ``-on`` / ``--output-name``
     """
 
     # Get the output path and the output name from the input filename
@@ -111,27 +136,29 @@ def manager(input_filename, span=0.1, output_name=""):
 
 
 def create_parser():
+
     parser = ArgumentParser()
     parser.add_argument(
         "-if",
         "--input-filename",
+        required=True,
         metavar="filename",
         type=str,
-        required=True,
-        help="Relative or absolute path to the _centres.xyz file",
+        help='Relative or absolute path to the "*_centres.xyz" file',
     )
     parser.add_argument(
         "-s",
         "--span",
-        type=float,
         default=0.1,
-        help="Distance tolerance between centre and atom. (in Angstroms)",
+        type=float,
+        help='Distance tolerance between centre and atom. (in Angstroms)',
     )
     parser.add_argument(
         "-on",
         "--output-name",
-        type=str,
         default="",
-        help="Seedname for the output files.",
+        type=str,
+        help='Seedname for the output files.',
     )
+
     return parser
