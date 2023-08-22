@@ -6,6 +6,9 @@ SPHINXOPTS    ?=
 SPHINXBUILD   ?= sphinx-build
 SOURCEDIR     = source
 BUILDDIR      = build
+VERSION="None"
+NAME="None"
+SCRIPT="all"
 
 # Put it first so that "make" without argument is like "make help".
 # help:
@@ -64,7 +67,9 @@ pip: prepare-release
 	-@rm -r radtools.egg-info
 	@python3 setup.py sdist bdist_wheel 
 	@python3 -m twine upload --repository pypi dist/* --verbose
-	@git tag -a "$(VERSION)" -m "Version $(VERSION)"
+	@git tag -a "v$(VERSION)" -m "Version $(VERSION)"
+	@git push origin "v$(VERSION)"
+	
 
 
 help:
@@ -92,7 +97,6 @@ help:
 bravais-pictures:
 	@python3 tools/plot-bravais-lattices.py
 
-VERSION="None"
 prepare-release:
 	@python3 -u tools/prepare-release.py -v $(VERSION)
 
@@ -100,14 +104,11 @@ docs-pictures:
 	@python3 tools/plot-data-structure.py
 	@python3 tools/plot-notation.py
 
-NAME="None"
 new-script:
 	@python3 tools/new-script.py -n $(NAME)
 
-SCRIPT="all"
 examples: 
 	@python3 tools/plot-script-guide.py -s $(SCRIPT) 
 
-SCRIPT="all"
 generate-script-docs: 
 	@python3 tools/generate-script-docs.py -s $(SCRIPT) 

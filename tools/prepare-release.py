@@ -302,24 +302,6 @@ def check_git_status(repo: git.Repo):
         )
 
 
-@envelope(message="Making tag for the release")
-def make_tag(repo: git.Repo, version: str):
-    """
-    Create a tag in the git repository for the release.
-
-    Parameters
-    ----------
-    repo : git.Repo
-        Git repository object.
-    version : str
-        Target version for the release.
-    """
-
-    new_tag = repo.create_tag(f"v{version}", message=f"Version {version}")
-
-    repo.remotes.origin.push(new_tag)
-
-
 def main(version: str):
     if version == "None":
         sys.tracebacklimit = 0
@@ -349,8 +331,6 @@ def main(version: str):
     check_git_status(repo)
 
     update_init(repo, version=version)
-
-    make_tag(repo, version=version)
 
     print(colored(f"{f'{version} ready to deploy':^{N}}", "green"))
     print(f"{'':=^{N}}")
