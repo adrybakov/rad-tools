@@ -7,6 +7,8 @@ from radtools.crystal.atom import Atom
 from radtools.spinham.hamiltonian import SpinHamiltonian, NotationError
 from radtools.spinham.parameter import ExchangeParameter
 from radtools.spinham.template import ExchangeTemplate
+from radtools.crystal.constants import REL_TOL, ABS_TOL
+from radtools.numerical import compare_numerically
 
 
 # Legacy tests
@@ -89,11 +91,11 @@ def test_getitem():
     ]
     for iso, atom1, atom2, R in bonds:
         model.add_bond(atom1, atom2, R, iso=iso)
-    assert model[(Cr1, Cr2, (0, 0, 0))].iso == 12
-    assert model[(Cr2, Cr2, (1, 0, 0))].iso == 12
-    assert model[(Cr1, Cr2, (-2, -2, 0))].iso == 12
+    assert compare_numerically(model[(Cr1, Cr2, (0, 0, 0))].iso, "==", 12)
+    assert compare_numerically(model[(Cr2, Cr2, (1, 0, 0))].iso, "==", 12)
+    assert compare_numerically(model[(Cr1, Cr2, (-2, -2, 0))].iso, "==", 12)
     with pytest.raises(KeyError):
-        assert model[(Cr1, Cr2, (0, 8, 0))].iso == 12
+        assert compare_numerically(model[(Cr1, Cr2, (0, 8, 0))].iso, "==", 12)
 
 
 def test_cell_error():
@@ -152,12 +154,12 @@ def test_space_dimensions():
     model.add_bond(Cr1, Cr3, (0, -1, 0), iso=2)
     model.add_bond(Cr2, Cr1, (0, 0, -3), iso=3)
     x_min, y_min, z_min, x_max, y_max, z_max = model.space_dimensions
-    assert x_min == 1
-    assert y_min == -7
-    assert z_min == -28
-    assert x_max == 1
-    assert y_max == 6
-    assert z_max == 5
+    assert compare_numerically(x_min, "==", 1)
+    assert compare_numerically(y_min, "==", -7)
+    assert compare_numerically(z_min, "==", -28)
+    assert compare_numerically(x_max, "==", 1)
+    assert compare_numerically(y_max, "==", 6)
+    assert compare_numerically(z_max, "==", 5)
 
 
 def test_add_bond():
@@ -227,18 +229,18 @@ def test_add_atom():
     model.add_atom(Cr2)
     assert len(model.magnetic_atoms) == 0
     assert len(model.atoms) == 2
-    assert model.get_atom("Cr1").position[0] == 2
-    assert model.get_atom("Cr1").position[1] == 5
-    assert model.get_atom("Cr1").position[2] == 1
-    assert model.get_atom("Cr2").position[0] == 4
-    assert model.get_atom("Cr2").position[1] == 2
-    assert model.get_atom("Cr2").position[2] == 1
+    assert compare_numerically(model.get_atom("Cr1").position[0], "==", 2)
+    assert compare_numerically(model.get_atom("Cr1").position[1], "==", 5)
+    assert compare_numerically(model.get_atom("Cr1").position[2], "==", 1)
+    assert compare_numerically(model.get_atom("Cr2").position[0], "==", 4)
+    assert compare_numerically(model.get_atom("Cr2").position[1], "==", 2)
+    assert compare_numerically(model.get_atom("Cr2").position[2], "==", 1)
     model.remove_atom(Cr2)
     Cr2 = Atom("Cr2", (4, 3, 1))
     model.add_atom(Cr2)
-    assert model.get_atom("Cr2").position[0] == 4
-    assert model.get_atom("Cr2").position[1] == 3
-    assert model.get_atom("Cr2").position[2] == 1
+    assert compare_numerically(model.get_atom("Cr2").position[0], "==", 4)
+    assert compare_numerically(model.get_atom("Cr2").position[1], "==", 3)
+    assert compare_numerically(model.get_atom("Cr2").position[2], "==", 1)
 
 
 def test_remove_atom():
@@ -275,54 +277,54 @@ def test_get_atom_coordinates():
     Cr1 = Atom("Cr1", (0.1, 0.6, 0.2))
     model.add_atom(Cr1)
     x, y, z = model.get_atom_coordinates(Cr1, relative=False)
-    assert x == 1
-    assert y == 6
-    assert z == 2
+    assert compare_numerically(x, "==", 1)
+    assert compare_numerically(y, "==", 6)
+    assert compare_numerically(z, "==", 2)
     x, y, z = model.get_atom_coordinates(Cr1, R=[1, 0, 0], relative=False)
-    assert x == 11
-    assert y == 6
-    assert z == 2
+    assert compare_numerically(x, "==", 11)
+    assert compare_numerically(y, "==", 6)
+    assert compare_numerically(z, "==", 2)
     x, y, z = model.get_atom_coordinates(Cr1, R=[0, -1, 0], relative=False)
-    assert x == 1
-    assert y == -4
-    assert z == 2
+    assert compare_numerically(x, "==", 1)
+    assert compare_numerically(y, "==", -4)
+    assert compare_numerically(z, "==", 2)
     x, y, z = model.get_atom_coordinates(Cr1, R=[0, 0, 2], relative=False)
-    assert x == 1
-    assert y == 6
-    assert z == 22
+    assert compare_numerically(x, "==", 1)
+    assert compare_numerically(y, "==", 6)
+    assert compare_numerically(z, "==", 22)
     x, y, z = model.get_atom_coordinates(Cr1, R=[0, -3, 2], relative=False)
-    assert x == 1
-    assert y == -24
-    assert z == 22
+    assert compare_numerically(x, "==", 1)
+    assert compare_numerically(y, "==", -24)
+    assert compare_numerically(z, "==", 22)
     x, y, z = model.get_atom_coordinates(Cr1, R=[3, -3, 2], relative=False)
-    assert x == 31
-    assert y == -24
-    assert z == 22
+    assert compare_numerically(x, "==", 31)
+    assert compare_numerically(y, "==", -24)
+    assert compare_numerically(z, "==", 22)
     model.cell = [[10, 10, 0], [0, 10, 10], [0, 0, 10]]
     x, y, z = model.get_atom_coordinates(Cr1, relative=False)
-    assert x == 1
-    assert y == 7
-    assert z == 8
+    assert compare_numerically(x, "==", 1)
+    assert compare_numerically(y, "==", 7)
+    assert compare_numerically(z, "==", 8)
     x, y, z = model.get_atom_coordinates(Cr1, R=[1, 0, 0], relative=False)
-    assert x == 11
-    assert y == 17
-    assert z == 8
+    assert compare_numerically(x, "==", 11)
+    assert compare_numerically(y, "==", 17)
+    assert compare_numerically(z, "==", 8)
     x, y, z = model.get_atom_coordinates(Cr1, R=[0, -1, 0], relative=False)
-    assert x == 1
-    assert y == -3
-    assert z == -2
+    assert compare_numerically(x, "==", 1)
+    assert compare_numerically(y, "==", -3)
+    assert compare_numerically(z, "==", -2)
     x, y, z = model.get_atom_coordinates(Cr1, R=[0, 0, 2], relative=False)
-    assert x == 1
-    assert y == 7
-    assert z == 28
+    assert compare_numerically(x, "==", 1)
+    assert compare_numerically(y, "==", 7)
+    assert compare_numerically(z, "==", 28)
     x, y, z = model.get_atom_coordinates(Cr1, R=[0, -3, 2], relative=False)
-    assert x == 1
-    assert y == -23
-    assert z == -2
+    assert compare_numerically(x, "==", 1)
+    assert compare_numerically(y, "==", -23)
+    assert compare_numerically(z, "==", -2)
     x, y, z = model.get_atom_coordinates(Cr1, R=[3, -3, 2], relative=False)
-    assert x == 31
-    assert y == 7
-    assert z == -2
+    assert compare_numerically(x, "==", 31)
+    assert compare_numerically(y, "==", 7)
+    assert compare_numerically(z, "==", -2)
 
 
 def test_get_bond_vector():
@@ -333,9 +335,9 @@ def test_get_bond_vector():
     model.add_atom(Cr1)
     model.add_atom(Cr2)
     vector = model.get_vector(Cr1, Cr2)
-    assert (vector == np.array([0, -3, 2])).all()
+    assert np.allclose(vector, np.array([0, -3, 2]))
     vector = model.get_vector(Cr1, Cr2, R=[3, 2, -5])
-    assert (vector == np.array([30, 17, -48])).all()
+    assert np.allclose(vector, np.array([30, 17, -48]))
 
 
 def test_get_distance():
@@ -346,9 +348,9 @@ def test_get_distance():
     model.add_atom(Cr1)
     model.add_atom(Cr2)
     d = model.get_distance(Cr1, Cr2)
-    assert d == sqrt(13)
+    assert compare_numerically(d, "==", sqrt(13))
     d = model.get_distance(Cr1, Cr2, R=[3, 2, -5])
-    assert d == sqrt(900 + 17**2 + 48**2)
+    assert compare_numerically(d, "==", sqrt(900 + 17**2 + 48**2))
 
 
 def test_filter():
@@ -477,79 +479,79 @@ def test_form_model():
 
     model.form_model(template=template1)
     assert len(model) == 6
-    assert (
-        model[(Cr1, Cr2, (0, 0, 0))].matrix
-        == np.array([[2.5, 2, 3], [4, 6.5, 6], [7, 8, 10.5]])
-    ).all()
-    assert (
-        model[(Cr2, Cr1, (0, 0, 0))].matrix
-        == np.array([[2.5, 4, 7], [2, 6.5, 8], [3, 6, 10.5]])
-    ).all()
+    assert np.allclose(
+        model[(Cr1, Cr2, (0, 0, 0))].matrix,
+        np.array([[2.5, 2, 3], [4, 6.5, 6], [7, 8, 10.5]]),
+    )
+    assert np.allclose(
+        model[(Cr2, Cr1, (0, 0, 0))].matrix,
+        np.array([[2.5, 4, 7], [2, 6.5, 8], [3, 6, 10.5]]),
+    )
 
-    assert (
-        model[(Cr1, Cr1, (1, 0, 0))].matrix
-        == np.array([[1, 3, 0], [3, 1, -1.5], [0, 1.5, 0]])
-    ).all()
-    assert (
-        model[(Cr1, Cr1, (-1, 0, 0))].matrix
-        == np.array([[1, 3, 0], [3, 1, 1.5], [0, -1.5, 0]])
-    ).all()
-    assert (
-        model[(Cr2, Cr2, (1, 0, 0))].matrix
-        == np.array([[1, 3, 0], [3, 1, -1.5], [0, 1.5, 0]])
-    ).all()
-    assert (
-        model[(Cr2, Cr2, (-1, 0, 0))].matrix
-        == np.array([[1, 3, 0], [3, 1, 1.5], [0, -1.5, 0]])
-    ).all()
+    assert np.allclose(
+        model[(Cr1, Cr1, (1, 0, 0))].matrix,
+        np.array([[1, 3, 0], [3, 1, -1.5], [0, 1.5, 0]]),
+    )
+    assert np.allclose(
+        model[(Cr1, Cr1, (-1, 0, 0))].matrix,
+        np.array([[1, 3, 0], [3, 1, 1.5], [0, -1.5, 0]]),
+    )
+    assert np.allclose(
+        model[(Cr2, Cr2, (1, 0, 0))].matrix,
+        np.array([[1, 3, 0], [3, 1, -1.5], [0, 1.5, 0]]),
+    )
+    assert np.allclose(
+        model[(Cr2, Cr2, (-1, 0, 0))].matrix,
+        np.array([[1, 3, 0], [3, 1, 1.5], [0, -1.5, 0]]),
+    )
     for matrix, atom1, atom2, R in bonds:
         model.add_bond(atom1, atom2, R, matrix=matrix)
     model.form_model(template=template2)
     assert len(model) == 5
-    assert (
-        model[(Cr1, Cr2, (0, 0, 0))].matrix
-        == np.array([[2.5, 2, 3], [4, 6.5, 6], [7, 8, 10.5]])
-    ).all()
-    assert (
-        model[(Cr2, Cr1, (0, 0, 0))].matrix
-        == np.array([[2.5, 4, 7], [2, 6.5, 8], [3, 6, 10.5]])
-    ).all()
+    assert np.allclose(
+        model[(Cr1, Cr2, (0, 0, 0))].matrix,
+        np.array([[2.5, 2, 3], [4, 6.5, 6], [7, 8, 10.5]]),
+    )
+    assert np.allclose(
+        model[(Cr2, Cr1, (0, 0, 0))].matrix,
+        np.array([[2.5, 4, 7], [2, 6.5, 8], [3, 6, 10.5]]),
+    )
 
-    assert (
-        model[(Cr1, Cr1, (1, 0, 0))].matrix
-        == np.array([[1, 10 / 3, 0], [10 / 3, 1, -4 / 3], [0, 4 / 3, 0]])
-    ).all()
-    assert (
-        model[(Cr1, Cr1, (-1, 0, 0))].matrix
-        == np.array([[1, 10 / 3, 0], [10 / 3, 1, 4 / 3], [0, -4 / 3, 0]])
-    ).all()
-    assert (
-        model[(Cr2, Cr2, (1, 0, 0))].matrix
-        == np.array([[1, 10 / 3, 0], [10 / 3, 1, -4 / 3], [0, 4 / 3, 0]])
-    ).all()
+    assert np.allclose(
+        model[(Cr1, Cr1, (1, 0, 0))].matrix,
+        np.array([[1, 10 / 3, 0], [10 / 3, 1, -4 / 3], [0, 4 / 3, 0]]),
+    )
+    assert np.allclose(
+        model[(Cr1, Cr1, (-1, 0, 0))].matrix,
+        np.array([[1, 10 / 3, 0], [10 / 3, 1, 4 / 3], [0, -4 / 3, 0]]),
+    )
+    assert np.allclose(
+        model[(Cr2, Cr2, (1, 0, 0))].matrix,
+        np.array([[1, 10 / 3, 0], [10 / 3, 1, -4 / 3], [0, 4 / 3, 0]]),
+    )
     assert (Cr2, Cr2, (-1, 0, 0)) not in model
 
     for matrix, atom1, atom2, R in bonds:
         model.add_bond(atom1, atom2, R, matrix=matrix)
     model.form_model(template=template3)
     assert len(model) == 4
-    assert (
-        model[(Cr1, Cr2, (0, 0, 0))].matrix
-        == np.array([[2.5, 2, 3], [4, 6.5, 6], [7, 8, 10.5]])
-    ).all()
-    assert (
-        model[(Cr2, Cr1, (0, 0, 0))].matrix
-        == np.array([[2.5, 4, 7], [2, 6.5, 8], [3, 6, 10.5]])
-    ).all()
+    assert np.allclose(
+        model[(Cr1, Cr2, (0, 0, 0))].matrix,
+        np.array([[2.5, 2, 3], [4, 6.5, 6], [7, 8, 10.5]]),
+    )
+    assert np.allclose(
+        model[(Cr2, Cr1, (0, 0, 0))].matrix,
+        np.array([[2.5, 4, 7], [2, 6.5, 8], [3, 6, 10.5]]),
+    )
 
-    assert (
-        model[(Cr1, Cr1, (1, 0, 0))].matrix
-        == np.array([[1, 4, 0], [4, 1, -1], [0, 1, 0]])
-    ).all()
-    assert (
-        model[(Cr1, Cr1, (-1, 0, 0))].matrix
-        == np.array([[1, 4, 0], [4, 1, 1], [0, -1, 0]])
-    ).all()
+    assert np.allclose(
+        model[(Cr1, Cr1, (1, 0, 0))].matrix,
+        np.array([[1, 4, 0], [4, 1, -1], [0, 1, 0]]),
+    )
+    assert np.allclose(
+        model[(Cr1, Cr1, (-1, 0, 0))].matrix,
+        np.array([[1, 4, 0], [4, 1, 1], [0, -1, 0]]),
+    )
 
     assert (Cr2, Cr2, (11, 0, 0)) not in model
     assert (Cr2, Cr2, (-1, 0, 0)) not in model
@@ -559,7 +561,7 @@ def test_notation_manipulation():
     model = SpinHamiltonian()
     Cr = Atom("Cr", (0, 0, 0), spin=3 / 2)
     model[Cr, Cr, (1, 0, 0)] = ExchangeParameter(iso=1)
-    assert model[Cr, Cr, (1, 0, 0)].iso == 1
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", 1)
 
     with pytest.raises(NotationError):
         model.double_counting
@@ -569,58 +571,58 @@ def test_notation_manipulation():
         model.factor
 
     model.notation = "standard"
-    assert model[Cr, Cr, (1, 0, 0)].iso == 1
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", 1)
     assert len(model) == 2
     model.notation = "standard"
-    assert model[Cr, Cr, (1, 0, 0)].iso == 1
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", 1)
     assert len(model) == 2
 
     assert model.double_counting
     assert len(model) == 2
     model.double_counting = False
-    assert model[Cr, Cr, (1, 0, 0)].iso == 2
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", 2)
     assert len(model) == 1
     model.double_counting = True
-    assert model[Cr, Cr, (1, 0, 0)].iso == 1
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", 1)
     assert len(model) == 2
 
     assert not model.spin_normalized
     model.spin_normalized = True
-    assert model[Cr, Cr, (1, 0, 0)].iso == 9 / 4
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", 9 / 4)
     model.spin_normalized = False
-    assert model[Cr, Cr, (1, 0, 0)].iso == 1
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", 1)
 
     assert model.factor == -1.0
     model.factor = -1 / 2
-    assert model[Cr, Cr, (1, 0, 0)].iso == 2
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", 2)
     model.factor = -1
-    assert model[Cr, Cr, (1, 0, 0)].iso == 1
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", 1)
     model.factor = -2
-    assert model[Cr, Cr, (1, 0, 0)].iso == 0.5
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", 0.5)
     model.factor = -1 / 2
-    assert model[Cr, Cr, (1, 0, 0)].iso == 2
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", 2)
     model.factor = -2
-    assert model[Cr, Cr, (1, 0, 0)].iso == 0.5
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", 0.5)
     model.factor = -1
-    assert model[Cr, Cr, (1, 0, 0)].iso == 1
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", 1)
 
     assert model.factor == -1
     model.factor = 1
-    assert model[Cr, Cr, (1, 0, 0)].iso == -1
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", -1)
     model.factor = -1
-    assert model[Cr, Cr, (1, 0, 0)].iso == 1
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", 1)
 
     model.notation = "SpinW"
-    assert model[Cr, Cr, (1, 0, 0)].iso == -1
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", -1)
     model.notation = "TB2J"
-    assert model[Cr, Cr, (1, 0, 0)].iso == 9 / 4
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", 9 / 4)
 
 
 def test_predefined_notations():
     model = SpinHamiltonian()
     Cr = Atom("Cr", (0, 0, 0), spin=3 / 2)
     model[Cr, Cr, (1, 0, 0)] = ExchangeParameter(iso=1)
-    assert model[Cr, Cr, (1, 0, 0)].iso == 1
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", 1)
 
     with pytest.raises(NotationError):
         model.double_counting
@@ -630,15 +632,15 @@ def test_predefined_notations():
         model.factor
 
     model.notation = "standard"
-    assert model[Cr, Cr, (1, 0, 0)].iso == 1
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", 1)
     assert model.double_counting and not model.spin_normalized and model.factor == -1
 
     model.notation = "TB2J"
-    assert model[Cr, Cr, (1, 0, 0)].iso == 9 / 4
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", 9 / 4)
     assert model.double_counting and model.spin_normalized and model.factor == -1
 
     model.notation = "SpinW"
-    assert model[Cr, Cr, (1, 0, 0)].iso == -1
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", -1)
     assert model.double_counting and not model.spin_normalized and model.factor == 1
 
 

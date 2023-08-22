@@ -42,7 +42,7 @@ def compare_numerically(x, condition, y, eps=None, rtol=REL_TOL, atol=ABS_TOL):
 
         .. code-block:: python
 
-            eps = atol + rtol * y
+            eps = atol + rtol * abs(y)
 
     rtol : float, default 1e-04
         Relative tolerance.
@@ -68,7 +68,7 @@ def compare_numerically(x, condition, y, eps=None, rtol=REL_TOL, atol=ABS_TOL):
     """
 
     if eps is None:
-        eps = atol + rtol * y
+        eps = atol + rtol * abs(y)
 
     if condition == "<":
         return x < y - eps
