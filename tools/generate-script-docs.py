@@ -97,16 +97,26 @@ def parse_manager(scriptfile, debug=False):
             print("".join(parameters[parameter]), end="")
 
     console_arguments = {}
+    metavars = {}
+    choices = {}
     version_notes = {}
     docs = {}
     for parameter in parameters:
         version_notes[parameter] = []
         console_arguments[parameter] = None
+        metavars[parameter] = None
+        choices[parameter] = None
         docs[parameter] = []
         for line in parameters[parameter]:
             if "Console argument" in line:
                 line = line.translate(str.maketrans("", "", "` \n")).split(":")[1]
                 console_arguments[parameter] = line.split("/")
+            elif "Metavar:" in line:
+                line = line.split(":")[1].strip()
+                metavars[parameter] = line
+            elif "Choices:" in line:
+                line = line.split(":")[1].strip().split(",")
+                choices[parameter] = line
             elif re.match(" *\.\.", line):
                 version_notes[parameter].append(line.replace("\n", "").lstrip())
             else:
@@ -133,8 +143,23 @@ def parse_manager(scriptfile, debug=False):
         print("Types:")
         for parameter in types:
             print(f"    {parameter:20} : {types[parameter]}")
+        print("Metavars:")
+        for parameter in metavars:
+            print(f"    {parameter:20} : {metavars[parameter]}")
+        print("Choices:")
+        for parameter in choices:
+            print(f"    {parameter:20} : {choices[parameter]}")
 
-    return docs, console_arguments, version_notes, required, default, types
+    return (
+        docs,
+        console_arguments,
+        version_notes,
+        required,
+        default,
+        types,
+        metavars,
+        choices,
+    )
 
 
 def main(script="all", debug=False):
@@ -188,10 +213,13 @@ def main(script="all", debug=False):
             required,
             default,
             types,
+            metavars,
+            choices,
         ) = parse_manager(
             os.path.join(SCRIPT_DIR, f"{script.replace('-','_')}.py"), debug=debug
         )
         docs_header = []
+
         # Read the docs, before Arguments
         with open(docfile, "r") as file:
             line = file.readline()
@@ -234,6 +262,62 @@ def main(script="all", debug=False):
                 if len(version_notes[parameter]) > 0:
                     for note in version_notes[parameter]:
                         file.write(f"{note}\n")
+
+        script_header = []
+        # Read the script implementation, before Arguments
+        with open(
+            os.path.join(SCRIPT_DIR, f"{script.replace('-','_')}.py"), "r"
+        ) as file:
+            line = file.readline()
+            while line and not line.startswith("def create_parser():"):
+                script_header.append(line)
+                line = file.readline()
+
+        # Write new script implementation
+        with open(
+            os.path.join(SCRIPT_DIR, f"{script.replace('-','_')}.py"), "w"
+        ) as file:
+            file.write("".join(script_header))
+            file.write("def create_parser():\n")
+            file.write("\n    parser = ArgumentParser()\n")
+            for parameter in docs:
+                file.write("    parser.add_argument(\n")
+                file.write(f'        "{console_arguments[parameter][0]}",\n')
+                if len(console_arguments[parameter]) > 1:
+                    file.write(f'        "{console_arguments[parameter][1]}",\n')
+                if required[parameter]:
+                    file.write(f"        required=True,\n")
+                else:
+                    file.write(f"        default={default[parameter]},\n")
+                if metavars[parameter] is not None:
+                    file.write(f"        metavar={metavars[parameter]},\n")
+                if types[parameter] == "bool":
+                    file.write(
+                        f'        action="store_true",\n'
+                        if default[parameter] == "False"
+                        else f'        action="store_false",\n'
+                    )
+                elif "tuple" in types[parameter] or "list" in types[parameter]:
+                    tmp_type = types[parameter].split()
+                    if len(tmp_type) == 3:
+                        file.write(f"        type={tmp_type[2]},\n")
+                        file.write(f'        nargs="*",\n')
+                    elif len(tmp_type) == 4:
+                        file.write(f"        type={tmp_type[3]},\n")
+                        file.write(f"        nargs={tmp_type[2]},\n")
+                    else:
+                        raise ValueError(
+                            f"Unknown type {types[parameter]} for parameter {parameter}"
+                        )
+                else:
+                    file.write(f"        type={types[parameter]},\n")
+                if choices[parameter] is not None:
+                    file.write("        choices=[\n")
+                    for choice in choices[parameter]:
+                        file.write(f"            {choice},\n")
+                    file.write("        ],\n")
+                file.write(f'        help="{docs[parameter][0].strip()}",\n    )\n')
+            file.write("\n    return parser\n")
 
 
 if __name__ == "__main__":

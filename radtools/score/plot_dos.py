@@ -45,10 +45,12 @@ def manager(
 
     Parameters
     ----------
-    input_folder : str
+    input_folder : str, default "."
         Relative or absolute path to the folder with PDOS files.
 
         Console argument: ``-if`` / ``--input-folder``
+
+        Metavar: "path"
 
         .. versionchanged:: 0.8.0 Renamed from ``input_path``
     seedname : str, optional
@@ -63,11 +65,15 @@ def manager(
 
         Console argument: ``-s`` / ``--seedname``
 
+        Metavar: "name"
+
         .. versionchanged:: 0.5.21 from "filpdos" to "seedname".
     output_name : str, optional
         Relative or absolute path to the folder for saving outputs.
 
         Console argument: ``-on`` / ``--output-name``
+
+        Metavar: "path"
     energy_window : tuple of 2 float, optional
         Energy window for the plots.
 
@@ -75,13 +81,17 @@ def manager(
 
         Console argument: ``-ew`` / ``--energy-window``
 
-        .. versioncahnged:: 0.5.21 Renamed from "window" to "energy-window".
+        Metavar: ("min", "max")
+
+        .. versionchanged:: 0.5.21 Renamed from "window" to "energy-window".
     dos_window : tuple of 2 float, optional
         DOS window for the plots.
 
         By default the whole states/eV range is plotted.
 
         Console argument: ``-dw`` / ``--dos-window``
+
+        Metavar: ("min", "max")
 
         .. versionadded:: 0.5.21
     efermi : float, default 0.0
@@ -90,6 +100,8 @@ def manager(
         Zero is shifted to Fermi energy.
 
         Console argument: ``-ef`` / ``--efermi``
+
+        Metavar: "energy"
     separate : bool, default False
         Whether to plot projected DOS for each atom of the same type separately.
 
@@ -139,6 +151,8 @@ def manager(
 
         Console argument: ``--custom``
 
+        Metavar: "description"
+
         .. versionadded:: 0.7.5
     colours : list of str, optional
         Colours for the relative and custom plots.
@@ -167,17 +181,23 @@ def manager(
 
         Console argument: ``-lfs`` / ``--legend-fontsize``
 
+        Metavar: "fontsize"
+
         .. versionadded:: 0.7.8
     axes_labels_fontsize : int, default 14
         Fontsize of the labes of the axes.
 
         Console argument: ``-alfs`` / ``--axes-labels-fontsize``
 
+        Metavar: "fontsize"
+
         .. versionadded:: 0.7.8
     title_fontsize : int, default 18
         Fontsize of the title.
 
         Console argument: ``-tfs`` / ``--title-fontsize``
+
+        Metavar: "fontsize"
 
         .. versionadded:: 0.7.8
 
@@ -278,165 +298,160 @@ def manager(
 
 
 def create_parser():
-    parser = ArgumentParser(
-        description="Script for visualisation of density of states."
-    )
+
+    parser = ArgumentParser()
     parser.add_argument(
         "-if",
         "--input-folder",
+        default=".",
         metavar="path",
         type=str,
-        default=".",
         help="Relative or absolute path to the folder with PDOS files.",
     )
     parser.add_argument(
         "-s",
         "--seedname",
+        default=None,
         metavar="name",
         type=str,
-        default=None,
         help="Prefix for input files with PDOS(E).",
     )
     parser.add_argument(
         "-on",
         "--output-name",
+        default="",
         metavar="path",
         type=str,
-        default="",
         help="Relative or absolute path to the folder for saving outputs.",
     )
     parser.add_argument(
         "-ew",
         "--energy-window",
+        default=None,
         metavar=("min", "max"),
         type=float,
         nargs=2,
-        default=None,
-        help="Energy window for the plots."
-        + "By default the whole energy range present in the files is plotted",
+        help="Energy window for the plots.",
     )
     parser.add_argument(
         "-dw",
         "--dos-window",
+        default=None,
         metavar=("min", "max"),
         type=float,
         nargs=2,
-        default=None,
-        help="DOS window for the plots. "
-        + "By default whole range present in the files is plotted.",
+        help="DOS window for the plots.",
     )
     parser.add_argument(
         "-ef",
         "--efermi",
+        default=0.0,
         metavar="energy",
         type=float,
-        default=0.0,
-        help="Fermi energy, zero by default.",
+        help="Fermi energy.",
     )
     parser.add_argument(
         "-sep",
         "--separate",
-        action="store_true",
         default=False,
+        action="store_true",
         help="Whether to plot projected DOS for each atom of the same type separately.",
     )
     parser.add_argument(
         "-r",
         "--relative",
-        action="store_true",
         default=False,
+        action="store_true",
         help="Whether to use relative style.",
     )
     parser.add_argument(
         "-n",
         "--normalize",
-        action="store_true",
         default=False,
+        action="store_true",
         help="Whether to normalized PDOS values to 1.",
     )
     parser.add_argument(
         "-v",
         "--verbose",
-        action="store_true",
         default=False,
+        action="store_true",
         help="Verbose output, propagates to the called methods.",
     )
     parser.add_argument(
         "-i",
         "--interactive",
-        action="store_true",
         default=False,
+        action="store_true",
         help="Interactive plotting.",
     )
     parser.add_argument(
         "-sp",
         "--save-pickle",
-        action="store_true",
         default=False,
+        action="store_true",
         help="Whether to save figures as .pickle files.",
     )
     parser.add_argument(
         "-st",
         "--save-txt",
-        action="store_true",
         default=False,
+        action="store_true",
         help="Whether to save some data as txt files.",
     )
     parser.add_argument(
         "-bt",
         "--background-total",
-        action="store_true",
         default=False,
+        action="store_true",
         help="Whether to use total PDOS as the background for all plots.",
     )
     parser.add_argument(
         "--custom",
-        type=str,
-        metavar="description",
         default=None,
+        metavar="description",
+        type=str,
         nargs="*",
-        help="Custom PDOS plot. See docs for info.",
+        help="Custom PDOS plot. See :ref:`rad-plot-dos_custom-plots` for info.",
     )
     parser.add_argument(
         "-cls",
         "--colours",
-        type=str,
-        metavar="colours",
         default=None,
+        type=str,
         nargs="*",
         help="Colours for the relative and custom plots.",
     )
     parser.add_argument(
         "-lbs",
         "--labels",
-        type=str,
-        metavar="labels",
         default=None,
+        type=str,
         nargs="*",
         help="Labels for the custom plots.",
     )
     parser.add_argument(
-        "-alfs",
-        "--axes-labels-fontsize",
-        type=int,
-        default=14,
-        metavar="fontsize",
-        help="Fontsize of the labes of the axes.",
-    )
-    parser.add_argument(
         "-lfs",
         "--legend-fontsize",
-        type=int,
         default=12,
         metavar="fontsize",
+        type=int,
         help="Fontsize of the legend.",
+    )
+    parser.add_argument(
+        "-alfs",
+        "--axes-labels-fontsize",
+        default=14,
+        metavar="fontsize",
+        type=int,
+        help="Fontsize of the labes of the axes.",
     )
     parser.add_argument(
         "-tfs",
         "--title-fontsize",
-        type=int,
         default=18,
         metavar="fontsize",
+        type=int,
         help="Fontsize of the title.",
     )
 

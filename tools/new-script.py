@@ -81,19 +81,6 @@ def main(name: str):
             + "def manager(input_filename):\n"
             + "    pass\n"
             + "\n"
-            + "# Arguments of the parser have to be the same as arguments of the manager()\n"
-            + '# You can use "-" here, but substitute it with "_" in manager()\n'
-            + "def create_parser():\n"
-            + "    parser = ArgumentParser()\n"
-            + "    parser.add_argument(\n"
-            + '        "-if",\n'
-            + '        "--input-filename",\n'
-            + '        metavar="filename",\n'
-            + "        type=str,\n"
-            + "        required=True,\n"
-            + '        help="Help message"\n'
-            + "    )\n"
-            + "    return parser\n"
         )
 
     # Docs

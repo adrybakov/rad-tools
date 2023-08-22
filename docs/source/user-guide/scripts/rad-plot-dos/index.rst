@@ -461,7 +461,7 @@ By default the whole energy range present in the files is plotted.
     optional
     type: tuple of 2 float
 
-.. versioncahnged:: 0.5.21 Renamed from "window" to "energy-window".
+.. versionchanged:: 0.5.21 Renamed from "window" to "energy-window".
 
 .. _rad-plot-dos_dos-window:
 
