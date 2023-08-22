@@ -3,7 +3,6 @@ import os
 
 from termcolor import cprint
 
-from radtools import __version__ as version
 from radtools.io.internal import read_template
 from radtools.io.tb2j import read_tb2j_model
 
@@ -28,6 +27,79 @@ def manager(
     :ref:`User Guide <rad-extract-tb2j>`.
     Parameters of the function directly
     correspond to the arguments of the script.
+
+    Parameters
+    ----------
+    input_filename : str
+        Relative or absolute path to the "exchange.out" file,
+        including the name and extension of the file itself.
+
+        Console argument: ``-if`` / ``--input-filename``
+    template_file : str, optional
+        Relative or absolute path to the template file,
+        including the name and extension of the file.
+
+        Console argument: ``-tf`` / ``--template-file``
+    output_name : str, optional
+        Name of the output files.
+
+        If this parameter is not specified, the result is printed in the
+        standard output stream.
+
+        Console argument: ``-on`` / ``--output-name``
+    decimals : int, default 4
+        Decimals after the comma for the exchange values.
+
+        Console argument: ``-d`` / ``--decimals``
+
+        .. versionchanged:: 0.5.17 Renamed from ``-acc``/``--accuracy``.
+    form_model : bool, default False
+        Whether to form the model from the template.
+
+        Console argument: ``-fm`` / ``--form-model``
+
+        .. versionchanged:: 0.8.0 Renamed from ``-fs``/``--force-symmetry``.
+    no_anisotropic : bool, default False
+        Whether to output anisotropic exchange.
+
+        Console argument: ``-noa`` / ``--no-anisotropic``
+
+        .. versionchanged:: 0.8.0 Renamed from ``-a``/``--anisotropic``.
+    no_matrix : bool, default False
+        Whether to output whole matrix exchange.
+
+        Console argument: ``-nom`` / ``--no-matrix``
+
+        .. versionchanged:: 0.8.0 Renamed from ``-m``/``--matrix``.
+    nodmi : bool, default False
+        Whether to output DMI exchange.
+
+        Console argument: ``-nodmi``
+
+        .. versionchanged:: 0.8.0 Renamed from ``-dmi``.
+    verbose : bool, default False
+        Verbose output, propagates to the called methods.
+
+        Console argument: ``-v`` / ``--verbose``
+    max_distance : float, optional
+        (<=) Maximum distance.
+
+        All the bonds with the distance between atom 1 and atom 2
+        greater than maximum distance are excluded from the model.
+
+        Console argument: ``-maxd`` / ``--max-distance``
+
+        .. versionadded:: 0.8.0
+    min_distance : float, optional
+        (>=) Minimum distance.
+
+        All the bonds with the distance between atom 1 and atom 2
+        lower than minimum distance are excluded from the Hamiltonian.
+
+        Console argument: ``-mind`` / ``--min-distance``
+
+        .. versionadded:: 0.8.0
+
     """
 
     if form_model and template_file is None:
@@ -114,7 +186,7 @@ def create_parser():
         "--template-file",
         metavar="filename",
         type=str,
-        required=True,
+        default=None,
         help="Relative or absolute path to the template file, "
         + "including the name and extension of the file.",
     )

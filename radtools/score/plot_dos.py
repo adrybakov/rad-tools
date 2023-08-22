@@ -14,7 +14,7 @@ from radtools.dos.plotting import COLOURS
 
 
 def manager(
-    input_folder,
+    input_folder=".",
     seedname=None,
     output_name="",
     energy_window=None,
@@ -42,6 +42,145 @@ def manager(
     :ref:`User Guide <rad-plot-dos>`.
     Parameters of the function directly
     correspond to the arguments of the script.
+
+    Parameters
+    ----------
+    input_folder : str
+        Relative or absolute path to the folder with PDOS files.
+
+        Console argument: ``-if`` / ``--input-folder``
+
+        .. versionchanged:: 0.8.0 Renamed from ``input_path``
+    seedname : str, optional
+        Prefix for input files with PDOS(E).
+
+        In the case of Quantum Espresso-produced seedname is the same
+        as specified in the QE projwfc.x input file (filpdos).
+
+        If it is not provided the script tries to
+        detect it automatically in the
+        ``rad-plot-dos_`input-folder`` folder.
+
+        Console argument: ``-s`` / ``--seedname``
+
+        .. versionchanged:: 0.5.21 from "filpdos" to "seedname".
+    output_name : str, optional
+        Relative or absolute path to the folder for saving outputs.
+
+        Console argument: ``-on`` / ``--output-name``
+    energy_window : tuple of 2 float, optional
+        Energy window for the plots.
+
+        By default the whole energy range present in the files is plotted.
+
+        Console argument: ``-ew`` / ``--energy-window``
+
+        .. versioncahnged:: 0.5.21 Renamed from "window" to "energy-window".
+    dos_window : tuple of 2 float, optional
+        DOS window for the plots.
+
+        By default the whole states/eV range is plotted.
+
+        Console argument: ``-dw`` / ``--dos-window``
+
+        .. versionadded:: 0.5.21
+    efermi : float, default 0.0
+        Fermi energy.
+
+        Zero is shifted to Fermi energy.
+
+        Console argument: ``-ef`` / ``--efermi``
+    separate : bool, default False
+        Whether to plot projected DOS for each atom of the same type separately.
+
+        Console argument: ``-sep`` / ``--separate``
+    relative : bool, default False
+        Whether to use relative style.
+
+        Console argument: ``-r`` / ``--relative``
+    normalize : bool, default False
+        Whether to normalized PDOS values to 1.
+
+        Console argument: ``-n`` / ``--normalize``
+
+        (with respect to LDOS of each plot or to total PDOS if
+        :ref:`rad-plot-dos_background-total` is used).
+    verbose : bool, default False
+        Verbose output, propagates to the called methods.
+
+        Console argument: ``-v`` / ``--verbose``
+    interactive : bool, default False
+        Interactive plotting.
+
+        Console argument: ``-i`` / ``--interactive``
+    save_pickle : bool, default False
+        Whether to save figures as .pickle files.
+
+        Console argument: ``-sp`` / ``--save-pickle``
+
+        .. versionadded:: 0.5.21
+    save_txt : bool, default False
+        Whether to save some data as txt files.
+
+        It does not affect "pdos-vs-dos.png",
+        because these data are accessible directly from PDOS input files.
+
+        Console argument: ``-st`` / ``--save-txt``
+
+        .. versionadded:: 0.5.21
+    background_total : bool, default False
+        Whether to use total PDOS as the background for all plots.
+
+        Console argument: ``-bt`` / ``--background-total``
+
+        .. versionadded:: 0.5.21
+    custom : list of str, optional
+        Custom PDOS plot. See :ref:`rad-plot-dos_custom-plots` for info.
+
+        Console argument: ``--custom``
+
+        .. versionadded:: 0.7.5
+    colours : list of str, optional
+        Colours for the relative and custom plots.
+
+        Values are passed directly to the matplotlib as strings,
+        therefore any valid value is allowed. Examples: "red" or "#FF0000".
+        When ``custom`` is used the order of colours is the same as for
+        the values of the ``custom``.
+
+        Console argument: ``-cls`` / ``--colours``
+
+        .. versionadded:: 0.7.5
+    labels : list of str, optional
+        Labels for the custom plots.
+
+        Amount of labels have to be the same as the amount of ``custom`` strings, or one more.
+        If one more, then first one is interpreted as the label for the background
+        (Use "None" to switch it off). If the amount of argument is one more  and the first one is None,
+        then the label for the total PDOS is switched off and the total PDOS itself is not plotted.
+
+        Console argument: ``-lbs`` / ``--labels``
+
+        .. versionadded:: 0.7.6
+    legend_fontsize : int, default 12
+        Fontsize of the legend.
+
+        Console argument: ``-lfs`` / ``--legend-fontsize``
+
+        .. versionadded:: 0.7.8
+    axes_labels_fontsize : int, default 14
+        Fontsize of the labes of the axes.
+
+        Console argument: ``-alfs`` / ``--axes-labels-fontsize``
+
+        .. versionadded:: 0.7.8
+    title_fontsize : int, default 18
+        Fontsize of the title.
+
+        Console argument: ``-tfs`` / ``--title-fontsize``
+
+        .. versionadded:: 0.7.8
+
     """
 
     out_head, out_tail = os.path.split(output_name)
@@ -148,7 +287,7 @@ def create_parser():
         metavar="path",
         type=str,
         default=".",
-        help="Relative or absulute path to the folder with dos files.",
+        help="Relative or absolute path to the folder with PDOS files.",
     )
     parser.add_argument(
         "-s",
@@ -173,8 +312,8 @@ def create_parser():
         type=float,
         nargs=2,
         default=None,
-        help="Energy window for the plots. "
-        + "By default whole range present in the files is plotted.",
+        help="Energy window for the plots."
+        + "By default the whole energy range present in the files is plotted",
     )
     parser.add_argument(
         "-dw",

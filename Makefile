@@ -76,14 +76,18 @@ help:
 	@echo "    html - build the html docs"
 	@echo "    html-examples - update examples and build html docs"
 	@echo "    doctest - run doctests"
-	@echo "    test - execute unit tests"
 	@echo "    clean - clean all files from docs and pip routines"
-	@echo "    test-all - execute testing suite"
+	@echo "    install - install the package"
+	@echo "    test - execute unit tests"
+	@echo "    test-all - execute full testing suite"
 	@echo "    pip - publish the package to the PyPi index"
-	@echo "    examples - update examples for all scripts"
 	@echo "    bravais-pictures - update pictures of bravais lattices"
 	@echo "    check-scripts - check consistency of argument names in scripts"
 	@echo "    prepare-release - prepare the package for release"
+	@echo "    docs-pictures - update pictures for the docs"
+	@echo "    new-scripts - create templates for the new script"
+	@echo "    examples - update examples for all scripts"
+	@echo "    generate-script-docs - generate docs for all scripts"
 	@echo
 
 bravais-pictures:
@@ -107,3 +111,7 @@ new-scripts:
 SCRIPT="all"
 examples: 
 	@python3 tools/plot-script-guide.py -s $(SCRIPT) 
+
+SCRIPT="all"
+generate-script-docs: 
+	@python3 tools/generate-script-docs.py -s $(SCRIPT) 

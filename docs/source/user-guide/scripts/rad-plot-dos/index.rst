@@ -398,7 +398,6 @@ Each seedname folder has the structure:
         ├── output_name_1
         └── output_name_2
 
-
 .. _rad-plot-dos_arguments:
 
 Arguments
@@ -412,30 +411,30 @@ Relative or absolute path to the folder with PDOS files.
 
 .. code-block:: text
 
-    default : current directory (".")
+    default: "."
+    type: str
 
 .. versionchanged:: 0.8.0 Renamed from ``input_path``
-
 
 .. _rad-plot-dos_seedname:
 
 -s, --seedname
 --------------
-Prefix for input files with PDOS(E). 
+Prefix for input files with PDOS(E).
 
-In the case of Quantum Espresso-produced pdos it is the same
+In the case of Quantum Espresso-produced seedname is the same
 as specified in the QE projwfc.x input file (filpdos).
 
-If it is not provided the script tries to 
-detect it automatically in the 
-:ref:`rad-plot-dos_input-folder` folder.
+If it is not provided the script tries to
+detect it automatically in the
+``rad-plot-dos_`input-folder`` folder.
 
 .. code-block:: text
 
-    default : None
+    optional
+    type: str
 
 .. versionchanged:: 0.5.21 from "filpdos" to "seedname".
-
 
 .. _rad-plot-dos_output-name:
 
@@ -445,51 +444,52 @@ Relative or absolute path to the folder for saving outputs.
 
 .. code-block:: text
 
-    default : current directory (".")
+    default: ""
+    type: str
 
 
 .. _rad-plot-dos_energy-window:
 
 -ew, --energy-window
 --------------------
-Energy window for the plots.  
+Energy window for the plots.
 
 By default the whole energy range present in the files is plotted.
 
 .. code-block:: text
 
-    default : None
+    optional
+    type: tuple of 2 float
 
-Renamed in version 0.5.21: from "window" to "energy-window".
-
+.. versioncahnged:: 0.5.21 Renamed from "window" to "energy-window".
 
 .. _rad-plot-dos_dos-window:
 
 -dw, --dos-window
 -----------------
-DOS window for the plots. 
+DOS window for the plots.
 
-By default the whole states/eV range present in the 
-:ref:`rad-plot-dos_energy-window` is plotted.
+By default the whole states/eV range is plotted.
 
 .. code-block:: text
 
-    default : None
+    optional
+    type: tuple of 2 float
 
 .. versionadded:: 0.5.21
-
 
 .. _rad-plot-dos_efermi:
 
 -ef, --efermi
 -------------
-Fermi energy. 
+Fermi energy.
 
 Zero is shifted to Fermi energy.
 
 .. code-block:: text
 
-    default : 0
+    default: 0.0
+    type: float
 
 
 .. _rad-plot-dos_separate:
@@ -500,7 +500,8 @@ Whether to plot projected DOS for each atom of the same type separately.
 
 .. code-block:: text
 
-    default : False
+    default: False
+    type: bool
 
 
 .. _rad-plot-dos_relative:
@@ -511,7 +512,8 @@ Whether to use relative style.
 
 .. code-block:: text
 
-    default : False
+    default: False
+    type: bool
 
 
 .. _rad-plot-dos_normalize:
@@ -520,12 +522,14 @@ Whether to use relative style.
 ---------------
 Whether to normalized PDOS values to 1.
 
+
 (with respect to LDOS of each plot or to total PDOS if
 :ref:`rad-plot-dos_background-total` is used).
 
 .. code-block:: text
 
-    default : False
+    default: False
+    type: bool
 
 
 .. _rad-plot-dos_verbose:
@@ -536,7 +540,8 @@ Verbose output, propagates to the called methods.
 
 .. code-block:: text
 
-    default : False
+    default: False
+    type: bool
 
 
 .. _rad-plot-dos_interactive:
@@ -547,7 +552,8 @@ Interactive plotting.
 
 .. code-block:: text
 
-    default : False
+    default: False
+    type: bool
 
 
 .. _rad-plot-dos_save-pickle:
@@ -558,27 +564,26 @@ Whether to save figures as .pickle files.
 
 .. code-block:: text
 
-    default : False
+    default: False
+    type: bool
 
 .. versionadded:: 0.5.21
-
 
 .. _rad-plot-dos_save-txt:
 
 -st, --save-txt
 ---------------
-Whether to save the data as txt files.
+Whether to save some data as txt files.
 
-.. note::
-    It does not affect "pdos-vs-dos.png", 
-    because these data are accessible directly from PDOS input files.
+It does not affect "pdos-vs-dos.png",
+because these data are accessible directly from PDOS input files.
 
 .. code-block:: text
 
-    default : False
+    default: False
+    type: bool
 
 .. versionadded:: 0.5.21
-
 
 .. _rad-plot-dos_background-total:
 
@@ -586,16 +591,12 @@ Whether to save the data as txt files.
 -----------------------
 Whether to use total PDOS as the background for all plots.
 
-Total partial density of states is used instead of corresponding 
-local density of states in all background data 
-(and in all normalization routines as well) .
-
 .. code-block:: text
 
-    default : False
+    default: False
+    type: bool
 
 .. versionadded:: 0.5.21
-
 
 .. _rad-plot-dos_custom:
 
@@ -605,11 +606,10 @@ Custom PDOS plot. See :ref:`rad-plot-dos_custom-plots` for info.
 
 .. code-block:: text
 
-    default : None
-    nargs : any
+    optional
+    type: list of str
 
 .. versionadded:: 0.7.5
-
 
 .. _rad-plot-dos_colours:
 
@@ -617,18 +617,17 @@ Custom PDOS plot. See :ref:`rad-plot-dos_custom-plots` for info.
 ---------------
 Colours for the relative and custom plots.
 
-Values are passed directly to the matplotlib as strings, 
+Values are passed directly to the matplotlib as strings,
 therefore any valid value is allowed. Examples: "red" or "#FF0000".
-When :ref:`rad-plot-dos_custom` is used the order of colours is the same as for 
-the values of the :ref:`rad-plot-dos_custom`.
+When ``custom`` is used the order of colours is the same as for
+the values of the ``custom``.
 
 .. code-block:: text
 
-    default : None
-    nargs : any
+    optional
+    type: list of str
 
 .. versionadded:: 0.7.5
-
 
 .. _rad-plot-dos_labels:
 
@@ -636,33 +635,17 @@ the values of the :ref:`rad-plot-dos_custom`.
 --------------
 Labels for the custom plots.
 
-Amount of labels have to be the same as the amount of custom strings, or one more.
-If one more, then first one is interpreted as the label for the background 
-(Use "None" to switch it off). If the amount of argument is one more  and the first one is None, 
+Amount of labels have to be the same as the amount of ``custom`` strings, or one more.
+If one more, then first one is interpreted as the label for the background
+(Use "None" to switch it off). If the amount of argument is one more  and the first one is None,
 then the label for the total PDOS is switched off and the total PDOS itself is not plotted.
 
-
 .. code-block:: text
 
-    default : None
-    nargs : any
+    optional
+    type: list of str
 
 .. versionadded:: 0.7.6
-
-
-.. _rad-plot-dos_axes-labels-fontsize:
-
--alfs, --axes-labels-fontsize
------------------------------
-Fontsize of the labes of the axes.
-
-.. code-block:: text
-
-    default : 14
-    type : int
-
-.. versionadded:: 0.7.8
-
 
 .. _rad-plot-dos_legend-fontsize:
 
@@ -672,11 +655,23 @@ Fontsize of the legend.
 
 .. code-block:: text
 
-    default : 12
-    type : int
+    default: 12
+    type: int
 
 .. versionadded:: 0.7.8
 
+.. _rad-plot-dos_axes-labels-fontsize:
+
+-alfs, --axes-labels-fontsize
+-----------------------------
+Fontsize of the labes of the axes.
+
+.. code-block:: text
+
+    default: 14
+    type: int
+
+.. versionadded:: 0.7.8
 
 .. _rad-plot-dos_title-fontsize:
 
@@ -686,7 +681,7 @@ Fontsize of the title.
 
 .. code-block:: text
 
-    default : 18
-    type : int
+    default: 18
+    type: int
 
 .. versionadded:: 0.7.8

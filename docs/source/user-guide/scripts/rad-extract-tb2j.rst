@@ -77,39 +77,35 @@ including the name and extension of the file itself.
 .. code-block:: text
 
     required
-    type : str
+    type: str
+
 
 .. _rad-extract-tb2j_template-file:
 
 -tf, --template-file
 --------------------
-Relative or absolute path to the template file, 
+Relative or absolute path to the template file,
 including the name and extension of the file.
 
 .. code-block:: text
 
-    required
-    type : str
-
-
-See also: :ref:`template <rad-make-template>`
+    optional
+    type: str
 
 
 .. _rad-extract-tb2j_output-name:
 
 -on, --output-name
 ------------------
-Seedname for the output files.
+Name of the output files.
 
-If this parameter is not specified, the result are printed in 
-standard output stream. 
+If this parameter is not specified, the result is printed in the
+standard output stream.
 
 .. code-block:: text
 
-    default : "extracted_exchange.txt"
-    type : str
-
-See also: :ref:`example <output-notes>`.
+    optional
+    type: str
 
 
 .. _rad-extract-tb2j_decimals:
@@ -120,23 +116,23 @@ Decimals after the comma for the exchange values.
 
 .. code-block:: text
 
-    default : 4
-    type : int
+    default: 4
+    type: int
 
-.. versionchanged:: 0.5.17 Renamed from "-acc"/"--accuracy".
+.. versionchanged:: 0.5.17 Renamed from ``-acc``/``--accuracy``.
 
 .. _rad-extract-tb2j_form-model:
 
 -fm, --form-model
----------------------
-Whether to form the model based on the template.
+-----------------
+Whether to form the model from the template.
 
 .. code-block:: text
 
-    default : False
-    type : bool
+    default: False
+    type: bool
 
-.. versionchanged:: 0.8.0 Renamed from "-fs"/"--force-symmetry".
+.. versionchanged:: 0.8.0 Renamed from ``-fs``/``--force-symmetry``.
 
 .. _rad-extract-tb2j_no-anisotropic:
 
@@ -146,23 +142,23 @@ Whether to output anisotropic exchange.
 
 .. code-block:: text
 
-    default : False
-    type : bool
+    default: False
+    type: bool
 
-.. versionchanged:: 0.8.0 Renamed from "-a"/"--anisotropic".
+.. versionchanged:: 0.8.0 Renamed from ``-a``/``--anisotropic``.
 
 .. _rad-extract-tb2j_no-matrix:
 
 -nom, --no-matrix
 -----------------
-Whether to output the whole matrix of exchange.
+Whether to output whole matrix exchange.
 
 .. code-block:: text
 
-    default : False
-    type : bool
+    default: False
+    type: bool
 
-.. versionchanged:: 0.8.0 Renamed from "-m"/"--matrix".
+.. versionchanged:: 0.8.0 Renamed from ``-m``/``--matrix``.
 
 .. _rad-extract-tb2j_nodmi:
 
@@ -172,10 +168,10 @@ Whether to output DMI exchange.
 
 .. code-block:: text
 
-    default : False
-    type : bool
+    default: False
+    type: bool
 
-.. versionchanged:: 0.8.0 Renamed from "-dmi".
+.. versionchanged:: 0.8.0 Renamed from ``-dmi``.
 
 .. _rad-extract-tb2j_verbose:
 
@@ -185,7 +181,9 @@ Verbose output, propagates to the called methods.
 
 .. code-block:: text
 
-    default : False
+    default: False
+    type: bool
+
 
 .. _rad-extract-tb2j_max-distance:
 
@@ -193,12 +191,13 @@ Verbose output, propagates to the called methods.
 ---------------------
 (<=) Maximum distance.
 
-All the bonds with the distance between atom 1 and atom 2 
+All the bonds with the distance between atom 1 and atom 2
 greater than maximum distance are excluded from the model.
 
 .. code-block:: text
 
-    default : None
+    optional
+    type: float
 
 .. versionadded:: 0.8.0
 
@@ -208,11 +207,12 @@ greater than maximum distance are excluded from the model.
 ---------------------
 (>=) Minimum distance.
 
-All the bonds with the distance between atom 1 and atom 2 
+All the bonds with the distance between atom 1 and atom 2
 lower than minimum distance are excluded from the Hamiltonian.
 
 .. code-block:: text
 
-    default : None
+    optional
+    type: float
 
 .. versionadded:: 0.8.0
