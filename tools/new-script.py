@@ -100,23 +100,20 @@ def main(name: str):
             + "\n"
             + "*" * N
             + "\n"
-            "\n"
-            f".. _rad-{name}_arguments:\n"
-            "\n"
-            "Arguments\n"
-            "=========\n"
-            "\n"
-            f".. _rad-{name}_input-filename:\n"
-            "\n"
-            "-if, --input-filename\n"
-            "---------------------\n"
-            "Help message\n"
-            "\n"
-            ".. code-block:: text\n"
-            "\n"
-            "    required\n"
-            "    type : str\n"
         )
+
+    print("Templates are created")
+    print(
+        f"Write manager() function in \n{os.path.abspath(os.path.join(ROOT_DIR, 'radtools', 'score', f'{name_py}.py'))}"
+    )
+    print(
+        f"Write documentation in \n{os.path.abspath(os.path.join(ROOT_DIR, 'docs', 'source', 'user-guide', 'scripts', f'rad-{name}.rst'))}"
+    )
+    print(
+        "Follow the documentation guidelines for the manager() function. "
+        + "When it is ready run to generate Arguments section in docs and "
+        + "parser in script implementation\n    make generate-script-docs SCRIPT=new-script\n"
+    )
 
 
 if __name__ == "__main__":
