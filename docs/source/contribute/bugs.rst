@@ -12,8 +12,7 @@ When reporting a bug, please include a minimal example that reproduces the
 problem. This will help us to fix the bug faster.
 
 
-In order to submit a bug report log in to your github account and go to the 
-repository of the project: |RAD-repo|_
+In order to submit a bug report log in to your github account and go to the |RAD-repo|_:
 
 Then click on the "Issues" tab. 
 

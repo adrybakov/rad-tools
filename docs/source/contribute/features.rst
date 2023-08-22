@@ -8,8 +8,7 @@ If you have an idea for the project. You can submit a feature request!
 
 Feature requests are managed as issues on the github repository of the project.
 
-In order to submit a feature request log in to your github account and go to the 
-repository of the project: |RAD-repo|_
+In order to submit a feature request log in to your github account and go to the |RAD-repo|_:
 
 Then click on the "Issues" tab. 
 
