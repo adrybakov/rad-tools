@@ -28,6 +28,75 @@ def manager(
     :ref:`User Guide <rad-make-template>`.
     Parameters of the function directly
     correspond to the arguments of the script.
+
+    Parameters
+    ----------
+    output_name : str, default "template.txt"
+        Name for the template output file.
+
+        See also: :ref:`example <output-notes>`.
+
+        Console argument: ``-on`` / ``--output-name``
+
+        Metavar: "filename"
+    input_filename : str, optional
+        Relative or absolute path to the "exchange.out" file, including name and extension of the file.
+
+        Console argument: ``-if`` / ``--input-filename``
+
+        Metavar: "filename"
+
+        .. versionchanged:: 0.5.12 Renamed from "tb2j_filename"
+    R_vector : list of int, optional
+        R vectors for filtering the spin Hamiltonian.
+
+        In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to).
+        Atom 1 is always located in (0, 0, 0) unit cell, while atom 2 is located in
+        R = (i, j, k) unit cell. This parameter tells the script to keep only the
+        bonds for which atom 2 is located in one of specified R supercells.
+        Supercells are specified by a set of integers separated by spaces.
+        They are grouped by three starting from the left and forms a set
+        of R vectors. If the last group contains 1 or 2 integers they are ignored.
+
+        Console argument: ``-R`` / ``--R-vector``
+
+        Metavar: "i1 j1 k1 i2 j2 k2 ..."
+    max_distance : float, optional
+        (<=) Maximum distance.
+
+        All the bonds with the distance between atom 1 and atom 2
+        greater than maximum distance are excluded from the model.
+
+        Console argument: ``-maxd`` / ``--max-distance``
+
+        Metavar: "distance"
+    min_distance : float, optional
+        (>=) Minimum distance.
+
+        All the bonds with the distance between atom 1 and atom 2
+        lower than minimum distance are excluded from the Hamiltonian.
+
+        Console argument: ``-mind`` / ``--min-distance``
+
+        Metavar: "distance"
+    distance : float, optional
+        (=) Exact distance.
+
+        Only the bonds with the exact distance remains in the model.
+        There is no point in specifying maximum or minimum distance when
+        this parameter is provided.
+
+        Console argument: ``-d`` / ``--distance``
+
+        Metavar: "distance"
+    verbose : bool, default False
+        Verbose output, propagates to the called methods.
+
+        Console argument: ``-v`` / ``--verbose``
+    eps : float, default 1e-3
+        Epsilon for the distance comparison.
+
+        Console argument: ``--eps``
     """
 
     n_sep = 80
@@ -152,73 +221,69 @@ def manager(
 
 
 def create_parser():
-    parser = ArgumentParser(
-        description="Script for the creation of template`s template"
-    )
 
+    parser = ArgumentParser()
     parser.add_argument(
         "-on",
         "--output-name",
+        default="template.txt",
         metavar="filename",
         type=str,
-        default="template.txt",
-        help="Name for the template output file.",
+        help='Name for the template output file.',
     )
     parser.add_argument(
         "-if",
         "--input-filename",
+        default=None,
         metavar="filename",
         type=str,
-        default=None,
-        help="Relative or absolute path to the 'exchange.out' file, "
-        + "including the name and extension of the file itself.",
+        help='Relative or absolute path to the "exchange.out" file, including name and extension of the file.',
     )
     parser.add_argument(
         "-R",
         "--R-vector",
-        metavar="R1a R1b R1c",
+        default=None,
+        metavar="i1 j1 k1 i2 j2 k2 ...",
         type=int,
         nargs="*",
-        default=None,
-        help="R vectors for filtering the model.",
+        help='R vectors for filtering the spin Hamiltonian.',
     )
     parser.add_argument(
         "-maxd",
         "--max-distance",
+        default=None,
         metavar="distance",
         type=float,
-        default=None,
-        help="(<=) Maximum distance.",
+        help='(<=) Maximum distance.',
     )
     parser.add_argument(
         "-mind",
         "--min-distance",
+        default=None,
         metavar="distance",
         type=float,
-        default=None,
-        help="(>=) Minimum distance.",
+        help='(>=) Minimum distance.',
     )
     parser.add_argument(
         "-d",
         "--distance",
+        default=None,
         metavar="distance",
         type=float,
-        default=None,
-        help="(=) Exact distance.",
+        help='(=) Exact distance.',
     )
     parser.add_argument(
         "-v",
         "--verbose",
-        action="store_true",
         default=False,
-        help="Verbose output, propagates to the called methods.",
+        action="store_true",
+        help='Verbose output, propagates to the called methods.',
     )
     parser.add_argument(
         "--eps",
-        type=float,
         default=1e-3,
-        metavar="value",
-        help="Epsilon for the distance comparison.",
+        type=float,
+        help='Epsilon for the distance comparison.',
     )
 
     return parser

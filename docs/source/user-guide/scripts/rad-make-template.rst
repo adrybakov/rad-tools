@@ -77,22 +77,24 @@ Arguments
 ------------------
 Name for the template output file.
 
+See also: :ref:`example <output-notes>`.
+
 .. code-block:: text
 
-    default : template.txt
+    default: "template.txt"
+    type: str
 
-See also: :ref:`example <output-notes>`.
 
 .. _rad-make-template_input-filename:
 
 -if, --input-filename
 ---------------------
-Relative or absolute path to the 'exchange.out' file, 
-including name and extension of the file.
+Relative or absolute path to the "exchange.out" file, including name and extension of the file.
 
 .. code-block:: text
 
-    default : None 
+    optional
+    type: str
 
 .. versionchanged:: 0.5.12 Renamed from "tb2j_filename"
 
@@ -102,17 +104,19 @@ including name and extension of the file.
 --------------
 R vectors for filtering the spin Hamiltonian.
 
-In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to). 
-Atom 1 is always located in (0, 0, 0) unit cell, while atom 2 is located in 
-R = (i, j, k) unit cell. This parameter tells the script to keep only the 
-bonds for which atom 2 is located in one of specified R supercells. 
-Supercells are specified by a set of integers separated by spaces. 
-They are grouped by three starting from the left and forms a set 
+In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to).
+Atom 1 is always located in (0, 0, 0) unit cell, while atom 2 is located in
+R = (i, j, k) unit cell. This parameter tells the script to keep only the
+bonds for which atom 2 is located in one of specified R supercells.
+Supercells are specified by a set of integers separated by spaces.
+They are grouped by three starting from the left and forms a set
 of R vectors. If the last group contains 1 or 2 integers they are ignored.
 
 .. code-block:: text
 
-    default : None
+    optional
+    type: list of int
+
 
 .. _rad-make-template_max-distance:
 
@@ -120,12 +124,14 @@ of R vectors. If the last group contains 1 or 2 integers they are ignored.
 ---------------------
 (<=) Maximum distance.
 
-All the bonds with the distance between atom 1 and atom 2 
+All the bonds with the distance between atom 1 and atom 2
 greater than maximum distance are excluded from the model.
 
 .. code-block:: text
 
-    default : None
+    optional
+    type: float
+
 
 .. _rad-make-template_min-distance:
 
@@ -133,12 +139,14 @@ greater than maximum distance are excluded from the model.
 ---------------------
 (>=) Minimum distance.
 
-All the bonds with the distance between atom 1 and atom 2 
+All the bonds with the distance between atom 1 and atom 2
 lower than minimum distance are excluded from the Hamiltonian.
 
 .. code-block:: text
 
-    default : None
+    optional
+    type: float
+
 
 .. _rad-make-template_distance:
 
@@ -147,14 +155,13 @@ lower than minimum distance are excluded from the Hamiltonian.
 (=) Exact distance.
 
 Only the bonds with the exact distance remains in the model.
+There is no point in specifying maximum or minimum distance when
+this parameter is provided.
 
 .. code-block:: text
 
-    default : None
-
-.. hint::
-    There is no point in specifying maximum or minimum distance when 
-    this parameter is provided.
+    optional
+    type: float
 
 
 .. _rad-make-template_verbose:
@@ -165,7 +172,8 @@ Verbose output, propagates to the called methods.
 
 .. code-block:: text
 
-    default : False
+    default: False
+    type: bool
 
 
 .. _rad-make-template_eps:
@@ -176,5 +184,6 @@ Epsilon for the distance comparison.
 
 .. code-block:: text
 
-    default 0.001
+    default: 1e-3
+    type: float
 
