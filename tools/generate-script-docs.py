@@ -204,6 +204,7 @@ def main(script="all", debug=False):
             raise ValueError(f" Documentation file for script {script} not found")
 
     for script, docfile in docfiles.items():
+        # Parse the scripts
         (
             docs,
             console_arguments,
@@ -216,9 +217,9 @@ def main(script="all", debug=False):
         ) = parse_manager(
             os.path.join(SCRIPT_DIR, f"{script.replace('-','_')}.py"), debug=debug
         )
-        docs_header = []
 
         # Read the docs, before Arguments
+        docs_header = []
         with open(docfile, "r") as file:
             line = file.readline()
             while (
@@ -232,15 +233,16 @@ def main(script="all", debug=False):
         # Write new docs
         with open(docfile, "w") as file:
             file.write("".join(docs_header))
+
+            # Header for the Arguments section
             file.write(f".. _rad-{script}_arguments:\n\nArguments\n=========\n")
             for parameter in docs:
+                # Subsection for each parameter
                 file.write(f"\n.. _rad-{script}_{parameter.replace('_','-')}:\n\n")
                 if len(console_arguments[parameter]) == 1:
-                    argname = console_arguments[parameter][0].lstrip("-")
                     argheader = f"{console_arguments[parameter][0]}"
                 else:
                     console_arguments[parameter].sort(key=lambda x: len(x))
-                    argname = console_arguments[parameter][1].lstrip("-")
                     argheader = (
                         f"{console_arguments[parameter][0]}, "
                         + f"{console_arguments[parameter][1]}"
@@ -261,8 +263,8 @@ def main(script="all", debug=False):
                     for note in version_notes[parameter]:
                         file.write(f"{note}\n")
 
-        script_header = []
         # Read the script implementation, before Arguments
+        script_header = []
         with open(
             os.path.join(SCRIPT_DIR, f"{script.replace('-','_')}.py"), "r"
         ) as file:
@@ -279,16 +281,23 @@ def main(script="all", debug=False):
             file.write("def create_parser():\n")
             file.write("\n    parser = ArgumentParser()\n")
             for parameter in docs:
+                # Add new parameter
                 file.write("    parser.add_argument(\n")
                 file.write(f'        "{console_arguments[parameter][0]}",\n')
                 if len(console_arguments[parameter]) > 1:
                     file.write(f'        "{console_arguments[parameter][1]}",\n')
+
+                # Write required or default
                 if required[parameter]:
                     file.write(f"        required=True,\n")
                 else:
                     file.write(f"        default={default[parameter]},\n")
+
+                # Write metavar
                 if metavars[parameter] is not None:
                     file.write(f"        metavar={metavars[parameter]},\n")
+
+                # Write type, nargs and action
                 if types[parameter] == "bool":
                     file.write(
                         f'        action="store_true",\n'
@@ -309,11 +318,15 @@ def main(script="all", debug=False):
                         )
                 else:
                     file.write(f"        type={types[parameter]},\n")
+
+                # Write choices
                 if choices[parameter] is not None:
                     file.write("        choices=[\n")
                     for choice in choices[parameter]:
                         file.write(f"            {choice},\n")
                     file.write("        ],\n")
+
+                # Write help
                 file.write(f"        help='{docs[parameter][0].strip()}',\n    )\n")
             file.write("\n    return parser\n")
 
