@@ -55,7 +55,7 @@ jobs:
       run: make examples
       
     - name: Make pictures
-      run: make pictures
+      run: make bravais-pictures
       
     - name: Build documentation
       run: make html
