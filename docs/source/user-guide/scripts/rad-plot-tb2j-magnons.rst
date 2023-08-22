@@ -65,8 +65,6 @@ For filtering the spin Hamiltonian there are a few options available:
 * :ref:`--R-vector <rad-plot-tb2j-magnons_R-vector>`
 * :ref:`--template <rad-plot-tb2j-magnons_template-file>`
 
-.. _rad-plot-tb2j-magnons_arguments:
-
 Control of parameters
 =====================
 
@@ -82,7 +80,7 @@ Examples
 ========
 
 CrSBr
-=====
+-----
 
 CrSBr is a ferromagnet with two magnetic sites in the unit cell. The minimum input is 
 the "exchange.out" file and the spin vectors for the two Cr atoms:
@@ -119,6 +117,8 @@ You can customise the k-path using :ref:`--k-path <rad-plot-tb2j-magnons_k-path>
 
     Magnon dispersion for CrSBr with custom path.
 
+.. _rad-plot-tb2j-magnons_arguments:
+
 Arguments
 =========
 
@@ -126,41 +126,13 @@ Arguments
 
 -if, --input-filename
 ---------------------
-Relative or absolute path to the "exchange.out" file,
-including the name and extension of the file itself.
+Relative or absolute path to the "exchange.out" file, including the name and extension of the file itself.
 
 .. code-block:: text
 
     required
-    type : str
+    type: str
 
-.. _rad-plot-tb2j-magnons_template-file:
-
--tf, --template-file
---------------------
-Relative or absolute path to the template file, 
-including the name and extension of the file.
-
-.. code-block:: text
-
-    required
-    type : str
-
-.. _rad-plot-tb2j-magnons_output-name:
-
--on, --output-name
-------------------
-Seedname for the output files.
-
-If this parameter is not specified, the result are printed in 
-standard output stream. 
-
-.. code-block:: text
-
-    default : None
-    type : str
-
-See also: :ref:`example <output-notes>`.
 
 .. _rad-plot-tb2j-magnons_spin:
 
@@ -170,12 +142,38 @@ Spin of the atoms in the model.
 
 For each atom, which has at least one bond connected to it is necessary to specify
 spin vector. The spin vector is specified in the form of atom`s name followed by
-three numbers, separated by spaces. 
+three numbers, separated by spaces.
 The numbers represent the x, y, and z components of the spin vector.
 
 .. code-block:: text
 
-    default : None
+    required
+    type: list of str
+
+
+.. _rad-plot-tb2j-magnons_template-file:
+
+-tf, --template-file
+--------------------
+Relative or absolute path to the template file, including the name and extension of the file.
+
+.. code-block:: text
+
+    optional
+    type: str
+
+
+.. _rad-plot-tb2j-magnons_output-name:
+
+-on, --output-name
+------------------
+Seedname for the output files.
+
+.. code-block:: text
+
+    default: "magnon_dispersion"
+    type: str
+
 
 .. _rad-plot-tb2j-magnons_spiral-vector:
 
@@ -185,8 +183,9 @@ Spin spiral vector. Relative to the reciprocal cell.
 
 .. code-block:: text
 
-    default : None
-    type : float
+    optional
+    type: list of 3 float
+
 
 .. _rad-plot-tb2j-magnons_rotation-axis:
 
@@ -196,10 +195,10 @@ Direction of global rotation axis. In absolute coordinates in real space.
 
 .. code-block:: text
 
-    default : None
-    type : float
-    nargs : 3
-    
+    optional
+    type: list of 3 float
+
+
 .. _rad-plot-tb2j-magnons_k-path:
 
 -kp, --k-path
@@ -208,19 +207,21 @@ Path in reciprocal space for the magnon dispersion.
 
 .. code-block:: text
 
-    default : None
-    type : str
+    optional
+    type: str
+
 
 .. _rad-plot-tb2j-magnons_form-model:
 
 -fm, --form-model
----------------------
-Whether to form the model based on the template.
+-----------------
+Whether to form the spinham based on the template.
 
 .. code-block:: text
 
-    default : False
-    type : bool
+    default: False
+    type: bool
+
 
 .. _rad-plot-tb2j-magnons_R-vector:
 
@@ -228,17 +229,19 @@ Whether to form the model based on the template.
 --------------
 R vectors for filtering the spin Hamiltonian.
 
-In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to). 
-Atom 1 is always located in (0, 0, 0) unit cell, while atom 2 is located in 
-R = (i, j, k) unit cell. This parameter tells the script to keep only the 
-bonds for which atom 2 is located in one of specified R supercells. 
-Supercells are specified by a set of integers separated by spaces. 
-They are grouped by three starting from the left and forms a set 
+In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to).
+Atom 1 is always located in (0, 0, 0) unit cell, while atom 2 is located in
+R = (i, j, k) unit cell. This parameter tells the script to keep only the
+bonds for which atom 2 is located in one of specified R supercells.
+Supercells are specified by a set of integers separated by spaces.
+They are grouped by three starting from the left and forms a set
 of R vectors. If the last group contains 1 or 2 integers they are ignored.
 
 .. code-block:: text
 
-    default : None
+    optional
+    type: list of int
+
 
 .. _rad-plot-tb2j-magnons_max-distance:
 
@@ -246,12 +249,15 @@ of R vectors. If the last group contains 1 or 2 integers they are ignored.
 ---------------------
 (<=) Maximum distance.
 
-All the bonds with the distance between atom 1 and atom 2 
+All the bonds with the distance between atom 1 and atom 2
 greater than maximum distance are excluded from the model.
 
 .. code-block:: text
 
-    default : None
+    optional
+    type: float
+
+.. versionadded:: 0.8.0
 
 .. _rad-plot-tb2j-magnons_min-distance:
 
@@ -259,24 +265,31 @@ greater than maximum distance are excluded from the model.
 ---------------------
 (>=) Minimum distance.
 
-All the bonds with the distance between atom 1 and atom 2 
-lower than minimum distance are excluded from the model.
+All the bonds with the distance between atom 1 and atom 2
+lower than minimum distance are excluded from the Hamiltonian.
 
 .. code-block:: text
 
-    default : None
+    optional
+    type: float
+
+.. versionadded:: 0.8.0
 
 .. _rad-plot-tb2j-magnons_save-txt:
 
 -st, --save-txt
 ---------------
-Whether to save data to .txt file. Two files appears: 
-"output-name.txt" and "output-name_info.txt". First one contains raw data of the graph,
+Whether to save data to .txt file.
+
+Two files appears: "output-name.txt" and "output-name_info.txt".
+First one contains raw data of the graph,
 second one contains information about the parameters.
 
 .. code-block:: text
 
-    default : False
+    default: False
+    type: bool
+
 
 .. _rad-plot-tb2j-magnons_interactive:
 
@@ -286,35 +299,37 @@ Whether to show interactive plot.
 
 .. code-block:: text
 
-    default : False
+    default: False
+    type: bool
+
 
 .. _rad-plot-tb2j-magnons_verbose:
 
 -v, --verbose
---------------
+-------------
 Verbose output, propagates to the called methods.
 
 .. code-block:: text
 
-    default : False
+    default: False
+    type: bool
+
 
 .. _rad-plot-tb2j-magnons_bravais-type:
 
 -bt, --bravais-type
---------------------
-
-Bravais lattice type. 
-If not provided, the type is identified automatically.
+-------------------
+Bravais lattice type. If not provided, the type is identified automatically.
 
 It does not force the Bravais lattice type on the model,
-but tries to reach the desired type by reducing the 
+but tries to reach the desired type by reducing the
 numerical accuracy in the :py:func:`lepage` algorithm.
 
 .. code-block:: text
 
-    default : None
-    type : str
-    choices : CUB, FCC, BCC, TET, BCT, ORC, ORCF, ORCI, ORCC, HEX, RHL, MCL, MCLC, TRI
+    optional
+    type: str
+
 
 .. _rad-plot-tb2j-magnons_join-output:
 
@@ -324,7 +339,9 @@ Whether to join the output files into a single file.
 
 .. code-block:: text
 
-    default : False
+    default: False
+    type: bool
+
 
 .. _rad-plot-tb2j-magnons_nodmi:
 
@@ -334,7 +351,9 @@ Whether to ignore DMI in the spinham.
 
 .. code-block:: text
 
-    default : False
+    default: False
+    type: bool
+
 
 .. _rad-plot-tb2j-magnons_no-anisotropic:
 
@@ -344,4 +363,6 @@ Whether to ignore anisotropic symmetric exchange in the spinham.
 
 .. code-block:: text
 
-    default : False
+    default: False
+    type: bool
+

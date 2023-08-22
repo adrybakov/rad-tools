@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from termcolor import cprint
 
-from radtools import __version__ as version
 from radtools.io.internal import read_template
 from radtools.io.tb2j import read_tb2j_model
 from radtools.magnons.dispersion import MagnonDispersion
@@ -17,9 +16,9 @@ from radtools.decorate.axes import plot_hlines
 
 def manager(
     input_filename,
-    template_file,
+    spin,
+    template_file=None,
     output_name="magnon_dispersion",
-    spin=None,
     spiral_vector=None,
     rotation_axis=None,
     k_path=None,
@@ -42,6 +41,130 @@ def manager(
     :ref:`User Guide <rad-plot-tb2j-magnons>`.
     Parameters of the function directly
     correspond to the arguments of the script.
+
+    Parameters
+    ----------
+    input_filename : str
+        Relative or absolute path to the "exchange.out" file, including the name and extension of the file itself.
+
+        Console argument: ``-if`` / ``--input-filename``
+
+        Metavar: "filename"
+    spin : list of str, optional
+        Spin of the atoms in the model.
+
+        For each atom, which has at least one bond connected to it is necessary to specify
+        spin vector. The spin vector is specified in the form of atom`s name followed by
+        three numbers, separated by spaces.
+        The numbers represent the x, y, and z components of the spin vector.
+
+        Console argument: ``-s`` / ``--spin``
+
+        Metavar: "Atom S_x S_y S_z"
+    template_file : str, optional
+        Relative or absolute path to the template file, including the name and extension of the file.
+
+        Console argument: ``-tf`` / ``--template-file``
+
+        Metavar: "filename"
+    output_name : str, default "magnon_dispersion"
+        Seedname for the output files.
+
+        Console argument: ``-on`` / ``--output-name``
+
+        Metavar: "filename"
+    spiral_vector : list of 3 float, optional
+        Spin spiral vector. Relative to the reciprocal cell.
+
+        Console argument: ``-Q`` / ``--spiral-vector``
+
+        Metavar: ("Q_x", "Q_y", "Q_z")
+    rotation_axis : list of 3 float, optional
+        Direction of global rotation axis. In absolute coordinates in real space.
+
+        Console argument: ``-ra`` / ``--rotation-axis``
+
+        Metavar: ("n_x", "n_y", "n_z")
+    k_path : str, optional
+        Path in reciprocal space for the magnon dispersion.
+
+        Console argument: ``-kp`` / ``--k-path``
+
+        Metavar: "G-X-M-G|G-Y"
+    form_model : bool, default False
+        Whether to form the spinham based on the template.
+
+        Console argument: ``-fm`` / ``--form-model``
+    R_vector : list of int, optional
+        R vectors for filtering the spin Hamiltonian.
+
+        In TB2J outputs the bond is defined by atom 1 (from) and atom 2 (to).
+        Atom 1 is always located in (0, 0, 0) unit cell, while atom 2 is located in
+        R = (i, j, k) unit cell. This parameter tells the script to keep only the
+        bonds for which atom 2 is located in one of specified R supercells.
+        Supercells are specified by a set of integers separated by spaces.
+        They are grouped by three starting from the left and forms a set
+        of R vectors. If the last group contains 1 or 2 integers they are ignored.
+
+        Console argument: ``-R`` / ``--R-vector``
+
+        Metavar: "i1 j1 k1 i2 j2 k2 ..."
+    max_distance : float, optional
+        (<=) Maximum distance.
+
+        All the bonds with the distance between atom 1 and atom 2
+        greater than maximum distance are excluded from the model.
+
+        Console argument: ``-maxd`` / ``--max-distance``
+
+        .. versionadded:: 0.8.0
+    min_distance : float, optional
+        (>=) Minimum distance.
+
+        All the bonds with the distance between atom 1 and atom 2
+        lower than minimum distance are excluded from the Hamiltonian.
+
+        Console argument: ``-mind`` / ``--min-distance``
+
+        .. versionadded:: 0.8.0
+    save_txt : bool, default False
+        Whether to save data to .txt file.
+
+        Two files appears: "output-name.txt" and "output-name_info.txt".
+        First one contains raw data of the graph,
+        second one contains information about the parameters.
+
+        Console argument: ``-st`` / ``--save-txt``
+    interactive : bool, default False
+        Whether to show interactive plot.
+
+        Console argument: ``-i`` / ``--interactive``
+    verbose : bool, default False
+        Verbose output, propagates to the called methods.
+
+        Console argument: ``-v`` / ``--verbose``
+    bravais_type : str, optional
+        Bravais lattice type. If not provided, the type is identified automatically.
+
+        It does not force the Bravais lattice type on the model,
+        but tries to reach the desired type by reducing the
+        numerical accuracy in the :py:func:`lepage` algorithm.
+
+        Console argument: ``-bt`` / ``--bravais-type``
+
+        Choices: "CUB", "FCC", "BCC", "TET", "BCT", "ORC", "ORCF", "ORCI", "ORCC", "HEX", "RHL", "MCL", "MCLC", "TRI"
+    join_output : bool, default False
+        Whether to join the output files into a single file.
+
+        Console argument: ``-jo`` / ``--join-output``
+    nodmi : bool, default False
+        Whether to ignore DMI in the spinham.
+
+        Console argument: ``-nodmi``
+    no_anisotropic : bool, default False
+        Whether to ignore anisotropic symmetric exchange in the spinham.
+
+        Console argument: ``-noa`` / ``--no-anisotropic``
     """
 
     head, _ = os.path.split(input_filename)
@@ -300,167 +423,160 @@ def manager(
 
 
 def create_parser():
-    parser = ArgumentParser(
-        description="Script for magnon dispersion from TB2J results."
-    )
 
+    parser = ArgumentParser()
     parser.add_argument(
         "-if",
         "--input-filename",
-        metavar="filename",
-        type=str,
         required=True,
-        help="Relative or absolute path to the 'exchange.out' file, "
-        + "including the name and extension of the file itself.",
-    )
-    parser.add_argument(
-        "-tf",
-        "--template-file",
         metavar="filename",
         type=str,
-        default=None,
-        help="Relative or absolute path to the template file, "
-        + "including the name and extension of the file.",
-    )
-    parser.add_argument(
-        "-on",
-        "--output-name",
-        metavar="filename",
-        type=str,
-        default="magnon_dispersion",
-        help="Seedname for the output files.",
+        help='Relative or absolute path to the "exchange.out" file, including the name and extension of the file itself.',
     )
     parser.add_argument(
         "-s",
         "--spin",
+        required=True,
         metavar="Atom S_x S_y S_z",
         type=str,
         nargs="*",
+        help='Spin of the atoms in the model.',
+    )
+    parser.add_argument(
+        "-tf",
+        "--template-file",
         default=None,
-        help="Spin of the atoms in the spinham.",
+        metavar="filename",
+        type=str,
+        help='Relative or absolute path to the template file, including the name and extension of the file.',
+    )
+    parser.add_argument(
+        "-on",
+        "--output-name",
+        default="magnon_dispersion",
+        metavar="filename",
+        type=str,
+        help='Seedname for the output files.',
     )
     parser.add_argument(
         "-Q",
         "--spiral-vector",
+        default=None,
         metavar=("Q_x", "Q_y", "Q_z"),
         type=float,
         nargs=3,
-        default=None,
-        help="Spin spiral vector. relative to the reciprocal cell.",
+        help='Spin spiral vector. Relative to the reciprocal cell.',
     )
     parser.add_argument(
         "-ra",
         "--rotation-axis",
+        default=None,
         metavar=("n_x", "n_y", "n_z"),
         type=float,
         nargs=3,
-        default=None,
-        help="Direction of global rotation axis. In absolute coordinates in real space.",
+        help='Direction of global rotation axis. In absolute coordinates in real space.',
     )
     parser.add_argument(
         "-kp",
         "--k-path",
-        metavar="k-path",
-        type=str,
         default=None,
-        help="Path in reciprocal space for the magnon dispersion.",
+        metavar="G-X-M-G|G-Y",
+        type=str,
+        help='Path in reciprocal space for the magnon dispersion.',
     )
     parser.add_argument(
         "-fm",
         "--form-model",
-        action="store_true",
         default=False,
-        help="Whether to form the spinham based on the template.",
+        action="store_true",
+        help='Whether to form the spinham based on the template.',
     )
     parser.add_argument(
         "-R",
         "--R-vector",
-        metavar="i j k",
+        default=None,
+        metavar="i1 j1 k1 i2 j2 k2 ...",
         type=int,
         nargs="*",
-        default=None,
-        help="R vectors for filtering the spinham.",
+        help='R vectors for filtering the spin Hamiltonian.',
     )
     parser.add_argument(
         "-maxd",
         "--max-distance",
-        metavar="distance",
-        type=float,
         default=None,
-        help="(<=) Maximum distance.",
+        type=float,
+        help='(<=) Maximum distance.',
     )
     parser.add_argument(
         "-mind",
         "--min-distance",
-        metavar="distance",
-        type=float,
         default=None,
-        help="(>=) Minimum distance.",
+        type=float,
+        help='(>=) Minimum distance.',
     )
     parser.add_argument(
         "-st",
         "--save-txt",
-        action="store_true",
         default=False,
-        help="Whether to save data to .txt file.",
+        action="store_true",
+        help='Whether to save data to .txt file.',
     )
     parser.add_argument(
         "-i",
         "--interactive",
-        action="store_true",
         default=False,
-        help="Interactive plotting.",
+        action="store_true",
+        help='Whether to show interactive plot.',
     )
     parser.add_argument(
         "-v",
         "--verbose",
-        action="store_true",
         default=False,
-        help="Verbose output, propagates to the called methods.",
+        action="store_true",
+        help='Verbose output, propagates to the called methods.',
     )
     parser.add_argument(
         "-bt",
         "--bravais-type",
-        metavar="type",
+        default=None,
+        type=str,
         choices=[
             "CUB",
-            "FCC",
-            "BCC",
-            "TET",
-            "BCT",
-            "ORC",
-            "ORCF",
-            "ORCI",
-            "ORCC",
-            "HEX",
-            "RHL",
-            "MCL",
-            "MCLC",
-            "TRI",
+             "FCC",
+             "BCC",
+             "TET",
+             "BCT",
+             "ORC",
+             "ORCF",
+             "ORCI",
+             "ORCC",
+             "HEX",
+             "RHL",
+             "MCL",
+             "MCLC",
+             "TRI",
         ],
-        type=str,
-        default=None,
-        help="Bravais lattice type. If not provided, the type is identified automatically.",
+        help='Bravais lattice type. If not provided, the type is identified automatically.',
     )
     parser.add_argument(
         "-jo",
         "--join-output",
+        default=False,
         action="store_true",
-        default=None,
-        help="Whether to join the output files into a single file.",
+        help='Whether to join the output files into a single file.',
     )
     parser.add_argument(
         "-nodmi",
-        action="store_true",
         default=False,
-        help="Whether to ignore DMI in the spinham.",
+        action="store_true",
+        help='Whether to ignore DMI in the spinham.',
     )
     parser.add_argument(
         "-noa",
         "--no-anisotropic",
-        action="store_true",
         default=False,
-        help="Whether to ignore anisotropic symmetric exchange in the spinham.",
+        action="store_true",
+        help='Whether to ignore anisotropic symmetric exchange in the spinham.',
     )
 
     return parser
