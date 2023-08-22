@@ -9,7 +9,7 @@ from radtools.dos.plotting import COLOURS
 
 
 def manager(
-    input_folder,
+    input_folder=".",
     seedname=None,
     output_name="",
     energy_window=None,
@@ -35,6 +35,126 @@ def manager(
     :ref:`User Guide <rad-plot-fatbands>`.
     Parameters of the function directly
     correspond to the arguments of the script.
+
+    Parameters
+    ----------
+    input_folder : str, default "."
+        Relative or absolute path to the folder with PDOS files.
+
+        Console argument: ``-if`` / ``--input-folder``
+
+        Metavar: "path"
+    seedname : str, optional
+        Prefix for input files with PDOS(E).
+
+        In the case of Quantum Espresso-produced seedname is the same
+        as specified in the QE projwfc.x input file (filpdos).
+
+        If it is not provided the script tries to
+        detect it automatically in the
+        ``rad-plot-fatbands_input-folder`` folder.
+
+        Console argument: ``-s`` / ``--seedname``
+
+        Metavar: "name"
+    output_name : str, optional
+        Relative or absolute path to the folder for saving outputs.
+
+        Console argument: ``-on`` / ``--output-name``
+
+        Metavar: "path"
+    energy_window : tuple of 2 float, optional
+        Energy window for the plots.
+
+        By default the whole energy range present in the files is plotted.
+
+        Console argument: ``-ew`` / ``--energy-window``
+
+        Metavar: ("min", "max")
+    k_window : tuple of 2 float, optional
+        K-point window for the plots.
+
+        By default the whole states/eV range is plotted.
+
+        Console argument: ``-kw`` / ``--k-window``
+
+        Metavar: ("min", "max")
+    efermi : float, default 0.0
+        Fermi energy.
+
+        Zero is shifted to Fermi energy.
+
+        Console argument: ``-ef`` / ``--efermi``
+
+        Metavar: "energy"
+    verbose : bool, default False
+        Verbose output, propagates to the called methods.
+
+        Console argument: ``-v`` / ``--verbose``
+    interactive : bool, default False
+        Interactive plotting.
+
+        Console argument: ``-i`` / ``--interactive``
+    separate : bool, default False
+        Whether to plot projected DOS for each atom of the same type separately.
+
+        Console argument: ``-sep`` / ``--separate``
+    save_pickle : bool, default False
+        Whether to save figures as .pickle files.
+
+        Console argument: ``-sp`` / ``--save-pickle``
+    save_txt : bool, default False
+        Whether to save some data as txt files.
+
+        Console argument: ``-st`` / ``--save-txt``
+    custom : list of str, optional
+        Custom PDOS plot.
+
+        Console argument: ``--custom``
+
+        Metavar: "description"
+    colours : list of str, optional
+        Colours for the relative and custom plots.
+
+        Values are passed directly to the matplotlib as strings,
+        therefore any valid value is allowed. Examples: "red" or "#FF0000".
+        When ``custom`` is used the order of colours is the same as for
+        the values of the ``custom``.
+
+        Console argument: ``-cls`` / ``--colours``
+    labels : list of str, optional
+        Labels for the custom plots.
+
+        Amount of labels have to be the same as the amount of ``custom`` strings, or one more.
+        If one more, then first one is interpreted as the label for the background
+        (Use "None" to switch it off). If the amount of argument is one more  and the first one is None,
+        then the label for the total PDOS is switched off and the total PDOS itself is not plotted.
+
+        Console argument: ``-lbs`` / ``--labels``
+    legend_fontsize : int, default 12
+        Fontsize of the legend.
+
+        Console argument: ``-lfs`` / ``--legend-fontsize``
+
+        Metavar: "fontsize"
+    axes_labels_fontsize : int, default 14
+        Fontsize of the labes of the axes.
+
+        Console argument: ``-alfs`` / ``--axes-labels-fontsize``
+
+        Metavar: "fontsize"
+    title_fontsize : int, default 18
+        Fontsize of the title.
+
+        Console argument: ``-tfs`` / ``--title-fontsize``
+
+        Metavar: "fontsize"
+    k_points : list of str, optional
+        Plot coordinates of high symmetry points.
+
+        Console argument: ``-kp`` / ``--k-points``
+
+        Metavar: "G 0.23 K 0.64 Y 1.2 ..."
     """
 
     out_head, out_tail = os.path.split(output_name)
@@ -92,150 +212,149 @@ def manager(
 
 
 def create_parser():
-    parser = ArgumentParser(description="Script for visualisation of fatbands.")
+
+    parser = ArgumentParser()
     parser.add_argument(
         "-if",
         "--input-folder",
+        default=".",
         metavar="path",
         type=str,
-        default=".",
-        help="Relative or absulute path to the folder with dos files.",
+        help='Relative or absolute path to the folder with PDOS files.',
     )
     parser.add_argument(
         "-s",
         "--seedname",
+        default=None,
         metavar="name",
         type=str,
-        default=None,
-        help="Prefix for input files with PDOS(E).",
+        help='Prefix for input files with PDOS(E).',
     )
     parser.add_argument(
         "-on",
         "--output-name",
-        metavar="name",
-        type=str,
         default="",
-        help="Relative or absolute path to the folder for saving outputs.",
+        metavar="path",
+        type=str,
+        help='Relative or absolute path to the folder for saving outputs.',
     )
     parser.add_argument(
         "-ew",
         "--energy-window",
+        default=None,
         metavar=("min", "max"),
         type=float,
         nargs=2,
-        default=None,
-        help="Energy window for the plots. "
-        + "By default whole range present in the files is plotted.",
+        help='Energy window for the plots.',
     )
     parser.add_argument(
         "-kw",
         "--k-window",
+        default=None,
         metavar=("min", "max"),
         type=float,
         nargs=2,
-        default=None,
-        help="K-point window for the plots. "
-        + "By default whole range present in the files is plotted.",
+        help='K-point window for the plots.',
     )
     parser.add_argument(
         "-ef",
         "--efermi",
+        default=0.0,
         metavar="energy",
         type=float,
-        default=0.0,
-        help="Fermi energy, zero by default.",
+        help='Fermi energy.',
     )
     parser.add_argument(
         "-v",
         "--verbose",
-        action="store_true",
         default=False,
-        help="Verbose output, propagates to the called methods.",
+        action="store_true",
+        help='Verbose output, propagates to the called methods.',
     )
     parser.add_argument(
         "-i",
         "--interactive",
-        action="store_true",
         default=False,
-        help="Interactive plotting.",
+        action="store_true",
+        help='Interactive plotting.',
     )
     parser.add_argument(
         "-sep",
         "--separate",
+        default=False,
         action="store_true",
-        default=True,
-        help="Whether to plot each entry in a separate file.",
+        help='Whether to plot projected DOS for each atom of the same type separately.',
     )
     parser.add_argument(
         "-sp",
         "--save-pickle",
-        action="store_true",
         default=False,
-        help="Whether to save figures as .pickle files.",
+        action="store_true",
+        help='Whether to save figures as .pickle files.',
     )
     parser.add_argument(
         "-st",
         "--save-txt",
-        action="store_true",
         default=False,
-        help="Whether to save some data as txt files.",
+        action="store_true",
+        help='Whether to save some data as txt files.',
     )
     parser.add_argument(
         "--custom",
-        type=str,
-        metavar="description",
         default=None,
+        metavar="description",
+        type=str,
         nargs="*",
-        help="Custom PDOS plot. See docs for info.",
+        help='Custom PDOS plot.',
     )
     parser.add_argument(
         "-cls",
         "--colours",
-        type=str,
-        metavar="colours",
         default=None,
+        type=str,
         nargs="*",
-        help="Colours for the relative and custom plots.",
+        help='Colours for the relative and custom plots.',
     )
     parser.add_argument(
         "-lbs",
         "--labels",
-        type=str,
-        metavar="labels",
         default=None,
+        type=str,
         nargs="*",
-        help="Labels for the custom plots.",
-    )
-    parser.add_argument(
-        "-alfs",
-        "--axes-labels-fontsize",
-        type=int,
-        default=14,
-        metavar="fontsize",
-        help="Fontsize of the labes of the axes.",
+        help='Labels for the custom plots.',
     )
     parser.add_argument(
         "-lfs",
         "--legend-fontsize",
-        type=int,
         default=12,
         metavar="fontsize",
-        help="Fontsize of the legend.",
+        type=int,
+        help='Fontsize of the legend.',
+    )
+    parser.add_argument(
+        "-alfs",
+        "--axes-labels-fontsize",
+        default=14,
+        metavar="fontsize",
+        type=int,
+        help='Fontsize of the labes of the axes.',
     )
     parser.add_argument(
         "-tfs",
         "--title-fontsize",
-        type=int,
         default=18,
         metavar="fontsize",
-        help="Fontsize of the title.",
+        type=int,
+        help='Fontsize of the title.',
     )
     parser.add_argument(
         "-kp",
         "--k-points",
-        nargs="*",
         default=None,
-        help="List of high symmetry points.",
+        metavar="G 0.23 K 0.64 Y 1.2 ...",
+        type=str,
+        nargs="*",
+        help='Plot coordinates of high symmetry points.',
     )
 
     return parser
