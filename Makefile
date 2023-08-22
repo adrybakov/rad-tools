@@ -84,7 +84,7 @@ help:
 	@echo "    bravais-pictures - update pictures of bravais lattices"
 	@echo "    prepare-release - prepare the package for release"
 	@echo "    docs-pictures - update pictures for the docs"
-	@echo "    new-scripts - create templates for the new script"
+	@echo "    new-script - create templates for the new script"
 	@echo "    examples - update examples for all scripts"
 	@echo "    generate-script-docs - generate docs for all scripts"
 	@echo
@@ -101,7 +101,7 @@ docs-pictures:
 	@python3 tools/plot-notation.py
 
 NAME="None"
-new-scripts:
+new-script:
 	@python3 tools/new-script.py -n $(NAME)
 
 SCRIPT="all"

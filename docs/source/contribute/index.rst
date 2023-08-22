@@ -73,7 +73,13 @@ Once the virtual environment is created, you can install requirements:
 Develop
 =======
 
-Develop your contribution. Commit your progress locally. Use meaningful commit messages. 
+Develop your contribution. Commit your progress locally. Use meaningful commit messages.
+If you want to create new script for command line interface, then check out :ref:`contribute_script` guide.
+
+.. toctree::
+   :hidden:
+
+   script
 
 Test
 ====

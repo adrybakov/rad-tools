@@ -101,6 +101,15 @@ def main(name: str):
             + "*" * N
             + "\n"
         )
+    # setup.py
+    setup_content = []
+    with open(os.path.join(ROOT_DIR, "setup.py"), "r") as file:
+        for line in file:
+            setup_content.append(line)
+            if line.startswith("    scripts=["):
+                setup_content.append(f'        "scripts/rad-{name}.py",\n')
+    with open(os.path.join(ROOT_DIR, "setup.py"), "w") as file:
+        file.writelines(setup_content)
 
     print("Templates are created")
     print(
@@ -111,8 +120,9 @@ def main(name: str):
     )
     print(
         "Follow the documentation guidelines for the manager() function. "
-        + "When it is ready run to generate Arguments section in docs and "
-        + "parser in script implementation\n    make generate-script-docs SCRIPT=new-script\n"
+        + "When it is ready run\n\n    make generate-script-docs SCRIPT=new-script\n\n"
+        + "This command generates Arguments section in docs and "
+        + "parser in script implementation"
     )
 
 
