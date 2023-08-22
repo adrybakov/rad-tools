@@ -82,7 +82,6 @@ help:
 	@echo "    test-all - execute full testing suite"
 	@echo "    pip - publish the package to the PyPi index"
 	@echo "    bravais-pictures - update pictures of bravais lattices"
-	@echo "    check-scripts - check consistency of argument names in scripts"
 	@echo "    prepare-release - prepare the package for release"
 	@echo "    docs-pictures - update pictures for the docs"
 	@echo "    new-scripts - create templates for the new script"
@@ -92,9 +91,6 @@ help:
 
 bravais-pictures:
 	@python3 tools/plot-bravais-lattices.py
-
-check-scripts:
-	@python3 tools/check-scripts.py
 
 VERSION="None"
 prepare-release:
