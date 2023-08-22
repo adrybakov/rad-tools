@@ -13,28 +13,39 @@ All scripts are intended to be run from the root directory of the project.
 Tools
 =====
 
-check-scripts.py
-----------------
+generate-scripts-docs.py
+------------------------
 
-Check the consistency between the scripts and the documentation.
-
-prepare-release.py
-------------------
-
-Prepare the release of the package. Never release without the successful run of
+Script generate Arguments section in the documentation and create_parser() function
+in the script implementation based on the manager() function in the script implementation.
 this script.
 
-plot-data-structure.py
------------------------
+new-script.py
+-------------
 
-Plot the data structure of the package. 
+Create template files for the new script.
 
 plot-bravais-lattice.py
 -----------------------
 
 Plot all examples of the bravais lattice.
 
+plot-data-structure.py
+-----------------------
+
+Plot the data structure of the package. 
+
 plot-notation.py
 ----------------
 
 Plot notation tree picture.
+
+plot-script-guide.py
+--------------------
+
+Plot pictures from the script user-guide (examples folder).
+
+prepare-release.py
+------------------
+
+Prepare the release of the package. Never release without the successful run of
