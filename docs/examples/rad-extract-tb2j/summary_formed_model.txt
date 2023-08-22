@@ -7,11 +7,11 @@
     ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝          ╚═╝    ╚════╝  ╚════╝ ╚══════╝╚═════╝      
                           Version: 0.8.0                        ▄   ▄           
                    Documentation: rad-tools.org                 █▀█▀█           
-                    Release date: 2 August 2023                 █▄█▄█           
-        Git hash: 9c9b087fa02be0cafdadaef6ec1c7926fe36e3d6       ███   ▄▄       
+                   Release date: 21 August 2023                 █▄█▄█           
+        Git hash: a257a3fa7a2077321331e4f23e809372366b5c00       ███   ▄▄       
                        Licence: MIT License                      ████ █  █      
                                                                  ████    █      
-             Generated on 21 August 2023 at 18:28:30             ▀▀▀▀▀▀▀▀       
+             Generated on 22 August 2023 at 17:54:31             ▀▀▀▀▀▀▀▀       
 Exchange values are extracted from:
 /Users/rybakov.ad/Projects/rad-tools/docs/examples/rad-extract-tb2j/exchange.out
 Template used for model formation:

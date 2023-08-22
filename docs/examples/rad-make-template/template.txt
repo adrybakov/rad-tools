@@ -11,7 +11,7 @@
         Git hash: a257a3fa7a2077321331e4f23e809372366b5c00       ███   ▄▄       
                        Licence: MIT License                      ████ █  █      
                                                                  ████    █      
-              Generated on 22 August 2023 at 17:7:33             ▀▀▀▀▀▀▀▀       
+              Generated on 22 August 2023 at 17:54:5             ▀▀▀▀▀▀▀▀       
 ================================================================================
 Neighbors template:
 Atom1 Atom2   i   j   k

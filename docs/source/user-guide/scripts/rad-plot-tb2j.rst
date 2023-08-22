@@ -80,11 +80,11 @@ Since "the exchange.out" file contains a lot of exchange bonds the pictures with
 all of them are not really useful. Lets plot the isotropic exchange picture 
 with some adjustments:
 
-    * Filter the spin Hamiltonian by maximum distance (:ref:`-md <rad-plot-tb2j_max-distance>`).
-    * Draw unit cell borders (:ref:`-dc <rad-plot-tb2j_draw-cells>`)
-    * Scale the marks of atoms (:ref:`-sa <rad-plot-tb2j_scale-atoms>`)
-    * Scale the data (:ref:`-sd <rad-plot-tb2j_scale-data>`)
-    * Add the title to the plot (:ref:`-t <rad-plot-tb2j_title>`)
+* Filter the spin Hamiltonian by maximum distance (:ref:`-md <rad-plot-tb2j_max-distance>`).
+* Draw unit cell borders (:ref:`-dc <rad-plot-tb2j_draw-cells>`)
+* Scale the marks of atoms (:ref:`-sa <rad-plot-tb2j_scale-atoms>`)
+* Scale the data (:ref:`-sd <rad-plot-tb2j_scale-data>`)
+* Add the title to the plot (:ref:`-t <rad-plot-tb2j_title>`)
 
 .. code-block:: bash
 
@@ -100,11 +100,11 @@ Filtering
 
 For filtering the spin Hamiltonian there are a few options available:
 
-    * :ref:`--max_distance <rad-plot-tb2j_max-distance>`
-    * :ref:`--min_distance <rad-plot-tb2j_min-distance>`
-    * :ref:`--distance <rad-plot-tb2j_distance>`
-    * :ref:`--R-vector <rad-plot-tb2j_R-vector>`
-    * :ref:`--template <rad-plot-tb2j_template-file>`
+* :ref:`--max_distance <rad-plot-tb2j_max-distance>`
+* :ref:`--min_distance <rad-plot-tb2j_min-distance>`
+* :ref:`--distance <rad-plot-tb2j_distance>`
+* :ref:`--R-vector <rad-plot-tb2j_R-vector>`
+* :ref:`--template <rad-plot-tb2j_template-file>`
 
 Here is an example of how to filter spin Hamiltonian in order to show 
 first exchange neighbour, using different options:

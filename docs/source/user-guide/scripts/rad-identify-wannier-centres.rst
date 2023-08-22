@@ -73,7 +73,7 @@ Arguments
 
 -if, --input-filename
 ---------------------
-Relative or absolute path to the "*_centres.xyz" file
+Relative or absolute path to the "_centres.xyz" file
 
 Identified Wannier centres are stored in the "filename_identified" file.
 

@@ -19,7 +19,7 @@ def manager(input_filename, span=0.1, output_name=""):
     Parameters
     ----------
     input_filename : str
-        Relative or absolute path to the "*_centres.xyz" file
+        Relative or absolute path to the "_centres.xyz" file
 
         Identified Wannier centres are stored in the "filename_identified" file.
 
@@ -136,7 +136,6 @@ def manager(input_filename, span=0.1, output_name=""):
 
 
 def create_parser():
-
     parser = ArgumentParser()
     parser.add_argument(
         "-if",
@@ -151,14 +150,14 @@ def create_parser():
         "--span",
         default=0.1,
         type=float,
-        help='Distance tolerance between centre and atom. (in Angstroms)',
+        help="Distance tolerance between centre and atom. (in Angstroms)",
     )
     parser.add_argument(
         "-on",
         "--output-name",
         default="",
         type=str,
-        help='Seedname for the output files.',
+        help="Seedname for the output files.",
     )
 
     return parser
