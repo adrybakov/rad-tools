@@ -6,7 +6,7 @@ Custom Exceptions
 
 .. versionadded:: 0.7
 
-.. currentmodule:: radtools.exceptions
+.. currentmodule:: radtools.exchange.hamiltonian
 
 ExchangeHamiltonian Exceptions
 ==============================
@@ -14,6 +14,8 @@ ExchangeHamiltonian Exceptions
     :toctree: generated/
 
     NotationError
+
+.. currentmodule:: radtools.magnons.diagonalization
 
 Diagonalization Exceptions
 ==========================
