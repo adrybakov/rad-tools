@@ -268,7 +268,7 @@ class SpinHamiltonian(Crystal):
                     + f"{list(PREDEFINED_NOTATIONS)}, got: {new_notation}"
                 )
             new_notation = PREDEFINED_NOTATIONS[new_notation]
-        # Set the notation from five values, converted to bool
+        # Set the notation from three values, converted to bool
         elif isinstance(new_notation, Iterable) and len(new_notation) == 3:
             new_notation = (
                 bool(new_notation[0]),
@@ -609,7 +609,7 @@ class SpinHamiltonian(Crystal):
         r"""
         Magnetic atoms of the model.
 
-        Atoms with at least bond starting or finishing in it.
+        Atoms with at least one bond starting or finishing in it.
 
         Atoms are ordered with respect to the :py:attr:`.Atom.index`.
 
