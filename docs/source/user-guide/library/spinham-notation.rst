@@ -141,7 +141,7 @@ The result are the exchange parameters in the notation two (N2):
 Predefined notations
 ====================
 
-There are three predefined notations in the RAD-tools. Each predefined notation is a 
+There are several predefined notations in the RAD-tools. Each predefined notation is a 
 tuple of two ``bool`` and one ``float``, which correspond to the three properties of the notation.
 
 .. hint::
@@ -153,23 +153,31 @@ tuple of two ``bool`` and one ``float``, which correspond to the three propertie
     .. math::
         H = -\sum_{i,j} \hat{\boldsymbol{S}}_i \cdot \boldsymbol{J}_{i,j} \cdot \hat{\boldsymbol{S}}_j
 
-    where double counting is present (:math:`ij` and :math:`ji` is in the sum).
+    where double counting is present (:math:`ij` and :math:`ji` are in the sum).
     Spin vectors are **not** normalized.
 * |TB2J|_
     (True, True, -1)
 
     .. math::
-        H = -\sum_{i,j} \hat{\boldsymbol{S}}_i \cdot \boldsymbol{J}_{i,j} \cdot \hat{\boldsymbol{S}}_j
+        H = -\sum_{i,j} \hat{\boldsymbol{e}}_i \cdot \boldsymbol{J}_{i,j} \cdot \hat{\boldsymbol{e}}_j
 
-    where double counting is present (:math:`ij` and :math:`ji` is in the sum).
+    where double counting is present (:math:`ij` and :math:`ji` are in the sum).
     Spin vectors are normalized to 1.
+* |Vampire|_
+    (False, True, -1)
+
+    .. math::
+        H = \sum_{i<j} \hat{\boldsymbol{e}}_i \cdot \boldsymbol{J}_{i,j} \cdot \hat{\boldsymbol{e}}_j
+
+    where double counting is **not** present (only :math:`ij` is in the sum).
+    Spin vectors are **not** normalized.
 * SpinW
     (True, False, 1)
 
     .. math::
         H = \sum_{i,j} \hat{\boldsymbol{S}}_i \cdot \boldsymbol{J}_{i,j} \cdot \hat{\boldsymbol{S}}_j
 
-    where double counting is present (:math:`ij` and :math:`ji` is in the sum).
+    where double counting is present (:math:`ij` and :math:`ji` are in the sum).
     Spin vectors are **not** normalized.
 
 See :ref:`Examples <library_spinham_notation-examples>` for the usage.
