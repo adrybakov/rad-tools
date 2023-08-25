@@ -7,7 +7,7 @@ import numpy as np
 from termcolor import cprint
 
 from radtools import __version__ as version
-from radtools.io.tb2j import read_tb2j_model
+from radtools.io.tb2j import load_tb2j_model
 from radtools.decorate.stats import logo
 
 
@@ -158,7 +158,7 @@ def manager(
             )
 
             # Read and filter the model
-            model = read_tb2j_model(input_filename, quiet=not verbose)
+            model = load_tb2j_model(input_filename, quiet=not verbose)
             model.filter(
                 min_distance=min_distance, max_distance=max_distance, R_vector=R_vector
             )
@@ -221,7 +221,6 @@ def manager(
 
 
 def create_parser():
-
     parser = ArgumentParser()
     parser.add_argument(
         "-on",
@@ -229,7 +228,7 @@ def create_parser():
         default="template.txt",
         metavar="filename",
         type=str,
-        help='Name for the template output file.',
+        help="Name for the template output file.",
     )
     parser.add_argument(
         "-if",
@@ -246,7 +245,7 @@ def create_parser():
         metavar="i1 j1 k1 i2 j2 k2 ...",
         type=int,
         nargs="*",
-        help='R vectors for filtering the spin Hamiltonian.',
+        help="R vectors for filtering the spin Hamiltonian.",
     )
     parser.add_argument(
         "-maxd",
@@ -254,7 +253,7 @@ def create_parser():
         default=None,
         metavar="distance",
         type=float,
-        help='(<=) Maximum distance.',
+        help="(<=) Maximum distance.",
     )
     parser.add_argument(
         "-mind",
@@ -262,7 +261,7 @@ def create_parser():
         default=None,
         metavar="distance",
         type=float,
-        help='(>=) Minimum distance.',
+        help="(>=) Minimum distance.",
     )
     parser.add_argument(
         "-d",
@@ -270,20 +269,20 @@ def create_parser():
         default=None,
         metavar="distance",
         type=float,
-        help='(=) Exact distance.',
+        help="(=) Exact distance.",
     )
     parser.add_argument(
         "-v",
         "--verbose",
         default=False,
         action="store_true",
-        help='Verbose output, propagates to the called methods.',
+        help="Verbose output, propagates to the called methods.",
     )
     parser.add_argument(
         "--eps",
         default=1e-3,
         type=float,
-        help='Epsilon for the distance comparison.',
+        help="Epsilon for the distance comparison.",
     )
 
     return parser

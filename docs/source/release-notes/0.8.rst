@@ -48,3 +48,22 @@ is added. In different scripts the argument ``output_name`` could mean the file 
 For the user the usage is the same.
 
 In all scripts the output now is saved at the same place where the input is located.
+
+0.8.1
+-----
+
+Add new attributes to the :py:class:`.ExchangeParameter` class:
+
+* :py:attr:`.ExchangeParameter.xx`
+* :py:attr:`.ExchangeParameter.xy`
+* :py:attr:`.ExchangeParameter.xz`
+* :py:attr:`.ExchangeParameter.yx`
+* :py:attr:`.ExchangeParameter.yy`
+* :py:attr:`.ExchangeParameter.yz`
+* :py:attr:`.ExchangeParameter.zx`
+* :py:attr:`.ExchangeParameter.zy`
+* :py:attr:`.ExchangeParameter.zz`
+
+Add :py:meth:`.dump_vampire`.
+
+Add new predefined notation to the :py:class:`.SpinHamiltonian` class: "vampire"

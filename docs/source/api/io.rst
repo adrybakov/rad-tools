@@ -8,18 +8,36 @@ io
 
 .. currentmodule:: radtools
 
-Routine for external inputs
+External inputs
 ===========================
 
 .. autosummary:: 
     :toctree: generated/
 
-    read_tb2j_model
+    load_tb2j_model
 
-Routine for internal inputs
+Internal inputs
 ===========================
 
 .. autosummary:: 
     :toctree: generated/
 
-    read_template
+    load_template
+    load_pickle
+
+Internal outputs
+================
+
+.. autosummary:: 
+    :toctree: generated/
+
+    dump_pickle
+    dump_spinham_txt
+
+External outputs
+================
+
+.. autosummary:: 
+    :toctree: generated/
+
+    dump_vampire

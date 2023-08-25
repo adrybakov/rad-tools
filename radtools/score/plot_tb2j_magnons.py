@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from termcolor import cprint
 
-from radtools.io.internal import read_template
-from radtools.io.tb2j import read_tb2j_model
+from radtools.io.internal import load_template
+from radtools.io.tb2j import load_tb2j_model
 from radtools.magnons.dispersion import MagnonDispersion
 from radtools.decorate.stats import logo
 from radtools.spinham.constants import TXT_FLAGS
@@ -194,7 +194,7 @@ def manager(
         R_vector = list(map(tuple, R_vector.tolist()))
 
     # Read the spinham
-    spinham = read_tb2j_model(
+    spinham = load_tb2j_model(
         input_filename, quiet=not verbose, bravais_type=bravais_type
     )
 
@@ -213,7 +213,7 @@ def manager(
 
     # Force symmetry of the template
     if template_file is not None:
-        template = read_template(template_file)
+        template = load_template(template_file)
     else:
         template = None
 
@@ -423,7 +423,6 @@ def manager(
 
 
 def create_parser():
-
     parser = ArgumentParser()
     parser.add_argument(
         "-if",
@@ -440,7 +439,7 @@ def create_parser():
         metavar="Atom S_x S_y S_z",
         type=str,
         nargs="*",
-        help='Spin of the atoms in the model.',
+        help="Spin of the atoms in the model.",
     )
     parser.add_argument(
         "-tf",
@@ -448,7 +447,7 @@ def create_parser():
         default=None,
         metavar="filename",
         type=str,
-        help='Relative or absolute path to the template file, including the name and extension of the file.',
+        help="Relative or absolute path to the template file, including the name and extension of the file.",
     )
     parser.add_argument(
         "-on",
@@ -456,7 +455,7 @@ def create_parser():
         default="magnon_dispersion",
         metavar="filename",
         type=str,
-        help='Seedname for the output files.',
+        help="Seedname for the output files.",
     )
     parser.add_argument(
         "-Q",
@@ -465,7 +464,7 @@ def create_parser():
         metavar=("Q_x", "Q_y", "Q_z"),
         type=float,
         nargs=3,
-        help='Spin spiral vector. Relative to the reciprocal cell.',
+        help="Spin spiral vector. Relative to the reciprocal cell.",
     )
     parser.add_argument(
         "-ra",
@@ -474,7 +473,7 @@ def create_parser():
         metavar=("n_x", "n_y", "n_z"),
         type=float,
         nargs=3,
-        help='Direction of global rotation axis. In absolute coordinates in real space.',
+        help="Direction of global rotation axis. In absolute coordinates in real space.",
     )
     parser.add_argument(
         "-kp",
@@ -482,14 +481,14 @@ def create_parser():
         default=None,
         metavar="G-X-M-G|G-Y",
         type=str,
-        help='Path in reciprocal space for the magnon dispersion.',
+        help="Path in reciprocal space for the magnon dispersion.",
     )
     parser.add_argument(
         "-fm",
         "--form-model",
         default=False,
         action="store_true",
-        help='Whether to form the spinham based on the template.',
+        help="Whether to form the spinham based on the template.",
     )
     parser.add_argument(
         "-R",
@@ -498,42 +497,42 @@ def create_parser():
         metavar="i1 j1 k1 i2 j2 k2 ...",
         type=int,
         nargs="*",
-        help='R vectors for filtering the spin Hamiltonian.',
+        help="R vectors for filtering the spin Hamiltonian.",
     )
     parser.add_argument(
         "-maxd",
         "--max-distance",
         default=None,
         type=float,
-        help='(<=) Maximum distance.',
+        help="(<=) Maximum distance.",
     )
     parser.add_argument(
         "-mind",
         "--min-distance",
         default=None,
         type=float,
-        help='(>=) Minimum distance.',
+        help="(>=) Minimum distance.",
     )
     parser.add_argument(
         "-st",
         "--save-txt",
         default=False,
         action="store_true",
-        help='Whether to save data to .txt file.',
+        help="Whether to save data to .txt file.",
     )
     parser.add_argument(
         "-i",
         "--interactive",
         default=False,
         action="store_true",
-        help='Whether to show interactive plot.',
+        help="Whether to show interactive plot.",
     )
     parser.add_argument(
         "-v",
         "--verbose",
         default=False,
         action="store_true",
-        help='Verbose output, propagates to the called methods.',
+        help="Verbose output, propagates to the called methods.",
     )
     parser.add_argument(
         "-bt",
@@ -542,41 +541,41 @@ def create_parser():
         type=str,
         choices=[
             "CUB",
-             "FCC",
-             "BCC",
-             "TET",
-             "BCT",
-             "ORC",
-             "ORCF",
-             "ORCI",
-             "ORCC",
-             "HEX",
-             "RHL",
-             "MCL",
-             "MCLC",
-             "TRI",
+            "FCC",
+            "BCC",
+            "TET",
+            "BCT",
+            "ORC",
+            "ORCF",
+            "ORCI",
+            "ORCC",
+            "HEX",
+            "RHL",
+            "MCL",
+            "MCLC",
+            "TRI",
         ],
-        help='Bravais lattice type. If not provided, the type is identified automatically.',
+        help="Bravais lattice type. If not provided, the type is identified automatically.",
     )
     parser.add_argument(
         "-jo",
         "--join-output",
         default=False,
         action="store_true",
-        help='Whether to join the output files into a single file.',
+        help="Whether to join the output files into a single file.",
     )
     parser.add_argument(
         "-nodmi",
         default=False,
         action="store_true",
-        help='Whether to ignore DMI in the spinham.',
+        help="Whether to ignore DMI in the spinham.",
     )
     parser.add_argument(
         "-noa",
         "--no-anisotropic",
         default=False,
         action="store_true",
-        help='Whether to ignore anisotropic symmetric exchange in the spinham.',
+        help="Whether to ignore anisotropic symmetric exchange in the spinham.",
     )
 
     return parser

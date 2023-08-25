@@ -6,17 +6,17 @@ from radtools.io.internal import *
 
 
 class ReadTemplate:
-    template = read_template(
+    template = load_template(
         os.path.join("utest", "test_io", "resources", "exchange.out")
     )
 
     def test_empty_filename(self):
         with pytest.raises(TypeError):
-            template = read_template(None)
+            template = load_template(None)
 
     def test_wrong_filename(self):
         with pytest.raises(FileNotFoundError):
-            template = read_template("Ah, music. " + "A magic beyond all we do here!")
+            template = load_template("Ah, music. " + "A magic beyond all we do here!")
 
     def count_entries(self, dictionary):
         i = 0

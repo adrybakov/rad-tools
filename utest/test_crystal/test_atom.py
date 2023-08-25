@@ -49,9 +49,14 @@ def test_Atom_spin(v):
     ),
 )
 def test_Atom_type(prefix, suffix):
-    for atom_type in ATOM_TYPES:
-        atom = Atom(prefix + atom_type + suffix)
-        assert atom.type == atom_type
+    if not prefix.startswith("__") and not suffix.endswith("__"):
+        for atom_type in ATOM_TYPES:
+            atom = Atom(prefix + atom_type + suffix)
+            assert atom.type == atom_type
+    else:
+        with pytest.raises(ValueError):
+            for atom_type in ATOM_TYPES:
+                atom = Atom(prefix + atom_type + suffix)
 
 
 def test_atom():

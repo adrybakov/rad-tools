@@ -16,7 +16,7 @@ positive for ferromagnetic order.
 .. note::
     The "standard" here does not mean that the :py:class:`.SpinHamiltonian`
     always has this notation. For example when :py:class:`.SpinHamiltonian` is
-    read from |TB2J|_ file (:py:func:`.read_tb2j_model`) it has the notation of TB2J.
+    read from |TB2J|_ file (:py:func:`.load_tb2j_model`) it has the notation of TB2J.
 
 Notation of the spin Hamiltonian is defined with two properties and the numerical 
 factor before the sum. The properties are:

@@ -1,7 +1,7 @@
 r"""
 Input-output from |TB2J|_.
 """
-__all__ = ["read_tb2j_model"]
+__all__ = ["load_tb2j_model"]
 
 import numpy as np
 
@@ -9,7 +9,7 @@ from radtools.crystal.constants import REL_TOL
 from radtools.spinham.hamiltonian import SpinHamiltonian
 
 
-def read_tb2j_model(filename, quiet=True, bravais_type=None) -> SpinHamiltonian:
+def load_tb2j_model(filename, quiet=True, bravais_type=None) -> SpinHamiltonian:
     r"""
     Read spin Hamiltonian from |TB2J|_ output file.
 

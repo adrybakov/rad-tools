@@ -3,8 +3,8 @@ import os
 
 from termcolor import cprint
 
-from radtools.io.internal import read_template
-from radtools.io.tb2j import read_tb2j_model
+from radtools.io.internal import load_template
+from radtools.io.tb2j import load_tb2j_model
 
 
 def manager(
@@ -123,9 +123,9 @@ def manager(
             os.makedirs(out_head, exist_ok=True)
 
     # Read the model and the template
-    model = read_tb2j_model(input_filename, quiet=not verbose)
+    model = load_tb2j_model(input_filename, quiet=not verbose)
     if template_file is not None:
-        template = read_template(template_file)
+        template = load_template(template_file)
     else:
         template = None
 
@@ -168,7 +168,6 @@ def manager(
 
 
 def create_parser():
-
     parser = ArgumentParser()
     parser.add_argument(
         "-if",
@@ -182,69 +181,69 @@ def create_parser():
         "--template-file",
         default=None,
         type=str,
-        help='Relative or absolute path to the template file,',
+        help="Relative or absolute path to the template file,",
     )
     parser.add_argument(
         "-on",
         "--output-name",
         default=None,
         type=str,
-        help='Name of the output files.',
+        help="Name of the output files.",
     )
     parser.add_argument(
         "-d",
         "--decimals",
         default=4,
         type=int,
-        help='Decimals after the comma for the exchange values.',
+        help="Decimals after the comma for the exchange values.",
     )
     parser.add_argument(
         "-fm",
         "--form-model",
         default=False,
         action="store_true",
-        help='Whether to form the model from the template.',
+        help="Whether to form the model from the template.",
     )
     parser.add_argument(
         "-noa",
         "--no-anisotropic",
         default=False,
         action="store_true",
-        help='Whether to output anisotropic exchange.',
+        help="Whether to output anisotropic exchange.",
     )
     parser.add_argument(
         "-nom",
         "--no-matrix",
         default=False,
         action="store_true",
-        help='Whether to output whole matrix exchange.',
+        help="Whether to output whole matrix exchange.",
     )
     parser.add_argument(
         "-nodmi",
         default=False,
         action="store_true",
-        help='Whether to output DMI exchange.',
+        help="Whether to output DMI exchange.",
     )
     parser.add_argument(
         "-v",
         "--verbose",
         default=False,
         action="store_true",
-        help='Verbose output, propagates to the called methods.',
+        help="Verbose output, propagates to the called methods.",
     )
     parser.add_argument(
         "-maxd",
         "--max-distance",
         default=None,
         type=float,
-        help='(<=) Maximum distance.',
+        help="(<=) Maximum distance.",
     )
     parser.add_argument(
         "-mind",
         "--min-distance",
         default=None,
         type=float,
-        help='(>=) Minimum distance.',
+        help="(>=) Minimum distance.",
     )
 
     return parser

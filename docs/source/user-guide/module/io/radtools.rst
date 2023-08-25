@@ -8,7 +8,7 @@ RAD-tools interface
 
 Yes, it is interface to itself.
 
-Function :py:func:`read_template` reads spin Hamiltonian template file 
+Function :py:func:`load_template` reads spin Hamiltonian template file 
 and constructs :py:class:`ExchangeTemplate` from it.
 
 Here is full template file specification:

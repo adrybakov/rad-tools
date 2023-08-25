@@ -51,7 +51,7 @@ Creation
 .. hint::
     
     For the creation of the spin Hamiltonian from the |TB2J|_ file see 
-    :py:func:`.read_tb2j_model`.
+    :py:func:`.load_tb2j_model`.
 
 .. doctest::
 
@@ -396,34 +396,35 @@ Saving
 ======
 
 The Hamiltonian could be saved in as a text file with 
-:py:meth:`.SpinHamiltonian.dump_txt` method:
+:py:func:`.dump_spinham_txt` function:
 
 .. doctest::
 
-    >>> hamiltonian = SpinHamiltonian()
+    >>> from radtools import dump_spinham_txt 
+    >>> hamiltonian = SpinHamiltonian() # doctest: +SKIP
     >>> # Saves the hamiltonian into the file "hamiltonian.txt"
-    >>> hamiltonian.dump_txt("hamiltonian.txt") # doctest: +SKIP
+    >>> dump_spinham_txt(hamiltonian, "hamiltonian.txt") # doctest: +SKIP
 
 The format of the file is inspired by the output files of the |TB2J|_ code.
 Isotropic exchange is always written. DMI, full matrix and symmetric anisotropic 
 exchange can be removed from the output.
 
-It can be serialized with :py:meth:`.SpinHamiltonian.dump_pickle` method.
+It can be serialized with :py:func:`.dump_pickle` function.
 
 .. doctest::
 
-    >>> hamiltonian = SpinHamiltonian()
+    >>> from radtools import dump_pickle 
+    >>> hamiltonian = SpinHamiltonian() # doctest: +SKIP
     >>> # Saves the hamiltonian into the file "hamiltonian.pickle"
-    >>> hamiltonian.dump_pickle("hamiltonian") # doctest: +SKIP
+    >>> dump_pickle(hamiltonian, "hamiltonian") # doctest: +SKIP
 
 .. hint::
 
     Note that the file extension is added automatically only for the
-    :py:meth:`.SpinHamiltonian.dump_pickle` method. It is done intentionally to
+    :py:func:`.dump_pickle` function. It is done intentionally to
     emphasize that the Hamiltonian is saved in a python-specific binary file. 
 
-    While the :py:meth:`.SpinHamiltonian.dump_txt` offers you complete control over the
-    file name. 
+    While the :py:func:`.dump_spinham_txt` offers you complete control over the file name. 
 
 .. _guide_spin-hamiltonian_dictionary:
 

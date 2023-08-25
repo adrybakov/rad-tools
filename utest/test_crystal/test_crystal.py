@@ -51,17 +51,18 @@ def test_add_atom_raises():
     st.lists(st.floats(min_value=0, max_value=1), min_size=3, max_size=3),
 )
 def test_get_atom(name, position):
-    position = np.array(position)
-    c = Crystal(cell=[[1, 0, 0], [0, 2, 0], [0, 0, 3]], standardize=False)
-    c.add_atom(name=name, position=position)
-    c.add_atom(name, position=position * 2.0)
-    atom = c.get_atom(name, 2)
-    assert np.allclose(atom.position, position * 2.0)
-    with pytest.raises(ValueError):
-        c.get_atom(name)
+    if not name.startswith("__") and not name.endswith("__"):
+        position = np.array(position)
+        c = Crystal(cell=[[1, 0, 0], [0, 2, 0], [0, 0, 3]], standardize=False)
+        c.add_atom(name=name, position=position)
+        c.add_atom(name, position=position * 2.0)
+        atom = c.get_atom(name, 2)
+        assert np.allclose(atom.position, position * 2.0)
+        with pytest.raises(ValueError):
+            c.get_atom(name)
 
-    atoms = c.get_atom(name, return_all=True)
-    assert len(atoms) == 2
+        atoms = c.get_atom(name, return_all=True)
+        assert len(atoms) == 2
 
 
 def test_remove_atom():
