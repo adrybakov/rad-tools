@@ -4,6 +4,7 @@ Input-output for the files related with this package.
 
 __all__ = [
     "load_template",
+    "read_template",
     "dump_spinham_txt",
     "dump_pickle",
     "load_pickle",
@@ -55,6 +56,8 @@ def load_pickle(filename):
 def load_template(filename):
     r"""
     Read template from the template file.
+
+    .. versionchanged:: 0.8.1 Renamed from ``read_template``
 
     See :ref:`template-draft` for the description of the template file format.
 
@@ -110,6 +113,10 @@ def load_template(filename):
                     if line and minor_sep not in line:
                         line = file.readline()
     return template
+
+
+# For backward compatibility
+read_template = load_template
 
 
 def dump_spinham_txt(
