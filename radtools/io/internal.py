@@ -123,7 +123,7 @@ def dump_spinham_txt(
     additional_stats=None,
 ):
     """
-    Save the Hamiltonian in a Human-readable format.
+    Save the :py:class:`.SpinHamiltonian` in a human-readable format.
 
     Parameters
     ----------
