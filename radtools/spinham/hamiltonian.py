@@ -4,7 +4,7 @@ Spin Hamiltonian module.
 Write a tutorial with docstring here.
 """
 
-__all__ = ["SpinHamiltonian", "ExchangeHamiltonian", "dump_spinham_txt"]
+__all__ = ["SpinHamiltonian", "ExchangeHamiltonian"]
 
 from copy import deepcopy
 from typing import Iterable, Tuple
@@ -18,8 +18,6 @@ from radtools.exceptions import NotationError
 from radtools.spinham.constants import PREDEFINED_NOTATIONS
 from radtools.spinham.parameter import ExchangeParameter
 from radtools.spinham.template import ExchangeTemplate
-from radtools.io.vampire import dump_vampire
-from radtools.io.internal import dump_spinham_txt
 
 
 class SpinHamiltonian(Crystal):
