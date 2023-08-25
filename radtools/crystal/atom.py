@@ -144,6 +144,10 @@ class Atom:
 
     @name.setter
     def name(self, new_name):
+        if new_name.startswith("__") or new_name.endswith("__"):
+            raise ValueError(
+                f"Name of the atom ({new_name}) is not valid. It cannot start/end with '__'."
+            )
         self._name = new_name
         # Reset type
         self._type = None
