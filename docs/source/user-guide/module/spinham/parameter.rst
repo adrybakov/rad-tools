@@ -142,6 +142,29 @@ Symmetric and asymmetric part can be accessed as:
            [ 1.,  0., -1.],
            [ 2.,  1.,  0.]])
 
+For each element of the exchange matrix the following properties are defined:
+
+.. doctest::
+
+    >>> J.xx
+    1.0
+    >>> J.xy
+    2.0
+    >>> J.xz
+    3.0
+    >>> J.yx
+    4.0
+    >>> J.yy
+    5.0
+    >>> J.yz
+    6.0
+    >>> J.zx
+    7.0
+    >>> J.zy
+    8.0
+    >>> J.zz
+    9.0
+
 Isotropic exchange
 ==================
 

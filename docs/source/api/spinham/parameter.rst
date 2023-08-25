@@ -31,6 +31,15 @@ Full exchange matrix
     ExchangeParameter.matrix
     ExchangeParameter.symm_matrix
     ExchangeParameter.asymm_matrix
+    ExchangeParameter.xx
+    ExchangeParameter.xy
+    ExchangeParameter.xz
+    ExchangeParameter.yx
+    ExchangeParameter.yy
+    ExchangeParameter.yz
+    ExchangeParameter.zx
+    ExchangeParameter.zy
+    ExchangeParameter.zz
 
 Isotropic exchange
 ==================
