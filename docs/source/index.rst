@@ -11,6 +11,7 @@ RAD-tools
     api/index
     release-notes/index
     contribute/index
+    cite
 
 :Release: |version|
 :Date: |release_date|
@@ -18,7 +19,8 @@ RAD-tools
 **Useful links**:
 :ref:`Installation <rad-tools_installation>` |
 `Source Repository <https://github.com/adrybakov/rad-tools>`_ |
-`Issue Tracker <https://github.com/adrybakov/rad-tools/issues>`_ 
+`Issue Tracker <https://github.com/adrybakov/rad-tools/issues>`_ |
+:ref:`Cite us <rad-tools_cite>` 
 
 .. grid:: 2
 
@@ -89,13 +91,3 @@ RAD-tools
             :click-parent:
 
             To the contributor's guide
-
-
-
-
-If you are using the graphics produced by the package in your work, 
-please give a credit to the developers by citing the package:
-
-.. code-block::
-        
-    RAD-tools package, rad-tools.org
