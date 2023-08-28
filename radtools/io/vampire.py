@@ -6,6 +6,7 @@ __all__ = ["dump_vampire"]
 
 from radtools.decorate.array import print_2d_array
 from radtools.spinham.parameter import ExchangeParameter
+from radtools.decorate.stats import logo
 
 meV_TO_J = 1.602176634e-22
 
@@ -46,7 +47,7 @@ def dump_vampire(
     """
     original_notation = spinham.notation
     spinham.notation = "vampire"
-    result = []
+    result = [logo(comment=True, date_time=True) + "\n"]
     result.append("# Unit cell size:\n")
     result.append(f"{spinham.a:.8f} {spinham.b:.8f} {spinham.c:.8f}\n")
     result.append("# Unit cell lattice vectors:\n")
@@ -94,7 +95,7 @@ def dump_vampire(
         J = J * meV_TO_J
         fmt = f"{7+decimals}.{decimals}e"
         result.append(
-            f"{IID:<2} {atom_indices[atom1]:<2} {atom_indices[atom2]:<2} {i:<2} {j:<2} {k:<2} "
+            f"{IID:<2} {atom_indices[atom1]:>2} {atom_indices[atom2]:>2} {i:>2} {j:>2} {k:>2} "
         )
         result.append(f"{J.xx:{fmt}} {J.xy:{fmt}} {J.xz:{fmt}} ")
         result.append(f"{J.yx:{fmt}} {J.yy:{fmt}} {J.yz:{fmt}} ")
