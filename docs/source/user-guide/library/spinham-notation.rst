@@ -164,13 +164,13 @@ tuple of two ``bool`` and one ``float``, which correspond to the three propertie
     where double counting is present (:math:`ij` and :math:`ji` are in the sum).
     Spin vectors are normalized to 1.
 * |Vampire|_
-    (False, True, -1)
+    (True, True, -1/2)
 
     .. math::
-        H = \sum_{i<j} \hat{\boldsymbol{e}}_i \cdot \boldsymbol{J}_{i,j} \cdot \hat{\boldsymbol{e}}_j
+        H = - \dfrac{1}{2}\sum_{i<j} \hat{\boldsymbol{e}}_i \cdot \boldsymbol{J}_{i,j} \cdot \hat{\boldsymbol{e}}_j
 
-    where double counting is **not** present (only :math:`ij` is in the sum).
-    Spin vectors are **not** normalized.
+    where double counting is present (only :math:`ij` is in the sum).
+    Spin vectors are normalized.
 * SpinW
     (True, False, 1)
 
