@@ -2,7 +2,7 @@ r"""
 Input-output for |Vampire|_.
 """
 
-__all__ = ["dump_vampire"]
+__all__ = ["dump_vampire", "dump_mat", "dump_ucf"]
 
 from radtools.decorate.array import print_2d_array
 from radtools.spinham.parameter import ExchangeParameter
@@ -13,12 +13,13 @@ meV_TO_J = 1.602176634e-22
 
 def dump_vampire(
     spinham,
-    filename=None,
+    seedname="vampire",
     anisotropic=True,
     dmi=True,
     custom_mask=None,
     decimals=5,
     materials=None,
+    nologo=False,
 ):
     """
     Save the Hamiltonian in a Human-readable format.
@@ -27,9 +28,9 @@ def dump_vampire(
     ----------
     spinham : :py:class:`.SpinHamiltonian`
         Spin Hamiltonian to be saved.
-    filename : str, optional
-        Name of the file for the Hamiltonian to be saved in.
-        If not given, the result will be printed in the console.
+    seedname : str, default "vampire"
+        Seedname for the .UCF and .mat files. Extensions are added automatically.
+        Input file always have the name "input".
     anisotropic : bool, default True
         Whether to output anisotropic exchange.
     dmi : bool, default True
@@ -42,12 +43,142 @@ def dump_vampire(
         Number of decimals to be printed (only for the exchange values).
     materials : list of int, optional
         List of materials for the atoms. Has to have the same length as the number of
-        magnetic atoms in the ``spinham``. If not given, all atoms will be considered
-        as the same material. Order is the same as in :py:attr:`.SpinHamiltonian.magnetic_atoms`.
+        magnetic atoms in the ``spinham``. Order is the same as in :py:attr:`.SpinHamiltonian.magnetic_atoms`.
+        If not given, each atom will be considered as a separate material. Starting from 0.
+    nologo : bool, default False
+        Whether to print the logo in the output files.
+
+    Returns
+    -------
+    content : str
+        Content of the .UCF file if ``filename`` is not given.
+    """
+
+    dump_ucf(
+        spinham,
+        filename=seedname + ".UCF",
+        anisotropic=anisotropic,
+        dmi=dmi,
+        custom_mask=custom_mask,
+        decimals=decimals,
+        materials=materials,
+        nologo=nologo,
+    )
+    dump_mat(
+        spinham,
+        filename=seedname + ".mat",
+        materials=materials,
+        nologo=nologo,
+    )
+    with open("input", "w") as file:
+        file.write(
+            "#------------------------------------------\n"
+            f"material:file={seedname}.mat\n"
+            f"material:unit-cell-file = {seedname}.UCF\n"
+            "#------------------------------------------\n"
+        )
+
+
+def dump_mat(spinham, filename=None, materials=None, nologo=False):
+    """
+    Write .mat file for |Vampire|_.
+
+    Parameters
+    ----------
+    spinham : :py:class:`.SpinHamiltonian`
+        Spin Hamiltonian to be saved.
+    filename : str, optional
+        Name for the .mat file. No extensions is added automatically.
+        If not given, the output is returned as a string.
+    materials : list of int, optional
+        List of materials for the atoms. Has to have the same length as the number of
+        magnetic atoms in the ``spinham``. Order is the same as in :py:attr:`.SpinHamiltonian.magnetic_atoms`.
+        If not given, each atom will be considered as a separate material. Starting from 0.
+    nologo : bool, default False
+        Whether to print the logo in the output files.
+    """
+    if nologo:
+        result = []
+    else:
+        result = [logo(comment=True, date_time=True) + "\n"]
+    if materials is not None:
+        result.append(f"material:num-materials = {max(materials)+1}\n")
+    else:
+        result.append(f"material:num-materials = {len(spinham.magnetic_atoms)}\n")
+    for i, atom in enumerate(spinham.magnetic_atoms):
+        if materials is None or materials[i] not in materials[:i]:
+            if materials is not None:
+                m_i = materials[i] + 1
+            else:
+                m_i = i + 1
+            result.append("#---------------------------------------------------\n")
+            result.append(f"# Material {m_i} \n")
+            result.append("#---------------------------------------------------\n")
+            result.append(f"material[{m_i}]:material-name = {atom.name}\n")
+            result.append(f"material[{m_i}]:material-element = {atom.type}\n")
+            result.append(f"material[{m_i}]:atomic-spin-moment={atom.spin}\n")
+            result.append(
+                f"material[{m_i}]:initial-spin-direction = {atom.spin_direction[0]:.8f},{atom.spin_direction[1]:.8f},{atom.spin_direction[2]:.8f}\n"
+            )
+    result.append("#---------------------------------------------------\n")
+
+    result = "".join(result)
+
+    if filename is None:
+        return "".join(result)
+
+    with open(filename, "w") as file:
+        file.write("".join(result))
+
+
+def dump_ucf(
+    spinham,
+    filename=None,
+    anisotropic=True,
+    dmi=True,
+    custom_mask=None,
+    decimals=5,
+    materials=None,
+    nologo=False,
+):
+    """
+    Save the Hamiltonian in a Human-readable format.
+
+    Parameters
+    ----------
+    spinham : :py:class:`.SpinHamiltonian`
+        Spin Hamiltonian to be saved.
+    filename : str, optional
+        Name for the .UCF file. No extension is added automatically.
+        If not given, the output is returned as a string.
+    anisotropic : bool, default True
+        Whether to output anisotropic exchange.
+    dmi : bool, default True
+        Whether to output DMI exchange.
+    custom_mask : func, optional
+        Custom mask for the exchange parameter. Function which take (3,3) numpy:`ndarray`
+        as an input and returns (3,3) numpy:`ndarray` as an output. If given, then
+        ``anisotropic`` and ``dmi`` parameters are ignored.
+    decimals : int, default 4
+        Number of decimals to be printed (only for the exchange values).
+    materials : list of int, optional
+        List of materials for the atoms. Has to have the same length as the number of
+        magnetic atoms in the ``spinham``. Order is the same as in :py:attr:`.SpinHamiltonian.magnetic_atoms`.
+        If not given, each atom will be considered as a separate material.
+    nologo : bool, default False
+        Whether to print the logo in the output files.
+
+    Returns
+    -------
+    content : str
+        Content of the .UCF file if ``filename`` is not given.
     """
     original_notation = spinham.notation
     spinham.notation = "vampire"
-    result = [logo(comment=True, date_time=True) + "\n"]
+    if nologo:
+        result = []
+    else:
+        result = [logo(comment=True, date_time=True) + "\n"]
     result.append("# Unit cell size:\n")
     result.append(f"{spinham.a:.8f} {spinham.b:.8f} {spinham.c:.8f}\n")
     result.append("# Unit cell lattice vectors:\n")
@@ -78,6 +209,8 @@ def dump_vampire(
         )
         if materials is not None:
             result.append(f" {materials[a_i]}")
+        else:
+            result.append(f" {a_i}")
         result.append("\n")
         atom_indices[atom] = a_i
     result.append("# Interactions\n")
@@ -105,8 +238,9 @@ def dump_vampire(
     spinham.notation = original_notation
 
     result = "".join(result)
-    if filename is not None:
-        with open(filename, "w") as file:
-            file.write(result)
-    else:
-        print(result)
+
+    if filename is None:
+        return result
+
+    with open(filename, "w") as file:
+        file.write(result)
