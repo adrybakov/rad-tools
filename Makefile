@@ -26,6 +26,7 @@ doctest:
 	@$(SPHINXBUILD) -b doctest "docs/$(SOURCEDIR)" "docs/$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 clean:
+
 	-@rm -r docs/build
 	-@rm -r docs/source/api/generated
 	-@rm -r docs/source/api/crystal/generated
