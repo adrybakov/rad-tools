@@ -5,6 +5,7 @@ from termcolor import cprint
 
 from radtools.io.internal import load_template
 from radtools.io.tb2j import load_tb2j_model
+from radtools.io.internal import dump_spinham_txt
 
 
 def manager(
@@ -151,7 +152,8 @@ def manager(
         template = None
 
     # Write the summary to the file or print it
-    model.dump_txt(
+    dump_spinham_txt(
+        model,
         filename=output_name,
         anisotropic=not no_anisotropic,
         matrix=not no_matrix,
