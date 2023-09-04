@@ -464,6 +464,10 @@ class ExchangeParameter:
         """
         return self.matrix[0][0]
 
+    @xx.setter
+    def xx(self, new_xx):
+        self._matrix[0][0] = float(new_xx)
+
     @property
     def xy(self) -> float:
         r"""
@@ -486,6 +490,10 @@ class ExchangeParameter:
             Value of exchange parameter :math:`J_{xy}`.
         """
         return self.matrix[0][1]
+
+    @xx.setter
+    def xy(self, new_xy):
+        self._matrix[0][1] = float(new_xy)
 
     @property
     def xz(self) -> float:
@@ -510,6 +518,10 @@ class ExchangeParameter:
         """
         return self.matrix[0][2]
 
+    @xz.setter
+    def xz(self, new_xz):
+        self._matrix[0][2] = float(new_xz)
+
     @property
     def yx(self) -> float:
         r"""
@@ -532,6 +544,10 @@ class ExchangeParameter:
             Value of exchange parameter :math:`J_{yx}`.
         """
         return self.matrix[1][0]
+
+    @yx.setter
+    def yx(self, new_yx):
+        self._matrix[1][0] = float(new_yx)
 
     @property
     def yy(self) -> float:
@@ -556,6 +572,10 @@ class ExchangeParameter:
         """
         return self.matrix[1][1]
 
+    @yy.setter
+    def yy(self, new_yy):
+        self._matrix[1][1] = float(new_yy)
+
     @property
     def yz(self) -> float:
         r"""
@@ -578,6 +598,10 @@ class ExchangeParameter:
             Value of exchange parameter :math:`J_{yz}`.
         """
         return self.matrix[1][2]
+
+    @yz.setter
+    def yz(self, new_yz):
+        self._matrix[1][2] = float(new_yz)
 
     @property
     def zx(self) -> float:
@@ -602,6 +626,10 @@ class ExchangeParameter:
         """
         return self.matrix[2][0]
 
+    @zx.setter
+    def zx(self, new_zx):
+        self._matrix[2][0] = float(new_zx)
+
     @property
     def zy(self) -> float:
         r"""
@@ -625,6 +653,10 @@ class ExchangeParameter:
         """
         return self.matrix[2][1]
 
+    @zy.setter
+    def zy(self, new_zy):
+        self._matrix[2][1] = float(new_zy)
+
     @property
     def zz(self) -> float:
         r"""
@@ -647,6 +679,10 @@ class ExchangeParameter:
             Value of exchange parameter :math:`J_{zz}`.
         """
         return self.matrix[2][2]
+
+    @zz.setter
+    def zz(self, new_zz):
+        self._matrix[2][2] = float(new_zz)
 
     # Definition of arithmetic operations5t
 
