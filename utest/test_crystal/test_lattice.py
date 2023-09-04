@@ -173,7 +173,7 @@ def test_Lattice_eps(r1, r2, r3, a, b, c, alpha, beta, gamma, eps_rel):
         assert l.eps_rel == eps_rel
         assert np.allclose(
             l.eps,
-            eps_rel * l.unit_cell_volume ** (1.0 / 3.0),
+            eps_rel * abs(l.unit_cell_volume) ** (1.0 / 3.0),
             rtol=REL_TOL,
             atol=ABS_TOL,
         )

@@ -175,6 +175,7 @@ custom_links = {
     "projwfc": ("projwfc.x", "https://www.quantum-espresso.org/Doc/INPUT_PROJWFC.html"),
     "QE": ("Quantum Espresso", "https://www.quantum-espresso.org"),
     "TB2J": ("TB2J", "https://tb2j.readthedocs.io/en/latest/"),
+    "Vampire": ("Vampire", "https://vampire.york.ac.uk/"),
     "Wannier90": ("Wannier90", "http://www.wannier.org/"),
     "Python": ("Python", "https://python.org"),
     "NumPy": ("NumPy", "https://numpy.org/"),

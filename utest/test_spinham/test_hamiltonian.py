@@ -616,6 +616,8 @@ def test_notation_manipulation():
     assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", -1)
     model.notation = "TB2J"
     assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", 9 / 4)
+    model.notation = "Vampire"
+    assert compare_numerically(model[Cr, Cr, (1, 0, 0)].iso, "==", 9 / 2)
 
 
 def test_predefined_notations():

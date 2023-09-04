@@ -96,16 +96,6 @@ Human readable representation
 
     SpinHamiltonian.notation_string
 
-Saving and loading
-==================
-
-.. autosummary::
-    :toctree: generated/
-
-    SpinHamiltonian.dump_txt
-    SpinHamiltonian.dump_pickle
-
-
 Crystal getter
 ==============
 

@@ -25,11 +25,11 @@ Now one need to use read functions from input-output module:
 
 .. code-block:: python
 
-    from radtools.io.tb2j import read_tb2j_model
-    from radtools.io.internal import read_template
+    from radtools.io.tb2j import load_tb2j_model
+    from radtools.io.internal import load_template
 
-    model = read_tb2j_model(filename)
-    template = read_template(template_filename)
+    model = load_tb2j_model(filename)
+    template = load_template(template_filename)
 
 0.4.1
 -----
@@ -56,13 +56,13 @@ There are two ways to import read functions:
 
 .. code-block:: python
 
-    from radtools.io.tb2j import read_tb2j_model
-    from radtools.io import read_tb2j_model
+    from radtools.io.tb2j import load_tb2j_model
+    from radtools.io import load_tb2j_model
 
 .. code-block:: python
 
     from radtools.io.internal import 
-    from radtools.io import read_template
+    from radtools.io import load_template
 
 Add :py:meth:`.number_spins_in_unit_cell` property to the :py:class:`.SpinHamiltonian`.
 

@@ -441,6 +441,249 @@ class ExchangeParameter:
 
         return self.dmi_module / abs(self.iso)
 
+    @property
+    def xx(self) -> float:
+        r"""
+        Value of exchange parameter :math:`J_{xx}`.
+
+        .. versionadded:: 0.8.1
+
+        .. doctest::
+
+            >>> from radtools.spinham import ExchangeParameter
+            >>> J = ExchangeParameter(matrix=[[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+            >>> J.xx
+            1.0
+            >>> J.matrix[0][0]
+            1.0
+
+        Returns
+        -------
+        xx : float
+            Value of exchange parameter :math:`J_{xx}`.
+        """
+        return self.matrix[0][0]
+
+    @xx.setter
+    def xx(self, new_xx):
+        self._matrix[0][0] = float(new_xx)
+
+    @property
+    def xy(self) -> float:
+        r"""
+        Value of exchange parameter :math:`J_{xy}`.
+
+        .. versionadded:: 0.8.1
+
+        .. doctest::
+
+            >>> from radtools.spinham import ExchangeParameter
+            >>> J = ExchangeParameter(matrix=[[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+            >>> J.xy
+            2.0
+            >>> J.matrix[0][1]
+            2.0
+
+        Returns
+        -------
+        xy : float
+            Value of exchange parameter :math:`J_{xy}`.
+        """
+        return self.matrix[0][1]
+
+    @xx.setter
+    def xy(self, new_xy):
+        self._matrix[0][1] = float(new_xy)
+
+    @property
+    def xz(self) -> float:
+        r"""
+        Value of exchange parameter :math:`J_{xz}`.
+
+        .. versionadded:: 0.8.1
+
+        .. doctest::
+
+            >>> from radtools.spinham import ExchangeParameter
+            >>> J = ExchangeParameter(matrix=[[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+            >>> J.xz
+            3.0
+            >>> J.matrix[0][2]
+            3.0
+
+        Returns
+        -------
+        xz : float
+            Value of exchange parameter :math:`J_{xz}`.
+        """
+        return self.matrix[0][2]
+
+    @xz.setter
+    def xz(self, new_xz):
+        self._matrix[0][2] = float(new_xz)
+
+    @property
+    def yx(self) -> float:
+        r"""
+        Value of exchange parameter :math:`J_{yx}`.
+
+        .. versionadded:: 0.8.1
+
+        .. doctest::
+
+            >>> from radtools.spinham import ExchangeParameter
+            >>> J = ExchangeParameter(matrix=[[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+            >>> J.yx
+            4.0
+            >>> J.matrix[1][0]
+            4.0
+
+        Returns
+        -------
+        yx : float
+            Value of exchange parameter :math:`J_{yx}`.
+        """
+        return self.matrix[1][0]
+
+    @yx.setter
+    def yx(self, new_yx):
+        self._matrix[1][0] = float(new_yx)
+
+    @property
+    def yy(self) -> float:
+        r"""
+        Value of exchange parameter :math:`J_{yy}`.
+
+        .. versionadded:: 0.8.1
+
+        .. doctest::
+
+            >>> from radtools.spinham import ExchangeParameter
+            >>> J = ExchangeParameter(matrix=[[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+            >>> J.yy
+            5.0
+            >>> J.matrix[1][1]
+            5.0
+
+        Returns
+        -------
+        yy : float
+            Value of exchange parameter :math:`J_{yy}`.
+        """
+        return self.matrix[1][1]
+
+    @yy.setter
+    def yy(self, new_yy):
+        self._matrix[1][1] = float(new_yy)
+
+    @property
+    def yz(self) -> float:
+        r"""
+        Value of exchange parameter :math:`J_{yz}`.
+
+        .. versionadded:: 0.8.1
+
+        .. doctest::
+
+            >>> from radtools.spinham import ExchangeParameter
+            >>> J = ExchangeParameter(matrix=[[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+            >>> J.yz
+            6.0
+            >>> J.matrix[1][2]
+            6.0
+
+        Returns
+        -------
+        yz : float
+            Value of exchange parameter :math:`J_{yz}`.
+        """
+        return self.matrix[1][2]
+
+    @yz.setter
+    def yz(self, new_yz):
+        self._matrix[1][2] = float(new_yz)
+
+    @property
+    def zx(self) -> float:
+        r"""
+        Value of exchange parameter :math:`J_{zx}`.
+
+        .. versionadded:: 0.8.1
+
+        .. doctest::
+
+            >>> from radtools.spinham import ExchangeParameter
+            >>> J = ExchangeParameter(matrix=[[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+            >>> J.zx
+            7.0
+            >>> J.matrix[2][0]
+            7.0
+
+        Returns
+        -------
+        zx : float
+            Value of exchange parameter :math:`J_{zx}`.
+        """
+        return self.matrix[2][0]
+
+    @zx.setter
+    def zx(self, new_zx):
+        self._matrix[2][0] = float(new_zx)
+
+    @property
+    def zy(self) -> float:
+        r"""
+        Value of exchange parameter :math:`J_{zy}`.
+
+        .. versionadded:: 0.8.1
+
+        .. doctest::
+
+            >>> from radtools.spinham import ExchangeParameter
+            >>> J = ExchangeParameter(matrix=[[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+            >>> J.zy
+            8.0
+            >>> J.matrix[2][1]
+            8.0
+
+        Returns
+        -------
+        zy : float
+            Value of exchange parameter :math:`J_{zy}`.
+        """
+        return self.matrix[2][1]
+
+    @zy.setter
+    def zy(self, new_zy):
+        self._matrix[2][1] = float(new_zy)
+
+    @property
+    def zz(self) -> float:
+        r"""
+        Value of exchange parameter :math:`J_{zz}`.
+
+        .. versionadded:: 0.8.1
+
+        .. doctest::
+
+            >>> from radtools.spinham import ExchangeParameter
+            >>> J = ExchangeParameter(matrix=[[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+            >>> J.zz
+            9.0
+            >>> J.matrix[2][2]
+            9.0
+
+        Returns
+        -------
+        zz : float
+            Value of exchange parameter :math:`J_{zz}`.
+        """
+        return self.matrix[2][2]
+
+    @zz.setter
+    def zz(self, new_zz):
+        self._matrix[2][2] = float(new_zz)
+
     # Definition of arithmetic operations5t
 
     # + (add)

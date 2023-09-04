@@ -3,22 +3,22 @@ import os
 import numpy as np
 import pytest
 
-from radtools.io import read_template
+from radtools.io import load_template
 from radtools.io.tb2j import *
 
 
 class TestReadSpinHamiltonian:
-    model = read_tb2j_model(
+    model = load_tb2j_model(
         os.path.join("utest", "test_io", "resources", "exchange.out")
     )
 
     def test_empty_filename(self):
         with pytest.raises(TypeError):
-            model = read_tb2j_model(None)
+            model = load_tb2j_model(None)
 
     def test_wrong_filename(self):
         with pytest.raises(FileNotFoundError):
-            model = read_tb2j_model("Ah, music. " + "A magic beyond all we do here!")
+            model = load_tb2j_model("Ah, music. " + "A magic beyond all we do here!")
 
     def test_read_cell(self):
         cell_values = [
@@ -216,7 +216,7 @@ class TestReadSpinHamiltonian:
     def test_filter_by_template(self):
         filtered_model = self.model.filtered(template=self.template)
         assert len(filtered_model) == 16
-        template = read_template(
+        template = load_template(
             os.path.join("utest", "test_io", "resources", "template.txt")
         )
         filtered_model = self.model.filtered(template=template)

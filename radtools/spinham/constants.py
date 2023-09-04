@@ -7,6 +7,7 @@ PREDEFINED_NOTATIONS = {
     "standard": (True, False, -1),
     "tb2j": (True, True, -1),
     "spinw": (True, False, 1),
+    "vampire": (True, True, -0.5),
 }
 
 TXT_FLAGS = {

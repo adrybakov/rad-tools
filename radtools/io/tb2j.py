@@ -1,7 +1,7 @@
 r"""
 Input-output from |TB2J|_.
 """
-__all__ = ["read_tb2j_model"]
+__all__ = ["load_tb2j_model", "read_tb2j_model"]
 
 import numpy as np
 
@@ -9,11 +9,12 @@ from radtools.crystal.constants import REL_TOL
 from radtools.spinham.hamiltonian import SpinHamiltonian
 
 
-def read_tb2j_model(filename, quiet=True, bravais_type=None) -> SpinHamiltonian:
+def load_tb2j_model(filename, quiet=True, bravais_type=None) -> SpinHamiltonian:
     r"""
     Read spin Hamiltonian from |TB2J|_ output file.
 
-    .. versionchanged:: 0.7
+    .. versionchanged:: 0.8.1 Renamed from ``read_tb2j_model``
+
 
     In |TB2J|_ spin Hamiltonian is define in a following notation:
 
@@ -184,3 +185,7 @@ def read_tb2j_model(filename, quiet=True, bravais_type=None) -> SpinHamiltonian:
             )
 
     return model
+
+
+# For backward compatibility
+read_tb2j_model = load_tb2j_model

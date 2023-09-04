@@ -7,8 +7,8 @@ from matplotlib import pyplot as plt
 from termcolor import cprint
 
 from radtools.constants import TODEGREES
-from radtools.io.internal import read_template
-from radtools.io.tb2j import read_tb2j_model
+from radtools.io.internal import load_template
+from radtools.io.tb2j import load_tb2j_model
 
 
 def rot_angle(x, y, dummy=False):
@@ -259,11 +259,11 @@ def manager(
         R_vector = list(map(tuple, R_vector.tolist()))
 
     # Read the model
-    model = read_tb2j_model(input_filename, quiet=not verbose)
+    model = load_tb2j_model(input_filename, quiet=not verbose)
 
     # Force symmetry of the template
     if template_file is not None:
-        template = read_template(template_file)
+        template = load_template(template_file)
     else:
         template = None
     if form_model:
@@ -417,7 +417,6 @@ def manager(
 
 
 def create_parser():
-
     parser = ArgumentParser()
     parser.add_argument(
         "-if",
@@ -433,7 +432,7 @@ def create_parser():
         default="exchange",
         metavar="filename",
         type=str,
-        help='Seedname for the output files.',
+        help="Seedname for the output files.",
     )
     parser.add_argument(
         "-wtp",
@@ -442,18 +441,18 @@ def create_parser():
         type=str,
         choices=[
             "all",
-             "iso",
-             "distance",
-             "dmi",
+            "iso",
+            "distance",
+            "dmi",
         ],
-        help='Type of data for display.',
+        help="Type of data for display.",
     )
     parser.add_argument(
         "-dc",
         "--draw-cells",
         default=False,
         action="store_true",
-        help='Whether to draw the cells.',
+        help="Whether to draw the cells.",
     )
     parser.add_argument(
         "-mind",
@@ -461,7 +460,7 @@ def create_parser():
         default=None,
         metavar="distance",
         type=float,
-        help='(>=) Minimum distance.',
+        help="(>=) Minimum distance.",
     )
     parser.add_argument(
         "-maxd",
@@ -469,7 +468,7 @@ def create_parser():
         default=None,
         metavar="distance",
         type=float,
-        help='(<=) Maximum distance.',
+        help="(<=) Maximum distance.",
     )
     parser.add_argument(
         "-d",
@@ -477,7 +476,7 @@ def create_parser():
         default=None,
         metavar="distance",
         type=float,
-        help='(=) Exact distance.',
+        help="(=) Exact distance.",
     )
     parser.add_argument(
         "-tf",
@@ -485,7 +484,7 @@ def create_parser():
         default=None,
         metavar="filename",
         type=str,
-        help='Relative or absolute path to the template file, including the name and extension of the file.',
+        help="Relative or absolute path to the template file, including the name and extension of the file.",
     )
     parser.add_argument(
         "-R",
@@ -494,42 +493,42 @@ def create_parser():
         metavar="i1 j1 k1 i2 j2 k2 ...",
         type=int,
         nargs="*",
-        help='R vectors for filtering the spin Hamiltonian.',
+        help="R vectors for filtering the spin Hamiltonian.",
     )
     parser.add_argument(
         "-sa",
         "--scale-atoms",
         default=1,
         type=float,
-        help='Scale for the size of atom marks.',
+        help="Scale for the size of atom marks.",
     )
     parser.add_argument(
         "-sd",
         "--scale-data",
         default=1,
         type=float,
-        help='Scale for the size of data text.',
+        help="Scale for the size of data text.",
     )
     parser.add_argument(
         "-t",
         "--title",
         default=None,
         type=str,
-        help='Title for the plots.',
+        help="Title for the plots.",
     )
     parser.add_argument(
         "-fm",
         "--form-model",
         default=False,
         action="store_true",
-        help='Force the spin Hamiltonian to have the symmetry of the template.',
+        help="Force the spin Hamiltonian to have the symmetry of the template.",
     )
     parser.add_argument(
         "-v",
         "--verbose",
         default=False,
         action="store_true",
-        help='Verbose output, propagates to the called methods.',
+        help="Verbose output, propagates to the called methods.",
     )
 
     return parser

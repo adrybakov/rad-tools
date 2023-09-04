@@ -8,7 +8,7 @@
 
 Main output of TB2J is the "exchange.out" file with the exchange parameters.
 
-Function :py:func:`read_tb2j_model` reads this file 
+Function :py:func:`load_tb2j_model` reads this file 
 and construct :py:class:`SpinHamiltonian` from it.
 
 Import
@@ -17,15 +17,15 @@ Import
 .. doctest::
 
     >>> # Exact import
-    >>> from radtools.io.tb2j import read_tb2j_model
+    >>> from radtools.io.tb2j import load_tb2j_model
     >>> # Explicit import
-    >>> from radtools.io import read_tb2j_model
+    >>> from radtools.io import load_tb2j_model
     >>> # Recommended import
-    >>> from radtools import read_tb2j_model
+    >>> from radtools import load_tb2j_model
 
 Usage
 =====
 
 .. doctest::
 
-    >>> hamiltonian = read_tb2j_model('exchange.out')  # doctest: +SKIP
+    >>> hamiltonian = load_tb2j_model('exchange.out')  # doctest: +SKIP

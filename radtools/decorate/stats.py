@@ -6,7 +6,7 @@ from radtools import __doclink__, __git_hash__, __release_date__, __version__
 __all__ = ["logo", "stamp_line", "license"]
 
 
-def logo(info=None, line_length=71, flat=False, date_time=False):
+def logo(info=None, line_length=71, flat=False, date_time=False, comment=None):
     """
     Logo generator for rad-tools package.
 
@@ -28,7 +28,10 @@ def logo(info=None, line_length=71, flat=False, date_time=False):
         Whether to return a flat logo or not.
     date_time : bool, default False
         Whether to include the date and time to the standard info or not.
-
+    comment : str or bool, optional
+        Whether to use some character at the end of each string. If bool and
+        True, then "# " is used. If str, then this string is used. If None, then
+        no character is used.
     Returns
     -------
     logo_info : str
@@ -79,6 +82,12 @@ def logo(info=None, line_length=71, flat=False, date_time=False):
     n = 12
     if line_length < N:
         line_length = N
+    if isinstance(comment, bool) and comment:
+        comment = "# "
+    elif comment is not None:
+        comment = str(comment)
+    else:
+        comment = ""
 
     logo_info = [f"{x:^{N}}" for x in logo]
     if len(info) > 0:
@@ -99,7 +108,7 @@ def logo(info=None, line_length=71, flat=False, date_time=False):
                 else:
                     logo_info.append(f"{info[i-before]:^{N-n}}{cat[i-before]:^{n}}")
 
-    logo_info = [f"{x:^{line_length}}\n" for x in logo_info]
+    logo_info = [f"{comment}{x:^{line_length}}\n" for x in logo_info]
     return "".join(logo_info)[:-1]
 
 
