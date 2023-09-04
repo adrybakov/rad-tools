@@ -657,6 +657,39 @@ Double counting
     (False, -4.5)
     >>> hamiltonian.double_counting = True
 
+Double counting and :math:`S_i^2` terms
+---------------------------------------
+
+Double counting behaves different if  atom1 = atom2 and (i, j, k) = (0, 0, 0):
+
+.. doctest::
+
+    >>> spinham = SpinHamiltonian()
+    >>> spinham.add_atom("Mn", (0, 0, 0))
+    >>> spinham.add_bond("Mn", "Mn", (1, 0, 0), iso=1)
+    >>> spinham.add_bond("Mn", "Mn", (0, 0, 0), iso=1)
+    >>> spinham.notation = (1, 1, 1)
+    >>> spinham.double_counting
+    True
+    >>> # Double counting is present (0, 0, 0) bond is not doubled.
+    >>> for a1, a2, R, J in spinham:
+    ...     print(R)
+    ...
+    (1, 0, 0)
+    (0, 0, 0)
+    (-1, 0, 0)
+    >>> print(spinham["Mn", "Mn", (1, 0, 0)].iso, spinham["Mn", "Mn", (0, 0, 0)].iso)
+    1.0 1.0
+    >>> spinham.double_counting = False
+    >>> for a1, a2, R, J in spinham:
+    ...     print(R)
+    ...
+    (1, 0, 0)
+    (0, 0, 0)
+    >>> # Parameter for (0, 0, 0) does not change
+    >>> print(spinham["Mn", "Mn", (1, 0, 0)].iso, spinham["Mn", "Mn", (0, 0, 0)].iso)
+    2.0 1.0
+
 Spin normalization
 ------------------
 

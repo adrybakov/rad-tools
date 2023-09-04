@@ -262,18 +262,19 @@ class SpinHamiltonian(Crystal):
         bonds = list(self)
 
         for atom1, atom2, (i, j, k), J in bonds:
-            if (
-                i > 0
-                or (i == 0 and j > 0)
-                or (i == 0 and j == 0 and k > 0)
-                or (i == 0 and j == 0 and k == 0 and atom1.index <= atom2.index)
-            ):
-                if (atom2, atom1, (-i, -j, -k)) in self:
-                    self.remove_bond(atom2, atom1, (-i, -j, -k))
-            else:
-                if (atom2, atom1, (-i, -j, -k)) not in self:
-                    self.add_bond(atom2, atom1, (-i, -j, -k), J=J.T)
-                    self.remove_bond(atom1, atom2, (i, j, k))
+            if (i, j, k) != (0, 0, 0) or atom1 != atom2:
+                if (
+                    i > 0
+                    or (i == 0 and j > 0)
+                    or (i == 0 and j == 0 and k > 0)
+                    or (i == 0 and j == 0 and k == 0 and atom1.index <= atom2.index)
+                ):
+                    if (atom2, atom1, (-i, -j, -k)) in self:
+                        self.remove_bond(atom2, atom1, (-i, -j, -k))
+                else:
+                    if (atom2, atom1, (-i, -j, -k)) not in self:
+                        self.add_bond(atom2, atom1, (-i, -j, -k), J=J.T)
+                        self.remove_bond(atom1, atom2, (i, j, k))
 
     @double_counting.setter
     def double_counting(self, new_value: bool):
@@ -293,7 +294,8 @@ class SpinHamiltonian(Crystal):
                 else:
                     self._ensure_no_double_counting()
                 for atom1, atom2, R, J in self:
-                    self[atom1, atom2, R] = J * factor
+                    if R != (0, 0, 0) or atom1 != atom2:
+                        self[atom1, atom2, R] = J * factor
         else:
             if new_value:
                 self._ensure_double_counting()

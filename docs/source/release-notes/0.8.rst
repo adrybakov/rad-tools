@@ -71,3 +71,8 @@ Add new predefined notation to the :py:class:`.SpinHamiltonian` class: "vampire"
 
 Fix :issue:`5`.
 
+0.8.2
+-----
+
+Correct behaviour of :py:attr:`.SpinHamiltonian.notation` for single-ion like terms.
+
