@@ -769,7 +769,7 @@ class Lattice:
             \epsilon = \epsilon_{rel}\cdot V^{\frac{1}{3}}
         """
 
-        return self.eps_rel * self.unit_cell_volume ** (1 / 3.0)
+        return self.eps_rel * abs(self.unit_cell_volume) ** (1 / 3.0)
 
     def type(self, eps_rel=None):
         r"""
