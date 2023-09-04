@@ -491,7 +491,7 @@ class ExchangeParameter:
         """
         return self.matrix[0][1]
 
-    @xx.setter
+    @xy.setter
     def xy(self, new_xy):
         self._matrix[0][1] = float(new_xy)
 
@@ -812,3 +812,8 @@ class ExchangeParameter:
     # !=
     def __neq__(self, other):
         return not self == other
+
+
+if __name__ == "__main__":
+    J = ExchangeParameter(matrix=[[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+    print(J.xy)
