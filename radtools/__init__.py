@@ -2,9 +2,9 @@ r"""
 RAD-tools
 """
 
-__version__ = "0.8.1"
+__version__ = "0.8.2"
 __doclink__ = "rad-tools.org"
-__git_hash__ = "8b0f75dd260ee2f0fa2191b96047464ea7aea167"
+__git_hash__ = "db65c09af968be82f4e0c9616ee854921e0ee94b"
 __release_date__ = "4 September 2023"
 
 from . import (
