@@ -632,3 +632,17 @@ def TRI_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
 
     # Recompute back to the real-space cell
     return Cell.reciprocal(rcell)
+
+
+if __name__ == "__main__":
+    import numpy as np
+
+    cell = np.array(
+        [
+            [0.0, 0.0, 0.5],
+            [0.42284605, -0.26686416, 0.0],
+            [-0.41862494, 0.27343815, 0.0],
+        ]
+    )
+    scell = ORCC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL)
+    print(scell)

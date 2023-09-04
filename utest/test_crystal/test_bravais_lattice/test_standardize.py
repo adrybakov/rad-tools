@@ -4,7 +4,7 @@ from math import acos, cos, sqrt, pi
 
 import numpy as np
 from hypothesis import given
-from hypothesis import strategies as st
+from hypothesis import strategies as st, example
 from scipy.spatial.transform import Rotation
 
 from radtools.crystal.bravais_lattice.standardize import (
@@ -402,6 +402,7 @@ def test_ORCI_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, order):
         assert np.linalg.det(cell) * old_det > 0
 
 
+@example(r1=0.0, r2=0.0, r3=1.0, conv_a=1.0, conv_b=0.0078125, conv_c=0.5, order=0)
 @given(
     st.floats(min_value=0, max_value=2 * pi),
     st.floats(min_value=0, max_value=2 * pi),
