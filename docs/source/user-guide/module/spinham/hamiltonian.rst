@@ -572,10 +572,10 @@ The notation could be defined in three ways:
     Spin vectors are normalized to 1.
     >>> hamiltonian.notation = 'vampire'
     >>> hamiltonian.notation
-    (False, True, -1.0)
+    (True, True, -0.5)
     >>> print(hamiltonian.notation_string)
-    H = - \sum_{i>=j} e_i J_{ij} e_j
-    No double counting.
+    H = -1/2 \sum_{i,j} e_i J_{ij} e_j
+    Double counting is present.
     Spin vectors are normalized to 1.
     >>> hamiltonian.notation = 'spinw'
     >>> hamiltonian.notation
