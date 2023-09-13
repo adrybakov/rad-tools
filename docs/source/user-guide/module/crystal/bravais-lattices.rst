@@ -6,7 +6,7 @@ Bravais lattices
 
 .. currentmodule:: radtools
 
-For the full reference see :ref:`api_crystal`
+For the full reference see :ref:`api_bravais-lattices`
 
 For the description of each Bravais lattice type see :ref:`library_bravais-lattices`.
 
@@ -17,8 +17,8 @@ Each Bravais lattice is an instance of :py:class:`.Lattice` class.
 
 For each Bravais lattice system there is a function defined, which constructs
 the instance of :py:class:`.Lattice` class from the parameters. For the names of the 
-constructors and corresponding parameters see the :ref:`tables below <library_bravais-lattices>` 
-(for full reference see :ref:`api_bravais-lattices`). Before the main table we present
+constructors and corresponding parameters see the :ref:`dedicated page <library_bravais-lattices>` 
+(for full reference see :ref:`Api reference <api_bravais-lattices>`). Before the main table we present
 an example of the usage of the constructor for the cubic lattice.
 
 Import
