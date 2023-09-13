@@ -22,4 +22,4 @@ consists of the lattice and the atoms. For the detailed guides see:
     lattice
     atom
     kpoints
-    bravais-lattices/index
+    bravais-lattices

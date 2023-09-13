@@ -7,7 +7,7 @@ import radtools as rad
 
 ROOT_DIR = "."
 OUTPUT_PATH = os.path.join(
-    ROOT_DIR, "docs", "source", "user-guide", "module", "crystal", "bravais-lattices"
+    ROOT_DIR, "docs", "source", "user-guide", "library", "bravais-lattices"
 )
 
 

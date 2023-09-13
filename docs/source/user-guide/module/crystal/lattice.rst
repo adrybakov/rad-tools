@@ -46,7 +46,7 @@ Lattice can be created in three different ways:
 
 When a lattice created from the cell orientation of the cell is respected,
 however the lattice vectors may be renamed. 
-:ref:`docs for each Bravais lattice <table_bravais-lattices>`.
+:ref:`docs for each Bravais lattice <library_bravais-lattices>`.
 
 Creation may change the angles and the lengths of the cell vectors.
 It preserve the volume, right- or left- handedness, lattice type and variation

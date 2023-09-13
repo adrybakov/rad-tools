@@ -38,6 +38,7 @@ Library
     library/lepage
     library/magnon-dispersion
     library/spinham-notation
+    library/bravais-lattices/index
 
 .. div:: logo-custom-text
     
