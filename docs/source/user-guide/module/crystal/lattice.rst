@@ -237,7 +237,7 @@ To show the plot use :py:meth:`.Lattice.show` method:
     >>> lattice.show() # doctest: +SKIP
 
 More examples of the plots with the code snippets can be found in the 
-:ref:`guide_crystal_bravais-lattices` guide.
+:ref:`library_bravais-lattices` guide.
 
 Full list of the available plotting methods can be found in the
 :ref:`api_lattice` reference.
@@ -271,7 +271,7 @@ time and stored internally for the future:
 .. note::
 
     For each Bravais lattice type there is a predefined path and set of 
-    kpoints in reciprocal space. See :ref:`guide_crystal_bravais-lattices` for more details.
+    kpoints in reciprocal space. See :ref:`library_bravais-lattices` for more details.
     The unit cell has to be standardized to use the predefined paths and kpoints.
 
 For the full guide on how to use :py:class:`.Kpoints` class see :ref:`guide_crystal_kpoints`.
