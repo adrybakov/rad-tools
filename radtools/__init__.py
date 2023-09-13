@@ -2,10 +2,10 @@ r"""
 RAD-tools
 """
 
-__version__ = "0.8.3"
+__version__ = "0.8.4.dev"
 __doclink__ = "rad-tools.org"
-__git_hash__ = "5b4dc9b04aecb7efebb9cd710c02e0ad7fb68e44"
-__release_date__ = "14 September 2023"
+__git_hash__ = "undefined"
+__release_date__ = "undefined"
 
 from . import (
     constants,
