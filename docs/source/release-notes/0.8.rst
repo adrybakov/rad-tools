@@ -76,3 +76,7 @@ Fix :issue:`5`.
 
 Correct behaviour of :py:attr:`.SpinHamiltonian.notation` for single-ion like terms.
 
+0.8.3
+-----
+
+Fix :issue:`6`.

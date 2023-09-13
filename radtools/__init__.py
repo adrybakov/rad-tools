@@ -2,7 +2,7 @@ r"""
 RAD-tools
 """
 
-__version__ = "0.8.3.dev"
+__version__ = "0.8.3"
 __doclink__ = "rad-tools.org"
 __git_hash__ = "undefined"
 __release_date__ = "undefined"
