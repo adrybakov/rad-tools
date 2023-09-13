@@ -41,16 +41,19 @@ the lengths of the first two vectors of the primitive cell.
 
 If these conditions are not satisfied, then the lattice is transformed to the standard form:
 
+Before the standardization we check if all angles are equal to :math:`90^{\circ}`.
+If yes, then the standardization for :ref:`guide_tet` is called.
+
 First we find the third lattice vector of the primitive cell. 
 For this step we use lattice vectors of the primitive cell:
 
-* If :math:`\vert\boldsymbol{a}_1\vert = \vert\boldsymbol{a}_3\vert`
+* If :math:`\beta \ne 90^{\circ}`
     .. math::
 
         (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
         (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
 
-* If :math:`\vert\boldsymbol{a}_2\vert = \vert\boldsymbol{a}_3\vert`
+* If :math:`\alpha \ne 90^{\circ}`
     .. math::
 
         (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
@@ -135,4 +138,3 @@ Edge cases
 If :math:`a = b`, then the lattice is :ref:`guide_tet`.
 
 If :math:`a = b = \sqrt{2} c`, then the lattice is :ref:`guide_cub`.
-

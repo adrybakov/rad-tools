@@ -351,11 +351,19 @@ def ORCC_standardize_cell(cell, rtol=REL_TOL, atol=ABS_TOL):
 
     a, b, c, alpha, beta, gamma = Cell.params(cell)
 
-    # a == c
-    if compare_numerically(a, "==", c, rtol=rtol, atol=atol):
+    if (
+        compare_numerically(alpha, "==", 90.0, eps=ABS_TOL_ANGLE)
+        and compare_numerically(beta, "==", 90.0, eps=ABS_TOL_ANGLE)
+        and compare_numerically(gamma, "==", 90.0, eps=ABS_TOL_ANGLE)
+    ):
+        return TET_standardize_cell(cell, rtol=rtol, atol=atol)
+
+    # next two check are based on the angle, because the length comparison is not enough
+    # a == c (beta != 90)
+    if compare_numerically(beta, "!=", 90.0, eps=ABS_TOL_ANGLE):
         cell = [cell[2], cell[0], cell[1]]
-    # b = c
-    elif compare_numerically(b, "==", c, rtol=rtol, atol=atol):
+    # b = c (alpha != 90)
+    elif compare_numerically(alpha, "!=", 90.0, eps=ABS_TOL_ANGLE):
         cell = [cell[1], cell[2], cell[0]]
 
     a, b, c, alpha, beta, gamma = Cell.params(cell)
