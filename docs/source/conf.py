@@ -171,6 +171,7 @@ del frozen_locals
 # Custom substitutions for links. Solution source:
 # https://docutils.sourceforge.io/docs/ref/rst/directives.html#directives-for-substitution-definitions
 custom_links = {
+    "Author": ("Author", "https://orcid.org/0000-0002-9924-3576"),
     "ANSI": ("ANSI", "https://en.wikipedia.org/wiki/ANSI_escape_code"),
     "projwfc": ("projwfc.x", "https://www.quantum-espresso.org/Doc/INPUT_PROJWFC.html"),
     "QE": ("Quantum Espresso", "https://www.quantum-espresso.org"),
