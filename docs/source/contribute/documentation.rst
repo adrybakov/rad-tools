@@ -16,4 +16,4 @@ The complete documentation guide is not formed yet. But the following rules are 
 
 More rules will appear soon. The documentation guide will evolve until it will be complete.
 If you have any question about the writing of the documentation, please contact the 
-`author <https://orcid.org/0000-0002-9924-3576>`_.
+|Author|_.
