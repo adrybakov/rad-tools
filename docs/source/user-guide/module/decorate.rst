@@ -372,13 +372,18 @@ Logo
     ██║  ██║██║  ██║██████╔╝         ██║   ╚█████╔╝╚█████╔╝███████╗██████╔╝
     ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝          ╚═╝    ╚════╝  ╚════╝ ╚══════╝╚═════╝ 
                                                                 ▄   ▄      
-                          Version: 0.8.0                        █▀█▀█      
-                    Release date: 2 August 2023                 █▄█▄█      
-        Git hash: 9c9b087fa02be0cafdadaef6ec1c7926fe36e3d6       ███   ▄▄  
-                   Documentation: rad-tools.org                  ████ █  █ 
-                       Licence: MIT License                      ████    █ 
+                          Version: 0.8.4                        █▀█▀█      
+                   Documentation: rad-tools.org                 █▄█▄█      
+                  Release date: 20 September 2023                ███   ▄▄  
+        Git hash: 5b4dc9b04aecb7efebb9cd710c02e0ad7fb68e44       ████ █  █ 
+                        Licence: GNU GPLv3                       ████    █ 
                                                                  ▀▀▀▀▀▀▀▀  
 
+The same behaviour can be achieved within the console (you may need to use ``python3``):
+
+.. code-block:: 
+
+    python -m radtools
 
 One-line summary
 ----------------
@@ -398,24 +403,11 @@ License
 
     >>> from radtools import license
     >>> print(license()) # doctest: +SKIP
-    MIT License
 
-    Copyright (c) 2022-2023 Andrey Rybakov
+This code prints the full text of the GNU GPLv3 license.
 
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights
-    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the Software is
-    furnished to do so, subject to the following conditions:
+The same behaviour can be achieved within the console (you may need to use ``python3``):
 
-    The above copyright notice and this permission notice shall be included in all
-    copies or substantial portions of the Software.
+.. code-block:: 
 
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    SOFTWARE.
+    python -m radtools --license

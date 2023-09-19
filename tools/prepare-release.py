@@ -6,16 +6,33 @@ from calendar import month_name
 from datetime import datetime
 
 import git
-from termcolor import colored, cprint
+from termcolor import colored
 
 N = 60
+
+LICENSE_SHORT = f"""# RAD-tools - program for spin Hamiltonian and magnons.
+# Copyright (C) 2022-{datetime.now().year}  Andrey Rybakov
+# 
+# e-mail: anry@uv.es, web: adrybakov.com
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+"""
 
 
 class FATAL(Exception):
     pass
-
-
-ROOT_DIR = os.path.abspath(".")  # Root directory of the project
 
 
 def only_githash_in_init(repo: git.Repo):
@@ -96,7 +113,7 @@ def check_active_branch(repo: git.Repo):
 
 
 @envelope(message="Updating __init__.py")
-def update_init(repo: git.Repo, version):
+def update_init(repo: git.Repo, version, root_dir:str):
     """
     Update __init__.py file.
 
@@ -118,7 +135,7 @@ def update_init(repo: git.Repo, version):
     good_message = {False: "not updated", True: "updated"}
 
     # Read __init__.py
-    init_file_path = os.path.join(ROOT_DIR, "radtools", "__init__.py")
+    init_file_path = os.path.join(root_dir, "radtools", "__init__.py")
     init_file = open(init_file_path, "r")
     init_file_content = init_file.readlines()
     init_file.close()
@@ -156,7 +173,7 @@ def update_init(repo: git.Repo, version):
 
 
 @envelope(message="Checking release notes")
-def check_release_notes(version: str):
+def check_release_notes(version: str, root_dir:str):
     """
     Check if the release notes are up to date.
 
@@ -165,7 +182,7 @@ def check_release_notes(version: str):
     version : str
         Target version for the release.
     """
-    path = os.path.join(ROOT_DIR, "docs", "source", "release-notes")
+    path = os.path.join(root_dir, "docs", "source", "release-notes")
     # (major, minor, rest)
     major, minor, rest = tuple(map(int, version.split(".")[:3]))
 
@@ -301,8 +318,36 @@ def check_git_status(repo: git.Repo):
             )
         )
 
+@envelope(message="Adding license info to source code files")
+def apply_license(root_dir):    
 
-def main(version: str):
+    with open(os.path.join(root_dir, "LICENSE.txt"), "r") as f:
+        lines = f.readlines()
+    with open(os.path.join(root_dir, "radtools", "_license.py"), "w") as f:
+        f.writelines('LICENSE = """')
+        f.writelines(lines)
+        f.writelines('"""')
+
+    source_files = []
+    for dirpath, _, filenames in os.walk(os.path.join(root_dir, "radtools")):
+        for filename in filenames:
+            if filename.endswith(".py"):
+                source_files.append(os.path.join(dirpath, filename))
+                
+    for file in source_files:
+        with open(file, "r") as f:
+            lines = f.readlines()
+        i = 0
+        if len(lines) > 0:
+            while i < len(lines) and (lines[i].startswith("#") or lines[i].startswith("\n")):
+                i += 1
+            lines = lines[i:]
+
+        with open(file, "w") as f:
+            f.write(LICENSE_SHORT)
+            f.writelines(lines)
+
+def main(version: str, root_dir: str):
     if version == "None":
         sys.tracebacklimit = 0
         raise FATAL(
@@ -326,11 +371,13 @@ def main(version: str):
 
     check_active_branch(repo)
 
-    check_release_notes(version=version)
+    check_release_notes(version=version, root_dir=root_dir)
 
     check_git_status(repo)
 
-    update_init(repo, version=version)
+    apply_license(root_dir=root_dir)
+
+    update_init(repo, version=version, root_dir=root_dir)
 
     print(colored(f"{f'{version} ready to deploy':^{N}}", "green"))
     print(f"{'':=^{N}}")
@@ -345,6 +392,14 @@ if __name__ == "__main__":
         type=str,
         required=True,
         help="Version to release",
+    )
+    parser.add_argument(
+        "-rd",
+        "--root-dir",
+        metavar="PATH",
+        type=str,
+        required=True,
+        help="Path to the root directory of the project",
     )
     args = parser.parse_args()
     main(**vars(args))
