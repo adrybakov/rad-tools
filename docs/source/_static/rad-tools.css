@@ -1,11 +1,15 @@
 html[data-theme="light"] {
   --pst-color-primary: #506EC3;
-  --pst-color-inline-code: #008181;
+  --pst-color-inline-code: #198F88;
+  --pst-color-secondary: #008181;
+  --pst-color-inline-code-links: #198F88;
 }
 
 html[data-theme="dark"] {
   --pst-color-primary: #4A85BE;
-  --pst-color-inline-code: #C398E3;
+  --pst-color-inline-code: #7BC4AC;
+  --pst-color-secondary: #4AAA98;
+  --pst-color-inline-code-links: #7BC4AC;
 
 }
 
@@ -131,6 +135,7 @@ html[data-theme=dark] .sd-card .sd-card-footer {
   background-color: var(--pst-color-background);
 }
 
+/* Custom font for user guide footer */
 .logo-custom-text {
   font-family: "CustomLogoFont";
 }
@@ -143,7 +148,7 @@ html[data-theme=dark] .sd-card .sd-card-footer {
     url("https://rad-tools.org/en/stable/_static/CustomLogoFont.svg#filename") format("svg");
 }
 
-
+/* Colors for the DOS guide */
 .color1 {
   color: #E08B4E;
 }
