@@ -272,10 +272,10 @@ def manager(
         info = [
             main_separator,
             logo(date_time=True, line_length=80),
-            f"\nMagnon dispersion is computed based on the file:\n{input_filename}\n",
+            f"\nMagnon dispersion is computed based on the file:\n{os.path.abspath(input_filename)}\n",
         ]
         if template_file is not None:
-            info.append(f"With template file:\n{template_file}\n")
+            info.append(f"With template file:\n{os.path.abspath(template_file)}\n")
 
         info.append(main_separator)
         info.append(TXT_FLAGS["cell"] + "\n")
