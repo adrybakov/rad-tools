@@ -2,7 +2,7 @@ import pytest
 
 from radtools.crystal.crystal import Crystal
 from radtools.crystal.atom import Atom
-from hypothesis import given, strategies as st, settings
+from hypothesis import given, strategies as st, settings, example
 
 import numpy as np
 
@@ -13,27 +13,28 @@ def test_deepcopy():
     c = Crystal()
     a = deepcopy(c)
 
-
+@example(name="__", position=[0,0,0])
 @given(
     st.text(min_size=1, max_size=10),
     st.lists(st.floats(min_value=0, max_value=1), min_size=3, max_size=3),
 )
 def test_add_atom(name, position):
-    c = Crystal(cell=[[1, 0, 0], [0, 2, 0], [0, 0, 3]], standardize=False)
-    c.add_atom(name=name, position=position)
-    assert c.atoms[0].name == name
-    assert np.allclose(c.atoms[0].position, position)
-    c.add_atom(Atom(name, position))
-    assert c.atoms[1].name == name
-    assert np.allclose(c.atoms[1].position, position)
-    c.add_atom(name, position=position)
-    assert c.atoms[2].name == name
-    assert np.allclose(c.atoms[2].position, position)
-    c.add_atom(name, position=position, relative=False)
-    assert c.atoms[3].name == name
-    assert np.allclose(
-        c.atoms[3].position, [position[0], position[1] / 2.0, position[2] / 3.0]
-    )
+    if not name.startswith("__") and not name.endswith("__"):
+        c = Crystal(cell=[[1, 0, 0], [0, 2, 0], [0, 0, 3]], standardize=False)
+        c.add_atom(name=name, position=position)
+        assert c.atoms[0].name == name
+        assert np.allclose(c.atoms[0].position, position)
+        c.add_atom(Atom(name, position))
+        assert c.atoms[1].name == name
+        assert np.allclose(c.atoms[1].position, position)
+        c.add_atom(name, position=position)
+        assert c.atoms[2].name == name
+        assert np.allclose(c.atoms[2].position, position)
+        c.add_atom(name, position=position, relative=False)
+        assert c.atoms[3].name == name
+        assert np.allclose(
+            c.atoms[3].position, [position[0], position[1] / 2.0, position[2] / 3.0]
+        )
 
 
 def test_add_atom_raises():

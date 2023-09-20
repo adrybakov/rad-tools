@@ -573,7 +573,14 @@ def test_MCL_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, or
         # Check that chirality is the same
         assert np.linalg.det(cell) * old_det > 0
 
-
+# @example(r1=0.0,
+# r2=0.0,  
+# r3=1.0,
+# conv_a=1.0,
+# conv_b=0.5,
+# conv_c=0.0078125,
+# conv_alpha=1.0,  
+# order=2)
 @given(
     st.floats(min_value=0, max_value=2 * pi),
     st.floats(min_value=0, max_value=2 * pi),
@@ -595,6 +602,8 @@ def test_MCLC_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, o
             ),
             order,
         )
+        print(cell)
+        print(Cell.params(cell))
 
         conv_b, conv_c = sorted([conv_b, conv_c])
         if conv_alpha > 90.0:

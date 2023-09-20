@@ -9,6 +9,8 @@ BUILDDIR      = build
 VERSION="None"
 NAME="None"
 SCRIPT="all"
+# Assuming that the Makefile is located in the root directory of the project
+ROOT_DIR = $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
 # Put it first so that "make" without argument is like "make help".
 # help:
@@ -98,7 +100,7 @@ bravais-pictures:
 	@python3 tools/plot-bravais-lattices.py
 
 prepare-release:
-	@python3 -u tools/prepare-release.py -v $(VERSION)
+	@python3 -u tools/prepare-release.py -v $(VERSION) -rd $(ROOT_DIR)
 
 docs-pictures:
 	@python3 tools/plot-data-structure.py

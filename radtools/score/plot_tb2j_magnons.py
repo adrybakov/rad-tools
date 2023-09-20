@@ -1,3 +1,21 @@
+# RAD-tools - program for spin Hamiltonian and magnons.
+# Copyright (C) 2022-2023  Andrey Rybakov
+# 
+# e-mail: anry@uv.es, web: adrybakov.com
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 from argparse import ArgumentParser
 import os
 
@@ -272,10 +290,10 @@ def manager(
         info = [
             main_separator,
             logo(date_time=True, line_length=80),
-            f"\nMagnon dispersion is computed based on the file:\n{input_filename}\n",
+            f"\nMagnon dispersion is computed based on the file:\n{os.path.abspath(input_filename)}\n",
         ]
         if template_file is not None:
-            info.append(f"With template file:\n{template_file}\n")
+            info.append(f"With template file:\n{os.path.abspath(template_file)}\n")
 
         info.append(main_separator)
         info.append(TXT_FLAGS["cell"] + "\n")

@@ -26,9 +26,13 @@ body:
   - type: markdown
     attributes:
       value: |
-        Use command (version >= 0.8)
+        Use command (version >= 0.8.4)
+        ```bash
+        python3 -m radtools
+        ```
+        or (version >= 0.8 < 0.8.4)
         ```bash 
-        python3 -m radtools --info 
+        python3 -m radtools --info
         ``` 
         or (version < 0.8)
         ```bash

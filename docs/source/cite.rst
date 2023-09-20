@@ -31,4 +31,4 @@ the following command in the terminal (you may need to use ``python3``):
 
 .. code-block:: bash
 
-    python -m radtools --info
+    python -m radtools
