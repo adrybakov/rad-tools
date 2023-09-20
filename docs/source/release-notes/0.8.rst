@@ -80,3 +80,24 @@ Correct behaviour of :py:attr:`.SpinHamiltonian.notation` for single-ion like te
 -----
 
 Fix :issue:`6`.
+
+0.8.4
+-----
+
+New behaviour for the ``__main__`` of the module:
+
+.. code-block:: bash
+
+    python3 -m radtools
+
+instead of 
+
+.. code-block:: bash
+
+    python3 -m radtools --info
+
+New:
+
+.. code-block:: bash
+
+    python3 -m radtools --license
