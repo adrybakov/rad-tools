@@ -12,16 +12,37 @@ SCRIPT="all"
 # Assuming that the Makefile is located in the root directory of the project
 ROOT_DIR = $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
-# Put it first so that "make" without argument is like "make help".
-# help:
-# 	@$(SPHINXBUILD) -M help "docs/$(SOURCEDIR)" "docs/$(BUILDDIR)" $(SPHINXOPTS) $(O)
+help:
+	@echo "\x1b[31m"
+	@echo "Please specify what do you want to do!"
+	@echo "\x1b[0m"
+	@echo "Available options are:\n"
+	@echo "    help - show this message"
+	@echo "    html - build the html docs"
+	@echo "    clean-html - clean all files from docs and build html docs from scrutch"
+	@echo "    html-examples - update examples and build html docs"
+	@echo "    doctest - run doctests"
+	@echo "    clean - clean all files from docs and pip routines"
+	@echo "    install - install the package"
+	@echo "    test - execute unit tests"
+	@echo "    test-all - execute full testing suite"
+	@echo "    pip - publish the package to the PyPi index"
+	@echo "    bravais-pictures - update pictures of bravais lattices"
+	@echo "    prepare-release - prepare the package for release"
+	@echo "    docs-pictures - update pictures for the docs"
+	@echo "    new-script - create templates for the new script"
+	@echo "    examples - update examples for all scripts"
+	@echo "    generate-script-docs - generate docs for all scripts"
+	@echo
 
 # $(O) is meant as a shortcut for $(SPHINXOPTS).
 html: 
 	@$(SPHINXBUILD) -M html "docs/$(SOURCEDIR)" "docs/$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-html-examples: 
-	@make examples
+clean-html: clean install html
+	@echo "Done"
+
+html-examples: examples bravais-pictures
 	@$(SPHINXBUILD) -M html "docs/$(SOURCEDIR)" "docs/$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 doctest: 
@@ -71,30 +92,7 @@ pip: prepare-release
 	@python3 -m twine upload --repository pypi dist/* --verbose
 	@git tag -a "v$(VERSION)" -m "Version $(VERSION)"
 	@git push origin "v$(VERSION)"
-	
 
-
-help:
-	@echo "\x1b[31m"
-	@echo "Please specify what do you want to do!"
-	@echo "\x1b[0m"
-	@echo "Available options are:\n"
-	@echo "    help - show this message"
-	@echo "    html - build the html docs"
-	@echo "    html-examples - update examples and build html docs"
-	@echo "    doctest - run doctests"
-	@echo "    clean - clean all files from docs and pip routines"
-	@echo "    install - install the package"
-	@echo "    test - execute unit tests"
-	@echo "    test-all - execute full testing suite"
-	@echo "    pip - publish the package to the PyPi index"
-	@echo "    bravais-pictures - update pictures of bravais lattices"
-	@echo "    prepare-release - prepare the package for release"
-	@echo "    docs-pictures - update pictures for the docs"
-	@echo "    new-script - create templates for the new script"
-	@echo "    examples - update examples for all scripts"
-	@echo "    generate-script-docs - generate docs for all scripts"
-	@echo
 
 bravais-pictures:
 	@python3 tools/plot-bravais-lattices.py
