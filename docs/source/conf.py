@@ -1,5 +1,6 @@
 import sys
 from os.path import abspath
+from datetime import datetime
 
 from radtools import __version__, __release_date__
 
@@ -8,7 +9,7 @@ sys.path.insert(0, abspath(".."))
 
 # Project information
 project = "rad-tools"
-copyright = "2022-2023, Andrey Rybakov"
+copyright = f"2022-{datetime.now().year}, Andrey Rybakov"
 author = "Andrey Rybakov"
 
 # Project version
