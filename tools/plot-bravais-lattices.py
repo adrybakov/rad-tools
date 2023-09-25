@@ -229,24 +229,27 @@ def plot():
                 "w",
             )
             py_file.write(
-                f'import radtools as rad\n\nl = rad.lattice_example("{name}")\n'
+                f'import radtools as rad\n\nl = rad.lattice_example("{name}")\nbackend = rad.MatplotlibBackend()\n'
             )
+            backend = rad.MatplotlibBackend()
             for data in wtp:
                 if len(wtp) == 1:
-                    l.plot(data)
-                    py_file.write(f'l.plot("{data}")\n')
+                    backend.plot(l, kind=data)
+                    py_file.write(f'backend.plot(l, kind="{data}")\n')
                 else:
                     if data == "conventional":
-                        l.plot(data, colour="black", label=data)
+                        backend.plot(l, kind=data, color="black", label=data)
                         py_file.write(
-                            f'l.plot("{data}", label="{data}", colour="black")\n'
+                            f'backend.plot(l, kind="{data}", label="{data}", color="black")\n'
                         )
                     else:
-                        l.plot(data, label=data)
-                        py_file.write(f'l.plot("{data}", label="{data}")\n')
-                    py_file.write("l.legend()\n")
-                    l.legend()
-            l.savefig(
+                        backend.plot(l, kind=data, label=data)
+                        py_file.write(
+                            f'backend.plot(l, kind="{data}", label="{data}")\n'
+                        )
+                    py_file.write("backend.legend()\n")
+                    backend.legend()
+            backend.save(
                 os.path.join(
                     OUTPUT_PATH, output_subname, f"{name.lower()}_{names[name][j]}.png"
                 ),
@@ -258,16 +261,15 @@ def plot():
             plt.close()
             py_file.write(
                 "# Save an image:\n"
-                + f'l.savefig("{name.lower()}_{names[name][j]}.png", '
+                + f'backend.save("{name.lower()}_{names[name][j]}.png", '
                 + f"elev={elev[name][j]}, azim={azim[name][j]}, "
                 + f'dpi=300, bbox_inches="tight")\n'
             )
             py_file.write(
                 "# Interactive plot:\n"
-                + f"l.show(elev={elev[name][j]}, azim={azim[name][j]})\n"
+                + f"backend.show(elev={elev[name][j]}, azim={azim[name][j]})\n"
             )
-            l.ax = None
-            l.fig = None
+            del backend
             py_file.close()
         print(f"{name} done")
 

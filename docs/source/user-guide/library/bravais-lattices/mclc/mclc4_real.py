@@ -1,11 +1,12 @@
 import radtools as rad
 
 l = rad.lattice_example("MCLC4")
-l.plot("primitive", label="primitive")
-l.legend()
-l.plot("conventional", label="conventional", colour="black")
-l.legend()
+backend = rad.MatplotlibBackend()
+backend.plot(l, kind="primitive", label="primitive")
+backend.legend()
+backend.plot(l, kind="conventional", label="conventional", color="black")
+backend.legend()
 # Save an image:
-l.savefig("mclc4_real.png", elev=25, azim=70, dpi=300, bbox_inches="tight")
+backend.save("mclc4_real.png", elev=25, azim=70, dpi=300, bbox_inches="tight")
 # Interactive plot:
-l.show(elev=25, azim=70)
+backend.show(elev=25, azim=70)

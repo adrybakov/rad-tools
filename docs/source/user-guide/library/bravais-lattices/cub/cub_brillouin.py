@@ -1,8 +1,9 @@
 import radtools as rad
 
 l = rad.lattice_example("CUB")
-l.plot("brillouin-kpath")
+backend = rad.MatplotlibBackend()
+backend.plot(l, kind="brillouin-kpath")
 # Save an image:
-l.savefig("cub_brillouin.png", elev=28, azim=23, dpi=300, bbox_inches="tight")
+backend.save("cub_brillouin.png", elev=28, azim=23, dpi=300, bbox_inches="tight")
 # Interactive plot:
-l.show(elev=28, azim=23)
+backend.show(elev=28, azim=23)

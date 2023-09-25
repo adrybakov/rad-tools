@@ -1,11 +1,12 @@
 import radtools as rad
 
 l = rad.lattice_example("ORCF3")
-l.plot("primitive", label="primitive")
-l.legend()
-l.plot("conventional", label="conventional", colour="black")
-l.legend()
+backend = rad.MatplotlibBackend()
+backend.plot(l, kind="primitive", label="primitive")
+backend.legend()
+backend.plot(l, kind="conventional", label="conventional", color="black")
+backend.legend()
 # Save an image:
-l.savefig("orcf3_real.png", elev=27, azim=36, dpi=300, bbox_inches="tight")
+backend.save("orcf3_real.png", elev=27, azim=36, dpi=300, bbox_inches="tight")
 # Interactive plot:
-l.show(elev=27, azim=36)
+backend.show(elev=27, azim=36)
