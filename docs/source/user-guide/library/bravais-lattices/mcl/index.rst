@@ -117,24 +117,24 @@ Brillouin zone and default kpath
 .. literalinclude:: mcl_brillouin.py
     :language: py
 
-.. figure:: mcl_brillouin.png 
-    :target: ../../../../../_images/mcl_brillouin.png 
+.. raw:: html
+    :file: mcl_brillouin.html
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: mcl_real.py
     :language: py
 
-.. figure:: mcl_real.png 
-    :target: ../../../../../_images/mcl_real.png 
+.. raw:: html
+    :file: mcl_real.html
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: mcl_wigner-seitz.py
     :language: py
 
-.. figure:: mcl_wigner-seitz.png 
-    :target: ../../../../../_images/mcl_wigner-seitz.png 
+.. raw:: html
+    :file: mcl_wigner-seitz.html
 
 Edge cases
 ==========

@@ -225,6 +225,10 @@ custom_links = {
     "RAD-repo": ("RAD-tools repository", "https://github.com/adrybakov/rad-tools"),
     "numpydoc": ("numpydoc", "https://numpydoc.readthedocs.io/en/latest/format.html"),
     "plotly": ("Plotly", "https://plotly.com/python/"),
+    "plotly-update-layout": (
+        ".update_layout()",
+        "https://plotly.com/python-api-reference/generated/plotly.graph_objects.Figure.html?highlight=update_layout#plotly.graph_objects.Figure.update_layout",
+    ),
 }
 
 

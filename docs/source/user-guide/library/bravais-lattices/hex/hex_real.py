@@ -1,9 +1,9 @@
 import radtools as rad
 
 l = rad.lattice_example("HEX")
-backend = rad.MatplotlibBackend()
+backend = rad.PlotlyBackend()
 backend.plot(l, kind="primitive")
 # Save an image:
-backend.save("hex_real.png", elev=35, azim=23, dpi=300, bbox_inches="tight")
+backend.save("hex_real.png")
 # Interactive plot:
-backend.show(elev=35, azim=23)
+backend.show()

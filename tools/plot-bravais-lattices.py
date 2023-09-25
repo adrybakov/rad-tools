@@ -229,9 +229,9 @@ def plot():
                 "w",
             )
             py_file.write(
-                f'import radtools as rad\n\nl = rad.lattice_example("{name}")\nbackend = rad.MatplotlibBackend()\n'
+                f'import radtools as rad\n\nl = rad.lattice_example("{name}")\nbackend = rad.PlotlyBackend()\n'
             )
-            backend = rad.MatplotlibBackend()
+            backend = rad.PlotlyBackend()
             for data in wtp:
                 if len(wtp) == 1:
                     backend.plot(l, kind=data)
@@ -247,28 +247,20 @@ def plot():
                         py_file.write(
                             f'backend.plot(l, kind="{data}", label="{data}")\n'
                         )
-                    py_file.write("backend.legend()\n")
-                    backend.legend()
             backend.save(
                 os.path.join(
-                    OUTPUT_PATH, output_subname, f"{name.lower()}_{names[name][j]}.png"
+                    OUTPUT_PATH, output_subname, f"{name.lower()}_{names[name][j]}.html"
                 ),
-                elev=elev[name][j],
-                azim=azim[name][j],
-                dpi=300,
-                bbox_inches="tight",
+                full_html=False,
+                include_plotlyjs="cdn",
+                include_mathjax="cdn",
             )
             plt.close()
             py_file.write(
                 "# Save an image:\n"
-                + f'backend.save("{name.lower()}_{names[name][j]}.png", '
-                + f"elev={elev[name][j]}, azim={azim[name][j]}, "
-                + f'dpi=300, bbox_inches="tight")\n'
+                + f'backend.save("{name.lower()}_{names[name][j]}.png")\n'
             )
-            py_file.write(
-                "# Interactive plot:\n"
-                + f"backend.show(elev={elev[name][j]}, azim={azim[name][j]})\n"
-            )
+            py_file.write("# Interactive plot:\n" + f"backend.show()\n")
             del backend
             py_file.close()
         print(f"{name} done")

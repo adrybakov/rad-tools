@@ -69,24 +69,24 @@ Brillouin zone and default kpath
 .. literalinclude:: tet_brillouin.py
     :language: py
 
-.. figure:: tet_brillouin.png 
-    :target: ../../../../../_images/tet_brillouin.png 
+.. raw:: html
+    :file: tet_brillouin.html
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: tet_real.py
     :language: py
 
-.. figure:: tet_real.png 
-    :target: ../../../../../_images/tet_real.png 
+.. raw:: html
+    :file: tet_real.html
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: tet_wigner-seitz.py
     :language: py
 
-.. figure:: tet_wigner-seitz.png 
-    :target: ../../../../../_images/tet_wigner-seitz.png 
+.. raw:: html
+    :file: tet_wigner-seitz.html
 
 
 Edge cases

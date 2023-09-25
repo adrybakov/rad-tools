@@ -112,24 +112,24 @@ Brillouin zone and default kpath
 .. literalinclude:: rhl1_brillouin.py
     :language: py
 
-.. figure:: rhl1_brillouin.png 
-    :target: ../../../../../_images/rhl1_brillouin.png 
+.. raw:: html
+    :file: rhl1_brillouin.html 
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: rhl1_real.py
     :language: py
 
-.. figure:: rhl1_real.png 
-    :target: ../../../../../_images/rhl1_real.png 
+.. raw:: html
+    :file: rhl1_real.html
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: rhl1_wigner-seitz.py
     :language: py
 
-.. figure:: rhl1_wigner-seitz.png 
-    :target: ../../../../../_images/rhl1_wigner-seitz.png 
+.. raw:: html
+    :file: rhl1_wigner-seitz.html
 
 RHL\ :sub:`2`
 -------------
@@ -139,24 +139,24 @@ Brillouin zone and default kpath
 .. literalinclude:: rhl2_brillouin.py
     :language: py
 
-.. figure:: rhl2_brillouin.png 
-    :target: ../../../../../_images/rhl2_brillouin.png 
+.. raw:: html
+    :file: rhl2_brillouin.html
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: rhl2_real.py
     :language: py
 
-.. figure:: rhl2_real.png 
-    :target: ../../../../../_images/rhl2_real.png 
+.. raw:: html
+    :file: rhl2_real.html
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: rhl2_wigner-seitz.py
     :language: py
 
-.. figure:: rhl2_wigner-seitz.png 
-    :target: ../../../../../_images/rhl2_wigner-seitz.png 
+.. raw:: html
+    :file: rhl2_wigner-seitz.html
 
 Edge cases
 ==========

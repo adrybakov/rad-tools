@@ -130,24 +130,24 @@ Brillouin zone and default kpath
 .. literalinclude:: bct1_brillouin.py
     :language: py
 
-.. figure:: bct1_brillouin.png 
-    :target: ../../../../../_images/bct1_brillouin.png 
+.. raw:: html
+    :file: bct1_brillouin.html
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: bct1_real.py
     :language: py
 
-.. figure:: bct1_real.png 
-    :target: ../../../../../_images/bct1_real.png 
+.. raw:: html
+    :file: bct1_real.html
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: bct1_wigner-seitz.py
     :language: py
 
-.. figure:: bct1_wigner-seitz.png 
-    :target: ../../../../../_images/bct1_wigner-seitz.png 
+.. raw:: html
+    :file: bct1_wigner-seitz.html
 
 BCT\ :sub:`2`
 -------------
@@ -158,24 +158,24 @@ Brillouin zone and default kpath
 .. literalinclude:: bct2_brillouin.py
     :language: py
 
-.. figure:: bct2_brillouin.png 
-    :target: ../../../../../_images/bct2_brillouin.png 
+.. raw:: html
+    :file: bct2_brillouin.html
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: bct2_real.py
     :language: py
 
-.. figure:: bct2_real.png 
-    :target: ../../../../../_images/bct2_real.png 
+.. raw:: html
+    :file: bct2_real.html
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: bct2_wigner-seitz.py
     :language: py
 
-.. figure:: bct2_wigner-seitz.png 
-    :target: ../../../../../_images/bct2_wigner-seitz.png 
+.. raw:: html
+    :file: bct2_wigner-seitz.html
 
 Edge cases
 ==========
