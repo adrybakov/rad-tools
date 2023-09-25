@@ -1,18 +1,18 @@
 # RAD-tools - program for spin Hamiltonian and magnons.
 # Copyright (C) 2022-2023  Andrey Rybakov
-# 
+#
 # e-mail: anry@uv.es, web: adrybakov.com
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -24,6 +24,8 @@ import numpy as np
 from radtools.geometry import volume
 from radtools.crystal.constants import HS_PLOT_NAMES
 from typing import Iterable
+from random import choices
+from string import ascii_lowercase
 
 try:
     import plotly.graph_objects as go
@@ -477,7 +479,7 @@ class MatplotlibBackend(AbstractBackend):
                         cell[i][0] * vector_pad[i],
                         cell[i][1] * vector_pad[i],
                         cell[i][2] * vector_pad[i],
-                        f"${vector_label}_{i}$",
+                        f"${vector_label}_{i+1}$",
                         fontsize=20,
                         color=color,
                         ha="center",
@@ -605,7 +607,7 @@ class MatplotlibBackend(AbstractBackend):
                         vs[i][0] * vector_pad[i],
                         vs[i][1] * vector_pad[i],
                         vs[i][2] * vector_pad[i],
-                        f"${vector_label}_{i}$",
+                        f"${vector_label}_{i+1}$",
                         fontsize=20,
                         color=color,
                         ha="center",
@@ -835,14 +837,7 @@ class PlotlyBackend(AbstractBackend):
         if kwargs_write_html is None:
             kwargs_write_html = {}
 
-        if "width" not in kwargs_update_layout:
-            kwargs_update_layout["width"] = 800
-        if "height" not in kwargs_update_layout:
-            kwargs_update_layout["height"] = 800
-        if "yaxis_scaleanchor" not in kwargs_update_layout:
-            kwargs_update_layout["yaxis_scaleanchor"] = "x"
-        if "legend" not in kwargs_update_layout:
-            kwargs_update_layout["legend"] = {"itemsizing": "constant"}
+        self.fig.update_scenes(aspectmode="data")
 
         self.fig.update_layout(**kwargs_update_layout)
         self.fig.write_html(output_name, **kwargs_write_html)
@@ -903,22 +898,11 @@ class PlotlyBackend(AbstractBackend):
         if normalize:
             cell /= abs(volume(cell) ** (1 / 3.0))
 
-        if label is not None:
-            self.fig.add_traces(
-                data=go.Scatter3d(
-                    mode="markers",
-                    x=[0],
-                    y=[0],
-                    z=[0],
-                    marker=dict(size=0, color=color),
-                    name=label,
-                    showlegend=True,
-                )
-            )
+        legendgroup = "".join(choices(ascii_lowercase, k=10))
 
         if vectors:
+            labels = [f"{vector_label}{i+1}" for i in range(3)]
             for i in range(3):
-                labels = [f"{vector_label}{i+1}" for i in range(3)]
                 x = [0, cell[i][0]]
                 y = [0, cell[i][1]]
                 z = [0, cell[i][2]]
@@ -933,39 +917,42 @@ class PlotlyBackend(AbstractBackend):
                             "hoverinfo": "none",
                             "line": {"color": color, "width": 3},
                             "showlegend": False,
+                            "legendgroup": legendgroup,
                         },
                         {
                             "type": "cone",
                             "x": [x[1]],
                             "y": [y[1]],
                             "z": [z[1]],
-                            "u": [0.3 * (x[1] - x[0])],
-                            "v": [0.3 * (y[1] - y[0])],
-                            "w": [0.3 * (z[1] - z[0])],
+                            "u": [0.2 * (x[1] - x[0])],
+                            "v": [0.2 * (y[1] - y[0])],
+                            "w": [0.2 * (z[1] - z[0])],
                             "anchor": "tip",
                             "hoverinfo": "none",
                             "colorscale": [[0, color], [1, color]],
                             "showscale": False,
                             "showlegend": False,
+                            "legendgroup": legendgroup,
                         },
                     ]
                 )
                 self.fig.add_traces(
                     data=go.Scatter3d(
                         mode="text",
-                        x=[x[1]],
-                        y=[y[1]],
-                        z=[z[1]],
-                        marker=dict(size=6, color=color),
+                        x=[1.2 * x[1]],
+                        y=[1.2 * y[1]],
+                        z=[1.2 * z[1]],
+                        marker=dict(size=0, color=color),
                         text=labels[i],
                         hoverinfo="none",
                         textposition="top center",
                         textfont=dict(size=12),
                         showlegend=False,
+                        legendgroup=legendgroup,
                     )
                 )
 
-        def plot_line(line, shift):
+        def plot_line(line, shift, showlegend=False):
             self.fig.add_traces(
                 data=go.Scatter3d(
                     mode="lines",
@@ -974,14 +961,19 @@ class PlotlyBackend(AbstractBackend):
                     z=[shift[2], shift[2] + line[2]],
                     line=dict(color=color),
                     hoverinfo="none",
-                    showlegend=False,
+                    legendgroup=legendgroup,
+                    name=label,
+                    showlegend=showlegend,
                 ),
             )
 
+        showlegend = label is not None
         for i in range(0, 3):
             j = (i + 1) % 3
             k = (i + 2) % 3
-            plot_line(cell[i], np.zeros(3))
+            plot_line(cell[i], np.zeros(3), showlegend=showlegend)
+            if showlegend:
+                showlegend = False
             plot_line(cell[i], cell[j])
             plot_line(cell[i], cell[k])
             plot_line(cell[i], cell[j] + cell[k])
@@ -1032,22 +1024,11 @@ class PlotlyBackend(AbstractBackend):
 
         vs = [v1, v2, v3]
 
-        if label is not None:
-            self.fig.add_traces(
-                data=go.Scatter3d(
-                    mode="markers",
-                    x=[0],
-                    y=[0],
-                    z=[0],
-                    marker=dict(size=0, color=color),
-                    name=label,
-                    showlegend=True,
-                )
-            )
+        legendgroup = "".join(choices(ascii_lowercase, k=10))
 
         if vectors:
+            labels = [f"{vector_label}{i+1}" for i in range(3)]
             for i in range(3):
-                labels = [f"{vector_label}{i+1}" for i in range(3)]
                 x = [0, vs[i][0]]
                 y = [0, vs[i][1]]
                 z = [0, vs[i][2]]
@@ -1062,39 +1043,43 @@ class PlotlyBackend(AbstractBackend):
                             "hoverinfo": "none",
                             "line": {"color": color, "width": 3},
                             "showlegend": False,
+                            "legendgroup": legendgroup,
                         },
                         {
                             "type": "cone",
                             "x": [x[1]],
                             "y": [y[1]],
                             "z": [z[1]],
-                            "u": [0.3 * (x[1] - x[0])],
-                            "v": [0.3 * (y[1] - y[0])],
-                            "w": [0.3 * (z[1] - z[0])],
+                            "u": [0.2 * (x[1] - x[0])],
+                            "v": [0.2 * (y[1] - y[0])],
+                            "w": [0.2 * (z[1] - z[0])],
                             "anchor": "tip",
                             "hoverinfo": "none",
                             "colorscale": [[0, color], [1, color]],
                             "showscale": False,
                             "showlegend": False,
+                            "legendgroup": legendgroup,
                         },
                     ]
                 )
                 self.fig.add_traces(
                     data=go.Scatter3d(
                         mode="text",
-                        x=[x[1]],
-                        y=[y[1]],
-                        z=[z[1]],
-                        marker=dict(size=6, color=color),
+                        x=[1.2 * x[1]],
+                        y=[1.2 * y[1]],
+                        z=[1.2 * z[1]],
+                        marker=dict(size=0, color=color),
                         text=labels[i],
                         hoverinfo="none",
                         textposition="top center",
                         textfont=dict(size=12),
                         showlegend=False,
+                        legendgroup=legendgroup,
                     )
                 )
 
         edges, _ = lattice.voronoi_cell(reciprocal=reciprocal, normalize=normalize)
+        showlegend = label is not None
         for p1, p2 in edges:
             xyz = np.array([p1, p2]).T
             self.fig.add_traces(
@@ -1105,11 +1090,17 @@ class PlotlyBackend(AbstractBackend):
                     z=xyz[2],
                     line=dict(color=color),
                     hoverinfo="none",
-                    showlegend=False,
+                    showlegend=showlegend,
+                    legendgroup=legendgroup,
+                    name=label,
                 ),
             )
+            if showlegend:
+                showlegend = False
 
-    def plot_kpath(self, lattice, color="#000000", label=None, normalize=False):
+    def plot_kpath(
+        self, lattice, color="#000000", label=None, normalize=False, **kwargs
+    ):
         r"""
         Plot k path in the reciprocal space.
 

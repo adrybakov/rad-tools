@@ -602,8 +602,7 @@ def test_MCLC_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, o
             ),
             order,
         )
-        print(cell)
-        print(Cell.params(cell))
+        
 
         conv_b, conv_c = sorted([conv_b, conv_c])
         if conv_alpha > 90.0:
