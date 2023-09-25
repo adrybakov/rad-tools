@@ -61,21 +61,22 @@ Brillouin zone and default kpath
 .. literalinclude:: bcc_brillouin.py
     :language: py
 
-.. figure:: bcc_brillouin.png 
-    :target: ../../../../../_images/bcc_brillouin.png
+.. raw:: html
+    :file: bcc_brillouin.html
+    
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: bcc_real.py
     :language: py
 
-.. figure:: bcc_real.png 
-    :target: ../../../../../_images/bcc_real.png 
+.. raw:: html
+    :file: bcc_real.html
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: bcc_wigner-seitz.py
     :language: py
 
-.. figure:: bcc_wigner-seitz.png 
-    :target: ../../../../../_images/bcc_wigner-seitz.png 
+.. raw:: html
+    :file: bcc_wigner-seitz.html

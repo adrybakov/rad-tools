@@ -208,24 +208,24 @@ Brillouin zone and default kpath
 .. literalinclude:: orcf1_brillouin.py
     :language: py
 
-.. figure:: orcf1_brillouin.png 
-    :target: ../../../../../_images/orcf1_brillouin.png 
+.. raw:: html
+    :file: orcf1_brillouin.html
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: orcf1_real.py
     :language: py
 
-.. figure:: orcf1_real.png 
-    :target: ../../../../../_images/orcf1_real.png 
+.. raw:: html
+    :file: orcf1_real.html
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: orcf1_wigner-seitz.py
     :language: py
 
-.. figure:: orcf1_wigner-seitz.png 
-    :target: ../../../../../_images/orcf1_wigner-seitz.png 
+.. raw:: html
+    :file: orcf1_wigner-seitz.html
 
 ORCF\ :sub:`2`
 --------------
@@ -235,24 +235,24 @@ Brillouin zone and default kpath
 .. literalinclude:: orcf2_brillouin.py
     :language: py
 
-.. figure:: orcf2_brillouin.png 
-    :target: ../../../../../_images/orcf2_brillouin.png 
+.. raw:: html
+    :file: orcf2_brillouin.html
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: orcf2_real.py
     :language: py
 
-.. figure:: orcf2_real.png 
-    :target: ../../../../../_images/orcf2_real.png 
+.. raw:: html
+    :file: orcf2_real.html
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: orcf2_wigner-seitz.py
     :language: py
 
-.. figure:: orcf2_wigner-seitz.png 
-    :target: ../../../../../_images/orcf2_wigner-seitz.png 
+.. raw:: html
+    :file: orcf2_wigner-seitz.html
 
 ORCF\ :sub:`3`
 --------------
@@ -262,24 +262,24 @@ Brillouin zone and default kpath
 .. literalinclude:: orcf3_brillouin.py
     :language: py
 
-.. figure:: orcf3_brillouin.png 
-    :target: ../../../../../_images/orcf3_brillouin.png 
+.. raw:: html
+    :file: orcf3_brillouin.html
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: orcf3_real.py
     :language: py
 
-.. figure:: orcf3_real.png 
-    :target: ../../../../../_images/orcf3_real.png 
+.. raw:: html
+    :file: orcf3_real.html
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: orcf3_wigner-seitz.py
     :language: py
 
-.. figure:: orcf3_wigner-seitz.png 
-    :target: ../../../../../_images/orcf3_wigner-seitz.png 
+.. raw:: html
+    :file: orcf3_wigner-seitz.html
 
 Edge cases
 ==========

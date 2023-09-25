@@ -69,21 +69,21 @@ Brillouin zone and default kpath
 .. literalinclude:: hex_brillouin.py
     :language: py
 
-.. figure:: hex_brillouin.png 
-    :target: ../../../../../_images/hex_brillouin.png 
+.. raw:: html
+    :file: hex_brillouin.html
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: hex_real.py
     :language: py
 
-.. figure:: hex_real.png 
-    :target: ../../../../../_images/hex_real.png 
+.. raw:: html
+    :file: hex_real.html
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: hex_wigner-seitz.py
     :language: py
 
-.. figure:: hex_wigner-seitz.png 
-    :target: ../../../../../_images/hex_wigner-seitz.png 
+.. raw:: html
+    :file: hex_wigner-seitz.html

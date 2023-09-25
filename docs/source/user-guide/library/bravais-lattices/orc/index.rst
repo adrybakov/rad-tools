@@ -90,24 +90,24 @@ Brillouin zone and default kpath
 .. literalinclude:: orc_brillouin.py
     :language: py
 
-.. figure:: orc_brillouin.png 
-    :target: ../../../../../_images/orc_brillouin.png 
+.. raw:: html
+    :file: orc_brillouin.html
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: orc_real.py
     :language: py
 
-.. figure:: orc_real.png 
-    :target: ../../../../../_images/orc_real.png 
+.. raw:: html
+    :file: orc_real.html 
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: orc_wigner-seitz.py
     :language: py
 
-.. figure:: orc_wigner-seitz.png 
-    :target: ../../../../../_images/orc_wigner-seitz.png 
+.. raw:: html
+    :file: orc_wigner-seitz.html
 
 Edge cases
 ==========

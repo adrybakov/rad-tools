@@ -21,6 +21,7 @@ Classes
     cell
 
 .. _api_crystal-plotting:
+
 Plotting
 ========
 

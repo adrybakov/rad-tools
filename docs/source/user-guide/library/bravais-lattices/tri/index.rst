@@ -251,24 +251,24 @@ Brillouin zone and default kpath
 .. literalinclude:: tri1a_brillouin.py
     :language: py
 
-.. figure:: tri1a_brillouin.png 
-    :target: ../../../../../_images/tri1a_brillouin.png 
+.. raw:: html
+    :file: tri1a_brillouin.html
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: tri1a_real.py
     :language: py
 
-.. figure:: tri1a_real.png 
-    :target: ../../../../../_images/tri1a_real.png 
+.. raw:: html
+    :file: tri1a_real.html
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: tri1a_wigner-seitz.py
     :language: py
 
-.. figure:: tri1a_wigner-seitz.png 
-    :target: ../../../../../_images/tri1a_wigner-seitz.png 
+.. raw:: html
+    :file: tri1a_wigner-seitz.html
 
 TRI\ :sub:`2a`
 --------------
@@ -278,24 +278,24 @@ Brillouin zone and default kpath
 .. literalinclude:: tri2a_brillouin.py
     :language: py
 
-.. figure:: tri2a_brillouin.png 
-    :target: ../../../../../_images/tri2a_brillouin.png 
+.. raw:: html
+    :file: tri2a_brillouin.html
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: tri2a_real.py
     :language: py
 
-.. figure:: tri2a_real.png 
-    :target: ../../../../../_images/tri2a_real.png 
+.. raw:: html
+    :file: tri2a_real.html
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: tri2a_wigner-seitz.py
     :language: py
 
-.. figure:: tri2a_wigner-seitz.png 
-    :target: ../../../../../_images/tri2a_wigner-seitz.png 
+.. raw:: html
+    :file: tri2a_wigner-seitz.html
 
 TRI\ :sub:`1b`
 --------------
@@ -305,24 +305,24 @@ Brillouin zone and default kpath
 .. literalinclude:: tri1b_brillouin.py
     :language: py
 
-.. figure:: tri1b_brillouin.png 
-    :target: ../../../../../_images/tri1b_brillouin.png 
+.. raw:: html
+    :file: tri1b_brillouin.html
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: tri1b_real.py
     :language: py
 
-.. figure:: tri1b_real.png 
-    :target: ../../../../../_images/tri1b_real.png 
+.. raw:: html
+    :file: tri1b_real.html
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: tri1b_wigner-seitz.py
     :language: py
 
-.. figure:: tri1b_wigner-seitz.png 
-    :target: ../../../../../_images/tri1b_wigner-seitz.png 
+.. raw:: html
+    :file: tri1b_wigner-seitz.html
 
 TRI\ :sub:`2b`
 --------------
@@ -332,21 +332,21 @@ Brillouin zone and default kpath
 .. literalinclude:: tri2b_brillouin.py
     :language: py
 
-.. figure:: tri2b_brillouin.png 
-    :target: ../../../../../_images/tri2b_brillouin.png 
+.. raw:: html
+    :file: tri2b_brillouin.html
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: tri2b_real.py
     :language: py
 
-.. figure:: tri2b_real.png 
-    :target: ../../../../../_images/tri2b_real.png 
+.. raw:: html
+    :file: tri2b_real.html
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: tri2b_wigner-seitz.py
     :language: py
 
-.. figure:: tri2b_wigner-seitz.png 
-    :target: ../../../../../_images/tri2b_wigner-seitz.png 
+.. raw:: html
+    :file: tri2b_wigner-seitz.html

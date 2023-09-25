@@ -1,9 +1,9 @@
 import radtools as rad
 
 l = rad.lattice_example("TET")
-backend = rad.MatplotlibBackend()
+backend = rad.PlotlyBackend()
 backend.plot(l, kind="primitive")
 # Save an image:
-backend.save("tet_real.png", elev=30, azim=30, dpi=300, bbox_inches="tight")
+backend.save("tet_real.png")
 # Interactive plot:
-backend.show(elev=30, azim=30)
+backend.show()

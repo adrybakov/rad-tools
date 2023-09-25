@@ -1,9 +1,9 @@
 import radtools as rad
 
 l = rad.lattice_example("CUB")
-backend = rad.MatplotlibBackend()
+backend = rad.PlotlyBackend()
 backend.plot(l, kind="primitive")
 # Save an image:
-backend.save("cub_real.png", elev=28, azim=23, dpi=300, bbox_inches="tight")
+backend.save("cub_real.png")
 # Interactive plot:
-backend.show(elev=28, azim=23)
+backend.show()

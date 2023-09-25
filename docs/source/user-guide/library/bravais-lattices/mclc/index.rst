@@ -368,24 +368,24 @@ Brillouin zone and default kpath
 .. literalinclude:: mclc1_brillouin.py
     :language: py
 
-.. figure:: mclc1_brillouin.png 
-    :target: ../../../../../_images/mclc1_brillouin.png 
+.. raw:: html
+    :file: mclc1_brillouin.html
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc1_real.py
     :language: py
 
-.. figure:: mclc1_real.png 
-    :target: ../../../../../_images/mclc1_real.png 
+.. raw:: html
+    :file: mclc1_real.html
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc1_wigner-seitz.py
     :language: py
 
-.. figure:: mclc1_wigner-seitz.png 
-    :target: ../../../../../_images/mclc1_wigner-seitz.png 
+.. raw:: html
+    :file: mclc1_wigner-seitz.html
 
 MCLC\ :sub:`2`
 --------------
@@ -395,24 +395,24 @@ Brillouin zone and default kpath
 .. literalinclude:: mclc2_brillouin.py
     :language: py
 
-.. figure:: mclc2_brillouin.png 
-    :target: ../../../../../_images/mclc2_brillouin.png 
+.. raw:: html
+    :file: mclc2_brillouin.html
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc2_real.py
     :language: py
 
-.. figure:: mclc2_real.png 
-    :target: ../../../../../_images/mclc2_real.png 
+.. raw:: html
+    :file: mclc2_real.html
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc2_wigner-seitz.py
     :language: py
 
-.. figure:: mclc2_wigner-seitz.png 
-    :target: ../../../../../_images/mclc2_wigner-seitz.png 
+.. raw:: html
+    :file: mclc2_wigner-seitz.html
 
 MCLC\ :sub:`3`
 --------------
@@ -422,24 +422,24 @@ Brillouin zone and default kpath
 .. literalinclude:: mclc3_brillouin.py
     :language: py
 
-.. figure:: mclc3_brillouin.png 
-    :target: ../../../../../_images/mclc3_brillouin.png 
+.. raw:: html
+    :file: mclc3_brillouin.html
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc3_real.py
     :language: py
 
-.. figure:: mclc3_real.png 
-    :target: ../../../../../_images/mclc3_real.png 
+.. raw:: html
+    :file: mclc3_real.html
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc3_wigner-seitz.py
     :language: py
 
-.. figure:: mclc3_wigner-seitz.png 
-    :target: ../../../../../_images/mclc3_wigner-seitz.png 
+.. raw:: html
+    :file: mclc3_wigner-seitz.html
 
 MCLC\ :sub:`4`
 --------------
@@ -449,24 +449,24 @@ Brillouin zone and default kpath
 .. literalinclude:: mclc4_brillouin.py
     :language: py
 
-.. figure:: mclc4_brillouin.png 
-    :target: ../../../../../_images/mclc4_brillouin.png 
+.. raw:: html
+    :file: mclc4_brillouin.html 
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc4_real.py
     :language: py
 
-.. figure:: mclc4_real.png 
-    :target: ../../../../../_images/mclc4_real.png 
+.. raw:: html
+    :file: mclc4_real.html
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc4_wigner-seitz.py
     :language: py
 
-.. figure:: mclc4_wigner-seitz.png 
-    :target: ../../../../../_images/mclc4_wigner-seitz.png 
+.. raw:: html
+    :file: mclc4_wigner-seitz.html
 
 MCLC\ :sub:`5`
 --------------
@@ -476,21 +476,21 @@ Brillouin zone and default kpath
 .. literalinclude:: mclc5_brillouin.py
     :language: py
 
-.. figure:: mclc5_brillouin.png 
-    :target: ../../../../../_images/mclc5_brillouin.png 
+.. raw:: html
+    :file: mclc5_brillouin.html
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc5_real.py
     :language: py
 
-.. figure:: mclc5_real.png 
-    :target: ../../../../../_images/mclc5_real.png 
+.. raw:: html
+    :file: mclc5_real.html
 
 Wigner-Seitz cell
 ^^^^^^^^^^^^^^^^^
 .. literalinclude:: mclc5_wigner-seitz.py
     :language: py
 
-.. figure:: mclc5_wigner-seitz.png 
-    :target: ../../../../../_images/mclc5_wigner-seitz.png 
+.. raw:: html
+    :file: mclc5_wigner-seitz.html
