@@ -15,17 +15,13 @@ Import
 ======
 
     >>> # Exact import
-    >>> from radtools.crystal.lattice import Lattice
+
     >>> # Explicit import
-    >>> from radtools.crystal import Lattice
     >>> # Recommended import
-    >>> from radtools import Lattice
+
 
 For the examples in this page we need additional import and some predefined variables:
 
-.. doctest::
-
-    >>> from radtools import lattice_example
 
 Creation
 ========
@@ -35,17 +31,6 @@ Plotting of the lattice
 =======================
 
 Lattice primitive, conventional unit cells as  well as the Wigner-Seitz cell 
-and Brillouin zone can be plotted using :py:meth:`.Lattice.plot` method:
 
-.. doctest::
-
-    >>> lattice = lattice_example("BCT")
-    >>> lattice.plot("brillouin")
-    >>> lattice.plot("kpath")
-
-To show the plot use :py:meth:`.Lattice.show` method:
-
-.. doctest::
-
-    >>> lattice.show() # doctest: +SKIP
-
+=======
+and Brillouin zone can be plotted using 

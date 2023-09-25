@@ -10,7 +10,7 @@ Various scripts for condense matter calculations and post-processing.
     :target: https://rad-tools.org/en/stable/?badge=stable
     :alt: Documentation Status
    
-.. image:: https://static.pepy.tech/personalized-badge/rad-tools?period=total&units=international_system&left_color=black&right_color=blue&left_text=Downloads
+.. image:: https://static.pepy.tech/personalized-badge/rad-tools?period=total&units=international_system&left_color=grey&right_color=blue&left_text=Downloads
  :target: https://pepy.tech/project/rad-tools
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
