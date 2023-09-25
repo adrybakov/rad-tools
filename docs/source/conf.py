@@ -224,6 +224,7 @@ custom_links = {
     ),
     "RAD-repo": ("RAD-tools repository", "https://github.com/adrybakov/rad-tools"),
     "numpydoc": ("numpydoc", "https://numpydoc.readthedocs.io/en/latest/format.html"),
+    "plotly": ("Plotly", "https://plotly.com/python/"),
 }
 
 

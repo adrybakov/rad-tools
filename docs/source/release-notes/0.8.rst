@@ -104,3 +104,15 @@ Fix :issue:`6`.
 * Change path to abspath for the input file in the txt output of :ref:`rad-plot-tb2j-magnons`.
     Every input source in each script is now saved as an absolute path.
     If not the case, please :ref:`report a bug <contribute_bug>`.
+
+0.8.5
+-----
+
+Major update of the lattice plotting:
+
+* All "colour" arguments are replaced with "color".
+
+* Plotting moved from the lattice class to the external Backend classes.
+
+* Add |plotly|_ backend. 
+    Note that plotly is not added to the package dependencies. 
