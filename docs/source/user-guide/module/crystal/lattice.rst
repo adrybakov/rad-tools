@@ -218,30 +218,6 @@ All lattice parameters can be accessed as attributes:
     for the conventional cell are not even mentioned). 
     See :ref:`api_lattice` for the full list of properties.
 
-Plotting of the lattice
-=======================
-
-Lattice primitive, conventional unit cells as  well as the Wigner-Seitz cell 
-and Brillouin zone can be plotted using :py:meth:`.Lattice.plot` method:
-
-.. doctest::
-
-    >>> lattice = lattice_example("BCT")
-    >>> lattice.plot("brillouin")
-    >>> lattice.plot("kpath")
-
-To show the plot use :py:meth:`.Lattice.show` method:
-
-.. doctest::
-
-    >>> lattice.show() # doctest: +SKIP
-
-More examples of the plots with the code snippets can be found in the 
-:ref:`library_bravais-lattices` guide.
-
-Full list of the available plotting methods can be found in the
-:ref:`api_lattice` reference.
-
 K points
 ========
 

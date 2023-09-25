@@ -88,20 +88,6 @@ Information properties
     Lattice.centring_type
     Lattice.crystal_family
 
-
-Plotting
-========
-
-.. autosummary::
-    :toctree: generated/
-
-    Lattice.plot
-    Lattice.legend
-    Lattice.remove
-    Lattice.savefig
-    Lattice.show
-    Lattice.clear
-
 Numerical accuracy
 ==================
 

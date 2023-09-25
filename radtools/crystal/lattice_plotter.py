@@ -375,7 +375,7 @@ class MatplotlibBackend(AbstractBackend):
 
         self.ax.legend(**kwargs)
 
-    def plot_real_space(
+    def plot_unit_cell(
         self,
         lattice,
         vectors=True,
