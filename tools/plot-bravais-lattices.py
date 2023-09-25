@@ -251,9 +251,7 @@ def plot():
                 os.path.join(
                     OUTPUT_PATH, output_subname, f"{name.lower()}_{names[name][j]}.html"
                 ),
-                full_html=False,
-                include_plotlyjs="cdn",
-                include_mathjax="cdn",
+                kwargs_write_html=dict(full_html=False, include_plotlyjs="cdn"),
             )
             plt.close()
             py_file.write(
