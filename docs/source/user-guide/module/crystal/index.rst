@@ -23,3 +23,4 @@ consists of the lattice and the atoms. For the detailed guides see:
     atom
     kpoints
     bravais-lattices
+    plotting

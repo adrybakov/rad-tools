@@ -20,6 +20,16 @@ Classes
     kpoints
     cell
 
+.. _api_crystal-plotting:
+Plotting
+========
+
+.. toctree::
+    :maxdepth: 1
+
+    plotly-backend
+    matplotlib-backend
+
 Identification routines
 =======================
 
