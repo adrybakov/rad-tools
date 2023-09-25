@@ -1,8 +1,9 @@
 import radtools as rad
 
 l = rad.lattice_example("HEX")
-l.plot("wigner-seitz")
+backend = rad.MatplotlibBackend()
+backend.plot(l, kind="wigner-seitz")
 # Save an image:
-l.savefig("hex_wigner-seitz.png", elev=32, azim=10, dpi=300, bbox_inches="tight")
+backend.save("hex_wigner-seitz.png", elev=32, azim=10, dpi=300, bbox_inches="tight")
 # Interactive plot:
-l.show(elev=32, azim=10)
+backend.show(elev=32, azim=10)

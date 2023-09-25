@@ -1,8 +1,9 @@
 import radtools as rad
 
 l = rad.lattice_example("BCT2")
-l.plot("wigner-seitz")
+backend = rad.MatplotlibBackend()
+backend.plot(l, kind="wigner-seitz")
 # Save an image:
-l.savefig("bct2_wigner-seitz.png", elev=41, azim=59, dpi=300, bbox_inches="tight")
+backend.save("bct2_wigner-seitz.png", elev=41, azim=59, dpi=300, bbox_inches="tight")
 # Interactive plot:
-l.show(elev=41, azim=59)
+backend.show(elev=41, azim=59)

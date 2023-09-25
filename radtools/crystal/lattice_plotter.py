@@ -1,4 +1,4 @@
-import matplotlib as plt
+import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch
 from mpl_toolkits.mplot3d import Axes3D, proj3d
 from matplotlib import rcParams
@@ -25,8 +25,11 @@ class AbstractBackend:
             "brillouin": self.plot_brillouin,
             "kpath": self.plot_kpath,
             "brillouin-kpath": self.plot_brillouin_kpath,
+            "brillouin_kpath": self.plot_brillouin_kpath,
             "wigner-seitz": self.plot_wigner_seitz,
+            "wigner_seitz": self.plot_wigner_seitz,
             "unit-cell": self.plot_unit_cell,
+            "unit_cell": self.plot_unit_cell,
         }
 
     # Backend-independent functions
@@ -51,6 +54,7 @@ class AbstractBackend:
             * "kpath"
             * "brillouin-kpath"
             * "wigner-seitz"
+            * "unit-cell"
         *args
             Passed directly to the plotting functions.
         **kwargs
@@ -60,12 +64,11 @@ class AbstractBackend:
             kinds = [kind]
         else:
             kinds = kind
-        try:
-            for kind in kinds:
-                kind = kind.replace("-", "_")
-                self.kinds[f"plot_{kind}"](*args, **kwargs)
-        except AttributeError:
-            raise ValueError(f"Plot kind '{kind}' does not exist!")
+        for kind in kinds:
+            if kind in self.kinds:
+                self.kinds[kind](*args, **kwargs)
+            else:
+                raise ValueError(f"Plot kind '{kind}' does not exist!")
 
     # Backend-dependent functions
     def remove(self, *args, **kwargs):
@@ -211,6 +214,7 @@ class MatplotlibBackend(AbstractBackend):
     """
 
     def __init__(self, fig=None, ax=None, background=True, focal_length=0.2):
+        super().__init__()
         if fig is None:
             fig = plt.figure(figsize=(6, 6))
             ax = fig.add_subplot(projection="3d")
@@ -233,7 +237,7 @@ class MatplotlibBackend(AbstractBackend):
             ax.axis("off")
         self.fig = fig
         self.ax = ax
-        self.artists = []
+        self.artists = {}
 
     def remove(self, kind="primitive"):
         r"""
@@ -290,6 +294,7 @@ class MatplotlibBackend(AbstractBackend):
             * "kpath"
             * "brillouin-kpath"
             * "wigner-seitz"
+            * "unit-cell"
 
         **kwargs
             Parameters to be passed to the plotting function.
@@ -309,6 +314,7 @@ class MatplotlibBackend(AbstractBackend):
         plot_kpath : "kpath" plot.
         plot_brillouin_kpath : "brillouin_kpath" plot.
         plot_wigner_seitz : "wigner-seitz" plot.
+        plot_unit_cell : "unit-cell" plot.
         show : Shows the plot.
         save : Save the figure in the file.
         """
@@ -723,6 +729,7 @@ class PlotlyBackend(AbstractBackend):
             raise ImportError(
                 'Plotly is not available. Install it with "pip install plotly"'
             )
+        super().__init__()
         if fig is None:
             fig = go.Figure()
         self.fig = fig
