@@ -229,6 +229,10 @@ custom_links = {
         ".update_layout()",
         "https://plotly.com/python-api-reference/generated/plotly.graph_objects.Figure.html?highlight=update_layout#plotly.graph_objects.Figure.update_layout",
     ),
+    "plotly-write-html": (
+        ".write_html()",
+        "https://plotly.com/python-api-reference/generated/plotly.io.to_html.html",
+    ),
 }
 
 

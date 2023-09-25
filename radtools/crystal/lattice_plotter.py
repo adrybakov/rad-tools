@@ -793,7 +793,12 @@ class PlotlyBackend(AbstractBackend):
         self.fig.update_layout(**kwargs)
         self.fig.show()
 
-    def save(self, output_name="lattice_graph.png", include_plotlyjs=True, **kwargs):
+    def save(
+        self,
+        output_name="lattice_graph.png",
+        kwargs_update_layout=None,
+        kwargs_write_html=None,
+    ):
         r"""
         Save the figure in the html file.
 
@@ -801,20 +806,28 @@ class PlotlyBackend(AbstractBackend):
         ----------
         output_name : str, default "lattice_graph.png"
             Name of the file to be saved. With extension.
-        include_plotlyjs : bool or str, default True
-            Whenever to include plotly js library into the html file.
-            File size reduces if set to False. But interactivity is lost.
-        **kwargs
-            Parameters to be passed to the ``fig.write_html()``.
+        kwargs_update_layout : dict, optional
+            Passed directly to the |plotly-update-layout|_.
+        kwargs_write_html : dict, optional
+            Passed directly to the |plotly-write-html|_.
         """
 
-        self.fig.update_layout(
-            width=800,
-            height=800,
-            yaxis_scaleanchor="x",
-            legend={"itemsizing": "constant"},
-        )
-        self.fig.write_html(output_name, include_plotlyjs=include_plotlyjs, **kwargs)
+        if kwargs_update_layout is None:
+            kwargs_update_layout = {}
+        if kwargs_write_html is None:
+            kwargs_write_html = {}
+
+        if "width" not in kwargs_update_layout:
+            kwargs_update_layout["width"] = 800
+        if "height" not in kwargs_update_layout:
+            kwargs_update_layout["height"] = 800
+        if "yaxis_scaleanchor" not in kwargs_update_layout:
+            kwargs_update_layout["yaxis_scaleanchor"] = "x"
+        if "legend" not in kwargs_update_layout:
+            kwargs_update_layout["legend"] = {"itemsizing": "constant"}
+
+        self.fig.update_layout(**kwargs_update_layout)
+        self.fig.write_html(output_name, **kwargs_write_html)
 
     def plot_unit_cell(
         self,
