@@ -116,3 +116,8 @@ Major update of the lattice plotting:
 
 * Add |plotly|_ backend. 
     Note that plotly is not added to the package dependencies. 
+
+0.8.6
+-----
+
+Fix problems with the new plotting backend.
