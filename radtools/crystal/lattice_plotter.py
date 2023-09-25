@@ -479,7 +479,7 @@ class MatplotlibBackend(AbstractBackend):
                         cell[i][0] * vector_pad[i],
                         cell[i][1] * vector_pad[i],
                         cell[i][2] * vector_pad[i],
-                        f"${vector_label}_{i}$",
+                        f"${vector_label}_{i+1}$",
                         fontsize=20,
                         color=color,
                         ha="center",
@@ -607,7 +607,7 @@ class MatplotlibBackend(AbstractBackend):
                         vs[i][0] * vector_pad[i],
                         vs[i][1] * vector_pad[i],
                         vs[i][2] * vector_pad[i],
-                        f"${vector_label}_{i}$",
+                        f"${vector_label}_{i+1}$",
                         fontsize=20,
                         color=color,
                         ha="center",
@@ -901,8 +901,8 @@ class PlotlyBackend(AbstractBackend):
         legendgroup = "".join(choices(ascii_lowercase, k=10))
 
         if vectors:
+            labels = [f"{vector_label}{i+1}" for i in range(3)]
             for i in range(3):
-                labels = [f"{vector_label}{i+1}" for i in range(3)]
                 x = [0, cell[i][0]]
                 y = [0, cell[i][1]]
                 z = [0, cell[i][2]]
@@ -1027,8 +1027,8 @@ class PlotlyBackend(AbstractBackend):
         legendgroup = "".join(choices(ascii_lowercase, k=10))
 
         if vectors:
+            labels = [f"{vector_label}{i+1}" for i in range(3)]
             for i in range(3):
-                labels = [f"{vector_label}{i+1}" for i in range(3)]
                 x = [0, vs[i][0]]
                 y = [0, vs[i][1]]
                 z = [0, vs[i][2]]

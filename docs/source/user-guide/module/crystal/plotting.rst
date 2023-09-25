@@ -22,11 +22,11 @@ Import
 .. doctest::
 
     >>> # Exact import
-    from radtools.crystal.lattice_plotter import MatplotlibBackend, PlotlyBackend
+    >>> from radtools.crystal.lattice_plotter import MatplotlibBackend, PlotlyBackend
     >>> # Explicit import
-    from radtools.crystal import MatplotlibBackend, PlotlyBackend
+    >>> from radtools.crystal import MatplotlibBackend, PlotlyBackend
     >>> # Recommended import
-    from radtools import MatplotlibBackend, PlotlyBackend
+    >>> from radtools import MatplotlibBackend, PlotlyBackend
 
 
 For the examples in this page we need additional import and some predefined variables:
@@ -70,7 +70,7 @@ showing or saving the figure:
     >>> pb.plot(lattice, kind="brillouin", label="Brillouin zone", color="red")
     >>> pb.plot(lattice, kind="kpath", label="K-path", color="black")
     >>> pb.save('hex_lattice.html')
-    >>> pb.show()
+    >>> pb.show() # doctest: +SKIP
 
 Plotting with Matplotlib
 ========================
@@ -82,7 +82,8 @@ The creation of the matplotlib backend can take one optional arguments: ``fig an
 .. doctest::
 
     >>> import matplotlib.pyplot as plt
-    >>> fig, ax = plt.subplots()
+    >>> fig = plt.figure(figsize=(6, 6))
+    >>> ax = fig.add_subplot(projection="3d")
     >>> mb = MatplotlibBackend(fig=fig, ax=ax)
 
 The typical workflow consist in plotting one or several lattices and then
@@ -93,4 +94,4 @@ showing or saving the figure:
     >>> mb.plot(lattice, kind="brillouin", label="Brillouin zone", color="red")
     >>> mb.plot(lattice, kind="kpath", label="K-path", color="black")
     >>> mb.save('hex_lattice.png')
-    >>> mb.show()
+    >>> mb.show() # doctest: +SKIP
