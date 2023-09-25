@@ -23,7 +23,7 @@ RAD-tools
 
 __version__ = "0.8.5"
 __doclink__ = "rad-tools.org"
-__git_hash__ = "43ad2ddb50bf5c2882a2f1cf63453e5f5e510aab"
+__git_hash__ = "9679f7a85c201fe15b2c52edd24cc7c4f8b95df1"
 __release_date__ = "25 September 2023"
 
 from . import (
