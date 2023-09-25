@@ -32,5 +32,4 @@ Plotting of the lattice
 
 Lattice primitive, conventional unit cells as  well as the Wigner-Seitz cell 
 
-=======
 and Brillouin zone can be plotted using 
