@@ -12,7 +12,7 @@ with open("README.rst", "r") as file:
 setup(
     name="rad-tools",
     version=__version__,
-    description="Scripts for condense matter calculations and post-processing.",
+    description="Spin Hamiltonians, magnons and condense matter post-processing.",
     long_description=long_description,
     author="Andrey Rybakov",
     author_email="rybakov.ad@icloud.com",
