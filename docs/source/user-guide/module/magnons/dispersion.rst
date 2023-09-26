@@ -8,7 +8,7 @@ For the full reference see :ref:`api_magnon-dispersion`.
 
 .. currentmodule:: radtools
 
-:py:class:`MagnonDispersion` is a class for calculating magnon dispersion.
+:py:class:`.MagnonDispersion` is a class for calculating magnon dispersion.
 See the :ref:`article in library <library_magnon-dispersion-method>` for more information about the method behind the calculations.
 
 Import
