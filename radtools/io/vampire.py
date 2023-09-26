@@ -1,18 +1,18 @@
 # RAD-tools - program for spin Hamiltonian and magnons.
 # Copyright (C) 2022-2023  Andrey Rybakov
-# 
+#
 # e-mail: anry@uv.es, web: adrybakov.com
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -135,9 +135,14 @@ def dump_mat(spinham, filename=None, materials=None, nologo=False):
             result.append(f"material[{m_i}]:material-name = {atom.name}\n")
             result.append(f"material[{m_i}]:material-element = {atom.type}\n")
             result.append(f"material[{m_i}]:atomic-spin-moment={atom.spin}\n")
-            result.append(
-                f"material[{m_i}]:initial-spin-direction = {atom.spin_direction[0]:.8f},{atom.spin_direction[1]:.8f},{atom.spin_direction[2]:.8f}\n"
-            )
+            if atom._spin_direction is not None:
+                result.append(
+                    f"material[{m_i}]:initial-spin-direction = {atom.spin_direction[0]:.8f},{atom.spin_direction[1]:.8f},{atom.spin_direction[2]:.8f}\n"
+                )
+            else:
+                result.append(f"material[{m_i}]:initial-spin-direction = random\n")
+            result.append(f"material[{m_i}]:dampling-constant=0.1\n")
+            result.append(f"material[{m_i}]:uniaxial-anisotropy-constant=0.0\n")
     result.append("#---------------------------------------------------\n")
 
     result = "".join(result)
