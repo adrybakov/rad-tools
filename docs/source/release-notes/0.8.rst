@@ -121,3 +121,8 @@ Major update of the lattice plotting:
 -----
 
 Fix problems with the new plotting backend.
+
+0.8.7
+-----
+
+Add io for the |POSCAR|_ files: :py:func:`.load_poscar` and :py:func:`.dump_poscar`.
