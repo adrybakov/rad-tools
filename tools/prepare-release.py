@@ -113,7 +113,7 @@ def check_active_branch(repo: git.Repo):
 
 
 @envelope(message="Updating __init__.py")
-def update_init(repo: git.Repo, version, root_dir:str):
+def update_init(repo: git.Repo, version, root_dir: str):
     """
     Update __init__.py file.
 
@@ -167,13 +167,13 @@ def update_init(repo: git.Repo, version, root_dir:str):
         )
 
     # Write __init__.py
-    init_file = open(init_file_path, "w")
+    init_file = open(init_file_path, "w", encoding="utf-8")
     init_file.writelines(init_file_content)
     init_file.close()
 
 
 @envelope(message="Checking release notes")
-def check_release_notes(version: str, root_dir:str):
+def check_release_notes(version: str, root_dir: str):
     """
     Check if the release notes are up to date.
 
@@ -228,7 +228,7 @@ def check_release_notes(version: str, root_dir:str):
             lines.append(untouched_line)
     index_file.close()
     # Write new content
-    index_file = open(os.path.join(path, "index.rst"), "w")
+    index_file = open(os.path.join(path, "index.rst"), "w", encoding="utf-8")
     index_file.writelines(lines)
     index_file.close()
 
@@ -318,12 +318,14 @@ def check_git_status(repo: git.Repo):
             )
         )
 
-@envelope(message="Adding license info to source code files")
-def apply_license(root_dir):    
 
+@envelope(message="Adding license info to source code files")
+def apply_license(root_dir):
     with open(os.path.join(root_dir, "LICENSE.txt"), "r") as f:
         lines = f.readlines()
-    with open(os.path.join(root_dir, "radtools", "_license.py"), "w") as f:
+    with open(
+        os.path.join(root_dir, "radtools", "_license.py"), "w", encoding="utf-8"
+    ) as f:
         f.writelines('LICENSE = """')
         f.writelines(lines)
         f.writelines('"""')
@@ -333,19 +335,22 @@ def apply_license(root_dir):
         for filename in filenames:
             if filename.endswith(".py"):
                 source_files.append(os.path.join(dirpath, filename))
-                
+
     for file in source_files:
         with open(file, "r") as f:
             lines = f.readlines()
         i = 0
         if len(lines) > 0:
-            while i < len(lines) and (lines[i].startswith("#") or lines[i].startswith("\n")):
+            while i < len(lines) and (
+                lines[i].startswith("#") or lines[i].startswith("\n")
+            ):
                 i += 1
             lines = lines[i:]
 
-        with open(file, "w") as f:
+        with open(file, "w", encoding="utf-8") as f:
             f.write(LICENSE_SHORT)
             f.writelines(lines)
+
 
 def main(version: str, root_dir: str):
     if version == "None":

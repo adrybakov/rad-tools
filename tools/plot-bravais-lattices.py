@@ -227,6 +227,7 @@ def plot():
                     OUTPUT_PATH, output_subname, f"{name.lower()}_{names[name][j]}.py"
                 ),
                 "w",
+                encoding="utf-8",
             )
             py_file.write(
                 f'import radtools as rad\n\nl = rad.lattice_example("{name}")\nbackend = rad.PlotlyBackend()\n'

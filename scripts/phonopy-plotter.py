@@ -71,7 +71,7 @@ def plot(file, kp=None, constant=1, on="output"):
     plt.show()
     if constant != 1:
         output = yaml.dump(data)
-        with open(f"{on}.yaml", "w") as file:
+        with open(f"{on}.yaml", "w", encoding="utf-8") as file:
             file.write(output)
 
 

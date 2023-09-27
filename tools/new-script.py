@@ -56,7 +56,9 @@ def main(name: str):
         )
 
     # Script interface
-    with open(os.path.join(ROOT_DIR, "scripts", f"rad-{name}.py"), "w") as file:
+    with open(
+        os.path.join(ROOT_DIR, "scripts", f"rad-{name}.py"), "w", encoding="utf-8"
+    ) as file:
         file.write(
             "#! /usr/local/bin/python3\n"
             + "\n"
@@ -72,7 +74,9 @@ def main(name: str):
 
     # Script implementation
     with open(
-        os.path.join(ROOT_DIR, "radtools", "score", f"{name_py}.py"), "w"
+        os.path.join(ROOT_DIR, "radtools", "score", f"{name_py}.py"),
+        "w",
+        encoding="utf-8",
     ) as file:
         file.write(
             "from argparse import ArgumentParser\n"
@@ -89,6 +93,7 @@ def main(name: str):
             ROOT_DIR, "docs", "source", "user-guide", "scripts", f"rad-{name}.rst"
         ),
         "w",
+        encoding="utf-8",
     ) as file:
         N = len(f"rad-{name}.py")
         file.write(
@@ -108,7 +113,7 @@ def main(name: str):
             setup_content.append(line)
             if line.startswith("    scripts=["):
                 setup_content.append(f'        "scripts/rad-{name}.py",\n')
-    with open(os.path.join(ROOT_DIR, "setup.py"), "w") as file:
+    with open(os.path.join(ROOT_DIR, "setup.py"), "w", encoding="utf-8") as file:
         file.writelines(setup_content)
 
     print("Templates are created")

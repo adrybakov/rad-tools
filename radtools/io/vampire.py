@@ -88,7 +88,7 @@ def dump_vampire(
         materials=materials,
         nologo=nologo,
     )
-    with open("input", "w") as file:
+    with open("input", "w", encoding="utf-8") as file:
         file.write(
             "#------------------------------------------\n"
             f"material:file={seedname}.mat\n"
@@ -150,7 +150,7 @@ def dump_mat(spinham, filename=None, materials=None, nologo=False):
     if filename is None:
         return "".join(result)
 
-    with open(filename, "w") as file:
+    with open(filename, "w", encoding="utf-8") as file:
         file.write("".join(result))
 
 
@@ -265,5 +265,5 @@ def dump_ucf(
     if filename is None:
         return result
 
-    with open(filename, "w") as file:
+    with open(filename, "w", encoding="utf-8") as file:
         file.write(result)

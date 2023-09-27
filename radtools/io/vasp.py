@@ -189,7 +189,7 @@ def dump_poscar(
 
     # Open file if needed
     if isinstance(file_object, str):
-        file_object = open(file_object, "w")
+        file_object = open(file_object, "w", encoding="utf-8")
 
     # Write
     file_object.write(comment + "\n")

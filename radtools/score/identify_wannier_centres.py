@@ -1,18 +1,18 @@
 # RAD-tools - program for spin Hamiltonian and magnons.
 # Copyright (C) 2022-2023  Andrey Rybakov
-# 
+#
 # e-mail: anry@uv.es, web: adrybakov.com
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -129,7 +129,7 @@ def manager(input_filename, span=0.1, output_name=""):
             centre[0] = name
 
     # Write the output
-    with open(output_name, "w") as file:
+    with open(output_name, "w", encoding="utf-8") as file:
         file.write(f"{len(atoms) + len(centres):6.0f}\n")
         file.write(f"{file_stats}")
         for centre, coordinate in centres:

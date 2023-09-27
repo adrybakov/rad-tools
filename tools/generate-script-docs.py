@@ -231,7 +231,7 @@ def main(script="all", debug=False):
                 line = file.readline()
 
         # Write new docs
-        with open(docfile, "w") as file:
+        with open(docfile, "w", encoding="utf-8") as file:
             file.write("".join(docs_header))
 
             # Header for the Arguments section
@@ -275,7 +275,9 @@ def main(script="all", debug=False):
 
         # Write new script implementation
         with open(
-            os.path.join(SCRIPT_DIR, f"{script.replace('-','_')}.py"), "w"
+            os.path.join(SCRIPT_DIR, f"{script.replace('-','_')}.py"),
+            "w",
+            encoding="utf-8",
         ) as file:
             file.write("".join(script_header))
             file.write("def create_parser():\n")
