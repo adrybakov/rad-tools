@@ -128,3 +128,8 @@ Fix problems with the new plotting backend.
 Add io for the |POSCAR|_ files: :py:func:`.load_poscar` and :py:func:`.dump_poscar`.
 Add ``encoding="utf-8"`` to all txt outputs. 
 It was causing the problems when saving outputs on the windows platform.
+
+0.8.8
+-----
+
+Add utf-8 to the one forgotten place. It is advised to skip 0.8.7 and install 0.8.8 instead.
