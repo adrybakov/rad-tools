@@ -233,6 +233,10 @@ custom_links = {
         ".write_html()",
         "https://plotly.com/python-api-reference/generated/plotly.io.to_html.html",
     ),
+    "POSCAR": (
+        "POSCAR",
+        "https://www.vasp.at/wiki/index.php/POSCAR#Full_format_specification",
+    ),
 }
 
 

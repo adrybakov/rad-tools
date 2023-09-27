@@ -15,6 +15,7 @@ External inputs
     :toctree: generated/
 
     load_tb2j_model
+    load_poscar
 
 Internal inputs
 ===========================
@@ -41,3 +42,4 @@ External outputs
     :toctree: generated/
 
     dump_vampire
+    dump_poscar
