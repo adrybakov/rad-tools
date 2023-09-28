@@ -1,6 +1,6 @@
 # RAD-tools - program for spin Hamiltonian and magnons.
 # Copyright (C) 2022-2023  Andrey Rybakov
-# 
+#
 # e-mail: anry@uv.es, web: adrybakov.com
 #
 # This program is free software: you can redistribute it and/or modify
@@ -20,10 +20,10 @@ r"""
 RAD-tools
 """
 
-__version__ = "0.8.8"
+__version__ = "0.8.9.dev"
 __doclink__ = "rad-tools.org"
-__git_hash__ = "9f889b599b9d334c4e4954631eb7dac28d6e13d4"
-__release_date__ = "27 September 2023"
+__git_hash__ = "undefined"
+__release_date__ = "undefined"
 
 
 from . import (
