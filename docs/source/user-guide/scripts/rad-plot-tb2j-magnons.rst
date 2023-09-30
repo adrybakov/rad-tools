@@ -30,22 +30,66 @@ Ground state is defined by two sets of parameters:
 
     .. code-block::
 
-        -s Cr1 0 0 1 Cr2 0 0 1
+        -s Cr1 0 0 1.5 Cr2 0 0 1.5
 
 
 * Spin-spiral vector. (single-Q incommensurate structure).
     Spin spiral is defined by two parameters, each parameter is a vector: 
 
-    * :math:`\vec{Q}` (:ref:`rad-plot-tb2j-magnons_spiral-vector`)
-        It is relative to the model reciprocal cell.
+    * :math:`\boldsymbol{\vec{Q}}` (:ref:`rad-plot-tb2j-magnons_spiral-vector`)
+        It is relative to the reciprocal cell.
 
-    * Global rotation axis :math:`\vec{n}` (:ref:`rad-plot-tb2j-magnons_rotation-axis`)
+    * Global rotation axis :math:`\boldsymbol{\vec{n}}` (:ref:`rad-plot-tb2j-magnons_rotation-axis`)
         It is given in absolute coordinate in a real space. Only the direction of the vector matters.
 
 In the input file "exchange.out" six atoms are present: Br1, Cr1, S1, Br2, Cr2, S2.
 Only Cr1 and Cr2 have exchange interaction between them. Therefore, it is necessary to specify
 spin vectors for Cr1 and Cr2. You can specify spin vectors for all atoms, but it is not
 necessary.
+
+.. _rad-plot-tb2j-magnons_custom-k-points:
+
+Custom k-points
+===============
+
+By default you can use predefined k-points based on the high symmetry points for each 
+:ref:`Bravais lattice <library_bravais-lattices>`. However, you can specify your own
+high symmetry points using :ref:`rad-plot-tb2j-magnons_k-points` argument:
+
+.. code-block:: bash
+
+    rad-plot-tb2j-magnons.py -if exchange.out -kps X1 "$\mathrm{X_1}$" -0.5 0 0 Y1 "$\mathrm{Y_1}$" 0 -0.5 0 -kp X1-G-Y1 -s Cr1 0 0 1.5 Cr2 0 0 1.5 -on CrSBr-custom-kpoints
+
+.. figure:: ../../../examples/rad-plot-tb2j-magnons/CrSBr-custom-kpoints.png
+    :target: ../../../_images/CrSBr-custom-kpoints.png
+    :align: center
+
+The syntax is the following:
+
+.. code-block:: text
+
+    -kps <name1> <label1> <kx1> <ky1> <kz1> <name2> <label2> <kx2> <ky2> <kz2> ...
+
+where:
+
+* <name> is the name of the k-point
+    It can be used in the :ref:`rad-plot-tb2j-magnons_k-path` argument.
+
+    .. note:: 
+        
+        If an error like:
+
+        .. code-block:: text
+
+            ValueError: Point 'X' already defined.
+        
+        appears, then you need to use different name for the k-points, because 
+        the name "X" is already used. Only the name is checked for uniqueness. Therefore,
+        you can provide the same label for different k-points or custom label for one of the predefined
+        k-points.
+* <label> is the label of the k-point
+    This string is directly passed to the plot. You can use |latex|_ syntax here.
+* <kx> <ky> <kz> are the coordinates of the k-point relative to the reciprocal cell.
 
 Template file
 =============
@@ -71,10 +115,10 @@ Control of parameters
 You can "turn off" parts of the full exchange matrix:
 
 * :ref:`--nodmi <rad-plot-tb2j-magnons_nodmi>`
-    Ignore DMI in the spinham.
+    Ignore :ref:`DMI <guide_spinham_parameter_dmi>` in the spinham.
 
 * :ref:`-noa/--no-anisotropic <rad-plot-tb2j-magnons_no-anisotropic>`
-    Ignore anisotropic symmetric exchange in the spinham.
+    Ignore :ref:`anisotropic symmetric exchange <guide_spinham_parameter_aniso>` in the spinham.
 
 Examples
 ========
@@ -141,7 +185,7 @@ Relative or absolute path to the "exchange.out" file, including the name and ext
 Spin of the atoms in the model.
 
 For each atom, which has at least one bond connected to it is necessary to specify
-spin vector. The spin vector is specified in the form of atom`s name followed by
+spin vector. The spin vector is specified in the form of atom's name followed by
 three numbers, separated by spaces.
 The numbers represent the x, y, and z components of the spin vector.
 
@@ -197,6 +241,20 @@ Direction of global rotation axis. In absolute coordinates in real space.
 
     optional
     type: list of 3 float
+
+
+.. _rad-plot-tb2j-magnons_k-points:
+
+-kps, --k-points
+----------------
+Additional high-symmetry k-points.
+
+Coordinates are relative to the reciprocal cell.
+
+.. code-block:: text
+
+    optional
+    type: list of str
 
 
 .. _rad-plot-tb2j-magnons_k-path:

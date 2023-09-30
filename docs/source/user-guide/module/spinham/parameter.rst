@@ -14,17 +14,23 @@ of predefined properties, which are specific for the exchange parameter.
 The full exchange parameter :math:`\boldsymbol{J}` is a :math:`3\times3` matrix 
 of real numbers. It is usually separated into three parts: 
 
+.. _guide_spinham_parameter_iso:
+
 * Isotropic (Heisenberg) exchange (:py:attr:`.iso`):
 
 .. math::
 
     J_{iso} = \dfrac{\text{tr}(\boldsymbol{J})}{3}
 
+.. _guide_spinham_parameter_aniso:
+
 * Symmetric anisotropic exchange (:py:attr:`.aniso`):
 
 .. math::
 
     \mathbf{J}_{aniso} = \boldsymbol{J}_{symm} = \dfrac{\boldsymbol{J} + \boldsymbol{J}^T}{2} - \dfrac{1}{3}\text{tr}(\boldsymbol{J})\cdot\mathbf{I}
+
+.. _guide_spinham_parameter_dmi:
 
 * Antisymmetric anisotropic (Dzyaloshinskii-Moriya) exchange (:py:attr:`.dmi`):
 

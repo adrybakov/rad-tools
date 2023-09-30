@@ -133,3 +133,9 @@ It was causing the problems when saving outputs on the windows platform.
 -----
 
 Add utf-8 to the one forgotten place. It is advised to skip 0.8.7 and install 0.8.8 instead.
+
+0.8.9
+-----
+
+Add :ref:`custom k-points <rad-plot-tb2j-magnons_custom-k-points>` to the :ref:`rad-plot-tb2j-magnons` script.
+Change default colors for the magnon dispersion plots.

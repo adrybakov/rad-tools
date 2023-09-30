@@ -1,6 +1,6 @@
 # RAD-tools - program for spin Hamiltonian and magnons.
 # Copyright (C) 2022-2023  Andrey Rybakov
-# 
+#
 # e-mail: anry@uv.es, web: adrybakov.com
 #
 # This program is free software: you can redistribute it and/or modify
@@ -39,6 +39,7 @@ def manager(
     output_name="magnon_dispersion",
     spiral_vector=None,
     rotation_axis=None,
+    k_points=None,
     k_path=None,
     form_model=False,
     R_vector=None,
@@ -72,7 +73,7 @@ def manager(
         Spin of the atoms in the model.
 
         For each atom, which has at least one bond connected to it is necessary to specify
-        spin vector. The spin vector is specified in the form of atom`s name followed by
+        spin vector. The spin vector is specified in the form of atom's name followed by
         three numbers, separated by spaces.
         The numbers represent the x, y, and z components of the spin vector.
 
@@ -103,6 +104,14 @@ def manager(
         Console argument: ``-ra`` / ``--rotation-axis``
 
         Metavar: ("n_x", "n_y", "n_z")
+    k_points : list of str, optional
+        Additional high-symmetry k-points.
+
+        Coordinates are relative to the reciprocal cell.
+
+        Console argument: ``-kps`` / ``--k-points``
+
+        Metavar: "name label xrel yrel zrel ..."
     k_path : str, optional
         Path in reciprocal space for the magnon dispersion.
 
@@ -220,6 +229,17 @@ def manager(
 
     # Get k points of the spinham
     kp = spinham.kpoints
+
+    # Add additional points
+    if k_points is not None:
+        for i in range(len(k_points) // 5):
+            point_name = k_points[5 * i]
+            point_label = k_points[5 * i + 1]
+            point_coordinates = list(map(float, k_points[5 * i + 2 : 5 * i + 5]))
+            kp.add_hs_point(
+                name=point_name, coordinates=point_coordinates, label=point_label
+            )
+
     # Set custom k path
     if k_path is not None:
         kp.path = k_path
@@ -279,8 +299,11 @@ def manager(
         lw=1,
         ls="dashed",
     )
+    colors = ["#174FD5", "#F8AB00", "#0CE1A2", "#FF003C", "#46EC00", "#9823C9"]
+    i = 0
     for omega in omegas:
-        ax.plot(kp.flatten_points(), omega)
+        ax.plot(kp.flatten_points(), omega, color=colors[i % len(colors)])
+        i += 1
 
     ax.set_xlim(kp.flatten_points()[0], kp.flatten_points()[-1])
     plot_hlines(ax, [0])
@@ -492,6 +515,15 @@ def create_parser():
         type=float,
         nargs=3,
         help="Direction of global rotation axis. In absolute coordinates in real space.",
+    )
+    parser.add_argument(
+        "-kps",
+        "--k-points",
+        default=None,
+        metavar="K $\mathrm{K_1}$ 0 0.5 0",
+        type=str,
+        nargs="*",
+        help="Additional high-symmetry k-points.",
     )
     parser.add_argument(
         "-kp",
