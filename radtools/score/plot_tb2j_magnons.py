@@ -16,20 +16,20 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from argparse import ArgumentParser
 import os
+from argparse import ArgumentParser
 
 import matplotlib.pyplot as plt
 import numpy as np
 from termcolor import cprint
 
+from radtools.decorate.array import print_2d_array
+from radtools.decorate.axes import plot_hlines
+from radtools.decorate.stats import logo
 from radtools.io.internal import load_template
 from radtools.io.tb2j import load_tb2j_model
 from radtools.magnons.dispersion import MagnonDispersion
-from radtools.decorate.stats import logo
 from radtools.spinham.constants import TXT_FLAGS
-from radtools.decorate.array import print_2d_array
-from radtools.decorate.axes import plot_hlines
 
 
 def manager(
@@ -108,6 +108,8 @@ def manager(
         Additional high-symmetry k-points.
 
         Coordinates are relative to the reciprocal cell.
+
+        .. versionadded:: 0.8.9
 
         Console argument: ``-kps`` / ``--k-points``
 
@@ -520,7 +522,7 @@ def create_parser():
         "-kps",
         "--k-points",
         default=None,
-        metavar="K $\mathrm{K_1}$ 0 0.5 0",
+        metavar="name label xrel yrel zrel ...",
         type=str,
         nargs="*",
         help="Additional high-symmetry k-points.",
