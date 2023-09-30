@@ -5,23 +5,26 @@ Spin Hamiltonians, magnons and condense matter post-processing.
 
 .. image:: https://badge.fury.io/py/rad-tools.svg
     :target: https://badge.fury.io/py/rad-tools
-    
+
 .. image:: https://readthedocs.org/projects/rad-tools/badge/?version=stable
     :target: https://rad-tools.org/en/stable/?badge=stable
     :alt: Documentation Status
-   
+
 .. image:: https://static.pepy.tech/personalized-badge/rad-tools?period=total&units=international_system&left_color=grey&right_color=blue&left_text=Downloads
  :target: https://pepy.tech/project/rad-tools
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
-   
+
+.. image:: https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336
+    :target: https://pycqa.github.io/isort/
+
 .. image:: https://img.shields.io/github/license/adrybakov/rad-tools
    :alt: GitHub
 
-The package covers post-processing scenarios for the results of 
-`Quantum Espresso <https://www.quantum-espresso.org>`_, 
-`TB2J <https://tb2j.readthedocs.io/en/latest/>`_ 
+The package covers post-processing scenarios for the results of
+`Quantum Espresso <https://www.quantum-espresso.org>`_,
+`TB2J <https://tb2j.readthedocs.io/en/latest/>`_
 and `Wannier90 <http://www.wannier.org/>`_, as well as provides some custom scripts.
 
 It is expected to be used in two ways:
@@ -77,7 +80,7 @@ Installing from source
 
    pip install rad-tools
 
-Additionally you may run the unit tests, 
+Additionally you may run the unit tests,
 which requires pytest (requires Python 3.7+) to be installed:
 
 .. code-block:: console
