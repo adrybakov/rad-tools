@@ -130,6 +130,7 @@ def envelope(message: str):
                 )
                 print(quote)
             print(f"{'':=^{N}}")
+            return errors is not None
 
         return inner
 
@@ -407,17 +408,22 @@ def main(version: str, root_dir: str, relax: bool = False):
     # update_init() will change the __init__.py file and there
     # will be uncommitted changes
 
-    check_active_branch(repo, relax=relax)
+    # rtd - ready to deploy
+    rtd = True
+    rtd =  check_active_branch(repo, relax=relax) and rtd
 
-    check_release_notes(version=version, root_dir=root_dir, relax=relax)
+    rtd =  check_release_notes(version=version, root_dir=root_dir, relax=relax) and rtd
 
-    check_git_status(repo, relax=relax)
+    rtd =  check_git_status(repo, relax=relax) and rtd
 
-    apply_license(root_dir=root_dir, relax=relax)
+    rtd =  apply_license(root_dir=root_dir, relax=relax) and rtd
 
-    update_init(repo, version=version, root_dir=root_dir, relax=relax)
+    rtd =  update_init(repo, version=version, root_dir=root_dir, relax=relax) and rtd
 
-    print(colored(f"{f'{version} ready to deploy':^{N}}", "green"))
+    if rtd:
+        print(colored(f"{f'{version} ready to deploy':^{N}}", "green"))
+    else:
+        print(colored(f"{f'{version} not ready to deploy':^{N}}", "red"))
     print(f"{'':=^{N}}")
 
 
