@@ -20,10 +20,10 @@ r"""
 RAD-tools
 """
 
-__version__ = "0.8.8"
+__version__ = "0.8.9"
 __doclink__ = "rad-tools.org"
-__git_hash__ = "9f889b599b9d334c4e4954631eb7dac28d6e13d4"
-__release_date__ = "27 September 2023"
+__git_hash__ = "70e1d95b5def1286dd9ed9cbdc8462a9ffb758ef"
+__release_date__ = "1 October 2023"
 
 
 from . import (
