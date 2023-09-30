@@ -6,6 +6,80 @@ from matplotlib.colors import to_rgb
 ROOT_DIR = "."
 
 
+def plot_two_centres(ax, position, d, h):
+    color1 = "#AFCCB8"  # DCB480"  # B5B6AA"  # BEBEDC"  # 8681F0"#B0D8EF"
+    color2 = "#2D4F37"  # 653600"  # 363829"  # 3C3C5F"  # 00007B"#2E5972"
+    begining_shift = 1.4
+    end_shift = 1.2
+    ax.quiver(
+        [position[0] - d / 2, position[0] + d / 2],
+        [position[1] - 5 * h / 12, position[1] - 5 * h / 12],
+        [0, 0],
+        [h, h],
+        angles="xy",
+        scale_units="xy",
+        scale=1,
+        width=0.01,
+        headlength=4,
+        headwidth=4,
+        headaxislength=4,
+        color=color2,
+        zorder=1,
+    )
+
+    ax.scatter(
+        [position[0] - d / 2, position[0] + d / 2],
+        [position[1], position[1]],
+        s=2400,
+        c=color1,
+        edgecolors=color2,
+        linewidths=2,
+        zorder=2,
+    )
+    ax.text(
+        position[0] - d / 2,
+        position[1],
+        R"$\boldsymbol{S}_i$",
+        ha="center",
+        va="center",
+        fontsize=25,
+        zorder=3,
+    )
+    ax.text(
+        position[0] + d / 2,
+        position[1],
+        R"$\boldsymbol{S}_j$",
+        ha="center",
+        va="center",
+        fontsize=30,
+        zorder=3,
+    )
+    ax.text(
+        position[0],
+        position[1],
+        R"$\boldsymbol{J}_{ij} = 1$",
+        ha="center",
+        va="center",
+        fontsize=30,
+        zorder=3,
+    )
+    ax.quiver(
+        [position[0] - begining_shift, position[0] + begining_shift],
+        [position[1], position[1]],
+        [-d / 2 + end_shift + begining_shift, d / 2 - end_shift - begining_shift],
+        [0, 0],
+        angles="xy",
+        scale_units="xy",
+        scale=1,
+        width=0.003,
+        headlength=7,
+        headwidth=4,
+        headaxislength=6,
+        color="grey",
+        zorder=1,
+    )
+
+
 def plot_notation():
     colors = {
         f"{1}": to_rgb("#33CB86"),
@@ -136,6 +210,7 @@ def plot_notation():
     ax.set_xlim(*xlim)
     ax.set_aspect(1)
     ax.axis("off")
+    plot_two_centres(ax, (1.6 * delta, yrange * 0.88), 1.4 * delta, 0.2 * yrange)
     filename = os.path.join(ROOT_DIR, "docs", "source", "img", "notation-tree.png")
     plt.savefig(filename, dpi=300, bbox_inches="tight")
 
