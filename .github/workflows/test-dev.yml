@@ -1,4 +1,4 @@
-name: Test stable branch
+name: Test dev branch
 
 on: 
   pull_request:
