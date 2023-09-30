@@ -410,19 +410,14 @@ def main(version: str, root_dir: str, relax: bool = False):
     # rtd - ready to deploy
     rtd = True
     rtd = check_active_branch(repo, relax=relax) and rtd
-    print(rtd)
 
     rtd = check_release_notes(version=version, root_dir=root_dir, relax=relax) and rtd
-    print(rtd)
 
     rtd = check_git_status(repo, relax=relax) and rtd
-    print(rtd)
 
     rtd = apply_license(root_dir=root_dir, relax=relax) and rtd
-    print(rtd)
 
     rtd = update_init(repo, version=version, root_dir=root_dir, relax=relax) and rtd
-    print(rtd)
 
     if rtd:
         print(colored(f"{f'{version} ready to deploy':^{N}}", "green"))
