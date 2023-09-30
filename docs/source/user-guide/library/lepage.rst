@@ -4,10 +4,10 @@
 LePage algorithm
 ****************
 
-The algorithm of the Bravais Lattice type identification is bases on the search for the 
+The algorithm for the Bravais lattice type identification is bases on the search for the 
 twofold rotation axes and described in details in [1]_. 
-Here we recall the algorithm from Table 1 of original publication with minor modifications as 
-implemented in :py:func:`.lepage`. 
+Here we recall the algorithm from Table 1 of the original publication with minor modifications as 
+implemented in :py:func:`.lepage` function. 
 
 3D Lattice
 ==========
@@ -18,9 +18,8 @@ as defined in [2]_ unless specified directly.
 
 Step I
 ------
-Compute niggli reduced cell. 
-It is done through the call to the :py:func:`.niggli` function.
-Define cell and reciprocal cell as Niggli cell and its reciprocal pair.
+Compute niggli reduced cell via the call to the :py:func:`.niggli` function.
+Define cell and reciprocal cell as Niggli cell and it's reciprocal pair.
 
 Step II
 --------
@@ -44,7 +43,7 @@ If :math:`\vert U \cdot h\vert = 2` or :math:`\vert U \cdot h\vert = 1` compute 
 
     \delta = \frac{\vert \boldsymbol{t}\times\boldsymbol{\tau}\vert}{\vert \boldsymbol{t}\cdot\boldsymbol{\tau}\vert}
 
-where
+where (@ - means matrix multiplication)
 
 .. code-block:: python
 
@@ -59,18 +58,18 @@ If :math:`\delta` is less then a ``limit``, keep the entry:
 
 Step IV
 -------
-Filter the result to eliminate "twins" of direct indices:
+Filter results to eliminate "twins" of direct indices:
 
-* [1, 2, 0] and [1, 2, 0]
-* [1, 2, 0] and [-1, -2, 0]
-* [1, 0, -1] and [2, 0, -2]: [1, 0, -1] is kept.
+* :math:`[1, 2, 0]` and :math:`[1, 2, 0]`
+* :math:`[1, 2, 0]` and :math:`[-1, -2, 0]`
+* :math:`[1, 0, -1]` and :math:`[2, 0, -2]`: :math:`[1, 0, -1]` is kept.
 
 At this step the ``axes`` list is computed
 
 Step V
 ------
 
-Compute pairwise cosines between twofold axes directions (``angles``): 
+Compute pairwise cosines between the twofold axes directions (``angles``): 
 
 .. math::
 
@@ -80,9 +79,9 @@ Compute pairwise cosines between twofold axes directions (``angles``):
 
 Step VI
 -------
-If you came from go to: delete the axes with the biggest delta from ``axes`` list.
+If you came from go to: delete axes with the biggest delta from ``axes`` list.
 
-Compute maximum :math:`\delta` if it is less then maximum delta, finish and return result.
+Compute maximum :math:`\delta`. If it is less then maximum delta, finish and return result.
 If not proceed with the consecutive checks for the system types.
 
 Step VII (cubic)
@@ -105,30 +104,31 @@ Check for the cubic system. Cubic system has
         9:& (0, -1, 1) \\
     \end{matrix}
 
-with the following angle matrix ((1, 1) is in the left, upper corner):
+with the following angle matrix:
 
 .. math::
 
     \begin{matrix}
-        0  & 90 & 90 & 45 & 45 & 45 & 45 & 90 & 90 \\
-        90 & 0  & 90 & 45 & 45 & 90 & 90 & 45 & 45 \\
-        90 & 90 & 0  & 90 & 90 & 45 & 45 & 45 & 45 \\
-        45 & 45 & 90 & 0  & 90 & 60 & 60 & 60 & 60 \\
-        45 & 45 & 90 & 90 & 0  & 60 & 60 & 60 & 60 \\
-        45 & 90 & 45 & 60 & 60 & 0  & 90 & 60 & 60 \\
-        45 & 90 & 45 & 60 & 60 & 90 & 0  & 60 & 60 \\
-        90 & 45 & 45 & 60 & 60 & 60 & 60 & 0  & 90 \\
-        90 & 45 & 45 & 60 & 60 & 60 & 60 & 60 & 0 
+          & 1          & 2          & 3          & 4          & 5          & 6          & 7          & 8          & 9          \\
+        1 & 0^{\circ}  & 90^{\circ} & 90^{\circ} & 45^{\circ} & 45^{\circ} & 45^{\circ} & 45^{\circ} & 90^{\circ} & 90^{\circ} \\
+        2 & 90^{\circ} & 0^{\circ}  & 90^{\circ} & 45^{\circ} & 45^{\circ} & 90^{\circ} & 90^{\circ} & 45^{\circ} & 45^{\circ} \\
+        3 & 90^{\circ} & 90^{\circ} & 0^{\circ}  & 90^{\circ} & 90^{\circ} & 45^{\circ} & 45^{\circ} & 45^{\circ} & 45^{\circ} \\
+        4 & 45^{\circ} & 45^{\circ} & 90^{\circ} & 0^{\circ}  & 90^{\circ} & 60^{\circ} & 60^{\circ} & 60^{\circ} & 60^{\circ} \\
+        5 & 45^{\circ} & 45^{\circ} & 90^{\circ} & 90^{\circ} & 0^{\circ}  & 60^{\circ} & 60^{\circ} & 60^{\circ} & 60^{\circ} \\
+        6 & 45^{\circ} & 90^{\circ} & 45^{\circ} & 60^{\circ} & 60^{\circ} & 0^{\circ}  & 90^{\circ} & 60^{\circ} & 60^{\circ} \\
+        7 & 45^{\circ} & 90^{\circ} & 45^{\circ} & 60^{\circ} & 60^{\circ} & 90^{\circ} & 0^{\circ}  & 60^{\circ} & 60^{\circ} \\
+        8 & 90^{\circ} & 45^{\circ} & 45^{\circ} & 60^{\circ} & 60^{\circ} & 60^{\circ} & 60^{\circ} & 0^{\circ}  & 90^{\circ} \\
+        9 & 90^{\circ} & 45^{\circ} & 45^{\circ} & 60^{\circ} & 60^{\circ} & 60^{\circ} & 60^{\circ} & 60^{\circ} & 0^{\circ} 
     \end{matrix}
 
 If ``angles`` is the same as the cubic angle matrix, 
 then find three axes with the following set of angles: 
-:math:`(0 \times 1, 90\times 4, 45 \times 4)`, put their Miller indices
-them in the matrix and compute its determinant :math:`\Delta`.
+:math:`(0^{\circ} \times 1, 90^{\circ}\times 4, 45^{\circ} \times 4)`, put their Miller indices
+in the matrix and compute its determinant :math:`\Delta`.
 
-* If :math:`\vert\Delta\vert = 1`, then set system type to "CUB".
-* If :math:`\vert\Delta\vert = 2`, then set system type to "BCC".
-* If :math:`\vert\Delta\vert = 4`, then set system type to "FCC".
+* If :math:`\vert\Delta\vert = 1`, then set system type to :ref:`"CUB" <guide_cub>`.
+* If :math:`\vert\Delta\vert = 2`, then set system type to :ref:`"BCC" <guide_bcc>`.
+* If :math:`\vert\Delta\vert = 4`, then set system type to :ref:`"FCC" <guide_fcc>`.
 
 Go to :ref:`step-vii`.
 
@@ -150,22 +150,23 @@ Check for the hexagonal system. Hexagonal system has
         7:& (0, 0, 1) 
     \end{matrix}
 
-with the following angle matrix ((1, 1) is in the left, upper corner):
+with the following angle matrix:
 
 .. math::
 
     \begin{matrix}
-        0  & 30 & 60 & 90 & 60 & 30 & 90 \\
-        30 & 0  & 30 & 60 & 90 & 60 & 30 \\
-        60 & 30 & 0  & 30 & 60 & 90 & 90 \\
-        90 & 60 & 30 & 0  & 30 & 60 & 90 \\
-        60 & 90 & 60 & 30 & 0  & 30 & 90 \\
-        30 & 60 & 90 & 60 & 30 & 0  & 90 \\
-        90 & 90 & 90 & 90 & 90 & 90 & 0  
+          & 1          & 2          & 3          & 4          & 5          & 6          & 7          \\
+        1 & 0^{\circ}  & 30^{\circ} & 60^{\circ} & 90^{\circ} & 60^{\circ} & 30^{\circ} & 90^{\circ} \\
+        2 & 30^{\circ} & 0^{\circ}  & 30^{\circ} & 60^{\circ} & 90^{\circ} & 60^{\circ} & 30^{\circ} \\
+        3 & 60^{\circ} & 30^{\circ} & 0^{\circ}  & 30^{\circ} & 60^{\circ} & 90^{\circ} & 90^{\circ} \\
+        4 & 90^{\circ} & 60^{\circ} & 30^{\circ} & 0^{\circ}  & 30^{\circ} & 60^{\circ} & 90^{\circ} \\
+        5 & 60^{\circ} & 90^{\circ} & 60^{\circ} & 30^{\circ} & 0^{\circ}  & 30^{\circ} & 90^{\circ} \\
+        6 & 30^{\circ} & 60^{\circ} & 90^{\circ} & 60^{\circ} & 30^{\circ} & 0^{\circ}  & 90^{\circ} \\
+        7 & 90^{\circ} & 90^{\circ} & 90^{\circ} & 90^{\circ} & 90^{\circ} & 90^{\circ} & 0^{\circ}  
     \end{matrix}
 
 If ``angles`` is the same as the hexagonal angle matrix, 
-then set system type to "HEX".
+then set system type to :ref:`"HEX" <guide_hex>`.
 
 Go to :ref:`step-vii`.
 
@@ -185,26 +186,27 @@ Check for the tetragonal system. Tetragonal system has
         5:& (1, -1, 0) 
     \end{matrix}
 
-with the following angle matrix ((1, 1) is in the left, upper corner):
+with the following angle matrix:
 
 .. math::
 
     \begin{matrix}
-        0  & 90 & 90 & 45 & 45 \\
-        90 & 0  & 90 & 45 & 45 \\
-        90 & 90 & 0  & 90 & 90 \\
-        45 & 45 & 90 & 0  & 90 \\
-        45 & 45 & 90 & 90 & 0   
+          & 1          & 2          & 3          & 4          & 5          \\
+        1 & 0^{\circ}  & 90^{\circ} & 90^{\circ} & 45^{\circ} & 45^{\circ} \\
+        2 & 90^{\circ} & 0^{\circ}  & 90^{\circ} & 45^{\circ} & 45^{\circ} \\
+        3 & 90^{\circ} & 90^{\circ} & 0^{\circ}  & 90^{\circ} & 90^{\circ} \\
+        4 & 45^{\circ} & 45^{\circ} & 90^{\circ} & 0^{\circ}  & 90^{\circ} \\
+        5 & 45^{\circ} & 45^{\circ} & 90^{\circ} & 90^{\circ} & 0^{\circ}   
     \end{matrix}
 
 If ``angles`` is the same as the tetragonal angle matrix, 
 then find one axes with the following set of angles: 
-:math:`(0 \times 1, 90\times 4, )`. Take two axes with minimal length form the remaining four.
+:math:`(0^{\circ} \times 1, 90^{\circ}\times 4)`. Take two axes with minimal length form the remaining four.
 Make a matrix from the Miller indices of the three axes 
 and compute its determinant :math:`\Delta`.
 
-* If :math:`\vert\Delta\vert  = 1`, then set system type to "TET".
-* If :math:`\vert\Delta\vert  = 2`, then set system type to "BCT".
+* If :math:`\vert\Delta\vert  = 1`, then set system type to :ref:`"TET" <guide_tet>`.
+* If :math:`\vert\Delta\vert  = 2`, then set system type to :ref:`"BCT" <guide_bct>`.
 
 Go to :ref:`step-vii`.
 
@@ -222,18 +224,19 @@ Check for the rhombohedral system. Rhombohedral system has
         3:& (1, 0, -1) \\
     \end{matrix}
 
-with the following angle matrix ((1, 1) is in the left, upper corner):
+with the following angle matrix:
 
 .. math::
 
     \begin{matrix}
-        0  & 60 & 60  \\
-        60 & 0  & 60  \\
-        60 & 60 & 0     
+          & 1          & 2          & 3           \\
+        1 & 0^{\circ}  & 60^{\circ} & 60^{\circ} \\
+        2 & 60^{\circ} & 0^{\circ}  & 60^{\circ} \\
+        3 & 60^{\circ} & 60^{\circ} & 0^{\circ}     
     \end{matrix}
 
 If ``angles`` is the same as the rhombohedral angle matrix, 
-then set system type to "RHL".
+then set system type to :ref:`"RHL" <guide_rhl>`.
 
 Go to :ref:`step-vii`.
 
@@ -251,23 +254,24 @@ Check for the orthorhombic system. Orthorhombic system has
         3:& (0, 0, 1) \\
     \end{matrix}
 
-with the following angle matrix ((1, 1) is in the left, upper corner):
+with the following angle matrix:
 
 .. math::
 
     \begin{matrix}
-        0  & 90 & 90  \\
-        90 & 0  & 90  \\
-        90 & 90 & 0     
+          & 1          & 2          & 3           \\
+        1 & 0^{\circ}  & 90^{\circ} & 90^{\circ}  \\
+        2 & 90^{\circ} & 0^{\circ}  & 90^{\circ}  \\
+        3 & 90^{\circ} & 90^{\circ} & 0     
     \end{matrix}
 
 If ``angles`` is the same as the orthorhombic angle matrix, 
 then make a matrix from the Miller indices of the three symmetry axes and 
 compute its determinant :math:`\Delta`.
 
-* If :math:`\vert\Delta\vert  = 1`, then set system type to "ORC".
-* If :math:`\vert\Delta\vert  = 4`, then set system type to "ORCF".
-* If :math:`\vert\Delta\vert  = 2`, then check for "ORCC" vs "ORCI".
+* If :math:`\vert\Delta\vert  = 1`, then set system type to :ref:`"ORC" <guide_orc>`.
+* If :math:`\vert\Delta\vert  = 4`, then set system type to ":ref:`"ORCF" <guide_orcf>`.
+* If :math:`\vert\Delta\vert  = 2`, then check for :ref:`"ORCC" <guide_orcc>` vs :ref:`"ORCI" <guide_orci>`.
     Define matrix :math:`C` as the matrix where columns are the Miller indices of 
     the three symmetry axes. Compute the vector:
 
@@ -275,8 +279,8 @@ compute its determinant :math:`\Delta`.
 
         v = C @ [1, 1, 1]
 
-    If the elements of v are coprime, then set system type to "ORCI", 
-    otherwise set the system type to "ORCC".
+    If the elements of v are |coprime|_, then set system type to :ref:`"ORCI" <guide_orci>`, 
+    otherwise set the system type to :ref:`"ORCC" <guide_orcc>`.
 
 Go to :ref:`step-vii`.
 
@@ -294,12 +298,13 @@ with respect to the conventional lattice as defined in [2]_):
         1:& (1, 0, 0) \\
     \end{matrix}
 
-with the following angle matrix ((1, 1) is in the left, upper corner):
+with the following angle matrix:
 
 .. math::
 
     \begin{matrix}
-        0      
+          & 1         \\
+        1 & 0^{\circ}      
     \end{matrix}
 
 If ``angles`` is the same as the monoclinic angle matrix, 
@@ -307,8 +312,8 @@ then define two shortest translation vectors in the plane
 perpendicular to the twofold rotation axis. Put Miller indices of these 
 two vectors and of twofold axis in a matrix and compute its determinant :math:`\Delta`
 
-* If :math:`\vert\Delta\vert  = 1`, then set system type to "MCL".
-* If :math:`\vert\Delta\vert  = 2`, then set system type to "MCLC".
+* If :math:`\vert\Delta\vert  = 1`, then set system type to :ref:`"MCL" <guide_mcl>`.
+* If :math:`\vert\Delta\vert  = 2`, then set system type to :ref:`"MCLC" <guide_mclc>`.
 
 
 Go to :ref:`step-vii`.
@@ -316,7 +321,7 @@ Go to :ref:`step-vii`.
 Step XIII (trigonal)
 --------------------
 
-If all previous checks failed set system type to "TRI" and go to :ref:`step-vii`. 
+If all previous checks failed set system type to :ref:`"TRI" <guide_tri>` and go to :ref:`step-vii`. 
 
 
 References

@@ -238,6 +238,7 @@ custom_links = {
         "https://www.vasp.at/wiki/index.php/POSCAR#Full_format_specification",
     ),
     "numba": ("Numba", "https://numba.pydata.org/"),
+    "coprime": ("coprime", "https://en.wikipedia.org/wiki/Coprime_integers"),
 }
 
 
