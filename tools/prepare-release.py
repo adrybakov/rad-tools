@@ -6,7 +6,6 @@ from calendar import month_name
 from datetime import datetime
 from random import randint
 
-
 import git
 from termcolor import colored
 
@@ -362,7 +361,7 @@ def apply_license(root_dir):
     ) as f:
         f.writelines('LICENSE = """')
         f.writelines(lines)
-        f.writelines('"""')
+        f.writelines('"""\n')
 
     source_files = []
     for dirpath, _, filenames in os.walk(os.path.join(root_dir, "radtools")):

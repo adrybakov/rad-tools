@@ -16,13 +16,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-r""" 
+r"""
 RAD-tools
 """
 
 __version__ = "0.8.9"
 __doclink__ = "rad-tools.org"
-__git_hash__ = "e2aedbb71f7138162139006b7bdf781bb7d80813"
+__git_hash__ = "a9863389ef7e90164d8e869c294505c8c2720628"
 __release_date__ = "1 October 2023"
 
 
