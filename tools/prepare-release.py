@@ -4,6 +4,8 @@ import sys
 from argparse import ArgumentParser
 from calendar import month_name
 from datetime import datetime
+from random import randint
+
 
 import git
 from termcolor import colored
@@ -12,7 +14,7 @@ N = 60
 
 LICENSE_SHORT = f"""# RAD-tools - program for spin Hamiltonian and magnons.
 # Copyright (C) 2022-{datetime.now().year}  Andrey Rybakov
-# 
+#
 # e-mail: anry@uv.es, web: adrybakov.com
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,8 +32,43 @@ LICENSE_SHORT = f"""# RAD-tools - program for spin Hamiltonian and magnons.
 
 """
 
+QUOTES_IF_BAD = [
+    # Albus Dumbledore
+    "Happiness can be found, even in the darkest of times, "
+    "if one only remembers to turn on the light.",
+    # Albus Dumbledore
+    "To the well-organized mind, death is but the next great adventure.",
+    # Ron Weasley
+    "When in doubt, go to the library.",
+    # Harry Potter
+    "I'm going to keep going until I succeed — or die.",
+    # Albus Dumbledore
+    "We must try not to sink beneath our anguish, but battle on.",
+    # Albus Dumbledore
+    "We must all face the choice between what is right and what is easy.",
+    # Cheshire Cat
+    "We're all mad here.",
+    # Sam Gamgee
+    "It's the job that's never started as takes longest to finish.",
+    # Gandalf
+    "He that breaks a thing to find out what it is, has left the path of wisdom.",
+]
 
-class FATAL(Exception):
+QUOTES_IF_GOOD = [
+    # Dobby
+    "Dobby is free.",
+    # Harry Potter
+    "Mischief Managed!",
+    # Severues Snape
+    "After all this time? Always.",
+    # Albus Dumbledore
+    "And now, let us step out into the night and pursue that flighty temptress, adventure.",
+    # Hamfast Gamgee
+    "All's well that ends better.",
+]
+
+
+class ERROR(Exception):
     pass
 
 
@@ -76,10 +113,22 @@ def envelope(message: str):
     """
 
     def wrapper(func):
-        def inner(*args, **kwargs):
+        def inner(*args, relax=False, **kwargs):
             print(f"{f'{message}'} ... ")
-            func(*args, **kwargs)
-            print(colored("Done", "green"))
+            errors = func(*args, **kwargs)
+            if errors is not None:
+                quote = colored(
+                    "\n" + QUOTES_IF_BAD[randint(0, len(QUOTES_IF_BAD) - 1)], "red"
+                )
+                if relax:
+                    print(errors + quote)
+                else:
+                    raise ERROR(errors + quote)
+            else:
+                quote = colored(
+                    "\n" + QUOTES_IF_GOOD[randint(0, len(QUOTES_IF_GOOD) - 1)], "green"
+                )
+                print(quote)
             print(f"{'':=^{N}}")
 
         return inner
@@ -100,15 +149,13 @@ def check_active_branch(repo: git.Repo):
 
     if repo.active_branch.name != "stable":
         sys.tracebacklimit = 0
-        raise FATAL(
-            "".join(
-                [
-                    colored("\nYou are not on stable branch\n", "red"),
-                    f"You are on '{repo.active_branch.name}' branch.\n",
-                    "Please checkout to the stable branch by running\n\n",
-                    "    git checkout stable\n",
-                ]
-            )
+        return "".join(
+            [
+                colored("\nYou are not on stable branch\n", "red"),
+                f"You are on '{repo.active_branch.name}' branch.\n",
+                "Please checkout to the stable branch by running\n\n",
+                "    git checkout stable\n",
+            ]
         )
 
 
@@ -151,19 +198,15 @@ def update_init(repo: git.Repo, version, root_dir: str):
     # Check if all variables were updated
     if not all(good):
         sys.tracebacklimit = 0
-        raise FATAL(
-            "".join(
-                [
-                    colored(
-                        "\nFailed to update some variables in '__init__.py':\n", "red"
-                    ),
-                    *[
-                        f"    {variables[i]:20} : {good_message[good[i]]}\n"
-                        for i in range(len(variables))
-                    ],
-                    "Please check the file and try again\n",
-                ]
-            )
+        return "".join(
+            [
+                colored("\nFailed to update some variables in '__init__.py':\n", "red"),
+                *[
+                    f"    {variables[i]:20} : {good_message[good[i]]}\n"
+                    for i in range(len(variables))
+                ],
+                "Please check the file and try again\n",
+            ]
         )
 
     # Write __init__.py
@@ -197,19 +240,17 @@ def check_release_notes(version: str, root_dir: str):
     # Check the minor version file
     if (major, minor) not in files:
         sys.tracebacklimit = 0
-        raise FATAL(
-            "".join(
-                [
-                    colored(
-                        f"\nRelease notes for the minor version {major}.{minor} are not available\n",
-                        "red",
-                    ),
-                    "Please add the file\n\n",
-                    f"    {major}.{minor}.rst\n\n",
-                    "to the directory\n\n",
-                    f"    docs/source/release-notes/\n",
-                ]
-            )
+        return "".join(
+            [
+                colored(
+                    f"\nRelease notes for the minor version {major}.{minor} are not available\n",
+                    "red",
+                ),
+                "Please add the file\n\n",
+                f"    {major}.{minor}.rst\n\n",
+                "to the directory\n\n",
+                f"    docs/source/release-notes/\n",
+            ]
         )
 
     # Update the toctree in the index file
@@ -247,39 +288,35 @@ def check_release_notes(version: str, root_dir: str):
     if not found_note:
         sys.tracebacklimit = 0
         if rest == 0:
-            raise FATAL(
-                "".join(
-                    [
-                        colored(
-                            f"\n'Whats new?' section for the {major}.{minor}.{rest} version is not available\n",
-                            "red",
-                        ),
-                        f"Please add it to the file\n\n",
-                        f"    docs/source/release-notes/{major}.{minor}.rst\n\n",
-                        "Follow the style:\n\n",
-                        f"    Whats new?\n",
-                        f"    {'':-^10}\n",
-                        "    Text\n",
-                    ]
-                )
+            return "".join(
+                [
+                    colored(
+                        f"\n'Whats new?' section for the {major}.{minor}.{rest} version is not available\n",
+                        "red",
+                    ),
+                    f"Please add it to the file\n\n",
+                    f"    docs/source/release-notes/{major}.{minor}.rst\n\n",
+                    "Follow the style:\n\n",
+                    f"    Whats new?\n",
+                    f"    {'':-^10}\n",
+                    "    Text\n",
+                ]
             )
         else:
-            raise FATAL(
-                "".join(
-                    [
-                        colored(
-                            f"\nRelease notes for the {major}.{minor}.{rest} version are not available\n",
-                            "red",
-                        ),
-                        f"Please add the note for the {major}.{minor}.{rest} version ",
-                        "to the file\n\n",
-                        f"    docs/source/release-notes/{major}.{minor}.rst\n\n",
-                        "Follow the style:\n\n",
-                        f"    {major}.{minor}.{rest}\n",
-                        f"    {'':-^{len(version)}}\n",
-                        "    Note text\n",
-                    ]
-                )
+            return "".join(
+                [
+                    colored(
+                        f"\nRelease notes for the {major}.{minor}.{rest} version are not available\n",
+                        "red",
+                    ),
+                    f"Please add the note for the {major}.{minor}.{rest} version ",
+                    "to the file\n\n",
+                    f"    docs/source/release-notes/{major}.{minor}.rst\n\n",
+                    "Follow the style:\n\n",
+                    f"    {major}.{minor}.{rest}\n",
+                    f"    {'':-^{len(version)}}\n",
+                    "    Note text\n",
+                ]
             )
 
 
@@ -297,25 +334,21 @@ def check_git_status(repo: git.Repo):
     if "nothing to commit, working tree clean" not in status:
         if not only_githash_in_init(repo):
             sys.tracebacklimit = 0
-            raise FATAL(
-                "".join(
-                    [
-                        colored("\nThere are uncommitted changes\n", "red"),
-                        "Please commit them:\n\n",
-                        status,
-                    ]
-                )
-            )
-    if "Your branch is up to date with" not in status:
-        sys.tracebacklimit = 0
-        raise FATAL(
-            "".join(
+            return "".join(
                 [
-                    colored("\nThere are unpushed changes\n", "red"),
-                    "Please push them:\n\n",
+                    colored("\nThere are uncommitted changes\n", "red"),
+                    "Please commit them:\n\n",
                     status,
                 ]
             )
+    if "Your branch is up to date with" not in status:
+        sys.tracebacklimit = 0
+        return "".join(
+            [
+                colored("\nThere are unpushed changes\n", "red"),
+                "Please push them:\n\n",
+                status,
+            ]
         )
 
 
@@ -352,10 +385,10 @@ def apply_license(root_dir):
             f.writelines(lines)
 
 
-def main(version: str, root_dir: str):
+def main(version: str, root_dir: str, relax: bool = False):
     if version == "None":
         sys.tracebacklimit = 0
-        raise FATAL(
+        raise ERROR(
             "".join(
                 [
                     colored("\nVersion is undefined\n", "red"),
@@ -374,15 +407,15 @@ def main(version: str, root_dir: str):
     # update_init() will change the __init__.py file and there
     # will be uncommitted changes
 
-    check_active_branch(repo)
+    check_active_branch(repo, relax=relax)
 
-    check_release_notes(version=version, root_dir=root_dir)
+    check_release_notes(version=version, root_dir=root_dir, relax=relax)
 
-    check_git_status(repo)
+    check_git_status(repo, relax=relax)
 
-    apply_license(root_dir=root_dir)
+    apply_license(root_dir=root_dir, relax=relax)
 
-    update_init(repo, version=version, root_dir=root_dir)
+    update_init(repo, version=version, root_dir=root_dir, relax=relax)
 
     print(colored(f"{f'{version} ready to deploy':^{N}}", "green"))
     print(f"{'':=^{N}}")
@@ -405,6 +438,12 @@ if __name__ == "__main__":
         type=str,
         required=True,
         help="Path to the root directory of the project",
+    )
+    parser.add_argument(
+        "-r",
+        "--relax",
+        action="store_true",
+        help="Relax the errors",
     )
     args = parser.parse_args()
     main(**vars(args))
