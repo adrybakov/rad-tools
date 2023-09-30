@@ -18,7 +18,7 @@
 
 from argparse import ArgumentParser
 
-from radtools.decorate.stats import logo, license
+from radtools.decorate.stats import license, logo
 
 if __name__ == "__main__":
     parser = ArgumentParser(

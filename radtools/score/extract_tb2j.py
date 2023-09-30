@@ -16,14 +16,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from argparse import ArgumentParser
 import os
+from argparse import ArgumentParser
 
 from termcolor import cprint
 
-from radtools.io.internal import load_template
+from radtools.io.internal import dump_spinham_txt, load_template
 from radtools.io.tb2j import load_tb2j_model
-from radtools.io.internal import dump_spinham_txt
 
 
 def manager(

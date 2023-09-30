@@ -23,8 +23,8 @@ Input-output for |Vampire|_.
 __all__ = ["dump_vampire", "dump_mat", "dump_ucf"]
 
 from radtools.decorate.array import print_2d_array
-from radtools.spinham.parameter import ExchangeParameter
 from radtools.decorate.stats import logo
+from radtools.spinham.parameter import ExchangeParameter
 
 meV_TO_J = 1.602176634e-22
 

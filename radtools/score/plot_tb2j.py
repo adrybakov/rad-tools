@@ -16,9 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import os
 from argparse import ArgumentParser
 from math import asin, pi, sqrt
-import os
 
 import numpy as np
 from matplotlib import pyplot as plt

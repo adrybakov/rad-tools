@@ -16,17 +16,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import os
 from argparse import ArgumentParser
 from calendar import month_name
 from datetime import datetime
-import os
 
 import numpy as np
 from termcolor import cprint
 
 from radtools import __version__ as version
-from radtools.io.tb2j import load_tb2j_model
 from radtools.decorate.stats import logo
+from radtools.io.tb2j import load_tb2j_model
 
 
 def manager(

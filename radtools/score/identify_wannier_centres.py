@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from argparse import ArgumentParser
 import os
+from argparse import ArgumentParser
 
 import numpy as np
 from termcolor import cprint
@@ -159,7 +159,7 @@ def create_parser():
         required=True,
         metavar="filename",
         type=str,
-        help='Relative or absolute path to the "*_centres.xyz" file',
+        help='Relative or absolute path to the "_centres.xyz" file',
     )
     parser.add_argument(
         "-s",

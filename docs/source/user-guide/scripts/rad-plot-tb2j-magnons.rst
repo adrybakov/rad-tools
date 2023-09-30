@@ -256,6 +256,7 @@ Coordinates are relative to the reciprocal cell.
     optional
     type: list of str
 
+.. versionadded:: 0.8.9
 
 .. _rad-plot-tb2j-magnons_k-path:
 

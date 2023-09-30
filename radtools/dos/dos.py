@@ -137,7 +137,9 @@ class DOSQE:
         # Detect the case
         if self._case is None:
             # Read header
-            with open(join(f"{self._input_folder}", f"{self.seedname}.pdos_tot")) as file:
+            with open(
+                join(f"{self._input_folder}", f"{self.seedname}.pdos_tot")
+            ) as file:
                 header = file.readline().lower().split()
 
             if "dos(e)" in header and "pdos(e)" in header:
@@ -200,7 +202,9 @@ class DOSQE:
 
         if self._k_resolved is None:
             # Check for k-resolved
-            with open(join(f"{self._input_folder}", f"{self.seedname}.pdos_tot")) as file:
+            with open(
+                join(f"{self._input_folder}", f"{self.seedname}.pdos_tot")
+            ) as file:
                 self._k_resolved = "ik" in file.readline().lower().split()
 
         return self._k_resolved

@@ -29,8 +29,8 @@ from .crystal import Crystal
 from .identify import *
 from .kpoints import *
 from .lattice import *
-from .properties import *
 from .lattice_plotter import *
+from .properties import *
 
 __all__ = ["Atom", "Crystal", "Cell", "crystal_constants"]
 __all__.extend(bravais_lattice.__all__)

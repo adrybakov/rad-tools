@@ -29,11 +29,12 @@ __all__ = [
 ]
 
 import numpy as np
-from radtools.spinham.template import ExchangeTemplate
+
 from radtools.decorate.array import print_2d_array
 from radtools.decorate.stats import logo
 from radtools.spinham.constants import TXT_FLAGS
 from radtools.spinham.hamiltonian import SpinHamiltonian
+from radtools.spinham.template import ExchangeTemplate
 
 meV_TO_J = 1.602176634e-22
 

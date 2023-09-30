@@ -17,11 +17,13 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
+
 import numpy as np
-from radtools.decorate.array import print_2d_array
-from radtools.geometry import volume, absolute_to_relative
+
 from radtools.crystal.atom import Atom
 from radtools.crystal.crystal import Crystal
+from radtools.decorate.array import print_2d_array
+from radtools.geometry import absolute_to_relative, volume
 
 __all__ = ["load_poscar", "dump_poscar"]
 
@@ -236,7 +238,7 @@ def dump_poscar(
 
 
 if __name__ == "__main__":
-    from radtools import Crystal, HEX
+    from radtools import HEX, Crystal
 
     c = Crystal(HEX(1, 2))
     c.add_atom("Cr2", position=[0.5, 0, 0])
