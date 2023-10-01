@@ -15,9 +15,9 @@ A few ways to ask for help or give feedback exist:
 Both places are  monitored and answered by the authors, choose the one you prefer.
 
 If you found a found a bug or want to request a feature, 
-then consider posting an `issue at github <https://github.com/adrybakov/rad-tools/issues>`_: 
+than consider posting an `issue at github <https://github.com/adrybakov/rad-tools/issues>`_: 
 
 * :ref:`contribute_bug`
 * :ref:`contribute_feature`.
 
-If the aforementioned options are not suitable for you, then you can contact the |Author|_ directly.
+If the aforementioned options are not suitable for you, than you can contact the |Author|_ directly.
