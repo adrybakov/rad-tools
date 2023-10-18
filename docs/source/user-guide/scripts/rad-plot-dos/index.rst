@@ -427,7 +427,7 @@ as specified in the QE projwfc.x input file (filpdos).
 
 If it is not provided the script tries to
 detect it automatically in the
-``rad-plot-dos_`input-folder`` folder.
+``rad-plot-dos_input-folder`` folder.
 
 .. code-block:: text
 
