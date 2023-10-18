@@ -79,7 +79,7 @@ def manager(
 
         If it is not provided the script tries to
         detect it automatically in the
-        ``rad-plot-dos_`input-folder`` folder.
+        ``rad-plot-dos_input-folder`` folder.
 
         Console argument: ``-s`` / ``--seedname``
 
