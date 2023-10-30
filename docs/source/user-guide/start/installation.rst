@@ -14,7 +14,7 @@ Requirement for RAD-tools installation are:
 * |termcolor|_
 
 Most likely you already have Python installed on your machine
-(if not check these links: |Python-installation|).
+(if not check these links: |Python-installation|_).
 
 RAD-tools can be installed with :ref:`pip <installation-pip>` 
 or from :ref:`source <installation-source>`.
