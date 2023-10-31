@@ -385,3 +385,335 @@ class Kpoints:
                     delta += flatten_points[-1]
                     flatten_points = np.concatenate((flatten_points, delta))
         return flatten_points
+
+def symmetry_analysis(
+    k_origin,
+    k_origin_weight,
+    k_points_subgrid,
+    symmetry,
+    threshold_k_grid,
+):
+    r"""
+    the symmetry analisys is applied on a subset of k points (k_points_subgrid), the origin of the subsystem is considered as well (k_origin)
+    in our case the origin is the point to which the refinment procedure is applied
+    from the symmetry annalysis is clear the distribution of the origin weight (k_origin_weight) between the different k points of the subset
+
+    Parameters
+    ----------
+    k_origin: (,3) |double|
+    k_origin_weight: |double|
+    k_points_subgrid: (:,3) |array|
+    symmetry: |list of lists| a symmetry is a list of 3 elements (the versor is the axis of rotation, while the modulus is the angle)
+    threshold_k_grid: |double| therhold to recognize a symmetry
+
+    Return
+    ----------
+    k_points_subgrid_weight_tmp: (:,1) |array| distribution of the origin k point weight between the different k points
+    """
+    k_points_subgrid_weight_tmp = np.zeros(len(k_points_subgrid[:, 0]))
+    # Use numpy
+    for i in range(0, len(k_points_subgrid[:, 0])):
+        k_points_subgrid_weight_tmp[i] = k_origin_weight / 4
+    if symmetry[0][0] == symmetry[0][1] == symmetry[0][2] == 0:
+        return k_points_subgrid_weight_tmp
+    check_degeneracy = np.zeros(
+        (len(k_points_subgrid[:, 0]), len(k_points_subgrid[:, 0])),
+        dtype=bool,
+    )
+    degeneracy = 0
+    for i in range(0, len(k_points_subgrid[:, 0]) - 1):
+        for j in range(i + 1, len(k_points_subgrid[:, 0])):
+            r = 0
+            while r < len(symmetry):
+                k_point_transformed = symmetry_transformation(
+                    k_origin, k_points_subgrid[j, :], symmetry[r]
+                )
+                flag = False
+                degeneracy_tmp = 0
+                for s in range(len(k_point_transformed)):
+                    flag = np.isclose(
+                        k_points_subgrid[i, s],
+                        k_point_transformed[s],
+                        atol=threshold_k_grid,
+                    )
+                    if flag == True:
+                        degeneracy_tmp = degeneracy_tmp + 1
+                if degeneracy_tmp == len(k_point_transformed):
+                    check_degeneracy[i][j] = True
+                    degeneracy = degeneracy + 1
+                    r = len(symmetry)
+                else:
+                    r = r + 1
+    if degeneracy == 0:
+        for i in range(0, len(k_points_subgrid[:, 0])):
+            k_points_subgrid_weight_tmp[i] = k_origin_weight / 4
+        return k_points_subgrid_weight_tmp
+    else:
+        list = {}
+        for i in range(0, len(k_points_subgrid[:, 0])):
+            list[str(i)] = [i]
+        for l in range(0, len(k_points_subgrid[:, 0]) - 1):
+            for j in range(l + 1, len(k_points_subgrid[:, 0])):
+                if len(list) != 1:
+                    if check_degeneracy[l][j] == True:
+                        for key, values in list.items():
+                            for value in values:
+                                if value == l:
+                                    positionl = key
+                                if value == j:
+                                    positionj = key
+                        list_new = {}
+                        if positionl != positionj:
+                            count = 0
+                            for key, values in list.items():
+                                if key == positionl:
+                                    list_new[str(count)] = values + list[positionj]
+                                    count = count + 1
+                                else:
+                                    if key != positionj:
+                                        list_new[str(count)] = values
+                                        count = count + 1
+                        list = {}
+                        for key, values in list_new.items():
+                            list[str(key)] = list_new[str(key)]
+        for key, values in list_new.items():
+            list_new[str(key)] = sorted(set(list_new[str(key)]))
+        if len(list_new) != 0:
+            k_weight_tmp = k_origin_weight / len(list_new)
+        else:
+            k_weight_tmp = 0.0
+        for key, values in list_new.items():
+            if len(values) == 1:
+                k_points_subgrid_weight_tmp[values] = k_weight_tmp
+            else:
+                count = 0
+                for value in values:
+                    if count == 0:
+                        k_points_subgrid_weight_tmp[value] = k_weight_tmp
+                        count = count + 1
+                    else:
+                        k_points_subgrid_weight_tmp[value] = 0
+        return k_points_subgrid_weight_tmp
+
+
+def local_refinment(
+    refined_grid,
+    reciprocal_vectors_2d,
+    not_refined_grid,
+    refinment_spacing,
+    refinment_iteration,
+    symmetry,
+    threshold_k_grid,
+):
+    r"""
+    Starting from a set of k points (not_refined_grid) with certain weight, to each k point iteratively (refinment_iteration) associates a subset of k points,
+    applying to each step a symmetry analysis (symmetry), and consequently distributing the initial weight of the starting k point to the subset k points
+    The refinment subgrid is built on the plane pointed out as an input (reciprocal_vectors_2d) [generalization to 3D is quite straightforward]
+
+    Parameters
+    ----------
+    refined_grid empty list []
+    reciprocal_vectors_2d : (2,3) |array|
+    not_refined_grid: (:,4) |array| the first 3 columns are the coordinates, while the 4th column is the weight
+    refinment_spacing: |double| initial subgrid dimension, half of the preceding subgrid dimension is considered at each iteration
+    refinment_iteration: |int| number of refinment iterations considered
+    symmetry: |list of lists| a symmetry is a list of 3 elements (the versor is the axis of rotation, while the modulus is the angle)
+    threshold_k_grid: |double| therhold to recognize a symmetry
+    """
+    if not_refined_grid.ndim == 1:
+        length_not_refined_grid = int(len(not_refined_grid) / 4)
+    else:
+        length_not_refined_grid = int(len(not_refined_grid))
+    if refinment_iteration == 0:
+        if length_not_refined_grid > 1:
+            for s in range(length_not_refined_grid):
+                if not_refined_grid[s, 3] != 0:
+                    refined_grid.extend(not_refined_grid[s, :])
+        else:
+            if not_refined_grid[3] != 0:
+                refined_grid.extend(not_refined_grid)
+    else:
+        iter = 0
+        while iter != length_not_refined_grid:
+            if length_not_refined_grid == 1:
+                k_tmp = not_refined_grid[:3]
+                k_weight_tmp = not_refined_grid[3]
+                iter = length_not_refined_grid
+            else:
+                k_tmp = not_refined_grid[iter, :3]
+                k_weight_tmp = not_refined_grid[iter, 3]
+                iter = iter + 1
+            if k_weight_tmp != 0:
+                k_points_subgrid = np.zeros((4, 4))
+                k_points_subgrid[0, :3] = (
+                    k_tmp + reciprocal_vectors_2d[0, :] * refinment_spacing
+                )
+                k_points_subgrid[1, :3] = (
+                    k_tmp - reciprocal_vectors_2d[0, :] * refinment_spacing
+                )
+                k_points_subgrid[2, :3] = (
+                    k_tmp + reciprocal_vectors_2d[1, :] * refinment_spacing
+                )
+                k_points_subgrid[3, :3] = (
+                    k_tmp - reciprocal_vectors_2d[1, :] * refinment_spacing
+                )
+                k_points_subgrid[:, 3] = symmetry_analysis(
+                    k_tmp,
+                    k_weight_tmp,
+                    k_points_subgrid[:, :3],
+                    symmetry,
+                    threshold_k_grid,
+                )
+                for i in range(0, 4):
+                    new_refinment_spacing = refinment_spacing / 2
+                    if k_points_subgrid[i, 3] != 0:
+                        local_refinment(
+                            refined_grid,
+                            reciprocal_vectors_2d,
+                            k_points_subgrid[i, :],
+                            new_refinment_spacing,
+                            refinment_iteration - 1,
+                            symmetry,
+                            threshold_k_grid,
+                        )
+
+
+def dynamical_refinment(
+    k_point_to_refine,
+    reciprocal_vectors_2d,
+    refinment_spacing,
+    refinment_iteration,
+    symmetry,
+    threshold_k_grid,
+):
+    r"""
+    In case to a point is already associated a subset of k points, but we are interested in a new refinment starting from the old one
+
+    Parameters
+    ----------
+    k_point_to_refine : (:,4) |array| subgrid of k points and respective weights
+    reciprocal_vectors_2d : (2,3) |array|
+    refinment_spacing: |double| initial subgrid dimension, half of the preceding subgrid dimension is considered at each iteration
+    refinment_iteration: |int| number of refinment iterations considered
+    symmetry: |list of lists| a symmetry is a list of 3 elements (the versor is the axis of rotation, while the modulus is the angle)
+    threshold_k_grid: |double| therhold to recognize a symmetry
+    """
+    refined_grid_tmp = []
+    local_refinment(
+        refined_grid_tmp,
+        reciprocal_vectors_2d,
+        k_point_to_refine,
+        refinment_spacing,
+        refinment_iteration,
+        symmetry,
+        threshold_k_grid,
+    )
+    refined_grid_tmp = np.reshape(refined_grid_tmp, (int(len(refined_grid_tmp) / 4), 4))
+    for s in range(len(k_point_to_refine)):
+        k_point_to_refine = np.delete(k_point_to_refine, 0, axis=0)
+    k_point_to_refine = np.append(k_point_to_refine, refined_grid_tmp)
+    k_point_to_refine = np.reshape(
+        k_point_to_refine, (int(len(k_point_to_refine) / 4), 4)
+    )
+    return k_point_to_refine
+
+
+def k_points_grid_2d_refinment_and_symmetry(
+    self,
+    plane_2d,
+    grid_spacing,
+    shift_in_plane,
+    shift_in_space,
+    symmetry,
+    refinment_spacing,
+    refinment_iteration,
+    threshold_k_grid,
+):
+    r"""
+    2d k points grid
+    Parameters
+    ----------
+    plane_2d : (1,3) |array_like|_  ex. [0,1,1] the plane is the b2xb3 in reciprocal space where the bi are the primitive vectors
+    grid_spacing: |double| spacing of the largest k grid
+    shift_in_plane : (1,2) |array_like|_  shift of the reciprocal plane_2d with respcet to the reciprocal(crystal) coordinates
+    shift_in_space : (1,3) |array_like|_  shift of the reciprocal plane_2d with respcet to the cartesian coordinates
+    symmetry : list [symmetry1,symmetry2...] each symmetry is a list of three elements: the versor is associated to the axis of rotation, while the modulus is the angle of rotation
+    refinment_spacing : |double| first refinment iteration dimension, the next refinment itarations are multiple of this
+    refinment_iteration : |int| number of refinment iterations
+    threshold_k_grid: |double| threshold for the symmetry checking
+    Return
+    -------------
+    normalized_chosen_reciprocal_plane: (2,3) |matrix| versor of the chosen plane
+    k0,k1 (1,1) |int,int| the number of k points along the 2 direction for the largest k grid
+    total_number_k_points |int|, total number of k points, taking into account also the refinment k points
+    k_points_grid_2d k0xk1 grid |k_point class| the largest k grid, where each point is associated to a refinment grid
+    """
+    count = 0
+    chosen_reciprocal_plane = np.zeros((2, 3))
+    for i in range(0, 3):
+        if plane_2d[i] != 0 and count < 2:
+            if i == 0:
+                chosen_reciprocal_plane[count] = self._model.b1
+            elif i == 1:
+                chosen_reciprocal_plane[count] = self._model.b2
+            else:
+                chosen_reciprocal_plane[count] = self._model.b3
+            count = count + 1
+    # np.dot(v1,v2) same as v1 @ v2
+    k0 = int(
+        np.dot(chosen_reciprocal_plane[0], chosen_reciprocal_plane[0]) / grid_spacing
+    )
+    k1 = int(
+        np.dot(chosen_reciprocal_plane[1], chosen_reciprocal_plane[1]) / grid_spacing
+    )
+    weight = 1 / (k0 * k1)
+    normalized_chosen_reciprocal_plane = np.zeros((2, 3))
+    # Try to use numpy here
+    for i in range(0, len(chosen_reciprocal_plane[:, 0])):
+        normalized_chosen_reciprocal_plane[i] = chosen_reciprocal_plane[i] / np.dot(
+            chosen_reciprocal_plane[i], chosen_reciprocal_plane[i]
+        )
+    k_points_grid_2d = np.zeros((k0, k1), dtype=object)
+    k_points_grid_2d_tmp = np.zeros(4)
+    with open("k_points.txt", "w") as file:
+        for i in range(0, k0):
+            for j in range(0, k1):
+                print(
+                    "k grid: {}% and {}%".format(int(i / k0 * 100), int(j / k1 * 100)),
+                    end="\r",
+                    flush=True,
+                )
+                k_points_grid_2d_tmp[:3] = ((i + shift_in_plane[0]) / k0) * (
+                    shift_in_space + chosen_reciprocal_plane[0]
+                ) + ((j + shift_in_plane[1]) / k1) * (
+                    shift_in_space + chosen_reciprocal_plane[1]
+                )
+                k_points_grid_2d_tmp[3] = weight
+                refined_grid_tmp = []
+                local_refinment(
+                    refined_grid_tmp,
+                    normalized_chosen_reciprocal_plane,
+                    k_points_grid_2d_tmp,
+                    refinment_spacing,
+                    refinment_iteration,
+                    symmetry,
+                    threshold_k_grid,
+                )
+                refined_grid_tmp = np.reshape(
+                    refined_grid_tmp, (int(len(refined_grid_tmp) / 4), 4)
+                )
+                k_points_grid_2d[i][j] = np.zeros((len(refined_grid_tmp), 4))
+                k_points_grid_2d[i][j] = refined_grid_tmp
+                file.write(f"{i} {j} {k_points_grid_2d[i][j]}  \n")
+    ##the k points are saved in the file k_points.txt
+    ##example of dynamical refinment
+    ##print(k_points_grid_2d[0][0])
+    ##k_points_grid_2d[0][0]=dynamical_refinment(
+    ##    k_points_grid_2d[0][0],
+    ##    chosen_reciprocal_plane,
+    ##    refinment_spacing,
+    ##    refinment_iteration,
+    ##    symmetry,threshold_k_grid
+    ##)
+    ##print(k_points_grid_2d[0][0])
+    return (normalized_chosen_reciprocal_plane, k0, k1, k_points_grid_2d)
