@@ -1,7 +1,7 @@
 *********
 RAD-tools
 *********
- 
+
 .. toctree::
     :maxdepth: 1
     :hidden:
@@ -19,7 +19,6 @@ RAD-tools
 
 **Useful links**:
 :ref:`Installation <rad-tools_installation>` |
-`Source Repository <https://github.com/adrybakov/rad-tools>`_ |
 `Issue Tracker <https://github.com/adrybakov/rad-tools/issues>`_ |
 :ref:`Cite us <rad-tools_cite>` |
 :ref:`support`
@@ -66,7 +65,7 @@ RAD-tools
         API Reference
         ^^^^^^^^^^^^^
 
-        Api Reference guide describes all classes and method of the package, 
+        Api Reference guide describes all classes and method of the package,
         how they work and which parameters they support.
         +++
 
