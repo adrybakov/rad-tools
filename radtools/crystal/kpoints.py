@@ -519,38 +519,47 @@ def symmetry_analysis(
         # returning the matrix with the respective weights
         return k_points_subgrid_weight_tmp
 
-#function checking if the k points of the list k_points_subgrid are inside the brillouin zone
+
+# function checking if the k points of the list k_points_subgrid are inside the brillouin zone
 def check_inside_brillouin_zone(
     k_points_subgrid,
     reciprocal_vectors_2d,
     brillouin_primitive_vectors,
     plane_2d,
 ):
-    matrix_crystal_to_cartesian=np.zeros((3,3))
-    matrix_cartesian_to_crystal=np.zeros((3,3))
-    k_points_subgrid_tmp=np.zeros((len(k_points_subgrid[:,0]),3))
-    matrix_crystal_to_cartesian[:,0]=brillouin_primitive_vectors[0,:]
-    matrix_crystal_to_cartesian[:,1]=brillouin_primitive_vectors[1,:]
-    matrix_crystal_to_cartesian[:,2]=brillouin_primitive_vectors[2,:]
-    matrix_cartesian_to_crystal=np.linalg.inv(np.matrix(matrix_crystal_to_cartesian))
-    #writing k points in crystal coordinates
-    for r in range(len(k_points_subgrid[:,0])):
-        for s in range(0,3):
-            for t in range(0,3):
-                k_points_subgrid_tmp[r,s]= k_points_subgrid_tmp[r,s]+matrix_cartesian_to_crystal[s,t]*k_points_subgrid[r,t]
-        count=0
-        #if the crystal coordinate of a k point is beyond +-1, it means that the k point is outside the brillouin zone
-        for l in range(0,3):
-            #considering only those primitive vectors defining the 2D plane chosen 
-            if plane_2d[l]!=0:
-                if abs(k_points_subgrid_tmp[r,l])>=1:
-                    for s in range(0,3):
-                        #translating the respective cartesian coordinates
-                        k_points_subgrid[r,s]=k_points_subgrid[r,s]-int(k_points_subgrid_tmp[r,l])*reciprocal_vectors_2d[count][s]
-            #progressing on the 2D plane primitive vectors
-            count=count+1
-    #returning the properly translated k points
-    return k_points_subgrid[:,:3]
+    matrix_crystal_to_cartesian = np.zeros((3, 3))
+    matrix_cartesian_to_crystal = np.zeros((3, 3))
+    k_points_subgrid_tmp = np.zeros((len(k_points_subgrid[:, 0]), 3))
+    matrix_crystal_to_cartesian[:, 0] = brillouin_primitive_vectors[0, :]
+    matrix_crystal_to_cartesian[:, 1] = brillouin_primitive_vectors[1, :]
+    matrix_crystal_to_cartesian[:, 2] = brillouin_primitive_vectors[2, :]
+    matrix_cartesian_to_crystal = np.linalg.inv(np.matrix(matrix_crystal_to_cartesian))
+    # writing k points in crystal coordinates
+    for r in range(len(k_points_subgrid[:, 0])):
+        for s in range(0, 3):
+            for t in range(0, 3):
+                k_points_subgrid_tmp[r, s] = (
+                    k_points_subgrid_tmp[r, s]
+                    + matrix_cartesian_to_crystal[s, t] * k_points_subgrid[r, t]
+                )
+        count = 0
+        # if the crystal coordinate of a k point is beyond +-1, it means that the k point is outside the brillouin zone
+        for l in range(0, 3):
+            # considering only those primitive vectors defining the 2D plane chosen
+            if plane_2d[l] != 0:
+                if abs(k_points_subgrid_tmp[r, l]) >= 1:
+                    for s in range(0, 3):
+                        # translating the respective cartesian coordinates
+                        k_points_subgrid[r, s] = (
+                            k_points_subgrid[r, s]
+                            - int(k_points_subgrid_tmp[r, l])
+                            * reciprocal_vectors_2d[count][s]
+                        )
+            # progressing on the 2D plane primitive vectors
+            count = count + 1
+    # returning the properly translated k points
+    return k_points_subgrid[:, :3]
+
 
 def local_refinment(
     refined_grid,
@@ -561,7 +570,7 @@ def local_refinment(
     symmetry,
     threshold_k_grid,
     brillouin_primitive_vectors,
-    plane_2d
+    plane_2d,
 ):
     r"""
     Starting from a set of k points (not_refined_grid) with certain weight, to each k point iteratively (refinment_iteration) associates a subset of k points,
@@ -622,7 +631,12 @@ def local_refinment(
                     symmetry,
                     threshold_k_grid,
                 )
-                k_points_subgrid[:,:3]=check_inside_brillouin_zone(k_points_subgrid[:,:3],reciprocal_vectors_2d,brillouin_primitive_vectors,plane_2d)
+                k_points_subgrid[:, :3] = check_inside_brillouin_zone(
+                    k_points_subgrid[:, :3],
+                    reciprocal_vectors_2d,
+                    brillouin_primitive_vectors,
+                    plane_2d,
+                )
                 for i in range(0, 4):
                     new_refinment_spacing = refinment_spacing / 2
                     if k_points_subgrid[i, 3] != 0:
@@ -635,7 +649,7 @@ def local_refinment(
                             symmetry,
                             threshold_k_grid,
                             brillouin_primitive_vectors,
-                            plane_2d
+                            plane_2d,
                         )
 
 
@@ -647,7 +661,7 @@ def dynamical_refinment(
     symmetry,
     threshold_k_grid,
     brillouin_primitive_vectors,
-    plane_2d
+    plane_2d,
 ):
     r"""
     In case to a point is already associated a subset of k points, but we are interested in a new refinment starting from the old one
@@ -671,7 +685,7 @@ def dynamical_refinment(
         symmetry,
         threshold_k_grid,
         brillouin_primitive_vectors,
-        plane_2d
+        plane_2d,
     )
     refined_grid_tmp = np.reshape(refined_grid_tmp, (int(len(refined_grid_tmp) / 4), 4))
     for s in range(len(k_point_to_refine)):
@@ -764,7 +778,7 @@ def k_points_grid_2d_refinment_and_symmetry(
                     symmetry,
                     threshold_k_grid,
                     brillouin_primitive_vectors,
-                    plane_2d
+                    plane_2d,
                 )
                 refined_grid_tmp = np.reshape(
                     refined_grid_tmp, (int(len(refined_grid_tmp) / 4), 4)
