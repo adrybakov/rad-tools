@@ -450,18 +450,9 @@ def symmetry_analysis(
                     @ (k_points_subgrid[j] - k_origin)
                     + k_origin
                 )
-                # degeneracy_tmp is counting how many coordinates are equal
-                degeneracy_tmp = 0
-                # checking if all three coordinates of the two points are "equal"
-                for s in range(len(k_point_transformed)):
-                    if np.isclose(
-                        k_points_subgrid[i, s],
-                        k_point_transformed[s],
-                        atol=threshold_k_grid,
-                    ):
-                        degeneracy_tmp = degeneracy_tmp + 1
-                # if all three coordinates are equal, then the two points are saved as degenerate
-                if degeneracy_tmp == len(k_point_transformed):
+                if np.allclose(
+                    k_points_subgrid[i], k_point_transformed, atol=threshold_k_grid
+                ):
                     check_degeneracy[i][j] = True
                     degeneracy = degeneracy + 1
                     r = len(symmetry)
