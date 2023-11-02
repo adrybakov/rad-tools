@@ -428,9 +428,7 @@ def symmetry_transformation(k_origin, k_point, axis):
 
     R = I + W * np.sin(rotation) + (W @ W) * 2 * np.sin(rotation / 2) ** 2
 
-    k_point_transformed = R @ unit_k_vector
-
-    k_point_transformed = k_point_transformed * module + k_origin
+    k_point_transformed = R @ unit_k_vector * module + k_origin
 
     return k_point_transformed
 
