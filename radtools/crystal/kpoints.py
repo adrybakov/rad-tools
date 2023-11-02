@@ -413,9 +413,6 @@ def symmetry_transformation(k_origin, k_point, axis):
     axis /= rotation
     k_vector = k_point - k_origin
 
-    module = np.linalg.norm(k_vector)
-    unit_k_vector = k_vector / module
-
     W = np.zeros((3, 3), dtype=float)
     I = np.eye(3, dtype=float)
     R = np.zeros((3, 3), dtype=float)
@@ -428,7 +425,7 @@ def symmetry_transformation(k_origin, k_point, axis):
 
     R = I + W * np.sin(rotation) + (W @ W) * 2 * np.sin(rotation / 2) ** 2
 
-    k_point_transformed = R @ unit_k_vector * module + k_origin
+    k_point_transformed = R @ k_vector + k_origin
 
     return k_point_transformed
 
