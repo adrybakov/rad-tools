@@ -426,9 +426,12 @@ def symmetry_analysis(
         Distribution of the origin k point weight between the different k points
     """
 
-    k_points_subgrid_weight_tmp = np.zeros(len(k_points_subgrid[:, 0]))
+    # It is used 10 times, so it is better to calculate it once
+    N = k_points_subgrid.shape[0]  # former len(k_points_subgrid[:, 0])
+
+    k_points_subgrid_weight_tmp = np.zeros(N)
     # Use numpy
-    for i in range(0, len(k_points_subgrid[:, 0])):
+    for i in range(0, N):
         k_points_subgrid_weight_tmp[i] = k_origin_weight / 4
     # if there are no symmetry operations, the weight on each subgrid k point is exactly 1/4 of the original weight
     if symmetry[0][0] == symmetry[0][1] == symmetry[0][2] == 0:
@@ -436,14 +439,14 @@ def symmetry_analysis(
 
     # defining a matrix to save the degeneracies, after each symmetry operation
     check_degeneracy = np.zeros(
-        (len(k_points_subgrid[:, 0]), len(k_points_subgrid[:, 0])),
+        (N, N),
         dtype=bool,
     )
     # saving number of degeneracies detected
     degeneracy = 0
     # each k point is compared to each other k point after the symmetry operation has been applied
-    for i in range(0, len(k_points_subgrid[:, 0]) - 1):
-        for j in range(i + 1, len(k_points_subgrid[:, 0])):
+    for i in range(0, N - 1):
+        for j in range(i + 1, N):
             r = 0
             # for each pair considering all the symmetry operations
             while r < len(symmetry):
@@ -473,17 +476,17 @@ def symmetry_analysis(
                     r = r + 1
     # if no degeneracy is detected, the common result is given
     if degeneracy == 0:
-        for i in range(0, len(k_points_subgrid[:, 0])):
+        for i in range(0, N):
             k_points_subgrid_weight_tmp[i] = k_origin_weight / 4
         return k_points_subgrid_weight_tmp
     else:
         # if degeneracy is detected, of the degenerate points only one is chosen
         list = {}
-        for i in range(0, len(k_points_subgrid[:, 0])):
+        for i in range(0, N):
             list[str(i)] = [i]
         # assuming all k points as not-degenerate, and creating a dictionary where to each eigenspace is associated an eigenvector(k_point)
-        for l in range(0, len(k_points_subgrid[:, 0]) - 1):
-            for j in range(l + 1, len(k_points_subgrid[:, 0])):
+        for l in range(0, N - 1):
+            for j in range(l + 1, N):
                 if len(list) != 1:
                     # reading the degeneracy matrix, the eigenspaces are properly populated, in particular degenerate k points are put in the same eigenspace
                     if check_degeneracy[l][j] == True:
