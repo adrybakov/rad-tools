@@ -23,6 +23,7 @@ General 3D lattice.
 from typing import Iterable
 
 import numpy as np
+from scipy.spatial.transform import Rotation
 
 from radtools.geometry import absolute_to_relative
 
@@ -409,21 +410,10 @@ def symmetry_transformation(k_origin, k_point, axis):
         #TODO better description
         rotated
     """
-    rotation = np.linalg.norm(axis)
-    axis /= rotation
+
     k_vector = k_point - k_origin
 
-    W = np.zeros((3, 3), dtype=float)
-    I = np.eye(3, dtype=float)
-    R = np.zeros((3, 3), dtype=float)
-    W[0][1] = -axis[2]
-    W[0][2] = axis[1]
-    W[1][2] = -axis[0]
-    W[1][0] = axis[2]
-    W[2][0] = -axis[1]
-    W[2][1] = axis[0]
-
-    R = I + W * np.sin(rotation) + (W @ W) * 2 * np.sin(rotation / 2) ** 2
+    R = Rotation.from_rotvec(axis).as_matrix()
 
     k_point_transformed = R @ k_vector + k_origin
 
