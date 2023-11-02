@@ -4,24 +4,32 @@
 Contributor`s guide
 *******************
 
-We welcome the contribution to the package! 
-
-It is not necessary to be a programmer to contribute. 
-You can help us with the documentation, :ref:`new features <contribute_feature>` 
-and :ref:`finding bugs <contribute_bug>`.
-
 .. toctree::
    :hidden:
 
    features
    bugs
    documentation
+   contributors
+
+We welcome the contribution to the package!
+
+If you're interested in seeing who has already contributed to this project,
+please visit our :ref:`Contributors page <contribute_contributors>`.
+We appreciate all contributions, big or small, and we look forward to seeing your name on that list!
+
+It is not necessary to be a programmer to contribute.
+You can help us with the documentation, :ref:`new features <contribute_feature>`
+and :ref:`finding bugs <contribute_bug>`.
+
 
 Contribution to the source code is summarized below.
 
+
+
 Fork
 ====
-The first step is to fork the repository on GitHub. 
+The first step is to fork the repository on GitHub.
 Go to |RAD-repo|_ and click on the "Fork" button.
 
 Clone
@@ -85,7 +93,7 @@ Test
 ====
 
 Write unit tests for the developed code. We recommend to write tests before the code.
-Test files are located in the "utest" directory. the structure of the source code directory 
+Test files are located in the "utest" directory. the structure of the source code directory
 ("radtools") and the test directory ("utest") is loosely the same.
 
 Run the tests locally:
@@ -97,7 +105,7 @@ Run the tests locally:
 Docs
 ====
 
-If you have developed a new feature, please add the description to the docs. 
+If you have developed a new feature, please add the description to the docs.
 Make sure to follow :ref:`docs_guide`.
 
 Build the docs locally:
@@ -118,7 +126,7 @@ Run doctest locally:
 Pull request
 ============
 
-Once you are ready with your contribution, 
+Once you are ready with your contribution,
 push your changes to your forked repository and create a pull request.
-Please add the description to the pull request. 
+Please add the description to the pull request.
 Mention the issue number if it is related to any.
