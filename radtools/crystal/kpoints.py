@@ -426,11 +426,6 @@ def symmetry_transformation(k_origin, k_point, axis):
     W[2][0] = -axis[1]
     W[2][1] = axis[0]
 
-    # numpy does it for your: matrix * scalar
-    # Try to get rid of this function and use numpy
-    def mul_mat_by_scalar(matrix, scalar):
-        return [[scalar * j for j in i] for i in matrix]
-
     # numpy does it for your: matrix * matrix
     # Try to get rid of this function and use numpy
     def mul_mat_by_mat(matrixa, matrixb):
@@ -443,8 +438,8 @@ def symmetry_transformation(k_origin, k_point, axis):
 
     R = (
         I
-        + mul_mat_by_scalar(W, np.sin(rotation))
-        + mul_mat_by_scalar(mul_mat_by_mat(W, W), 2 * pow(np.sin(rotation / 2), 2))
+        + W * np.sin(rotation)
+        + mul_mat_by_mat(W, W) * 2 * pow(np.sin(rotation / 2), 2)
     )
     k_point_transformed = np.zeros(3)
     # Try to rewrite with numpy
