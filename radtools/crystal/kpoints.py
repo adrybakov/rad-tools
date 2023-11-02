@@ -427,12 +427,15 @@ def symmetry_transformation(k_origin, k_point, axis):
     W[2][1] = axis[0]
 
     R = I + W * np.sin(rotation) + (W @ W) * 2 * np.sin(rotation / 2) ** 2
-    k_point_transformed = np.zeros(3)
+    k_point_transformed = np.zeros(3, dtype=float)
+
     # Try to rewrite with numpy
     for i in range(0, 3):
         for j in range(0, 3):
             k_point_transformed[i] = k_point_transformed[i] + R[i][j] * unit_k_vector[j]
+
     k_point_transformed = k_point_transformed * module + k_origin
+
     return k_point_transformed
 
 
