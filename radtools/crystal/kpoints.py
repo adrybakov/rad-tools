@@ -388,31 +388,6 @@ class Kpoints:
         return flatten_points
 
 
-def symmetry_transformation(k_origin, k_point, axis):
-    r"""
-    #TODO Short description
-
-    Symmetry transformation of a k vector, from ``k_origin`` to ``k_point``.
-
-    Parameters
-    ----------
-    k_origin : (3,) |array-like|_
-        #TODO description
-    k_point : (3,) |array-like|_
-        #TODO description
-    axis : (3,) |array-like|_
-        Rotation vector, its modulus is equal to the rotation angle,
-        while its verso is the axis of rotation.
-
-    Returns
-    -------
-    k_point : #TODO
-        #TODO better description
-        rotated
-    """
-    return Rotation.from_rotvec(axis).as_matrix() @ (k_point - k_origin) + k_origin
-
-
 def symmetry_analysis(
     k_origin,
     k_origin_weight,
@@ -458,8 +433,10 @@ def symmetry_analysis(
             r = 0
             # for each pair considering all the symmetry operations
             while r < len(symmetry):
-                k_point_transformed = symmetry_transformation(
-                    k_origin, k_points_subgrid[j, :], symmetry[r]
+                k_point_transformed = (
+                    Rotation.from_rotvec(symmetry[r]).as_matrix()
+                    @ (k_points_subgrid[j] - k_origin)
+                    + k_origin
                 )
                 flag = False
                 # degeneracy_tmp is counting how many coordinates are equal
