@@ -410,10 +410,7 @@ def symmetry_transformation(k_origin, k_point, axis):
         #TODO better description
         rotated
     """
-
-    R = Rotation.from_rotvec(axis).as_matrix()
-
-    return R @ (k_point - k_origin) + k_origin
+    return Rotation.from_rotvec(axis).as_matrix() @ (k_point - k_origin) + k_origin
 
 
 def symmetry_analysis(
