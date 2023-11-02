@@ -386,24 +386,29 @@ class Kpoints:
                     flatten_points = np.concatenate((flatten_points, delta))
         return flatten_points
 
-def symmetry_transformation(
-    k_origin, 
-    k_point, 
-    axis
-    ):
+
+def symmetry_transformation(k_origin, k_point, axis):
     r"""
-        symmetry transformation of a k vector, from k_origin to k_point, axis is the rotation vector: 
-        i.e. its modulus is equal to the rotation angle, while its verso is the axis of rotation
-      
-        Parameters
-        ----------
-        k_origin: (,3) |double|
-        k_point: (,3) |double|
-        axis: (3) |array|
-        Return
-        ----------
-        k_point rotated
-       """
+    #TODO Short description
+
+    Symmetry transformation of a k vector, from ``k_origin`` to ``k_point``.
+
+    Parameters
+    ----------
+    k_origin : (3,) |array-like|_
+        #TODO description
+    k_point : (3,) |array-like|_
+        #TODO description
+    axis : (3,) |array-like|_
+        Rotation vector, its modulus is equal to the rotation angle,
+        while its verso is the axis of rotation.
+
+    Returns
+    -------
+    k_point : #TODO
+        #TODO better description
+        rotated
+    """
     rotation = np.sqrt(np.dot(axis, axis))
     # print(k_point-k_origin,axis)
     axis = axis / rotation
@@ -421,10 +426,12 @@ def symmetry_transformation(
     W[1][0] = axis[2]
     W[2][0] = -axis[1]
     W[2][1] = axis[0]
+
     # numpy does it for your: matrix * scalar
     # Try to get rid of this function and use numpy
     def mul_mat_by_scalar(matrix, scalar):
         return [[scalar * j for j in i] for i in matrix]
+
     # numpy does it for your: matrix * matrix
     # Try to get rid of this function and use numpy
     def mul_mat_by_mat(matrixa, matrixb):
@@ -432,26 +439,22 @@ def symmetry_transformation(
         for k in range(0, 3):
             for l in range(0, 3):
                 for r in range(0, 3):
-                    product[k][l] = (
-                        product[k][l] + matrixa[k][r] * matrixb[r][l]
-                    )
+                    product[k][l] = product[k][l] + matrixa[k][r] * matrixb[r][l]
         return product
+
     R = (
         I
         + mul_mat_by_scalar(W, np.sin(rotation))
-        + mul_mat_by_scalar(
-            mul_mat_by_mat(W, W), 2 * pow(np.sin(rotation / 2), 2)
-        )
+        + mul_mat_by_scalar(mul_mat_by_mat(W, W), 2 * pow(np.sin(rotation / 2), 2))
     )
     k_point_transformed = np.zeros(3)
     # Try to rewrite with numpy
     for i in range(0, 3):
         for j in range(0, 3):
-            k_point_transformed[i] = (
-                k_point_transformed[i] + R[i][j] * unit_k_vector[j]
-            )
+            k_point_transformed[i] = k_point_transformed[i] + R[i][j] * unit_k_vector[j]
     k_point_transformed = k_point_transformed * module + k_origin
     return k_point_transformed
+
 
 def symmetry_analysis(
     k_origin,
@@ -484,27 +487,27 @@ def symmetry_analysis(
     # if there are no symmetry operations, the weight on each subgrid k point is exactly 1/4 of the original weight
     if symmetry[0][0] == symmetry[0][1] == symmetry[0][2] == 0:
         return k_points_subgrid_weight_tmp
-    
+
     # defining a matrix to save the degeneracies, after each symmetry operation
     check_degeneracy = np.zeros(
         (len(k_points_subgrid[:, 0]), len(k_points_subgrid[:, 0])),
         dtype=bool,
     )
-    #saving number of degeneracies detected
+    # saving number of degeneracies detected
     degeneracy = 0
-    #each k point is compared to each other k point after the symmetry operation has been applied
+    # each k point is compared to each other k point after the symmetry operation has been applied
     for i in range(0, len(k_points_subgrid[:, 0]) - 1):
         for j in range(i + 1, len(k_points_subgrid[:, 0])):
             r = 0
-            #for each pair considering all the symmetry operations 
+            # for each pair considering all the symmetry operations
             while r < len(symmetry):
                 k_point_transformed = symmetry_transformation(
                     k_origin, k_points_subgrid[j, :], symmetry[r]
                 )
                 flag = False
-                #degeneracy_tmp is counting how many coordinates are equal
+                # degeneracy_tmp is counting how many coordinates are equal
                 degeneracy_tmp = 0
-                #checking if all three coordinates of the two points are "equal"
+                # checking if all three coordinates of the two points are "equal"
                 for s in range(len(k_point_transformed)):
                     flag = np.isclose(
                         k_points_subgrid[i, s],
@@ -513,28 +516,28 @@ def symmetry_analysis(
                     )
                     if flag == True:
                         degeneracy_tmp = degeneracy_tmp + 1
-                #if all three coordinates are equal, then the two points are saved as degenerate
+                # if all three coordinates are equal, then the two points are saved as degenerate
                 if degeneracy_tmp == len(k_point_transformed):
                     check_degeneracy[i][j] = True
                     degeneracy = degeneracy + 1
                     r = len(symmetry)
                 else:
                     r = r + 1
-    #if no degeneracy is detected, the common result is given
+    # if no degeneracy is detected, the common result is given
     if degeneracy == 0:
         for i in range(0, len(k_points_subgrid[:, 0])):
             k_points_subgrid_weight_tmp[i] = k_origin_weight / 4
         return k_points_subgrid_weight_tmp
     else:
-        #if degeneracy is detected, of the degenerate points only one is chosen
+        # if degeneracy is detected, of the degenerate points only one is chosen
         list = {}
         for i in range(0, len(k_points_subgrid[:, 0])):
             list[str(i)] = [i]
-        #assuming all k points as not-degenerate, and creating a dictionary where to each eigenspace is associated an eigenvector(k_point)
+        # assuming all k points as not-degenerate, and creating a dictionary where to each eigenspace is associated an eigenvector(k_point)
         for l in range(0, len(k_points_subgrid[:, 0]) - 1):
             for j in range(l + 1, len(k_points_subgrid[:, 0])):
                 if len(list) != 1:
-                    #reading the degeneracy matrix, the eigenspaces are properly populated, in particular degenerate k points are put in the same eigenspace
+                    # reading the degeneracy matrix, the eigenspaces are properly populated, in particular degenerate k points are put in the same eigenspace
                     if check_degeneracy[l][j] == True:
                         for key, values in list.items():
                             for value in values:
@@ -543,8 +546,8 @@ def symmetry_analysis(
                                 if value == j:
                                     positionj = key
                         list_new = {}
-                        #new list is created with the proper eigenspaces, but at the same time is compared with the old one, 
-                        #to check if there are old degeneracies to take into account
+                        # new list is created with the proper eigenspaces, but at the same time is compared with the old one,
+                        # to check if there are old degeneracies to take into account
                         if positionl != positionj:
                             count = 0
                             for key, values in list.items():
@@ -555,11 +558,11 @@ def symmetry_analysis(
                                     if key != positionj:
                                         list_new[str(count)] = values
                                         count = count + 1
-                        #the new list is save to be used as an old one
+                        # the new list is save to be used as an old one
                         list = {}
                         for key, values in list_new.items():
                             list[str(key)] = list_new[str(key)]
-        #the chosen k points 
+        # the chosen k points
         for key, values in list_new.items():
             list_new[str(key)] = sorted(set(list_new[str(key)]))
         if len(list_new) != 0:
@@ -571,14 +574,14 @@ def symmetry_analysis(
                 k_points_subgrid_weight_tmp[values] = k_weight_tmp
             else:
                 count = 0
-                #chosing of the degenerate points only the first one
+                # chosing of the degenerate points only the first one
                 for value in values:
                     if count == 0:
                         k_points_subgrid_weight_tmp[value] = k_weight_tmp
                         count = count + 1
                     else:
                         k_points_subgrid_weight_tmp[value] = 0
-        #returning the matrix with the respective weights
+        # returning the matrix with the respective weights
         return k_points_subgrid_weight_tmp
 
 
@@ -745,7 +748,7 @@ def k_points_grid_2d_refinment_and_symmetry(
             else:
                 chosen_reciprocal_plane[count] = brillouin_primitive_vectors[2]
             count = count + 1
-    #np.dot(v1,v2) same as v1 @ v2
+    # np.dot(v1,v2) same as v1 @ v2
     k0 = int(
         np.dot(chosen_reciprocal_plane[0], chosen_reciprocal_plane[0]) / grid_spacing
     )
@@ -803,6 +806,7 @@ def k_points_grid_2d_refinment_and_symmetry(
     ##)
     ##print(k_points_grid_2d[0][0])
     return (normalized_chosen_reciprocal_plane, k0, k1, k_points_grid_2d)
+
 
 ##if __name__ == "__main__":
 ##    import timeit
