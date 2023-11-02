@@ -409,7 +409,7 @@ def symmetry_analysis(
     ----------
     k_origin : (3,) |array-like|_
         #TODO description
-    k_origin_weight : |array-like|_
+    k_origin_weight : float
         #TODO description
     k_points_subgrid : (N, 3) |array-like|_
         #TODO description
@@ -425,6 +425,9 @@ def symmetry_analysis(
     k_points_subgrid_weight_tmp: (N,) :numpy:`ndarray`
         Distribution of the origin k point weight between the different k points
     """
+
+    k_points_subgrid = np.array(k_points_subgrid)
+    k_origin = np.array(k_origin)
 
     # It is used 10 times, so it is better to calculate it once
     N = k_points_subgrid.shape[0]  # former len(k_points_subgrid[:, 0])
