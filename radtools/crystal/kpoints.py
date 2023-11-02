@@ -396,22 +396,36 @@ def symmetry_analysis(
     threshold_k_grid,
 ):
     r"""
-    the symmetry analisys is applied on a subset of k points (k_points_subgrid), the origin of the subsystem is considered as well (k_origin)
-    in our case the origin is the point to which the refinment procedure is applied
-    from the symmetry annalysis is clear the distribution of the origin weight (k_origin_weight) between the different k points of the subset
+
+    #TODO Short description
+
+    The symmetry analysis is applied on a subset of k points ``k_points_subgrid``,
+    the origin of the subsystem is considered as well ``k_origin``
+    in our case the origin is the point to which the refinement procedure is applied
+    from the symmetry analysis is clear the distribution of the origin weight
+    ``k_origin_weight`` between the different k points of the subset
 
     Parameters
     ----------
-    k_origin: (,3) |double|
-    k_origin_weight: |double|
-    k_points_subgrid: (:,3) |array|
-    symmetry: |list of lists| a symmetry is a list of 3 elements (the versor is the axis of rotation, while the modulus is the angle)
-    threshold_k_grid: |double| therhold to recognize a symmetry
+    k_origin : (3,) |array-like|_
+        #TODO description
+    k_origin_weight : |array-like|_
+        #TODO description
+    k_points_subgrid : (N, 3) |array-like|_
+        #TODO description
+    symmetry : list of lists
+        #TODO better description
+        A symmetry is a list of 3 elements
+        (the versor is the axis of rotation, while the modulus is the angle).
+    threshold_k_grid : float
+        Threshold to recognize a symmetry.
 
-    Return
-    ----------
-    k_points_subgrid_weight_tmp: (:,1) |array| distribution of the origin k point weight between the different k points
+    Returns
+    -------
+    k_points_subgrid_weight_tmp: (N, 1) :numpy:`ndarray`
+        Distribution of the origin k point weight between the different k points
     """
+
     k_points_subgrid_weight_tmp = np.zeros(len(k_points_subgrid[:, 0]))
     # Use numpy
     for i in range(0, len(k_points_subgrid[:, 0])):
