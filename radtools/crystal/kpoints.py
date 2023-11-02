@@ -777,4 +777,8 @@ def k_points_grid_2d_refinment_and_symmetry(
 ##        refinment_spacing,
 ##        refinment_iteration,
 ##        threshold_k_grid)
+<<<<<<< HEAD
 ##    print(k0,k1)(venv) (base)
+=======
+##    print(k0,k1)
+>>>>>>> 60da13c (k points method better commenting)
