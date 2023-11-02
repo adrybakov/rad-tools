@@ -422,7 +422,7 @@ def symmetry_analysis(
 
     Returns
     -------
-    k_points_subgrid_weight_tmp: (N, 1) :numpy:`ndarray`
+    k_points_subgrid_weight_tmp: (N,) :numpy:`ndarray`
         Distribution of the origin k point weight between the different k points
     """
 
@@ -436,10 +436,7 @@ def symmetry_analysis(
         return k_points_subgrid_weight_tmp
 
     # defining a matrix to save the degeneracies, after each symmetry operation
-    check_degeneracy = np.zeros(
-        (N, N),
-        dtype=bool,
-    )
+    check_degeneracy = np.zeros((N, N), dtype=bool)
     # saving number of degeneracies detected
     degeneracy = 0
     # each k point is compared to each other k point after the symmetry operation has been applied
@@ -453,17 +450,15 @@ def symmetry_analysis(
                     @ (k_points_subgrid[j] - k_origin)
                     + k_origin
                 )
-                flag = False
                 # degeneracy_tmp is counting how many coordinates are equal
                 degeneracy_tmp = 0
                 # checking if all three coordinates of the two points are "equal"
                 for s in range(len(k_point_transformed)):
-                    flag = np.isclose(
+                    if np.isclose(
                         k_points_subgrid[i, s],
                         k_point_transformed[s],
                         atol=threshold_k_grid,
-                    )
-                    if flag == True:
+                    ):
                         degeneracy_tmp = degeneracy_tmp + 1
                 # if all three coordinates are equal, then the two points are saved as degenerate
                 if degeneracy_tmp == len(k_point_transformed):
