@@ -429,10 +429,8 @@ def symmetry_analysis(
     # It is used 10 times, so it is better to calculate it once
     N = k_points_subgrid.shape[0]  # former len(k_points_subgrid[:, 0])
 
-    k_points_subgrid_weight_tmp = np.zeros(N)
-    # Use numpy
-    for i in range(0, N):
-        k_points_subgrid_weight_tmp[i] = k_origin_weight / 4
+    k_points_subgrid_weight_tmp = (k_origin_weight / 4) * np.ones(N, dtype=float)
+
     # if there are no symmetry operations, the weight on each subgrid k point is exactly 1/4 of the original weight
     if symmetry[0][0] == symmetry[0][1] == symmetry[0][2] == 0:
         return k_points_subgrid_weight_tmp
