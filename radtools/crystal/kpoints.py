@@ -388,6 +388,7 @@ class Kpoints:
         return flatten_points
 
 
+
 def symmetry_analysis(
     k_origin,
     k_origin_weight,
