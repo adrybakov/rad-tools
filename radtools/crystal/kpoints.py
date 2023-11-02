@@ -863,11 +863,7 @@ def k_points_grid_2d_refinment_and_symmetry(
 ##
 ##    brillouin_primitive_vectors=np.zeros((3,3))
 ##    brillouin_primitive_vectors[0]=[1,0,0]
-<<<<<<< HEAD
 ##    brillouin_primitive_vectors[1]=[-1/2,3,0]
-=======
-##    brillouin_primitive_vectors[1]=[0,1,0]
->>>>>>> bd71982eac0bd13b44282e158bf856c14e5ed1c3
 ##    brillouin_primitive_vectors[2]=[0,0,1]
 ##    plane_2d=[1,1,0]
 ##    #threshold for understanding if there is a degeneracy
@@ -886,15 +882,4 @@ def k_points_grid_2d_refinment_and_symmetry(
 ##        refinment_spacing,
 ##        refinment_iteration,
 ##        threshold_k_grid)
-<<<<<<< HEAD
-<<<<<<< HEAD
-##    print(k0,k1)(venv) (base)
-=======
 ##    print(k0,k1)
->>>>>>> 60da13c (k points method better commenting)
-=======
-##    print(k0,k1)
-=======
-##    print(k0,k1)(venv) (base)
->>>>>>> bd71982eac0bd13b44282e158bf856c14e5ed1c3
->>>>>>> 0aa91cf (attempt)
