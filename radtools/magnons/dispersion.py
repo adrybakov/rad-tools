@@ -267,7 +267,7 @@ class MagnonDispersion:
         h = np.concatenate((left, right), axis=1)
         return h
 
-    def omega(self, k, zeros_to_none=False):
+    def omega(self, k, noeigenvector, zeros_to_none=False):
         r"""
         Computes magnon energies.
 
@@ -314,7 +314,19 @@ class MagnonDispersion:
                         else:
                             omegas = np.zeros(self.N)
         omegas[np.abs(omegas) <= 1e-8] = 0
-        return omegas
+        # considering right number of eigenvectors
+        U = U[: self.N, : self.N]
+        # ordering the eigenvalues and the associated eigenvectors
+        # U=np.zeros((self.N,self.N))
+        # normalizing the eigenvectors (?)
+        for i in range(0, len(omegas)):
+            norm = np.dot(np.conj(U[i, :]), U[i, :])
+            if norm != 0:
+                U[i, :] = U[i, :] / norm
+        if noeigenvector == True:
+            return omegas
+        else:
+            return omegas, U
 
     def omegas(self, kpoints, zeros_to_none=False):
         r"""
