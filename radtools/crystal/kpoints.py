@@ -445,9 +445,8 @@ def symmetry_analysis(
     # each k point is compared to each other k point after the symmetry operation has been applied
     for i in range(0, N - 1):
         for j in range(i + 1, N):
-            r = 0
             # for each pair considering all the symmetry operations
-            while r < len(symmetry):
+            for r in range(len(symmetry)):
                 k_point_transformed = (
                     Rotation.from_rotvec(symmetry[r]).as_matrix()
                     @ (k_points_subgrid[j] - k_origin)
@@ -458,9 +457,7 @@ def symmetry_analysis(
                 ):
                     check_degeneracy[i][j] = True
                     degeneracy = degeneracy + 1
-                    r = len(symmetry)
-                else:
-                    r = r + 1
+                    break
     # if no degeneracy is detected, the common result is given
     if degeneracy == 0:
         for i in range(0, N):
