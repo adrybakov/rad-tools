@@ -392,7 +392,7 @@ def symmetry_analysis(
     k_origin,
     k_origin_weight,
     k_points_subgrid,
-    symmetry,
+    symmetries,
     threshold_k_grid,
 ):
     r"""
@@ -413,7 +413,7 @@ def symmetry_analysis(
         #TODO description
     k_points_subgrid : (N, 3) |array-like|_
         #TODO description
-    symmetry : list of lists
+    symmetries : list of lists
         #TODO better description
         A symmetry is a list of 3 elements
         (the versor is the axis of rotation, while the modulus is the angle).
@@ -436,7 +436,7 @@ def symmetry_analysis(
 
     # If there are no symmetry operations,
     # than the weight on each subgrid k point is exactly 1/4 of the original weight
-    if symmetry[0][0] == symmetry[0][1] == symmetry[0][2] == 0:
+    if symmetries[0][0] == symmetries[0][1] == symmetries[0][2] == 0:
         return k_points_subgrid_weight_tmp
 
     # Defining a matrix to save the degeneracies, after each symmetry operation
@@ -447,9 +447,9 @@ def symmetry_analysis(
     for i in range(0, N - 1):
         for j in range(i + 1, N):
             # For each pair considering all the symmetry operations
-            for r in range(len(symmetry)):
+            for rotvec in symmetries:
                 k_point_transformed = (
-                    Rotation.from_rotvec(symmetry[r]).as_matrix()
+                    Rotation.from_rotvec(rotvec).as_matrix()
                     @ (k_points_subgrid[j] - k_origin)
                     + k_origin
                 )
