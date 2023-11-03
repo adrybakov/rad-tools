@@ -434,18 +434,19 @@ def symmetry_analysis(
 
     k_points_subgrid_weight_tmp = (k_origin_weight / 4) * np.ones(N, dtype=float)
 
-    # if there are no symmetry operations, the weight on each subgrid k point is exactly 1/4 of the original weight
+    # If there are no symmetry operations,
+    # than the weight on each subgrid k point is exactly 1/4 of the original weight
     if symmetry[0][0] == symmetry[0][1] == symmetry[0][2] == 0:
         return k_points_subgrid_weight_tmp
 
-    # defining a matrix to save the degeneracies, after each symmetry operation
+    # Defining a matrix to save the degeneracies, after each symmetry operation
     check_degeneracy = np.zeros((N, N), dtype=bool)
-    # saving number of degeneracies detected
+    # Saving number of degeneracies detected
     no_degeneracy = True
-    # each k point is compared to each other k point after the symmetry operation has been applied
+    # Each k point is compared to each other k point after the symmetry operation has been applied
     for i in range(0, N - 1):
         for j in range(i + 1, N):
-            # for each pair considering all the symmetry operations
+            # For each pair considering all the symmetry operations
             for r in range(len(symmetry)):
                 k_point_transformed = (
                     Rotation.from_rotvec(symmetry[r]).as_matrix()
@@ -458,17 +459,19 @@ def symmetry_analysis(
                     check_degeneracy[i][j] = True
                     no_degeneracy = False
                     break
-    # if no degeneracy is detected, the common result is given
+    # If no degeneracy is detected, the common result is given
     if no_degeneracy:
         return k_points_subgrid_weight_tmp
     else:
-        # if degeneracy is detected, of the degenerate points only one is chosen
+        # If degeneracy is detected, of the degenerate points only one is chosen
         list = dict([(str(i), [i]) for i in range(N)])
-        # assuming all k points as not-degenerate, and creating a dictionary where to each eigenspace is associated an eigenvector(k_point)
+        # Assuming all k points as not-degenerate, and creating a dictionary
+        # where to each eigenspace is associated an eigenvector(k_point)
         for l in range(0, N - 1):
             for j in range(l + 1, N):
                 if len(list) != 1:
-                    # reading the degeneracy matrix, the eigenspaces are properly populated, in particular degenerate k points are put in the same eigenspace
+                    # Reading the degeneracy matrix, the eigenspaces are properly populated,
+                    # in particular degenerate k points are put in the same eigenspace
                     if check_degeneracy[l][j] == True:
                         for key, values in list.items():
                             for value in values:
@@ -477,8 +480,9 @@ def symmetry_analysis(
                                 if value == j:
                                     positionj = key
                         list_new = {}
-                        # new list is created with the proper eigenspaces, but at the same time is compared with the old one,
-                        # to check if there are old degeneracies to take into account
+                        # New list is created with the proper eigenspaces, but at the same
+                        # time is compared with the old one, to check if there are old
+                        # degeneracies to take into account
                         if positionl != positionj:
                             count = 0
                             for key, values in list.items():
@@ -489,11 +493,11 @@ def symmetry_analysis(
                                     if key != positionj:
                                         list_new[str(count)] = values
                                         count = count + 1
-                        # the new list is save to be used as an old one
+                        # The new list is save to be used as an old one
                         list = {}
                         for key, values in list_new.items():
                             list[str(key)] = list_new[str(key)]
-        # the chosen k points
+        # The chosen k points
         for key, values in list_new.items():
             list_new[str(key)] = sorted(set(list_new[str(key)]))
         if len(list_new) != 0:
@@ -505,14 +509,14 @@ def symmetry_analysis(
                 k_points_subgrid_weight_tmp[values] = k_weight_tmp
             else:
                 count = 0
-                # chosing of the degenerate points only the first one
+                # Chosing of the degenerate points only the first one
                 for value in values:
                     if count == 0:
                         k_points_subgrid_weight_tmp[value] = k_weight_tmp
                         count = count + 1
                     else:
                         k_points_subgrid_weight_tmp[value] = 0
-        # returning the matrix with the respective weights
+        # Returning the matrix with the respective weights
         return k_points_subgrid_weight_tmp
 
 
