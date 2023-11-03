@@ -441,7 +441,7 @@ def symmetry_analysis(
     # defining a matrix to save the degeneracies, after each symmetry operation
     check_degeneracy = np.zeros((N, N), dtype=bool)
     # saving number of degeneracies detected
-    degeneracy = 0
+    no_degeneracy = True
     # each k point is compared to each other k point after the symmetry operation has been applied
     for i in range(0, N - 1):
         for j in range(i + 1, N):
@@ -456,10 +456,10 @@ def symmetry_analysis(
                     k_points_subgrid[i], k_point_transformed, atol=threshold_k_grid
                 ):
                     check_degeneracy[i][j] = True
-                    degeneracy = degeneracy + 1
+                    no_degeneracy = False
                     break
     # if no degeneracy is detected, the common result is given
-    if degeneracy == 0:
+    if no_degeneracy:
         for i in range(0, N):
             k_points_subgrid_weight_tmp[i] = k_origin_weight / 4
         return k_points_subgrid_weight_tmp
