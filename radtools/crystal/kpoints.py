@@ -463,9 +463,7 @@ def symmetry_analysis(
         return k_points_subgrid_weight_tmp
     else:
         # if degeneracy is detected, of the degenerate points only one is chosen
-        list = {}
-        for i in range(0, N):
-            list[str(i)] = [i]
+        list = dict([(str(i), [i]) for i in range(N)])
         # assuming all k points as not-degenerate, and creating a dictionary where to each eigenspace is associated an eigenvector(k_point)
         for l in range(0, N - 1):
             for j in range(l + 1, N):
