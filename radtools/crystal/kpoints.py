@@ -460,8 +460,6 @@ def symmetry_analysis(
                     break
     # if no degeneracy is detected, the common result is given
     if no_degeneracy:
-        for i in range(0, N):
-            k_points_subgrid_weight_tmp[i] = k_origin_weight / 4
         return k_points_subgrid_weight_tmp
     else:
         # if degeneracy is detected, of the degenerate points only one is chosen
