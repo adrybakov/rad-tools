@@ -8,12 +8,12 @@ Version 0.8
 
 Whats new?
 ----------
-Restructure the class hierarchy: 
+Restructure the class hierarchy:
 
 * :py:class:`.Lattice` is now a parent of the :py:class:`.Crystal` class.
 * :py:class:`.Crystal` is now a parent of the :py:class:`.SpinHamiltonian` class.
 
-Rename module ``exchange`` to ``spinham``. The idea is to focus on the general spin 
+Rename module ``exchange`` to ``spinham``. The idea is to focus on the general spin
 Hamiltonian, which is not limited to exchange interactions. :py:class:`.ExchangeHamiltonian`
 is now :py:class:`.SpinHamiltonian`. The name ``ExchangeHamiltonian`` is still available
 as an alias for backwards compatibility.
@@ -28,10 +28,10 @@ file.
 * :ref:`api_decorate`
 * :ref:`api_numerical`
 
-All custom exceptions are gathered in the :ref:`api_exceptions` module. As the amount of 
+All custom exceptions are gathered in the :ref:`api_exceptions` module. As the amount of
 custom exceptions is intended to be small, they are placed in the one file.
 
-On contrary, the constants are placed in the corresponding ``constants.py`` 
+On contrary, the constants are placed in the corresponding ``constants.py``
 files across submodules.
 
 Fully functional :py:class:`.Kpoints` class is introduced. It covers the details of the high
@@ -89,7 +89,7 @@ Fix :issue:`6`.
 
         python3 -m radtools
 
-    instead of 
+    instead of
 
     .. code-block:: bash
 
@@ -114,8 +114,8 @@ Major update of the lattice plotting:
 
 * Plotting moved from the lattice class to the external Backend classes.
 
-* Add |plotly|_ backend. 
-    Note that plotly is not added to the package dependencies. 
+* Add |plotly|_ backend.
+    Note that plotly is not added to the package dependencies.
 
 0.8.6
 -----
@@ -126,7 +126,7 @@ Fix problems with the new plotting backend.
 -----
 
 Add io for the |POSCAR|_ files: :py:func:`.load_poscar` and :py:func:`.dump_poscar`.
-Add ``encoding="utf-8"`` to all txt outputs. 
+Add ``encoding="utf-8"`` to all txt outputs.
 It was causing the problems when saving outputs on the windows platform.
 
 0.8.8
@@ -139,3 +139,9 @@ Add utf-8 to the one forgotten place. It is advised to skip 0.8.7 and install 0.
 
 Add :ref:`custom k-points <rad-plot-tb2j-magnons_custom-k-points>` to the :ref:`rad-plot-tb2j-magnons` script.
 Change default colors for the magnon dispersion plots.
+
+0.8.10
+------
+
+Minor improvements. Add parameters to the :py:meth:`.MagnonDispersion.omega`.
+Move from `setup.py`` to ``pyproject.toml``.

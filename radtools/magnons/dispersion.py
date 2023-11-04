@@ -267,7 +267,7 @@ class MagnonDispersion:
         h = np.concatenate((left, right), axis=1)
         return h
 
-    def omega(self, k, zeros_to_none=False):
+    def omega(self, k, zeros_to_none=False, return_G=False, return_imaginary=False):
         r"""
         Computes magnon energies.
 
@@ -278,43 +278,67 @@ class MagnonDispersion:
             In absolute coordinates.
         zeros_to_none : bool, default=False
             If True, then return ``None`` instead of 0 if Colpa fails.
+        return_G : bool, default False
+            Whether to return the transformation matrix.
+            See :py:func:`.solve_via_colpa` for details.
+            .. versionadded:: 0.8.10
+        return_imaginary : bool, default False
+            Whether to return imaginary part of the energies.
+            If ``True``, then real and imaginary part can be accessed via
+            ``omegas.real`` and ``omegas.imag``.
+            .. versionadded:: 0.8.10
 
         Returns
         -------
         omegas : (N,) :numpy:`ndarray`
             Magnon energies for the vector ``k``.
+            If ``return_G`` is ``True``, then return (2N,) :numpy:`ndarray` else
+            return (N,) :numpy:`ndarray`. See :py:func:`.solve_via_colpa` for details.
+        G : (2N, 2N) : :numpy:`ndarray`
+            Transformation matrix. Returned only if ``return_G`` is ``True``.
+            See :py:func:`.solve_via_colpa` for details.
         """
         # Diagonalize h matrix via Colpa
         k = np.array(k)
         h = self.h(k)
         try:
-            omegas, U = solve_via_colpa(h)
-            omegas = omegas.real[: self.N]
+            omegas, G = solve_via_colpa(h)
         except ColpaFailed:
             # Try to solve for positive semidefinite matrix
             try:
-                omegas, U = solve_via_colpa(h + np.diag(1e-8 * np.ones(2 * self.N)))
-                omegas = omegas.real[: self.N]
+                omegas, G = solve_via_colpa(h + np.diag(1e-8 * np.ones(2 * self.N)))
             except ColpaFailed:
                 # Try to solve for negative defined matrix
                 try:
-                    omegas, U = solve_via_colpa(-h)
-                    omegas = omegas.real[: self.N] * -1
+                    omegas, G = solve_via_colpa(-h)
+                    omegas *= -1
+                    G *= -1
                 except ColpaFailed:
                     # Try to solve for negative semidefinite matrix
                     try:
-                        omegas, U = solve_via_colpa(
+                        omegas, G = solve_via_colpa(
                             -h - np.diag(1e-8 * np.ones(h.shape[0]))
                         )
-                        omegas = omegas.real[: self.N] * -1
+                        omegas *= -1
+                        G *= -1
                     except ColpaFailed:
                         # If all fails, return None or 0
                         if zeros_to_none:
-                            omegas = np.array([None] * self.N)
+                            omegas = np.array([None] * 2 * self.N, dtype=float)
+                            if return_G:
+                                G = np.empty((2 * self.N, 2 * self.N), dtype=float)
+
                         else:
-                            omegas = np.zeros(self.N)
+                            omegas = np.zeros(self.N, dtype=float)
+                            if return_G:
+                                G = np.zeros((2 * self.N, 2 * self.N), dtype=float)
         omegas[np.abs(omegas) <= 1e-8] = 0
-        return omegas
+        if not return_imaginary:
+            omegas = omegas.real
+        if return_G:
+            return omegas, G
+        else:
+            return omegas[: self.N]
 
     def omegas(self, kpoints, zeros_to_none=False):
         r"""
