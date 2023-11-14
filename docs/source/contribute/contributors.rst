@@ -10,7 +10,7 @@ evolved into a powerful tool for the analysis of the condensed matter systems.
 
 Here's a list of all the contributors who shape its evolution:
 
-* `Marko Marino <https://github.com/marcomarino123>`_
+* `Marco Marino <https://github.com/marcomarino123>`_
 * You can be the next one!
 
 Thank you to all of our contributors for your hard work and dedication!

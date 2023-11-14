@@ -30,15 +30,15 @@ the corresponding links below.
 
    * Go to the |RAD-repo|_ and click on the "Fork" button.
      Now you have your own copy of the RAD-tools repository in your GitHub account.
-   * Clone you copy of the repository to your local machine:
+   * Clone your copy of the repository to your local machine:
 
      - If you are using ssh-key::
 
-         git clone https://github.com/your-username/rad-tools.git
+         git clone git@github.com:your-username/rad-tools.git
 
      - If you are not using ssh-key::
 
-         git clone git@github.com:your-username/rad-tools.git
+         git clone https://github.com/your-username/rad-tools.git
 
    * Change the directory::
 
