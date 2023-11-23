@@ -22,6 +22,8 @@ Input-output for |Vampire|_.
 
 __all__ = ["dump_vampire", "dump_mat", "dump_ucf"]
 
+import numpy as np
+
 from radtools.decorate.array import print_2d_array
 from radtools.decorate.stats import logo
 from radtools.spinham.parameter import ExchangeParameter

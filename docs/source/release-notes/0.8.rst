@@ -149,4 +149,9 @@ Move from `setup.py`` to ``pyproject.toml``.
 0.8.11
 ------
 
-Bugfix in :py:func:`.dump_ucf`. - number of materials was not written. It is working properly now.
+Bugfix in :py:func:`.dump_ucf`. - number of materials was not written. It is working properly now. SKIP, install 0.8.12 instead.
+
+0.8.12
+------
+
+Hotfix for 0.8.11 (Missed imports).
