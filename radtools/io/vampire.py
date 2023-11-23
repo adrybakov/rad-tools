@@ -224,7 +224,7 @@ def dump_ucf(
         + "\n"
     )
     result.append("# Atoms\n")
-    result.append(f"{len(spinham.magnetic_atoms)} 1\n")
+    result.append(f"{len(spinham.magnetic_atoms)} {len(np.unique(materials))}\n")
     atom_indices = {}
     for a_i, atom in enumerate(spinham.magnetic_atoms):
         result.append(
