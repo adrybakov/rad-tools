@@ -21,10 +21,10 @@ General 3D lattice.
 """
 
 from typing import Iterable
-
+from collections import Counter
 import numpy as np
+from scipy.interpolate import griddata
 from scipy.spatial.transform import Rotation
-
 from radtools.geometry import absolute_to_relative
 
 __all__ = ["Kpoints"]
@@ -387,6 +387,45 @@ class Kpoints:
                     flatten_points = np.concatenate((flatten_points, delta))
         return flatten_points
 
+# function checking if the k points of the list k_points_subgrid are inside the brillouin zone
+def check_inside_brillouin_zone(
+    k_points_subgrid,
+    reciprocal_vectors_2d,
+    brillouin_primitive_vectors,
+    plane_2d,
+):
+    matrix_crystal_to_cartesian = np.zeros((3, 3))
+    matrix_cartesian_to_crystal = np.zeros((3, 3))
+    k_points_subgrid_tmp = np.zeros((len(k_points_subgrid[:, 0]), 3))
+    matrix_crystal_to_cartesian[:, 0] = brillouin_primitive_vectors[0, :]
+    matrix_crystal_to_cartesian[:, 1] = brillouin_primitive_vectors[1, :]
+    matrix_crystal_to_cartesian[:, 2] = brillouin_primitive_vectors[2, :]
+    matrix_cartesian_to_crystal = np.linalg.inv(np.matrix(matrix_crystal_to_cartesian))
+    # writing k points in crystal coordinates
+    for r in range(len(k_points_subgrid[:, 0])):
+        for s in range(0, 3):
+            for t in range(0, 3):
+                k_points_subgrid_tmp[r, s] = (
+                    k_points_subgrid_tmp[r, s]
+                    + matrix_cartesian_to_crystal[s, t] * k_points_subgrid[r, t]
+                )
+        count = 0
+        # if the crystal coordinate of a k point is beyond +-1, it means that the k point is outside the brillouin zone
+        for l in range(0, 3):
+            # considering only those primitive vectors defining the 2D plane chosen
+            if plane_2d[l] != 0:
+                if abs(k_points_subgrid_tmp[r, l]) >= 1:
+                    for s in range(0, 3):
+                        # translating the respective cartesian coordinates
+                        k_points_subgrid[r, s] = (
+                            k_points_subgrid[r, s]
+                            - int(k_points_subgrid_tmp[r, l])
+                            * reciprocal_vectors_2d[count][s]
+                        )
+            # progressing on the 2D plane primitive vectors
+            count = count + 1
+    # returning the properly translated k points
+    return k_points_subgrid
 
 def symmetry_analysis(
     k_origin,
@@ -439,7 +478,7 @@ def symmetry_analysis(
     if symmetries[0][0] == symmetries[0][1] == symmetries[0][2] == 0:
         return k_points_subgrid_weight_tmp
 
-    # Defining a matrix to save the degeneracies, after each symmetry operation
+    # Defining a mpiatrix to save the degeneracies, after each symmetry operation
     check_degeneracy = np.zeros((N, N), dtype=bool)
     # Saving number of degeneracies detected
     no_degeneracy = True
@@ -518,47 +557,6 @@ def symmetry_analysis(
                         k_points_subgrid_weight_tmp[value] = 0
         # Returning the matrix with the respective weights
         return k_points_subgrid_weight_tmp
-
-
-# function checking if the k points of the list k_points_subgrid are inside the brillouin zone
-def check_inside_brillouin_zone(
-    k_points_subgrid,
-    reciprocal_vectors_2d,
-    brillouin_primitive_vectors,
-    plane_2d,
-):
-    matrix_crystal_to_cartesian = np.zeros((3, 3))
-    matrix_cartesian_to_crystal = np.zeros((3, 3))
-    k_points_subgrid_tmp = np.zeros((len(k_points_subgrid[:, 0]), 3))
-    matrix_crystal_to_cartesian[:, 0] = brillouin_primitive_vectors[0, :]
-    matrix_crystal_to_cartesian[:, 1] = brillouin_primitive_vectors[1, :]
-    matrix_crystal_to_cartesian[:, 2] = brillouin_primitive_vectors[2, :]
-    matrix_cartesian_to_crystal = np.linalg.inv(np.matrix(matrix_crystal_to_cartesian))
-    # writing k points in crystal coordinates
-    for r in range(len(k_points_subgrid[:, 0])):
-        for s in range(0, 3):
-            for t in range(0, 3):
-                k_points_subgrid_tmp[r, s] = (
-                    k_points_subgrid_tmp[r, s]
-                    + matrix_cartesian_to_crystal[s, t] * k_points_subgrid[r, t]
-                )
-        count = 0
-        # if the crystal coordinate of a k point is beyond +-1, it means that the k point is outside the brillouin zone
-        for l in range(0, 3):
-            # considering only those primitive vectors defining the 2D plane chosen
-            if plane_2d[l] != 0:
-                if abs(k_points_subgrid_tmp[r, l]) >= 1:
-                    for s in range(0, 3):
-                        # translating the respective cartesian coordinates
-                        k_points_subgrid[r, s] = (
-                            k_points_subgrid[r, s]
-                            - int(k_points_subgrid_tmp[r, l])
-                            * reciprocal_vectors_2d[count][s]
-                        )
-            # progressing on the 2D plane primitive vectors
-            count = count + 1
-    # returning the properly translated k points
-    return k_points_subgrid[:, :3]
 
 
 def local_refinment(
@@ -651,7 +649,6 @@ def local_refinment(
                             brillouin_primitive_vectors,
                             plane_2d,
                         )
-
 
 def dynamical_refinment(
     k_point_to_refine,
@@ -754,38 +751,38 @@ def k_points_grid_2d_refinment_and_symmetry(
         )
     k_points_grid_2d = np.zeros((k0, k1), dtype=object)
     k_points_grid_2d_tmp = np.zeros(4)
-    with open("k_points.txt", "w") as file:
-        for i in range(0, k0):
-            for j in range(0, k1):
-                print(
-                    "k grid: {}% and {}%".format(int(i / k0 * 100), int(j / k1 * 100)),
-                    end="\r",
-                    flush=True,
-                )
-                k_points_grid_2d_tmp[:3] = ((i + shift_in_plane[0]) / k0) * (
-                    shift_in_space + chosen_reciprocal_plane[0]
-                ) + ((j + shift_in_plane[1]) / k1) * (
-                    shift_in_space + chosen_reciprocal_plane[1]
-                )
-                k_points_grid_2d_tmp[3] = weight
-                refined_grid_tmp = []
-                local_refinment(
-                    refined_grid_tmp,
-                    normalized_chosen_reciprocal_plane,
-                    k_points_grid_2d_tmp,
-                    refinment_spacing,
-                    refinment_iteration,
-                    symmetry,
-                    threshold_k_grid,
-                    brillouin_primitive_vectors,
-                    plane_2d,
-                )
-                refined_grid_tmp = np.reshape(
-                    refined_grid_tmp, (int(len(refined_grid_tmp) / 4), 4)
-                )
-                k_points_grid_2d[i][j] = np.zeros((len(refined_grid_tmp), 4))
-                k_points_grid_2d[i][j] = refined_grid_tmp
-                file.write(f"{i} {j} {k_points_grid_2d[i][j]}  \n")
+   ## with open("k_points.txt", "w") as file:
+    for i in range(0, k0):
+        for j in range(0, k1):
+            #print(
+            #    "k grid: {}% and {}%".format(int(i / k0 * 100), int(j / k1 * 100)),
+            #    end="\r",
+            #    flush=True,
+            #)
+            k_points_grid_2d_tmp[:3] = ((i + shift_in_plane[0]) / k0) * (
+                shift_in_space + chosen_reciprocal_plane[0]
+            ) + ((j + shift_in_plane[1]) / k1) * (
+                shift_in_space + chosen_reciprocal_plane[1]
+            )
+            k_points_grid_2d_tmp[3] = weight
+            refined_grid_tmp = []
+            local_refinment(
+                refined_grid_tmp,
+                normalized_chosen_reciprocal_plane,
+                k_points_grid_2d_tmp,
+                refinment_spacing,
+                refinment_iteration,
+                symmetry,
+                threshold_k_grid,
+                brillouin_primitive_vectors,
+                plane_2d,
+            )
+            refined_grid_tmp = np.reshape(
+                refined_grid_tmp, (int(len(refined_grid_tmp) / 4), 4)
+            )
+            k_points_grid_2d[i][j] = np.zeros((len(refined_grid_tmp), 4))
+            k_points_grid_2d[i][j] = refined_grid_tmp
+  ##              file.write(f"{k_points_grid_2d[i][j]}  \n")
     ##the k points are saved in the file k_points.txt
     ##example of dynamical refinment
     ##print(k_points_grid_2d[0][0])
@@ -799,13 +796,202 @@ def k_points_grid_2d_refinment_and_symmetry(
     ##print(k_points_grid_2d[0][0])
     return (normalized_chosen_reciprocal_plane, k0, k1, k_points_grid_2d)
 
+def mapping_to_square_grid(
+        k_points_list_with_weights,
+        normalized_chosen_reciprocal_plane,
+        epsilon
+):
+    r"""
+    mapping of the 2d k point list (generated using known primitive vectors) into a square k point list, i.e. naming the position of the single k points
+    1) first the origin is defined (as the leftest and lowest point)
+    2) to each point is associated a k vector with respect to the origin
+    2b) it is considered the pair of vectors producing the larger angle
+    2) each k vector is projected along the two found vectors
+    3) the bording points are selected and correspondingly enumerated 
+    1) the points (1),(2), (3) and (4) are repeted
+    ACTHUNG!!! be carefull in the choice of epsilon, otherwise you risk not to find any point
+    there is the possibility that on a border there would be less than two points, this is evaluated a posteriori
+    Parameters
+    ----------
+    k_points_list_with_weights : (2,4) |array_like|_  ex. the list contain the 3 xyz coordinates and a weight
+    """
+
+    ###defining a recursive function to define the borders
+    def bording_definition(origin_indices,k_points_list,k_points_border,normalized_chosen_reciprocal_plane,epsilon):
+        r"""
+        parameters
+        origin_indices: (1,1) |array|_ indices associated with the origin
+        k_points_list: (n,3) |array|_ list of k points
+        brillouin_primitive_vectors: (2,3) |array|_ brillouin primitive vectors defining a 2D plane in the Brillouin zone
+        
+        (iterative) return, until k=n
+        k_points_list: (n-k,3) |array|_ list of k points not part of the border
+        k_points_border: (k,5) |array|_ list of k points part of the border, to each k point are associated the 3 kxkykz coordinates and the two indices, defined with respect to the origin indices
+        """
+        if len(k_points_list)==0:
+            return 0
+        
+        ###assuming at the beginning as origin (0,0,0)
+        ###finding the real origin (the lowest and leftest point)
+        number_k_points=len(k_points_list)
+        k_vectors=np.zeros((number_k_points,3))
+        k_vectors_projections=np.zeros((number_k_points,2))
+        ###the k vectors have a weight in the 3rd position
+        for i in range(0,number_k_points):
+            k_vectors[i]=k_points_list[i][:3]
+            for j in range(0,2):
+                k_vectors_projections[i][j]=np.dot(k_vectors[i],brillouin_primitive_vectors[j])
+        ###print(k_vectors_projections)
+        min_value=k_vectors_projections[0][:]
+        position_min_value=0
+        for i in range(0,number_k_points):
+            if min_value[0] > k_vectors_projections[i][0] and min_value[1] > k_vectors_projections[i][1]:
+                position_min_value=i
+                min_value=k_vectors_projections[i][:]
+        origin=k_points_list[position_min_value][:]
+        
+        ###finding the maximal angle pair (the parallelogram containing all the points)
+        ###recentering the vectors with respect to the real origin
+        for i in range(0,number_k_points):
+            if i!=position_min_value:
+                k_vectors[i]=k_points_list[i][:3]-origin[:3]
+                norm=np.dot(k_vectors[i],k_vectors[i])
+                ###normalizing the vectors
+                if norm !=0:
+                    k_vectors[i]=k_vectors[i]/norm
+        min_sin_angle=1
+        position_min_sin_angle=[0,0]
+        for i in range(0,number_k_points):
+            for j in range(i+1,number_k_points):
+                if i!=position_min_value:
+                    sin_angle=np.dot(k_vectors[i],k_vectors[j])
+                    if sin_angle<min_sin_angle:
+                        min_sin_angle=sin_angle
+                        position_min_sin_angle=[i,j]
+        ###saving the two found axis in a variable (a1,a2)
+        new_axis_vectors=np.zeros((2,3))
+        for i in range(0,2):
+            new_axis_vectors[i]=k_vectors[position_min_sin_angle[i]]
+
+        epsilon_tmp=epsilon
+        ###finding the k points around the two found axis (the epsilon used here is the same of the k point grid building); the control flag is used to be sure the found k points are at leat two (the two of the axis..)
+        control_flag=0
+        while control_flag==0:
+            ####defining every point as a vector with respect to the found origin and differentiating between points along a1 and a2 and not
+            k_points_not_along_a=[]
+            k_points_along_a=[[],[]]
+            for i in range(0,number_k_points):
+                if i!=position_min_value:
+                    ####here we need the not normilzed vectors
+                    k_vectors[i]=k_points_list[i][:3]-origin[:3]
+                    ###flag to check that the projection is not null on both the primitive reciprocal vectors
+                    count_not_ptojected=0
+                    count_projected=0
+                    for j in range(0,2):
+                        k_vectors_projections[i][j]=np.dot(k_vectors[i],new_axis_vectors[j])
+                        ####grouping all elements with one of the two projections equal to zero (those at the border)
+                        if abs(k_vectors_projections[i][j])<=epsilon_tmp and count_projected!=1:
+                            k_points_along_a[1-j].append([i,k_vectors_projections[i][1-j]])
+                            count_projected=count_projected+1
+                        else:
+                            count_not_ptojected=count_not_ptojected+1
+                            if count_not_ptojected == 2 and count_projected==0:
+                                k_points_not_along_a.append(k_points_list[i])
+            number_k_points_along_a=np.zeros(2)
+            for i in range(0,2):
+                number_k_points_along_a[i]=int(len(k_points_along_a[i]))
+            if number_k_points_along_a[0]<1 or number_k_points_along_a[1]<1:
+                ###going back in the refinment procedure
+                epsilon_tmp=epsilon_tmp*2
+            else:
+                control_flag=1
+
+        ##reshaping a0 and a1 lists, and trasforming them to arrays
+        matrix_k_points_along_a={}
+        for i in range(0,2):
+            matrix_k_points_along_a[i]=np.zeros((int(number_k_points_along_a[i]),2))
+        for i in range(0,2):
+            for j in range(int(number_k_points_along_a[i])):
+                for r in range(0,2):
+                    matrix_k_points_along_a[i][j][r]=k_points_along_a[i][j][r]
+        
+        ###addding the origin to the border_list
+        k_points_border.append([k_points_list[position_min_value],origin_indices])
+        ###ordering to border points, and giving them proper indices
+        for i in range(0,2):
+            matrix_k_points_along_a[i]=np.reshape(sorted(matrix_k_points_along_a[i],key=lambda x: x[1]),(int(number_k_points_along_a[i]),2))
+            for j in range(int(number_k_points_along_a[i])):
+                position=int(matrix_k_points_along_a[i][j][0])
+                if i == 0:
+                    indices=[origin_indices[i],j+1]
+                else:
+                    indices=[j+1,origin_indices[i]]
+                k_points_border.append([k_points_list[position],indices])
+        
+        #print(k_points_border)
+        #increasing the index of the origin
+        new_origin_indices=[origin_indices[0]+1,origin_indices[1]+1]
+        bording_definition(new_origin_indices, k_points_not_along_a, k_points_border, normalized_chosen_reciprocal_plane,epsilon)
+    
+   ## print("START OF THE COUNTOR-CUT")
+    ###applying bording definition in an iterative way
+    k_points_border=[]
+    INFO=bording_definition([0,0],k_points_list_with_weights,k_points_border,normalized_chosen_reciprocal_plane,epsilon)
+  ##  print("END OF THE COUNTOR-CUT")
+    
+    ####now the list has to be converted into a matrix
+    ####the rows of the matrix can have different number of columns
+    ####building a square matrix, putting the missing spots to None
+    def create_square_matrix(list_of_pairs):
+        #print(list_of_pairs)
+        # Determine the matrix size based on the maximum indices
+        matrix_size = max(max(list_of_pairs[pair][1]) for pair in range(len(list_of_pairs))) + 1 
+        # Initialize an empty square matrix with lists containing four values (3 coordinatex kxkykz and weight)
+        square_matrix = [[[[None, None, None, None] for tmp1 in range(4)] for tmp2 in range(0,matrix_size)] for tmp3 in range(0,matrix_size)]
+
+        # Fill the matrix with specified values at specified indices
+        for pair in range(0,len(list_of_pairs)):
+            pairi=list_of_pairs[pair][1][0]
+            pairj=list_of_pairs[pair][1][1]
+            #saving coordinates and weight
+            square_matrix[pairi][pairj] = list_of_pairs[pair][0]  
+        return square_matrix
+    
+    square_grid=create_square_matrix(k_points_border)
+    dim=len(square_grid)
+    ###the missing points in the square grid are filled with interpolated values
+    def fill_matrix_with_interpolation(matrix):
+        # Find the indices of elements that are not arrays of 4 None elements
+        known_indices = np.argwhere(np.array([element is not None and len(element) == 4 and all(e is not None for e in element) for row in matrix for element in row]))
+
+        # Extract the coordinates and values of known positions
+        known_coords = np.argwhere(np.array(matrix) != None)
+        known_values = np.array([matrix[i][j] for i, j in known_indices])
+
+        # Find the indices of None values in the matrix
+        none_indices = np.argwhere(np.array(matrix) == None)
+
+        # Extract the coordinates of None values
+        none_coords = tuple(map(tuple, none_indices))
+
+        # Perform interpolation for each element of the array separately
+        interpolated_values = [griddata(known_coords, known_values[:, i], none_coords, method='linear') for i in range(4)]
+
+        # Fill the matrix with interpolated values for each element of the array
+        for i in range(4):
+            matrix[tuple(np.transpose(none_indices))] = [interpolated_values[j][i] for j in range(len(none_coords))]
+
+        return matrix
+
+    square_grid=fill_matrix_with_interpolation(square_grid)
+    return square_grid    
 
 ##if __name__ == "__main__":
 ##    import timeit
 ##    import os
 ##    import matplotlib.pyplot as plt
 ##    import numpy as np
-##    from termcolor import cprint
+##    ##from termcolor import cprint
 ##    from radtools.io.internal import load_template
 ##    from radtools.io.tb2j import load_tb2j_model
 ##    from radtools.magnons.dispersion import MagnonDispersion
@@ -823,10 +1009,12 @@ def k_points_grid_2d_refinment_and_symmetry(
 ##    threshold_k_grid=0.0000001
 ##    shift_in_plane=[0,0]
 ##    shift_in_space=[0,0,0]
-##    symmetry=[[0,0,np.pi]]
-##    grid_spacing=0.01
-##    refinment_iteration=3
-##    refinment_spacing=0.005
+##    symmetry=[[0,0,0]]
+##    grid_spacing=0.1
+##    refinment_iteration=1
+##    refinment_spacing=0.01
+##    epsilon=refinment_spacing
+##    
 ##    normalized_chosen_reciprocal_plane,k0,k1,refined_grid_2d=k_points_grid_2d_refinment_and_symmetry(brillouin_primitive_vectors,plane_2d,
 ##        grid_spacing,
 ##        shift_in_plane,
@@ -835,4 +1023,14 @@ def k_points_grid_2d_refinment_and_symmetry(
 ##        refinment_spacing,
 ##        refinment_iteration,
 ##        threshold_k_grid)
+##    list_of_k_points=[]
+##    list_tmp=[]
+##    for i in range(0,k0):
+##        for j in range(0,k1):
+##            list_tmp=refined_grid_2d[i][j]
+##            for r in range(0,len(list_tmp)):
+##                list_of_k_points.append(list_tmp[r])
+##
+##    list_of_k_points=mapping_to_square_grid(list_of_k_points,normalized_chosen_reciprocal_plane,epsilon)
 ##    print(k0,k1)
+##
