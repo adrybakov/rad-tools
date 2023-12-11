@@ -1,8 +1,8 @@
 import sys
-from os.path import abspath
 from datetime import datetime
+from os.path import abspath
 
-from radtools import __version__, __release_date__
+from radtools import __release_date__, __version__
 
 sys.path.insert(0, abspath(".."))
 
@@ -102,6 +102,7 @@ else:
     switcher_version = f"{major}.{minor}"
     github_version = "stable"
 html_theme_options = {
+    "announcement": "RAD-tools splits into WULFRIC  <a href='https://rad-tools.org/en/stable/announcement.html'>Read more here</a>",
     "collapse_navigation": True,
     "use_edit_page_button": True,
     "navbar_center": ["version-switcher", "navbar-nav"],

@@ -13,6 +13,7 @@ RAD-tools
     contribute/index
     cite
     support
+    announcement
 
 :Release: |version|
 :Date: |release_date|
@@ -21,7 +22,8 @@ RAD-tools
 :ref:`Installation <rad-tools_installation>` |
 `Issue Tracker <https://github.com/adrybakov/rad-tools/issues>`_ |
 :ref:`Cite us <rad-tools_cite>` |
-:ref:`support`
+:ref:`support` |
+:ref:`announcement`
 
 .. grid:: 2
 
