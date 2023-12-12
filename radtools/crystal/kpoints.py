@@ -953,30 +953,27 @@ def mapping_to_square_grid(
         max_pair=max(list_of_k_points[:,1])
         maxi=max_pair[0]
         maxj=max_pair[1]
-        print(maxi,maxj)
         #Initialize an empty square matrix with lists containing four values (3 coordinatex kxkykz and weight)
-        square_matrix = np.((maxi,maxj),dtype=list)
-                                 
-        [None,None,None,None])
-        print(square_matrix)
+        nan=np.nan
+        square_matrix =[[[nan,nan,nan,nan] for i in range(maxi+1)] for j in range(maxj+1)]                         
         
         #Fill the matrix with specified values at specified indices
         for pair in range(0,len(list_of_k_points[:,1])):
             pairi=list_of_k_points[pair,1][0]
             pairj=list_of_k_points[pair,1][1]
             #saving coordinates and weight
-            square_matrix[pairi][pairj] = list_of_k_points[pair][0]  
+            square_matrix[pairi][pairj] = list(list_of_k_points[pair][0])
+        
         return square_matrix
     
     square_grid=create_square_matrix(k_points_border_matrix)
-    print(square_grid)
+    
     #####the missing points in the square grid are filled with interpolated values
     ##def fill_matrix_with_interpolation(matrix):
     ##    # Find the indices of elements that are not arrays of 4 None elements
     ##    known_indices = np.argwhere(np.array([element is not None and len(element) == 4 and all(e is not None for e in element) for row in matrix for element in row]))
 ##
     ##    # Extract the coordinates and values of known positions
-    ##    known_coords = np.argwhere(np.array(matrix) != None)
     ##    known_values = np.array([matrix[i][j] for i, j in known_indices])
 ##
     ##    # Find the indices of None values in the matrix
@@ -986,15 +983,16 @@ def mapping_to_square_grid(
     ##    none_coords = tuple(map(tuple, none_indices))
 ##
     ##    # Perform interpolation for each element of the array separately
-    ##    interpolated_values = [griddata(known_coords, known_values[:, i], none_coords, method='linear') for i in range(4)]
+    ##    interpolated_values = [griddata(known_indices, known_values[:, i], none_coords, method='linear') for i in range(4)]
 ##
     ##    # Fill the matrix with interpolated values for each element of the array
     ##    for i in range(4):
     ##        matrix[tuple(np.transpose(none_indices))] = [interpolated_values[j][i] for j in range(len(none_coords))]
 ##
     ##    return matrix
-
-    #square_grid=fill_matrix_with_interpolation(square_grid)
+    ##
+    ##square_grid=fill_matrix_with_interpolation(square_grid)
+    ##print(square_grid)
     return square_grid    
 
 if __name__ == "__main__":
@@ -1022,7 +1020,7 @@ if __name__ == "__main__":
     shift_in_space=[0,0,0]
     symmetry=[[0,0,0]]
     grid_spacing=0.1
-    refinment_iteration=0
+    refinment_iteration=1
     refinment_spacing=0.01
     epsilon=refinment_spacing
     
