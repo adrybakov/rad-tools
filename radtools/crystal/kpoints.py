@@ -933,57 +933,68 @@ def mapping_to_square_grid(
         new_origin_indices=[origin_indices[0]+1,origin_indices[1]+1]
         bording_definition(new_origin_indices, k_points_not_along_a, k_points_border, normalized_chosen_reciprocal_plane,epsilon)
     
-    ## print("START OF THE COUNTOR-CUT")
+    print("START OF THE COUNTOR-CUT")
     ###applying bording definition in an iterative way
     k_points_border=[]
     INFO=bording_definition([0,0],k_points_list_with_weights,k_points_border,normalized_chosen_reciprocal_plane,epsilon)
-    ##  print("END OF THE COUNTOR-CUT")
-    
+    print("END OF THE COUNTOR-CUT")
+    k_points_border_matrix=np.zeros((len(k_points_border),2),dtype=list)
+    for i in range(len(k_points_border)):
+        k_points_border_matrix[i,0]=k_points_border[i][0]
+        k_points_border_matrix[i,1]=k_points_border[i][1]
+   
     ####now the list has to be converted into a matrix
     ####the rows of the matrix can have different number of columns
     ####building a square matrix, putting the missing spots to None
-    def create_square_matrix(list_of_pairs):
-        #print(list_of_pairs)
-        # Determine the matrix size based on the maximum indices
-        matrix_size = max(max(list_of_pairs[pair][1]) for pair in range(len(list_of_pairs))) + 1 
-        # Initialize an empty square matrix with lists containing four values (3 coordinatex kxkykz and weight)
-        square_matrix = [[[[None, None, None, None] for tmp1 in range(4)] for tmp2 in range(0,matrix_size)] for tmp3 in range(0,matrix_size)]
-
-        # Fill the matrix with specified values at specified indices
-        for pair in range(0,len(list_of_pairs)):
-            pairi=list_of_pairs[pair][1][0]
-            pairj=list_of_pairs[pair][1][1]
+    def create_square_matrix(list_of_k_points):
+        print(list_of_k_points)
+        print(list_of_k_points[:,1])
+        #Determine the matrix size based on the maximum indices
+        max_pair=max(list_of_k_points[:,1])
+        maxi=max_pair[0]
+        maxj=max_pair[1]
+        print(maxi,maxj)
+        #Initialize an empty square matrix with lists containing four values (3 coordinatex kxkykz and weight)
+        square_matrix = np.((maxi,maxj),dtype=list)
+                                 
+        [None,None,None,None])
+        print(square_matrix)
+        
+        #Fill the matrix with specified values at specified indices
+        for pair in range(0,len(list_of_k_points[:,1])):
+            pairi=list_of_k_points[pair,1][0]
+            pairj=list_of_k_points[pair,1][1]
             #saving coordinates and weight
-            square_matrix[pairi][pairj] = list_of_pairs[pair][0]  
+            square_matrix[pairi][pairj] = list_of_k_points[pair][0]  
         return square_matrix
     
-    square_grid=create_square_matrix(k_points_border)
-    dim=len(square_grid)
-    ###the missing points in the square grid are filled with interpolated values
-    def fill_matrix_with_interpolation(matrix):
-        # Find the indices of elements that are not arrays of 4 None elements
-        known_indices = np.argwhere(np.array([element is not None and len(element) == 4 and all(e is not None for e in element) for row in matrix for element in row]))
+    square_grid=create_square_matrix(k_points_border_matrix)
+    print(square_grid)
+    #####the missing points in the square grid are filled with interpolated values
+    ##def fill_matrix_with_interpolation(matrix):
+    ##    # Find the indices of elements that are not arrays of 4 None elements
+    ##    known_indices = np.argwhere(np.array([element is not None and len(element) == 4 and all(e is not None for e in element) for row in matrix for element in row]))
+##
+    ##    # Extract the coordinates and values of known positions
+    ##    known_coords = np.argwhere(np.array(matrix) != None)
+    ##    known_values = np.array([matrix[i][j] for i, j in known_indices])
+##
+    ##    # Find the indices of None values in the matrix
+    ##    none_indices = np.argwhere(np.array(matrix) == None)
+##
+    ##    # Extract the coordinates of None values
+    ##    none_coords = tuple(map(tuple, none_indices))
+##
+    ##    # Perform interpolation for each element of the array separately
+    ##    interpolated_values = [griddata(known_coords, known_values[:, i], none_coords, method='linear') for i in range(4)]
+##
+    ##    # Fill the matrix with interpolated values for each element of the array
+    ##    for i in range(4):
+    ##        matrix[tuple(np.transpose(none_indices))] = [interpolated_values[j][i] for j in range(len(none_coords))]
+##
+    ##    return matrix
 
-        # Extract the coordinates and values of known positions
-        known_coords = np.argwhere(np.array(matrix) != None)
-        known_values = np.array([matrix[i][j] for i, j in known_indices])
-
-        # Find the indices of None values in the matrix
-        none_indices = np.argwhere(np.array(matrix) == None)
-
-        # Extract the coordinates of None values
-        none_coords = tuple(map(tuple, none_indices))
-
-        # Perform interpolation for each element of the array separately
-        interpolated_values = [griddata(known_coords, known_values[:, i], none_coords, method='linear') for i in range(4)]
-
-        # Fill the matrix with interpolated values for each element of the array
-        for i in range(4):
-            matrix[tuple(np.transpose(none_indices))] = [interpolated_values[j][i] for j in range(len(none_coords))]
-
-        return matrix
-
-    square_grid=fill_matrix_with_interpolation(square_grid)
+    #square_grid=fill_matrix_with_interpolation(square_grid)
     return square_grid    
 
 if __name__ == "__main__":
@@ -1011,7 +1022,7 @@ if __name__ == "__main__":
     shift_in_space=[0,0,0]
     symmetry=[[0,0,0]]
     grid_spacing=0.1
-    refinment_iteration=1
+    refinment_iteration=0
     refinment_spacing=0.01
     epsilon=refinment_spacing
     
@@ -1032,4 +1043,5 @@ if __name__ == "__main__":
                 list_of_k_points.append(list_tmp[r])
 
     list_of_k_points=mapping_to_square_grid(list_of_k_points,normalized_chosen_reciprocal_plane,epsilon)
+    print(list_of_k_points)
     print(k0,k1)
