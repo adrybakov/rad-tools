@@ -972,24 +972,28 @@ def mapping_to_square_grid(
     def fill_matrix_with_interpolation(square_matrix):
         # Find the indices of elements that are not arrays of 4 None elements
         nan=np.nan
-        known_indices=list(map(tuple, np.where(np.isnan(square_matrix))))
-        # Extract the coordinates and values of known positions
-        print(np.shape(square_matrix))
-        print(known_indices)
-        known_values = np.array([square_matrix[i][j] for i, j in known_indices])
-        # Find the indices of nan values in the matrix
-        none_indices = np.argwhere(np.array(square_matrix) == [nan,nan,nan,nan])
-        # Extract the coordinates of None values
-        none_coords = tuple(map(tuple, none_indices))
+        known_indices=[]
+        unknown_indices=[]
+        for i in range(len(square_grid)):
+            for j in range(len(square_grid)):
+                if square_grid[i][j] != [nan,nan,nan,nan]:
+                    known_indices.append([i,j])
+                else:
+                    unknown_indices.append([i,j])
+        known_values = np.array([square_matrix[i][j] for i,j in known_indices])
+        unknown_values=np.array([square_matrix[i][j] for i,j in unknown_indices])
         # Perform interpolation for each element of the array separately
-        interpolated_values = [griddata(known_indices, known_values[:, i], none_coords, method='linear') for i in range(4)]
+        interpolated_values = [griddata(known_indices, known_values[:, i], unknown_indices, method='nearest') for i in range(4)]
         # Fill the matrix with interpolated values for each element of the array
-        for i in range(4):
-            square_matrix[tuple(np.transpose(none_indices))] = [interpolated_values[j][i] for j in range(len(none_coords))]
+        print(interpolated_values)
+        count=0
+        for i,j in unknown_indices:
+            square_matrix[i][j] = [interpolated_values[i][count] for i in range(4)]
+            count=count+1
         return square_matrix
 
     square_grid=fill_matrix_with_interpolation(square_grid)
-    print(square_grid)
+    
     return square_grid    
 
 if __name__ == "__main__":
@@ -1038,5 +1042,8 @@ if __name__ == "__main__":
                 list_of_k_points.append(list_tmp[r])
 
     list_of_k_points=mapping_to_square_grid(list_of_k_points,normalized_chosen_reciprocal_plane,epsilon)
-    print(list_of_k_points)
-    print(k0,k1)
+    for i in range(len(list_of_k_points)):
+        for j in range(len(list_of_k_points)):
+            print(str(list_of_k_points[i][j]))
+    #print(list_of_k_points)
+    #print(k0,k1)
