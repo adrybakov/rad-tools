@@ -838,7 +838,7 @@ def mapping_to_square_grid(
         k_vectors_projections=np.zeros((number_k_points,2))
         ###the k vectors have a weight in the 3rd position
         for i in range(0,number_k_points):
-            k_vectors[i]=k_points_list[i][:3]
+            k_vectors[i]=np.array(k_points_list[i][:3])
             for j in range(0,2):
                 k_vectors_projections[i][j]=np.dot(k_vectors[i],brillouin_primitive_vectors[j])
         ###print(k_vectors_projections)

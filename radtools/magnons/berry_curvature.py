@@ -456,9 +456,9 @@ if __name__ == "__main__":
     threshold_omega=0.6
 
     brillouin_primitive_vectors=np.zeros((3,3))
-    brillouin_primitive_vectors[0]=spinham.a1
-    brillouin_primitive_vectors[1]=spinham.a2
-    brillouin_primitive_vectors[2]=spinham.a3
+    brillouin_primitive_vectors[0]=[1,0,0]
+    brillouin_primitive_vectors[1]=[-1/2,3,0]
+    brillouin_primitive_vectors[2]=[0,0,1]
     print(brillouin_primitive_vectors)
     added_refinment_iteration=0
     noaniso=False
