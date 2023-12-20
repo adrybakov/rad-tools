@@ -25,7 +25,7 @@ from radtools.crystal.kpoints import *
 from radtools.crystal.kpoints import k_points_grid_2d_refinment_and_symmetry
 from radtools.crystal.kpoints import dynamical_refinment
 from radtools.crystal.kpoints import check_inside_brillouin_zone
-from radtools.crystal.kpoints import mapping_to_square_grid
+from radtools.crystal.kpoints import mapping_to_square_grid_2d
 from radtools.geometry import span_orthonormal_set
 from radtools.magnons.diagonalization import ColpaFailed, solve_via_colpa
 from radtools.spinham.hamiltonian import SpinHamiltonian
@@ -267,25 +267,30 @@ class Berry_curvature:
             self.threshold_k_grid,
         )
         # reducing the k points grid to a square grid
-        square_grid=mapping_to_square_grid(
-            k_points_grid_2d,
-            normalized_chosen_reciprocal_plane,
-            self.refinment_spacing
-        )
-        dimx=len(square_grid)
+        list_of_k_points=[]
+        list_tmp=[]
+        for i in range(0,k0):
+            for j in range(0,k1):
+                list_tmp=k_points_grid_2d[i][j]
+                for r in range(0,len(list_tmp)):
+                    list_of_k_points.append(list_tmp[r])
+       
+        square_grid,n0,n0=mapping_to_square_grid_2d(
+            list_of_k_points,
+            normalized_chosen_reciprocal_plane)
 
         #checking if there are degeneracies and saving the magnonic surfaes in the file magnonic_surfaces.txt
         list_magnonic_branches = function_generate_indipendent_list(self.N)
-        u_k=np.zeros((dimx,dimx,self.N,self.N), dtype=complex)
-        weight_k=np.zeros((dimx,dimx))
+        u_k=np.zeros((n0,n0,self.N,self.N), dtype=complex)
+        weight_k=np.zeros((n0,n0))
         ##file_2 = open("magnonic_surfaces.txt", "w")
-        for i in range(0, dimx):
-            for j in range(0, dimx):
+        for i in range(0, n0):
+            for j in range(0, n0):
                 ##print(
                 ##    "degeneracy studies",
-                ##    int(i / dimx * 100),
+                ##    int(i / n0 * 100),
                 ##    "%  and ",
-                ##    int(j / dimx * 100),
+                ##    int(j / n0 * 100),
                 ##    "%",
                 ##    end="\r",
                 ##    flush=True,
@@ -326,8 +331,8 @@ class Berry_curvature:
         ### the dynamical refinment is a little bit more complex here (but can be implemented as well)
        ## file_1 = open("berry_curvature.txt", "w") 
         ### here the eigenvectors are calculated on the way (the static procedure can be applied as well)
-        for i in range(0, dimx):
-            for j in range(0, dimx):
+        for i in range(0, n0):
+            for j in range(0, n0):
               ## print(
               ##     "berry grid",
               ##     int(i / k0 * 100),
@@ -339,17 +344,17 @@ class Berry_curvature:
               ## )
               ## ### considering the little square path
                 u_k_tmp=np.zeros((4,self.N,self.N))
-                if i < dimx -1 and j < dimx -1:
+                if i < n0 -1 and j < n0 -1:
                     u_k_tmp[0]=u_k[i][j]
                     u_k_tmp[3]=u_k[i][j+1]
                     u_k_tmp[2]=u_k[i+1][j+1]
                     u_k_tmp[1]=u_k[i+1][j]
-                elif i < dimx -1 and j == dimx-1:
+                elif i < n0 -1 and j == n0-1:
                     u_k_tmp[0]=u_k[i][j]
                     u_k_tmp[3]=u_k[i][0]
                     u_k_tmp[2]=u_k[i+1][0]
                     u_k_tmp[1]=u_k[i+1][j]
-                elif i == dimx -1 and j < dimx-1:
+                elif i == n0 -1 and j < n0-1:
                     u_k_tmp[0]=u_k[i][j]
                     u_k_tmp[3]=u_k[i][j+1]
                     u_k_tmp[2]=u_k[0][j+1]
