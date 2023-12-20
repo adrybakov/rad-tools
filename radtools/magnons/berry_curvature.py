@@ -304,7 +304,7 @@ class Berry_curvature:
                     **list_magnonic_branches,
                 )
                 u_k[i][j]=u_k[i][j]*weight_k[i][j]
-                file_2.write(f"{k_point_tmp} {omega_k_tmp}   \n")
+                ##file_2.write(f"{k_point_tmp} {omega_k_tmp}   \n")
         print(list_magnonic_branches)
         
         ##calculating the berry curvature in each k point directly

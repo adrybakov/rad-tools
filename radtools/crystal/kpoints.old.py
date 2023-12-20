@@ -797,52 +797,209 @@ def k_points_grid_2d_refinment_and_symmetry(
     return (normalized_chosen_reciprocal_plane, k0, k1, k_points_grid_2d)
 
 def mapping_to_square_grid(
-    k_points_list_with_weights,
-    normalized_chosen_reciprocal_plane,
-    epsilon
-    ):
+        k_points_list_with_weights,
+        normalized_chosen_reciprocal_plane,
+        epsilon
+):
+    r"""
+    mapping of the 2d k point list (generated using known primitive vectors) into a square k point list, i.e. naming the position of the single k points
+    1) first the origin is defined (as the leftest and lowest point)
+    2) to each point is associated a k vector with respect to the origin
+    2b) it is considered the pair of vectors producing the larger angle
+    2) each k vector is projected along the two found vectors
+    3) the bording points are selected and correspondingly enumerated 
+    1) the points (1),(2), (3) and (4) are repeted
+    ACTHUNG!!! be carefull in the choice of epsilon, otherwise you risk not to find any point
+    there is the possibility that on a border there would be less than two points, this is evaluated a posteriori
+    Parameters
+    ----------
+    k_points_list_with_weights : (2,4) |array_like|_  ex. the list contain the 3 xyz coordinates and a weight
+    """
 
-    number_k_points=len(k_points_list_with_weights)
-    k_vectors=np.zeros((number_k_points,3))
-    k_vectors_projections=np.zeros((number_k_points,2))
-    for i in range(0,number_k_points):
-        k_vectors[i]=k_points_list_with_weights[i][:3]
+    ###defining a recursive function to define the borders
+    def bording_definition(origin_indices,k_points_list,k_points_border,normalized_chosen_reciprocal_plane,epsilon):
+        r"""
+        parameters
+        origin_indices: (1,1) |array|_ indices associated with the origin
+        k_points_list: (n,3) |array|_ list of k points
+        brillouin_primitive_vectors: (2,3) |array|_ brillouin primitive vectors defining a 2D plane in the Brillouin zone
+        
+        (iterative) return, until k=n
+        k_points_list: (n-k,3) |array|_ list of k points not part of the border
+        k_points_border: (k,5) |array|_ list of k points part of the border, to each k point are associated the 3 kxkykz coordinates and the two indices, defined with respect to the origin indices
+        """
+        if len(k_points_list)==0:
+            return 0
+        print(len(k_points_list))
+        ###assuming at the beginning as origin (0,0,0)
+        ###finding the real origin (the lowest and leftest point)
+        number_k_points=len(k_points_list)
+        k_vectors=np.zeros((number_k_points,3))
+        k_vectors_projections=np.zeros((number_k_points,2))
+        ###the k vectors have a weight in the 3rd position
         for j in range(0,2):
-            k_vectors_projections[i][j]=np.dot(k_vectors[i],normalized_chosen_reciprocal_plane[j])
-    xmin,xmax=0,1
-    ymin,ymax=0,1
-    ##size of regular grid
-    counti=0
-    countj=0
-    i=0
-    flag=0
-    while(flag==0):
-        if(i<number_k_points):
-            if abs(k_vectors_projections[i][1])<epsilon:
-                countj=countj+1
-            if abs(k_vectors_projections[i][0])<epsilon:
-                counti=counti+1
-            i=i+1
-        else:
-            if(counti==0 or countj==0):
-                epsilon=epsilon*2
-                countj=0
-                counti=0
-                i=0
+            min_value[j]=np.dot(k_points_list[0][:3],brillouin_primitive_vectors[j])
+            k_vectors_projections[0][:]
+        position_min_value=0
+        for i in range(0,number_k_points):
+            k_vectors[i]=np.asanyarray(k_points_list[i][:3])
+            for j in range(0,2):
+                k_vectors_projections[i][j]=np.dot(k_vectors[i],brillouin_primitive_vectors[j])
+            if min_value[0] > k_vectors_projections[i][0] and min_value[1] > k_vectors_projections[i][1]:
+                position_min_value=i
+                min_value=k_vectors_projections[i][:]
+        origin=k_points_list[position_min_value][:]
+        
+        ###finding the maximal angle pair (the parallelogram containing all the points)
+        ###recentering the vectors with respect to the real origin
+        for i in range(0,number_k_points):
+            if i!=position_min_value:
+                k_vectors[i]=k_points_list[i][:3]-origin[:3]
+                norm=np.dot(k_vectors[i],k_vectors[i])
+                ###normalizing the vectors
+                if norm !=0:
+                    k_vectors[i]=k_vectors[i]/norm
+        min_sin_angle=1
+        position_min_sin_angle=[0,0]
+        for i in range(0,number_k_points):
+            for j in range(i+1,number_k_points):
+                if i!=position_min_value:
+                    sin_angle=np.dot(k_vectors[i],k_vectors[j])
+                    if sin_angle<min_sin_angle:
+                        min_sin_angle=sin_angle
+                        position_min_sin_angle=[i,j]
+        ###saving the two found axis in a variable (a1,a2)
+        new_axis_vectors=np.zeros((2,3))
+        for i in range(0,2):
+            new_axis_vectors[i]=k_vectors[position_min_sin_angle[i]]
+
+        epsilon_tmp=epsilon
+        ###finding the k points around the two found axis (the epsilon used here is the same of the k point grid building); the control flag is used to be sure the found k points are at leat two (the two of the axis..)
+        control_flag=0
+        while control_flag==0:
+            ####defining every point as a vector with respect to the found origin and differentiating between points along a1 and a2 and not
+            k_points_not_along_a=[]
+            k_points_along_a=[[],[]]
+            for i in range(0,number_k_points):
+                if i!=position_min_value:
+                    ####here we need the not normilzed vectors
+                    k_vectors[i]=k_points_list[i][:3]-origin[:3]
+                    ###flag to check that the projection is not null on both the primitive reciprocal vectors
+                    count_not_ptojected=0
+                    count_projected=0
+                    for j in range(0,2):
+                        k_vectors_projections[i][j]=np.dot(k_vectors[i],new_axis_vectors[j])
+                        ####grouping all elements with one of the two projections equal to zero (those at the border)
+                        if abs(k_vectors_projections[i][j])<=epsilon_tmp and count_projected!=1:
+                            k_points_along_a[1-j].append([i,k_vectors_projections[i][1-j]])
+                            count_projected=count_projected+1
+                        else:
+                            count_not_ptojected=count_not_ptojected+1
+                            if count_not_ptojected == 2 and count_projected==0:
+                                k_points_not_along_a.append(k_points_list[i])
+            number_k_points_along_a=np.zeros(2)
+            for i in range(0,2):
+                number_k_points_along_a[i]=int(len(k_points_along_a[i]))
+            if number_k_points_along_a[0]<1 or number_k_points_along_a[1]<1:
+                ###going back in the refinment procedure
+                epsilon_tmp=epsilon_tmp*2
             else:
-                flag=1
-    ny,nx=countj,counti
-    #Generate a regular grid to interpolate the data
-    xi=np.linspace(xmin,xmax,nx)
-    yi=np.linspace(ymin,ymax,ny)
-    xi,yi=np.meshgrid(xi,yi)
-    zi=griddata(k_vectors_projections,k_points_list_with_weights[:,3],(xi,yi))
-    plt.figure()
-    plt.pcolormesh(xi,yi,zi)
-    plt.scatter(k_vectors_projections,c=k_points_list_with_weights[:,3])
-    plt.colorbar()
-    plt.axis([xmin, xmax, ymin, ymax])
-    plt.show()
+                control_flag=1
+
+        ##reshaping a0 and a1 lists, and trasforming them to arrays
+        matrix_k_points_along_a={}
+        for i in range(0,2):
+            matrix_k_points_along_a[i]=np.zeros((int(number_k_points_along_a[i]),2))
+        for i in range(0,2):
+            for j in range(int(number_k_points_along_a[i])):
+                for r in range(0,2):
+                    matrix_k_points_along_a[i][j][r]=k_points_along_a[i][j][r]
+        
+        ###addding the origin to the border_list
+        k_points_border.append([k_points_list[position_min_value],origin_indices])
+        ###ordering to border points, and giving them proper indices
+        for i in range(0,2):
+            matrix_k_points_along_a[i]=np.reshape(sorted(matrix_k_points_along_a[i],key=lambda x: x[1]),(int(number_k_points_along_a[i]),2))
+            for j in range(int(number_k_points_along_a[i])):
+                position=int(matrix_k_points_along_a[i][j][0])
+                if i == 0:
+                    indices=[origin_indices[i],j+1]
+                else:
+                    indices=[j+1,origin_indices[i]]
+                k_points_border.append([k_points_list[position],indices])
+        
+        #print(k_points_border)
+        #test printing
+        file=open(f"border{origin_indices[0]}.txt", "w")
+        for i in range(len(k_points_border)):
+            file.write(str( ' '.join(map(str, k_points_border[i][0][:])))+"\n")
+
+        #increasing the index of the origin
+        new_origin_indices=[origin_indices[0]+1,origin_indices[1]+1]
+        bording_definition(new_origin_indices, k_points_not_along_a, k_points_border, normalized_chosen_reciprocal_plane,epsilon)
+    
+    print("START OF THE COUNTOR-CUT")
+    ###applying bording definition in an iterative way
+    k_points_border=[]
+    INFO=bording_definition([0,0],k_points_list_with_weights,k_points_border,normalized_chosen_reciprocal_plane,epsilon)
+    print("END OF THE COUNTOR-CUT")
+    k_points_border_matrix=np.zeros((len(k_points_border),2),dtype=list)
+    for i in range(len(k_points_border)):
+        k_points_border_matrix[i,0]=k_points_border[i][0]
+        k_points_border_matrix[i,1]=k_points_border[i][1]
+   
+    ####now the list has to be converted into a matrix
+    ####the rows of the matrix can have different number of columns
+    ####building a square matrix, putting the missing spots to None
+    def create_square_matrix(list_of_k_points):
+        #print(list_of_k_points)
+        #print(list_of_k_points[:,1])
+        #Determine the matrix size based on the maximum indices
+        max_pair=max(list_of_k_points[:,1])
+        maxi=max_pair[0]
+        maxj=max_pair[1]
+        #Initialize an empty square matrix with lists containing four values (3 coordinatex kxkykz and weight)
+        nan=np.nan
+        square_matrix =[[[nan,nan,nan,nan] for i in range(maxi+1)] for j in range(maxj+1)]                         
+        
+        #Fill the matrix with specified values at specified indices
+        for pair in range(0,len(list_of_k_points[:,1])):
+            pairi=list_of_k_points[pair,1][0]
+            pairj=list_of_k_points[pair,1][1]
+            #saving coordinates and weight
+            square_matrix[pairi][pairj] = list(list_of_k_points[pair][0])
+        
+        return square_matrix
+    
+    square_grid=create_square_matrix(k_points_border_matrix)
+    
+    #####the missing points in the square grid are filled with interpolated values
+    def fill_matrix_with_interpolation(square_matrix):
+        # Find the indices of elements that are not arrays of 4 None elements
+        nan=np.nan
+        known_indices=[]
+        unknown_indices=[]
+        for i in range(len(square_grid)):
+            for j in range(len(square_grid)):
+                if square_grid[i][j] != [nan,nan,nan,nan]:
+                    known_indices.append([i,j])
+                else:
+                    unknown_indices.append([i,j])
+        known_values = np.array([square_matrix[i][j] for i,j in known_indices])
+        unknown_values=np.array([square_matrix[i][j] for i,j in unknown_indices])
+        # Perform interpolation for each element of the array separately
+        interpolated_values = [griddata(known_indices, known_values[:, i], unknown_indices, method='nearest') for i in range(4)]
+        # Fill the matrix with interpolated values for each element of the array
+        print(interpolated_values)
+        count=0
+        for i,j in unknown_indices:
+            square_matrix[i][j] = [interpolated_values[i][count] for i in range(4)]
+            count=count+1
+        return square_matrix
+
+    square_grid=fill_matrix_with_interpolation(square_grid)
+    
+    return square_grid  
 
 if __name__ == "__main__":
     import timeit
