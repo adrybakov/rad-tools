@@ -19,6 +19,8 @@
 from copy import deepcopy
 from math import sqrt
 import numpy as np
+import os 
+import ipyparallel as ipp
 from radtools import MagnonDispersion
 from scipy.spatial.transform import Rotation
 from radtools.crystal.kpoints import *
@@ -274,7 +276,6 @@ class Berry_curvature:
                 list_tmp=k_points_grid_2d[i][j]
                 for r in range(0,len(list_tmp)):
                     list_of_k_points.append(list_tmp[r])
-       
         square_grid,n0,n0=mapping_to_square_grid_2d(
             list_of_k_points,
             normalized_chosen_reciprocal_plane)
@@ -283,18 +284,9 @@ class Berry_curvature:
         list_magnonic_branches = function_generate_indipendent_list(self.N)
         u_k=np.zeros((n0,n0,self.N,self.N), dtype=complex)
         weight_k=np.zeros((n0,n0))
-        ##file_2 = open("magnonic_surfaces.txt", "w")
+       
         for i in range(0, n0):
             for j in range(0, n0):
-                ##print(
-                ##    "degeneracy studies",
-                ##    int(i / n0 * 100),
-                ##    "%  and ",
-                ##    int(j / n0 * 100),
-                ##    "%",
-                ##    end="\r",
-                ##    flush=True,
-                ##) 
                 k_point_tmp = np.asarray(square_grid[i][j][:3])
                 weight_k[i][j] = square_grid[i][j][3]
                 (
@@ -304,12 +296,11 @@ class Berry_curvature:
                 ) = self.calculation_omega_and_u_checking_degeneracy(
                     k_point_tmp,
                     self.threshold_omega,
-                    True,
-                    True,
+                    False,
+                    False,
                     **list_magnonic_branches,
                 )
                 u_k[i][j]=u_k[i][j]*weight_k[i][j]
-                ##file_2.write(f"{k_point_tmp} {omega_k_tmp}   \n")
         print(list_magnonic_branches)
         
         ##calculating the berry curvature in each k point directly
@@ -331,6 +322,7 @@ class Berry_curvature:
         ### the dynamical refinment is a little bit more complex here (but can be implemented as well)
        ## file_1 = open("berry_curvature.txt", "w") 
         ### here the eigenvectors are calculated on the way (the static procedure can be applied as well)
+        
         for i in range(0, n0):
             for j in range(0, n0):
               ## print(
@@ -343,7 +335,7 @@ class Berry_curvature:
               ##     flush=True,
               ## )
               ## ### considering the little square path
-                u_k_tmp=np.zeros((4,self.N,self.N))
+                u_k_tmp=np.zeros((4,self.N,self.N),dtype=complex)
                 if i < n0 -1 and j < n0 -1:
                     u_k_tmp[0]=u_k[i][j]
                     u_k_tmp[3]=u_k[i][j+1]
@@ -425,54 +417,58 @@ class Berry_curvature:
     def __call__(self, *args, **kwargs):
         return self.omegas(*args, **kwargs)
 
-if __name__ == "__main__":
-    import timeit
-    import os
-    import matplotlib.pyplot as plt
-    import numpy as np
-    from termcolor import cprint
-    import radtools
-    from radtools.io.internal import load_template
-    from radtools.io.tb2j import load_tb2j_model
-    from radtools.magnons.dispersion import MagnonDispersion
-    from radtools.decorate.stats import logo
-    from radtools.spinham.constants import TXT_FLAGS
-    from radtools.decorate.array import print_2d_array
-    from radtools.decorate.axes import plot_hlines
-
-    spin={"Cr1":[0,0,1],"Cr2":[0,0,1]}
-    input_filename='/home/marcomarino/TestBerry_curvature/exchange.2.out'
-    spinham = load_tb2j_model(input_filename)
-    for key,values in spin.items():
-        atom_name=key
-        atom=spinham.get_atom(atom_name)
-        atom_spin=list(values)
-        atom.spin_vector=atom_spin
-    dispersion = MagnonDispersion(spinham,nodmi=False,noaniso=False)
-    
-    plane_2d=[1,1,0]
-    threshold_k_grid=0.0000001
-    shift_in_plane=[0,0]
-    shift_in_space=[0,0,0]
-    symmetry=[[0,0,0]]
-    grid_spacing=0.1
-    refinment_iteration=0
-    refinment_spacing=0.5
-    threshold_omega=0.6
-
-    brillouin_primitive_vectors=np.zeros((3,3))
-    brillouin_primitive_vectors[0]=[1,0,0]
-    brillouin_primitive_vectors[1]=[-1/2,3,0]
-    brillouin_primitive_vectors[2]=[0,0,1]
-    print(brillouin_primitive_vectors)
-    added_refinment_iteration=0
-    noaniso=False
-    nodmi=False
-    number_iterations_dynamical_refinment=1
-    berry=Berry_curvature(spinham,nodmi,noaniso,brillouin_primitive_vectors,plane_2d,grid_spacing,shift_in_plane,
-                            shift_in_space,symmetry,refinment_spacing,refinment_iteration,threshold_k_grid,
-                            threshold_omega,added_refinment_iteration,number_iterations_dynamical_refinment)
-    print(berry.berry_curvauture_calculation())
- #sed 's/[][",'"'"']//g' berry_points.txt | awk 'NF>1{print}' > berry_points.cleaned.txt
-    #sed 's/[][",'"'"']//g' magnonic_surfaces.txt | awk 'NF>1{print}' > magnonic_surfaces.cleaned.txt
-     #sed 's/[][",'"'"']//g' k_points.txt | awk 'NF>1{print}' > k_points.cleaned.txt
+##if __name__ == "__main__":
+##    import timeit
+##    import os
+##    import matplotlib.pyplot as plt
+##    import numpy as np
+##    from termcolor import cprint
+##    import radtools
+##    from radtools.io.internal import load_template
+##    from radtools.io.tb2j import load_tb2j_model
+##    from radtools.magnons.dispersion import MagnonDispersion
+##    from radtools.decorate.stats import logo
+##    from radtools.spinham.constants import TXT_FLAGS
+##    from radtools.decorate.array import print_2d_array
+##    from radtools.decorate.axes import plot_hlines
+##
+##    spin={"Cr1":[0,0,1],"Cr2":[0,0,1]}
+##    input_filename='/home/marcomarino/TestBerry_curvature/exchange.2.out'
+##    spinham = load_tb2j_model(input_filename)
+##    for key,values in spin.items():
+##        atom_name=key
+##        atom=spinham.get_atom(atom_name)
+##        atom_spin=list(values)
+##        atom.spin_vector=atom_spin
+##    dispersion = MagnonDispersion(spinham,nodmi=False,noaniso=False)
+##    
+##    plane_2d=[1,1,0]
+##    threshold_k_grid=0.0000001
+##    shift_in_plane=[0,0]
+##    shift_in_space=[0,0,0]
+##    symmetry=[[0,0,0]]
+##    grid_spacing=0.1
+##    refinment_iteration=0
+##    refinment_spacing=0.5
+##    threshold_omega=0.6
+##
+##    brillouin_primitive_vectors=np.zeros((3,3))
+##    brillouin_primitive_vectors[0]=[1,0,0]
+##    brillouin_primitive_vectors[1]=[-1/2,3,0]
+##    brillouin_primitive_vectors[2]=[0,0,1]
+##    print(brillouin_primitive_vectors)
+##    added_refinment_iteration=0
+##    noaniso=False
+##    nodmi=False
+##    number_iterations_dynamical_refinment=1
+##    berry=Berry_curvature(spinham,nodmi,noaniso,brillouin_primitive_vectors,plane_2d,grid_spacing,shift_in_plane,
+##                            shift_in_space,symmetry,refinment_spacing,refinment_iteration,threshold_k_grid,
+##                            threshold_omega,added_refinment_iteration,number_iterations_dynamical_refinment)
+##    cluster=ipp.Cluster()
+##    c=cluster.start_and_connect_sync()
+##    dview=c[:]
+##    dview.block=True
+##    dview.apply(berry.berry_curvauture_calculation())
+##    #sed 's/[][",'"'"']//g' berry_points.txt | awk 'NF>1{print}' > berry_points.cleaned.txt
+##    #sed 's/[][",'"'"']//g' magnonic_surfaces.txt | awk 'NF>1{print}' > magnonic_surfaces.cleaned.txt
+    #sed 's/[][",'"'"']//g' k_points.txt | awk 'NF>1{print}' > k_points.cleaned.txt

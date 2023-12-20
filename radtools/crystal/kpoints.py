@@ -834,49 +834,49 @@ def mapping_to_square_grid_2d(
 
     return(new_k_points_list_with_weights_and_indices,number_k_points,number_k_points)
 
-if __name__ == "__main__":
-    import timeit
-    import os
-    import matplotlib.pyplot as plt
-    import numpy as np
-    ##from termcolor import cprint
-    from radtools.io.internal import load_template
-    from radtools.io.tb2j import load_tb2j_model
-    from radtools.magnons.dispersion import MagnonDispersion
-    from radtools.decorate.stats import logo
-    from radtools.spinham.constants import TXT_FLAGS
-    from radtools.decorate.array import print_2d_array
-    from radtools.decorate.axes import plot_hlines
-
-    brillouin_primitive_vectors=np.zeros((3,3))
-    brillouin_primitive_vectors[0]=[1,0,0]
-    brillouin_primitive_vectors[1]=[-1/2,3,0]
-    brillouin_primitive_vectors[2]=[0,0,1]
-    plane_2d=[1,1,0]
-    #threshold for understanding if there is a degeneracy
-    threshold_k_grid=0.0000001
-    shift_in_plane=[0,0]
-    shift_in_space=[0,0,0]
-    symmetry=[[0,0,0]]
-    grid_spacing=0.01
-    refinment_iteration=0
-    refinment_spacing=0.005
-    epsilon=refinment_spacing
-    
-    normalized_chosen_reciprocal_plane,k0,k1,refined_grid_2d=k_points_grid_2d_refinment_and_symmetry(brillouin_primitive_vectors,plane_2d,
-        grid_spacing,
-        shift_in_plane,
-        shift_in_space,
-        symmetry,
-        refinment_spacing,
-        refinment_iteration,
-        threshold_k_grid)
-    list_of_k_points=[]
-    list_tmp=[]
-    for i in range(0,k0):
-        for j in range(0,k1):
-            list_tmp=refined_grid_2d[i][j]
-            for r in range(0,len(list_tmp)):
-                list_of_k_points.append(list_tmp[r])
-    new_list_of_k_points,n0,n0=mapping_to_square_grid_2d(list_of_k_points,normalized_chosen_reciprocal_plane)
+##if __name__ == "__main__":
+##    import timeit
+##    import os
+##    import matplotlib.pyplot as plt
+##    import numpy as np
+##    ##from termcolor import cprint
+##    from radtools.io.internal import load_template
+##    from radtools.io.tb2j import load_tb2j_model
+##    from radtools.magnons.dispersion import MagnonDispersion
+##    from radtools.decorate.stats import logo
+##    from radtools.spinham.constants import TXT_FLAGS
+##    from radtools.decorate.array import print_2d_array
+##    from radtools.decorate.axes import plot_hlines
+##
+##    brillouin_primitive_vectors=np.zeros((3,3))
+##    brillouin_primitive_vectors[0]=[1,0,0]
+##    brillouin_primitive_vectors[1]=[-1/2,3,0]
+##    brillouin_primitive_vectors[2]=[0,0,1]
+##    plane_2d=[1,1,0]
+##    #threshold for understanding if there is a degeneracy
+##    threshold_k_grid=0.0000001
+##    shift_in_plane=[0,0]
+##    shift_in_space=[0,0,0]
+##    symmetry=[[0,0,0]]
+##    grid_spacing=0.01
+##    refinment_iteration=0
+##    refinment_spacing=0.005
+##    epsilon=refinment_spacing
+##    
+##    normalized_chosen_reciprocal_plane,k0,k1,refined_grid_2d=k_points_grid_2d_refinment_and_symmetry(brillouin_primitive_vectors,plane_2d,
+##        grid_spacing,
+##        shift_in_plane,
+##        shift_in_space,
+##        symmetry,
+##        refinment_spacing,
+##        refinment_iteration,
+##        threshold_k_grid)
+##    list_of_k_points=[]
+##    list_tmp=[]
+##    for i in range(0,k0):
+##        for j in range(0,k1):
+##            list_tmp=refined_grid_2d[i][j]
+##            for r in range(0,len(list_tmp)):
+##                list_of_k_points.append(list_tmp[r])
+##    new_list_of_k_points,n0,n0=mapping_to_square_grid_2d(list_of_k_points,normalized_chosen_reciprocal_plane)
     
