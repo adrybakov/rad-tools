@@ -249,7 +249,6 @@ class Berry_curvature:
         else:
             return list_magnonic_branches, omega_k
 
-
     def berry_curvauture_calculation(self):
         # generating k points grid with refinment as already pointed out
         (
@@ -320,8 +319,7 @@ class Berry_curvature:
         ### the procedure above introduces some phases that are not cancelled, so a better strategy is the following 
         ### mapping all the ij points to a square grid 
         ### the dynamical refinment is a little bit more complex here (but can be implemented as well)
-       ## file_1 = open("berry_curvature.txt", "w") 
-        ### here the eigenvectors are calculated on the way (the static procedure can be applied as well)
+        ## file_1 = open("berry_curvature.txt", "w")
         
         for i in range(0, n0):
             for j in range(0, n0):
@@ -470,5 +468,5 @@ class Berry_curvature:
 ##    dview.block=True
 ##    dview.apply(berry.berry_curvauture_calculation())
 ##    #sed 's/[][",'"'"']//g' berry_points.txt | awk 'NF>1{print}' > berry_points.cleaned.txt
-##    #sed 's/[][",'"'"']//g' magnonic_surfaces.txt | awk 'NF>1{print}' > magnonic_surfaces.cleaned.txt
+    #sed 's/[][",'"'"']//g' magnonic_surfaces.txt | awk 'NF>1{print}' > magnonic_surfaces.cleaned.txt
     #sed 's/[][",'"'"']//g' k_points.txt | awk 'NF>1{print}' > k_points.cleaned.txt

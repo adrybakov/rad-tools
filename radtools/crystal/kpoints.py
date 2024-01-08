@@ -435,32 +435,24 @@ def symmetry_analysis(
     threshold_k_grid,
 ):
     r"""
-    #TODO Short description
-
-    The symmetry analysis is applied on a subset of k points ``k_points_subgrid``,
-    the origin of the subsystem is considered as well ``k_origin``
-    in our case the origin is the point to which the refinement procedure is applied
-    from the symmetry analysis is clear the distribution of the origin weight
-    ``k_origin_weight`` between the different k points of the subset
-
+    Given a list of k points "k_points_subgrid" and an origin "k_origin" with a certain weight "k_origin_weight", different symmetry operations are
+    applied to the list of k points, keeping the origin fixed, and the origin weight propelry distributed between the points
+    The orbits of the symmetry operations have a certain percentage of the weight, which takes into account how many of the list k points are 
+    linked to each other
+    Of the orbits one k point is chosen as representative 
     Parameters
     ----------
-    k_origin : (3,) |array-like|_
-        #TODO description
-    k_origin_weight : float
-        #TODO description
-    k_points_subgrid : (N, 3) |array-like|_
-        #TODO description
+    k_origin : (3,) |array-like|_ fixed point considered in the point-group symmetry operations
+    k_origin_weight : float  weight to distribute between the k points of the list 
+    k_points_subgrid : (N, 3) |array-like| list of k points considered in the symmetry analysis
     symmetries : list of lists
-        #TODO better description
         A symmetry is a list of 3 elements
         (the versor is the axis of rotation, while the modulus is the angle).
     threshold_k_grid : float
         Threshold to recognize a symmetry.
-
     Returns
     -------
-    k_points_subgrid_weight_tmp: (N,) :numpy:`ndarray`
+    k_points_subgrid_weight_tmp: (N,4) :numpy:`ndarray`
         Distribution of the origin k point weight between the different k points
     """
 
@@ -734,18 +726,15 @@ def k_points_grid_2d_refinment_and_symmetry(
             count = count + 1
     # np.dot(v1,v2) same as v1 @ v2
     k0 = int(
-        np.dot(chosen_reciprocal_plane[0], chosen_reciprocal_plane[0]) / grid_spacing
+        (chosen_reciprocal_plane[0] @ chosen_reciprocal_plane[0])/ grid_spacing
     )
     k1 = int(
-        np.dot(chosen_reciprocal_plane[1], chosen_reciprocal_plane[1]) / grid_spacing
+        (chosen_reciprocal_plane[1] @ chosen_reciprocal_plane[1]) / grid_spacing
     )
     weight = 1 / (k0 * k1)
     normalized_chosen_reciprocal_plane = np.zeros((2, 3))
-    # Try to use numpy here
-    for i in range(0, len(chosen_reciprocal_plane[:, 0])):
-        normalized_chosen_reciprocal_plane[i] = chosen_reciprocal_plane[i] / np.dot(
-            chosen_reciprocal_plane[i], chosen_reciprocal_plane[i]
-        )
+    normalized_chosen_reciprocal_plane = chosen_reciprocal_plane / (
+            chosen_reciprocal_plane @ chosen_reciprocal_plane)
     k_points_grid_2d = np.zeros((k0, k1), dtype=object)
     k_points_grid_2d_tmp = np.zeros(4)
     for i in range(0, k0):
@@ -790,7 +779,7 @@ def mapping_to_square_grid_2d(
     new_k_points_list_with_weights_and_ordering : (:6) |matrix| : list of k points (kx,ky,kz,w,i,j) where w is the respective weight of the k point, and (i,j) the indices mapping to a 2d square grid 
     note: teh weights, being added some points in the interpolation, are renormalized over the entire set of points (it is assumed that the initial list is normalized)
     """
-    #considerin a mapping from a list of k vectors in 3d with a weight into a list of k vectors in 2d with a weight
+    #considerin a mapping from a list of k vectors in 3d with a weight, into a list of k vectors in 2d with a weight
     #simply considering the projection of the vectors on the primitive reciprocal vectors
     number_k_points=len(k_points_list_with_weights)
     k_vectors=np.zeros((number_k_points,3))
