@@ -284,22 +284,34 @@ class Berry_curvature:
         u_k=np.zeros((n0,n0,self.N,self.N), dtype=complex)
         weight_k=np.zeros((n0,n0))
        
-        for i in range(0, n0):
-            for j in range(0, n0):
-                k_point_tmp = np.asarray(square_grid[i][j][:3])
-                weight_k[i][j] = square_grid[i][j][3]
-                (
-                    list_magnonic_branches,
-                    omega_k_tmp,
-                    u_k[i][j]
-                ) = self.calculation_omega_and_u_checking_degeneracy(
-                    k_point_tmp,
-                    self.threshold_omega,
-                    False,
-                    False,
-                    **list_magnonic_branches,
-                )
-                u_k[i][j]=u_k[i][j]*weight_k[i][j]
+        file_1="magnonic_grid.txt"
+        with open(file_1, 'w') as file_1w:
+            for i in range(0, n0):
+                for j in range(0, n0):
+                    print(
+                        "k grid",
+                        int(i / n0 * 100),
+                        "%  and ",
+                        int(j / n0 * 100),
+                        "%",
+                        end="\r",
+                        flush=True,
+                    )
+                    k_point_tmp = np.asarray(square_grid[i][j][:3])
+                    weight_k[i][j] = square_grid[i][j][3]
+                    (
+                        list_magnonic_branches,
+                        omega_k_tmp,
+                        u_k[i][j]
+                    ) = self.calculation_omega_and_u_checking_degeneracy(
+                        k_point_tmp,
+                        self.threshold_omega,
+                        False,
+                        False,
+                        **list_magnonic_branches,
+                    )
+                    u_k[i][j]=u_k[i][j]*weight_k[i][j]
+                    file_1w.write(str(i)+' '+str(j)+' '+str(k_point_tmp[0])+' '+str(k_point_tmp[1])+' '+str(k_point_tmp[2])+' '+str(omega_k_tmp*weight_k[i][j])+'\n')
         print(list_magnonic_branches)
         
         ##calculating the berry curvature in each k point directly
@@ -320,95 +332,97 @@ class Berry_curvature:
         ### mapping all the ij points to a square grid 
         ### the dynamical refinment is a little bit more complex here (but can be implemented as well)
         ## file_1 = open("berry_curvature.txt", "w")
-        
-        for i in range(0, n0):
-            for j in range(0, n0):
-              ## print(
-              ##     "berry grid",
-              ##     int(i / k0 * 100),
-              ##     "%  and ",
-              ##     int(j / k1 * 100),
-              ##     "%",
-              ##     end="\r",
-              ##     flush=True,
-              ## )
-              ## ### considering the little square path
-                u_k_tmp=np.zeros((4,self.N,self.N),dtype=complex)
-                if i < n0 -1 and j < n0 -1:
-                    u_k_tmp[0]=u_k[i][j]
-                    u_k_tmp[3]=u_k[i][j+1]
-                    u_k_tmp[2]=u_k[i+1][j+1]
-                    u_k_tmp[1]=u_k[i+1][j]
-                elif i < n0 -1 and j == n0-1:
-                    u_k_tmp[0]=u_k[i][j]
-                    u_k_tmp[3]=u_k[i][0]
-                    u_k_tmp[2]=u_k[i+1][0]
-                    u_k_tmp[1]=u_k[i+1][j]
-                elif i == n0 -1 and j < n0-1:
-                    u_k_tmp[0]=u_k[i][j]
-                    u_k_tmp[3]=u_k[i][j+1]
-                    u_k_tmp[2]=u_k[0][j+1]
-                    u_k_tmp[1]=u_k[0][j]
-                else:
-                    u_k_tmp[0]=u_k[i][j]
-                    u_k_tmp[3]=u_k[i][0]
-                    u_k_tmp[2]=u_k[0][0]
-                    u_k_tmp[1]=u_k[0][j]
-                ##in the not-degenerate case the Berry curvature is straightforwardath
-                if len(list_magnonic_branches) == self.N:
-                    phase_tmp = np.asarray(
-                        list(
-                            map(
-                                lambda x, y, z, w: np.angle(
-                                    np.asarray(x)
-                                )
-                                + np.angle(np.asarray(y))
-                                - np.angle(np.asarray(z))
-                                - np.angle(np.asarray(w)),
-                                function_product_of_rows_eigenvector_matrix(
-                                    u_k_tmp[0], u_k_tmp[1]
-                                ),
-                                function_product_of_rows_eigenvector_matrix(
-                                    u_k_tmp[1], u_k_tmp[2]
-                                ),
-                                function_product_of_rows_eigenvector_matrix(
-                                    u_k_tmp[3], u_k_tmp[2]
-                                ),
-                                function_product_of_rows_eigenvector_matrix(
-                                    u_k_tmp[0], u_k_tmp[3]
-                                ),
-                            )
-                        )
+        file_2="berry_grid.txt"
+        with open(file_2, 'w') as file_2w:
+            for i in range(0, n0):
+                for j in range(0, n0):
+                    print(
+                        "berry grid",
+                        int(i / n0 * 100),
+                        "%  and ",
+                        int(j / n0 * 100),
+                        "%",
+                        end="\r",
+                        flush=True,
                     )
-                ##in the degenerate case the Berry curvature is calculated using the non-abelian formulation
-                else:
-                    for (
-                        eigenspace,
-                        eigenvalues,
-                    ) in list_magnonic_branches.items():
-                        phase_tmp[eigenspace] = (
-                            np.asarray(
-                                function_phase_eigenspace_indicated(
-                                    u_k_tmp[0], u_k_tmp[1], eigenvalues
-                                )
-                            )
-                            + np.asarray(
-                                function_phase_eigenspace_indicated(
-                                    u_k_tmp[1], u_k_tmp[2], eigenvalues
-                                )
-                            )
-                            - np.asarray(
-                                function_phase_eigenspace_indicated(
-                                    u_k_tmp[3], u_k_tmp[2], eigenvalues
-                                )
-                            )
-                            - np.asarray(
-                                function_phase_eigenspace_indicated(
-                                    u_k_tmp[0], u_k_tmp[3], eigenvalues
+                  ## ### considering the little square path
+                    u_k_tmp=np.zeros((4,self.N,self.N),dtype=complex)
+                    if i < n0 -1 and j < n0 -1:
+                        u_k_tmp[0]=u_k[i][j]
+                        u_k_tmp[3]=u_k[i][j+1]
+                        u_k_tmp[2]=u_k[i+1][j+1]
+                        u_k_tmp[1]=u_k[i+1][j]
+                    elif i < n0 -1 and j == n0-1:
+                        u_k_tmp[0]=u_k[i][j]
+                        u_k_tmp[3]=u_k[i][0]
+                        u_k_tmp[2]=u_k[i+1][0]
+                        u_k_tmp[1]=u_k[i+1][j]
+                    elif i == n0 -1 and j < n0-1:
+                        u_k_tmp[0]=u_k[i][j]
+                        u_k_tmp[3]=u_k[i][j+1]
+                        u_k_tmp[2]=u_k[0][j+1]
+                        u_k_tmp[1]=u_k[0][j]
+                    else:
+                        u_k_tmp[0]=u_k[i][j]
+                        u_k_tmp[3]=u_k[i][0]
+                        u_k_tmp[2]=u_k[0][0]
+                        u_k_tmp[1]=u_k[0][j]
+                    ##in the not-degenerate case the Berry curvature is straightforwardath
+                    if len(list_magnonic_branches) == self.N:
+                        phase_tmp = np.asarray(
+                            list(
+                                map(
+                                    lambda x, y, z, w: np.angle(
+                                        np.asarray(x)
+                                    )
+                                    + np.angle(np.asarray(y))
+                                    - np.angle(np.asarray(z))
+                                    - np.angle(np.asarray(w)),
+                                    function_product_of_rows_eigenvector_matrix(
+                                        u_k_tmp[0], u_k_tmp[1]
+                                    ),
+                                    function_product_of_rows_eigenvector_matrix(
+                                        u_k_tmp[1], u_k_tmp[2]
+                                    ),
+                                    function_product_of_rows_eigenvector_matrix(
+                                        u_k_tmp[3], u_k_tmp[2]
+                                    ),
+                                    function_product_of_rows_eigenvector_matrix(
+                                        u_k_tmp[0], u_k_tmp[3]
+                                    ),
                                 )
                             )
                         )
-                phase=phase+phase_tmp
+                    ##in the degenerate case the Berry curvature is calculated using the non-abelian formulation
+                    else:
+                        for (
+                            eigenspace,
+                            eigenvalues,
+                        ) in list_magnonic_branches.items():
+                            phase_tmp[eigenspace] = (
+                                np.asarray(
+                                    function_phase_eigenspace_indicated(
+                                        u_k_tmp[0], u_k_tmp[1], eigenvalues
+                                    )
+                                )
+                                + np.asarray(
+                                    function_phase_eigenspace_indicated(
+                                        u_k_tmp[1], u_k_tmp[2], eigenvalues
+                                    )
+                                )
+                                - np.asarray(
+                                    function_phase_eigenspace_indicated(
+                                        u_k_tmp[3], u_k_tmp[2], eigenvalues
+                                    )
+                                )
+                                - np.asarray(
+                                    function_phase_eigenspace_indicated(
+                                        u_k_tmp[0], u_k_tmp[3], eigenvalues
+                                    )
+                                )
+                            )
+                    phase=phase+phase_tmp
+                    file_2w.write(str(i)+' '+str(j)+' '+str(np.asarray(square_grid[i][j][0]))+' '+str(np.asarray(square_grid[i][j][1]))+' '+str(np.asarray(square_grid[i][j][2]))+' '+str(phase_tmp)+'\n')
     
         return list_magnonic_branches, phase
 
@@ -462,11 +476,12 @@ if __name__ == "__main__":
     berry=Berry_curvature(spinham,nodmi,noaniso,brillouin_primitive_vectors,plane_2d,grid_spacing,shift_in_plane,
                             shift_in_space,symmetry,refinment_spacing,refinment_iteration,threshold_k_grid,
                             threshold_omega,added_refinment_iteration,number_iterations_dynamical_refinment)
-    cluster=ipp.Cluster()
-    c=cluster.start_and_connect_sync()
-    dview=c[:]
-    dview.block=True
-    dview.apply(berry.berry_curvauture_calculation())
+    berry.berry_curvauture_calculation()
+    #cluster=ipp.Cluster()
+    #c=cluster.start_and_connect_sync()
+    #dview=c[:]
+    #dview.block=True
+    #dview.apply(berry.berry_curvauture_calculation())
     #sed 's/[][",'"'"']//g' berry_points.txt | awk 'NF>1{print}' > berry_points.cleaned.txt
     #sed 's/[][",'"'"']//g' magnonic_surfaces.txt | awk 'NF>1{print}' > magnonic_surfaces.cleaned.txt
     #sed 's/[][",'"'"']//g' k_points.txt | awk 'NF>1{print}' > k_points.cleaned.txt
