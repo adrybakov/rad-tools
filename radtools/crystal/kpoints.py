@@ -703,7 +703,7 @@ def k_points_grid_2d_refinment_and_symmetry(
     shift_in_plane : (1,2) |array_like|_  shift of the reciprocal plane_2d with respcet to the reciprocal(crystal) coordinates
     shift_in_space : (1,3) |array_like|_  shift of the reciprocal plane_2d with respcet to the cartesian coordinates
     symmetry : list [symmetry1,symmetry2...] each symmetry is a list of three elements: the versor is associated to the axis of rotation, while the modulus is the angle of rotation
-    refinment_spacing : |double| first refinment iteration dimension, the next refinment itarations are multiple of this
+    refinment_spacing : |double| first refinment iteration dimension, the next refinment itarations are multiple of this (power 2)
     refinment_iteration : |int| number of refinment iterations
     threshold_k_grid: |double| threshold for the symmetry checking
     Return
@@ -713,6 +713,13 @@ def k_points_grid_2d_refinment_and_symmetry(
     total_number_k_points |int|, total number of k points, taking into account also the refinment k points
     k_points_grid_2d k0xk1 grid |k_point class| the largest k grid, where each point is associated to a refinment grid
     """
+    if not refinment_spacing:
+        refinment_spacing=grid_spacing/2
+    if not shift_in_plane:
+        shift_in_plane=[0,0]
+    if not shift_in_space:
+        shift_in_space=[0,0,0]
+
     count = 0
     chosen_reciprocal_plane = np.zeros((2, 3))
     for i in range(0, 3):
@@ -824,54 +831,65 @@ def mapping_to_square_grid_2d(
 
     return(new_k_points_list_with_weights_and_indices,number_k_points,number_k_points)
 
-if __name__ == "__main__":
-    import timeit
-    import os
-    import matplotlib.pyplot as plt
-    import numpy as np
-    ##from termcolor import cprint
-    from radtools.io.internal import load_template
-    from radtools.io.tb2j import load_tb2j_model
-    from radtools.magnons.dispersion import MagnonDispersion
-    from radtools.decorate.stats import logo
-    from radtools.spinham.constants import TXT_FLAGS
-    from radtools.decorate.array import print_2d_array
-    from radtools.decorate.axes import plot_hlines
-
-    brillouin_primitive_vectors=np.zeros((3,3))
-    brillouin_primitive_vectors[0]=[1,0,0]
-    brillouin_primitive_vectors[1]=[-1/2,3,0]
-    brillouin_primitive_vectors[2]=[0,0,1]
-    plane_2d=[1,1,0]
-    #threshold for understanding if there is a degeneracy
-    threshold_k_grid=0.0000001
-    shift_in_plane=[0,0]
-    shift_in_space=[0,0,0]
-    symmetry=[[0,0,0]]
-    grid_spacing=0.1
-    refinment_iteration=0
-    refinment_spacing=0.1
-    epsilon=refinment_spacing
-    
-    normalized_chosen_reciprocal_plane,k0,k1,refined_grid_2d=k_points_grid_2d_refinment_and_symmetry(brillouin_primitive_vectors,plane_2d,
-        grid_spacing,
-        shift_in_plane,
-        shift_in_space,
-        symmetry,
-        refinment_spacing,
-        refinment_iteration,
-        threshold_k_grid)
-    list_of_k_points=[]
-    list_tmp=[]
-    for i in range(0,k0):
-        for j in range(0,k1):
-            list_tmp=refined_grid_2d[i][j]
-            for r in range(0,len(list_tmp)):
-                list_of_k_points.append(list_tmp[r])
-    new_list_of_k_points,n0,n0=mapping_to_square_grid_2d(list_of_k_points,normalized_chosen_reciprocal_plane)
-    
-    file="k_point_square_grid.txt"
-    with open(file, 'w') as filew:
-        for i in range(n0):
-            for j in range(n0):
-                filew.write(str(new_list_of_k_points[i,j][0])+' '+str(new_list_of_k_points[i,j][1])+' '+str(new_list_of_k_points[i,j][3])+'\n')
+###TESTING INPUT
+##if __name__ == "__main__":
+##    import timeit
+##    import os
+##    import matplotlib.pyplot as plt
+##    import numpy as np
+##    ##from termcolor import cprint
+##    from radtools.io.internal import load_template
+##    from radtools.io.tb2j import load_tb2j_model
+##    from radtools.magnons.dispersion import MagnonDispersion
+##    from radtools.decorate.stats import logo
+##    from radtools.spinham.constants import TXT_FLAGS
+##    from radtools.decorate.array import print_2d_array
+##    from radtools.decorate.axes import plot_hlines
+##
+##    brillouin_primitive_vectors=np.zeros((3,3))
+##    brillouin_primitive_vectors[0]=[1,0,0]
+##    brillouin_primitive_vectors[1]=[0,1,0]
+##    brillouin_primitive_vectors[2]=[0,0,1]
+##    plane_2d=[1,1,0]
+##    #threshold for understanding if there is a degeneracy
+##    threshold_k_grid=0.0000001
+##    ##shift_in_plane=[0,0]
+##    ###shift_in_space=[0,0,0]
+##    symmetry=[[0,0,np.pi/2]]
+##    grid_spacing=0.1
+##    refinment_iteration=1
+##   ### refinment_spacing=0.05
+##
+##    normalized_chosen_reciprocal_plane,k0,k1,refined_grid_2d=k_points_grid_2d_refinment_and_symmetry(brillouin_primitive_vectors,plane_2d,
+##        grid_spacing,
+##        None,
+##        None,
+##        symmetry,
+##        None,
+##        refinment_iteration,
+##        threshold_k_grid)
+##    
+##    list_of_k_points=[]
+##    list_tmp=[]
+##    for i in range(0,k0):
+##        for j in range(0,k1):
+##            list_tmp=refined_grid_2d[i][j]
+##            for r in range(0,len(list_tmp)):
+##                list_of_k_points.append(list_tmp[r])
+##    
+##    file1="k_point_normal_grid.txt"
+##    with open(file1, 'w') as file1:
+##        for i in range(k0):
+##            for j in range(k1):
+##                list_tmp=refined_grid_2d[i][j]
+##                for r in range(0,len(list_tmp)):
+##                    file1.write(str(list_tmp[r,0])+' '+str(list_tmp[r,1])+' '+str(list_tmp[r,2])+' '+str(list_tmp[r,3])+'\n')
+##
+##    new_list_of_k_points,n0,n0=mapping_to_square_grid_2d(list_of_k_points,normalized_chosen_reciprocal_plane)
+##    
+##    file2="k_point_square_grid.txt"
+##    with open(file2, 'w') as file2:
+##        for i in range(n0):
+##            for j in range(n0):
+##                file2.write(str(new_list_of_k_points[i,j][0])+' '+str(new_list_of_k_points[i,j][1])+' '+str(new_list_of_k_points[i,j][3])+'\n')
+##

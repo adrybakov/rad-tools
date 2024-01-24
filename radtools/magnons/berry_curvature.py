@@ -190,9 +190,7 @@ class Berry_curvature:
     refinment_spacing,
     refinment_iteration,
     threshold_k_grid,
-    threshold_omega,
-    added_refinment_iteration,
-    number_iterations_dynamical_refinment,
+    threshold_omega
     ) -> None:
         self.spinham=spinham
         self.nodmi=nodmi
@@ -207,8 +205,6 @@ class Berry_curvature:
         self.refinment_iteration=refinment_iteration
         self.threshold_k_grid=threshold_k_grid
         self.threshold_omega=threshold_omega
-        self.added_refinment_iteration=added_refinment_iteration
-        self.number_iterations_dynamical_refinment=number_iterations_dynamical_refinment
         self.dispersion=MagnonDispersion(self.spinham,nodmi=self.nodmi,noaniso=self.noaniso)
         self.N=self.dispersion.N
     
@@ -423,12 +419,12 @@ class Berry_curvature:
                             )
                     phase=phase+phase_tmp
                     file_2w.write(str(i)+' '+str(j)+' '+str(np.asarray(square_grid[i][j][0]))+' '+str(np.asarray(square_grid[i][j][1]))+' '+str(np.asarray(square_grid[i][j][2]))+' '+str(phase_tmp)+'\n')
-    
         return list_magnonic_branches, phase
 
     def __call__(self, *args, **kwargs):
         return self.omegas(*args, **kwargs)
 
+###TESTING INPUT
 if __name__ == "__main__":
     import timeit
     import os
@@ -452,30 +448,28 @@ if __name__ == "__main__":
         atom=spinham.get_atom(atom_name)
         atom_spin=list(values)
         atom.spin_vector=atom_spin
-    dispersion = MagnonDispersion(spinham,nodmi=False,noaniso=False)
+    #dispersion = MagnonDispersion(spinham,nodmi=False,noaniso=False)
     
     plane_2d=[1,1,0]
     threshold_k_grid=0.0000001
-    shift_in_plane=[0,0]
-    shift_in_space=[0,0,0]
+    #shift_in_plane=[0,0]
+    #shift_in_space=[0,0,0]
     symmetry=[[0,0,0]]
     grid_spacing=0.1
-    refinment_iteration=0
-    refinment_spacing=0.1
+    refinment_iteration=1
+    #refinment_spacing=0.1
     threshold_omega=0.6
 
     brillouin_primitive_vectors=np.zeros((3,3))
     brillouin_primitive_vectors[0]=[1,0,0]
-    brillouin_primitive_vectors[1]=[-1/2,3,0]
+    brillouin_primitive_vectors[1]=[-1/2,1,0]
     brillouin_primitive_vectors[2]=[0,0,1]
     print(brillouin_primitive_vectors)
-    added_refinment_iteration=0
     noaniso=False
     nodmi=False
-    number_iterations_dynamical_refinment=1
-    berry=Berry_curvature(spinham,nodmi,noaniso,brillouin_primitive_vectors,plane_2d,grid_spacing,shift_in_plane,
-                            shift_in_space,symmetry,refinment_spacing,refinment_iteration,threshold_k_grid,
-                            threshold_omega,added_refinment_iteration,number_iterations_dynamical_refinment)
+    berry=Berry_curvature(spinham,nodmi,noaniso,brillouin_primitive_vectors,plane_2d,grid_spacing,None,
+                            None,symmetry,None,refinment_iteration,threshold_k_grid,
+                            threshold_omega)
     berry.berry_curvauture_calculation()
     #cluster=ipp.Cluster()
     #c=cluster.start_and_connect_sync()
