@@ -308,7 +308,7 @@ class Berry_curvature:
                     )
                     u_k[i][j]=u_k[i][j]*weight_k[i][j]
                     file_1w.write(str(i)+' '+str(j)+' '+str(k_point_tmp[0])+' '+str(k_point_tmp[1])+' '+str(k_point_tmp[2])+' '+str(omega_k_tmp*weight_k[i][j])+'\n')
-        print(list_magnonic_branches)
+        print('\n'+str(list_magnonic_branches)+'\n')
         
         ##calculating the berry curvature in each k point directly
         ##taking into account possible degeneracies (in the non-abelian formulation)
@@ -456,7 +456,7 @@ if __name__ == "__main__":
     #shift_in_space=[0,0,0]
     symmetry=[[0,0,0]]
     grid_spacing=0.1
-    refinment_iteration=1
+    refinment_iteration=2
     #refinment_spacing=0.1
     threshold_omega=0.6
 
@@ -470,7 +470,7 @@ if __name__ == "__main__":
     berry=Berry_curvature(spinham,nodmi,noaniso,brillouin_primitive_vectors,plane_2d,grid_spacing,None,
                             None,symmetry,None,refinment_iteration,threshold_k_grid,
                             threshold_omega)
-    berry.berry_curvauture_calculation()
+    print(berry.berry_curvauture_calculation())
     #cluster=ipp.Cluster()
     #c=cluster.start_and_connect_sync()
     #dview=c[:]
