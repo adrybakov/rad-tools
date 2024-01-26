@@ -751,15 +751,14 @@ def k_points_grid_generator_2D(
         shift_in_plane=[0,0]
     if not shift_in_space:
         shift_in_space=[0,0,0]
-
     
-    brillouin_primitive_vectors_2d = np.zeros((2, 3),type=float)
-    normalized_brillouin_primitive_vectors_2d = np.zeros((2, 3),type=float)
+    brillouin_primitive_vectors_2d = np.zeros((2, 3))
+    normalized_brillouin_primitive_vectors_2d = np.zeros((2, 3))
     count = 0
     for i in range(3):
         if selected_plane_2d[i] != 0:
             brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_3d[i]
-            normalized_brillouin_primitive_vectors_2d[count] = normalized_brillouin_primitive_vectors_2d[count]/(normalized_brillouin_primitive_vectors_2d[count]@normalized_brillouin_primitive_vectors_2d[count])
+            normalized_brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_2d[count]/(brillouin_primitive_vectors_2d[count]@brillouin_primitive_vectors_2d[count])
             count += 1
 
     k0 = int(
@@ -775,33 +774,39 @@ def k_points_grid_generator_2D(
     k_point_tmp = np.zeros(4)
     for i in range(k0):
         for j in range(k1):
-            k_point_tmp[:3] = ((i + shift_in_plane[0]) / k0) * (
+            k_point_tmp[:3] = (float(i + shift_in_plane[0]) / k0) * (
                 shift_in_space + brillouin_primitive_vectors_2d[0]
-            ) + ((j + shift_in_plane[1]) / k1) * (
+            ) + (float(j + shift_in_plane[1]) / k1) * (
                 shift_in_space + brillouin_primitive_vectors_2d[1]
             )
             k_point_tmp[3] = initial_weights
-            k_points_grid_2d.append(k_point_tmp)
-    # applying the refinment procedure to the 2d k points grid
-    refined_grid = []
-    local_refinment(
-        refined_grid,
-        k_points_grid_2d,
-        refinment_spacing,
-        refinment_iteration,
-        symmetry,
-        threshold,
-        brillouin_primitive_vectors_3d,
-        selected_plane_2d,
-        normalized_brillouin_primitive_vectors_2d  
-    )     
-    refined_grid = np.reshape(
-        refined_grid, len(refined_grid)/4, 4)
+            k_points_grid_2d.extend([k_point_tmp])
     
-    # interpolating and ordering the 2d k points
-    new_list_of_k_points,n0,n0=interpolation_k_points_weights_in_2D(refined_grid,brillouin_primitive_vectors_2d,number_elements)
+    print(shift_in_plane)
+    print(k_points_grid_2d)
+    ##for i in range(len(k_points_grid_2d)):
+      ##  print(k_points_grid_2d[i,:])
+  
+   ## # applying the refinment procedure to the 2d k points grid
+   ## refined_grid = []
+   ## local_refinment(
+   ##     refined_grid,
+   ##     k_points_grid_2d,
+   ##     refinment_spacing,
+   ##     refinment_iteration,
+   ##     symmetry,
+   ##     threshold,
+   ##     brillouin_primitive_vectors_3d,
+   ##     selected_plane_2d,
+   ##     normalized_brillouin_primitive_vectors_2d  
+   ## )     
+   ## refined_grid = np.reshape(
+   ##     refined_grid, len(refined_grid)/4, 4)
+   ## 
+   ## interpolating and ordering the 2d k points
+   ## new_list_of_k_points,n0,n0=interpolation_k_points_weights_in_2D(refined_grid,brillouin_primitive_vectors_2d,number_elements)
     
-    return (normalized_brillouin_primitive_vectors_2d,n0,n0,new_list_of_k_points)
+    return (normalized_brillouin_primitive_vectors_2d,k0,k1,k_points_grid_2d)
 
 # function considering one point in a list of k points, a refinment procedure is applied to the k point selected
 # if a radius is indicated, all the near by ones k points are selected and their weight redistributed over a denser grid
@@ -825,7 +830,7 @@ def dynamical_refinment(
     
     minimal_distance = np.min(np.abs(old_k_list[:,:3]-k_point_selected[:3]))
     refinment_spacing = minimal_distance
-    # applying the refinment procedure to the 2d k point selected
+    # applying the refinment procedure to the k point selected
     refined_grid = []
     local_refinment(
         refined_grid,
@@ -850,3 +855,56 @@ def dynamical_refinment(
     # interpolating and ordering the 2d k points
         new_list_of_k_points,n0,n0=interpolation_k_points_weights_in_2D(refined_grid,brillouin_primitive_vectors_2d,number_elements)
         return new_list_of_k_points,n0,n0
+
+#TESTING INPUT
+if __name__ == "__main__":
+    import timeit
+    import os
+    import matplotlib.pyplot as plt
+    import numpy as np
+    ##from termcolor import cprint
+    from radtools.io.internal import load_template
+    from radtools.io.tb2j import load_tb2j_model
+    from radtools.magnons.dispersion import MagnonDispersion
+    from radtools.decorate.stats import logo
+    from radtools.spinham.constants import TXT_FLAGS
+    from radtools.decorate.array import print_2d_array
+    from radtools.decorate.axes import plot_hlines
+
+    brillouin_primitive_vectors_3d=np.zeros((3,3))
+    brillouin_primitive_vectors_3d[0]=[1,0,0]
+    brillouin_primitive_vectors_3d[1]=[0,1,0]
+    brillouin_primitive_vectors_3d[2]=[0,0,1]
+    selected_plane_2d=[1,1,0]
+    #threshold for understanding if there is a degeneracy
+    threshold=0.0000001
+    ##shift_in_plane=[0,0]
+    ###shift_in_space=[0,0,0]
+    symmetry=[[0,0,0]]
+    initial_grid_spacing=0.1
+    refinment_iteration=0
+    ### refinment_spacing=0.05
+
+    
+    normalized_brillouin_primitive_vectors_2d,n0,n0,new_list_of_k_points=k_points_grid_generator_2D(
+        brillouin_primitive_vectors_3d,
+        selected_plane_2d,
+        initial_grid_spacing,
+        None,
+        None,
+        symmetry,
+        None,
+        refinment_iteration,
+        threshold,
+        None
+    )
+
+   ## for i in range(len(new_list_of_k_points)):
+   ##     print(new_list_of_k_points[i])
+
+    file1="k_point_normal_grid.txt"
+    with open(file1, 'w') as file1:
+        for i in range(n0):
+            for j in range(n0):
+                for r in range(len(new_list_of_k_points)):
+                    file1.write(str(new_list_of_k_points[r,0])+' '+str(new_list_of_k_points[r,1])+' '+str(new_list_of_k_points[r,2])+' '+str(new_list_of_k_points[r,3])+'\n')
