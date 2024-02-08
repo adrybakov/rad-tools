@@ -209,6 +209,8 @@ class Berry_curvature:
         abelian_phase=np.zeros(self.N,dtype=complex)
         chern_number=np.zeros(number_eigenspaces)
         
+        u=np.zeros((4,self.N,self.N),dtype=complex)
+        weight_a=np.zeros(4,dtype=float)
         # the dynamical refinment as formulated requires to interpolate all the k grid again...
         i=0
         j=0
@@ -222,56 +224,79 @@ class Berry_curvature:
                     flush=True,
                 )
             ## considering the little parallepiped path
-            u=np.zeros((4,self.N,self.N),dtype=complex)
             if i < n0 -1 and j < n1 -1:
                 u[0]=us[i][j]
                 u[3]=us[i][j+1]
                 u[2]=us[i+1][j+1]
                 u[1]=us[i+1][j]
-                weight=k_points_grid[i,j][3]+k_points_grid[i,j+1][3]+k_points_grid[i+1,j+1][3]+k_points_grid[i+1,j][3]
+                weight_a[0]=k_points_grid[i,j][3]+k_points_grid[i+1,j][3]
+                weight_a[1]=k_points_grid[i+1,j][3]+k_points_grid[i+1,j+1][3]
+                weight_a[2]=k_points_grid[i,j+1][3]+k_points_grid[i+1,j+1][3]
+                weight_a[3]=k_points_grid[i,j][3]+k_points_grid[i,j+1][3]
+                weight_omega=np.sum(weight_a)
             elif i < n0 -1 and j == n1-1:
                 u[0]=us[i][j]
                 u[3]=us[i][0]
                 u[2]=us[i+1][0]
                 u[1]=us[i+1][j]
-                weight=k_points_grid[i,j][3]+k_points_grid[i,0][3]+k_points_grid[i+1,0][3]+k_points_grid[i+1,j][3]
+                weight_a[0]=k_points_grid[i,j][3]+k_points_grid[i+1,j][3]
+                weight_a[1]=k_points_grid[i+1,j][3]+k_points_grid[i+1,0][3]
+                weight_a[2]=k_points_grid[i,0][3]+k_points_grid[i+1,0][3]
+                weight_a[3]=k_points_grid[i,j][3]+k_points_grid[i,0][3]
+                weight_omega=np.sum(weight_a)
             elif i == n0 -1 and j < n1-1:
                 u[0]=us[i][j]
                 u[3]=us[i][j+1]
                 u[2]=us[0][j+1]
                 u[1]=us[0][j]
-                weight=k_points_grid[i,j][3]+k_points_grid[i,j+1][3]+k_points_grid[0,j+1][3]+k_points_grid[0,j][3]
+                weight_a[0]=k_points_grid[i,j][3]+k_points_grid[0,j][3]
+                weight_a[1]=k_points_grid[0,j][3]+k_points_grid[0,j+1][3]
+                weight_a[2]=k_points_grid[i,j+1][3]+k_points_grid[0,j+1][3]
+                weight_a[3]=k_points_grid[i,j][3]+k_points_grid[i,j+1][3]
+                weight_omega=np.sum(weight_a)
             else:
                 u[0]=us[i][j]
                 u[3]=us[i][0]
                 u[2]=us[0][0]
                 u[1]=us[0][j]
-                weight=k_points_grid[i,j][3]+k_points_grid[i,0][3]+k_points_grid[0,0][3]+k_points_grid[0,j][3]
+                weight_a[0]=k_points_grid[i,j][3]+k_points_grid[0,j][3]
+                weight_a[1]=k_points_grid[0,j][3]+k_points_grid[0,0][3]
+                weight_a[2]=k_points_grid[i,0][3]+k_points_grid[0,0][3]
+                weight_a[3]=k_points_grid[i,j][3]+k_points_grid[i,0][3]
+                weight_omega=np.sum(weight_a)
             ##in the not-degenerate case the Berry curvature is straightforward
             if number_eigenspaces == self.N:
                 abelian_phase = np.asarray(list(map(
-                    lambda x, y, z, w: 
-                    np.angle(np.asarray(x))
-                    + np.angle(np.asarray(y))
-                    - np.angle(np.asarray(z))
-                    - np.angle(np.asarray(w)),
-                    (u[0] @ u[1]),
-                    (u[1] @ u[2]),
-                    (u[3] @ u[2]),
-                    (u[0] @ u[3]))))
+                    lambda x,xw,y,yw,z,zw,w,ww: 
+                    np.angle(np.asarray(x))*xw
+                    + np.angle(np.asarray(y))*yw
+                    - np.angle(np.asarray(z))*zw
+                    - np.angle(np.asarray(w))*ww,
+                    (u[0] @ u[1]),weight_a[0],
+                    (u[1] @ u[2]),weight_a[1],
+                    (u[3] @ u[2]),weight_a[3],
+                    (u[0] @ u[3]),weight_a[0])))
                 ##in case the phase is outside the logaritmic dominion
-                abelian_phase-=int(abelian_phase/(weight*np.pi))
+                abelian_phase-=int(abelian_phase/(weight_omega*np.pi))
                 chern_number+=abelian_phase
                 ##in the degenerate case the Berry curvature is calculated using the non-abelian formulation
             else:
                 for n in range(number_eigenspaces):
                     bands=[magnonic_branches==n]
-                    non_abelian_phase[n] = np.asarray(u[0][np.ix_(bands,bands)] @ u[1][np.ix_(bands,bands)]) \
-                        +np.asarray(u[1][np.ix_(bands,bands)] @ u[2][np.ix_(bands,bands)]) \
-                        +np.asarray(u[3][np.ix_(bands,bands)] @ u[2][np.ix_(bands,bands)]) \
-                        +np.asarray(u[0][np.ix_(bands,bands)] @ u[3][np.ix_(bands,bands)]) \
+                    non_abelian_phase[n] = np.asarray(list(map(
+                    lambda x,xw,y,yw,z,zw,w,ww: 
+                    np.angle(np.asarray(x))*xw
+                    + np.angle(np.asarray(y))*yw
+                    - np.angle(np.asarray(z))*zw
+                    - np.angle(np.asarray(w))*ww,
+                    (u[0][np.ix_(bands,bands)] @ u[1][np.ix_(bands,bands)]),weight_a[0],
+                    (u[1][np.ix_(bands,bands)] @ u[2][np.ix_(bands,bands)]),weight_a[1],
+                    (u[3][np.ix_(bands,bands)] @ u[2][np.ix_(bands,bands)]),weight_a[3],
+                    (u[0][np.ix_(bands,bands)] @ u[3][np.ix_(bands,bands)]),weight_a[0])))
                 ##in case the phase is outside the logaritmic dominion
-                non_abelian_phase-=int(non_abelian_phase/(weight*np.pi)) 
+                non_abelian_phase-=int(non_abelian_phase/(weight_omega*np.pi)) 
                 chern_number+=non_abelian_phase
+
+        ###dynamical refinment (to think a better solution... also to apply it directly to not refined grid....)
 
         return chern_number,magnonic_branches,number_eigenspaces
