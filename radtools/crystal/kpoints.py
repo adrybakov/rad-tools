@@ -626,7 +626,9 @@ def interpolation_k_points_weights(
     
     Return
     -------------
-    new_k_points_list_with_weights_and_ordering : (:6) |array_like| : list of k points (kx,ky,kz,w,i,j) where w is the respective weight of the k point, and (i,j) the indices ordering the 2D k point grid 
+    new_k_points_list : (:6) |array_like| : list of k points (kx,ky,kz,w,i,j) where w is the respective weight of the k point, and (i,j) the indices ordering the 2D k point grid 
+    new_k_points_grid : (n0,n1) |array_like| (4) (kx,ky,kz,w) the list of k points ( new_k_points_list_with_weights_and_ordering) is written as a grid
+    n0,n1 ...
     note: the weights, being added some points in the interpolation, are renormalized over the entire set of points (it is assumed that the initial list is already normalized)
     """
     # considering first a mapping from the list of k vectors in the 3D cartesian coordinates with the respective weight, to a list of k vectors in the 2D crystal coordinates with the respective weight
@@ -671,16 +673,18 @@ def interpolation_k_points_weights(
     zi=list(map(lambda x: x/total_norm,zi))
 
     ##now mapping back to the brillouin zone saving the indices
-    new_k_points_list_with_weights_and_indices=np.zeros((number_elements_interpolation[0],number_elements_interpolation[1],4))
+    new_k_points_list=np.zeros((number_elements_interpolation[0]*number_elements_interpolation[1],6))
+    new_k_points_grid=np.zeros((number_elements_interpolation[0],number_elements_interpolation[1],4))
     coordinates=np.zeros(3)
     for i in range(number_elements_interpolation[0]):
         for j in range(number_elements_interpolation[1]):
             vector=np.asanyarray([xi[i,j],yi[i,j]])
             coordinates=(brillouin_primitive_vectors_2d.T)@vector
-            new_k_points_list_with_weights_and_indices[i][j][:3]=coordinates
-            new_k_points_list_with_weights_and_indices[i][j][3]=zi[i][j]
+            new_k_points_grid[i][j][:3]=coordinates
+            new_k_points_grid[i][j][3]=zi[i][j]
+            new_k_points_list.extend(coordinates,zi[i][j],i,j)
 
-    return(new_k_points_list_with_weights_and_indices,number_elements_interpolation[0],number_elements_interpolation[1])
+    return(new_k_points_list,new_k_points_grid,number_elements_interpolation[0],number_elements_interpolation[1])
 
 # Generation of a 2D k points grid through a refinment procedure
 # Because of the disorder of the k points due to the refinment procedure, an interpolation scheme has been added to obtain a propelry ordered k points grid
@@ -768,28 +772,30 @@ def k_points_grid_generator_2D(
             brillouin_primitive_vectors_2d,
             normalized_brillouin_primitive_vectors_2d  
         )     
-        #transforming from a list to array_like element
+        #transforming from a list to array_like elements
         refined_k_points_grid = np.reshape(refined_k_points_grid,(int(len(refined_k_points_grid)/4), 4))
 
         #interpolating and ordering the 2D k points grid
-        new_k_points_grid,n0,n1=interpolation_k_points_weights(refined_k_points_grid,brillouin_primitive_vectors_2d,number_elements)
+        new_k_points_list,new_k_points_grid,n0,n1=interpolation_k_points_weights(refined_k_points_grid,brillouin_primitive_vectors_2d,number_elements)
 
-        return (n0,n1,new_k_points_grid)
+        return (new_k_points_list,new_k_points_grid,n0,n1)
     else:
         k_points_grid_not_refined = np.zeros(k0,k1,4)
+        k_points_list_not_refined = np.zeros(k0*k1,6)
         for i in range(k0):
             for j in range(k1):
                 k_points_grid_not_refined[i,j][:3] = (float(i + shift_in_plane[0]) / k0) * (shift_in_space + brillouin_primitive_vectors_2d[0]) \
                     + (float(j + shift_in_plane[1]) / k1) * (shift_in_space + brillouin_primitive_vectors_2d[1])
                 k_points_grid_not_refined[i,j][3] = initial_weights
+                k_points_list_not_refined.extend(k_points_grid_not_refined[i,j][:],i,j)
                 
-        return (k0,k1,k_points_grid_not_refined)
+        return (k_points_list_not_refined,k_points_grid_not_refined,k0,k1)
 
 # Function considering one point in a list of k points and applying a refinment procedure to the selected k point (in the plane pointed out by brillouin_primitive_vectors)
 def dynamical_refinment(
     old_k_list,
-    element_to_refine,
-    position_element_to_refine,
+    elements_to_refine,
+    position_elements_to_refine,
     brillouin_primitive_vectors,
     refinment_iteration,
     symmetries,
@@ -804,8 +810,8 @@ def dynamical_refinment(
     Parameters
     -------
     old_k_list: (:6) |array_like| : list of k points (kx,ky,kz,w,i,j) where w is the respective weight of the k point, and (i,j) the indices ordering the 2D k point grid 
-    element_to_refine: (4) |array| : k point to refine (kx,ky,kz,w)
-    position_element_to_refine: |int| the position in the list of the k point to refine
+    elements_to_refine: (n,4) |array_like| : k points to refine (kx,ky,kz,w)
+    position_elements_to_refine: (n) |array_like| (int) the position in the list of the k point to refine
     brillouin_primitive_vectors: (2,3) |array_like| : 2D plane in the reciprocal space (the list of k points given has to be generated from these reciprocal vectors)
     symmetries: |list of lists| a symmetry is a list of 3 elements (the versor is the axis of rotation, while the modulus is the angle)
     refinment_iteration: |int| number of refinment iterations considered
@@ -817,39 +823,42 @@ def dynamical_refinment(
     k0,k1 (1,1) |int| the number of k points along the two directions generating the chosen 2D reciprocal plane
     k points grid 2D k0xk1 grid
     """
+    
+    # if more than one point is given
+    for i in range(len(elements_to_refine)):
+        
+        # position of the k point selected in the list
+        del old_k_list[position_elements_to_refine[i]]
+        
+        minimal_distance = np.min(np.abs(old_k_list[:,:3]-elements_to_refine[i][:3]))
+        refinment_spacing = minimal_distance/2
 
-    # position of the k point selected in the list
-    del old_k_list[position_element_to_refine]
+        # applying the refinment procedure to the k point selected
+        refined_grid = []
+        local_refinment(
+            refined_grid,
+            elements_to_refine[i],
+            refinment_spacing,
+            refinment_iteration,
+            symmetries,
+            threshold,
+            brillouin_primitive_vectors
+        )     
 
-    minimal_distance = np.min(np.abs(old_k_list[:,:3]-element_to_refine[:3]))
-    refinment_spacing = minimal_distance/2
+        # transforming from a list to array_like elements
+        refined_grid = np.reshape(refined_grid, len(refined_grid)/4, 4)
 
-    # applying the refinment procedure to the k point selected
-    refined_grid = []
-    local_refinment(
-        refined_grid,
-        element_to_refine,
-        refinment_spacing,
-        refinment_iteration,
-        symmetries,
-        threshold,
-        brillouin_primitive_vectors
-    )     
+        # eliminating indices from the old k list
+        del old_k_list[:,4:]
 
-    # transforming from a list to array_like elements
-    refined_grid = np.reshape(refined_grid, len(refined_grid)/4, 4)
-
-    # eliminating indices from the old k list
-    del old_k_list[:,4:]
-
-    # adding the new points to the old list
-    old_k_list=np.vstack([old_k_list,refined_grid])
+        # adding the new points to the old list
+        old_k_list=np.vstack([old_k_list,refined_grid])
 
     if ordering == False:
         return old_k_list
     else:
         # interpolating and ordering the 2D k points grid
-        new_k_list, n0, n1=interpolation_k_points_weights(old_k_list,brillouin_primitive_vectors,number_elements_interpolation)
-        return new_k_list , n0, n1
+        new_k_list, new_k_grid, n0, n1=interpolation_k_points_weights(old_k_list,brillouin_primitive_vectors,number_elements_interpolation)
+        return (new_k_list,new_k_grid,n0,n1)
 
 
