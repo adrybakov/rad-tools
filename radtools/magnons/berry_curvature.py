@@ -110,7 +110,6 @@ class Berry_curvature:
         self.noaniso=noaniso
         self.dispersion=MagnonDispersion(self.spinham,nodmi=self.nodmi,noaniso=self.noaniso)
         self.N=self.dispersion.N
-    
 
     def magnonic_surfaces(
         self, n0, n1, k_points_grid, noeigenvectors, nocheckdegeneracy, threshold_omega
