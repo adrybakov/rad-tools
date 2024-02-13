@@ -209,12 +209,12 @@ class Berry_curvature:
         # and to recalculate all the magnonic surfaces
         cycling_through=True
         while cycling_through==True:
+            position_elements_to_refine_list=[]
             ##taking into account possible degeneracies is equivalent to adopt the non-Abelian formulation of the Berry Curvature
             phase=np.zeros(number_eigenspaces,dtype=complex)
             chern_number=np.zeros(number_eigenspaces)
             i=0
             j=0
-            position_list=0
             while i < n0:
                 while j < n1:
                     print(
@@ -234,9 +234,7 @@ class Berry_curvature:
                     weight_a[1]=k_points_grid[i+1,j][3]+k_points_grid[i+1,j+1][3]
                     weight_a[2]=k_points_grid[i,j+1][3]+k_points_grid[i+1,j+1][3]
                     weight_a[3]=k_points_grid[i,j][3]+k_points_grid[i,j+1][3]
-                    weight_omega=np.sum(weight_a)
-                    elements_to_refine=[k_points_grid[i,j],k_points_grid[i,j+1],k_points_grid[i+1,j+1],k_points_grid[i+1,j]]
-                    position_elements_to_refine=[[i,j],[i,j+1],[i+1,j+1],[i+1,j]]
+                    position_elements_to_refine=[i*n1+j,i*n1+j+1,(i+1)*n1+j+1,(i+1)*n1+j]
                 elif i < n0 -1 and j == n1-1:
                     u[0]=us[i][j]
                     u[3]=us[i][0]
@@ -246,9 +244,7 @@ class Berry_curvature:
                     weight_a[1]=k_points_grid[i+1,j][3]+k_points_grid[i+1,0][3]
                     weight_a[2]=k_points_grid[i,0][3]+k_points_grid[i+1,0][3]
                     weight_a[3]=k_points_grid[i,j][3]+k_points_grid[i,0][3]
-                    weight_omega=np.sum(weight_a)
-                    elements_to_refine=[k_points_grid[i,j],k_points_grid[i,0],k_points_grid[i+1,0],k_points_grid[i+1,j]]
-                    position_elements_to_refine=[[i,j],[i,0],[i+1,0],[i+1,j]]
+                    position_elements_to_refine=[i*n1+j,i*n1,(i+1)*n1,(i+1)*n1+j]
                 elif i == n0 -1 and j < n1-1:
                     u[0]=us[i][j]
                     u[3]=us[i][j+1]
@@ -258,9 +254,7 @@ class Berry_curvature:
                     weight_a[1]=k_points_grid[0,j][3]+k_points_grid[0,j+1][3]
                     weight_a[2]=k_points_grid[i,j+1][3]+k_points_grid[0,j+1][3]
                     weight_a[3]=k_points_grid[i,j][3]+k_points_grid[i,j+1][3]
-                    weight_omega=np.sum(weight_a)
-                    elements_to_refine=[k_points_grid[i,j],k_points_grid[i,j+1],k_points_grid[0,j+1],k_points_grid[0,j]]
-                    position_elements_to_refine=[[i,j],[i,j+1],[0,j+1],[0,j]]
+                    position_elements_to_refine=[i*n1+j,i*n1+j+1,j+1,j]
                 else:
                     u[0]=us[i][j]
                     u[3]=us[i][0]
@@ -270,9 +264,7 @@ class Berry_curvature:
                     weight_a[1]=k_points_grid[0,j][3]+k_points_grid[0,0][3]
                     weight_a[2]=k_points_grid[i,0][3]+k_points_grid[0,0][3]
                     weight_a[3]=k_points_grid[i,j][3]+k_points_grid[i,0][3]
-                    weight_omega=np.sum(weight_a)
-                    elements_to_refine=[k_points_grid[i,j],k_points_grid[i,0],k_points_grid[0,0],k_points_grid[0,j]]
-                    position_elements_to_refine=[[i,j],[i,0],[0,0],[0,j]]
+                    position_elements_to_refine=[i*n1+j,i*n1,0,j]
                 ##in the not-degenerate case the Berry curvature is straightforward
                 if number_eigenspaces == self.N:
                     phase = np.asarray(list(map(
@@ -285,8 +277,6 @@ class Berry_curvature:
                         (u[1] @ u[2]),weight_a[1],
                         (u[3] @ u[2]),weight_a[3],
                         (u[0] @ u[3]),weight_a[0])))
-                    ##in case the phase is outside the logaritmic dominion
-                    phase-=int(phase/(weight_omega*np.pi))
                     chern_number+=phase
                     ##in the degenerate case the Berry curvature is calculated using the non-abelian formulation
                 else:
@@ -302,17 +292,19 @@ class Berry_curvature:
                         (u[1][np.ix_(bands,bands)] @ u[2][np.ix_(bands,bands)]),weight_a[1],
                         (u[3][np.ix_(bands,bands)] @ u[2][np.ix_(bands,bands)]),weight_a[3],
                         (u[0][np.ix_(bands,bands)] @ u[3][np.ix_(bands,bands)]),weight_a[0])))
-                    ##in case the phase is outside the logaritmic dominion
-                    phase-=int(phase/(weight_omega*np.pi)) 
                     chern_number+=phase
 
-                ###dynamical refinment
-                ###the degeneracy is not checked again
-                if dynamical_refinment==True:
+                    #saving all divergent points: if the refinment procedure is applied, the grid will be refined around these points
                     if np.max(phase)>threshold_dynamical_refinment:
-                        (k_points_list,new_k_grid,n0,n1)=dynamical_refinment(k_points_list,elements_to_refine,position_elements_to_refine,brillouin_primitive_vectors,dynamical_refinment_iteration,symmetries,threshold_k_point,True,None)
-                        _,us,magnonic_branches,number_eigenspaces=self.magnonic_surfaces(n0,n1,new_k_grid,False,True,threshold_omega)
-                        chern_number=0
-                        break
+                        position_elements_to_refine_list.extend(position_elements_to_refine)
+
+            ###dynamical refinment
+            ###the degeneracy is not checked again
+            if dynamical_refinment==True:
+                (k_points_list,new_k_grid,n0,n1)=dynamical_refinment(k_points_list,position_elements_to_refine_list,brillouin_primitive_vectors,dynamical_refinment_iteration,symmetries,threshold_k_point,True,None)
+                _,us,magnonic_branches,number_eigenspaces=self.magnonic_surfaces(n0,n1,new_k_grid,False,True,threshold_omega)
+                cycling_through=False
+            else:
+                cycling_through=False
 
         return chern_number,magnonic_branches,number_eigenspaces

@@ -650,8 +650,8 @@ def interpolation_k_points_weights(
     if number_elements_interpolation is None:
         ny,nx=number_k_points,number_k_points
         number_elements_interpolation=np.zeros(2,dtype=int)
-        number_elements_interpolation[0]=number_k_points/2
-        number_elements_interpolation[1]=number_k_points/2
+        number_elements_interpolation[0]=number_k_points
+        number_elements_interpolation[1]=number_k_points
     else:
         nx,ny=number_elements_interpolation[0],number_elements_interpolation[1]
 
@@ -698,8 +698,7 @@ def k_points_grid_generator_2D(
     threshold,
     refinment,
     refinment_spacing,
-    refinment_iteration,
-    number_elements
+    refinment_iteration
 ):
     r"""
     2D k points grid generator
@@ -776,7 +775,7 @@ def k_points_grid_generator_2D(
         refined_k_points_grid = np.reshape(refined_k_points_grid,(int(len(refined_k_points_grid)/4), 4))
 
         #interpolating and ordering the 2D k points grid
-        new_k_points_list,new_k_points_grid,n0,n1=interpolation_k_points_weights(refined_k_points_grid,brillouin_primitive_vectors_2d,number_elements)
+        new_k_points_list,new_k_points_grid,n0,n1=interpolation_k_points_weights(refined_k_points_grid,brillouin_primitive_vectors_2d,None)
 
         return (new_k_points_list,new_k_points_grid,n0,n1)
     else:
@@ -794,14 +793,12 @@ def k_points_grid_generator_2D(
 # Function considering one point in a list of k points and applying a refinment procedure to the selected k point (in the plane pointed out by brillouin_primitive_vectors)
 def dynamical_refinment(
     old_k_list,
-    elements_to_refine,
     position_elements_to_refine,
     brillouin_primitive_vectors,
     refinment_iteration,
     symmetries,
     threshold,
-    ordering,
-    number_elements_interpolation
+    ordering
 ):
     r"""
     Dynamical refinment around a k point in a 2D plane
@@ -823,21 +820,21 @@ def dynamical_refinment(
     k0,k1 (1,1) |int| the number of k points along the two directions generating the chosen 2D reciprocal plane
     k points grid 2D k0xk1 grid
     """
-    
+    # applying the refinment procedure to the k point selected
+    refined_grid = []
     # if more than one point is given
-    for i in range(len(elements_to_refine)):
+    for i in range(len(position_elements_to_refine)):
         
         # position of the k point selected in the list
+        element_to_refine=old_k_list[position_elements_to_refine[i]]
         del old_k_list[position_elements_to_refine[i]]
         
-        minimal_distance = np.min(np.abs(old_k_list[:,:3]-elements_to_refine[i][:3]))
+        minimal_distance = np.min(np.abs(old_k_list[:,:3]-element_to_refine[i][:3]))
         refinment_spacing = minimal_distance/2
-
-        # applying the refinment procedure to the k point selected
-        refined_grid = []
+        
         local_refinment(
             refined_grid,
-            elements_to_refine[i],
+            element_to_refine,
             refinment_spacing,
             refinment_iteration,
             symmetries,
@@ -845,20 +842,20 @@ def dynamical_refinment(
             brillouin_primitive_vectors
         )     
 
-        # transforming from a list to array_like elements
-        refined_grid = np.reshape(refined_grid, len(refined_grid)/4, 4)
+    # transforming from a list to array_like elements
+    refined_grid = np.reshape(refined_grid, len(refined_grid)/4, 4)
 
-        # eliminating indices from the old k list
-        del old_k_list[:,4:]
+    # eliminating indices from the old k list
+    del old_k_list[:,4:]
 
-        # adding the new points to the old list
-        old_k_list=np.vstack([old_k_list,refined_grid])
-
+    # adding the new points to the old list
+    old_k_list=np.vstack([old_k_list,refined_grid])
+    
     if ordering == False:
         return old_k_list
     else:
         # interpolating and ordering the 2D k points grid
-        new_k_list, new_k_grid, n0, n1=interpolation_k_points_weights(old_k_list,brillouin_primitive_vectors,number_elements_interpolation)
+        new_k_list, new_k_grid, n0, n1=interpolation_k_points_weights(old_k_list,brillouin_primitive_vectors,None)
         return (new_k_list,new_k_grid,n0,n1)
 
 
