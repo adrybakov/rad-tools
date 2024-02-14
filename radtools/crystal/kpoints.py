@@ -25,6 +25,7 @@ from collections import Counter
 import numpy as np
 from scipy.interpolate import griddata
 from scipy.spatial.transform import Rotation
+from scipy.spatial import Delaunay
 from radtools.geometry import absolute_to_relative
 
 __all__ = ["Kpoints"]
@@ -557,7 +558,7 @@ def local_refinment(
     if refinment_iteration == 0:
         for i in range(length_old_k_list):
             if old_k_list[i,3]!=0:
-                new_k_list.extend(old_k_list[i,:])
+                new_k_list=np.append(new_k_list,old_k_list[i,:])
     else:
         iter = 0
         while iter != length_old_k_list:
@@ -682,7 +683,7 @@ def interpolation_k_points_weights(
             coordinates=(brillouin_primitive_vectors_2d.T)@vector
             new_k_points_grid[i][j][:3]=coordinates
             new_k_points_grid[i][j][3]=zi[i][j]
-            new_k_points_list.extend(coordinates,zi[i][j],i,j)
+            new_k_points_list[i*number_elements_interpolation[1]+j,:]=np.asarray(coordinates,zi[i][j],i,j)
 
     return(new_k_points_list,new_k_points_grid,number_elements_interpolation[0],number_elements_interpolation[1])
 
@@ -775,20 +776,56 @@ def k_points_grid_generator_2D(
         refined_k_points_grid = np.reshape(refined_k_points_grid,(int(len(refined_k_points_grid)/4), 4))
 
         #interpolating and ordering the 2D k points grid
-        new_k_points_list,new_k_points_grid,n0,n1=interpolation_k_points_weights(refined_k_points_grid,brillouin_primitive_vectors_2d,None)
+        #new_k_points_list,new_k_points_grid,n0,n1=interpolation_k_points_weights(refined_k_points_grid,brillouin_primitive_vectors_2d,None)
 
         return (new_k_points_list,new_k_points_grid,n0,n1)
     else:
-        k_points_grid_not_refined = np.zeros(k0,k1,4)
-        k_points_list_not_refined = np.zeros(k0*k1,6)
+        k_points_grid_not_refined = np.zeros((k0,k1,4))
+        k_points_list_not_refined = np.zeros((k0*k1,6))
         for i in range(k0):
             for j in range(k1):
                 k_points_grid_not_refined[i,j][:3] = (float(i + shift_in_plane[0]) / k0) * (shift_in_space + brillouin_primitive_vectors_2d[0]) \
                     + (float(j + shift_in_plane[1]) / k1) * (shift_in_space + brillouin_primitive_vectors_2d[1])
                 k_points_grid_not_refined[i,j][3] = initial_weights
-                k_points_list_not_refined.extend(k_points_grid_not_refined[i,j][:],i,j)
+                k_points_list_not_refined[i*k1+j,:]=[k_points_grid_not_refined[i,j][:],i,j]
                 
         return (k_points_list_not_refined,k_points_grid_not_refined,k0,k1)
+
+def k_points_list_tesselation_2d(
+    k_points_list,
+    brillouin_primitive_vectors_2d
+):
+    number_elements=k_points_list.shape[0]
+    k_points_list_projections=np.zeros((number_elements,3))
+    
+    # choosing one point as an origin in the 2d brillouin plane
+    origin=k_points_list[0][:3]
+    # calculating the projections of the different k points on the primitive vectors
+    for i in range(number_elements):
+        k_points_list_projections[i,:2]=np.dot(k_points_list[i][:3]-origin,brillouin_primitive_vectors_2d)
+        k_points_list_projections[i,2]=i
+
+    ### sorting with respect to the values of the projections
+    ## this sorting will give the clock-wise direction    
+    sorted(k_points_list_projections,key=lambda x: x[0])
+    sorted(k_points_list_projections,key=lambda x: x[1])
+
+    # triangulation of the set of points
+    triangles = Delaunay(k_points_list_projections)
+    # these are the different triangles, where each element has a pair of number representating the ordering in the triangle itself and a number representing the respective element of the list
+    return triangles, k_points_list
+
+def dynamical_refinment_tesselation_2d(
+    triangles,
+    k_points_list_subset,
+    brillouin_primitive_vectors_2d
+):
+    number_elements=len(k_points_list_subset)
+    
+
+
+
+
 
 # Function considering one point in a list of k points and applying a refinment procedure to the selected k point (in the plane pointed out by brillouin_primitive_vectors)
 def dynamical_refinment(
@@ -857,5 +894,49 @@ def dynamical_refinment(
         # interpolating and ordering the 2D k points grid
         new_k_list, new_k_grid, n0, n1=interpolation_k_points_weights(old_k_list,brillouin_primitive_vectors,None)
         return (new_k_list,new_k_grid,n0,n1)
+
+if __name__ == "__main__":
+    import timeit
+    import os
+    import matplotlib.pyplot as plt
+    import numpy as np
+    ##from termcolor import cprint
+    from radtools.io.internal import load_template
+    from radtools.io.tb2j import load_tb2j_model
+    from radtools.magnons.dispersion import MagnonDispersion
+    from radtools.decorate.stats import logo
+    from radtools.spinham.constants import TXT_FLAGS
+    from radtools.decorate.array import print_2d_array
+    from radtools.decorate.axes import plot_hlines
+
+    brillouin_primitive_vectors=np.zeros((3,3))
+    brillouin_primitive_vectors[0]=[1,0,0]
+    brillouin_primitive_vectors[1]=[-1/2,3,0]
+    brillouin_primitive_vectors[2]=[0,0,1]
+    chosen_plane=[1,1,0]
+    #threshold for understanding if there is a degeneracy
+    threshold=0.0000001
+    shift_in_plane=[0,0]
+    shift_in_space=[0,0,0]
+    symmetries=[[0,0,0]]
+    initial_grid_spacing=0.1
+    refinment_iteration=0
+    refinment_spacing=0.01
+    refinment=False
+    
+    (new_k_points_list,new_k_points_grid,n0,n1)=k_points_grid_generator_2D(
+                                                                brillouin_primitive_vectors,
+                                                                chosen_plane,
+                                                                initial_grid_spacing,
+                                                                shift_in_plane,
+                                                                shift_in_space,
+                                                                symmetries,
+                                                                threshold,
+                                                                refinment,
+                                                                refinment_spacing,
+                                                                refinment_iteration
+                                                            )
+    print(new_k_points_list,n0,n1)
+   
 
 
