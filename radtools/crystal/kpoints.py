@@ -427,6 +427,19 @@ def check_inside_brillouin_zone(
                     k_point_list[i,d]-=int(transformed_k_point_list[i,d])*brillouin_primitive_vectors_3d[r,d]
     return k_point_list
 
+def check_inside_radius(
+        k_point_list,
+        k_point_origin,
+        radius
+):
+    number_k_elements=k_point_list.shape[0]
+    
+    for i in range(number_k_elements):
+        k_point_vectors[i]=k_point_list[i]-origin
+        
+
+
+
 # function applying symmetry analysis to a list of k points, the symmetry operations considered are the point group ones
 # the fixed point is given; the analysis aim is to redistribute the fixed point weight between the list of k points
 # the found symmetry orbits are counted in the redistribution of the fixed point weight a number of times equal to the number of k points inside the orbit itself
@@ -531,7 +544,9 @@ def local_refinment(
     threshold,
     brillouin_primitive_vectors_3d,
     brillouin_primitive_vectors_2d,
-    normalized_brillouin_primitive_vectors_2d
+    normalized_brillouin_primitive_vectors_2d,
+    radius_check,
+    radius
 ):
     r"""
     Starting from a set of k points (old_k_list) with certain weights, to each k point iteratively (refinment_iteration) a new subset of k points is associated,
@@ -540,6 +555,9 @@ def local_refinment(
     At each iteration for each k point four new k points are generated along the reciprocal primitive vectors of the selcted plane (2d refinment), at a distance from the original k point 
     equal to the refinment spacing (the refinment spacing is halved at each iteration).
     Obviously no refinment is applied to k points with null weight.
+
+    if radius_check == True instead of checking that the point is inside the 2d plane of the brillouin zone, it is checked that it is inside a circle of a certain radius
+    (radius), and if it is outside the circle it is downfolded back 
 
     Parameters
     ----------
@@ -591,10 +609,17 @@ def local_refinment(
                 
                 k_tmp_subgrid=np.delete(k_tmp_subgrid, np.where(k_tmp_subgrid[:,3]==0),axis=0)
 
-                k_tmp_subgrid[:,:3] = check_inside_brillouin_zone(
-                    k_tmp_subgrid[:,:3],
-                    brillouin_primitive_vectors_3d,
-                )
+                if radius_check == False:
+                    k_tmp_subgrid[:,:3] = check_inside_brillouin_zone(
+                        k_tmp_subgrid[:,:3],
+                        brillouin_primitive_vectors_3d,
+                    )
+                else:
+                    k_tmp_subgrid[:,:3] = check_inside_radius(
+                        k_tmp_subgrid[:,:3],
+                        radius
+                    )
+
                 # applying to the points of the subgrid the refinment procedure
                 new_refinment_spacing = refinment_spacing / 2
                 
