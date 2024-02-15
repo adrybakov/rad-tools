@@ -880,7 +880,8 @@ def dynamical_refinment_tesselation_2d(
     brillouin_primitive_vectors_2d
 ):
     number_elements=len(k_points_list_subset)
-    
+    ##selec
+
 
     apply local refinement with distance = min distance
     and do a check to see if is inside....
@@ -959,49 +960,3 @@ def dynamical_refinment(
         # interpolating and ordering the 2D k points grid
         new_k_list, new_k_grid, n0, n1=interpolation_k_points_weights(old_k_list,brillouin_primitive_vectors,None)
         return (new_k_list,new_k_grid,n0,n1)
-
-if __name__ == "__main__":
-    import timeit
-    import os
-    import matplotlib.pyplot as plt
-    import numpy as np
-    ##from termcolor import cprint
-    from radtools.io.internal import load_template
-    from radtools.io.tb2j import load_tb2j_model
-    from radtools.magnons.dispersion import MagnonDispersion
-    from radtools.decorate.stats import logo
-    from radtools.spinham.constants import TXT_FLAGS
-    from radtools.decorate.array import print_2d_array
-    from radtools.decorate.axes import plot_hlines
-
-    brillouin_primitive_vectors=np.zeros((3,3))
-    brillouin_primitive_vectors[0]=[1,0,0]
-    brillouin_primitive_vectors[1]=[-1/2,3,0]
-    brillouin_primitive_vectors[2]=[0,0,1]
-    chosen_plane=[1,1,0]
-    #threshold for understanding if there is a degeneracy
-    threshold=0.0000001
-    shift_in_plane=[0,0]
-    shift_in_space=[0,0,0]
-    symmetries=[[0,0,0]]
-    initial_grid_spacing=0.1
-    refinment_iteration=0
-    refinment_spacing=0.01
-    refinment=False
-    
-    (new_k_points_list,new_k_points_grid,n0,n1)=k_points_grid_generator_2D(
-                                                                brillouin_primitive_vectors,
-                                                                chosen_plane,
-                                                                initial_grid_spacing,
-                                                                shift_in_plane,
-                                                                shift_in_space,
-                                                                symmetries,
-                                                                threshold,
-                                                                refinment,
-                                                                refinment_spacing,
-                                                                refinment_iteration
-                                                            )
-    print(new_k_points_list,n0,n1)
-   
-
-
