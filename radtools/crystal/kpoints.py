@@ -428,37 +428,45 @@ def check_inside_brillouin_zone(
     return k_point_list
 
 def check_inside_closed_shape(
-        triangles,
-        k_point_list
+        subset_triangles,
+        k_point_list,
+        all_k_point_list
 ):
     r"""
-    Given a set of triangles with one common vertex and adjacent sides (pair by pair); the function check if the k points in the list are outside any of the triangles
-    if any of the points is outside it is erased from the list
+    Given a set of triangles with one common vertex and adjacent sides (pair by pair), 
+    the function checks if the k points in the list are outside any of the triangles
+    if any of the k points is outside it is erased from the k point list
     Parameters
     ----------
-    triangles: (N,(3,3)) |array_like| the triangles with the common origin (k_point_origin) and adjacent sides 
-    k_point_list: (k,3) |array_like| the k points that need to be checked (the to-be-checked k points)
+    triangles: (N,3) |array_like| the triangles with a common origin and adjacent sides 
+                each triangle has three indices, which point to one of the k points
+                from the all k point list
+
+    all_k_point_list (N,3) |array_like| (kx,ky,kz)
+    k_point_list: (k,3) |array_like| the k points that need to be checked (kx,ky,kz)
     Returns
     ----------
-    k_point_list: (k-s,3) |array_like| the k points that resulted to be inside one of the triangles
+    k_point_list: (k-s,3) |array_like| the k points that resulted to be inside one of the subset of triangles
     """
 
-    number_k_elements=k_point_list.shape[0]
-    number_triangles=triangles.shape[0]
+    number_elements=k_point_list.shape[0]
+    number_triangles=subset_triangles.shape[0]
 
-    # for each triangle the vecotrial products between the different vertices and between the vertices and the to-be-checked k points are calculated
+    # for each triangle the vecotrial products between the different vertices, and between the vertices and the to-be-checked k points
+    # are used to calculate the barycentric weights, which give information about the to-be-checked k point being inside or outside the triangle itself
     vectorial_products=np.zeros(6)
     weights=np.zeros(3)
     elements_to_erase=[]
     for j in range(number_triangles):
-        vectorial_products[0]=np.linalg.norm(np.cross(triangles[j][0],triangles[j][1]))
-        vectorial_products[1]=np.linalg.norm(np.cross(triangles[j][1],triangles[j][2]))
-        vectorial_products[2]=np.linalg.norm(np.cross(triangles[j][2],triangles[j][0]))
+        indices=np.unique(np.where(all_k_point_list[:][0]==subset_triangles[j])[0],axis=0)
+        vectorial_products[0]=np.linalg.norm(np.cross(all_k_point_list[indices[0]],all_k_point_list[indices[1]]))
+        vectorial_products[1]=np.linalg.norm(np.cross(all_k_point_list[indices[1]],all_k_point_list[indices[2]]))
+        vectorial_products[2]=np.linalg.norm(np.cross(all_k_point_list[indices[2]],all_k_point_list[indices[0]]))
         normalization=vectorial_products[0]+vectorial_products[1]+vectorial_products[2]
-        for i in range(number_k_elements):
-            vectorial_products[3]=np.linalg.norm(np.cross(k_point_list[i],triangles[j][1]-triangles[j][2]))
-            vectorial_products[4]=np.linalg.norm(np.cross(k_point_list[i],triangles[j][2]-triangles[j][0]))
-            vectorial_products[5]=np.linalg.norm(np.cross(k_point_list[i],triangles[j][0]-triangles[j][1]))
+        for i in range(number_elements):
+            vectorial_products[3]=np.linalg.norm(np.cross(k_point_list[i],all_k_point_list[indices[1]]-all_k_point_list[indices[2]]))
+            vectorial_products[4]=np.linalg.norm(np.cross(k_point_list[i],all_k_point_list[indices[2]]-all_k_point_list[indices[0]]))
+            vectorial_products[5]=np.linalg.norm(np.cross(k_point_list[i],all_k_point_list[indices[0]]-all_k_point_list[indices[1]]))
             weights[1]=(vectorial_products[1]+vectorial_products[3])/normalization
             weights[2]=(vectorial_products[2]+vectorial_products[4])/normalization
             weights[3]=(vectorial_products[0]+vectorial_products[5])/normalization
@@ -739,6 +747,7 @@ def interpolation_k_points_weights(
 # Generation of a 2D k points grid through a refinment procedure
 # Because of the disorder of the k points due to the refinment procedure, an interpolation scheme can been added to obtain a propelry ordered k points grid
 # however this approach diminuishes the advantages to consider a symmetry refinment procedure 
+# therefore a triangulation can be considered instead
 def k_points_grid_generator_2D(
     brillouin_primitive_vectors_3d,
     chosen_plane,
@@ -750,7 +759,8 @@ def k_points_grid_generator_2D(
     refinment,
     refinment_spacing,
     refinment_iteration,
-    interpolation
+    interpolation,
+    triangulation
 ):
     r"""
     2D k points grid generator
@@ -811,9 +821,9 @@ def k_points_grid_generator_2D(
                 count=count+1
 
         # applying the refinment procedure to the 2d k points grid
-        refined_k_points_grid = []
+        refined_k_points_list = []
         local_refinment(
-            refined_k_points_grid,
+            refined_k_points_list,
             k_points_grid,
             refinment_spacing,
             refinment_iteration,
@@ -824,15 +834,17 @@ def k_points_grid_generator_2D(
             normalized_brillouin_primitive_vectors_2d  
         )     
         #transforming from a list to array_like elements
-        refined_k_points_grid = np.reshape(refined_k_points_grid,(int(len(refined_k_points_grid)/4), 4))
+        refined_k_points_list = np.reshape(refined_k_points_list,(int(len(refined_k_points_list)/4), 4))
 
         if interpolation == True:
             #interpolating and ordering the 2D k points grid
-            new_k_points_list,new_k_points_grid,n0,n1=interpolation_k_points_weights(refined_k_points_grid,brillouin_primitive_vectors_2d,None)
+            new_k_points_list,new_k_points_grid,n0,n1=interpolation_k_points_weights(refined_k_points_list,brillouin_primitive_vectors_2d,None)
             return (new_k_points_list,new_k_points_grid,n0,n1)
+        elif triangulation == True:
+            refined_k_points_list,triangles=k_points_list_tesselation_2d(refined_k_points_list,brillouin_primitive_vectors_2d)
+            return refined_k_points_list, triangles
         else:
-            triangles=k_points_list_tesselation_2d(refined_k_points_grid,brillouin_primitive_vectors_2d)
-            return triangles, refined_k_points_grid
+            return(refined_k_points_list)
     else:
         k_points_grid_not_refined = np.zeros((k0,k1,4))
         k_points_list_not_refined = np.zeros((k0*k1,6))
@@ -847,37 +859,54 @@ def k_points_grid_generator_2D(
 
 def k_points_list_tesselation_2d(
     k_points_list,
-    brillouin_primitive_vectors_2d
+    brillouin_primitive_vectors_2d,
+    count
 ):
+    r"""
+    the sparse k points (i,kx,ky,kz,w) are linked togheter through a triangulation procedure (Delaunay procedure)
+    the so-built triangles are listed, each triangle is characterized by three indices pointing to the vertices position in the k poins list  
+    the ordering of the vertices is so to assure a cloack-wise path along the triangle
+    Parameters
+    ---------
+    k_points_list: (n,4) |array_like| (kx,ky,kz,w)
+    brillouin_primitive_vectors_2d: (2,3) |array_like|
+    
+    Returns
+    ---------
+    k_points_list: (n,5) |array_like| (i,kx,ky,kz,w)
+    triangles: (s,3) |array_like| 
+    """
     number_elements=k_points_list.shape[0]
     k_points_list_projections=np.zeros((number_elements,3))
-    
+    new_k_points_list=np.zeros((number_elements,5))
     # choosing one point as an origin in the 2d brillouin plane
     origin=k_points_list[0][:3]
     # calculating the projections of the different k points on the primitive vectors
     for i in range(number_elements):
         k_points_list_projections[i,:2]=np.dot(k_points_list[i][:3]-origin,brillouin_primitive_vectors_2d)
         k_points_list_projections[i,2]=i
+        new_k_points_list[i,1:]=k_points_list[i,:]
+        new_k_points_list[i,0]=i+count
 
     # triangulation of the set of points
     triangles = Delaunay(k_points_list_projections)
     # these are the different triangles, where each element has a pair of number representating the ordering in the triangle itself and a number representing the respective element of the list
     number_of_triangles = len(triangles) 
-    triangles_renamed = np.zeros((number_of_triangles,(3,4)),dtype=float)
+    triangles_renamed = np.zeros((number_of_triangles,3),dtype=float)
     for i in range(number_of_triangles):
         # looking for the clock-wise path
         sorted(triangles[i],key=lambda x: x[1])
         if triangles[i][0,:1]==np.min(triangles[i][:,0]):
             sorted(triangles[i],key=lambda x: x[0])
         for s in range(3):
-            triangles_renamed[i][s,:]=k_points_list(triangles[i][s,2])
-    # for each triangle the ordering of the vertices is now cloac-kwise
-    return triangles
+            triangles_renamed[i][s]=triangles[i][2]
+    # for each triangle the ordering of the vertices is now clock-wise
+    return new_k_points_list,triangles_renamed
 
 def dynamical_refinment_tesselation_2d(
-    triangles_list,
-    k_points_list_subset,
-    brillouin_primitive_vectors_2d,
+    triangles,
+    positions_k_points_to_refine,
+    all_k_points_list,
     refinment_iteration,
     symmetries,
     threshold,
@@ -885,23 +914,39 @@ def dynamical_refinment_tesselation_2d(
     brillouin_primitive_vectors_2d,
     normalized_brillouin_primitive_vectors_2d
 ):
-    border_k_points=[]
-    number_elements=len(k_points_list_subset)
-    for i in range(number_elements):
-        number_triangles=len(triangles_list[i])
-        distances=np.zeros(number_triangles)
-        for j in range(len(triangles_list[i])):
-            distances[j]=np.linalg.norm(triangles_list[i][j]-k_points_list_subset[i])
-            if distances[j]==0:
-                distances[j]=np.nan
-            else:
-                border_k_points.append(triangles_list[i][j])
-            
+    new_k_points_list=[]
+    new_triangles=[]
+    new_k_points_list.append(all_k_points_list)
+    number_elements_to_refine=len(positions_k_points_to_refine)
+    indices_k_points_to_refine=np.unique(np.where(all_k_points_list[:][0]==positions_k_points_to_refine)[0],axis=0)
+    count=len(all_k_points_list)
+    for i in range(number_elements_to_refine):
+        triangles_to_refine=[]
+        positions_triangles_to_refine=np.unique(np.where(triangles_to_refine==positions_k_points_to_refine[i])[0])
+        number_subset_triangles=len(positions_triangles_to_refine)
+        for r in range(number_subset_triangles):
+            triangles_to_refine.append(triangles[positions_triangles_to_refine[r]])
+        
+        border_k_points=[]
+        # here we are counting vertices twice
+        distances=np.zeros(number_subset_triangles*3)
+        for j in range(number_subset_triangles):
+            for s in range(3):
+                distances[j*3+s]=np.linalg.norm(all_k_points_list[triangles[positions_triangles_to_refine[j]][s]]-all_k_points_list[indices_k_points_to_refine[i]])
+                if distances[j*3+s]==0:
+                    distances[j*3+s]=np.nan
+                else:
+                    border_k_points.append(triangles[positions_triangles_to_refine[j]][s])
+        # remove any double counting
+        border_k_points=np.unique(np.array(border_k_points)).tolist()
+        # applying local refinment to the selected point
+        # chose as distance the minimum distance with respect to the border
+        # here some problems can emerge 
         minimum_distance=np.min(distances)/2
-        refined_k_points_grid=[]
+        refined_k_points_list=[]
         local_refinment(
-            refined_k_points_grid,
-            k_points_list_subset[i],
+            refined_k_points_list,
+            all_k_points_list[indices_k_points_to_refine[i]],
             minimum_distance,
             refinment_iteration,
             symmetries,
@@ -910,19 +955,27 @@ def dynamical_refinment_tesselation_2d(
             brillouin_primitive_vectors_2d,
             normalized_brillouin_primitive_vectors_2d  
         )
-        #transforming from a list to array_like elements
-        refined_k_points_grid = np.reshape(refined_k_points_grid,(int(len(refined_k_points_grid)/4), 4))
-        refined_k_points_grid=check_inside_closed_shape(
-            triangles_list[i],
-            refined_k_points_grid)
-        border_k_points.append(refined_k_points_grid)
+        # transforming from a list to array_like elements
+        refined_k_points_list = np.reshape(refined_k_points_list,(int(len(refined_k_points_list)/4), 4))
+        # check if the points are inside the border 
+        refined_k_points_list=check_inside_closed_shape(
+            triangles_to_refine,
+            refined_k_points_list,
+            all_k_points_list)
+        # triangulation of the new k points
+        border_k_points.append(refined_k_points_list)
+        border_k_points = np.reshape(refined_k_points_list,(int(len(refined_k_points_list)/4), 4))    
+        k_point_list,added_triangles=k_points_list_tesselation_2d(
+            border_k_points,
+            brillouin_primitive_vectors_2d,
+            count
+            )
+        count=count+len(refined_k_points_list)
+        new_k_points_list.append(k_point_list)
+        new_triangles.append(added_triangles)
 
-    border_k_points = np.reshape(refined_k_points_grid,(int(len(refined_k_points_grid)/4), 4))    
-    added_triangles=k_points_list_tesselation_2d(
-        border_k_points,
-        brillouin_primitive_vectors_2d
-        )
-    return added_triangles
+    new_triangles=np.unique(np.array(new_triangles)).tolist()
+    return new_k_points_list,new_triangles
 
 
 # Function considering one point in a list of k points and applying a refinment procedure to the selected k point (in the plane pointed out by brillouin_primitive_vectors)

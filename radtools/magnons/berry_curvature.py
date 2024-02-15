@@ -308,3 +308,8 @@ class Berry_curvature:
                 cycling_through=False
 
         return chern_number,magnonic_branches,number_eigenspaces
+
+    
+    AGGIUNGERE CALCOLO ATTRAVERSO TRIANGOLARIZZAZIONE
+
+
