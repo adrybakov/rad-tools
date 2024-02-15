@@ -866,12 +866,13 @@ def k_points_list_tesselation_2d(
     triangles_renamed = np.zeros((number_of_triangles,(3,4)),dtype=float)
     for i in range(number_of_triangles):
         # looking for the clock-wise path
-        sorted(triangles[i],key=lambda x: x[0])
         sorted(triangles[i],key=lambda x: x[1])
+        if triangles[i][0,:1]==np.min(triangles[i][:,0]):
+            sorted(triangles[i],key=lambda x: x[0])
         for s in range(3):
             triangles_renamed[i][s,:]=k_points_list(triangles[i][s,2])
     # for each triangle the ordering of the vertices is now cloac-kwise
-
+    return triangles
 
 def dynamical_refinment_tesselation_2d(
     triangles,
@@ -879,6 +880,7 @@ def dynamical_refinment_tesselation_2d(
     brillouin_primitive_vectors_2d
 ):
     number_elements=len(k_points_list_subset)
+    
 
     apply local refinement with distance = min distance
     and do a check to see if is inside....
