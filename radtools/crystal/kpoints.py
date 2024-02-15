@@ -875,22 +875,54 @@ def k_points_list_tesselation_2d(
     return triangles
 
 def dynamical_refinment_tesselation_2d(
-    triangles,
+    triangles_list,
     k_points_list_subset,
-    brillouin_primitive_vectors_2d
+    brillouin_primitive_vectors_2d,
+    refinment_iteration,
+    symmetries,
+    threshold,
+    brillouin_primitive_vectors_3d,
+    brillouin_primitive_vectors_2d,
+    normalized_brillouin_primitive_vectors_2d
 ):
+    border_k_points=[]
     number_elements=len(k_points_list_subset)
-    ##selec
+    for i in range(number_elements):
+        number_triangles=len(triangles_list[i])
+        distances=np.zeros(number_triangles)
+        for j in range(len(triangles_list[i])):
+            distances[j]=np.linalg.norm(triangles_list[i][j]-k_points_list_subset[i])
+            if distances[j]==0:
+                distances[j]=np.nan
+            else:
+                border_k_points.append(triangles_list[i][j])
+            
+        minimum_distance=np.min(distances)/2
+        refined_k_points_grid=[]
+        local_refinment(
+            refined_k_points_grid,
+            k_points_list_subset[i],
+            minimum_distance,
+            refinment_iteration,
+            symmetries,
+            threshold,
+            brillouin_primitive_vectors_3d,
+            brillouin_primitive_vectors_2d,
+            normalized_brillouin_primitive_vectors_2d  
+        )
+        #transforming from a list to array_like elements
+        refined_k_points_grid = np.reshape(refined_k_points_grid,(int(len(refined_k_points_grid)/4), 4))
+        refined_k_points_grid=check_inside_closed_shape(
+            triangles_list[i],
+            refined_k_points_grid)
+        border_k_points.append(refined_k_points_grid)
 
-
-    apply local refinement with distance = min distance
-    and do a check to see if is inside....
-    then do a new tringulation with the new points,
-    add the new triangles to the old triangles
-    
-
-
-
+    border_k_points = np.reshape(refined_k_points_grid,(int(len(refined_k_points_grid)/4), 4))    
+    added_triangles=k_points_list_tesselation_2d(
+        border_k_points,
+        brillouin_primitive_vectors_2d
+        )
+    return added_triangles
 
 
 # Function considering one point in a list of k points and applying a refinment procedure to the selected k point (in the plane pointed out by brillouin_primitive_vectors)
