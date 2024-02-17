@@ -478,7 +478,6 @@ def check_inside_closed_shape(
 
     return k_point_list
 
-
 # function applying symmetry analysis to a list of k points, the symmetry operations considered are the point group ones
 # the fixed point is given; the analysis aim is to redistribute the fixed point weight between the list of k points
 # the found symmetry orbits are counted in the redistribution of the fixed point weight a number of times equal to the number of k points inside the orbit itself
@@ -730,19 +729,16 @@ def interpolation_k_points_weights(
     total_norm=np.sum(zi)
     zi=list(map(lambda x: x/total_norm,zi))
 
-    ##now mapping back to the brillouin zone saving the indices
-    new_k_points_list=np.zeros((number_elements_interpolation[0]*number_elements_interpolation[1],6))
-    new_k_points_grid=np.zeros((number_elements_interpolation[0],number_elements_interpolation[1],4))
+    ##now mapping back to the brillouin zone saving the indices with the ordering of the elements
+    new_k_points_list=np.zeros((number_elements_interpolation[0]*number_elements_interpolation[1],4))
     coordinates=np.zeros(3)
     for i in range(number_elements_interpolation[0]):
         for j in range(number_elements_interpolation[1]):
             vector=np.asanyarray([xi[i,j],yi[i,j]])
             coordinates=(brillouin_primitive_vectors_2d.T)@vector
-            new_k_points_grid[i][j][:3]=coordinates
-            new_k_points_grid[i][j][3]=zi[i][j]
-            new_k_points_list[i*number_elements_interpolation[1]+j,:]=np.asarray(coordinates,zi[i][j],i,j)
+            new_k_points_list[i*number_elements_interpolation[1]+j,:]=np.asarray(coordinates,zi[i][j])
 
-    return(new_k_points_list,new_k_points_grid,number_elements_interpolation[0],number_elements_interpolation[1])
+    return(new_k_points_list,number_elements_interpolation[0],number_elements_interpolation[1])
 
 # Generation of a 2D k points grid through a refinment procedure
 # Because of the disorder of the k points due to the refinment procedure, an interpolation scheme can been added to obtain a propelry ordered k points grid
@@ -812,13 +808,11 @@ def k_points_grid_generator_2D(
     if refinment == True:
         # building the initial 2D k points grid
         k_points_grid = np.zeros((k0*k1,4),dtype=float)
-        count=0
         for i in range(k0):
             for j in range(k1):
-                k_points_grid[count,:3] = (float(i + shift_in_plane[0]) / k0) * (shift_in_space + brillouin_primitive_vectors_2d[0]) \
+                k_points_grid[i*k1+j,:3] = (float(i + shift_in_plane[0]) / k0) * (shift_in_space + brillouin_primitive_vectors_2d[0]) \
                     + (float(j + shift_in_plane[1]) / k1) * (shift_in_space + brillouin_primitive_vectors_2d[1])
-                k_points_grid[count,3] = initial_weights
-                count=count+1
+                k_points_grid[i*k1+j,3] = initial_weights
 
         # applying the refinment procedure to the 2d k points grid
         refined_k_points_list = []
@@ -838,29 +832,25 @@ def k_points_grid_generator_2D(
 
         if interpolation == True:
             #interpolating and ordering the 2D k points grid
-            new_k_points_list,new_k_points_grid,n0,n1=interpolation_k_points_weights(refined_k_points_list,brillouin_primitive_vectors_2d,None)
-            return (new_k_points_list,new_k_points_grid,n0,n1)
+            new_k_points_list,n0,n1=interpolation_k_points_weights(refined_k_points_list,brillouin_primitive_vectors_2d,None)
+            return (new_k_points_list,n0,n1)
         elif triangulation == True:
             refined_k_points_list,triangles=k_points_list_tesselation_2d(refined_k_points_list,brillouin_primitive_vectors_2d)
             return refined_k_points_list, triangles
         else:
             return(refined_k_points_list)
     else:
-        k_points_grid_not_refined = np.zeros((k0,k1,4))
         k_points_list_not_refined = np.zeros((k0*k1,6))
         for i in range(k0):
             for j in range(k1):
-                k_points_grid_not_refined[i,j][:3] = (float(i + shift_in_plane[0]) / k0) * (shift_in_space + brillouin_primitive_vectors_2d[0]) \
+                k_points_list_not_refined[i*k1+j][:3] = (float(i + shift_in_plane[0]) / k0) * (shift_in_space + brillouin_primitive_vectors_2d[0]) \
                     + (float(j + shift_in_plane[1]) / k1) * (shift_in_space + brillouin_primitive_vectors_2d[1])
-                k_points_grid_not_refined[i,j][3] = initial_weights
-                k_points_list_not_refined[i*k1+j,:]=[k_points_grid_not_refined[i,j][:],i,j]
-                
-        return (k_points_list_not_refined,k_points_grid_not_refined,k0,k1)
+                k_points_list_not_refined[i*k1+j][3] = initial_weights
+        return (k_points_list_not_refined,k0,k1)
 
 def k_points_list_tesselation_2d(
     k_points_list,
-    brillouin_primitive_vectors_2d,
-    count
+    brillouin_primitive_vectors_2d
 ):
     r"""
     the sparse k points (i,kx,ky,kz,w) are linked togheter through a triangulation procedure (Delaunay procedure)
@@ -873,7 +863,7 @@ def k_points_list_tesselation_2d(
     
     Returns
     ---------
-    k_points_list: (n,5) |array_like| (i,kx,ky,kz,w)
+    k_points_list: (n,4) |array_like| (kx,ky,kz,w)
     triangles: (s,3) |array_like| 
     """
     number_elements=k_points_list.shape[0]
@@ -885,8 +875,7 @@ def k_points_list_tesselation_2d(
     for i in range(number_elements):
         k_points_list_projections[i,:2]=np.dot(k_points_list[i][:3]-origin,brillouin_primitive_vectors_2d)
         k_points_list_projections[i,2]=i
-        new_k_points_list[i,1:]=k_points_list[i,:]
-        new_k_points_list[i,0]=i+count
+        new_k_points_list[i]=k_points_list[i]
 
     # triangulation of the set of points
     triangles = Delaunay(k_points_list_projections)
@@ -921,6 +910,7 @@ def dynamical_refinment_tesselation_2d(
     indices_k_points_to_refine=np.unique(np.where(all_k_points_list[:][0]==positions_k_points_to_refine)[0],axis=0)
     count=len(all_k_points_list)
     for i in range(number_elements_to_refine):
+        new_k_points_list[positions_k_points_to_refine[i]]=np.asarray([np.nan,np.nan,np.nan,np.nan])
         triangles_to_refine=[]
         positions_triangles_to_refine=np.unique(np.where(triangles_to_refine==positions_k_points_to_refine[i])[0])
         number_subset_triangles=len(positions_triangles_to_refine)
