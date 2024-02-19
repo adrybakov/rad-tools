@@ -759,6 +759,7 @@ def k_points_generator_2D(
 ):
     r"""
     k points generator in a 2d plane
+    
     Parameters
     ----------
     brillouin_primitive_vectors_3d: (3,3) |array_like| (columns: kx,ky,kz, rows: b1,b2,b3)
@@ -772,7 +773,7 @@ def k_points_generator_2D(
     refinment_iteration: |int| number of refinment iterations considered
     threshold: |double| therhold to recognize a symmetry
     triangulation: |boolean| if a triangulation is considered or not
-    
+
     Return
     -------------
     Trianguation not considered:
@@ -843,12 +844,23 @@ def k_points_generator_2D(
 
     else:
         k_points_list_not_refined = np.zeros((k0*k1,6))
+        squares=np.zeros((k0*k1,4))
         for i in range(k0):
             for j in range(k1):
                 k_points_list_not_refined[i*k1+j][:3] = (float(i + shift_in_plane[0]) / k0) * (shift_in_space + brillouin_primitive_vectors_2d[0]) \
                     + (float(j + shift_in_plane[1]) / k1) * (shift_in_space + brillouin_primitive_vectors_2d[1])
                 k_points_list_not_refined[i*k1+j][3] = initial_weights
-        return (k_points_list_not_refined,k0,k1)
+                ####periodicity
+                ##if i<k0-1 and j<k1-1:
+                squares[i*k1+j]=[i*k1+j,(i+1)*k1+j,(i+1)*k1+j+1,i*k1+j+1]
+                ##elif i<k0-1 and j==k1-1:
+                ##    squares[i*k1+j]=[i*k1+j,(i+1)*k1+j,(i+1)*k1+0,i*k1+0]
+                ##elif i==k0-1 and j<k1-1:
+                ##    squares[i*k1+j]=[i*k1+j,0*k1+j,0*k1+j+1,i*k1+j+1]
+                ##else:
+                ##    squares[i*k1+j]=[i*k1+j,0*k1+j,0*k1+0,i*k1+0]
+
+        return k_points_list_not_refined,squares
 
 def k_points_triangulation_2d(
     k_points_list,
