@@ -159,58 +159,25 @@ class Berry_curvature:
         return omegas,us,magnonic_branches,number_eigenspaces
 
     def circuitation_over_a_path(
-        u_values_along_the_path,k_point_weights_along_the_path,number_modes,number_eigenspaces,magnonic_branches,triangulation
+        u_values_along_the_path,k_point_weights_along_the_path,number_modes,number_eigenspaces,magnonic_branches,number_vertices
     ):
-        if triangulation == True:
-            if number_eigenspaces == number_modes:
-                phase = np.asarray(list(map(
-                    lambda x,xw,y,yw,z,zw: 
-                    np.angle(np.asarray(x))*xw
-                    + np.angle(np.asarray(y))*yw
-                    + np.angle(np.asarray(z))*zw,
-                    (u_values_along_the_path[0] @ u_values_along_the_path[1]),k_point_weights_along_the_path[0],
-                    (u_values_along_the_path[1] @ u_values_along_the_path[2]),k_point_weights_along_the_path[1],
-                    (u_values_along_the_path[2] @ u_values_along_the_path[0]),k_point_weights_along_the_path[2])))
-
-             ##in the degenerate case the Berry curvature is calculated using the non-abelian formulation
-            else:
-                for n in range(number_eigenspaces):
-                    bands=[magnonic_branches==n]
-                    phase[n] = np.asarray(list(map(
-                    lambda x,xw,y,yw,z,zw: 
-                    np.angle(np.asarray(x))*xw
-                    + np.angle(np.asarray(y))*yw
-                    + np.angle(np.asarray(z))*zw,
-                    (u_values_along_the_path[0][np.ix_(bands,bands)] @ u_values_along_the_path[1][np.ix_(bands,bands)]),k_point_weights_along_the_path[0],
-                    (u_values_along_the_path[1][np.ix_(bands,bands)] @ u_values_along_the_path[2][np.ix_(bands,bands)]),k_point_weights_along_the_path[1],
-                    (u_values_along_the_path[2][np.ix_(bands,bands)] @ u_values_along_the_path[0][np.ix_(bands,bands)]),k_point_weights_along_the_path[2])))
+        phases=np.zeros(number_eigenspaces,dtype=complex)
+        if number_eigenspaces == number_modes:
+            count=0
+            while count<number_vertices-1:
+                phases=phases+np.angle(np.asarray(u_values_along_the_path[count]@u_values_along_the_path[count+1]))*k_point_weights_along_the_path[count]
+                count+=1
+            phases=phases+np.angle(np.asarray(u_values_along_the_path[number_vertices-1]@u_values_along_the_path[0]))*k_point_weights_along_the_path[number_vertices-1]  
+        ##In the degenerate case the Berry curvature is calculated using the Non-Abelian formulation
         else:
-            if number_eigenspaces == number_modes:
-                phase = np.asarray(list(map(
-                    lambda x,xw,y,yw,z,zw,w,ww: 
-                    np.angle(np.asarray(x))*xw
-                    + np.angle(np.asarray(y))*yw
-                    - np.angle(np.asarray(z))*zw
-                    - np.angle(np.asarray(w))*ww,
-                    (u_values_along_the_path[0] @ u_values_along_the_path[1]),k_point_weights_along_the_path[0],
-                    (u_values_along_the_path[1] @ u_values_along_the_path[2]),k_point_weights_along_the_path[1],
-                    (u_values_along_the_path[3] @ u_values_along_the_path[2]),k_point_weights_along_the_path[3],
-                    (u_values_along_the_path[0] @ u_values_along_the_path[3]),k_point_weights_along_the_path[0])))
-             ##in the degenerate case the Berry curvature is calculated using the non-abelian formulation
-            else:
-                for n in range(number_eigenspaces):
-                    bands=[magnonic_branches==n]
-                    phase[n] = np.asarray(list(map(
-                    lambda x,xw,y,yw,z,zw, w,ww: 
-                    np.angle(np.asarray(x))*xw
-                    + np.angle(np.asarray(y))*yw
-                    - np.angle(np.asarray(z))*zw
-                    - np.angle(np.asarray(w))*ww,
-                    (u_values_along_the_path[0][np.ix_(bands,bands)] @ u_values_along_the_path[1][np.ix_(bands,bands)]),k_point_weights_along_the_path[0],
-                    (u_values_along_the_path[1][np.ix_(bands,bands)] @ u_values_along_the_path[2][np.ix_(bands,bands)]),k_point_weights_along_the_path[1],
-                    (u_values_along_the_path[3][np.ix_(bands,bands)] @ u_values_along_the_path[2][np.ix_(bands,bands)]),k_point_weights_along_the_path[3],
-                    (u_values_along_the_path[0][np.ix_(bands,bands)] @ u_values_along_the_path[3][np.ix_(bands,bands)]),k_point_weights_along_the_path[0])))
-        return phase
+            for n in range(number_eigenspaces):
+                bands=[magnonic_branches==n]
+                count=0
+                while count<number_vertices-1:
+                    phases[n]=phases[n]+np.angle(np.asarray(u_values_along_the_path[count][np.ix_(bands,bands)] @ u_values_along_the_path[count+1][np.ix_(bands,bands)]))*k_point_weights_along_the_path[count]
+                    count+=1
+                phases[n]=phases[n]+np.angle(np.asarray(u_values_along_the_path[number_vertices-1][np.ix_(bands,bands)] @ u_values_along_the_path[0][np.ix_(bands,bands)]))*k_point_weights_along_the_path[number_vertices-1]
+        return phases
 
     def berry_curvature(
         self,
@@ -229,10 +196,7 @@ class Berry_curvature:
         dynamical_refinment,
         dynamical_refinment_iteration,
         threshold_dynamical_refinment
-    ):
-        phase=np.zeros(number_eigenspaces,dtype=complex)
-        chern_number=np.zeros(number_eigenspaces)
-        
+    ):  
         refined_k_points_list,little_paths=k_points_generator_2D(
                                 brillouin_primitive_vectors,
                                 chosen_plane,
@@ -246,7 +210,6 @@ class Berry_curvature:
                                 refinment_iteration,
                                 triangulation
                             )
-
         _,us,magnonic_branches,number_eigenspaces=self.magnonic_surfaces(refined_k_points_list,False,False,threshold_omega,False)
 
         if triangulation==True:
@@ -255,56 +218,42 @@ class Berry_curvature:
             number_vertices=4
 
         u=np.zeros((number_vertices,self.N,self.N),dtype=complex)
-        weight_a=np.zeros(number_vertices,dtype=float)
+        weights=np.zeros(number_vertices,dtype=float)
+        old_chern=np.zeros(number_eigenspaces,dtype=float)
+        chern=np.zeros(number_eigenspaces,dtype=float)
 
-        position_elements_to_refine_list=[]
-        ##taking into account possible degeneracies is equivalent to adopt the non-Abelian formulation of the Berry Curvature
-        number_little_paths=little_paths.shape[0]
-        
-        i=0
-        while i < number_little_paths:
-            position_elements_to_refine=[]
-            for j in range(number_vertices):
-                u[j]=us[little_paths[i][j]]
-                weight_a=refined_k_points_list[little_paths[i][j],3]
-                position_elements_to_refine.append(little_paths[i][j])
-            phase=self.circuitation_over_a_path(u,weight_a,self.N,number_eigenspaces,magnonic_branches,triangulation)
-
-            #saving all divergent points: if the refinment procedure is applied, the grid will be refined around these points
-            if np.max(phase)>threshold_dynamical_refinment:
-                position_elements_to_refine_list.extend(position_elements_to_refine)
+        while dynamical_refinment==True:
+            number_little_paths=little_paths.shape[0]
+            _,us,magnonic_branches,number_eigenspaces=self.magnonic_surfaces(refined_k_points_list,False,False,threshold_omega,False)
+            i=0
+            phases=np.zeros((number_little_paths,number_eigenspaces),dtype=complex)
+            while i < number_little_paths:
+                for j in range(number_vertices):
+                    u[j]=us[little_paths[i][j]]
+                    weights[j]=refined_k_points_list[little_paths[i][j],3]
+                phases[i]=self.circuitation_over_a_path(u,weights,self.N,number_eigenspaces,magnonic_branches,triangulation)
+                chern+=phases
+            # condition for dynamical refinment
+            if np.any(np.asarray(list(map(lambda x: float(x).is_integer(),chern)))) == False:
+                old_chern+=chern
+                max_indices=[]
+                max_phases=np.max(phases,axis=0)
+                max_index=np.argmax(max_phases)
+                for j in range(number_little_paths):
+                    if j != max_index:
+                        if (max_phases[j]<max_phases[max_index]+threshold_dynamical_refinment) and (max_phases[j]>max_phases[max_index]-threshold_dynamical_refinment):
+                            max_indices.append(j)
+                selected_little_paths=little_paths[max_indices,:]
+                refined_little_paths,little_paths=dynamical_refinment_2d(
+                                                        little_paths,
+                                                        selected_little_paths,
+                                                        refined_k_points_list,
+                                                        dynamical_refinment_iteration,
+                                                        symmetries,
+                                                        threshold_omega,
+                                                        brillouin_primitive_vectors,
+                                                        chosen_plane,
+                                                        triangulation
+                                                    )
             else:
-                chern_number+=phase 
-
-            ###dynamical refinment
-            ###the degeneracy is not checked again
-            ###the circuitation is calculated only on the new triangles
-            if (triangulation==True) and (dynamical_refinment==True):
-                new_bias=len(refined_k_points_list)
-
-                refined_k_points_list,triangles=dynamical_refinment_triangulation_2d(
-                                                    little_paths,
-                                                    position_elements_to_refine_list,
-                                                    refined_k_points_list,
-                                                    dynamical_refinment_iteration,
-                                                    symmetries,
-                                                    threshold_omega,
-                                                    brillouin_primitive_vectors,
-                                                    chosen_plane
-                                                )
-
-                new_triangles=triangles[new_bias:,:]
-                new_k_points=refined_k_points_list[new_bias:,:]
-                _,us,magnonic_branches,number_eigenspaces=self.magnonic_surfaces(new_k_points,False,True,threshold_omega)
-                number_new_triangles=new_triangles.shape[0]
-                while i < number_new_triangles:
-                    for j in range(3):
-                        u[j]=us[new_triangles[i][j]]
-                        weight_a=refined_k_points_list[new_triangles[i][j],3]
-                    phase=self.circuitation_over_a_path(u,weight_a,self.N,number_eigenspaces,magnonic_branches,triangulation)
-                    chern_number+=phase 
-    
-            return chern_number,magnonic_branches,number_eigenspaces
-    
-   
-    
+                dynamical_refinment=False
