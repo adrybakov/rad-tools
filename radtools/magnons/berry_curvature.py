@@ -248,6 +248,7 @@ class Berry_curvature:
                                                         little_paths,
                                                         selected_little_paths,
                                                         refined_k_points_list,
+                                                        dynamical_refinment,
                                                         dynamical_refinment_iteration,
                                                         symmetries,
                                                         threshold_omega,
