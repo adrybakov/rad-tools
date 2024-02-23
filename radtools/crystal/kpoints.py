@@ -389,7 +389,7 @@ class Kpoints:
         return flatten_points
 
 #function checking if the k points in the list k_list are inside the Brillouin zone
-def check_inside_brillouin_zone(
+def downfold_inside_brillouin_zone(
     k_point_list,
     brillouin_primitive_vectors_3d
 ):
@@ -403,12 +403,12 @@ def check_inside_brillouin_zone(
         -------
         transformed_k_point_list: (N, 3) :|array_like| kx,ky,kz (k points are given in cartesian coordinates)
         """
-
     matrix_transformation_crystal_to_cartesian = np.zeros((3,3))
     matrix_transformation_cartesian_to_crystal = np.zeros((3,3))
     
     number_k_point_elements = k_point_list.shape[0]
     transformed_k_point_list = np.zeros((number_k_point_elements,3),dtype=float)
+    flag_inside_out=np.zeros((number_k_point_elements),dtype=int)
 
     matrix_transformation_crystal_to_cartesian = np.matrix(brillouin_primitive_vectors_3d).transpose()
 
@@ -423,9 +423,10 @@ def check_inside_brillouin_zone(
         modules=np.absolute(transformed_k_point_list[:,r])
         for i in range(number_k_point_elements):
             if modules[i] >=1:
+                flag_inside_out[i]=1
                 for d in range(3):
                     k_point_list[i,d]-=int(transformed_k_point_list[i,d])*brillouin_primitive_vectors_3d[r,d]
-    return k_point_list
+    return k_point_list, flag_inside_out
 
 # function applying symmetry analysis to a list of k points, the symmetry operations considered are the point group ones
 # the fixed point is given; the analysis aim is to redistribute the fixed point weight between the list of k points
@@ -531,8 +532,8 @@ def local_refinment_with_symmetry_analysis(
     threshold,
     brillouin_primitive_vectors_3d,
     brillouin_primitive_vectors_2d,
-    normalized_brillouin_primitive_vectors_2d
-
+    normalized_brillouin_primitive_vectors_2d,
+    downfold
 ):
     r"""
     Starting from a set of k points (old_k_list) with certain weights, to each k point iteratively (refinment_iteration) a new subset of k points is associated,
@@ -585,7 +586,7 @@ def local_refinment_with_symmetry_analysis(
                 k_tmp_subgrid[2,:3] +=  normalized_brillouin_primitive_vectors_2d[1,:]*refinment_spacing
                 k_tmp_subgrid[3,:3] -=  normalized_brillouin_primitive_vectors_2d[1,:]*refinment_spacing
                 
-                k_tmp_subgrid = symmetry_analysis(
+                k_tmp_subgrid[:,:3] = symmetry_analysis(
                     k_tmp,
                     k_tmp_weight,
                     k_tmp_subgrid[:,:3],
@@ -594,25 +595,27 @@ def local_refinment_with_symmetry_analysis(
                 )
                 
                 k_tmp_subgrid=np.delete(k_tmp_subgrid, np.where(k_tmp_subgrid[:,3]==0),axis=0)
+                
+                if downfold==True:
+                    k_tmp_subgrid[:,:3]= downfold_inside_brillouin_zone(
+                        k_tmp_subgrid[:,:3],
+                        brillouin_primitive_vectors_3d,
+                    )
 
-                k_tmp_subgrid[:,:3] = check_inside_brillouin_zone(
-                    k_tmp_subgrid[:,:3],
-                    brillouin_primitive_vectors_3d,
-                )
-
-                # applying to the points of the subgrid the refinment procedure
+                # applying to the points of the subgrid to the refinment procedure
                 new_refinment_spacing = refinment_spacing / 2
                 
                 local_refinment_with_symmetry_analysis(
                     new_k_list,
                     k_tmp_subgrid,
                     new_refinment_spacing,
-                    refinment_iteration - 1,
+                    refinment_iteration-1,
                     symmetries,
                     threshold,
                     brillouin_primitive_vectors_3d,
                     brillouin_primitive_vectors_2d,
-                    normalized_brillouin_primitive_vectors_2d 
+                    normalized_brillouin_primitive_vectors_2d,
+                    downfold
                 )
 
 def k_points_triangulation_2d(
@@ -644,7 +647,6 @@ def k_points_triangulation_2d(
     triangles: (s,3) |array_like| 
     left_border_points, bottom_border_points indices of the points at the border of the BZ
     """
-
 
     number_elements=k_points_list.shape[0]
     k_points_list_projections=np.zeros((number_elements,3))
@@ -684,7 +686,7 @@ def k_points_triangulation_2d(
     
     #these are the different triangles, where each element has a pair of number representating the ordering in the triangle itself and a number representing the respective element of the list
     number_of_triangles = len(old_triangles) 
-    new_triangles = np.zeros((number_of_triangles,3),dtype=float)
+    new_triangles = np.zeros((number_of_triangles,4),dtype=float)
     
     for i in range(number_of_triangles):
         #looking for the clock-wise path
@@ -793,7 +795,8 @@ def k_points_generator_2D(
             threshold,
             brillouin_primitive_vectors_3d,
             brillouin_primitive_vectors_2d,
-            normalized_brillouin_primitive_vectors_2d  
+            normalized_brillouin_primitive_vectors_2d,
+            True
         )     
         #transforming a list into an array-like element
         k0=int(len(refined_k_points_list)/4)
@@ -917,72 +920,69 @@ def dynamical_refinment_little_paths_2d(
     new_k_points_list: (n,4) |array_like| (kx,ky,kz,w)
     added_little_paths: (,3) |array_like| (v1,v2,v3)
     """
+    
     position_littles_paths_to_refine=list(np.unique(np.asarray(position_littles_paths_to_refine)))
     number_littles_paths_to_refine=len(position_littles_paths_to_refine)
-    little_paths_to_refine=[]
-    position_k_points_to_refine=[]
+    little_paths_to_refine={}
+    k_points_to_refine={}
+    count=0
     for i in position_littles_paths_to_refine:
-        little_paths_to_refine.append(little_paths[i,:])
+        little_paths_to_refine[count]=little_paths[i,:]
         for j in range(number_vertices):
-            position_k_points_to_refine.append(little_paths[i,j])
-    # the k points appearing only twice are at the border 
-    count_apparitions={}
-    for i in position_k_points_to_refine:
-        count_apparitions[i]=count_apparitions.get(i,0)+1
-    border_k_points=[]
-    for key,element in count_apparitions.items():
-        if(element==2):
-            border_k_points.append(key)
-            # refining only the k points not on the border
-            del position_k_points_to_refine[position_k_points_to_refine==key]
-    # these are the points to effectively refine
-    number_k_points_to_refine=len(position_k_points_to_refine)
-    # associating to each to-refine k point the little paths around it (i.e. the border points)
-    points_little_paths_around={}
+            k_points_to_refine[count]= k_points_to_refine[count]+little_paths[i,j]
+        count+=1    
+    del little_paths[position_littles_paths_to_refine]
+    # the little paths around are associated to each to-refine little path
     little_paths_around={}
-    for i in range(number_k_points_to_refine):
-        for j in range(number_littles_paths_to_refine):
-            for r in range(number_vertices):
-                if position_k_points_to_refine[i]==little_paths_to_refine[j,r]:
-                    points_little_paths_around[i].append(little_paths_to_refine[j,r])
-                    little_paths_around[i].append(little_paths_to_refine[j,:])
+    for i in range(number_littles_paths_to_refine):
+        little_paths_around[i]=little_paths_around[i]+np.where(np.any(little_paths==k_points_to_refine[i]))
+    # the k points of the little paths around are associated to each to-refine little path
+    border_k_points={}
+    for key,element in little_paths_around.items():
+        border_k_points[key]=border_k_points[key]+[i for i in little_paths[element] if i!=key]
+    # procede to a refinement of the k points constituing the to-refine little paths
     if number_vertices==3:
         all_new_triangles=[]
-        # finding the minimum distance between the to-refine k point and the border points
-        for i in range(number_k_points_to_refine):
+        # finding the minimum distance between the to-refine k points and the border k points
+        for i in range(number_littles_paths_to_refine):
+            
+
+
+            distances=np.zeros(number_vertices*len(border_k_points[i]))
+            for j in range(number_vertices):
+                for s in border_k_points[i]:
+                    distances[j*3+s]=np.linalg.norm(all_k_points_list[little_paths_to_refine[i,j]]-all_k_points_list[s])
+            minimal_distance=np.min(distances)
             refined_k_points_list=[]
-            distances=np.zeros(len(points_little_paths_around[i]))
-            for j in little_paths_around[i]:
-                distances[j]=np.linalg.norm(all_k_points_list[position_k_points_to_refine[i]]-all_k_points_list[j])
             local_refinment_with_symmetry_analysis(
                 refined_k_points_list,
-                all_k_points_list[position_k_points_to_refine[i]],
-                np.min(distances[i])/2,
+                all_k_points_list[little_paths_to_refine[i,:]],
+                minimal_distance,
                 refinment_iteration,
                 symmetries,
                 threshold,
                 brillouin_primitive_vectors_3d,
                 brillouin_primitive_vectors_2d,
-                normalized_brillouin_primitive_vectors_2d  
+                normalized_brillouin_primitive_vectors_2d,
+                False
             )
             #transforming from a list to array_like elements
             refined_k_points_list = np.reshape(refined_k_points_list,(int(len(refined_k_points_list)/4), 4))
             #check if the points are inside the border 
             refined_k_points_list=check_inside_closed_shape(
-                little_paths_around[i],
+                np.concatenate(little_paths_around[i],little_paths_to_refine[i]),
                 refined_k_points_list,
                 all_k_points_list)
             #triangulation
-            border_plus_refined_k_points_list=np.concatenate(all_k_points_list[points_little_paths_around[i]],refined_k_points_list)
+            border_plus_refined_k_points_list=np.concatenate(all_k_points_list[border_k_points[i]],refined_k_points_list)
             border_plus_refined_k_points_list,added_triangles=k_points_triangulation_2d(
-                                                                    border_plus_refined_k_points_list
+                                                                    border_plus_refined_k_points_list,
                                                                     brillouin_primitive_vectors_2d,
                                                                     count,
-                                                                    len(points_little_paths_around[i]))
+                                                                    len(border_k_points[i]))
             all_new_triangles.append(added_triangles)
-            
             return refined_k_points_list, added_triangles
-        ###NECESSARIO STUDIARE IL CASO AL BORDO ...
+        
         ## possono stare al bordo i punti da raffinare, o uno dei punti del bordo dei punti da raffinare...
     else:
         number_border_k_points=len(border_k_points)
