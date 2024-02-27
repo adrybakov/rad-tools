@@ -454,7 +454,6 @@ def symmetry_analysis(
     -------
     new_k_list: (N,4) :|array_like| list of k points coordinates with respcetive weights from the symmetry analysis
     """
-
     number_elements = k_list.shape[0]  
 
     new_k_list = np.c_[ k_list, (k_origin_weight / number_elements) * np.ones(number_elements, dtype=float)]
@@ -519,7 +518,7 @@ def symmetry_analysis(
                     assigned_indices.extend([r for r in range(number_elements) if k_eigenspaces[r]==k_eigenspaces[i]])
                     counting+=1
         # considering a representative for each eigenspace
-      
+        print(k_eigenspaces)
         for i in range(number_eigenspaces):
             list_positions=[r for r in range(number_elements) if ordered_k_eigenspaces[r]==i]
             new_k_list[list_positions[0],3]=weights
@@ -943,22 +942,65 @@ def dynamical_refinment_little_paths_2d(
     new_k_points_list: (n,4) |array_like| (kx,ky,kz,w)
     added_little_paths: (,3) |array_like| (v1,v2,v3)
     """
-    
+
+    number_little_paths=len(little_paths)
+    # canceling any repetition
     position_littles_paths_to_refine=list(np.unique(np.asarray(position_littles_paths_to_refine)))
     number_littles_paths_to_refine=len(position_littles_paths_to_refine)
-    little_paths_to_refine={}
-    k_points_to_refine={}
-    count=0
+    # considering the selected little paths
+    little_paths_to_refine = little_paths[position_littles_paths_to_refine]
+    # in the list of all little paths, the ones selected are substituted with a little path with vertices equal to -1
     for i in position_littles_paths_to_refine:
-        little_paths_to_refine[count]=little_paths[i,:]
-        for j in range(number_vertices):
-            k_points_to_refine[count]= k_points_to_refine[count]+little_paths[i,j]
-        count+=1    
-    del little_paths[position_littles_paths_to_refine]
-    # the little paths around are associated to each to-refine little path
-    little_paths_around={}
+        little_paths[i]=[-1 for j in range(number_vertices)]
+    # the little paths around the to-refine little paths are associated to each to-refine little path
+    little_paths_around=[]
     for i in range(number_littles_paths_to_refine):
-        little_paths_around[i]=little_paths_around[i]+np.where(np.any(little_paths==k_points_to_refine[i]))
+        little_paths_around.append(list(set([ [int(j),i] for r in range(number_little_paths) for j in little_paths[r] if j in little_paths_to_refine[i]])))
+    
+    FINIRE DA QUI
+
+    print(little_paths_around)
+    # checking if two to-refine little paths are nearby (they have one side in common, i.e. one of the little_paths_around is equal to position_littles_paths_to_refine)
+    check_degeneracy = np.zeros((number_littles_paths_to_refine, number_littles_paths_to_refine), dtype=bool)
+    any_degeneracy = 0
+    for i in range(number_littles_paths_to_refine-1):
+        for j in range(i,number_littles_paths_to_refine):
+            for r in little_paths_around[i]:
+                if r in little_paths_around[j]:
+                    check_degeneracy[i,j]=True
+                    any_degeneracy+=1
+                else:
+                    check_degeneracy[i,j]=False
+    if any_degeneracy != 0:
+        for i in range(number_littles_paths_to_refine-1):
+            for j in range(i,number_littles_paths_to_refine):
+                if check_degeneracy[i][j]==True:
+                    min_value=min(i,j)
+                    max_value=max(i,j)
+                    little_paths_around[min_value].extend(little_paths_around[max_value])
+                    
+        
+        print(little_paths_around)
+        print(check_degeneracy)
+        # counting number of new different little paths
+        number_littles_paths_to_refine=len(np.unique(little_paths_around ))
+
+        ### ordering eigenspaces values
+        ##ordered_k_eigenspaces=np.zeros(number_elements)
+        ##counting=0
+        ##assigned_indices=[]
+        ##for i in range(number_elements):
+        ##    if k_eigenspaces[i] not in assigned_indices:
+        ##        if counting<number_eigenspaces:
+        ##            ordered_k_eigenspaces[k_eigenspaces==k_eigenspaces[i]]=counting
+        ##            assigned_indices.extend([r for r in range(number_elements) if k_eigenspaces[r]==k_eigenspaces[i]])
+        ##            counting+=1
+        
+    # checking if two to refine-little paths have a little path around in common         
+
+
+
+    #print(little_paths_around)                            
     # the k points of the little paths around are associated to each to-refine little path
     border_k_points={}
     for key,element in little_paths_around.items():
@@ -1088,7 +1130,7 @@ if __name__ == "__main__":
         )
     print(not_refined_k_points_list)
     print(parallelograms)
-    indices=[0,1,2,3,4]
+    indices=[0,1,2,3,4,4,4,5]
     subset_parallelograms=parallelograms[indices]
     print(subset_parallelograms)
 
