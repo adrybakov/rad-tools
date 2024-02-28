@@ -27,6 +27,7 @@ from scipy.interpolate import griddata
 from scipy.spatial.transform import Rotation
 from scipy.spatial import Delaunay
 from radtools.geometry import absolute_to_relative
+from scipy.spatial.distance import cdist
 
 __all__ = ["Kpoints"]
 
@@ -488,7 +489,6 @@ def symmetry_analysis(
                     no_degeneracy = False
                     break
 
-
     # if no degeneracy is detected, the no-symmetry-operations result is given
     if no_degeneracy:
         return new_k_list
@@ -855,58 +855,44 @@ def k_points_generator_2D(
 
         return not_refined_k_points_list,parallelograms,left_border_points,bottom_border_points,k0,k1
 
-def check_inside_closed_shape(
-        subset_triangles,
-        k_point_list,
-        all_k_point_list
+def check_inside_closed_shape_2d(
+    eigenvectors_around_array,
+    refined_k_points_list,
+    brillouin_primitive_vectors_2d
 ):
-    r"""
-    Given a set of triangles with one common vertex and adjacent sides (pair by pair), 
-    the function checks if the k points in the list are outside any of the triangles
-    if any of the k points is outside it is erased from the k point list
-    Parameters
-    ----------
-    triangles: (N,3) |array_like| the triangles with a common origin and adjacent sides 
-                each triangle has three indices, which point to one of the k points
-                from the all k point list
+    number_elements_border=eigenvectors_around_array.shape[0]
+    number_elements=refined_k_points_list.shape[0]
 
-    all_k_point_list (N,3) |array_like| (kx,ky,kz)
+    k_points_list_projections_border=np.zeros((number_elements_border,2),dtype=float)
+    k_points_list_projections=np.zeros((number_elements_border,2),dtype=float)
 
-    k_point_list: (k,3) |array_like| the k points that need to be checked (kx,ky,kz)
+    origin=np.zeros(3,dtype=float)
 
-    Returns
-    ----------
-    k_point_list: (k-s,3) |array_like| the k points that resulted to be inside one of the triangles
-    """
+    #calculating the projections of the different k points on the primitive vectors
+    for i in range(number_elements_border):
+        for j in range(2):
+            k_points_list_projections_border[i,j]=(eigenvectors_around_array[i,:3]-origin)@brillouin_primitive_vectors_2d[j,:]
+    for i in range(number_elements):
+        for j in range(2):
+            k_points_list_projections[i,j]=(refined_k_points_list[i,:3]-origin)@brillouin_primitive_vectors_2d[j,:]
     
-    number_elements=k_point_list.shape[0]
-    number_triangles=subset_triangles.shape[0]
-
-    # for each triangle the vecotrial products between the different vertices, and between the vertices and the to-be-checked k points
-    # are used to calculate the barycentric weights of the to-be-checked k points, which give information about the to-be-checked k point being inside or outside the triangle itself
-    vectorial_products=np.zeros(6)
-    weights=np.zeros(3)
-    elements_to_erase=[]
-    for j in range(number_triangles):
-        indices=np.unique(np.where(all_k_point_list[:][0]==subset_triangles[j])[0],axis=0)
-        vectorial_products[0]=np.linalg.norm(np.cross(all_k_point_list[indices[0]],all_k_point_list[indices[1]]))
-        vectorial_products[1]=np.linalg.norm(np.cross(all_k_point_list[indices[1]],all_k_point_list[indices[2]]))
-        vectorial_products[2]=np.linalg.norm(np.cross(all_k_point_list[indices[2]],all_k_point_list[indices[0]]))
-        normalization=vectorial_products[0]+vectorial_products[1]+vectorial_products[2]
-        for i in range(number_elements):
-            vectorial_products[3]=np.linalg.norm(np.cross(k_point_list[i],all_k_point_list[indices[1]]-all_k_point_list[indices[2]]))
-            vectorial_products[4]=np.linalg.norm(np.cross(k_point_list[i],all_k_point_list[indices[2]]-all_k_point_list[indices[0]]))
-            vectorial_products[5]=np.linalg.norm(np.cross(k_point_list[i],all_k_point_list[indices[0]]-all_k_point_list[indices[1]]))
-            weights[1]=(vectorial_products[1]+vectorial_products[3])/normalization
-            weights[2]=(vectorial_products[2]+vectorial_products[4])/normalization
-            weights[3]=(vectorial_products[0]+vectorial_products[5])/normalization
-        if np.min(weights) < 0 or np.max(weights)> 1:
-            elements_to_erase.append(i)
+    #Point Inclusion in Polygon Test W. Randolph Franklin (WRF) 
+    def pnpoly(nvert,vert,test):
+        i=0
+        c=1
+        while i < nvert:
+            for j in range(i+1,nvert-1):
+                if ( ((vert[i,1]>test[1]) != (vert[j,1]>test[1])) and (test[0]<(vert[j,0]-vert[i,0])*(test[1]-vert[i,1])/(vert[j,1]-vert[i,1])+vert[i,0]) ):    
+                    c = -c
+        return c
     
-    # eliminating all k points not contained in any of the triangles
-    np.delete(k_point_list,elements_to_erase,axis=0)
+    indices=[]
+    for i in range(number_elements):
+        if pnpoly(number_elements_border,k_points_list_projections_border,k_points_list_projections[i])<0:
+            indices.append(i)
 
-    return k_point_list
+    del refined_k_points_list[indices]
+    return refined_k_points_list
 
 def dynamical_refinment_little_paths_2d(
         little_paths,
@@ -942,83 +928,127 @@ def dynamical_refinment_little_paths_2d(
     new_k_points_list: (n,4) |array_like| (kx,ky,kz,w)
     added_little_paths: (,3) |array_like| (v1,v2,v3)
     """
-
     number_little_paths=len(little_paths)
-    # canceling any repetition
-    position_littles_paths_to_refine=list(np.unique(np.asarray(position_littles_paths_to_refine)))
-    number_littles_paths_to_refine=len(position_littles_paths_to_refine)
-    # considering the selected little paths
-    little_paths_to_refine = little_paths[position_littles_paths_to_refine]
-    # in the list of all little paths, the ones selected are substituted with a little path with vertices equal to -1
-    for i in position_littles_paths_to_refine:
-        little_paths[i]=[-1 for j in range(number_vertices)]
-    # the little paths around the to-refine little paths are associated to each to-refine little path
-    little_paths_around=[]
-    for i in range(number_littles_paths_to_refine):
-        little_paths_around.append(list(set([ [int(j),i] for r in range(number_little_paths) for j in little_paths[r] if j in little_paths_to_refine[i]])))
-    
-    FINIRE DA QUI
 
-    print(little_paths_around)
-    # checking if two to-refine little paths are nearby (they have one side in common, i.e. one of the little_paths_around is equal to position_littles_paths_to_refine)
-    check_degeneracy = np.zeros((number_littles_paths_to_refine, number_littles_paths_to_refine), dtype=bool)
-    any_degeneracy = 0
-    for i in range(number_littles_paths_to_refine-1):
-        for j in range(i,number_littles_paths_to_refine):
-            for r in little_paths_around[i]:
-                if r in little_paths_around[j]:
+    position_little_paths_to_refine=list(set(position_littles_paths_to_refine))
+    eigenspaces_little_paths_to_refine=[[i] for i in position_little_paths_to_refine]
+
+    flag_checking_indipendence=True
+    while flag_checking_indipendence == True:
+        number_eigenspaces=len(eigenspaces_little_paths_to_refine)
+        number_total_eigenvectors=0
+        number_total_around=0
+        little_paths_around_each_eigenspace=[]
+        for eigenspace in eigenspaces_little_paths_to_refine:
+            number_eigenvectors=len(eigenspace)
+            number_total_eigenvectors+=number_eigenvectors
+            # considering the to-refine little paths in the selected eigenspace
+            eigenvectors = little_paths[eigenspace]
+            # the little paths around each eigenvector are associated to it
+            little_paths_around_each_eigenvector=[]
+            for i in range(number_eigenvectors):
+                little_paths_around_each_eigenvector.append(list(set([ int(r) for r in range(number_little_paths) for j in little_paths[r] if j in eigenvectors[i] and r not in eigenspace])))
+            number_total_around+=len(little_paths_around_each_eigenvector)
+        little_paths_around_each_eigenspace.append(little_paths_around_each_eigenvector)
+        # checking if two eigenspaces are in reality the same eigenspace:
+        # between the "little_paths_around" of one of the two eigenspaces the index of one of the eigenvectors of the other eigenspace appear
+        check_degeneracy = np.zeros((number_eigenspaces, number_eigenspaces), dtype=bool)
+        any_degeneracy = 0
+        for i in range(number_eigenspaces-1):
+            for j in range(i+1,number_eigenspaces):
+                if eigenspaces_little_paths_to_refine[i] in little_paths_around_each_eigenspace[j]:
                     check_degeneracy[i,j]=True
                     any_degeneracy+=1
                 else:
                     check_degeneracy[i,j]=False
-    if any_degeneracy != 0:
-        for i in range(number_littles_paths_to_refine-1):
-            for j in range(i,number_littles_paths_to_refine):
-                if check_degeneracy[i][j]==True:
-                    min_value=min(i,j)
-                    max_value=max(i,j)
-                    little_paths_around[min_value].extend(little_paths_around[max_value])
-                    
-        
-        print(little_paths_around)
-        print(check_degeneracy)
-        # counting number of new different little paths
-        number_littles_paths_to_refine=len(np.unique(little_paths_around ))
+        if any_degeneracy!=0:
+            # unifying the eigenspaces properly
+            # after having written them in an array form to facilitate it
+            # unifying as well the "little paths around"
+            eigenspaces_little_paths_to_refine_array=np.zeros((number_total_eigenvectors,2),dtype=int)
+            little_paths_around_each_eigenspace_array=np.zeros((number_total_around,2),dtype=int)
+            count1=0
+            count2=0
+            count4=0
+            for eigenspace in eigenspaces_little_paths_to_refine:
+                count3=0
+                for eigenvector in eigenspace:
+                    eigenspaces_little_paths_to_refine_array[count1,0]=eigenvector
+                    eigenspaces_little_paths_to_refine_array[count1,1]=count2
+                    for around in little_paths_around_each_eigenspace[count2][count3]:
+                        little_paths_around_each_eigenspace_array[count4,0]=around
+                        little_paths_around_each_eigenspace_array[count4,1]=count2
+                        count4+=1
+                    count3+=1
+                    count1+=1
+                count2+=1
+            count=0
+            for i in range(number_eigenspaces-1):
+                for j in range(i+1,number_eigenspaces):
+                    if check_degeneracy[i][j]==True:
+                        min_value=min(i,j)
+                        max_value=max(i,j)
+                        eigenvectors_positions=[r for r in range(number_total_eigenvectors) if eigenspaces_little_paths_to_refine_array[r,1]==max_value]
+                        around_positions=[r for r in range(number_total_around) if little_paths_around_each_eigenspace_array[r,1]==max_value]
+                        eigenspaces_little_paths_to_refine_array[eigenvectors_positions,1]=min_value
+                        little_paths_around_each_eigenspace_array[around_positions,1]=min_value
+            # redefining eigenspaces in order to take into account the found degeneracies
+            values_eigenspaces=list(np.unique(eigenspaces_little_paths_to_refine_array[:,1]))
+            eigenspaces_little_paths_to_refine=[]
+            little_paths_around_each_eigenspace=[]
+            for value in values_eigenspaces:
+                eigenspaces_little_paths_to_refine.append(r for r in range(number_total_eigenvectors) if eigenspaces_little_paths_to_refine_array[r,1]==value)
+                little_paths_around_each_eigenspace.append(r for r in range(number_total_around) if little_paths_around_each_eigenspace_array[r,1]==value)
+            # eliminating in each eigenspace the presence of eigenvectors in other eigenvectors little paths around
+            number_eigenspaces=len(eigenspaces_little_paths_to_refine)
+            for i in range(number_eigenspaces):
+                indices=[]
+                for r in range(len(little_paths_around_each_eigenspace[i])):
+                    if little_paths_around_each_eigenspace[i][r] == i:
+                        indices.append(int(r))
+                del little_paths_around_each_eigenspace[i][indices]
+            # checking if two eigenvectors have one little path around in common (for at leas two vertices)
+            # this in common little path is inserted into the to refine little paths and the procedure is repeated
+            new_little_paths_to_refine=[]
+            for i in range(number_eigenspaces-1):
+                for j in range(i+1,number_eigenspaces):
+                    for element in little_paths_around_each_eigenspace[i]:
+                        if element in little_paths_around_each_eigenspace[j]:
+                            new_little_paths_to_refine.append(element)
+            eigenspaces_little_paths_to_refine.append(new_little_paths_to_refine)
+        else:
+            flag_checking_indipendence=False
 
-        ### ordering eigenspaces values
-        ##ordered_k_eigenspaces=np.zeros(number_elements)
-        ##counting=0
-        ##assigned_indices=[]
-        ##for i in range(number_elements):
-        ##    if k_eigenspaces[i] not in assigned_indices:
-        ##        if counting<number_eigenspaces:
-        ##            ordered_k_eigenspaces[k_eigenspaces==k_eigenspaces[i]]=counting
-        ##            assigned_indices.extend([r for r in range(number_elements) if k_eigenspaces[r]==k_eigenspaces[i]])
-        ##            counting+=1
-        
-    # checking if two to refine-little paths have a little path around in common         
-
-
-
-    #print(little_paths_around)                            
-    # the k points of the little paths around are associated to each to-refine little path
-    border_k_points={}
-    for key,element in little_paths_around.items():
-        border_k_points[key]=border_k_points[key]+[i for i in little_paths[element] if i!=key]
+    #substituting to the little_paths_positions, the k points positions
+    number_eigenspaces=len(eigenspaces_little_paths_to_refine)
+    for eigenspace in eigenspaces_little_paths_to_refine:
+        eigenspaces_k_points_to_refine=[vertex for eigenvector in eigenspace for vertex in little_paths[eigenvector]]
+    for eigenspace in little_paths_around_each_eigenspace:
+        eigenspaces_k_points_around=list(set([vertex for eigenvector in eigenspace for vertex in little_paths[eigenvector]]))
+    
     # procede to a refinement of the k points constituing the to-refine little paths
     if number_vertices==3:
         all_new_triangles=[]
+        all_k_points_list_tmp=[]
         # finding the minimum distance between the to-refine k points and the border k points
-        for i in range(number_littles_paths_to_refine):
-            distances=np.zeros(number_vertices*len(border_k_points[i]))
-            for j in range(number_vertices):
-                for s in border_k_points[i]:
-                    distances[j*3+s]=np.linalg.norm(all_k_points_list[little_paths_to_refine[i,j]]-all_k_points_list[s])
-            minimal_distance=np.min(distances)
+        for i in range(number_eigenspaces):
+            number_eigenvectors=len(eigenspaces_k_points_to_refine[i])
+            eigenvectors_array=np.zeros((number_eigenvectors,3),dtype=float)
+            number_eigenvectors_around=len(eigenspaces_k_points_around[i])
+            eigenvectors_around_array=np.zeros((number_eigenvectors_around,3),dtype=float)
+            for j in range(number_eigenvectors):
+                if eigenspaces_k_points_to_refine[i][j,1]==0:
+                    eigenvectors_array[j]=all_k_points_list[eigenspaces_k_points_to_refine[i][j,0]]
+                elif eigenspaces_k_points_to_refine[i][j,1]==1:
+                    eigenvectors_array[j]=all_k_points_list[eigenspaces_k_points_to_refine[i][j,0]]+brillouin_primitive_vectors_2d[0]
+                else:
+                    eigenvectors_array[j]=all_k_points_list[eigenspaces_k_points_to_refine[i][j,0]]+brillouin_primitive_vectors_2d[1]
+
+            minimal_distance = (cdist(eigenvectors_array-eigenvectors_around_array)).min()
             refined_k_points_list=[]
             local_refinment_with_symmetry_analysis(
                 refined_k_points_list,
-                all_k_points_list[little_paths_to_refine[i,:]],
+                eigenvectors_array,
                 minimal_distance,
                 refinment_iteration,
                 symmetries,
@@ -1028,25 +1058,26 @@ def dynamical_refinment_little_paths_2d(
                 normalized_brillouin_primitive_vectors_2d,
                 False
             )
-            #transforming from a list to array_like elements
+            # transforming from a list to array_like elements
             refined_k_points_list = np.reshape(refined_k_points_list,(int(len(refined_k_points_list)/4), 4))
-            #check if the points are inside the border 
-            refined_k_points_list=check_inside_closed_shape(
-                np.concatenate(little_paths_around[i],little_paths_to_refine[i]),
-                refined_k_points_list,
-                all_k_points_list)
-            #triangulation
-            border_plus_refined_k_points_list=np.concatenate(all_k_points_list[border_k_points[i]],refined_k_points_list)
-            border_plus_refined_k_points_list,added_triangles=k_points_triangulation_2d(
-                                                                    border_plus_refined_k_points_list,
-                                                                    brillouin_primitive_vectors_2d,
-                                                                    count,
-                                                                    len(border_k_points[i]))
+            # check if the points are inside the border 
+            refined_k_points_list = check_inside_closed_shape_2d(
+                                        eigenvectors_around_array,
+                                        refined_k_points_list,
+                                        brillouin_primitive_vectors_2d)
+            # triangulation
+            refined_k_points_list,added_triangles=k_points_triangulation_2d(
+                                                    refined_k_points_list,
+                                                    brillouin_primitive_vectors_2d,
+                                                    count)
+            count+=len(refined_k_points_list)
+            all_k_points_list_tmp.append(refined_k_points_list)
             all_new_triangles.append(added_triangles)
-            return refined_k_points_list, added_triangles
-           
-        ## possono stare al bordo i punti da raffinare, o uno dei punti del bordo dei punti da raffinare...
+        all_k_points_list.append(all_k_points_list_tmp)
+        return all_k_points_list, added_triangles
     else:
+        FINIRE DYNAMICAL REFINMENT DA QUI
+
         number_border_k_points=len(border_k_points)
         projections_border_k_points=np.zeros((border_k_points,2))
         origin=all_k_points_list[border_k_points[0]]
@@ -1081,6 +1112,11 @@ def dynamical_refinment_little_paths_2d(
             None,
             len(all_k_points_list))
         ###NECESSARIO STUDIARE IL CASO AL BORDO ...
+        
+         # in the list of all little paths, the ones selected are substituted with a little path with vertices equal to -1
+         for eigenvector in eigenspace:
+            little_paths[eigenvector]=[-1 for j in range(number_vertices)]
+        
         return not_refined_k_points_list, parallelograms
 
 
