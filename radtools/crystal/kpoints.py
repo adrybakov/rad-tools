@@ -1076,42 +1076,59 @@ def dynamical_refinment_little_paths_2d(
         all_k_points_list.append(all_k_points_list_tmp)
         return all_k_points_list, added_triangles
     else:
-        FINIRE DYNAMICAL REFINMENT DA QUI
+        # here it is sufficient to find for each eigenspace the extremal k points
+        # these k points are then used to draw a simil-BZ, which is refined using the grid-generation 2d methods
+        for i in range(number_eigenspaces):
+            number_eigenvectors_around=len(eigenspaces_k_points_around[i])
+            eigenvectors_around_array=np.zeros((number_eigenvectors_around,3),dtype=float)
+            for j in range(number_eigenvectors_around):
+                if eigenspaces_k_points_around[i][j,1]==0:
+                    eigenvectors_around_array[j]=all_k_points_list[eigenspaces_k_points_around[i][j,0]]
+                elif eigenspaces_k_points_around[i][j,1]==1:
+                    eigenvectors_around_array[j]=all_k_points_list[eigenspaces_k_points_around[i][j,0]]+brillouin_primitive_vectors_2d[0]
+                else:
+                    eigenvectors_around_array[j]=all_k_points_list[eigenspaces_k_points_around[i][j,0]]+brillouin_primitive_vectors_2d[1]
 
-        number_border_k_points=len(border_k_points)
-        projections_border_k_points=np.zeros((border_k_points,2))
-        origin=all_k_points_list[border_k_points[0]]
-        #calculating the projections of the different k points on the primitive vectors
-        for i in range(number_border_k_points):
-            projections_border_k_points[i]=np.dot(all_k_points_list[border_k_points[i]]-origin,brillouin_primitive_vectors_2d)
-        #calculatting the origin-point
-        origin=np.argmin(np.asarray((list(map(lambda x,y: np.sqrt(x*x+y*y), projections_border_k_points[:,0],projections_border_k_points[:,1])))))
-        #calculating the projections of the different k points on the primitive vectors (with the new origin)
-        for i in range(number_border_k_points):
-            projections_border_k_points[i]=np.dot(all_k_points_list[border_k_points[i]]-all_k_points_list[border_k_points[origin]],brillouin_primitive_vectors_2d)
-        elementy=sorted(projections_border_k_points,key=lambda x: x[0])[-1]
-        elementx=sorted(projections_border_k_points,key=lambda x: x[1])[-1]
-        for i in range(number_border_k_points):
-            if elementx == projections_border_k_points[i]:
-                x_i=i
-            if elementy == projections_border_k_points[i]:
-                y_i=i
-        #defining the primitive vectors of the subspace
-        little_brillouin_primitive_vectors_2d=np.zeros((2,3))
-        little_brillouin_primitive_vectors_2d[0,:]=all_k_points_list[border_k_points[x_i]]-all_k_points_list[border_k_points[origin]]
-        little_brillouin_primitive_vectors_2d[1,:]=all_k_points_list[border_k_points[y_i]]-all_k_points_list[border_k_points[origin]]
-        not_refined_k_points_list,parallelograms,_bt,_bl=k_points_generator_2D(
-            brillouin_primitive_vectors_3d,
-            None,
-            None,
-            little_brillouin_primitive_vectors_2d,
-            None,
-            None,
-            None,
-            None,
-            None,
-            len(all_k_points_list))
-        ###NECESSARIO STUDIARE IL CASO AL BORDO ...
+            k_points_list_projections_border=np.zeros((number_eigenvectors_around,2),dtype=float)
+
+            origin=np.zeros(3,dtype=float)
+            #calculating the projections of the different k points on the primitive vectors
+            for i in range(number_eigenvectors_around):
+                for j in range(2):
+                    k_points_list_projections_border[i,j]=(eigenvectors_around_array[i,:3]-origin)@brillouin_primitive_vectors_2d[j,:]
+
+
+                DA QUI
+
+
+
+            elementy=sorted(k_points_list_projections_border,key=lambda x: x[0])[-1]
+            elementx=sorted(k_points_list_projections_border,key=lambda x: x[1])[-1]
+
+            for i in range(number_eigenvectors_around):
+                if elementx == k_points_list_projections_border[i]:
+                    x_i=i
+                if elementy == k_points_list_projections_border[i]:
+                    y_i=i
+            
+
+
+            #defining the primitive vectors of the subspace
+            little_brillouin_primitive_vectors_2d=np.zeros((2,3))
+            little_brillouin_primitive_vectors_2d[0,:]=all_k_points_list[border_k_points[x_i]]-all_k_points_list[border_k_points[origin]]
+            little_brillouin_primitive_vectors_2d[1,:]=all_k_points_list[border_k_points[y_i]]-all_k_points_list[border_k_points[origin]]
+            not_refined_k_points_list,parallelograms,_bt,_bl=k_points_generator_2D(
+                brillouin_primitive_vectors_3d,
+                None,
+                None,
+                little_brillouin_primitive_vectors_2d,
+                None,
+                None,
+                None,
+                None,
+                None,
+                len(all_k_points_list))
+            ###NECESSARIO STUDIARE IL CASO AL BORDO ...
         
          # in the list of all little paths, the ones selected are substituted with a little path with vertices equal to -1
          for eigenvector in eigenspace:
