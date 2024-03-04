@@ -1,5 +1,5 @@
 # RAD-tools - program for spin Hamiltonian and magnons.
-# Copyright (C) 2022-2023  Andrey Rybakov
+# Copyright (C) 2022-2024  Andrey Rybakov
 #
 # e-mail: anry@uv.es, web: adrybakov.com
 #
@@ -83,7 +83,7 @@ def niggli(
                 A & B & C \\
                 \xi/2 & \eta/2 & \zeta/2
             \end{pmatrix}
-        
+
         If return_cell == True, then return Niggli cell: (a, b, c, alpha, beta, gamma).
 
     Raises
@@ -108,7 +108,7 @@ def niggli(
     Examples
     --------
     Example from [1]_
-    (parameters are reproducing :math:`A=9`, :math:`B=27`, :math:`C=4`, 
+    (parameters are reproducing :math:`A=9`, :math:`B=27`, :math:`C=4`,
     :math:`\xi` = -5, :math:`\eta` = -4, :math:`\zeta = -22`):
 
     .. doctest::
@@ -127,7 +127,7 @@ def niggli(
         >>> print(f"{alpha:.2f} {beta:.2f} {gamma:.2f}")
         103.92 109.47 134.88
         >>> niggli_matrix_form = rad.niggli(a, b, c, alpha, beta, gamma, verbose=True)
-                       A         B         C        xi        eta      zeta   
+                       A         B         C        xi        eta      zeta
         start:       9.00000  27.00000   4.00000  -5.00000  -4.00000 -22.00000
         2 appl. to   9.00000  27.00000   4.00000  -5.00000  -4.00000 -22.00000
         1 appl. to   9.00000   4.00000  27.00000  -5.00000 -22.00000  -4.00000

@@ -1,5 +1,5 @@
 # RAD-tools - program for spin Hamiltonian and magnons.
-# Copyright (C) 2022-2023  Andrey Rybakov
+# Copyright (C) 2022-2024  Andrey Rybakov
 #
 # e-mail: anry@uv.es, web: adrybakov.com
 #
@@ -34,10 +34,10 @@ def solve_via_colpa(D):
 
     .. math::
 
-        \hat{H} = \sum_{r^{\prime}, r = 1}^m 
+        \hat{H} = \sum_{r^{\prime}, r = 1}^m
         \hat{\alpha}_{r^{\prime}}^{\dagger}\boldsymbol{\Delta}_1^{r^{\prime}r}\hat{\alpha}_r +
-        \hat{\alpha}_{r^{\prime}}^{\dagger}\boldsymbol{\Delta}_2^{r^{\prime}r}\hat{\alpha}_{m+r}^{\dagger} + 
-        \hat{\alpha}_{m+r^{\prime}}^{\dagger}\boldsymbol{\Delta}_3^{r^{\prime}r}\hat{\alpha}_r + 
+        \hat{\alpha}_{r^{\prime}}^{\dagger}\boldsymbol{\Delta}_2^{r^{\prime}r}\hat{\alpha}_{m+r}^{\dagger} +
+        \hat{\alpha}_{m+r^{\prime}}^{\dagger}\boldsymbol{\Delta}_3^{r^{\prime}r}\hat{\alpha}_r +
         \hat{\alpha}_{m+r^{\prime}}^{\dagger}\boldsymbol{\Delta}_4^{r^{\prime}r}\hat{\alpha}_{m+r}^{\dagger}
 
     In a matrix form the Hamiltonian is:
@@ -45,10 +45,10 @@ def solve_via_colpa(D):
     .. math::
 
         \hat{H} = \boldsymbol{\hat{a}}^{\dagger} \boldsymbol{D} \boldsymbol{\hat{a}}
-    
+
     where
 
-    .. math:: 
+    .. math::
 
         \boldsymbol{\hat{a}} =
         \begin{pmatrix}
@@ -86,15 +86,15 @@ def solve_via_colpa(D):
         Last N eigenvalues are sorted in ascending order.
         In the case of diagonalization of the magnon Hamiltonian
         first N eigenvalues are the same as last N eigenvalues, but
-        in reversed order. It is an array of the diagonal elements of the 
+        in reversed order. It is an array of the diagonal elements of the
         diagonal matrix :math:`\boldsymbol{E}` from the diagonalized Hamiltonian.
 
     G : (2N, 2N) :numpy:`ndarray`
-        Transformation matrix, which change the basis from the original set of bosonic 
-        operators :math:`\boldsymbol{\hat{a}}` to the set of 
+        Transformation matrix, which change the basis from the original set of bosonic
+        operators :math:`\boldsymbol{\hat{a}}` to the set of
         new bosonic operators :math:`\boldsymbol{\hat{c}}` which diagonalize
         the Hamiltonian:
-        
+
         .. math::
 
             \boldsymbol{\hat{c}} = \boldsymbol{G} \boldsymbol{\hat{a}}

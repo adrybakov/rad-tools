@@ -1,5 +1,5 @@
 # RAD-tools - program for spin Hamiltonian and magnons.
-# Copyright (C) 2022-2023  Andrey Rybakov
+# Copyright (C) 2022-2024  Andrey Rybakov
 #
 # e-mail: anry@uv.es, web: adrybakov.com
 #
@@ -128,11 +128,18 @@ def manager(input_filename, span=0.1, output_name=""):
         else:
             centre[0] = name
 
+    # Save the count of centres in atoms
+    count = {}
+
     # Write the output
     with open(output_name, "w", encoding="utf-8") as file:
         file.write(f"{len(atoms) + len(centres):6.0f}\n")
         file.write(f"{file_stats}")
         for centre, coordinate in centres:
+            if centre in count:
+                count[centre] += 1
+            else:
+                count[centre] = 1
             file.write(
                 f"X      "
                 + f"{coordinate[0]:14.8f}   "
@@ -149,6 +156,10 @@ def manager(input_filename, span=0.1, output_name=""):
                 + f"   ->   {atom}\n"
             )
     cprint(f"Results are in {os.path.abspath(output_name)}", "blue")
+    count = "\n".join(
+        [f"{centre:6} -> {amount:4} WF" for centre, amount in count.items()]
+    )
+    print(f"Found:\n{count}")
 
 
 def create_parser():

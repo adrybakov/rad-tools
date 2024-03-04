@@ -1,5 +1,5 @@
 # RAD-tools - program for spin Hamiltonian and magnons.
-# Copyright (C) 2022-2023  Andrey Rybakov
+# Copyright (C) 2022-2024  Andrey Rybakov
 #
 # e-mail: anry@uv.es, web: adrybakov.com
 #
@@ -17,10 +17,10 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 r"""
-The module provides input-output routines. 
+The module provides input-output routines.
 It does not mean to absorb all interfaces to the external data formats,
-but designed to be the place for the constructor of the internal 
-data structures from the input data of the external programs, 
+but designed to be the place for the constructor of the internal
+data structures from the input data of the external programs,
 as well as from the internal-specified formats.
 """
 

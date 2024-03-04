@@ -1,5 +1,5 @@
 # RAD-tools - program for spin Hamiltonian and magnons.
-# Copyright (C) 2022-2023  Andrey Rybakov
+# Copyright (C) 2022-2024  Andrey Rybakov
 #
 # e-mail: anry@uv.es, web: adrybakov.com
 #
@@ -17,7 +17,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 r"""
-Collection of small routines and constants, 
+Collection of small routines and constants,
 which are used across the whole package.
 
 It's purpose is to serve as an "other" folder.
@@ -46,7 +46,7 @@ def compare_numerically(x, condition, y, eps=None, rtol=REL_TOL, atol=ABS_TOL):
             x = y  & \text{ not } (x < y - \varepsilon \text{ or } y < x - \varepsilon) \\
             x \ne y & x < y - \varepsilon \text{ or } y < x - \varepsilon
         \end{matrix}
-        
+
     Parameters
     ----------
     x : float

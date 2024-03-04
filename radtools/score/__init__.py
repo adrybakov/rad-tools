@@ -1,5 +1,5 @@
 # RAD-tools - program for spin Hamiltonian and magnons.
-# Copyright (C) 2022-2023  Andrey Rybakov
+# Copyright (C) 2022-2024  Andrey Rybakov
 #
 # e-mail: anry@uv.es, web: adrybakov.com
 #
@@ -20,16 +20,16 @@ r"""
 Script interface to the radtools package.
 
 The behaviour of the command line interface is defined by the
-functions in this module.  
+functions in this module.
 
 The functions are called with the same names as the scripts,
-but the prefix "rad-" is removed and "-" are substituted by "_". 
+but the prefix "rad-" is removed and "-" are substituted by "_".
 Function`s arguments directly correspond to the full names of the
-arguments of the script (i.e. the argument :ref:`rad-extract-tb2j_input-filename` 
+arguments of the script (i.e. the argument :ref:`rad-extract-tb2j_input-filename`
 of the script :ref:`rad-extract-tb2j` is passed to the function :py:func:`.extract_tb2j` as the
-argument ``input_filename``). 
+argument ``input_filename``).
 
-Full documentation on the behaviour is available in the 
+Full documentation on the behaviour is available in the
 :ref:`scripts-guide`.
 
 
@@ -48,7 +48,7 @@ Full documentation on the behaviour is available in the
 
     .. code-block:: python
 
-        from radtools import identify_wannier_centres  
+        from radtools import identify_wannier_centres
         identify_wannier_centres("seedname_centres.xyz",
             span = 0.2,
             output_name="identified_centres")
