@@ -233,7 +233,7 @@ class Berry_curvature:
                     weights[j]=refined_k_points_list[little_paths[i][j],3]
                 phases[i]=self.circuitation_over_a_path(u,weights,self.N,number_eigenspaces,magnonic_branches,triangulation)
                 chern+=phases
-            # condition for dynamical refinment
+            # condition for dynamical refinment (checking that the Chern numbers are integer numbers)
             if np.any(np.asarray(list(map(lambda x: float(x).is_integer(),chern)))) == False:
                 old_chern+=chern
                 max_indices=[]
@@ -258,3 +258,6 @@ class Berry_curvature:
                                                     )
             else:
                 dynamical_refinment=False
+        
+        return chern
+    

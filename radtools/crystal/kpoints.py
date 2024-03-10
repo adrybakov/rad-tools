@@ -23,6 +23,7 @@ General 3D lattice.
 from typing import Iterable
 from collections import Counter
 import numpy as np
+import scipy
 from scipy.interpolate import griddata
 from scipy.spatial.transform import Rotation
 from scipy.spatial import Delaunay
