@@ -28,6 +28,7 @@ from scipy.spatial.transform import Rotation
 from scipy.spatial import Delaunay
 from radtools.geometry import absolute_to_relative
 from scipy.spatial.distance import cdist
+import math
 
 __all__ = ["Kpoints"]
 
@@ -904,6 +905,7 @@ def dynamical_refinment_little_paths_2d(
         threshold,
         brillouin_primitive_vectors_3d,
         brillouin_primitive_vectors_2d,
+        chosen_plane,
         normalized_brillouin_primitive_vectors_2d
 ):
     r"""
@@ -1078,6 +1080,7 @@ def dynamical_refinment_little_paths_2d(
     else:
         # here it is sufficient to find for each eigenspace the extremal k points
         # these k points are then used to draw a simil-BZ, which is refined using the grid-generation 2d methods
+        count=len(all_k_points_list)
         for i in range(number_eigenspaces):
             number_eigenvectors_around=len(eigenspaces_k_points_around[i])
             eigenvectors_around_array=np.zeros((number_eigenvectors_around,3),dtype=float)
@@ -1096,42 +1099,55 @@ def dynamical_refinment_little_paths_2d(
             for i in range(number_eigenvectors_around):
                 for j in range(2):
                     k_points_list_projections_border[i,j]=(eigenvectors_around_array[i,:3]-origin)@brillouin_primitive_vectors_2d[j,:]
-
-
-                DA QUI
-
-
-
-            elementy=sorted(k_points_list_projections_border,key=lambda x: x[0])[-1]
-            elementx=sorted(k_points_list_projections_border,key=lambda x: x[1])[-1]
-
-            for i in range(number_eigenvectors_around):
-                if elementx == k_points_list_projections_border[i]:
-                    x_i=i
-                if elementy == k_points_list_projections_border[i]:
-                    y_i=i
+            #transforming into polar coordinates x,y -> rho,theta
+            rho=list(map(lambda x,y: math.sqrt(x**2+y**2),k_points_list_projections_border[:,0],k_points_list_projections_border[:,1]))
+            rho=np.reshape(rho,(number_eigenspaces,1))
+            theta=list(map(lambda x,y: math.atan(y/x),k_points_list_projections_border[:,0],k_points_list_projections_border[:,1]))
+            theta=np.reshape(theta,(number_eigenspaces,1))
+            ij_origin=np.argmin(rho)
             
+            ij_a0=np.argmin(theta)
+            i_a0=np.argmax(rho[ij_a0])
+            ij_a1=np.argmax(theta)
+            i_a1=np.argmax(rho[ij_a1])
+            
+            #finding the new bordening
+            new_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
+            origin=k_points_list_projections_border[ij_origin,:]
+            new_brillouin_primitive_vectors_2d[0,:]=k_points_list_projections_border[i_a0,:]-origin
+            new_brillouin_primitive_vectors_2d[1,:]=k_points_list_projections_border[i_a1,:]-origin
 
+            new_brillouin_primitive_vectors_3d=np.zeros((3,3),dtype=float)
+            new_brillouin_primitive_vectors_3d[3,:]=brillouin_primitive_vectors_3d[[i for i in range(3) if chosen_plane[i]==0],:]
+            for i in range(2):
+                new_brillouin_primitive_vectors_3d[i,:]=new_brillouin_primitive_vectors_2d[i,:]
 
-            #defining the primitive vectors of the subspace
-            little_brillouin_primitive_vectors_2d=np.zeros((2,3))
-            little_brillouin_primitive_vectors_2d[0,:]=all_k_points_list[border_k_points[x_i]]-all_k_points_list[border_k_points[origin]]
-            little_brillouin_primitive_vectors_2d[1,:]=all_k_points_list[border_k_points[y_i]]-all_k_points_list[border_k_points[origin]]
-            not_refined_k_points_list,parallelograms,_bt,_bl=k_points_generator_2D(
+            #finding the minimal grid spacing
+            moduli=np.zeros(number_eigenvectors_around,dtype=float)
+            for i in range(number_eigenvectors_around):
+                moduli[i]=np.linalg.norm(eigenvectors_around_array[i,:3]-origin,2)
+            initial_grid_spacing=np.min(moduli)/2
+            
+            new_not_refined_k_points_list,new_parallelograms,k0,k1=k_points_generator_2D(
                 brillouin_primitive_vectors_3d,
+                initial_grid_spacing,
+                chosen_plane,
+                new_brillouin_primitive_vectors_2d,
+                False,
                 None,
                 None,
-                little_brillouin_primitive_vectors_2d,
                 None,
                 None,
                 None,
                 None,
-                None,
-                len(all_k_points_list))
-            ###NECESSARIO STUDIARE IL CASO AL BORDO ...
+                count
+                )
+            count=count+k0*k1
+            all_k_points_list.append(new_not_refined_k_points_list)
+            little_paths.append(new_parallelograms)
         
-         # in the list of all little paths, the ones selected are substituted with a little path with vertices equal to -1
-         for eigenvector in eigenspace:
+        # in the list of all little paths, the ones selected are substituted with a little path with vertices equal to -1
+        for eigenvector in eigenspace:
             little_paths[eigenvector]=[-1 for j in range(number_vertices)]
         
         return not_refined_k_points_list, parallelograms
