@@ -847,7 +847,7 @@ def k_points_generator_2D(
         return refined_k_points_list,triangles
     else:
         not_refined_k_points_list = np.zeros((k0*k1,4))
-        parallelograms=np.empty((k0*k1,4),dtype=object)
+        parallelograms=[]
         for i in range(0,k0):
             for j in range(0,k1):
                # print(i,j,k0,k1)
@@ -855,19 +855,21 @@ def k_points_generator_2D(
                    + (float(j + shift_in_plane[1]) / k1) * (shift_in_space + brillouin_primitive_vectors_2d[1])
                 not_refined_k_points_list[i*k1+j][3]=initial_weights
                 #periodicity of the BZ
+                parallelogram=[]
                 if i<k0-1 and j<k1-1:
-                    parallelograms[i*k1+j]=[[i*k1+j,0],[(i+1)*k1+j,0],[(i+1)*k1+j+1,0],[i*k1+j+1,0]]
+                    parallelogram=[[i*k1+j,0],[(i+1)*k1+j,0],[(i+1)*k1+j+1,0],[i*k1+j+1,0]]
                 elif i<k0-1 and j==k1-1:
-                    parallelograms[i*k1+j]=[[i*k1+j,0],[(i+1)*k1+j,0],[(i+1)*k1+0,1],[i*k1+0,1]]
+                    parallelogram=[[i*k1+j,0],[(i+1)*k1+j,0],[(i+1)*k1+0,2],[i*k1+0,2]]
                 elif i==k0-1 and j<k1-1:
-                    parallelograms[i*k1+j]=[[i*k1+j,0],[0*k1+j,2],[0*k1+j+1,2],[i*k1+j+1,0]]
+                    parallelogram=[[i*k1+j,0],[0*k1+j,1],[0*k1+j+1,1],[i*k1+j+1,0]]
                 else:
-                    parallelograms[i*k1+j]=[[i*k1+j,0],[0*k1+j,0],[0*k1+0,3],[i*k1+0,0]]
-
+                    parallelogram=[[i*k1+j,0],[0*k1+j,1],[0*k1+0,3],[i*k1+0,2]]
                 for r in range(4):
-                    parallelograms[i*k1+j][r][0]+=precedent_count
-                parallelograms[i*k1+j]=np.array(parallelograms[i*k1+j])
-
+                    parallelogram[r][0]+=precedent_count
+                
+                parallelograms.append(parallelogram)
+        parallelograms=np.reshape(parallelograms,(int(k0*k1),4,2))
+                    
         return not_refined_k_points_list,parallelograms
 
 def check_inside_closed_shape_2d(
@@ -911,7 +913,7 @@ def check_inside_closed_shape_2d(
 
 def dynamical_refinment_little_paths_2d(
         little_paths,
-        position_littles_paths_to_refine,
+        position_little_paths_to_refine,
         number_vertices,
         all_k_points_list,
         refinment_iteration,
@@ -945,10 +947,8 @@ def dynamical_refinment_little_paths_2d(
     added_little_paths: (,3) |array_like| (v1,v2,v3)
     """
     number_little_paths=len(little_paths)
-
-    position_little_paths_to_refine=list(set(position_littles_paths_to_refine))
     eigenspaces_little_paths_to_refine=[[i] for i in position_little_paths_to_refine]
-
+    print(eigenspaces_little_paths_to_refine)
     flag_checking_indipendence=True
     while flag_checking_indipendence == True:
         number_eigenspaces=len(eigenspaces_little_paths_to_refine)
@@ -962,10 +962,18 @@ def dynamical_refinment_little_paths_2d(
             eigenvectors = little_paths[eigenspace]
             # the little paths around each eigenvector are associated to it
             little_paths_around_each_eigenvector=[]
+            print("eige",eigenspace)
+            print("numb",number_eigenvectors)
             for i in range(number_eigenvectors):
-                little_paths_around_each_eigenvector.append(list(set([ int(r) for r in range(number_little_paths) for j in little_paths[r] if j in eigenvectors[i] and r not in eigenspace])))
+                print("eigenvec",eigenvectors[i][:,0])
+                print(little_paths[1])
+                print(little_paths[1][:,0])
+                little_paths_around_each_eigenvector.append([r for r in range(number_little_paths) for j in little_paths[r][:,0] if j in eigenvectors[i][:,0] and r not in eigenspace])
+                little_paths_around_each_eigenvector=np.unique(little_paths_around_each_eigenvector)
             number_total_around+=len(little_paths_around_each_eigenvector)
-        little_paths_around_each_eigenspace.append(little_paths_around_each_eigenvector)
+            print(number_total_around,little_paths_around_each_eigenvector)
+            little_paths_around_each_eigenspace.append(little_paths_around_each_eigenvector)
+        print(little_paths_around_each_eigenspace)
         # checking if two eigenspaces are in reality the same eigenspace:
         # between the "little_paths_around" of one of the two eigenspaces the index of one of the eigenvectors of the other eigenspace appear
         check_degeneracy = np.zeros((number_eigenspaces, number_eigenspaces), dtype=bool)
@@ -978,6 +986,8 @@ def dynamical_refinment_little_paths_2d(
                 else:
                     check_degeneracy[i,j]=False
         if any_degeneracy!=0:
+            print("inside")
+            print(check_degeneracy)
             # unifying the eigenspaces properly
             # after having written them in an array form to facilitate it
             # unifying as well the "little paths around"
@@ -991,7 +1001,8 @@ def dynamical_refinment_little_paths_2d(
                 for eigenvector in eigenspace:
                     eigenspaces_little_paths_to_refine_array[count1,0]=eigenvector
                     eigenspaces_little_paths_to_refine_array[count1,1]=count2
-                    for around in little_paths_around_each_eigenspace[count2][count3]:
+                    print(little_paths_around_each_eigenspace[count2])
+                    for around in little_paths_around_each_eigenspace[count2]:
                         little_paths_around_each_eigenspace_array[count4,0]=around
                         little_paths_around_each_eigenspace_array[count4,1]=count2
                         count4+=1
@@ -1013,17 +1024,28 @@ def dynamical_refinment_little_paths_2d(
             eigenspaces_little_paths_to_refine=[]
             little_paths_around_each_eigenspace=[]
             for value in values_eigenspaces:
-                eigenspaces_little_paths_to_refine.append(r for r in range(number_total_eigenvectors) if eigenspaces_little_paths_to_refine_array[r,1]==value)
-                little_paths_around_each_eigenspace.append(r for r in range(number_total_around) if little_paths_around_each_eigenspace_array[r,1]==value)
+                eigenspaces_little_paths_to_refine.append([r for r in range(number_total_eigenvectors) if eigenspaces_little_paths_to_refine_array[r,1]==value])
+                little_paths_around_each_eigenspace.append([r for r in range(number_total_around) if little_paths_around_each_eigenspace_array[r,1]==value])
+            print("ecco")
+            print(eigenspaces_little_paths_to_refine)
+            print(little_paths_around_each_eigenspace)
             # eliminating in each eigenspace the presence of eigenvectors in other eigenvectors little paths around
             number_eigenspaces=len(eigenspaces_little_paths_to_refine)
             for i in range(number_eigenspaces):
                 indices=[]
-                for r in range(len(little_paths_around_each_eigenspace[i])):
-                    if little_paths_around_each_eigenspace[i][r] == i:
-                        indices.append(int(r))
-                del little_paths_around_each_eigenspace[i][indices]
-            # checking if two eigenvectors have one little path around in common (for at leas two vertices)
+                for j in eigenspaces_little_paths_to_refine[i]:
+                    for r in little_paths_around_each_eigenspace[i]:
+                        if r == j:
+                            indices.append(r)
+                print("indices",indices)
+                indices.sort()
+                if len(indices)!=0:
+                    count5=0
+                    for index in indices:
+                        del little_paths_around_each_eigenspace[i][index-count5]
+                        count5+=1
+                    print(little_paths_around_each_eigenspace[i])
+            # checking if two eigenvectors (of two eigenspaces) have one little path around in common (for at leas two vertices)
             # this in common little path is inserted into the to refine little paths and the procedure is repeated
             new_little_paths_to_refine=[]
             for i in range(number_eigenspaces-1):
@@ -1191,9 +1213,9 @@ if __name__ == "__main__":
     brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
     chosen_plane=[1,1,0]
     symmetries=[[0,0,np.pi/2]]
-    initial_grid_spacing=0.1
+    initial_grid_spacing=0.01
     refinment_iteration=3
-    refinment_spacing=0.001
+    refinment_spacing=0.01
     threshold=0.001
     count=0
     shift_in_plane=[0,0]
@@ -1271,58 +1293,74 @@ if __name__ == "__main__":
         shift_in_space,
         count
         )
-    #print(not_refined_k_points_list)
+    ###print(not_refined_k_points_list)
+    ##print(parallelograms)
+    ##number_parallelograms=len(parallelograms)
+    ##print(np.shape(not_refined_k_points_list))
+    ##print(np.shape(parallelograms))
+    ###print(parallelograms)
+    ##parallelogram=[0]*4
+    ##new_parallelograms_tmp=[]
+    ##for i in range(number_parallelograms):
+    ##    indx_1=[parallelograms[i][r][0] for r in range(4)]
+    ##    indx_2=[parallelograms[i][r][1] for r in range(4)]
+    ##    count=0
+    ##    for indx in indx_1:
+    ##        parallelogram[count]=[not_refined_k_points_list[indx,s] for s in range(3)]
+    ##        if indx_2[count]!=0:
+    ##            for s in range(3):
+    ##                if indx_2[count]==1:
+    ##                    parallelogram[count][s]+=brillouin_primitive_vectors_2d[0,s]
+    ##                elif indx_2[count]==2:
+    ##                    parallelogram[count][s]+=brillouin_primitive_vectors_2d[1,s]
+    ##                else:
+    ##                    parallelogram[count][s]+=brillouin_primitive_vectors_2d[1,s]+brillouin_primitive_vectors_2d[0,s]
+    ##        count+=1
+    ##    new_parallelograms_tmp.extend(parallelogram)
+    ##print(np.shape(new_parallelograms_tmp))
+    ##number_parallelograms=int(len(new_parallelograms_tmp)/4)
+    ##new_parallelograms=np.reshape(new_parallelograms_tmp,(number_parallelograms,4,3))
+    ##print(new_parallelograms)
+    ##new_parallelograms=new_parallelograms[:,:,:2]
+    ##fig,ax=plt.subplots()
+    ##patches=[]
+    ##for i in range(number_parallelograms):
+    ##    polygon=Polygon(new_parallelograms[i], closed=True, fill=None, edgecolor='c')
+    ##    patches.append(polygon)
+    ##
+    ##print(new_parallelograms)
+    ##p = PatchCollection(patches,cmap=matplotlib.cm.jet,alpha=0.4)
+    ##colors = 100*np.random.rand(len(patches))
+    ##p.set_array(np.array(colors))
+    ##ax.add_collection(p)
+    ###plt.show()
+    ##fig=plt.figure()
+    ##ax=fig.add_subplot(projection='3d')
+    ##ax.scatter(not_refined_k_points_list[:,0],not_refined_k_points_list[:,1],not_refined_k_points_list[:,3])
+    ###plt.show()
+
+    position_little_paths_to_refine=[1,2,3]
+    number_vertices=4
+    normalized_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
+    for i in range(2):
+        normalized_brillouin_primitive_vectors_2d[i]=brillouin_primitive_vectors_2d[i]/np.dot(brillouin_primitive_vectors_2d[i],brillouin_primitive_vectors_2d[i])
+    
     print(parallelograms)
-    number_parallelograms=len(parallelograms)
-    print(np.shape(not_refined_k_points_list))
-    print(np.shape(parallelograms))
-    #print(parallelograms)
-    parallelogram=[0]*4
-    new_parallelograms_tmp=[]
-    for i in range(number_parallelograms):
-        indx_1=[parallelograms[i][r][0] for r in range(4)]
-        indx_2=[parallelograms[i][r][1] for r in range(4)]
-        count=0
-        for indx in indx_1:
-            parallelogram[count]=[not_refined_k_points_list[indx,s] for s in range(3)]
-            if indx_2[count]!=0:
-                for s in range(3):
-                    if indx_2[count]==1:
-                        parallelogram[count][s]+=brillouin_primitive_vectors_2d[0,s]
-                    elif indx_2[count]==2:
-                        parallelogram[count][s]+=brillouin_primitive_vectors_2d[1,s]
-                    else:
-                        parallelogram[count][s]+=brillouin_primitive_vectors_2d[1,s]+brillouin_primitive_vectors_2d[0,s]
-            count+=1
-        new_parallelograms_tmp.extend(parallelogram)
-
-    print(np.shape(new_parallelograms_tmp))
-    number_parallelograms=int(len(new_parallelograms_tmp)/4)
-    new_parallelograms=np.reshape(new_parallelograms_tmp,(number_parallelograms,4,3))
-    print(new_parallelograms)
-    new_parallelograms=new_parallelograms[:,:,:2]
-
-    fig,ax=plt.subplots()
-    patches=[]
-    for i in range(number_parallelograms):
-        polygon=Polygon(new_parallelograms[i], closed=True, fill=None, edgecolor='c')
-        patches.append(polygon)
+    not_refined_k_points_list,parallelograms=dynamical_refinment_little_paths_2d(
+        parallelograms,
+        position_little_paths_to_refine,
+        number_vertices,
+        not_refined_k_points_list,
+        refinment_iteration,
+        symmetries,
+        threshold,
+        brillouin_primitive_vectors_3d,
+        brillouin_primitive_vectors_2d,
+        chosen_plane,
+        normalized_brillouin_primitive_vectors_2d
+    )  
     
-    print(new_parallelograms)
-
-    p = PatchCollection(patches,cmap=matplotlib.cm.jet,alpha=0.4)
-    colors = 100*np.random.rand(len(patches))
-    p.set_array(np.array(colors))
-    ax.add_collection(p)
-    plt.show()
-
-    fig=plt.figure()
-    ax=fig.add_subplot(projection='3d')
-    ax.scatter(not_refined_k_points_list[:,0],not_refined_k_points_list[:,1],not_refined_k_points_list[:,3])
-
-    plt.show()
-    
-    ###dynamical refinment (parallelograms)
+    ##dynamical refinment (parallelograms)
     ##print(not_refined_k_points_list)
     ##print(parallelograms)
     ##indices=[0,1,2,3,4,4,4,5]
