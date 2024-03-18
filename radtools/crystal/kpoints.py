@@ -406,30 +406,24 @@ def downfold_inside_brillouin_zone(
         -------
         transformed_k_point_list: (N, 3) :|array_like| kx,ky,kz (k points are given in cartesian coordinates)
         """
-    matrix_transformation_crystal_to_cartesian = np.zeros((3,3))
-    matrix_transformation_cartesian_to_crystal = np.zeros((3,3))
-    
+    matrix_transformation_crystal_to_cartesian=np.zeros((3,3))
+    matrix_transformation_cartesian_to_crystal=np.zeros((3,3))
     number_k_point_elements = k_point_list.shape[0]
     transformed_k_point_list = np.zeros((number_k_point_elements,3),dtype=float)
-    flag_inside_out=np.zeros((number_k_point_elements),dtype=int)
-
-    matrix_transformation_crystal_to_cartesian = np.matrix(brillouin_primitive_vectors_3d).transpose()
-
+    matrix_transformation_crystal_to_cartesian=np.matrix(brillouin_primitive_vectors_3d).transpose()
     matrix_transformation_cartesian_to_crystal=np.linalg.inv(matrix_transformation_crystal_to_cartesian)
 
     # writing k points in crystal coordinates
     for i in range(number_k_point_elements):
-        transformed_k_point_list[i,:] = matrix_transformation_cartesian_to_crystal @ k_point_list[i,:]
+        transformed_k_point_list[i,:]=matrix_transformation_cartesian_to_crystal@k_point_list[i,:]
 
     # checking if any point of the list is outside the first brillouin zone
-    for r in range(3):
-        modules=np.absolute(transformed_k_point_list[:,r])
-        for i in range(number_k_point_elements):
-            if modules[i] >=1:
-                flag_inside_out[i]=1
+    for i in range(number_k_point_elements):
+        for r in range(3):
+            if transformed_k_point_list[i,r] >= 1.0 or transformed_k_point_list[i,r] < 0:
                 for d in range(3):
-                    k_point_list[i,d]-=int(transformed_k_point_list[i,d])*brillouin_primitive_vectors_3d[r,d]
-    return k_point_list, flag_inside_out
+                    k_point_list[i,d]=k_point_list[i,d]-brillouin_primitive_vectors_3d[r,d]*np.sign(transformed_k_point_list[i,r])
+    return k_point_list
 
 # function applying symmetry analysis to a list of k points, the symmetry operations considered are the point group ones
 # the fixed point is given; the analysis aim is to redistribute the fixed point weight between the list of k points
@@ -522,8 +516,11 @@ def symmetry_analysis(
         # considering a representative for each eigenspace
         for i in range(number_eigenspaces):
             list_positions=[r for r in range(number_elements) if ordered_k_eigenspaces[r]==i]
-            new_k_list[list_positions[0],3]=weights
-            new_k_list[list_positions[1:],3]=0
+            if len(list_positions)!=0:
+                new_k_list[list_positions[0],3]=weights
+                new_k_list[list_positions[1:],3]=0
+            else:
+                break
 
         # returning the matrix with the respective weights
         return new_k_list
@@ -566,6 +563,11 @@ def local_refinment_with_symmetry_analysis(
     """
     length_old_k_list=old_k_list.shape[0]
     if refinment_iteration == 0:
+        if downfold == True:
+            old_k_list[:,:3]= downfold_inside_brillouin_zone(
+                old_k_list[:,:3],
+                brillouin_primitive_vectors_3d,
+            )
         for i in range(length_old_k_list):
             if old_k_list[i,3]!=0:
                 new_k_list.extend(old_k_list[i,:])
@@ -600,13 +602,11 @@ def local_refinment_with_symmetry_analysis(
                 )
                 
                 k_tmp_subgrid=np.delete(k_tmp_subgrid, np.where(k_tmp_subgrid[:,3]==0),axis=0)
-                
-                if downfold==True:
-                    k_tmp_subgrid[:,:3],flag_inside_out= downfold_inside_brillouin_zone(
+                if downfold == True:
+                    k_tmp_subgrid[:,:3]= downfold_inside_brillouin_zone(
                         k_tmp_subgrid[:,:3],
                         brillouin_primitive_vectors_3d,
                     )
-
                 # applying to the points of the subgrid to the refinment procedure
                 new_refinment_spacing = refinment_spacing / 2
                 
@@ -654,12 +654,12 @@ def k_points_triangulation_2d(
 
     number_elements=k_points_list.shape[0]
     k_points_list_projections=np.zeros((number_elements,2),dtype=float)
-
     #choosing one point as an origin in the 2d brillouin plane
-    origin=k_points_list[0,:3]
+    origin=np.zeros(3,dtype=float)
     #calculating the projections of the different k points on the primitive vectors
     vector_0=np.zeros((number_elements,2),dtype=float)
     vector_1=np.zeros((number_elements,2),dtype=float)
+    vector_2=np.ones((number_elements,2),dtype=float)
     for i in range(number_elements):
         vector_0[i,0]=1
         vector_1[i,1]=1
@@ -667,61 +667,73 @@ def k_points_triangulation_2d(
             k_points_list_projections[i,j]=(k_points_list[i,:3]-origin)@brillouin_primitive_vectors_2d[j,:]
     
     #considering the periodic images
-    k_points_list_projections_periodic_images_0=np.zeros((number_elements,2),dtype=float)
-    k_points_list_projections_periodic_images_1=np.zeros((number_elements,2),dtype=float)
-    k_points_list_projections_periodic_images_0=k_points_list_projections+vector_0
-    k_points_list_projections_periodic_images_1=k_points_list_projections+vector_1
-
-    #triangulation of the set of points
-    old_triangles_tmp = Delaunay(k_points_list_projections).simplices
-    old_triangles=[]
-    for i in range(len(old_triangles_tmp)):
-        old_triangles.append([[element,0] for element in old_triangles_tmp[i]])
-
-    #to consider the border is equivalent to consider the trianglues between k_points_list_projections_periodic_images_0/1 and k_points_list_projections
-    old_triangles_border_1=[]
-    k_points_list_projections_periodic_images_1=np.vstack([k_points_list_projections,k_points_list_projections_periodic_images_1])
-    old_triangles_border_1_tmp = Delaunay(k_points_list_projections_periodic_images_1).simplices
-    for i in range(len(old_triangles_border_1_tmp)):
-        if np.any(old_triangles_border_1_tmp[i]<number_elements) and  np.any(old_triangles_border_1_tmp[i]>number_elements):
-            old_triangles_border_1.append([[element,0] if element<number_elements else [element-number_elements,2] for element in old_triangles_border_1_tmp[i]])
-    old_triangles_border_0=[]
-    k_points_list_projections_periodic_images_0=np.vstack([k_points_list_projections,k_points_list_projections_periodic_images_0])
-    old_triangles_border_0_tmp = Delaunay(k_points_list_projections_periodic_images_0).simplices
-    for i in range(len(old_triangles_border_0_tmp)):
-        if np.any(old_triangles_border_0_tmp[i]<number_elements) and  np.any(old_triangles_border_0_tmp[i]>number_elements):
-            old_triangles_border_0.append([[element,0] if element<number_elements else [element-number_elements,1] for element in old_triangles_border_0_tmp[i]])
-
-    #concatenating the triangles totally inside the FBZ (0) and the ones going through the border (1/2)
-    old_triangles=np.vstack([old_triangles,old_triangles_border_0])
-    old_triangles=np.vstack([old_triangles,old_triangles_border_1])
-    #these are the different triangles, where each element has two numbers representing the respective element of the list and one element distinguishing if the point is passing trough the border of the FBZ
+    k_points_list_projections_periodic_images=np.zeros((4*number_elements,2),dtype=float)
+    k_points_list_projections_periodic_images[:number_elements,:]=k_points_list_projections
+    k_points_list_projections_periodic_images[number_elements:2*number_elements,:]=k_points_list_projections+vector_0
+    k_points_list_projections_periodic_images[2*number_elements:3*number_elements,:]=k_points_list_projections+vector_1
+    k_points_list_projections_periodic_images[3*number_elements:,:]=k_points_list_projections+vector_2
     
-    #the projections along the two axis can be used to properly order the vertices of the triangles
-    new_triangles = []
-    vertices_projections = np.zeros((3,2))
-    number_of_triangles = len(old_triangles) 
-    for i in range(number_of_triangles):
-        vertices=old_triangles[i,:]
-        one=[1,0]
-        two=[0,1]
-        for r in range(3):
-            if vertices[r,1]==0:
-                vertices_projections[r]=k_points_list_projections[vertices[r,0]]
-            elif vertices[r,1]==1:
-                vertices_projections[r]=k_points_list_projections[vertices[r,0]]+one
+    #triangulation of the set of points
+    old_triangles_tmp = Delaunay(k_points_list_projections_periodic_images,qhull_options="QJ")
+    print(old_triangles_tmp.add_points)
+
+    old_triangles_tmp=old_triangles_tmp.simplices
+    number_triangles = int(len(old_triangles_tmp))
+    old_triangles=[]
+    for i in range(number_triangles):
+        triangle=np.zeros((3,2),dtype=int)
+        count_element=0
+        count_outside=0
+        for element in old_triangles_tmp[i]:
+            if element<number_elements:
+                triangle[count_element,1]=0
+                triangle[count_element,0]=element
+            elif element>=number_elements and element<2*number_elements:
+                triangle[count_element,1]=1
+                count_outside+=1
+                triangle[count_element,0]=element-number_elements
+            elif element>=2*number_elements and element<3*number_elements:
+                triangle[count_element,1]=2
+                count_outside+=1
+                triangle[count_element,0]=element-2*number_elements
             else:
-                vertices_projections[r]=k_points_list_projections[vertices[r,0]]+two
-        indices=[tup[0] for tup in sorted(enumerate(vertices_projections[:,1]))]
-        vertices_projections=vertices_projections[indices]
-        if vertices_projections[0,1]==np.min(vertices_projections[:,0]):
-            indices=[tup[0] for tup in sorted(enumerate(vertices_projections[:,0]))]
-            vertices_projections=vertices_projections[indices]
-        vertices=vertices[indices]
-        #considering the case the function is called on an existing list (the existing list has length equal to border_count)
-        for s in range(3):
-            if  vertices[s,0]> count:
-                vertices[s,0]+=count
+                triangle[count_element,1]=3
+                count_outside+=1
+                triangle[count_element,0]=element-3*number_elements
+            count_element+=1
+        if count_outside < 3:
+            old_triangles.append(triangle)
+    number_triangles = int(len(old_triangles))
+
+    #the projections along the two axis can be used to properly order the vertices of the triangls
+    new_triangles = []
+    vertices_projections = np.zeros((3,2),dtype=float)
+    one=[1,0]
+    two=[0,1]
+    three=[1,1]
+    for i in range(number_triangles):
+        ##print(i,number_triangles)
+        ##print(old_triangles[i])
+        vertices=old_triangles[i]
+        ##for r in range(3):
+        ##    if vertices[r,1]==0:
+        ##        vertices_projections[r]=k_points_list_projections[vertices[r,0]]
+        ##    elif vertices[r,1]==1:
+        ##        vertices_projections[r]=k_points_list_projections[vertices[r,0]]+one
+        ##    elif vertices[r,1]==2:
+        ##        vertices_projections[r]=k_points_list_projections[vertices[r,0]]+two
+        ##    else:
+        ##        vertices_projections[r]=k_points_list_projections[vertices[r,0]]+three
+        ##indices=[tup[0] for tup in sorted(enumerate(vertices_projections[:,1]))]
+        ##vertices_projections=vertices_projections[indices]
+        ##if vertices_projections[0,1]==np.min(vertices_projections[:,0]):
+        ##    indices=[tup[0] for tup in sorted(enumerate(vertices_projections[:,0]))]
+        ##    vertices_projections=vertices_projections[indices]
+        ##vertices=vertices[indices]
+        #considering the case the function is called on an existing list (the existing list has length equal to count)
+        ##for s in range(3):
+        ##    if  vertices[s,0]> count:
+        ##        vertices[s,0]+=count
         new_triangles.append(vertices)
        
     #for each triangle the ordering of the vertices is now clock-wise
@@ -740,7 +752,7 @@ def k_points_generator_2D(
     refinment_iteration=0,
     shift_in_plane=[0,0],
     shift_in_space=[0,0,0],
-    count=0 
+    precedent_count=0 
 ):
     r"""
     k points generator in a 2d plane
@@ -836,11 +848,12 @@ def k_points_generator_2D(
     else:
         not_refined_k_points_list = np.zeros((k0*k1,4))
         parallelograms=np.empty((k0*k1,4),dtype=object)
-        for i in range(k0):
-            for j in range(k1):
-                not_refined_k_points_list[i*k1+j][:3] = (float(i + shift_in_plane[0]) / k0) * (shift_in_space + brillouin_primitive_vectors_2d[0]) \
+        for i in range(0,k0):
+            for j in range(0,k1):
+               # print(i,j,k0,k1)
+                not_refined_k_points_list[i*k1+j][:3]=(float(i + shift_in_plane[0]) / k0) * (shift_in_space + brillouin_primitive_vectors_2d[0]) \
                    + (float(j + shift_in_plane[1]) / k1) * (shift_in_space + brillouin_primitive_vectors_2d[1])
-                not_refined_k_points_list[i*k1+j][3] = initial_weights
+                not_refined_k_points_list[i*k1+j][3]=initial_weights
                 #periodicity of the BZ
                 if i<k0-1 and j<k1-1:
                     parallelograms[i*k1+j]=[[i*k1+j,0],[(i+1)*k1+j,0],[(i+1)*k1+j+1,0],[i*k1+j+1,0]]
@@ -849,9 +862,10 @@ def k_points_generator_2D(
                 elif i==k0-1 and j<k1-1:
                     parallelograms[i*k1+j]=[[i*k1+j,0],[0*k1+j,2],[0*k1+j+1,2],[i*k1+j+1,0]]
                 else:
-                    parallelograms[i*k1+j]=[[i*k1+j,3],[0*k1+j,3],[0*k1+0,3],[i*k1+0,3]]
+                    parallelograms[i*k1+j]=[[i*k1+j,0],[0*k1+j,0],[0*k1+0,3],[i*k1+0,0]]
+
                 for r in range(4):
-                    parallelograms[i*k1+j][r][0]+=count
+                    parallelograms[i*k1+j][r][0]+=precedent_count
                 parallelograms[i*k1+j]=np.array(parallelograms[i*k1+j])
 
         return not_refined_k_points_list,parallelograms
@@ -1110,7 +1124,7 @@ def dynamical_refinment_little_paths_2d(
             i_a0=np.argmax(rho[ij_a0])
             ij_a1=np.argmax(theta)
             i_a1=np.argmax(rho[ij_a1])
-            
+
             #finding the new bordening
             new_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
             origin=k_points_list_projections_border[ij_origin,:]
@@ -1145,13 +1159,11 @@ def dynamical_refinment_little_paths_2d(
             count=count+k0*k1
             all_k_points_list.append(new_not_refined_k_points_list)
             little_paths.append(new_parallelograms)
-        
+
         # in the list of all little paths, the ones selected are substituted with a little path with vertices equal to -1
         for eigenvector in eigenspace:
             little_paths[eigenvector]=[-1 for j in range(number_vertices)]
-        
-        return not_refined_k_points_list, parallelograms
-
+        return not_refined_k_points_list,parallelograms
 
 #TESTING INPUT
 if __name__ == "__main__":
@@ -1173,28 +1185,84 @@ if __name__ == "__main__":
     from radtools.decorate.axes import plot_hlines
 
     brillouin_primitive_vectors_3d=np.zeros((3,3),dtype=float)
-    brillouin_primitive_vectors_3d[0]=[1,1,0]
+    brillouin_primitive_vectors_3d[0]=[1,0,0]
     brillouin_primitive_vectors_3d[1]=[0,1,0]
     brillouin_primitive_vectors_3d[2]=[0,0,1]
     brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
     chosen_plane=[1,1,0]
     symmetries=[[0,0,np.pi/2]]
     initial_grid_spacing=0.1
-    refinment_iteration=1
-    refinment_spacing=0.05
+    refinment_iteration=3
+    refinment_spacing=0.001
     threshold=0.001
     count=0
-    shift_in_plane=[1,0]
+    shift_in_plane=[0,0]
     shift_in_space=[0,0,0]
-   
 
     ###LITTLE TRIANGLES
-    refined_k_points_list,triangles=k_points_generator_2D(
+    ##refined_k_points_list,triangles=k_points_generator_2D(
+    ##    brillouin_primitive_vectors_3d,
+    ##    initial_grid_spacing,
+    ##    chosen_plane,
+    ##    brillouin_primitive_vectors_2d,
+    ##    True,
+    ##    refinment_spacing,
+    ##    symmetries,
+    ##    threshold,
+    ##    refinment_iteration,
+    ##    shift_in_space,
+    ##    shift_in_space,
+    ##    count
+    ##    )
+    ##
+    ##print(brillouin_primitive_vectors_3d)
+    ##print(brillouin_primitive_vectors_2d)
+    ##number_triangles=len(triangles)
+    ##triangle=[0]*3
+    ##new_triangles=[]
+    ##for i in range(number_triangles):
+    ##    indx_1=[triangles[i][r][0] for r in range(3)]
+    ##    indx_2=[triangles[i][r][1] for r in range(3)]
+    ##    count=0
+    ##    for indx in indx_1:
+    ##        triangle[count]=[refined_k_points_list[indx,s] for s in range(3)]
+    ##        if indx_2[count]!=0:
+    ##            for s in range(3):
+    ##                if indx_2[count]==1:
+    ##                    triangle[count][s]+=brillouin_primitive_vectors_2d[0,s]
+    ##                elif indx_2[count]==2:
+    ##                    triangle[count][s]+=brillouin_primitive_vectors_2d[1,s]
+    ##                else:
+    ##                    triangle[count][s]+=brillouin_primitive_vectors_2d[1,s]+brillouin_primitive_vectors_2d[0,s]
+    ##        count+=1
+    ##    new_triangles.extend(triangle)
+    ## print(new_triangles) 
+    ##new_triangles=np.reshape(new_triangles,(number_triangles,3,3))
+    ##new_triangles=new_triangles[:,:,:2]
+    ##fig,ax=plt.subplots()
+    ##patches=[]
+    ##
+    ##for i in range(number_triangles):
+    ##    polygon=Polygon(new_triangles[i], closed=True, fill=None, edgecolor='b')
+    ##    patches.append(polygon)
+    ##
+    ##p = PatchCollection(patches,cmap=matplotlib.cm.jet,alpha=0.4)
+    ##colors = 100*np.random.rand(len(patches))
+    ##p.set_array(np.array(colors))
+    ##ax.add_collection(p)
+    ##plt.show()
+    ##fig=plt.figure()
+    ##ax=fig.add_subplot(projection='3d')
+    ##ax.scatter(refined_k_points_list[:,0],refined_k_points_list[:,1],refined_k_points_list[:,3])
+    ##plt.show()
+
+    ###LITTLE PARALLELOGRAMS
+    not_refined_k_points_list,parallelograms=k_points_generator_2D(
         brillouin_primitive_vectors_3d,
         initial_grid_spacing,
         chosen_plane,
         brillouin_primitive_vectors_2d,
-        True,
+        False,
         refinment_spacing,
         symmetries,
         threshold,
@@ -1203,76 +1271,56 @@ if __name__ == "__main__":
         shift_in_space,
         count
         )
-    
-    number_triangles=len(triangles)
-    triangle=[0]*3
-    new_triangles=[]
-
-    print(triangles)
-    for i in range(number_triangles):
-        indx_1=[triangles[i][r][0] for r in range(3)]
-        indx_2=[triangles[i][r][1] for r in range(3)]
-        print(indx_2)
-        for r in range(3):
-            triangle[r]=[refined_k_points_list[indx_1[r],s] for s in range(2)]
-            if indx_2[r]!=0:
-                for s in range(2):
-                    if indx_2[r]==1:
-                        triangle[r][s]=triangle[r][s]+brillouin_primitive_vectors_2d[0,s]
+    #print(not_refined_k_points_list)
+    print(parallelograms)
+    number_parallelograms=len(parallelograms)
+    print(np.shape(not_refined_k_points_list))
+    print(np.shape(parallelograms))
+    #print(parallelograms)
+    parallelogram=[0]*4
+    new_parallelograms_tmp=[]
+    for i in range(number_parallelograms):
+        indx_1=[parallelograms[i][r][0] for r in range(4)]
+        indx_2=[parallelograms[i][r][1] for r in range(4)]
+        count=0
+        for indx in indx_1:
+            parallelogram[count]=[not_refined_k_points_list[indx,s] for s in range(3)]
+            if indx_2[count]!=0:
+                for s in range(3):
+                    if indx_2[count]==1:
+                        parallelogram[count][s]+=brillouin_primitive_vectors_2d[0,s]
+                    elif indx_2[count]==2:
+                        parallelogram[count][s]+=brillouin_primitive_vectors_2d[1,s]
                     else:
-                        triangle[r][s]=triangle[r][s]+brillouin_primitive_vectors_2d[1,s]
-    
-    #  print(triangle)
-        new_triangles.extend(triangle)
-    #print(new_triangles) 
+                        parallelogram[count][s]+=brillouin_primitive_vectors_2d[1,s]+brillouin_primitive_vectors_2d[0,s]
+            count+=1
+        new_parallelograms_tmp.extend(parallelogram)
 
-    new_triangles=np.reshape(new_triangles,(number_triangles,3,2))
-    #print(np.shape(new_triangles))
-    print(new_triangles)
-#
+    print(np.shape(new_parallelograms_tmp))
+    number_parallelograms=int(len(new_parallelograms_tmp)/4)
+    new_parallelograms=np.reshape(new_parallelograms_tmp,(number_parallelograms,4,3))
+    print(new_parallelograms)
+    new_parallelograms=new_parallelograms[:,:,:2]
+
     fig,ax=plt.subplots()
     patches=[]
-    
-    for i in range(number_triangles):
-        polygon=Polygon(new_triangles[i], closed=True, fill=None, edgecolor='b')
+    for i in range(number_parallelograms):
+        polygon=Polygon(new_parallelograms[i], closed=True, fill=None, edgecolor='c')
         patches.append(polygon)
     
+    print(new_parallelograms)
+
     p = PatchCollection(patches,cmap=matplotlib.cm.jet,alpha=0.4)
     colors = 100*np.random.rand(len(patches))
     p.set_array(np.array(colors))
     ax.add_collection(p)
-
     plt.show()
 
-    #print(new_triangles)
-    ##substitute to each vertex the k point coordinates
-    ##for i in range(len(triangles)):
-    ##    for j in range(3):
-    ##        new
-
-    ###LITTLE PARALLELOGRAMS
-    ###not_refined_k_points_list,parallelograms=k_points_generator_2D(
-    ###    brillouin_primitive_vectors_3d,
-    ###    initial_grid_spacing,
-    ###    chosen_plane,
-    ###    brillouin_primitive_vectors_2d,
-    ###    False,
-    ###    refinment_spacing,
-    ###    symmetries,
-    ###    threshold,
-    ###    refinment_iteration,
-    ###    shift_in_space,
-    ###    shift_in_space,
-    ###    count
-    ###    )
-    ###print(not_refined_k_points_list[:,1])
-    
-    import matplotlib.pyplot as plt
     fig=plt.figure()
     ax=fig.add_subplot(projection='3d')
-    ax.scatter(refined_k_points_list[:,0],refined_k_points_list[:,1],refined_k_points_list[:,3])
+    ax.scatter(not_refined_k_points_list[:,0],not_refined_k_points_list[:,1],not_refined_k_points_list[:,3])
 
-   # plt.show()
+    plt.show()
     
     ###dynamical refinment (parallelograms)
     ##print(not_refined_k_points_list)
