@@ -30,6 +30,7 @@ from scipy.spatial import Delaunay
 from radtools.geometry import absolute_to_relative
 from scipy.spatial.distance import cdist
 import math
+from operator import itemgetter
 
 __all__ = ["Kpoints"]
 
@@ -922,7 +923,8 @@ def dynamical_refinment_little_paths_2d(
         brillouin_primitive_vectors_3d,
         brillouin_primitive_vectors_2d,
         chosen_plane,
-        normalized_brillouin_primitive_vectors_2d
+        normalized_brillouin_primitive_vectors_2d,
+        epsilon
 ):
     r"""
     some k points of the "all k points list" are selected (the ones in the selected little paths "position_littles_paths_to_refine"), 
@@ -946,9 +948,11 @@ def dynamical_refinment_little_paths_2d(
     new_k_points_list: (n,4) |array_like| (kx,ky,kz,w)
     added_little_paths: (,3) |array_like| (v1,v2,v3)
     """
+    new_all_k_points_list=[]
+    new_all_k_points_list.append(all_k_points_list)
+    only_new_little_paths=[]
     number_little_paths=len(little_paths)
     eigenspaces_little_paths_to_refine=[[i] for i in position_little_paths_to_refine]
-    print(eigenspaces_little_paths_to_refine)
     flag_checking_indipendence=True
     while flag_checking_indipendence == True:
         number_eigenspaces=len(eigenspaces_little_paths_to_refine)
@@ -962,34 +966,27 @@ def dynamical_refinment_little_paths_2d(
             eigenvectors = little_paths[eigenspace]
             # the little paths around each eigenvector are associated to it
             little_paths_around_each_eigenvector=[]
-            print("eige",eigenspace)
-            print("numb",number_eigenvectors)
             for i in range(number_eigenvectors):
-                print("eigenvec",eigenvectors[i][:,0])
-                print(little_paths[1])
-                print(little_paths[1][:,0])
-                little_paths_around_each_eigenvector.append([r for r in range(number_little_paths) for j in little_paths[r][:,0] if j in eigenvectors[i][:,0] and r not in eigenspace])
-                little_paths_around_each_eigenvector=np.unique(little_paths_around_each_eigenvector)
+                little_paths_around_each_eigenvector.extend([r for r in range(number_little_paths) for j in little_paths[r][:,0] if j in eigenvectors[i][:,0] and r not in eigenspace])
+            little_paths_around_each_eigenvector=list(np.unique(little_paths_around_each_eigenvector))
             number_total_around+=len(little_paths_around_each_eigenvector)
-            print(number_total_around,little_paths_around_each_eigenvector)
             little_paths_around_each_eigenspace.append(little_paths_around_each_eigenvector)
-        print(little_paths_around_each_eigenspace)
         # checking if two eigenspaces are in reality the same eigenspace:
         # between the "little_paths_around" of one of the two eigenspaces the index of one of the eigenvectors of the other eigenspace appear
         check_degeneracy = np.zeros((number_eigenspaces, number_eigenspaces), dtype=bool)
         any_degeneracy = 0
         for i in range(number_eigenspaces-1):
             for j in range(i+1,number_eigenspaces):
-                if eigenspaces_little_paths_to_refine[i] in little_paths_around_each_eigenspace[j]:
-                    check_degeneracy[i,j]=True
-                    any_degeneracy+=1
-                else:
-                    check_degeneracy[i,j]=False
+                for r in range(len(eigenspaces_little_paths_to_refine[i])):
+                    if eigenspaces_little_paths_to_refine[i][r] in little_paths_around_each_eigenspace[j]:
+                        check_degeneracy[i,j]=True
+                        any_degeneracy+=1
+                        break
+                    else:
+                        check_degeneracy[i,j]=False
         if any_degeneracy!=0:
-            print("inside")
-            print(check_degeneracy)
             # unifying the eigenspaces properly
-            # after having written them in an array form to facilitate it
+            # after having written them in an array form to facilitate it (the unification)
             # unifying as well the "little paths around"
             eigenspaces_little_paths_to_refine_array=np.zeros((number_total_eigenvectors,2),dtype=int)
             little_paths_around_each_eigenspace_array=np.zeros((number_total_around,2),dtype=int)
@@ -1001,13 +998,12 @@ def dynamical_refinment_little_paths_2d(
                 for eigenvector in eigenspace:
                     eigenspaces_little_paths_to_refine_array[count1,0]=eigenvector
                     eigenspaces_little_paths_to_refine_array[count1,1]=count2
-                    print(little_paths_around_each_eigenspace[count2])
-                    for around in little_paths_around_each_eigenspace[count2]:
-                        little_paths_around_each_eigenspace_array[count4,0]=around
-                        little_paths_around_each_eigenspace_array[count4,1]=count2
-                        count4+=1
-                    count3+=1
-                    count1+=1
+                for around in little_paths_around_each_eigenspace[count2]:
+                    little_paths_around_each_eigenspace_array[count4,0]=around
+                    little_paths_around_each_eigenspace_array[count4,1]=count2
+                    count4+=1
+                count3+=1
+                count1+=1
                 count2+=1
             count=0
             for i in range(number_eigenspaces-1):
@@ -1026,9 +1022,6 @@ def dynamical_refinment_little_paths_2d(
             for value in values_eigenspaces:
                 eigenspaces_little_paths_to_refine.append([r for r in range(number_total_eigenvectors) if eigenspaces_little_paths_to_refine_array[r,1]==value])
                 little_paths_around_each_eigenspace.append([r for r in range(number_total_around) if little_paths_around_each_eigenspace_array[r,1]==value])
-            print("ecco")
-            print(eigenspaces_little_paths_to_refine)
-            print(little_paths_around_each_eigenspace)
             # eliminating in each eigenspace the presence of eigenvectors in other eigenvectors little paths around
             number_eigenspaces=len(eigenspaces_little_paths_to_refine)
             for i in range(number_eigenspaces):
@@ -1037,15 +1030,13 @@ def dynamical_refinment_little_paths_2d(
                     for r in little_paths_around_each_eigenspace[i]:
                         if r == j:
                             indices.append(r)
-                print("indices",indices)
                 indices.sort()
                 if len(indices)!=0:
                     count5=0
                     for index in indices:
                         del little_paths_around_each_eigenspace[i][index-count5]
                         count5+=1
-                    print(little_paths_around_each_eigenspace[i])
-            # checking if two eigenvectors (of two eigenspaces) have one little path around in common (for at leas two vertices)
+            # checking if two eigenspaces have one little path around in common 
             # this in common little path is inserted into the to refine little paths and the procedure is repeated
             new_little_paths_to_refine=[]
             for i in range(number_eigenspaces-1):
@@ -1053,17 +1044,27 @@ def dynamical_refinment_little_paths_2d(
                     for element in little_paths_around_each_eigenspace[i]:
                         if element in little_paths_around_each_eigenspace[j]:
                             new_little_paths_to_refine.append(element)
-            eigenspaces_little_paths_to_refine.append(new_little_paths_to_refine)
+            if len(new_little_paths_to_refine)==0:
+                flag_checking_indipendence=True
+            else:
+                eigenspaces_little_paths_to_refine.append(new_little_paths_to_refine)
         else:
             flag_checking_indipendence=False
-
+    print("Little paths to refine:", eigenspaces_little_paths_to_refine)
+    print("Little paths around the ones to refine:", little_paths_around_each_eigenspace)
     #substituting to the little_paths_positions, the k points positions
     number_eigenspaces=len(eigenspaces_little_paths_to_refine)
+    eigenspaces_k_points_to_refine=[]
+    eigenspaces_k_points_around=[]
     for eigenspace in eigenspaces_little_paths_to_refine:
-        eigenspaces_k_points_to_refine=[vertex for eigenvector in eigenspace for vertex in little_paths[eigenvector]]
+        eigenspaces_k_points_to_refine.append(np.unique([vertex for eigenvector in eigenspace for vertex in little_paths[eigenvector]],axis=0))
     for eigenspace in little_paths_around_each_eigenspace:
-        eigenspaces_k_points_around=list(set([vertex for eigenvector in eigenspace for vertex in little_paths[eigenvector]]))
+        eigenspaces_k_points_around.append(np.unique([vertex for eigenvector in eigenspace for vertex in little_paths[eigenvector]],axis=0))
     
+    print("K points to refine:", np.shape(eigenspaces_k_points_to_refine))
+    print(eigenspaces_k_points_to_refine)
+    print("K points around the ones to refine:", np.shape(eigenspaces_k_points_around))
+    print(eigenspaces_k_points_around)
     # procede to a refinement of the k points constituing the to-refine little paths
     if number_vertices==3:
         all_new_triangles=[]
@@ -1081,7 +1082,6 @@ def dynamical_refinment_little_paths_2d(
                     eigenvectors_array[j]=all_k_points_list[eigenspaces_k_points_to_refine[i][j,0]]+brillouin_primitive_vectors_2d[0]
                 else:
                     eigenvectors_array[j]=all_k_points_list[eigenspaces_k_points_to_refine[i][j,0]]+brillouin_primitive_vectors_2d[1]
-
             minimal_distance = (cdist(eigenvectors_array-eigenvectors_around_array)).min()
             refined_k_points_list=[]
             local_refinment_with_symmetry_analysis(
@@ -1116,76 +1116,115 @@ def dynamical_refinment_little_paths_2d(
     else:
         # here it is sufficient to find for each eigenspace the extremal k points
         # these k points are then used to draw a simil-BZ, which is refined using the grid-generation 2d methods
-        count=len(all_k_points_list)
+        precedent_count=len(all_k_points_list)
+        print(np.shape(eigenspaces_k_points_around))
         for i in range(number_eigenspaces):
             number_eigenvectors_around=len(eigenspaces_k_points_around[i])
-            eigenvectors_around_array=np.zeros((number_eigenvectors_around,3),dtype=float)
-            for j in range(number_eigenvectors_around):
-                if eigenspaces_k_points_around[i][j,1]==0:
-                    eigenvectors_around_array[j]=all_k_points_list[eigenspaces_k_points_around[i][j,0]]
-                elif eigenspaces_k_points_around[i][j,1]==1:
-                    eigenvectors_around_array[j]=all_k_points_list[eigenspaces_k_points_around[i][j,0]]+brillouin_primitive_vectors_2d[0]
-                else:
-                    eigenvectors_around_array[j]=all_k_points_list[eigenspaces_k_points_around[i][j,0]]+brillouin_primitive_vectors_2d[1]
-
-            k_points_list_projections_border=np.zeros((number_eigenvectors_around,2),dtype=float)
-
-            origin=np.zeros(3,dtype=float)
+            print(number_eigenvectors_around)
+            eigenvectors_around_array=np.zeros((number_eigenvectors_around,4),dtype=float)
+            print(eigenspaces_k_points_around[i])
+            translations_1=[j for j in range(number_eigenvectors_around) if eigenspaces_k_points_around[i][j][1]==1]
+            translations_2=[j for j in range(number_eigenvectors_around) if eigenspaces_k_points_around[i][j][1]==2]
+            translations_3=[j for j in range(number_eigenvectors_around) if eigenspaces_k_points_around[i][j][1]==3]
+            if len(translations_3)!=0:
+                for j in range(number_eigenvectors_around):
+                    eigenvectors_around_array[j,:3]=all_k_points_list[eigenspaces_k_points_around[i][j][0],:3]+brillouin_primitive_vectors_2d[1]+brillouin_primitive_vectors_2d[0]
+                    eigenvectors_around_array[j,3]=all_k_points_list[eigenspaces_k_points_around[i][j][0],3]
+            elif len(translations_2)!=0:
+                for j in range(number_eigenvectors_around):
+                    eigenvectors_around_array[j,:3]=all_k_points_list[eigenspaces_k_points_around[i][j][0],:3]+brillouin_primitive_vectors_2d[1]
+                    eigenvectors_around_array[j,3]=all_k_points_list[eigenspaces_k_points_around[i][j][0],3]
+            elif len(translations_1)!=0:
+                for j in range(number_eigenvectors_around):
+                    eigenvectors_around_array[j,:3]=all_k_points_list[eigenspaces_k_points_around[i][j][0],:3]+brillouin_primitive_vectors_2d[0]
+                    eigenvectors_around_array[j,3]=all_k_points_list[eigenspaces_k_points_around[i][j][0],3]
+            else:
+                eigenvectors_around_array[j]=all_k_points_list[eigenspaces_k_points_around[i][j][0]]
+            print(eigenvectors_around_array)
             #calculating the projections of the different k points on the primitive vectors
+            k_points_list_projections_border=np.zeros((number_eigenvectors_around,2),dtype=float)
             for i in range(number_eigenvectors_around):
                 for j in range(2):
-                    k_points_list_projections_border[i,j]=(eigenvectors_around_array[i,:3]-origin)@brillouin_primitive_vectors_2d[j,:]
+                    k_points_list_projections_border[i,j]=(eigenvectors_around_array[i,:3])@brillouin_primitive_vectors_2d[j,:]
             #transforming into polar coordinates x,y -> rho,theta
             rho=list(map(lambda x,y: math.sqrt(x**2+y**2),k_points_list_projections_border[:,0],k_points_list_projections_border[:,1]))
-            rho=np.reshape(rho,(number_eigenspaces,1))
-            theta=list(map(lambda x,y: math.atan(y/x),k_points_list_projections_border[:,0],k_points_list_projections_border[:,1]))
-            theta=np.reshape(theta,(number_eigenspaces,1))
+            rho=np.reshape(rho,(number_eigenvectors_around,1))
             ij_origin=np.argmin(rho)
-            
-            ij_a0=np.argmin(theta)
-            i_a0=np.argmax(rho[ij_a0])
-            ij_a1=np.argmax(theta)
-            i_a1=np.argmax(rho[ij_a1])
-
+            origin=eigenvectors_around_array[ij_origin,:3]
+            print("origine:", origin)
+            #defining the projections respect to the new origin
+            for i in range(number_eigenvectors_around):
+                for j in range(2):
+                    k_points_list_projections_border[i,j]=((eigenvectors_around_array[i,:3])-origin)@brillouin_primitive_vectors_2d[j,:]
+            #transforming into polar coordinates x,y -> rho,theta
+            rho=list(map(lambda x,y: math.sqrt(x**2+y**2),k_points_list_projections_border[:,0],k_points_list_projections_border[:,1]))
+            rho=np.reshape(rho,(number_eigenvectors_around,1))
+            theta=list(map(lambda x,y: math.atan(y/(x+epsilon)),k_points_list_projections_border[:,0],k_points_list_projections_border[:,1]))
+            for i in range(len(theta)):
+                if theta[i]<0:
+                    theta[i]=-theta[i]+np.pi/2
+            theta=np.reshape(theta,(number_eigenvectors_around,1))
+            print("theta ",theta)
+            print("rho",rho)
+            theta_0=np.min(theta)
+            ij_a0=[i for i in range(number_eigenvectors_around) if np.isclose(theta[i],theta_0,atol=epsilon)]
+            rho_0=np.max(rho[ij_a0])
+            j_a0=np.min([i for i in range(number_eigenvectors_around) if np.isclose(rho_0,rho[i],atol=epsilon) and i in ij_a0])
+            #i_a0=[i for i in range(number_eigenvectors_around) if np.isclose(np.min(rho[ij_a0]),rho[i])]
+            theta_1=np.max(theta)
+            ij_a1=[i for i in range(number_eigenvectors_around) if np.isclose(theta[i],theta_1,atol=epsilon)]
+            rho_1=np.max(rho[ij_a1])
+            j_a1=np.min([i for i in range(number_eigenvectors_around) if np.isclose(rho_1,rho[i],atol=epsilon) and i in ij_a1])
+            #i_a1=[i for i in range(number_eigenvectors_around) if np.isclose(np.min(rho[ij_a1]),rho[i],atol=epsilon)]
+            print(theta_0,theta_1)
+            print(rho_0,rho_1)
+            print("indices: ",j_a0,j_a1)
+            print(origin,eigenvectors_around_array[j_a0,:3],eigenvectors_around_array[j_a1,:3])
             #finding the new bordening
             new_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
-            origin=k_points_list_projections_border[ij_origin,:]
-            new_brillouin_primitive_vectors_2d[0,:]=k_points_list_projections_border[i_a0,:]-origin
-            new_brillouin_primitive_vectors_2d[1,:]=k_points_list_projections_border[i_a1,:]-origin
+            new_brillouin_primitive_vectors_2d[0]=eigenvectors_around_array[j_a0,:3]-origin
+            new_brillouin_primitive_vectors_2d[1]=eigenvectors_around_array[j_a1,:3]-origin
 
+            print(new_brillouin_primitive_vectors_2d)
             new_brillouin_primitive_vectors_3d=np.zeros((3,3),dtype=float)
-            new_brillouin_primitive_vectors_3d[3,:]=brillouin_primitive_vectors_3d[[i for i in range(3) if chosen_plane[i]==0],:]
+            new_brillouin_primitive_vectors_3d[2,:]=brillouin_primitive_vectors_3d[[i for i in range(3) if chosen_plane[i]==0],:]
             for i in range(2):
                 new_brillouin_primitive_vectors_3d[i,:]=new_brillouin_primitive_vectors_2d[i,:]
 
             #finding the minimal grid spacing
+            max_value=np.linalg.norm(new_brillouin_primitive_vectors_2d[0]+new_brillouin_primitive_vectors_2d[1],2)
             moduli=np.zeros(number_eigenvectors_around,dtype=float)
             for i in range(number_eigenvectors_around):
                 moduli[i]=np.linalg.norm(eigenvectors_around_array[i,:3]-origin,2)
+                if moduli[i]<epsilon:
+                    moduli[i]=max_value
             initial_grid_spacing=np.min(moduli)/2
+            print(initial_grid_spacing)
             
-            new_not_refined_k_points_list,new_parallelograms,k0,k1=k_points_generator_2D(
-                brillouin_primitive_vectors_3d,
+            print(new_brillouin_primitive_vectors_3d,
+                initial_grid_spacing,
+                chosen_plane,
+                new_brillouin_primitive_vectors_2d)
+
+            new_not_refined_k_points_list,new_parallelograms=k_points_generator_2D(
+                new_brillouin_primitive_vectors_3d,
                 initial_grid_spacing,
                 chosen_plane,
                 new_brillouin_primitive_vectors_2d,
                 False,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                count
+                0,
+                [[0,0,0]],
+                0.0,
+                0,
+                [0,0],
+                origin,
+                precedent_count
                 )
-            count=count+k0*k1
-            all_k_points_list.append(new_not_refined_k_points_list)
-            little_paths.append(new_parallelograms)
-
-        # in the list of all little paths, the ones selected are substituted with a little path with vertices equal to -1
-        for eigenvector in eigenspace:
-            little_paths[eigenvector]=[-1 for j in range(number_vertices)]
-        return not_refined_k_points_list,parallelograms
+            precedent_count=precedent_count+len(new_not_refined_k_points_list)
+            new_all_k_points_list.append(new_not_refined_k_points_list)
+            only_new_little_paths.append(new_parallelograms)
+        
+        return new_all_k_points_list,only_new_little_paths
 
 #TESTING INPUT
 if __name__ == "__main__":
@@ -1217,6 +1256,7 @@ if __name__ == "__main__":
     refinment_iteration=3
     refinment_spacing=0.01
     threshold=0.001
+    epsilon=0.000000001
     count=0
     shift_in_plane=[0,0]
     shift_in_space=[0,0,0]
@@ -1345,7 +1385,7 @@ if __name__ == "__main__":
     for i in range(2):
         normalized_brillouin_primitive_vectors_2d[i]=brillouin_primitive_vectors_2d[i]/np.dot(brillouin_primitive_vectors_2d[i],brillouin_primitive_vectors_2d[i])
     
-    print(parallelograms)
+    #print(parallelograms)
     not_refined_k_points_list,parallelograms=dynamical_refinment_little_paths_2d(
         parallelograms,
         position_little_paths_to_refine,
@@ -1357,7 +1397,8 @@ if __name__ == "__main__":
         brillouin_primitive_vectors_3d,
         brillouin_primitive_vectors_2d,
         chosen_plane,
-        normalized_brillouin_primitive_vectors_2d
+        normalized_brillouin_primitive_vectors_2d,
+        epsilon
     )  
     
     ##dynamical refinment (parallelograms)
