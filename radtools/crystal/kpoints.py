@@ -395,8 +395,7 @@ class Kpoints:
 #function checking if the k points in the list k_list are inside the Brillouin zone
 def downfold_inside_brillouin_zone(
     k_point_list,
-    brillouin_primitive_vectors_3d
-):
+    brillouin_primitive_vectors_3d):
     r"""
         check if any point in a list is inside the first brillouin zone, in case the point is outside it is shifted back to the first brillouin zone
         Parameters
@@ -419,12 +418,18 @@ def downfold_inside_brillouin_zone(
         transformed_k_point_list[i,:]=matrix_transformation_cartesian_to_crystal@k_point_list[i,:]
 
     # checking if any point of the list is outside the first brillouin zone
+    #to each k point is associated a int 0,1,2,3 if it goes over the bonds
+    indices=[]
     for i in range(number_k_point_elements):
+        count=0
         for r in range(3):
             if transformed_k_point_list[i,r] >= 1.0 or transformed_k_point_list[i,r] < 0:
+                count+=r
                 for d in range(3):
                     k_point_list[i,d]=k_point_list[i,d]-brillouin_primitive_vectors_3d[r,d]*np.sign(transformed_k_point_list[i,r])
-    return k_point_list
+        indices.append(count)
+    indices=np.reshape(indices,(number_k_point_elements,1))
+    return k_point_list,indices
 
 # function applying symmetry analysis to a list of k points, the symmetry operations considered are the point group ones
 # the fixed point is given; the analysis aim is to redistribute the fixed point weight between the list of k points
@@ -604,7 +609,7 @@ def local_refinment_with_symmetry_analysis(
                 
                 k_tmp_subgrid=np.delete(k_tmp_subgrid, np.where(k_tmp_subgrid[:,3]==0),axis=0)
                 if downfold == True:
-                    k_tmp_subgrid[:,:3]= downfold_inside_brillouin_zone(
+                    k_tmp_subgrid[:,:3]=downfold_inside_brillouin_zone(
                         k_tmp_subgrid[:,:3],
                         brillouin_primitive_vectors_3d,
                     )
@@ -743,17 +748,19 @@ def k_points_triangulation_2d(
 #generation of a 2D k points grid 
 def k_points_generator_2D(
     brillouin_primitive_vectors_3d,
+    other_brillouin_primitive_vectors_3d,
     initial_grid_spacing,
     chosen_plane,
     brillouin_primitive_vectors_2d,
-    symmetry_analysis_flag,
+    default_gridding=10,
+    symmetry_analysis_flag=False,
     refinment_spacing=0,
     symmetries=[[0,0,0]],
     threshold=0.0001,
     refinment_iteration=0,
     shift_in_plane=[0,0],
     shift_in_space=[0,0,0],
-    precedent_count=0 
+    precedent_count=0
 ):
     r"""
     k points generator in a 2d plane
@@ -781,7 +788,7 @@ def k_points_generator_2D(
         triangles: (n,3) |array_like| each row is a triangle, where the 3 vertices are integers, which correspond to the list positions of the given k points 
     """
     normalized_brillouin_primitive_vectors_2d = np.zeros((2, 3),dtype=float)
-
+    ##print("ecco",precedent_count)
     if  chosen_plane==[0,0,0]:
         chosen_plane=[]
         for i in range(2):
@@ -804,12 +811,18 @@ def k_points_generator_2D(
                 count += 1
 
     #initial 2D grid dimensions
+    print(brillouin_primitive_vectors_2d[1])
     k0 = int(
         (brillouin_primitive_vectors_2d[0] @ brillouin_primitive_vectors_2d[0])/ initial_grid_spacing
         )
     k1 = int(
         (brillouin_primitive_vectors_2d[1] @ brillouin_primitive_vectors_2d[1]) / initial_grid_spacing
         )
+    if k0==0 or k1==0:
+        k0=default_gridding
+        k1=default_gridding
+
+    print("k0 k1",k0,k1,default_gridding)
     initial_weights = 1 / (k0 * k1)
     #building the initial 2D k points grid
     k_points_grid = np.zeros((k0*k1,4),dtype=float)
@@ -817,7 +830,7 @@ def k_points_generator_2D(
         for j in range(k1):
             k_points_grid[i*k1+j,:3] = (float(i + shift_in_plane[0]) / k0) * (shift_in_space + brillouin_primitive_vectors_2d[0,:]) + (float(j + shift_in_plane[1]) / k1) * (shift_in_space + brillouin_primitive_vectors_2d[1,:])
             k_points_grid[i*k1+j,3] = initial_weights
-    
+            ###print(k_points_grid[i*k1+j,:3])
     if symmetry_analysis_flag == True:
         if refinment_spacing==0:
             refinment_spacing=initial_grid_spacing/2
@@ -838,7 +851,6 @@ def k_points_generator_2D(
             normalized_brillouin_primitive_vectors_2d,
             True
         )
-
         #transforming a list into an array-like element
         k0=int(len(refined_k_points_list)/4)
         refined_k_points_list = np.reshape(refined_k_points_list,(int(len(refined_k_points_list)/4), 4))
@@ -849,28 +861,70 @@ def k_points_generator_2D(
     else:
         not_refined_k_points_list = np.zeros((k0*k1,4))
         parallelograms=[]
-        for i in range(0,k0):
-            for j in range(0,k1):
-               # print(i,j,k0,k1)
-                not_refined_k_points_list[i*k1+j][:3]=(float(i + shift_in_plane[0]) / k0) * (shift_in_space + brillouin_primitive_vectors_2d[0]) \
-                   + (float(j + shift_in_plane[1]) / k1) * (shift_in_space + brillouin_primitive_vectors_2d[1])
-                not_refined_k_points_list[i*k1+j][3]=initial_weights
-                #periodicity of the BZ
-                parallelogram=[]
-                if i<k0-1 and j<k1-1:
+        if np.array_equal(other_brillouin_primitive_vectors_3d,brillouin_primitive_vectors_3d):
+            for i in range(0,k0):
+                for j in range(0,k1):
+                   # print(i,j,k0,k1)
+                    not_refined_k_points_list[i*k1+j][:3]=(float(i + shift_in_plane[0]) / k0) * (shift_in_space + brillouin_primitive_vectors_2d[0]) \
+                       + (float(j + shift_in_plane[1]) / k1) * (shift_in_space + brillouin_primitive_vectors_2d[1])
+                    not_refined_k_points_list[i*k1+j][3]=initial_weights
+                    #periodicity of the BZ
+                    parallelogram=[]
+                    if i<k0-1 and j<k1-1:
+                        parallelogram=[[i*k1+j,0],[(i+1)*k1+j,0],[(i+1)*k1+j+1,0],[i*k1+j+1,0]]
+                    elif i<k0-1 and j==k1-1:
+                        parallelogram=[[i*k1+j,0],[(i+1)*k1+j,0],[(i+1)*k1+0,2],[i*k1+0,2]]
+                    elif i==k0-1 and j<k1-1:
+                        parallelogram=[[i*k1+j,0],[0*k1+j,1],[0*k1+j+1,1],[i*k1+j+1,0]]
+                    else:
+                        parallelogram=[[i*k1+j,0],[0*k1+j,1],[0*k1+0,3],[i*k1+0,2]]
+                    ##print(parallelogram)
+                    #for r in range(4):
+                     #   parallelogram[r][0]+=precedent_count  
+                    ####print(parallelogram)    
+                    parallelograms.append(parallelogram)
+                    ##print(parallelogram[1][0])
+            parallelograms=np.reshape(parallelograms,(int(k0*k1),4,2))
+        else:
+            for i in range(0,k0):
+                for j in range(0,k1):
+                   # print(i,j,k0,k1)
+                    not_refined_k_points_list[i*k1+j][:3]=(float(i + shift_in_plane[0]) / k0) * (shift_in_space + brillouin_primitive_vectors_2d[0]) \
+                       + (float(j + shift_in_plane[1]) / k1) * (shift_in_space + brillouin_primitive_vectors_2d[1])
+                    not_refined_k_points_list[i*k1+j][3]=initial_weights
+                    parallelogram=[]
                     parallelogram=[[i*k1+j,0],[(i+1)*k1+j,0],[(i+1)*k1+j+1,0],[i*k1+j+1,0]]
-                elif i<k0-1 and j==k1-1:
-                    parallelogram=[[i*k1+j,0],[(i+1)*k1+j,0],[(i+1)*k1+0,2],[i*k1+0,2]]
-                elif i==k0-1 and j<k1-1:
-                    parallelogram=[[i*k1+j,0],[0*k1+j,1],[0*k1+j+1,1],[i*k1+j+1,0]]
-                else:
-                    parallelogram=[[i*k1+j,0],[0*k1+j,1],[0*k1+0,3],[i*k1+0,2]]
-                for r in range(4):
-                    parallelogram[r][0]+=precedent_count
-                
-                parallelograms.append(parallelogram)
-        parallelograms=np.reshape(parallelograms,(int(k0*k1),4,2))
-                    
+                    parallelograms.append(parallelogram)
+                    ##print(parallelogram[1][0])
+            parallelograms=np.reshape(parallelograms,(int(k0*k1),4,2))
+            print("dentro")
+            print(not_refined_k_points_list)
+            ### checking if the points are going over one of the borders of the other_brillouin_primitive_vectors_3d (in the input)
+            not_refined_k_points_list[:,:3],indices=downfold_inside_brillouin_zone(
+                not_refined_k_points_list[:,:3],
+                other_brillouin_primitive_vectors_3d)
+            print(np.shape(not_refined_k_points_list))
+            #print(np.shape(not_refined_k_points_list))
+            print(np.shape(parallelograms))
+            print(np.shape(indices))
+            #print(not_refined_k_points_list[0][3])
+            print(parallelograms)
+
+            for parallelogram in parallelograms:
+                for vertex in parallelogram:
+                    print(vertex)
+                    if indices[vertex[0]][0]==3:
+                        vertex[1]+=-(1+int(vertex[0][1]/k1))*k1
+                        vertex[2]+=-(int(vertex[0][1]%k1)+1)-(1+int(vertex[0][1]/k1))*k1
+                        vertex[3]+=-(int(vertex[0][1]%k1)+1)
+                    elif indices[vertex[0]][0]==2:
+                        vertex[2]+=-(int(vertex[0][1]%k1)+1)
+                        vertex[3]+=-(int(vertex[0][1]%k1)+1)
+                    else:
+                        vertex[1]+=-(1+int(vertex[0][1]/k1))*k1
+                        vertex[2]+=-(1+int(vertex[0][1]/k1))*k1     
+        
+        print(not_refined_k_points_list)      
         return not_refined_k_points_list,parallelograms
 
 def check_inside_closed_shape_2d(
@@ -903,12 +957,10 @@ def check_inside_closed_shape_2d(
                 if ( ((vert[i,1]>test[1]) != (vert[j,1]>test[1])) and (test[0]<(vert[j,0]-vert[i,0])*(test[1]-vert[i,1])/(vert[j,1]-vert[i,1])+vert[i,0]) ):    
                     c = -c
         return c
-    
     indices=[]
     for i in range(number_elements):
         if pnpoly(number_elements_border,k_points_list_projections_border,k_points_list_projections[i])<0:
             indices.append(i)
-
     del refined_k_points_list[indices]
     return refined_k_points_list
 
@@ -948,18 +1000,21 @@ def dynamical_refinment_little_paths_2d(
     new_k_points_list: (n,4) |array_like| (kx,ky,kz,w)
     added_little_paths: (,3) |array_like| (v1,v2,v3)
     """
-    new_all_k_points_list=[]
-    new_all_k_points_list.append(all_k_points_list)
+    ###print(all_k_points_list)
+    new_all_k_points_list=all_k_points_list
     only_new_little_paths=[]
     number_little_paths=len(little_paths)
     eigenspaces_little_paths_to_refine=[[i] for i in position_little_paths_to_refine]
     flag_checking_indipendence=True
+    print(position_little_paths_to_refine)
     while flag_checking_indipendence == True:
         number_eigenspaces=len(eigenspaces_little_paths_to_refine)
         number_total_eigenvectors=0
         number_total_around=0
         little_paths_around_each_eigenspace=[]
+        print("eigenspaces",eigenspaces_little_paths_to_refine)
         for eigenspace in eigenspaces_little_paths_to_refine:
+            print(eigenspace)
             number_eigenvectors=len(eigenspace)
             number_total_eigenvectors+=number_eigenvectors
             # considering the to-refine little paths in the selected eigenspace
@@ -985,27 +1040,30 @@ def dynamical_refinment_little_paths_2d(
                     else:
                         check_degeneracy[i,j]=False
         if any_degeneracy!=0:
-            # unifying the eigenspaces properly
-            # after having written them in an array form to facilitate it (the unification)
-            # unifying as well the "little paths around"
+            #unifying the eigenspaces properly
+            #after having written them in an array form to facilitate it (the unification)
+            #unifying as well the "little paths around"
             eigenspaces_little_paths_to_refine_array=np.zeros((number_total_eigenvectors,2),dtype=int)
             little_paths_around_each_eigenspace_array=np.zeros((number_total_around,2),dtype=int)
             count1=0
             count2=0
             count4=0
             for eigenspace in eigenspaces_little_paths_to_refine:
+                print("degeneracy checking",eigenspace)
                 count3=0
                 for eigenvector in eigenspace:
                     eigenspaces_little_paths_to_refine_array[count1,0]=eigenvector
                     eigenspaces_little_paths_to_refine_array[count1,1]=count2
+                    count1+=1
                 for around in little_paths_around_each_eigenspace[count2]:
                     little_paths_around_each_eigenspace_array[count4,0]=around
                     little_paths_around_each_eigenspace_array[count4,1]=count2
                     count4+=1
                 count3+=1
-                count1+=1
                 count2+=1
             count=0
+            print("before degeneracy",eigenspaces_little_paths_to_refine_array)
+            print(check_degeneracy)
             for i in range(number_eigenspaces-1):
                 for j in range(i+1,number_eigenspaces):
                     if check_degeneracy[i][j]==True:
@@ -1015,27 +1073,36 @@ def dynamical_refinment_little_paths_2d(
                         around_positions=[r for r in range(number_total_around) if little_paths_around_each_eigenspace_array[r,1]==max_value]
                         eigenspaces_little_paths_to_refine_array[eigenvectors_positions,1]=min_value
                         little_paths_around_each_eigenspace_array[around_positions,1]=min_value
+            print("after degeneracy",eigenspaces_little_paths_to_refine_array)
             # redefining eigenspaces in order to take into account the found degeneracies
             values_eigenspaces=list(np.unique(eigenspaces_little_paths_to_refine_array[:,1]))
             eigenspaces_little_paths_to_refine=[]
             little_paths_around_each_eigenspace=[]
             for value in values_eigenspaces:
-                eigenspaces_little_paths_to_refine.append([r for r in range(number_total_eigenvectors) if eigenspaces_little_paths_to_refine_array[r,1]==value])
-                little_paths_around_each_eigenspace.append([r for r in range(number_total_around) if little_paths_around_each_eigenspace_array[r,1]==value])
+                eigenspaces_little_paths_to_refine.append([eigenspaces_little_paths_to_refine_array[r,0] for r in range(number_total_eigenvectors) if eigenspaces_little_paths_to_refine_array[r,1]==value])
+                little_paths_around_each_eigenspace.append([little_paths_around_each_eigenspace_array[r,0] for r in range(number_total_around) if little_paths_around_each_eigenspace_array[r,1]==value])
+            print("proper renaming",eigenspaces_little_paths_to_refine,little_paths_around_each_eigenspace)
             # eliminating in each eigenspace the presence of eigenvectors in other eigenvectors little paths around
             number_eigenspaces=len(eigenspaces_little_paths_to_refine)
+            print(number_eigenspaces)
             for i in range(number_eigenspaces):
+                print(i,little_paths_around_each_eigenspace[i])
                 indices=[]
-                for j in eigenspaces_little_paths_to_refine[i]:
-                    for r in little_paths_around_each_eigenspace[i]:
-                        if r == j:
-                            indices.append(r)
+                count6=0
+                for r in little_paths_around_each_eigenspace[i]:
+                    for j in eigenspaces_little_paths_to_refine[i]:
+                        if j == r:
+                            indices.append(count6)
+                    count6+=1
                 indices.sort()
+                print("indices",indices)
                 if len(indices)!=0:
                     count5=0
                     for index in indices:
+                        print(index)
                         del little_paths_around_each_eigenspace[i][index-count5]
                         count5+=1
+                print("after erasing",little_paths_around_each_eigenspace)
             # checking if two eigenspaces have one little path around in common 
             # this in common little path is inserted into the to refine little paths and the procedure is repeated
             new_little_paths_to_refine=[]
@@ -1047,20 +1114,25 @@ def dynamical_refinment_little_paths_2d(
             if len(new_little_paths_to_refine)==0:
                 flag_checking_indipendence=True
             else:
-                eigenspaces_little_paths_to_refine.append(new_little_paths_to_refine)
+                new_little_paths_to_refine=list(np.unique(new_little_paths_to_refine))
+                for s in new_little_paths_to_refine:
+                    eigenspaces_little_paths_to_refine.append([s])
         else:
             flag_checking_indipendence=False
+        print("finish cycle",eigenspaces_little_paths_to_refine,little_paths_around_each_eigenspace)
     print("Little paths to refine:", eigenspaces_little_paths_to_refine)
     print("Little paths around the ones to refine:", little_paths_around_each_eigenspace)
     #substituting to the little_paths_positions, the k points positions
+    print("in the middle",new_all_k_points_list)
     number_eigenspaces=len(eigenspaces_little_paths_to_refine)
     eigenspaces_k_points_to_refine=[]
     eigenspaces_k_points_around=[]
     for eigenspace in eigenspaces_little_paths_to_refine:
         eigenspaces_k_points_to_refine.append(np.unique([vertex for eigenvector in eigenspace for vertex in little_paths[eigenvector]],axis=0))
+        for eigenvector in eigenspace:
+            print("k point paths to refine",little_paths[eigenvector])
     for eigenspace in little_paths_around_each_eigenspace:
-        eigenspaces_k_points_around.append(np.unique([vertex for eigenvector in eigenspace for vertex in little_paths[eigenvector]],axis=0))
-    
+        eigenspaces_k_points_around.append(np.unique([vertex for eigenvector in eigenspace for vertex in little_paths[eigenvector]],axis=0))    
     print("K points to refine:", np.shape(eigenspaces_k_points_to_refine))
     print(eigenspaces_k_points_to_refine)
     print("K points around the ones to refine:", np.shape(eigenspaces_k_points_around))
@@ -1114,34 +1186,31 @@ def dynamical_refinment_little_paths_2d(
         all_k_points_list.append(all_k_points_list_tmp)
         return all_k_points_list, added_triangles
     else:
+        print("dentro2")
         # here it is sufficient to find for each eigenspace the extremal k points
         # these k points are then used to draw a simil-BZ, which is refined using the grid-generation 2d methods
         precedent_count=len(all_k_points_list)
-        print(np.shape(eigenspaces_k_points_around))
+        ###print("ecco2",precedent_count)
+       # print(np.shape(eigenspaces_k_points_around))
         for i in range(number_eigenspaces):
             number_eigenvectors_around=len(eigenspaces_k_points_around[i])
-            print(number_eigenvectors_around)
+            #print(number_eigenvectors_around)
             eigenvectors_around_array=np.zeros((number_eigenvectors_around,4),dtype=float)
-            print(eigenspaces_k_points_around[i])
-            translations_1=[j for j in range(number_eigenvectors_around) if eigenspaces_k_points_around[i][j][1]==1]
-            translations_2=[j for j in range(number_eigenvectors_around) if eigenspaces_k_points_around[i][j][1]==2]
-            translations_3=[j for j in range(number_eigenvectors_around) if eigenspaces_k_points_around[i][j][1]==3]
-            if len(translations_3)!=0:
-                for j in range(number_eigenvectors_around):
+            #print(eigenspaces_k_points_around[i])
+            for j in range(number_eigenvectors_around):
+                print(all_k_points_list[eigenspaces_k_points_around[i][j][0]])
+                if eigenspaces_k_points_around[i][j][1]==3:
                     eigenvectors_around_array[j,:3]=all_k_points_list[eigenspaces_k_points_around[i][j][0],:3]+brillouin_primitive_vectors_2d[1]+brillouin_primitive_vectors_2d[0]
-                    eigenvectors_around_array[j,3]=all_k_points_list[eigenspaces_k_points_around[i][j][0],3]
-            elif len(translations_2)!=0:
-                for j in range(number_eigenvectors_around):
+                elif eigenspaces_k_points_around[i][j][1]==2:
                     eigenvectors_around_array[j,:3]=all_k_points_list[eigenspaces_k_points_around[i][j][0],:3]+brillouin_primitive_vectors_2d[1]
-                    eigenvectors_around_array[j,3]=all_k_points_list[eigenspaces_k_points_around[i][j][0],3]
-            elif len(translations_1)!=0:
-                for j in range(number_eigenvectors_around):
+                elif eigenspaces_k_points_around[i][j][1]==1:
                     eigenvectors_around_array[j,:3]=all_k_points_list[eigenspaces_k_points_around[i][j][0],:3]+brillouin_primitive_vectors_2d[0]
-                    eigenvectors_around_array[j,3]=all_k_points_list[eigenspaces_k_points_around[i][j][0],3]
-            else:
-                eigenvectors_around_array[j]=all_k_points_list[eigenspaces_k_points_around[i][j][0]]
-            print(eigenvectors_around_array)
+                else:
+                    eigenvectors_around_array[j]=all_k_points_list[eigenspaces_k_points_around[i][j][0]]
+                eigenvectors_around_array[j,3]=all_k_points_list[eigenspaces_k_points_around[i][j][0],3]
+            #print(eigenvectors_around_array)
             #calculating the projections of the different k points on the primitive vectors
+            print(brillouin_primitive_vectors_2d,eigenvectors_around_array)
             k_points_list_projections_border=np.zeros((number_eigenvectors_around,2),dtype=float)
             for i in range(number_eigenvectors_around):
                 for j in range(2):
@@ -1150,6 +1219,7 @@ def dynamical_refinment_little_paths_2d(
             rho=list(map(lambda x,y: math.sqrt(x**2+y**2),k_points_list_projections_border[:,0],k_points_list_projections_border[:,1]))
             rho=np.reshape(rho,(number_eigenvectors_around,1))
             ij_origin=np.argmin(rho)
+            print(rho)
             origin=eigenvectors_around_array[ij_origin,:3]
             print("origine:", origin)
             #defining the projections respect to the new origin
@@ -1164,8 +1234,8 @@ def dynamical_refinment_little_paths_2d(
                 if theta[i]<0:
                     theta[i]=-theta[i]+np.pi/2
             theta=np.reshape(theta,(number_eigenvectors_around,1))
-            print("theta ",theta)
-            print("rho",rho)
+            #print("theta ",theta)
+            #print("rho",rho)
             theta_0=np.min(theta)
             ij_a0=[i for i in range(number_eigenvectors_around) if np.isclose(theta[i],theta_0,atol=epsilon)]
             rho_0=np.max(rho[ij_a0])
@@ -1176,21 +1246,19 @@ def dynamical_refinment_little_paths_2d(
             rho_1=np.max(rho[ij_a1])
             j_a1=np.min([i for i in range(number_eigenvectors_around) if np.isclose(rho_1,rho[i],atol=epsilon) and i in ij_a1])
             #i_a1=[i for i in range(number_eigenvectors_around) if np.isclose(np.min(rho[ij_a1]),rho[i],atol=epsilon)]
-            print(theta_0,theta_1)
-            print(rho_0,rho_1)
-            print("indices: ",j_a0,j_a1)
-            print(origin,eigenvectors_around_array[j_a0,:3],eigenvectors_around_array[j_a1,:3])
+            #print(theta_0,theta_1)
+            #print(rho_0,rho_1)
+            #print("indices: ",j_a0,j_a1)
+            #print(origin,eigenvectors_around_array[j_a0,:3],eigenvectors_around_array[j_a1,:3])
             #finding the new bordening
             new_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
             new_brillouin_primitive_vectors_2d[0]=eigenvectors_around_array[j_a0,:3]-origin
             new_brillouin_primitive_vectors_2d[1]=eigenvectors_around_array[j_a1,:3]-origin
-
-            print(new_brillouin_primitive_vectors_2d)
+            #print(new_brillouin_primitive_vectors_2d)
             new_brillouin_primitive_vectors_3d=np.zeros((3,3),dtype=float)
             new_brillouin_primitive_vectors_3d[2,:]=brillouin_primitive_vectors_3d[[i for i in range(3) if chosen_plane[i]==0],:]
             for i in range(2):
                 new_brillouin_primitive_vectors_3d[i,:]=new_brillouin_primitive_vectors_2d[i,:]
-
             #finding the minimal grid spacing
             max_value=np.linalg.norm(new_brillouin_primitive_vectors_2d[0]+new_brillouin_primitive_vectors_2d[1],2)
             moduli=np.zeros(number_eigenvectors_around,dtype=float)
@@ -1199,18 +1267,20 @@ def dynamical_refinment_little_paths_2d(
                 if moduli[i]<epsilon:
                     moduli[i]=max_value
             initial_grid_spacing=np.min(moduli)/2
-            print(initial_grid_spacing)
+            #print(initial_grid_spacing)
+            print("input gridding",new_brillouin_primitive_vectors_3d,
+              initial_grid_spacing,
+              chosen_plane,
+              new_brillouin_primitive_vectors_2d,
+              origin)
             
-            print(new_brillouin_primitive_vectors_3d,
-                initial_grid_spacing,
-                chosen_plane,
-                new_brillouin_primitive_vectors_2d)
-
             new_not_refined_k_points_list,new_parallelograms=k_points_generator_2D(
                 new_brillouin_primitive_vectors_3d,
+                brillouin_primitive_vectors_3d,
                 initial_grid_spacing,
                 chosen_plane,
                 new_brillouin_primitive_vectors_2d,
+                100,
                 False,
                 0,
                 [[0,0,0]],
@@ -1220,9 +1290,17 @@ def dynamical_refinment_little_paths_2d(
                 origin,
                 precedent_count
                 )
-            precedent_count=precedent_count+len(new_not_refined_k_points_list)
-            new_all_k_points_list.append(new_not_refined_k_points_list)
-            only_new_little_paths.append(new_parallelograms)
+            for parallelogram in parallelograms:
+                for vertex in parallelogram:
+                    vertex[1]+=precedent_count
+           ### print(new_all_k_points_list)
+           #### print(new_not_refined_k_points_list)
+            precedent_count+=len(new_not_refined_k_points_list)
+            new_all_k_points_list=np.append(new_all_k_points_list,new_not_refined_k_points_list,axis=0)
+            only_new_little_paths.extend(new_parallelograms)
+
+        print(np.shape(only_new_little_paths))
+        ##only_new_little_paths=np.reshape(only_new_little_paths,(int(len(only_new_little_paths)/3),3))
         
         return new_all_k_points_list,only_new_little_paths
 
@@ -1252,11 +1330,12 @@ if __name__ == "__main__":
     brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
     chosen_plane=[1,1,0]
     symmetries=[[0,0,np.pi/2]]
-    initial_grid_spacing=0.01
-    refinment_iteration=3
-    refinment_spacing=0.01
+    initial_grid_spacing=0.1
+    refinment_iteration=0
+    refinment_spacing=0.1
     threshold=0.001
     epsilon=0.000000001
+    default_gridding=1000
     count=0
     shift_in_plane=[0,0]
     shift_in_space=[0,0,0]
@@ -1321,15 +1400,17 @@ if __name__ == "__main__":
     ###LITTLE PARALLELOGRAMS
     not_refined_k_points_list,parallelograms=k_points_generator_2D(
         brillouin_primitive_vectors_3d,
+        brillouin_primitive_vectors_3d,
         initial_grid_spacing,
         chosen_plane,
         brillouin_primitive_vectors_2d,
+        default_gridding,
         False,
         refinment_spacing,
         symmetries,
         threshold,
         refinment_iteration,
-        shift_in_space,
+        shift_in_plane,
         shift_in_space,
         count
         )
@@ -1379,13 +1460,28 @@ if __name__ == "__main__":
     ##ax.scatter(not_refined_k_points_list[:,0],not_refined_k_points_list[:,1],not_refined_k_points_list[:,3])
     ###plt.show()
 
-    position_little_paths_to_refine=[1,2,3]
-    number_vertices=4
+    position_little_paths_to_refine=[31,32,33]
+    for i in position_little_paths_to_refine:
+        print(parallelograms[i])
+    number_vertices=4,
     normalized_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
     for i in range(2):
         normalized_brillouin_primitive_vectors_2d[i]=brillouin_primitive_vectors_2d[i]/np.dot(brillouin_primitive_vectors_2d[i],brillouin_primitive_vectors_2d[i])
     
+    #print("prima", not_refined_k_points_list)
     #print(parallelograms)
+    #print(position_little_paths_to_refine,
+    #    number_vertices,
+    #    not_refined_k_points_list,
+    #    refinment_iteration,
+    #    symmetries,
+    #    threshold,
+    #    brillouin_primitive_vectors_3d,
+    #    brillouin_primitive_vectors_2d,
+    #    chosen_plane,
+    #    normalized_brillouin_primitive_vectors_2d,
+    #    epsilon)
+    #
     not_refined_k_points_list,parallelograms=dynamical_refinment_little_paths_2d(
         parallelograms,
         position_little_paths_to_refine,
@@ -1400,7 +1496,52 @@ if __name__ == "__main__":
         normalized_brillouin_primitive_vectors_2d,
         epsilon
     )  
+    #print("dopo", not_refined_k_points_list)
+    #print(parallelograms)
+    number_parallelograms=len(parallelograms)
+    #print(np.shape(not_refined_k_points_list))
+    #print(np.shape(parallelograms))
+    #print(parallelograms)
+    parallelogram=[0]*4
+    new_parallelograms_tmp=[]
+    for i in range(number_parallelograms):
+        indx_1=[parallelograms[i][r][0] for r in range(4)]
+        indx_2=[parallelograms[i][r][1] for r in range(4)]
+        count=0
+        for indx in indx_1:
+            parallelogram[count]=[not_refined_k_points_list[indx,s] for s in range(3)]
+            if indx_2[count]!=0:
+                for s in range(3):
+                    if indx_2[count]==1:
+                        parallelogram[count][s]+=brillouin_primitive_vectors_2d[0,s]
+                    elif indx_2[count]==2:
+                        parallelogram[count][s]+=brillouin_primitive_vectors_2d[1,s]
+                    else:
+                        parallelogram[count][s]+=brillouin_primitive_vectors_2d[1,s]+brillouin_primitive_vectors_2d[0,s]
+            count+=1
+        new_parallelograms_tmp.extend(parallelogram)
+    print(np.shape(new_parallelograms_tmp))
+    number_parallelograms=int(len(new_parallelograms_tmp)/4)
+    new_parallelograms=np.reshape(new_parallelograms_tmp,(number_parallelograms,4,3))
+    #print(new_parallelograms)
+    new_parallelograms=new_parallelograms[:,:,:2]
+    fig,ax=plt.subplots()
+    patches=[]
+    for i in range(number_parallelograms):
+        polygon=Polygon(new_parallelograms[i], closed=True, fill=None, edgecolor='c')
+        patches.append(polygon)
     
+    #print(new_parallelograms)
+    p = PatchCollection(patches,cmap=matplotlib.cm.jet,alpha=0.4)
+    colors = 100*np.random.rand(len(patches))
+    p.set_array(np.array(colors))
+    ax.add_collection(p)
+    plt.show()
+    ##fig=plt.figure()
+    ##ax=fig.add_subplot(projection='3d')
+    ##ax.scatter(not_refined_k_points_list[:,0],not_refined_k_points_list[:,1],not_refined_k_points_list[:,3])
+    ##plt.show()
+
     ##dynamical refinment (parallelograms)
     ##print(not_refined_k_points_list)
     ##print(parallelograms)
