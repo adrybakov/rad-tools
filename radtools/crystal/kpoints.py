@@ -1259,6 +1259,7 @@ def dynamical_refinment_little_paths_2d(
             new_brillouin_primitive_vectors_3d[2,:]=brillouin_primitive_vectors_3d[[i for i in range(3) if chosen_plane[i]==0],:]
             for i in range(2):
                 new_brillouin_primitive_vectors_3d[i,:]=new_brillouin_primitive_vectors_2d[i,:]
+            
             #finding the minimal grid spacing
             max_value=np.linalg.norm(new_brillouin_primitive_vectors_2d[0]+new_brillouin_primitive_vectors_2d[1],2)
             moduli=np.zeros(number_eigenvectors_around,dtype=float)
@@ -1341,61 +1342,61 @@ if __name__ == "__main__":
     shift_in_space=[0,0,0]
 
     ###LITTLE TRIANGLES
-    ##refined_k_points_list,triangles=k_points_generator_2D(
-    ##    brillouin_primitive_vectors_3d,
-    ##    initial_grid_spacing,
-    ##    chosen_plane,
-    ##    brillouin_primitive_vectors_2d,
-    ##    True,
-    ##    refinment_spacing,
-    ##    symmetries,
-    ##    threshold,
-    ##    refinment_iteration,
-    ##    shift_in_space,
-    ##    shift_in_space,
-    ##    count
-    ##    )
-    ##
-    ##print(brillouin_primitive_vectors_3d)
-    ##print(brillouin_primitive_vectors_2d)
-    ##number_triangles=len(triangles)
-    ##triangle=[0]*3
-    ##new_triangles=[]
-    ##for i in range(number_triangles):
-    ##    indx_1=[triangles[i][r][0] for r in range(3)]
-    ##    indx_2=[triangles[i][r][1] for r in range(3)]
-    ##    count=0
-    ##    for indx in indx_1:
-    ##        triangle[count]=[refined_k_points_list[indx,s] for s in range(3)]
-    ##        if indx_2[count]!=0:
-    ##            for s in range(3):
-    ##                if indx_2[count]==1:
-    ##                    triangle[count][s]+=brillouin_primitive_vectors_2d[0,s]
-    ##                elif indx_2[count]==2:
-    ##                    triangle[count][s]+=brillouin_primitive_vectors_2d[1,s]
-    ##                else:
-    ##                    triangle[count][s]+=brillouin_primitive_vectors_2d[1,s]+brillouin_primitive_vectors_2d[0,s]
-    ##        count+=1
-    ##    new_triangles.extend(triangle)
-    ## print(new_triangles) 
-    ##new_triangles=np.reshape(new_triangles,(number_triangles,3,3))
-    ##new_triangles=new_triangles[:,:,:2]
-    ##fig,ax=plt.subplots()
-    ##patches=[]
-    ##
-    ##for i in range(number_triangles):
-    ##    polygon=Polygon(new_triangles[i], closed=True, fill=None, edgecolor='b')
-    ##    patches.append(polygon)
-    ##
-    ##p = PatchCollection(patches,cmap=matplotlib.cm.jet,alpha=0.4)
-    ##colors = 100*np.random.rand(len(patches))
-    ##p.set_array(np.array(colors))
-    ##ax.add_collection(p)
-    ##plt.show()
-    ##fig=plt.figure()
-    ##ax=fig.add_subplot(projection='3d')
-    ##ax.scatter(refined_k_points_list[:,0],refined_k_points_list[:,1],refined_k_points_list[:,3])
-    ##plt.show()
+    refined_k_points_list,triangles=k_points_generator_2D(
+        brillouin_primitive_vectors_3d,
+        initial_grid_spacing,
+        chosen_plane,
+        brillouin_primitive_vectors_2d,
+        True,
+        refinment_spacing,
+        symmetries,
+        threshold,
+        refinment_iteration,
+        shift_in_space,
+        shift_in_space,
+        count
+        )
+    
+    print(brillouin_primitive_vectors_3d)
+    print(brillouin_primitive_vectors_2d)
+    number_triangles=len(triangles)
+    triangle=[0]*3
+    new_triangles=[]
+    for i in range(number_triangles):
+        indx_1=[triangles[i][r][0] for r in range(3)]
+        indx_2=[triangles[i][r][1] for r in range(3)]
+        count=0
+        for indx in indx_1:
+            triangle[count]=[refined_k_points_list[indx,s] for s in range(3)]
+            if indx_2[count]!=0:
+                for s in range(3):
+                    if indx_2[count]==1:
+                        triangle[count][s]+=brillouin_primitive_vectors_2d[0,s]
+                    elif indx_2[count]==2:
+                        triangle[count][s]+=brillouin_primitive_vectors_2d[1,s]
+                    else:
+                        triangle[count][s]+=brillouin_primitive_vectors_2d[1,s]+brillouin_primitive_vectors_2d[0,s]
+            count+=1
+        new_triangles.extend(triangle)
+    print(new_triangles) 
+    new_triangles=np.reshape(new_triangles,(number_triangles,3,3))
+    new_triangles=new_triangles[:,:,:2]
+    fig,ax=plt.subplots()
+    patches=[]
+    
+    for i in range(number_triangles):
+        polygon=Polygon(new_triangles[i], closed=True, fill=None, edgecolor='b')
+        patches.append(polygon)
+    
+    p = PatchCollection(patches,cmap=matplotlib.cm.jet,alpha=0.4)
+    colors = 100*np.random.rand(len(patches))
+    p.set_array(np.array(colors))
+    ax.add_collection(p)
+    plt.show()
+    fig=plt.figure()
+    ax=fig.add_subplot(projection='3d')
+    ax.scatter(refined_k_points_list[:,0],refined_k_points_list[:,1],refined_k_points_list[:,3])
+    plt.show()
 
     ###LITTLE PARALLELOGRAMS
     not_refined_k_points_list,parallelograms=k_points_generator_2D(
@@ -1416,45 +1417,45 @@ if __name__ == "__main__":
         )
     ###print(not_refined_k_points_list)
     ##print(parallelograms)
-    ##number_parallelograms=len(parallelograms)
-    ##print(np.shape(not_refined_k_points_list))
-    ##print(np.shape(parallelograms))
-    ###print(parallelograms)
-    ##parallelogram=[0]*4
-    ##new_parallelograms_tmp=[]
-    ##for i in range(number_parallelograms):
-    ##    indx_1=[parallelograms[i][r][0] for r in range(4)]
-    ##    indx_2=[parallelograms[i][r][1] for r in range(4)]
-    ##    count=0
-    ##    for indx in indx_1:
-    ##        parallelogram[count]=[not_refined_k_points_list[indx,s] for s in range(3)]
-    ##        if indx_2[count]!=0:
-    ##            for s in range(3):
-    ##                if indx_2[count]==1:
-    ##                    parallelogram[count][s]+=brillouin_primitive_vectors_2d[0,s]
-    ##                elif indx_2[count]==2:
-    ##                    parallelogram[count][s]+=brillouin_primitive_vectors_2d[1,s]
-    ##                else:
-    ##                    parallelogram[count][s]+=brillouin_primitive_vectors_2d[1,s]+brillouin_primitive_vectors_2d[0,s]
-    ##        count+=1
-    ##    new_parallelograms_tmp.extend(parallelogram)
-    ##print(np.shape(new_parallelograms_tmp))
-    ##number_parallelograms=int(len(new_parallelograms_tmp)/4)
-    ##new_parallelograms=np.reshape(new_parallelograms_tmp,(number_parallelograms,4,3))
-    ##print(new_parallelograms)
-    ##new_parallelograms=new_parallelograms[:,:,:2]
-    ##fig,ax=plt.subplots()
-    ##patches=[]
-    ##for i in range(number_parallelograms):
-    ##    polygon=Polygon(new_parallelograms[i], closed=True, fill=None, edgecolor='c')
-    ##    patches.append(polygon)
-    ##
-    ##print(new_parallelograms)
-    ##p = PatchCollection(patches,cmap=matplotlib.cm.jet,alpha=0.4)
-    ##colors = 100*np.random.rand(len(patches))
-    ##p.set_array(np.array(colors))
-    ##ax.add_collection(p)
-    ###plt.show()
+    number_parallelograms=len(parallelograms)
+    print(np.shape(not_refined_k_points_list))
+    print(np.shape(parallelograms))
+    #print(parallelograms)
+    parallelogram=[0]*4
+    new_parallelograms_tmp=[]
+    for i in range(number_parallelograms):
+        indx_1=[parallelograms[i][r][0] for r in range(4)]
+        indx_2=[parallelograms[i][r][1] for r in range(4)]
+        count=0
+        for indx in indx_1:
+            parallelogram[count]=[not_refined_k_points_list[indx,s] for s in range(3)]
+            if indx_2[count]!=0:
+                for s in range(3):
+                    if indx_2[count]==1:
+                        parallelogram[count][s]+=brillouin_primitive_vectors_2d[0,s]
+                    elif indx_2[count]==2:
+                        parallelogram[count][s]+=brillouin_primitive_vectors_2d[1,s]
+                    else:
+                        parallelogram[count][s]+=brillouin_primitive_vectors_2d[1,s]+brillouin_primitive_vectors_2d[0,s]
+            count+=1
+        new_parallelograms_tmp.extend(parallelogram)
+    print(np.shape(new_parallelograms_tmp))
+    number_parallelograms=int(len(new_parallelograms_tmp)/4)
+    new_parallelograms=np.reshape(new_parallelograms_tmp,(number_parallelograms,4,3))
+    print(new_parallelograms)
+    new_parallelograms=new_parallelograms[:,:,:2]
+    fig,ax=plt.subplots()
+    patches=[]
+    for i in range(number_parallelograms):
+        polygon=Polygon(new_parallelograms[i], closed=True, fill=None, edgecolor='c')
+        patches.append(polygon)
+    
+    print(new_parallelograms)
+    p = PatchCollection(patches,cmap=matplotlib.cm.jet,alpha=0.4)
+    colors = 100*np.random.rand(len(patches))
+    p.set_array(np.array(colors))
+    ax.add_collection(p)
+    plt.show()
     ##fig=plt.figure()
     ##ax=fig.add_subplot(projection='3d')
     ##ax.scatter(not_refined_k_points_list[:,0],not_refined_k_points_list[:,1],not_refined_k_points_list[:,3])

@@ -718,12 +718,15 @@ def k_points_generator_2D(
         k1=default_gridding
     initial_weights = 1 / (k0 * k1)
 
+    print("inside 2d generation", brillouin_primitive_vectors_2d,k0,k1)
+
     ###building the initial 2D k points grid
     k_points_grid=np.zeros((k0*k1,4),dtype=float)
     for i in range(k0):
         for j in range(k1):
-            k_points_grid[i*k1+j,:3] =(float(i + shift_in_plane[0]) / k0) * (shift_in_space + brillouin_primitive_vectors_2d[0])\
-                       + (float(j + shift_in_plane[1]) / k1) * (shift_in_space + brillouin_primitive_vectors_2d[1])
+            k_points_grid[i*k1+j,:3] =(float(i + shift_in_plane[0]) / k0) * (brillouin_primitive_vectors_2d[0])\
+                       + (float(j + shift_in_plane[1]) / k1) * (brillouin_primitive_vectors_2d[1])
+            k_points_grid[i*k1+j,:3]+=shift_in_space
             k_points_grid[i*k1+j,3] = initial_weights
     
     ###symmetry analysis
@@ -858,9 +861,8 @@ def dynamical_refinment_little_paths_2D(
     number_little_paths=len(little_paths)
     
     eigenspaces_little_paths_to_refine=[[i] for i in position_little_paths_to_refine]
-
+    print("beginning: ",eigenspaces_little_paths_to_refine)
     flag_checking_indipendence=True
-
     while flag_checking_indipendence == True:
         number_eigenspaces=len(eigenspaces_little_paths_to_refine)
         number_total_eigenvectors=0
@@ -940,7 +942,6 @@ def dynamical_refinment_little_paths_2D(
                 if len(indices)!=0:
                     count4=0
                     for index in indices:
-                        print(index)
                         del little_paths_around_each_eigenspace[i][index-count4]
                         count4+=1
             ### checking if two eigenspaces have one little path around in common 
@@ -960,6 +961,7 @@ def dynamical_refinment_little_paths_2D(
         else:
             flag_checking_indipendence=False
         print("cycling",eigenspaces_little_paths_to_refine,little_paths_around_each_eigenspace)
+
     print("little paths to refine:",eigenspaces_little_paths_to_refine)
     print("little paths around the ones to refine:",little_paths_around_each_eigenspace)
     ### substituting to the little paths positions, the k points positions in the list of k points
@@ -969,9 +971,13 @@ def dynamical_refinment_little_paths_2D(
     for eigenspace in eigenspaces_little_paths_to_refine:
         eigenspaces_k_points_to_refine.append(np.unique([vertex for eigenvector in eigenspace for vertex in little_paths[eigenvector]],axis=0))
     for eigenspace in little_paths_around_each_eigenspace:
-        eigenspaces_k_points_around.append(np.unique([vertex for eigenvector in eigenspace for vertex in little_paths[eigenvector]],axis=0))    
-    print("k points to refine:", np.shape(eigenspaces_k_points_to_refine), eigenspaces_k_points_to_refine)
-    print("k points around the ones to refine:", np.shape(eigenspaces_k_points_around),eigenspaces_k_points_around)
+---> Qua bisogna cancellare i punti k around se sono gia nell'autospazio
+        eigenspaces_k_points_around.append(np.unique([vertex_1 for eigenvector in eigenspace for vertex_1 in little_paths[eigenvector]],axis=0))    
+    print("k points to refine:",eigenspaces_k_points_to_refine)
+    print("k points around the ones to refine:",eigenspaces_k_points_around)
+   
+    
+
     ### procede to a refinement of the k points constituing the to-refine little paths
     if number_vertices==3:
         k_points_list_tmp=[]
@@ -1004,7 +1010,6 @@ def dynamical_refinment_little_paths_2D(
                     normalized_brillouin_primitive_vectors_2d,
                     False
                     )
-
             ### check if the points are inside the border 
             refined_k_points_list[:,:3] = check_inside_closed_shape_2d(
                                         eigenvectors_around_array,
@@ -1036,57 +1041,63 @@ def dynamical_refinment_little_paths_2D(
                 else:
                     eigenvectors_around_array[j]=k_points_list[eigenspaces_k_points_around[i][j][0]]
                 eigenvectors_around_array[j,3]=k_points_list[eigenspaces_k_points_around[i][j][0],3]
+    --> QUA BISOGNA TROVARE UN MODO MIGLIORE PER GRIGLIARE QUALCOSA DI CUI CONOSCO IL CONTORNO   
             ### calculating the projections of the different k points on the primitive vectors
             k_points_list_projections_border=np.zeros((number_eigenvectors_around,2),dtype=float)
             k_points_list_projections_border_sum=np.zeros((number_eigenvectors_around),dtype=float)
-            for i in range(number_eigenvectors_around):
+            for r in range(number_eigenvectors_around):
                 for j in range(2):
-                    k_points_list_projections_border[i,j]=eigenvectors_around_array[i,:3]@brillouin_primitive_vectors_2d[j,:]
-                k_points_list_projections_border_sum[i]=np.sum(k_points_list_projections_border[i])
+                    k_points_list_projections_border[r,j]=eigenvectors_around_array[r,:3]@brillouin_primitive_vectors_2d[j,:]
+                k_points_list_projections_border_sum[r]=np.sum(k_points_list_projections_border[r])
             ### sorting in order to find the simil-BZ
             origin_ij=np.argmin(k_points_list_projections_border_sum)
             origin=eigenvectors_around_array[origin_ij,:3]
-            for i in range(number_eigenvectors_around):
+            for s in range(number_eigenvectors_around):
                 for j in range(2):
-                    k_points_list_projections_border[i,j]=(eigenvectors_around_array[i,:3]-origin)@brillouin_primitive_vectors_2d[j,:]
+                    k_points_list_projections_border[s,j]=(eigenvectors_around_array[s,:3]-origin)@brillouin_primitive_vectors_2d[j,:]
+            ##print(k_points_list_projections_border)
             ### finding the bottom-right point
-            min_0=k_points_list_projections_border[0,0]
-            max_1=k_points_list_projections_border[0,1]
-            position_pair_1=0
-            for i in range(number_eigenvectors_around):
-                if k_points_list_projections_border[i,0]<min_0 and  k_points_list_projections_border[i,1]>max_1:
-                    min_0=k_points_list_projections_border[i,0]
-                    max_1=k_points_list_projections_border[i,1]
-                    position_pair_1=i
-            ### finding the top-left point
             max_0=k_points_list_projections_border[0,0]
             min_1=k_points_list_projections_border[0,1]
             position_pair_0=0
-            for i in range(number_eigenvectors_around):
-                if k_points_list_projections_border[i,0]>max_0 and  k_points_list_projections_border[i,1]<min_1:
-                    max_0=k_points_list_projections_border[i,0]
-                    min_1=k_points_list_projections_border[i,1]
-                    position_pair_0=i
+            for t in range(number_eigenvectors_around):
+                if k_points_list_projections_border[t,0]>=max_0 and k_points_list_projections_border[t,1]<=min_1:
+                    max_0=k_points_list_projections_border[t,0]
+                    min_1=k_points_list_projections_border[t,1]
+                    position_pair_0=t
+                    #print(position_pair_0)
+            ### finding the top-left point
+            min_0=k_points_list_projections_border[0,0]
+            max_1=k_points_list_projections_border[0,1]
+            position_pair_1=0
+            for t in range(number_eigenvectors_around):
+                if k_points_list_projections_border[t,0]<=min_0 and  k_points_list_projections_border[t,1]>=max_1:
+                    max_0=k_points_list_projections_border[t,0]
+                    min_1=k_points_list_projections_border[t,1]
+                    position_pair_1=t
+            print("extremal positions",position_pair_0,position_pair_1,origin_ij)
             ### defining the new bordening
             new_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
-            new_brillouin_primitive_vectors_2d[0]=eigenvectors_around_array[position_pair_1,:3]-origin
-            new_brillouin_primitive_vectors_2d[1]=eigenvectors_around_array[position_pair_0,:3]-origin
+            new_brillouin_primitive_vectors_2d[0]=eigenvectors_around_array[position_pair_0,:3]-origin
+            new_brillouin_primitive_vectors_2d[1]=eigenvectors_around_array[position_pair_1,:3]-origin
             new_brillouin_primitive_vectors_3d=np.zeros((3,3),dtype=float)
             count = 0
-            for i in range(3):
-                if chosen_plane[i] != 0:
-                    new_brillouin_primitive_vectors_3d[i] = new_brillouin_primitive_vectors_2d[count]
+            for s in range(3):
+                if chosen_plane[s] != 0:
+                    new_brillouin_primitive_vectors_3d[s] = new_brillouin_primitive_vectors_2d[count]
                     count += 1
                 else:
-                    new_brillouin_primitive_vectors_3d[i] = brillouin_primitive_vectors_3d[i]
+                    new_brillouin_primitive_vectors_3d[s] = brillouin_primitive_vectors_3d[s]
+            print("new brillouin zone \n", new_brillouin_primitive_vectors_2d)
             ### finding the minimal grid spacing
             max_value=np.linalg.norm(new_brillouin_primitive_vectors_2d[0]+new_brillouin_primitive_vectors_2d[1],2)
             moduli=np.zeros(number_eigenvectors_around,dtype=float)
-            for i in range(number_eigenvectors_around):
-                moduli[i]=np.linalg.norm(eigenvectors_around_array[i,:3]-origin,2)
-                if moduli[i] < threshold_minimal_refinment:
-                    moduli[i]=max_value
-            initial_grid_spacing=np.min(moduli)/2
+            for s in range(number_eigenvectors_around):
+                moduli[s]=np.linalg.norm(eigenvectors_around_array[s,:3]-origin,2)
+                if moduli[s] < threshold_minimal_refinment:
+                    moduli[s]=max_value
+            initial_grid_spacing=np.min(moduli)/6
+            print("input 2d generation",initial_grid_spacing,counting_offset,origin)
             new_k_points_list_tmp,parallelograms=k_points_generator_2D(
                                                     new_brillouin_primitive_vectors_3d,
                                                     brillouin_primitive_vectors_3d,
@@ -1102,14 +1113,16 @@ def dynamical_refinment_little_paths_2D(
                                                     [0,0],
                                                     origin,
                                                     counting_offset
-                                                )                        
+                                                    )
+            ### saving the parallelograms           
             for parallelogram in parallelograms:
                 for vertex in parallelogram:
-                    vertex[1]+=counting_offset
+                    vertex[0]+=counting_offset
             counting_offset+=len(new_k_points_list_tmp)
-
             new_k_points_list=np.append(new_k_points_list,new_k_points_list_tmp,axis=0)
             only_new_little_paths.extend(parallelograms)
+            print("new little paths", np.shape(only_new_little_paths))
+            print("k points list", np.shape(new_k_points_list))
 
     return new_k_points_list,only_new_little_paths
 
@@ -1201,7 +1214,7 @@ if __name__ == "__main__":
     refinment_iterations=3
     refinment_spacing=0.1
     threshold_symmetry=0.001
-    epsilon=0.000000001
+    threshold_minimal_refinment=0.000000001
     default_gridding=1000
     count=0
     shift_in_plane=[0,0]
@@ -1209,23 +1222,23 @@ if __name__ == "__main__":
     covering_BZ=True
 
     ### LITTLE PARALLELOGRAMS
-    ##number_vertices=4
-    ##not_refined_k_points_list,parallelograms=k_points_generator_2D(
-    ##    brillouin_primitive_vectors_3d,
-    ##    brillouin_primitive_vectors_3d,
-    ##    chosen_plane,
-    ##    grid_spacing,
-    ##    covering_BZ,
-    ##    default_gridding,
-    ##    False,
-    ##    refinment_spacing,
-    ##    refinment_iterations,
-    ##    symmetries,
-    ##    threshold_symmetry,
-    ##    shift_in_plane,
-    ##    shift_in_space,
-    ##    0
-    ##)
+    number_vertices=4
+    not_refined_k_points_list,parallelograms=k_points_generator_2D(
+        brillouin_primitive_vectors_3d,
+        brillouin_primitive_vectors_3d,
+        chosen_plane,
+        grid_spacing,
+        covering_BZ,
+        default_gridding,
+        False,
+        refinment_spacing,
+        refinment_iterations,
+        symmetries,
+        threshold_symmetry,
+        shift_in_plane,
+        shift_in_space,
+        0
+    )
     ##printing_covering_BZ_2D(
     ##    brillouin_primitive_vectors_3d,
     ##    chosen_plane,
@@ -1235,32 +1248,64 @@ if __name__ == "__main__":
     ##)
 
     ###LITTLE TRIANGLES
-    number_vertices=3
-    refined_k_points_list,triangles=k_points_generator_2D(
-        brillouin_primitive_vectors_3d,
-        brillouin_primitive_vectors_3d,
-        chosen_plane,
-        grid_spacing,
-        covering_BZ,
-        default_gridding,
-        True,
-        refinment_spacing,
+    ##number_vertices=3
+    ##refined_k_points_list,triangles=k_points_generator_2D(
+    ##    brillouin_primitive_vectors_3d,
+    ##    brillouin_primitive_vectors_3d,
+    ##    chosen_plane,
+    ##    grid_spacing,
+    ##    covering_BZ,
+    ##    default_gridding,
+    ##    True,
+    ##    refinment_spacing,
+    ##    refinment_iterations,
+    ##    symmetries,
+    ##    threshold_symmetry,
+    ##    shift_in_plane,
+    ##    shift_in_space,
+    ##    0
+    ##    )
+    ##printing_covering_BZ_2D(
+    ##    brillouin_primitive_vectors_3d,
+    ##    chosen_plane,
+    ##    refined_k_points_list,
+    ##    triangles,
+    ##    number_vertices
+    ##)
+    
+    ###DYNAMICAL REFINMENT
+    brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
+    normalized_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
+    count = 0
+    for i in range(3):
+        if chosen_plane[i]!=0:
+            brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_3d[i]
+            normalized_brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_2d[count]/(brillouin_primitive_vectors_2d[count]@brillouin_primitive_vectors_2d[count])
+            count += 1
+    
+    position_little_paths_to_refine=[1,2,30]
+    not_refined_k_points_list,parallelograms=dynamical_refinment_little_paths_2D(
+        parallelograms,
+        not_refined_k_points_list,
+        position_little_paths_to_refine,
+        number_vertices,
         refinment_iterations,
         symmetries,
         threshold_symmetry,
-        shift_in_plane,
-        shift_in_space,
-        0
-        )
-    printing_covering_BZ_2D(
         brillouin_primitive_vectors_3d,
         chosen_plane,
-        refined_k_points_list,
-        triangles,
-        number_vertices
+        brillouin_primitive_vectors_2d,
+        normalized_brillouin_primitive_vectors_2d,
+        threshold_minimal_refinment,
+        default_gridding
     )
-    
-    
-    
+    ##printing_covering_BZ_2D(
+    ##    brillouin_primitive_vectors_3d,
+    ##    chosen_plane,
+    ##    not_refined_k_points_list,
+    ##    parallelograms,
+    ##    number_vertices
+    ##)
+
 
   
