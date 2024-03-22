@@ -597,7 +597,6 @@ def k_points_triangulation_2D(
        
     ###for each triangle the ordering of the vertices is now clock-wise
     #return k_points_list,ordered_triangles
-
     return k_points_list,triangles
 
 ### local refinment of the k points list in the 2D plane
@@ -613,18 +612,16 @@ def local_refinment_with_symmetry_analysis(
     normalized_brillouin_primitive_vectors_2d,
     downfold_procedure=False
 ):
-   
     length_old_k_points_list=old_k_points_list.shape[0]
     if  refinment_iterations == 0:
-        for i in range(length_old_k_points_list):
-            if old_k_points_list[i,4]!=0.0:
-                new_k_points_list.extend(old_k_points_list[i,:])
         if downfold_procedure == True:
-            new_k_points_list = np.reshape(new_k_points_list,(int(len(new_k_points_list)/4), 4))
-            new_k_points_list[:,:3]= downfold_inside_brillouin_zone(
-                new_k_points_list[:,:3],
+            old_k_points_list[:,:3],indices= downfold_inside_brillouin_zone(
+                old_k_points_list[:,:3],
                 brillouin_primitive_vectors_3d
             )
+        for i in range(length_old_k_points_list):
+            if old_k_points_list[i,3]!=0.0:
+                new_k_points_list.extend(old_k_points_list[i,:])
     else:
         iter = 0
         while iter != length_old_k_points_list:
@@ -659,14 +656,14 @@ def local_refinment_with_symmetry_analysis(
                 
                 ### applying downfolding procedure
                 if downfold_procedure == True:
-                    k_point_tmp_subgrid[:,:3]=downfold_inside_brillouin_zone(
+                    k_point_tmp_subgrid[:,:3],indices=downfold_inside_brillouin_zone(
                         k_point_tmp_subgrid[:,:3],
                         brillouin_primitive_vectors_3d,
                     )
 
                 ### applying reiteratively the refinment procedure
                 new_refinment_spacing = refinment_spacing / 2
-                
+
                 local_refinment_with_symmetry_analysis(
                     k_point_tmp_subgrid,
                     new_k_points_list,
@@ -711,7 +708,7 @@ def k_points_generator_2D(
             (brillouin_primitive_vectors_2d[0] @ brillouin_primitive_vectors_2d[0])/grid_spacing
             )
         k1 = int(
-            (brillouin_primitive_vectors_2d[1] @ brillouin_primitive_vectors_2d[1]) /grid_spacing
+            (brillouin_primitive_vectors_2d[1] @ brillouin_primitive_vectors_2d[1])/grid_spacing
             )
         if k0==0 or k1==0:
             k0=default_gridding
@@ -725,7 +722,8 @@ def k_points_generator_2D(
     k_points_grid=np.zeros((k0*k1,4),dtype=float)
     for i in range(k0):
         for j in range(k1):
-            k_points_grid[i*k1+j,:3] = (float(i + shift_in_plane[0]) / k0) * (shift_in_space + brillouin_primitive_vectors_2d[0,:]) + (float(j + shift_in_plane[1]) / k1) * (shift_in_space + brillouin_primitive_vectors_2d[1,:])
+            k_points_grid[i*k1+j,:3] =(float(i + shift_in_plane[0]) / k0) * (shift_in_space + brillouin_primitive_vectors_2d[0])\
+                       + (float(j + shift_in_plane[1]) / k1) * (shift_in_space + brillouin_primitive_vectors_2d[1])
             k_points_grid[i*k1+j,3] = initial_weights
     
     ###symmetry analysis
@@ -755,9 +753,8 @@ def k_points_generator_2D(
             normalized_brillouin_primitive_vectors_2d,
             True
         )
-        ###the list should be already ordered
         ###transforming the list into an array-like object (calling it list as well)
-        ###refined_k_points_list = np.reshape(refined_k_points_list,(int(len(refined_k_points_list)/4), 4))
+        refined_k_points_list = np.reshape(refined_k_points_list,(int(len(refined_k_points_list)/4), 4))
         ###if a covering of the BZ is not requested
         if covering_BZ == True:
             ###applying a triangulation procedure to order the k points list 
@@ -1133,7 +1130,6 @@ def printing_covering_BZ_2D(
     
     number_little_paths=len(little_paths)
     little_path=[0]*number_vertices
-   
     ### substituing to the vertices the k points coordinates
     new_little_paths=[]
     for i in range(number_little_paths):
@@ -1145,30 +1141,27 @@ def printing_covering_BZ_2D(
             if indx_2[count]!=0:
                 for s in range(3):
                     if indx_2[count]==1:
-                        k_points_list[count][s]+=brillouin_primitive_vectors_2d[0,s]
+                        little_path[count][s]+=brillouin_primitive_vectors_2d[0,s]
                     elif indx_2[count]==2:
-                        k_points_list[count][s]+=brillouin_primitive_vectors_2d[1,s]
+                        little_path[count][s]+=brillouin_primitive_vectors_2d[1,s]
                     else:
-                        k_points_list[count][s]+=brillouin_primitive_vectors_2d[1,s]+brillouin_primitive_vectors_2d[0,s]
+                        little_path[count][s]+=brillouin_primitive_vectors_2d[1,s]+brillouin_primitive_vectors_2d[0,s]
             count+=1
         new_little_paths.extend(little_path)
+
     ### reordering the list
     number_little_paths=int(len(new_little_paths)/number_vertices)
     new_little_paths=np.reshape(new_little_paths,(number_little_paths,number_vertices,3))
     ### considering only coordinates in the chosen plane
-    number_little_paths=number_little_paths
-
-
-
-    new_parallelograms=new_parallelograms[:,:,:2]
-
-
-
-    
+    new_little_paths_projected=np.zeros((number_little_paths,number_vertices,2),dtype=float)
+    for i in range(number_little_paths):
+        for j in range(number_vertices):
+            for r in range(2):
+                new_little_paths_projected[i,j,r]+=(new_little_paths[i,j]@brillouin_primitive_vectors_2d[r])
     fig,ax=plt.subplots()
     patches=[]
     for i in range(number_little_paths):
-        polygon=Polygon(new_little_paths[i],closed=True,fill=None,edgecolor='c')
+        polygon=Polygon(new_little_paths_projected[i],closed=True,fill=None,edgecolor='c')
         patches.append(polygon)
     p = PatchCollection(patches,cmap=matplotlib.cm.jet,alpha=0.4)
     colors = 100*np.random.rand(len(patches))
@@ -1178,7 +1171,6 @@ def printing_covering_BZ_2D(
     ax=fig.add_subplot(projection='3d')
     ax.scatter(k_points_list[:,0],k_points_list[:,1],k_points_list[:,3])
     plt.show()
-
 
 ### TESTING INPUT
 if __name__ == "__main__":
@@ -1206,7 +1198,7 @@ if __name__ == "__main__":
     chosen_plane=[1,1,0]
     symmetries=[[0,0,np.pi/2]]
     grid_spacing=0.1
-    refinment_iterations=0
+    refinment_iterations=3
     refinment_spacing=0.1
     threshold_symmetry=0.001
     epsilon=0.000000001
@@ -1217,14 +1209,41 @@ if __name__ == "__main__":
     covering_BZ=True
 
     ### LITTLE PARALLELOGRAMS
-    not_refined_k_points_list,parallelograms=k_points_generator_2D(
+    ##number_vertices=4
+    ##not_refined_k_points_list,parallelograms=k_points_generator_2D(
+    ##    brillouin_primitive_vectors_3d,
+    ##    brillouin_primitive_vectors_3d,
+    ##    chosen_plane,
+    ##    grid_spacing,
+    ##    covering_BZ,
+    ##    default_gridding,
+    ##    False,
+    ##    refinment_spacing,
+    ##    refinment_iterations,
+    ##    symmetries,
+    ##    threshold_symmetry,
+    ##    shift_in_plane,
+    ##    shift_in_space,
+    ##    0
+    ##)
+    ##printing_covering_BZ_2D(
+    ##    brillouin_primitive_vectors_3d,
+    ##    chosen_plane,
+    ##    not_refined_k_points_list,
+    ##    parallelograms,
+    ##    number_vertices
+    ##)
+
+    ###LITTLE TRIANGLES
+    number_vertices=3
+    refined_k_points_list,triangles=k_points_generator_2D(
         brillouin_primitive_vectors_3d,
         brillouin_primitive_vectors_3d,
         chosen_plane,
         grid_spacing,
         covering_BZ,
         default_gridding,
-        False,
+        True,
         refinment_spacing,
         refinment_iterations,
         symmetries,
@@ -1232,9 +1251,16 @@ if __name__ == "__main__":
         shift_in_plane,
         shift_in_space,
         0
+        )
+    printing_covering_BZ_2D(
+        brillouin_primitive_vectors_3d,
+        chosen_plane,
+        refined_k_points_list,
+        triangles,
+        number_vertices
     )
     
-    print(parallelograms)
+    
     
 
   
