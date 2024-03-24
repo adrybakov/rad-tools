@@ -856,10 +856,8 @@ def dynamical_refinment_little_paths_2D(
 ):
     new_k_points_list=k_points_list
     counting_offset=len(k_points_list)
-
     only_new_little_paths=[]
     number_little_paths=len(little_paths)
-    
     eigenspaces_little_paths_to_refine=[[i] for i in position_little_paths_to_refine]
     print("beginning: ",eigenspaces_little_paths_to_refine)
     flag_checking_indipendence=True
@@ -944,20 +942,51 @@ def dynamical_refinment_little_paths_2D(
                     for index in indices:
                         del little_paths_around_each_eigenspace[i][index-count4]
                         count4+=1
-            ### checking if two eigenspaces have one little path around in common 
-            ### this in common little path is inserted into the to refine little paths and the procedure is repeated
-            new_little_paths_to_refine=[]
-            for i in range(number_eigenspaces-1):
-                for j in range(i+1,number_eigenspaces):
-                    for element in little_paths_around_each_eigenspace[i]:
-                        if element in little_paths_around_each_eigenspace[j]:
-                            new_little_paths_to_refine.append(element)
-            if len(new_little_paths_to_refine)==0:
-                flag_checking_indipendence=True
-            else:
-                new_little_paths_to_refine=list(np.unique(new_little_paths_to_refine))
-                for s in new_little_paths_to_refine:
-                    eigenspaces_little_paths_to_refine.append([s])
+        no_regularization=0
+        ### checking if two eigenspaces have one little path around in common 
+        ### this in common little path is inserted into the to refine little paths and the procedure is repeated
+        list_tmp=[]
+        for i in range(number_eigenspaces-1):
+            for j in range(i+1,number_eigenspaces):
+                for element in little_paths_around_each_eigenspace[i]:
+                    if element in little_paths_around_each_eigenspace[j]:
+                        list_tmp.append(element)
+        if len(list_tmp)!=0:
+            no_regularization+=1
+            list_tmp=list(np.unique(list_tmp))
+            for s in list_tmp:
+                eigenspaces_little_paths_to_refine.append([s])
+        ### symmetrizing the refinment region (mainly for the number_vertices = 4 case)
+        ### check for each eigenspace, if two eigenvectors have one common near-by little path
+        ### that near-by little path is considered as a selected little-path if it has at least two vertices in common with each eigenvector
+        for eigenspace in eigenspaces_little_paths_to_refine:
+            number_eigenvectors=len(eigenspace)
+            if number_eigenvectors>1:
+                near_by_little_paths_2_vertices=np.empty(number_eigenvectors,dtype=object)
+                list_tmp=[]
+                count7=0
+                for eigenvector in eigenspace:
+                    for vertex_2 in little_paths[eigenvector]:
+                        for r in range(number_little_paths):
+                            count8=0
+                            for vertex_1 in little_paths[r]:
+                                if vertex_1[0]==vertex_2[0] and vertex_1[1]==vertex_2[1]:
+                                    count8+=1
+                            if count8>=2:
+                                list_tmp.append(r)
+                near_by_little_paths_2_vertices[count7]=np.unique(list_tmp)
+                if len(near_by_little_paths_2_vertices[count7])!=0:
+                    for i in range(0,number_eigenvectors-1):
+                        for j in range(i+1,number_eigenvectors):
+                            for r in near_by_little_paths_2_vertices[i]:
+                                for s in near_by_little_paths_2_vertices[j]:
+                                    if s==r:
+                                        no_regularization+=1
+                                        eigenspaces_little_paths_to_refine.append([s])
+                count7+=1
+        if no_regularization!=0 or any_degeneracy!=0:
+            flag_checking_indipendence=True
+            print("degeneracies and regularizations detected: ",any_degeneracy,no_regularization)
         else:
             flag_checking_indipendence=False
         print("cycling",eigenspaces_little_paths_to_refine,little_paths_around_each_eigenspace)
@@ -970,14 +999,24 @@ def dynamical_refinment_little_paths_2D(
     eigenspaces_k_points_around=[]
     for eigenspace in eigenspaces_little_paths_to_refine:
         eigenspaces_k_points_to_refine.append(np.unique([vertex for eigenvector in eigenspace for vertex in little_paths[eigenvector]],axis=0))
-    for eigenspace in little_paths_around_each_eigenspace:
----> Qua bisogna cancellare i punti k around se sono gia nell'autospazio
-        eigenspaces_k_points_around.append(np.unique([vertex_1 for eigenvector in eigenspace for vertex_1 in little_paths[eigenvector]],axis=0))    
+    ### erasing from the k points around the one inside the refinment region
+    count5=0
+    for eigenspace_2 in little_paths_around_each_eigenspace:
+        list_tmp=[]
+        for eigenvector_2 in eigenspace_2:
+            for vertex_2 in little_paths[eigenvector_2]:
+                count6=0
+                for eigenspace_1 in eigenspaces_k_points_to_refine[count5]:
+                    for eigenvector_1 in eigenspace_1:
+                        for vertex_1 in little_paths[eigenvector_1]:
+                            if vertex_1[0]==vertex_2[0]:
+                                count6+=1
+                if count6==0:
+                    list_tmp.extend([list(vertex_2)])
+        eigenspaces_k_points_around.append(np.asarray(list_tmp))
+        count5+=1
     print("k points to refine:",eigenspaces_k_points_to_refine)
     print("k points around the ones to refine:",eigenspaces_k_points_around)
-   
-    
-
     ### procede to a refinement of the k points constituing the to-refine little paths
     if number_vertices==3:
         k_points_list_tmp=[]
@@ -994,10 +1033,8 @@ def dynamical_refinment_little_paths_2D(
                     eigenvectors_array[j]=k_points_list[eigenspaces_k_points_to_refine[i][j,0]]+brillouin_primitive_vectors_2d[0]
                 else:
                     eigenvectors_array[j]=k_points_list[eigenspaces_k_points_to_refine[i][j,0]]+brillouin_primitive_vectors_2d[1]
-            
             minimal_distance = (cdist(eigenvectors_array-eigenvectors_around_array)).min()
             refined_k_points_list=[]
-            
             local_refinment_with_symmetry_analysis(
                     eigenvectors_array,
                     refined_k_points_list,
@@ -1040,8 +1077,7 @@ def dynamical_refinment_little_paths_2D(
                     eigenvectors_around_array[j,:3]=k_points_list[eigenspaces_k_points_around[i][j][0],:3]+brillouin_primitive_vectors_2d[0]
                 else:
                     eigenvectors_around_array[j]=k_points_list[eigenspaces_k_points_around[i][j][0]]
-                eigenvectors_around_array[j,3]=k_points_list[eigenspaces_k_points_around[i][j][0],3]
-    --> QUA BISOGNA TROVARE UN MODO MIGLIORE PER GRIGLIARE QUALCOSA DI CUI CONOSCO IL CONTORNO   
+                eigenvectors_around_array[j,3]=k_points_list[eigenspaces_k_points_around[i][j][0],3]  
             ### calculating the projections of the different k points on the primitive vectors
             k_points_list_projections_border=np.zeros((number_eigenvectors_around,2),dtype=float)
             k_points_list_projections_border_sum=np.zeros((number_eigenvectors_around),dtype=float)
@@ -1215,7 +1251,7 @@ if __name__ == "__main__":
     refinment_spacing=0.1
     threshold_symmetry=0.001
     threshold_minimal_refinment=0.000000001
-    default_gridding=1000
+    default_gridding=100
     count=0
     shift_in_plane=[0,0]
     shift_in_space=[0,0,0]
@@ -1283,7 +1319,7 @@ if __name__ == "__main__":
             normalized_brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_2d[count]/(brillouin_primitive_vectors_2d[count]@brillouin_primitive_vectors_2d[count])
             count += 1
     
-    position_little_paths_to_refine=[1,2,30]
+    position_little_paths_to_refine=[13,58,37]
     not_refined_k_points_list,parallelograms=dynamical_refinment_little_paths_2D(
         parallelograms,
         not_refined_k_points_list,
@@ -1299,13 +1335,10 @@ if __name__ == "__main__":
         threshold_minimal_refinment,
         default_gridding
     )
-    ##printing_covering_BZ_2D(
-    ##    brillouin_primitive_vectors_3d,
-    ##    chosen_plane,
-    ##    not_refined_k_points_list,
-    ##    parallelograms,
-    ##    number_vertices
-    ##)
-
-
-  
+    printing_covering_BZ_2D(
+        brillouin_primitive_vectors_3d,
+        chosen_plane,
+        not_refined_k_points_list,
+        parallelograms,
+        number_vertices
+    )
