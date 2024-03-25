@@ -20,11 +20,10 @@ from copy import deepcopy
 from math import sqrt
 import numpy as np
 import os 
-import ipyparallel as ipp
 from radtools import MagnonDispersion
 from scipy.spatial.transform import Rotation
-from radtools.crystal.kpoints import dynamical_refinment_triangulation_2d
-from radtools.crystal.kpoints import k_points_generator_2D
+from radtools.crystal.kpointsNEW import dynamical_refinment_little_paths_2D
+from radtools.crystal.kpointsNEW import k_points_generator_2D
 from radtools.geometry import span_orthonormal_set
 from radtools.magnons.diagonalization import ColpaFailed, solve_via_colpa
 from radtools.spinham.hamiltonian import SpinHamiltonian
@@ -182,34 +181,49 @@ class Berry_curvature:
     def berry_curvature(
         self,
         triangulation,
-        brillouin_primitive_vectors,
+        brillouin_primitive_vectors_3d,
         chosen_plane,
-        initial_grid_spacing,
+        grid_spacing,
+        default_gridding,
         shift_in_plane,
         shift_in_space,
         symmetries,
-        threshold_k_point,
+        threshold_symmetry,
         refinment,
         refinment_spacing,
-        refinment_iteration,
+        refinment_iterations,
         threshold_omega,
         dynamical_refinment,
         dynamical_refinment_iteration,
         threshold_dynamical_refinment
     ):  
+        
         refined_k_points_list,little_paths=k_points_generator_2D(
-                                brillouin_primitive_vectors,
-                                chosen_plane,
-                                initial_grid_spacing,
-                                shift_in_plane,
-                                shift_in_space,
-                                symmetries,
-                                threshold_omega,
-                                refinment,
-                                refinment_spacing,
-                                refinment_iteration,
-                                triangulation
-                            )
+                                                    brillouin_primitive_vectors_3d,
+                                                    brillouin_primitive_vectors_3d,
+                                                    chosen_plane,
+                                                    grid_spacing,
+                                                    True,
+                                                    default_gridding,
+                                                    False,
+                                                    refinment_spacing,
+                                                    refinment_iterations,
+                                                    symmetries,
+                                                    threshold_symmetry,
+                                                    shift_in_plane,
+                                                    shift_in_space,
+                                                    0
+                                                )
+        
+        brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
+        normalized_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
+        count = 0
+        for i in range(3):
+            if chosen_plane[i]!=0:
+                brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_3d[i]
+                normalized_brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_2d[count]/(brillouin_primitive_vectors_2d[count]@brillouin_primitive_vectors_2d[count])
+                count += 1
+        
         _,us,magnonic_branches,number_eigenspaces=self.magnonic_surfaces(refined_k_points_list,False,False,threshold_omega,False)
 
         if triangulation==True:
@@ -244,18 +258,22 @@ class Berry_curvature:
                         if (max_phases[j]<max_phases[max_index]+threshold_dynamical_refinment) and (max_phases[j]>max_phases[max_index]-threshold_dynamical_refinment):
                             max_indices.append(j)
                 selected_little_paths=little_paths[max_indices,:]
-                refined_little_paths,little_paths=dynamical_refinment_2d(
-                                                        little_paths,
-                                                        selected_little_paths,
-                                                        refined_k_points_list,
-                                                        dynamical_refinment,
-                                                        dynamical_refinment_iteration,
-                                                        symmetries,
-                                                        threshold_omega,
-                                                        brillouin_primitive_vectors,
-                                                        chosen_plane,
-                                                        triangulation
-                                                    )
+
+                refined_k_points_list,little_paths=dynamical_refinment_little_paths_2D(
+                                                                little_paths,
+                                                                refined_k_points_list,
+                                                                selected_little_paths,
+                                                                number_vertices,
+                                                                refinment_iterations,
+                                                                symmetries,
+                                                                threshold_symmetry,
+                                                                brillouin_primitive_vectors_3d,
+                                                                chosen_plane,
+                                                                brillouin_primitive_vectors_2d,
+                                                                normalized_brillouin_primitive_vectors_2d,
+                                                                0.0000000000001,
+                                                                default_gridding
+                                                            )
             else:
                 dynamical_refinment=False
         
