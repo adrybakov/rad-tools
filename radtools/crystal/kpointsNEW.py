@@ -510,7 +510,8 @@ def symmetry_analysis(
 def k_points_triangulation_2D(
     k_points_list,
     brillouin_primitive_vectors_2D,
-    precedent_count
+    precedent_count,
+    border_indices=[]
 ):
     number_elements=k_points_list.shape[0]
     k_points_list_projections=np.zeros((number_elements,2),dtype=float)
@@ -589,11 +590,17 @@ def k_points_triangulation_2D(
             vertices_projections=vertices_projections[indices]
         vertices=vertices[indices]
         ###considering the case the function is called on an existing list (the existing list has length equal to precedent_count)
+        border_count=number_elements-len(border_indices)
         list_tmp=[]
         for s in range(3):
-            if  vertices[s,0]> precedent_count:
+            if  vertices[s,0]> precedent_count and vertices[s,0]<border_count:
                 vertices[s,0]+=precedent_count
+        ###considering the case in which the function is called on new k points plus old k points, and the proper indices of the old k points are given by border indices
+        ###assuming as well that the old k points are after the new k points (so given the total number of k points the old ones are the ones > all_k_points-len(border_indices))
+            if vertices[s,0]>=border_count and border_count!=number_elements:
+                vertices[s,0]=border_indices[vertices[s,0]-border_count]
             list_tmp.append(list(vertices[s]))
+        
         ordered_triangles.append(list_tmp)
     
     ordered_triangles=np.reshape(ordered_triangles,(number_triangles,3,2))
@@ -1047,6 +1054,7 @@ def dynamical_refinment_little_paths_2D(
                 else:
                     eigenvectors_array[j,:3]=k_points_list[eigenspaces_k_points_to_refine[i][j,0],:3]+brillouin_primitive_vectors_2d[1]+brillouin_primitive_vectors_2d[0]
                 eigenvectors_array[j,3]=k_points_list[eigenspaces_k_points_to_refine[i][j,0],3]
+            border_indices=[]
             for j in range(number_eigenvectors_around):
                 if eigenspaces_k_points_around[i][j,1]==0:
                     eigenvectors_around_array[j,:3]=k_points_list[eigenspaces_k_points_around[i][j,0],:3]
@@ -1057,6 +1065,7 @@ def dynamical_refinment_little_paths_2D(
                 else:
                     eigenvectors_around_array[j,:3]=k_points_list[eigenspaces_k_points_around[i][j,0],:3]+brillouin_primitive_vectors_2d[1]+brillouin_primitive_vectors_2d[0]
                 eigenvectors_around_array[j,3]=k_points_list[eigenspaces_k_points_around[i][j,0],3]
+                border_indices.append(eigenspaces_k_points_around[i][j,0])
             distance=np.zeros(number_eigenvectors_around*number_eigenvectors,dtype=float)
             for s in range(number_eigenvectors):
                 for t in range(number_eigenvectors_around):
@@ -1078,7 +1087,7 @@ def dynamical_refinment_little_paths_2D(
                     brillouin_primitive_vectors_3d,
                     brillouin_primitive_vectors_2d,
                     normalized_brillouin_primitive_vectors_2d,
-                    True
+                    False
                     )
             ###transforming the list into an array-like object (calling it list as well)
             refined_k_points_list_tmp = np.reshape(refined_k_points_list_tmp,(int(len(refined_k_points_list_tmp)/4), 4))
@@ -1092,14 +1101,27 @@ def dynamical_refinment_little_paths_2D(
             refined_k_points_list_tmp,triangles=k_points_triangulation_2D(
                                                     refined_k_points_list_tmp,
                                                     brillouin_primitive_vectors_2d,
-                                                    counting_offset)
-            counting_offset+=len(refined_k_points_list)
-            k_points_list_tmp.extend(refined_k_points_list)
-            ### saving the triangles           
+                                                    counting_offset,
+                                                    border_indices)
+            ### checking border BZ
+            refined_k_points_list_tmp[:,:3],indices=downfold_inside_brillouin_zone(
+                                                    refined_k_points_list_tmp[:,:3],
+                                                    brillouin_primitive_vectors_3d,
+                                                    )
             for triangle in triangles:
                 for vertex in triangle:
-                    vertex[0]+=counting_offset
+                    index=vertex[0]
+                    print(index,counting_offset)
+                    if index >= counting_offset:
+                        print("dentro")
+                        vertex[1]=indices[index-counting_offset]
+            ### adding the new k points and triangles to the list of output
+                
+            counting_offset+=len(refined_k_points_list)
+            k_points_list_tmp.extend(refined_k_points_list)
             only_new_little_paths.extend(triangles)
+
+        ### ordering the lists
         only_new_little_paths=np.reshape(only_new_little_paths,(int(len(only_new_little_paths)),3,2))
         new_k_points_list=np.append(new_k_points_list,k_points_list_tmp,axis=0)
     else:
@@ -1288,8 +1310,8 @@ if __name__ == "__main__":
     chosen_plane=[1,1,0]
     symmetries=[[0,0,0]]
     grid_spacing=0.1
-    refinment_iterations=2
-    refinment_spacing=0.05
+    refinment_iterations=3
+    refinment_spacing=0.001
     threshold_symmetry=0.001
     threshold_minimal_refinment=0.000000001
     default_gridding=100
@@ -1395,7 +1417,7 @@ if __name__ == "__main__":
             brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_3d[i]
             normalized_brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_2d[count]/(brillouin_primitive_vectors_2d[count]@brillouin_primitive_vectors_2d[count])
             count += 1
-    position_little_paths_to_refine=[16]
+    position_little_paths_to_refine=[37]
     not_refined_k_points_list,triangles_plus=dynamical_refinment_little_paths_2D(
         triangles,
         refined_k_points_list,
@@ -1420,6 +1442,6 @@ if __name__ == "__main__":
         brillouin_primitive_vectors_3d,
         chosen_plane,
         not_refined_k_points_list,
-        triangles_plus,
+        all_triangles,
         number_vertices
     )
