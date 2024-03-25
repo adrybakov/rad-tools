@@ -22,8 +22,8 @@ import numpy as np
 import os 
 from radtools import MagnonDispersion
 from scipy.spatial.transform import Rotation
-from radtools.crystal.kpointsNEW import dynamical_refinment_little_paths_2D
-from radtools.crystal.kpointsNEW import k_points_generator_2D
+from radtools.crystal.kpoints import dynamical_refinment_little_paths_2D
+from radtools.crystal.kpoints import k_points_generator_2D
 from radtools.geometry import span_orthonormal_set
 from radtools.magnons.diagonalization import ColpaFailed, solve_via_colpa
 from radtools.spinham.hamiltonian import SpinHamiltonian

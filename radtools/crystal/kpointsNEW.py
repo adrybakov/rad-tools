@@ -1,0 +1,1565 @@
+# RAD-tools - program for spin Hamiltonian and magnons.
+# Copyright (C) 2022-2023  Andrey Rybakov
+#
+# e-mail: anry@uv.es, web: adrybakov.com
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+r"""
+General 3D lattice.
+"""
+
+from typing import Iterable
+from collections import Counter
+import numpy as np
+import scipy
+from scipy.interpolate import griddata
+from scipy.spatial.transform import Rotation
+from scipy.spatial import Delaunay
+from radtools.geometry import absolute_to_relative
+from scipy.spatial.distance import cdist
+import math
+from operator import itemgetter
+
+__all__ = ["Kpoints"]
+
+
+class Kpoints:
+    r"""
+    K-point path.
+
+    Parameters
+    ----------
+    b1 : (3,) array_like
+        First reciprocal lattice vector :math:`\mathbf{b}_1`.
+    b2 : (3,) array_like
+        Second reciprocal lattice vector :math:`\mathbf{b}_2`.
+    b3 : (3,) array_like
+        Third reciprocal lattice vector :math:`\mathbf{b}_3`.
+    coordinates : list, optional
+        Coordinates are given in relative coordinates in reciprocal space.
+    names: list, optional
+        Names of the high symmetry points. Used for programming, not for plotting.
+    labels : list, optional
+        Dictionary of the high symmetry points labels for plotting.
+        Has to have the same length as ``coordinates``.
+    path : str, optional
+        K points path.
+    n : int
+        Number of points between each pair of the high symmetry points
+        (high symmetry points excluded).
+
+    Attributes
+    ----------
+    b1 : (3,) :numpy:`ndarray`
+        First reciprocal lattice vector :math:`\mathbf{b}_1`.
+    b2 : (3,) :numpy:`ndarray`
+        Second reciprocal lattice vector :math:`\mathbf{b}_2`.
+    b3 : (3,) :numpy:`ndarray`
+        Third reciprocal lattice vector :math:`\mathbf{b}_3`.
+    hs_names : list
+        Names of the high symmetry points. Used for programming, not for plotting.
+    hs_coordinates : dict
+        Dictionary of the high symmetry points coordinates.
+
+        .. code-block:: python
+
+            {"name": [k_a, k_b, k_c], ... }
+
+    hs_labels : dict
+        Dictionary of the high symmetry points labels for plotting.
+
+        .. code-block:: python
+
+            {"name": "label", ... }
+    """
+
+    def __init__(
+        self, b1, b2, b3, coordinates=None, names=None, labels=None, path=None, n=100
+    ) -> None:
+        self.b1 = np.array(b1)
+        self.b2 = np.array(b2)
+        self.b3 = np.array(b3)
+
+        if coordinates is None:
+            coordinates = []
+
+        # Fill names and labels with defaults
+        if names is None:
+            names = [f"K{i+1}" for i in range(len(coordinates))]
+            if labels is None:
+                labels = [f"K$_{i+1}$" for i in range(len(coordinates))]
+        if labels is None:
+            labels = [name for name in names]
+        else:
+            if len(labels) != len(coordinates):
+                raise ValueError(
+                    f"Amount of labels ({len(labels)}) does not match amount of points ({len(coordinates)})."
+                )
+
+        # Define high symmetry points attributes
+        self.hs_coordinates = dict(
+            [(names[i], np.array(coordinates[i])) for i in range(len(coordinates))]
+        )
+        self.hs_labels = dict([(names[i], labels[i]) for i in range(len(coordinates))])
+        self.hs_names = names
+
+        self._n = n
+
+        self._path = None
+        if path is None:
+            if len(self.hs_names) > 0:
+                path = [self.hs_names[0]]
+            else:
+                path = []
+            for point in self.hs_names[1:]:
+                path.append(f"-{point}")
+            path = "".join(path)
+        self.path = path
+
+    def add_hs_point(self, name, coordinates, label, relative=True):
+        r"""
+        Add high symmetry point.
+
+        Parameters
+        ----------
+        name : str
+            Name of the high symmetry point.
+        coordinates : (3,) array_like
+            Coordinates of the high symmetry point.
+        label : str
+            Label of the high symmetry point, ready to be plotted.
+        relative : bool, optional
+            Whether to interpret coordinates as relative or absolute.
+        """
+
+        if name in self.hs_names:
+            raise ValueError(f"Point '{name}' already defined.")
+
+        if not relative:
+            coordinates = absolute_to_relative(
+                np.array([self.b1, self.b2, self.b3]), coordinates
+            )
+
+        self.hs_names.append(name)
+        self.hs_coordinates[name] = np.array(coordinates)
+        self.hs_labels[name] = label
+
+    @property
+    def path(self):
+        r"""
+        K points path.
+
+        Returns
+        -------
+        path : list of list of str
+            K points path. Each subpath is a list of the high symmetry points.
+        """
+
+        return self._path
+
+    @path.setter
+    def path(self, new_path):
+        if isinstance(new_path, str):
+            tmp_path = new_path.split("|")
+            new_path = []
+            for i in range(len(tmp_path)):
+                subpath = tmp_path[i].split("-")
+                # Each subpath has to contain at least two points.
+                if len(subpath) != 1:
+                    new_path.append(subpath)
+        elif isinstance(new_path, Iterable):
+            tmp_path = new_path
+            new_path = []
+            for subpath in tmp_path:
+                if isinstance(subpath, str) and "-" in subpath:
+                    subpath = subpath.split("-")
+                    # Each subpath has to contain at least two points.
+                    if len(subpath) != 1:
+                        new_path.append(subpath)
+                elif (
+                    not isinstance(subpath, str)
+                    and isinstance(subpath, Iterable)
+                    and len(subpath) != 1
+                ):
+                    new_path.append(subpath)
+                else:
+                    new_path = [tmp_path]
+                    break
+        # Check if all points are defined.
+        for subpath in new_path:
+            for point in subpath:
+                if point not in self.hs_names:
+                    message = f"Point '{point}' is not defined. Defined points are:"
+                    for defined_name in self.hs_names:
+                        message += (
+                            f"\n  {defined_name} : {self.hs_coordinates[defined_name]}"
+                        )
+                    raise ValueError(message)
+        self._path = new_path
+
+    @property
+    def path_string(self):
+        r"""
+        K points path as a string.
+
+        Returns
+        -------
+        path : str
+        """
+
+        result = ""
+        for s_i, subpath in enumerate(self.path):
+            for i, name in enumerate(subpath):
+                if i != 0:
+                    result += "-"
+                result += name
+            if s_i != len(self.path) - 1:
+                result += "|"
+
+        return result
+
+    @property
+    def n(self):
+        r"""
+        Amount of points between each pair of the high symmetry points
+        (high symmetry points excluded).
+
+        Returns
+        -------
+        n : int
+        """
+
+        return self._n
+
+    @n.setter
+    def n(self, new_n):
+        if not isinstance(new_n, int):
+            raise ValueError(
+                f"n has to be integer. Given: {new_n}, type = {type(new_n)}"
+            )
+        self._n = new_n
+
+    @property
+    def labels(self):
+        r"""
+        Labels of high symmetry points, ready to be plotted.
+
+        For example for point "Gamma" it returns r"$\Gamma$".
+
+        If there are two high symmetry points following one another in the path,
+        it returns "X|Y" where X and Y are the labels of the two high symmetry points.
+
+        Returns
+        -------
+        labels : list of str
+            Labels, ready to be plotted. Same length as :py:attr:`.coordinates`.
+        """
+
+        labels = []
+        for s_i, subpath in enumerate(self.path):
+            if s_i != 0:
+                labels[-1] += "|" + self.hs_labels[subpath[0]]
+            else:
+                labels.append(self.hs_labels[subpath[0]])
+            for name in subpath[1:]:
+                labels.append(self.hs_labels[name])
+
+        return labels
+
+    def coordinates(self, relative=False):
+        r"""
+        Flatten coordinates of the high symmetry points, ready to be plotted.
+
+        Parameters
+        ----------
+        relative : bool, optional
+            Whether to use relative coordinates instead of the absolute ones.
+        Returns
+        -------
+        coordinates : :numpy:`ndarray`
+            Coordinates, ready to be plotted. Same length as :py:attr:`.labels`.
+        """
+
+        if relative:
+            cell = np.eye(3)
+        else:
+            cell = np.array([self.b1, self.b2, self.b3])
+
+        coordinates = []
+        for s_i, subpath in enumerate(self.path):
+            if s_i == 0:
+                coordinates.append(0)
+            for i, name in enumerate(subpath[1:]):
+                coordinates.append(
+                    np.linalg.norm(
+                        self.hs_coordinates[name] @ cell
+                        - self.hs_coordinates[subpath[i]] @ cell
+                    )
+                    + coordinates[-1]
+                )
+
+        return np.array(coordinates)
+
+    def points(self, relative=False):
+        r"""
+        Coordinates of all points with n points between each pair of the high
+        symmetry points (high symmetry points excluded).
+
+        Parameters
+        ----------
+        relative : bool, optional
+            Whether to use relative coordinates instead of the absolute ones.
+
+        Returns
+        -------
+        points : (N, 3) :numpy:`ndarray`
+            Coordinates of all points.
+        """
+
+        if relative:
+            cell = np.eye(3)
+        else:
+            cell = np.array([self.b1, self.b2, self.b3])
+
+        points = None
+        for subpath in self.path:
+            for i in range(len(subpath) - 1):
+                name = subpath[i]
+                next_name = subpath[i + 1]
+                new_points = np.linspace(
+                    self.hs_coordinates[name] @ cell,
+                    self.hs_coordinates[next_name] @ cell,
+                    self._n + 2,
+                )
+                if points is None:
+                    points = new_points
+                else:
+                    points = np.concatenate((points, new_points))
+        return points
+
+    # It can not just call for points and flatten them, because it has to treat "|" as a special case.
+    def flatten_points(self, relative=False):
+        r"""
+        Flatten coordinates of all points with n points between each pair of the high
+        symmetry points (high symmetry points excluded). Used to plot band structure, dispersion, etc.
+
+        Parameters
+        ----------
+        relative : bool, optional
+            Whether to use relative coordinates instead of the absolute ones.
+
+        Returns
+        -------
+        flatten_points : (N, 3) :numpy:`ndarray`
+            Flatten coordinates of all points.
+        """
+
+        if relative:
+            cell = np.eye(3)
+        else:
+            cell = np.array([self.b1, self.b2, self.b3])
+
+        flatten_points = None
+        for s_i, subpath in enumerate(self.path):
+            for i in range(len(subpath) - 1):
+                name = subpath[i]
+                next_name = subpath[i + 1]
+                points = (
+                    np.linspace(
+                        self.hs_coordinates[name] @ cell,
+                        self.hs_coordinates[next_name] @ cell,
+                        self._n + 2,
+                    )
+                    - self.hs_coordinates[name] @ cell
+                )
+                delta = np.linalg.norm(points, axis=1)
+                if s_i == 0 and i == 0:
+                    flatten_points = delta
+                else:
+                    delta += flatten_points[-1]
+                    flatten_points = np.concatenate((flatten_points, delta))
+        return flatten_points
+
+###function checking if the k points in the list k list are inside the BZ
+def downfold_inside_brillouin_zone(
+    k_points_list,
+    brillouin_primitive_vectors_3D):
+    r"""
+         check if any point in a list is inside the first brillouin zone, in case the point is outside it is shifted back to the first brillouin zone
+         Parameters
+         ----------
+         k_point_list: (N, 3) :|array_like| kx,ky,kz (k points are given in cartesian coordinates)
+         brillouin_primitive_vectors_3d: (3,3) :|array_like| columns: kx,ky,kz, rows: b1,b2,b3
+         Returns
+         -------
+         transformed_k_point_list: (N, 3) :|array_like| kx,ky,kz (k points are given in cartesian coordinates)
+         """  
+    matrix_transformation_crystal_to_cartesian=np.zeros((3,3),dtype=float)
+    matrix_transformation_cartesian_to_crystal=np.zeros((3,3),dtype=float)
+    
+    number_k_points = k_points_list.shape[0]
+    transformed_k_points_list = np.zeros((number_k_points,3),dtype=float)
+    
+    matrix_transformation_crystal_to_cartesian=np.matrix(brillouin_primitive_vectors_3D).transpose()
+    matrix_transformation_cartesian_to_crystal=np.linalg.inv(matrix_transformation_crystal_to_cartesian)
+
+    ### writing k points in crystal coordinates
+    for i in range(number_k_points):
+        transformed_k_points_list[i,:]=matrix_transformation_cartesian_to_crystal@k_points_list[i,:]
+
+    ### checking if any point of the list is outside the first brillouin zone
+    ### to each k point is associated a int 0,1,2,3 if it goes over the boundaries
+    indices=[]
+    for i in range(number_k_points):
+        count=0
+        for r in range(3):
+            if transformed_k_points_list[i,r]>=1.0 or transformed_k_points_list[i,r]<0:
+                count+=r
+                for d in range(3):
+                    k_points_list[i,d]=k_points_list[i,d]-brillouin_primitive_vectors_3D[r,d]*np.sign(transformed_k_points_list[i,r])
+        indices.append(count)
+    return k_points_list,indices
+
+### function applying symmetry analysis to a list of k points, the symmetry operations considered are the point group ones
+### the fixed point is given; the analysis aim is to redistribute the fixed point weight between the list of k points
+### the number of found symmetry orbits are counted in the redistribution of the fixed point weight
+def symmetry_analysis(
+    k_fixed_point,
+    k_fixed_point_weight,
+    k_points_list,
+    symmetries,
+    threshold_symmetry
+):
+    r"""
+    Given a list of k points "k_list" and an origin "k_origin" with a certain weight "k_origin_weight", different symmetry operations are applied to the list of k points, keeping the origin fixed.
+    The origin weight is propelry distributed between the points:
+        the orbits of the symmetry operations acquire a certain percentage of the origin weight, which takes into account how many orbits are found 
+        of the orbits one k point (from the k list) is chosen as representative, and the weight of the orbit is assigned only to it
+    Parameters
+    ----------
+    k_origin:(3) |array_like| fixed point coordinates (kx,ky,kz), fixed point considered in the point-group symmetry operations
+    k_origin_weight : |float|  weight to distribute between the k points of the list 
+    k_list : (N, 3) |array_like| list of k points considered in the symmetry analysis (kx,ky,kz)
+    symmetries : list of lists, a symmetry is a list of 3 elements (the versor is the axis of rotation, while the modulus is the angle).
+    threshold : |float| threshold to recognize a symmetry.
+    Returns
+    -------
+    new_k_list: (N,4) :|array_like| list of k points coordinates with respcetive weights from the symmetry analysis
+    """
+    number_elements = k_points_list.shape[0]  
+
+    new_k_points_list = np.c_[ k_points_list, (k_fixed_point_weight / number_elements) * np.ones(number_elements, dtype=float)]
+    
+    ### if there are no symmetry operations, the weight on each k point is exactly 1/(number_elements) of the original weight
+    if ((symmetries is None) or (symmetries[0][0] == symmetries[0][1] == symmetries[0][2] == 0)):
+        return new_k_points_list
+
+    ### defining a matrix to save the degeneracies, after each symmetry operation
+    check_degeneracy = np.zeros((number_elements, number_elements), dtype=bool)
+    ### saving flag if no degeneracy is detected
+    no_degeneracies = True
+    
+    eigenspaces=np.zeros(number_elements,dtype=int)
+    for i in range(number_elements):
+        eigenspaces[i]=i
+    ### each k point is compared to each other k point after each of the symmetry operations has been applied
+    for i in range(number_elements-1):
+        for j in range(i+1,number_elements):
+            ### for each pair considering all the symmetry operations
+            for rotvec in symmetries:
+                transformed_k_point = (
+                    Rotation.from_rotvec(rotvec).as_matrix()
+                    @ (k_points_list[j] - k_fixed_point)
+                    + k_fixed_point
+                )
+                ### if any degeneracy is detected, the check on all the symmetry operations given is stopped
+                if np.allclose(
+                    k_points_list[i], transformed_k_point, atol=threshold_symmetry
+                ):
+                    check_degeneracy[i][j] = True
+                    no_degeneracies = False
+                    break
+
+    ### if no degeneracy is detected, the same result as in the case of no symmetry operation is given
+    if no_degeneracies:
+        return new_k_points_list
+    else:
+        ### if degeneracy is detected, between the degenerate points only one is chosen as representative of the respective orbit (the first to appear in the k points list)
+        ### at first assuming all k points as not-degenerate
+        ### to each eigenspace (orbit) is associated a not null k_point
+        for i in range(number_elements-1):
+            for j in range(i+1,number_elements):
+                if check_degeneracy[i][j]==True:
+                    min_value=min(i,j)
+                    max_value=max(i,j)
+                    eigenspaces[eigenspaces==max_value]=min_value
+
+        ### counting number of different eigenspaces
+        number_eigenspaces=len(np.unique(eigenspaces))
+        weights=k_fixed_point_weight/number_eigenspaces
+
+        ### ordering eigenspaces values
+        ordered_eigenspaces=np.zeros(number_elements)
+        counting=0
+        assigned_indices=[]
+        for i in range(number_elements):
+            if eigenspaces[i] not in assigned_indices:
+                if counting<number_eigenspaces:
+                    ordered_eigenspaces[eigenspaces==eigenspaces[i]]=counting
+                    assigned_indices.extend([r for r in range(number_elements) if eigenspaces[r]==eigenspaces[i]])
+                    counting+=1
+        ### considering a representative for each eigenspace
+        for i in range(number_eigenspaces):
+            list_positions=[r for r in range(number_elements) if ordered_eigenspaces[r]==i]
+            if len(list_positions)!=0:
+                new_k_points_list[list_positions[0],3]=weights
+                new_k_points_list[list_positions[1:],3]=0
+            else:
+                break
+
+        ### returning the k points and their respective weights
+        return new_k_points_list
+
+def k_points_triangulation_2D(
+    k_points_list,
+    brillouin_primitive_vectors_2D,
+    precedent_count,
+    border_indices=[]
+):
+    r"""
+    the sparse k points (kx,ky,kz,w) are linked togheter through a triangulation procedure (Delaunay procedure)
+    the so-built triangles are listed, each triangle is characterized by three indices pointing to the vertices position in the k poins list  
+    the ordering of the vertices is so to assure a cloack-wise path along the triangles
+
+    the periodicity of the BZ is properly taken into account:
+        the points at the left border or bottom border are considered twice in the triangulation
+        once on their proper border, then on the opposite border (translation of a reciprocal vector)
+        the index of the triangulation is the same both times, this assures the periodicity condition
+    
+    Parameters
+    ---------
+    k_points_list: (n,4) |array_like| (kx,ky,kz,w)
+    brillouin_primitive_vectors_2d: (2,3) |array_like|
+    count: (int) taking into account if the k points need to be added to a list, so numbering properly the vertices, in order to be able to use these triangles with the new list
+    border_count: (int) taking into account if the first k points in k_points_list are from the border and are not neeeded to be added to the list  
+
+    Returns
+    ---------
+    k_points_list: (n,4) |array_like| (kx,ky,kz,w)
+    triangles: (s,3) |array_like| 
+    left_border_points, bottom_border_points indices of the points at the border of the BZ
+    """
+    number_elements=k_points_list.shape[0]
+    k_points_list_projections=np.zeros((number_elements,2),dtype=float)
+    ###choosing one point as an origin in the 2D brillouin plane
+    origin=np.zeros(3,dtype=float)
+    ###calculating the projections of the different k points on the primitive vectors
+    vector_0=np.zeros((number_elements,2),dtype=float)
+    vector_1=np.zeros((number_elements,2),dtype=float)
+    vector_2=np.ones((number_elements,2),dtype=float)
+    for i in range(number_elements):
+        vector_0[i,0]=1
+        vector_1[i,1]=1
+        for j in range(2):
+            k_points_list_projections[i,j]=(k_points_list[i,:3]-origin)@brillouin_primitive_vectors_2D[j,:]
+    ###considering the periodic images as well
+    k_points_list_projections_with_periodic_images=np.zeros((4*number_elements,2),dtype=float)
+    k_points_list_projections_with_periodic_images[:number_elements,:]=k_points_list_projections
+    k_points_list_projections_with_periodic_images[number_elements:2*number_elements,:]=k_points_list_projections+vector_0
+    k_points_list_projections_with_periodic_images[2*number_elements:3*number_elements,:]=k_points_list_projections+vector_1
+    k_points_list_projections_with_periodic_images[3*number_elements:,:]=k_points_list_projections+vector_2
+    
+    ###triangulation of the set of points
+    triangles_tmp = Delaunay(k_points_list_projections_with_periodic_images,qhull_options="QJ")
+    triangles_tmp=triangles_tmp.simplices
+    ###each vertex has a pair of elements: the nuber of the k point associated, and if it the traingle is there passing through the BZ border
+    number_triangles = int(len(triangles_tmp))
+    triangles=[]
+    for i in range(number_triangles):
+        single_triangle=np.zeros((3,2),dtype=int)
+        count_element=0
+        count_outside=0
+        for element in triangles_tmp[i]:
+            if element<number_elements:
+                single_triangle[count_element,1]=0
+                single_triangle[count_element,0]=element
+            elif element>=number_elements and element<2*number_elements:
+                single_triangle[count_element,1]=1
+                single_triangle[count_element,0]=element-number_elements
+                count_outside+=1
+            elif element>=2*number_elements and element<3*number_elements:
+                single_triangle[count_element,1]=2
+                single_triangle[count_element,0]=element-2*number_elements
+                count_outside+=1
+            else:
+                single_triangle[count_element,1]=3
+                single_triangle[count_element,0]=element-3*number_elements
+                count_outside+=1
+            count_element+=1
+        if count_outside < 3:
+            triangles.append(single_triangle)
+    ###counting the proper number of triangles
+    number_triangles = int(len(triangles))
+
+    ###TESTING NEEDED HERE
+    ###the projections along the two axis can be used to properly order the vertices of the triangls
+    ordered_triangles = []
+    vertices_projections = np.zeros((3,2),dtype=float)
+    one=[1,0]
+    two=[0,1]
+    three=[1,1]
+    for i in range(number_triangles):
+        vertices=triangles[i]
+        for r in range(3):
+            if vertices[r,1]==0:
+                vertices_projections[r]=k_points_list_projections[vertices[r,0]]
+            elif vertices[r,1]==1:
+                vertices_projections[r]=k_points_list_projections[vertices[r,0]]+one
+            elif vertices[r,1]==2:
+                vertices_projections[r]=k_points_list_projections[vertices[r,0]]+two
+            else:
+                vertices_projections[r]=k_points_list_projections[vertices[r,0]]+three
+        indices=[tup[0] for tup in sorted(enumerate(vertices_projections[:,1]))]
+        vertices_projections=vertices_projections[indices]
+        if vertices_projections[0,1]==np.min(vertices_projections[:,0]):
+            indices=[tup[0] for tup in sorted(enumerate(vertices_projections[:,0]))]
+            vertices_projections=vertices_projections[indices]
+        vertices=vertices[indices]
+        ###considering the case the function is called on an existing list (the existing list has length equal to precedent_count)
+        border_count=number_elements-len(border_indices)
+        list_tmp=[]
+        for s in range(3):
+            if  vertices[s,0]> precedent_count and vertices[s,0]<border_count:
+                vertices[s,0]+=precedent_count
+        ###considering the case in which the function is called on new k points plus old k points, and the proper indices of the old k points are given by border indices
+        ###assuming as well that the old k points are after the new k points (so given the total number of k points the old ones are the ones > all_k_points-len(border_indices))
+            if vertices[s,0]>=border_count and border_count!=number_elements:
+                vertices[s,0]=border_indices[vertices[s,0]-border_count]
+            list_tmp.append(list(vertices[s]))
+        
+        ordered_triangles.append(list_tmp)
+    
+    ordered_triangles=np.reshape(ordered_triangles,(number_triangles,3,2))
+    ###for each triangle the ordering of the vertices is now clock-wise
+    #return k_points_list,ordered_triangles
+    return k_points_list,ordered_triangles
+
+### local refinment of the k points list in the 2D plane
+def local_refinment_with_symmetry_analysis(
+    old_k_points_list,
+    new_k_points_list,
+    refinment_spacing,
+    refinment_iterations,
+    symmetries,
+    threshold_symmetry,
+    brillouin_primitive_vectors_3d,
+    brillouin_primitive_vectors_2d,
+    normalized_brillouin_primitive_vectors_2d,
+    downfold_procedure=False
+):
+    r"""
+    Starting from a set of k points (old_k_list) with certain weights, to each k point iteratively (refinment_iteration) a new subset of k points is associated,
+    a symmetry analysis (symmetry) is performed on the subset, and consequently the initial weight of the k point is distributed in the subset of k points.
+    This procedure goes on for the given number of refinment iterations.
+    At each iteration for each k point four new k points are generated along the reciprocal primitive vectors of the selcted plane (2d refinment), at a distance from the original k point 
+    equal to the refinment spacing (the refinment spacing is halved at each iteration).
+    Obviously no refinment is applied to k points with null weight.
+
+    if check_inside_dominion == True instead of checking that the point is inside the 2d plane of the brillouin zone, it is checked that it is inside a circle of a certain radius
+    (radius), and if it is outside the circle it is downfolded back 
+
+    Parameters
+    ----------
+    new_k_list: (,4) |array_like| list of values produced by the refinment procedure (expected to be empty at the beginning of the refinment procedure)
+    old_k_list: (,4) |list| list of values give to the refinment procedure (kx,ky,kz,weight)
+    refinment_spacing: |double| initial spacing given to generate the refinment, half of the preceding refinment spacing is considered at each refinment iteration
+    refinment_iteration: |int| number of refinment iterations considered
+    symmetry: |list of lists| a symmetry is a list of 3 elements (the versor is the axis of rotation, while the modulus is the angle)
+    threshold: |double| threshold to recognize a symmetry
+    brillouin_primitive_vectors : (2,3) |array_like| vectors definining the 2D plane in the reciprocal space, chosen for the refinment procedure
+    brillouin_primitive_vectors_all: (3,3) |array_like| vectors definining the 3D reciprocal space
+    (the k points of the list are expected to be in the same 2D plane)
+    """
+    length_old_k_points_list=old_k_points_list.shape[0]
+    if  refinment_iterations == 0:
+        if downfold_procedure == True:
+            old_k_points_list[:,:3],indices= downfold_inside_brillouin_zone(
+                old_k_points_list[:,:3],
+                brillouin_primitive_vectors_3d
+            )
+        for i in range(length_old_k_points_list):
+            if old_k_points_list[i,3]!=0.0:
+                new_k_points_list.extend(old_k_points_list[i,:])
+    else:
+        iter = 0
+        while iter != length_old_k_points_list:
+            ### reading the k points inside the list and refine around them
+            if length_old_k_points_list == 1:
+                k_point_tmp = old_k_points_list[0,:3]
+                k_point_tmp_weight = old_k_points_list[0,3]
+                iter = length_old_k_points_list
+            else:
+                k_point_tmp = old_k_points_list[iter,:3]
+                k_point_tmp_weight = old_k_points_list[iter,3]
+                iter = iter + 1
+            ### refinment procedure is applied to the single k point if its weight is not zero
+            if k_point_tmp_weight != 0:
+                ### a sub_grid of points is associated to each k point
+                k_point_tmp_subgrid = np.zeros((4, 4),dtype=float)
+                k_point_tmp_subgrid[:,:3] = k_point_tmp
+                k_point_tmp_subgrid[0,:3] +=  normalized_brillouin_primitive_vectors_2d[0,:]*refinment_spacing
+                k_point_tmp_subgrid[1,:3] -=  normalized_brillouin_primitive_vectors_2d[0,:]*refinment_spacing
+                k_point_tmp_subgrid[2,:3] +=  normalized_brillouin_primitive_vectors_2d[1,:]*refinment_spacing
+                k_point_tmp_subgrid[3,:3] -=  normalized_brillouin_primitive_vectors_2d[1,:]*refinment_spacing
+                ### the weight of the k point is redistributed on the subgrid taking into account a symmetry analysis
+                k_point_tmp_subgrid = symmetry_analysis(
+                    k_point_tmp,
+                    k_point_tmp_weight,
+                    k_point_tmp_subgrid[:,:3],
+                    symmetries,
+                    threshold_symmetry
+                )
+                ### deleting the k points of the subgrid having weight equal to zero
+                k_point_tmp_subgrid=np.delete(k_point_tmp_subgrid, np.where(k_point_tmp_subgrid[:,3]==0),axis=0)
+                
+                ### applying downfolding procedure
+                if downfold_procedure == True:
+                    k_point_tmp_subgrid[:,:3],indices=downfold_inside_brillouin_zone(
+                        k_point_tmp_subgrid[:,:3],
+                        brillouin_primitive_vectors_3d,
+                    )
+
+                ### applying reiteratively the refinment procedure
+                new_refinment_spacing = refinment_spacing / 2
+
+                local_refinment_with_symmetry_analysis(
+                    k_point_tmp_subgrid,
+                    new_k_points_list,
+                    new_refinment_spacing,
+                    refinment_iterations-1,
+                    symmetries,
+                    threshold_symmetry,
+                    brillouin_primitive_vectors_3d,
+                    brillouin_primitive_vectors_2d,
+                    normalized_brillouin_primitive_vectors_2d,
+                    downfold_procedure
+                )
+
+#generation of a 2D k points grid 
+def k_points_generator_2D(
+    new_brillouin_primitive_vectors_3d,
+    old_brillouin_primitive_vectors_3d,
+    chosen_plane,
+    grid_spacing,
+    covering_BZ=False,
+    default_gridding=100,
+    symmetry_analysis=False,
+    refinment_spacing=0,
+    refinment_iterations=0,
+    symmetries=[[0,0,0]],
+    threshold_symmetry=0.0001,
+    shift_in_plane=[0,0],
+    shift_in_space=[0,0,0],
+    precedent_count=0
+):
+    r"""
+    k points generator in a 2d plane
+    
+    Parameters
+    ----------
+    brillouin_primitive_vectors_3d: (3,3) |array_like| (columns: kx,ky,kz, rows: b1,b2,b3)
+    chosen_plane: (,3) |array_like|  ex. [0,1,1] the plane is the b2 x b3 plane in the reciprocal space where the bi are the brillouin primitive vectors
+    initial_grid_spacing: |double| spacing of the k grid before the refinment procedure
+    shift_in_plane : (,2) |array_like| shift of the chosen reciprocal 2D plane with respecet to the crystal coordinates
+    shift_in_space : (,3) |array_like|  shift of the chosen reciprocal 2D plane with respecet to the cartesian coordinates 
+    (this allow to build a 3D k points grid, considering different shifts along the third brillouin primitive vector, if there are no symmetries along this direction to consider)
+    symmetries: |list of lists| a symmetry is a list of 3 elements (the versor is the axis of rotation, while the modulus is the angle)
+    refinment_spacing: |double| initial spacing given to generate the refinment, half of the preceding refinment spacing is considered at each refinment iteration
+    refinment_iteration: |int| number of refinment iterations considered
+    threshold: |double| therhold to recognize a symmetry
+    symmetry_analysis: |boolean| local_refinment_with_symmetry_analysis or not
+    Return
+    -------------
+    "local_refinment_with_symmetry_analysis" not considered:
+        k_points_list: (1,k0*k1) |array_like| k points (kx,ky,kz,w) where w is the weight of the k point
+        parallelograms : (n,4) |array_like| each row is a parallelogram, where the 4 vertices are integers, which correspond to the list positions of the given k points 
+    "local_refinment_with_symmetry_analysis" considered:
+        k_points_list: (1,k0*k1) |array_like| k points (kx,ky,kz,w) where w is the weight of the k point
+        triangles: (n,3) |array_like| each row is a triangle, where the 3 vertices are integers, which correspond to the list positions of the given k points 
+    """
+    ###individuating the 2D plane
+    brillouin_primitive_vectors_2d=np.zeros((2, 3),dtype=float)
+    count = 0
+    for i in range(3):
+        if chosen_plane[i]!=0:
+            brillouin_primitive_vectors_2d[count] = new_brillouin_primitive_vectors_3d[i]
+            count += 1
+
+    ###initial 2D grid number of points (considering the grid_spacing input)
+    if grid_spacing!=0.0:
+        k0 = int(
+            (brillouin_primitive_vectors_2d[0] @ brillouin_primitive_vectors_2d[0])/grid_spacing
+            )
+        k1 = int(
+            (brillouin_primitive_vectors_2d[1] @ brillouin_primitive_vectors_2d[1])/grid_spacing
+            )
+        if k0==0 or k1==0:
+            k0=default_gridding
+            k1=default_gridding
+    else:
+        k0=default_gridding
+        k1=default_gridding
+    initial_weights = 1 / (k0 * k1)
+
+    print("inside 2d generation", brillouin_primitive_vectors_2d,k0,k1)
+
+    ###building the initial 2D k points grid
+    k_points_grid=np.zeros((k0*k1,4),dtype=float)
+    for i in range(k0):
+        for j in range(k1):
+            k_points_grid[i*k1+j,:3] =(float(i + shift_in_plane[0]) / k0) * (brillouin_primitive_vectors_2d[0])\
+                       + (float(j + shift_in_plane[1]) / k1) * (brillouin_primitive_vectors_2d[1])
+            k_points_grid[i*k1+j,:3]+=shift_in_space
+            k_points_grid[i*k1+j,3] = initial_weights
+    
+    ###symmetry analysis
+    if symmetry_analysis == True:
+        ###if not refinment spacing is given, the one from the building of the k points grid is used
+        if refinment_spacing==0 or refinment_spacing==grid_spacing:
+            refinment_spacing=grid_spacing/2.0
+       
+        ###normalized 2D plange generators, needed in the symmetry-refinment procedure
+        normalized_brillouin_primitive_vectors_2d = np.zeros((2, 3),dtype=float)
+        for i in range(2):
+            normalized_brillouin_primitive_vectors_2d[i]=brillouin_primitive_vectors_2d[i]/(brillouin_primitive_vectors_2d[i]@brillouin_primitive_vectors_2d[i])
+        
+        ###applying the symmetry-refinment procedure to the 2D k points grid
+        ###obtaining a refined list as an output
+        ###loosing the ordering of the k points in the 2D plane
+        refined_k_points_list = []
+        local_refinment_with_symmetry_analysis(
+            k_points_grid,
+            refined_k_points_list,
+            refinment_spacing,
+            refinment_iterations,
+            symmetries,
+            threshold_symmetry,
+            new_brillouin_primitive_vectors_3d,
+            brillouin_primitive_vectors_2d,
+            normalized_brillouin_primitive_vectors_2d,
+            True
+        )
+        ###transforming the list into an array-like object (calling it list as well)
+        refined_k_points_list = np.reshape(refined_k_points_list,(int(len(refined_k_points_list)/4), 4))
+        #print("prima",refined_k_points_list)
+        refined_k_points_list = np.unique(refined_k_points_list,axis=0)
+        #print("dopo",refined_k_points_list)
+        ###if a covering of the BZ is not requested
+        if covering_BZ == True:
+            ###applying a triangulation procedure to order the k points list 
+            ###the periodicity of the BZ is properly considered in the triangulation procedure
+            refined_k_points_list,triangles=k_points_triangulation_2D(refined_k_points_list,brillouin_primitive_vectors_2d,precedent_count)
+            return refined_k_points_list,triangles
+        else:
+            refined_k_points_list
+    ###if no symmetry analysis is applied, building parallelograms to cover the BZ
+    else:
+        if covering_BZ == False:
+            k_points_grid
+        else:
+            parallelograms=[]
+            ###in case the downfolding procedure is requested with respect to a different BZ
+            if np.array_equal(new_brillouin_primitive_vectors_3d,old_brillouin_primitive_vectors_3d):
+                for i in range(0,k0):
+                    for j in range(0,k1):
+                        #periodicity of the BZ
+                        parallelogram=[]
+                        if i<k0-1 and j<k1-1:
+                            parallelogram=[[i*k1+j,0],[(i+1)*k1+j,0],[(i+1)*k1+j+1,0],[i*k1+j+1,0]]
+                        elif i<k0-1 and j==k1-1:
+                            parallelogram=[[i*k1+j,0],[(i+1)*k1+j,0],[(i+1)*k1+0,2],[i*k1+0,2]]
+                        elif i==k0-1 and j<k1-1:
+                            parallelogram=[[i*k1+j,0],[0*k1+j,1],[0*k1+j+1,1],[i*k1+j+1,0]]
+                        else:
+                            parallelogram=[[i*k1+j,0],[0*k1+j,1],[0*k1+0,3],[i*k1+0,2]] 
+                        parallelograms.append(parallelogram)
+                parallelograms=np.reshape(parallelograms,(int(k0*k1),4,2))
+            else:
+                k_points_grid[:,:3],indices=downfold_inside_brillouin_zone(
+                    k_points_grid[:,:3],
+                    old_brillouin_primitive_vectors_3d)
+                parallelogram=[]
+                for i in range(k0):
+                    for j in range(k1):
+                        if i<k0-1 and j<k1-1:
+                            parallelogram=[[i*k1+j,indices[i*k1+j]],[(i+1)*k1+j,indices[(i+1)*k1+j]],[(i+1)*k1+j+1,indices[(i+1)*k1+j+1]],[i*k1+j+1,indices[i*k1+j+1]]]
+                            parallelograms.append(parallelogram)
+                parallelograms=np.reshape(parallelograms,(len(parallelograms),4,2))        
+            return k_points_grid,parallelograms
+
+def check_inside_closed_shape_2d(
+    border_k_points_list,
+    k_points_list,
+    brillouin_primitive_vectors_2d
+):
+    number_elements_border=border_k_points_list.shape[0]
+    number_elements=k_points_list.shape[0]
+    k_points_list_projections_border=np.zeros((number_elements_border,2),dtype=float)
+    k_points_list_projections=np.zeros((number_elements,2),dtype=float)
+
+    origin=np.zeros(3,dtype=float)
+    ### calculating the projections of the different k points on the primitive vectors
+    for i in range(number_elements_border):
+        for j in range(2):
+            k_points_list_projections_border[i,j]=(border_k_points_list[i,:3]-origin)@brillouin_primitive_vectors_2d[j,:]
+    for i in range(number_elements):
+        for j in range(2):
+            k_points_list_projections[i,j]=(k_points_list[i,:3]-origin)@brillouin_primitive_vectors_2d[j,:]
+    
+    #point inclusion in polygon test W. Randolph Franklin (WRF) 
+    def pnpoly(nvert,vert,test):
+        i=0
+        c=1
+        while i < nvert:
+            for j in range(i+1,nvert-1):
+                if ( ((vert[i,1]>test[1]) != (vert[j,1]>test[1])) and (test[0]<(vert[j,0]-vert[i,0])*(test[1]-vert[i,1])/(vert[j,1]-vert[i,1])+vert[i,0]) ):    
+                    c = -c
+            i+=1
+        return c
+    
+    indices=[]
+    for i in range(number_elements):
+        if pnpoly(number_elements_border,k_points_list_projections_border,k_points_list_projections[i])<0:
+            indices.append(i)
+    
+    ##if len(indices)!=0:
+    ##    count=0
+    ##    for i in range(len(indices)):
+    ##        k_points_list=np.delete(k_points_list,i-count,axis=0)
+    ##        count+=1
+
+    return k_points_list
+
+def dynamical_refinment_little_paths_2D(
+        little_paths,
+        k_points_list,
+        position_little_paths_to_refine,
+        number_vertices,
+        refinment_iterations,
+        symmetries,
+        threshold_symmetry,
+        brillouin_primitive_vectors_3d,
+        chosen_plane,
+        brillouin_primitive_vectors_2d,
+        normalized_brillouin_primitive_vectors_2d,
+        threshold_minimal_refinment=0.00000000001,
+        default_gridding=100
+):
+    r"""
+    some k points of the "all k points list" are selected (the ones in the selected little paths "position_littles_paths_to_refine"), 
+    and a local refinment is applied to them, in case of triangles (number_vertices=3) a refinment with symmetry analysis is applied,
+    in case of parallelograms (number_vertices=4) a refinment without symmetry analysis is applied 
+    points on the border or nearby the border of the BZ are properly considered
+
+    a refinmente without symmetry analysis is done in the case of parallelograms 
+
+    Parameters
+    ---------
+    little_paths: (s,number_vertices) |array_like| (v1,v2,v3...) int (v=vertex)
+    all_k_points_list: (n,4) |array_like| (kx,ky,kz,w)
+    positions_little_paths_to_refine: |list| (int) positions of the little paths to which the refinment procedure is applied
+    number_vertices: |int| distinguishing between traingles and parallelograms
+
+    (parameters for the refinment...)
+
+    Returns
+    ---------
+    new_k_points_list: (n,4) |array_like| (kx,ky,kz,w)
+    added_little_paths: (,3) |array_like| (v1,v2,v3)
+    """
+    new_k_points_list=k_points_list
+    counting_offset=len(k_points_list)
+    only_new_little_paths=[]
+    number_little_paths=len(little_paths)
+    eigenspaces_little_paths_to_refine=[[i] for i in position_little_paths_to_refine]
+    print("beginning: ",eigenspaces_little_paths_to_refine)
+    flag_checking_indipendence=True
+    while flag_checking_indipendence == True:
+        number_eigenspaces=len(eigenspaces_little_paths_to_refine)
+        number_total_eigenvectors=0
+        number_total_little_paths_around=0
+        little_paths_around_each_eigenspace=[]
+        print(eigenspaces_little_paths_to_refine)
+        for eigenspace in eigenspaces_little_paths_to_refine:
+            print(eigenspace)
+            number_eigenvectors=len(eigenspace)
+            number_total_eigenvectors+=number_eigenvectors
+            ### considering the to-refine little paths in the selected eigenspace
+            eigenvectors = little_paths[eigenspace]
+            ### the little paths around each eigenvector are associated to it
+            little_paths_around_each_eigenvector=[]
+            for i in range(number_eigenvectors):
+                little_paths_around_each_eigenvector.extend([r for r in range(number_little_paths) for j in little_paths[r][:,0] if j in eigenvectors[i][:,0] and r not in eigenspace])
+            little_paths_around_each_eigenvector=list(np.unique(little_paths_around_each_eigenvector))
+            number_total_little_paths_around+=len(little_paths_around_each_eigenvector)
+            little_paths_around_each_eigenspace.append(little_paths_around_each_eigenvector)
+        ### checking if two eigenspaces are in reality the same eigenspace
+        ### between the "little_paths_around" of one of the two eigenspaces the index of one of the eigenvectors of the other eigenspace appears
+        check_degeneracy = np.zeros((number_eigenspaces, number_eigenspaces), dtype=bool)
+        any_degeneracy = 0
+        for i in range(number_eigenspaces-1):
+            for j in range(i+1,number_eigenspaces):
+                for r in range(len(eigenspaces_little_paths_to_refine[i])):
+                    if eigenspaces_little_paths_to_refine[i][r] in little_paths_around_each_eigenspace[j]:
+                        check_degeneracy[i,j]=True
+                        any_degeneracy+=1
+                        break
+                    else:
+                        check_degeneracy[i,j]=False
+        if any_degeneracy!=0:
+            ## unifying the eigenspaces properly
+            ## after having written them in an array form to facilitate the unification
+            ## unifying as well the "little paths around"
+            eigenspaces_little_paths_to_refine_array=np.zeros((number_total_eigenvectors,2),dtype=int)
+            little_paths_around_each_eigenspace_array=np.zeros((number_total_little_paths_around,2),dtype=int)
+            count1=0
+            count2=0
+            count3=0
+            for eigenspace in eigenspaces_little_paths_to_refine:
+                for eigenvector in eigenspace:
+                    eigenspaces_little_paths_to_refine_array[count1,0]=eigenvector
+                    eigenspaces_little_paths_to_refine_array[count1,1]=count2
+                    count1+=1
+                for around in little_paths_around_each_eigenspace[count2]:
+                    little_paths_around_each_eigenspace_array[count3,0]=around
+                    little_paths_around_each_eigenspace_array[count3,1]=count2
+                    count3+=1
+                count2+=1
+            for i in range(number_eigenspaces-1):
+                for j in range(i+1,number_eigenspaces):
+                    if check_degeneracy[i][j]==True:
+                        min_value=min(i,j)
+                        max_value=max(i,j)
+                        eigenvectors_positions=[r for r in range(number_total_eigenvectors) if eigenspaces_little_paths_to_refine_array[r,1]==max_value]
+                        around_positions=[r for r in range(number_total_little_paths_around) if little_paths_around_each_eigenspace_array[r,1]==max_value]
+                        eigenspaces_little_paths_to_refine_array[eigenvectors_positions,1]=min_value
+                        little_paths_around_each_eigenspace_array[around_positions,1]=min_value
+            ### redefining eigenspaces in order to take into account the found degeneracies
+            values_eigenspaces=list(np.unique(eigenspaces_little_paths_to_refine_array[:,1]))
+            eigenspaces_little_paths_to_refine=[]
+            little_paths_around_each_eigenspace=[]
+            for value in values_eigenspaces:
+                eigenspaces_little_paths_to_refine.append([eigenspaces_little_paths_to_refine_array[r,0] for r in range(number_total_eigenvectors) if eigenspaces_little_paths_to_refine_array[r,1]==value])
+                little_paths_around_each_eigenspace.append([little_paths_around_each_eigenspace_array[r,0] for r in range(number_total_little_paths_around) if little_paths_around_each_eigenspace_array[r,1]==value])
+            ### eliminating in each eigenspace the presence of eigenvectors in other eigenvectors little paths around
+            number_eigenspaces=len(eigenspaces_little_paths_to_refine)
+            for i in range(number_eigenspaces):
+                indices=[]
+                count4=0
+                for r in little_paths_around_each_eigenspace[i]:
+                    for j in eigenspaces_little_paths_to_refine[i]:
+                        if j == r:
+                            indices.append(count4)
+                    count4+=1
+                indices.sort()
+                if len(indices)!=0:
+                    count4=0
+                    for index in indices:
+                        del little_paths_around_each_eigenspace[i][index-count4]
+                        count4+=1
+        no_regularization=0
+        ### checking if two eigenspaces have one little path around in common 
+        ### this in common little path is inserted into the to refine little paths and the procedure is repeated
+        list_tmp=[]
+        for i in range(number_eigenspaces-1):
+            for j in range(i+1,number_eigenspaces):
+                for element in little_paths_around_each_eigenspace[i]:
+                    if element in little_paths_around_each_eigenspace[j]:
+                        list_tmp.append(element)
+        if len(list_tmp)!=0:
+            no_regularization+=1
+            list_tmp=list(np.unique(list_tmp))
+            for s in list_tmp:
+                eigenspaces_little_paths_to_refine.append([s])
+        ### symmetrizing the refinment region (mainly for the number_vertices = 4 case)
+        ### check for each eigenspace, if two eigenvectors have one common near-by little path
+        ### that near-by little path is considered as a selected little-path if it has at least two vertices in common with each eigenvector
+        for eigenspace in eigenspaces_little_paths_to_refine:
+            number_eigenvectors=len(eigenspace)
+            if number_eigenvectors>1:
+                near_by_little_paths_2_vertices=np.empty(number_eigenvectors,dtype=object)
+                list_tmp=[]
+                count7=0
+                for eigenvector in eigenspace:
+                    for vertex_2 in little_paths[eigenvector]:
+                        for r in range(number_little_paths):
+                            count8=0
+                            for vertex_1 in little_paths[r]:
+                                if vertex_1[0]==vertex_2[0] and vertex_1[1]==vertex_2[1]:
+                                    count8+=1
+                            if count8>=2:
+                                list_tmp.append(r)
+                near_by_little_paths_2_vertices[count7]=np.unique(list_tmp)
+                if len(near_by_little_paths_2_vertices[count7])!=0:
+                    for i in range(0,number_eigenvectors-1):
+                        for j in range(i+1,number_eigenvectors):
+                            for r in near_by_little_paths_2_vertices[i]:
+                                for s in near_by_little_paths_2_vertices[j]:
+                                    if s==r:
+                                        no_regularization+=1
+                                        eigenspaces_little_paths_to_refine.append([s])
+                count7+=1
+        if no_regularization!=0 or any_degeneracy!=0:
+            flag_checking_indipendence=True
+            print("degeneracies and regularizations detected: ",any_degeneracy,no_regularization)
+        else:
+            flag_checking_indipendence=False
+        print("cycling",eigenspaces_little_paths_to_refine,little_paths_around_each_eigenspace)
+    print("little paths to refine:",eigenspaces_little_paths_to_refine)
+    print("little paths around the ones to refine:",little_paths_around_each_eigenspace)
+    ### substituting to the little paths positions, the k points positions in the list of k points
+    number_eigenspaces=len(eigenspaces_little_paths_to_refine)
+    eigenspaces_k_points_to_refine=[]
+    eigenspaces_k_points_around=[]
+    for eigenspace in eigenspaces_little_paths_to_refine:
+        eigenspaces_k_points_to_refine.append(np.unique([vertex for eigenvector in eigenspace for vertex in little_paths[eigenvector]],axis=0))
+    ### erasing from the k points around the one inside the refinment region
+    count5=0
+    for eigenspace_2 in little_paths_around_each_eigenspace:
+        list_tmp=[]
+        for eigenvector_2 in eigenspace_2:
+            for vertex_2 in little_paths[eigenvector_2]:
+                count6=0
+                for eigenvector_1 in eigenspaces_little_paths_to_refine[count5]:
+                    for vertex_1 in little_paths[eigenvector_1]:
+                        if vertex_1[0]==vertex_2[0]:
+                            count6+=1
+                if count6==0:
+                    list_tmp.extend([list(vertex_2)])
+        eigenspaces_k_points_around.append(np.unique(np.asarray(list_tmp),axis=0))
+        count5+=1
+    print("k points to refine:",eigenspaces_k_points_to_refine)
+    print("k points around the ones to refine:",eigenspaces_k_points_around)
+    ### procede to a refinement of the k points constituing the to-refine little paths
+    if number_vertices==3:
+        k_points_list_tmp=[]
+        only_new_little_paths=[]
+        # finding the minimum distance between the to-refine k points and the border k points
+        for i in range(number_eigenspaces):
+            number_eigenvectors=len(eigenspaces_k_points_to_refine[i])
+            eigenvectors_array=np.zeros((number_eigenvectors,4),dtype=float)
+            number_eigenvectors_around=len(eigenspaces_k_points_around[i])
+            eigenvectors_around_array=np.zeros((number_eigenvectors_around,4),dtype=float)
+            for j in range(number_eigenvectors):
+                if eigenspaces_k_points_to_refine[i][j,1]==0:
+                    eigenvectors_array[j,:3]=k_points_list[eigenspaces_k_points_to_refine[i][j,0],:3]
+                elif eigenspaces_k_points_to_refine[i][j,1]==1:
+                    eigenvectors_array[j,:3]=k_points_list[eigenspaces_k_points_to_refine[i][j,0],:3]+brillouin_primitive_vectors_2d[0]
+                elif eigenspaces_k_points_to_refine[i][j,1]==2:
+                    eigenvectors_array[j,:3]=k_points_list[eigenspaces_k_points_to_refine[i][j,0],:3]+brillouin_primitive_vectors_2d[1]
+                else:
+                    eigenvectors_array[j,:3]=k_points_list[eigenspaces_k_points_to_refine[i][j,0],:3]+brillouin_primitive_vectors_2d[1]+brillouin_primitive_vectors_2d[0]
+                eigenvectors_array[j,3]=k_points_list[eigenspaces_k_points_to_refine[i][j,0],3]
+            border_indices=[]
+            for j in range(number_eigenvectors_around):
+                if eigenspaces_k_points_around[i][j,1]==0:
+                    eigenvectors_around_array[j,:3]=k_points_list[eigenspaces_k_points_around[i][j,0],:3]
+                elif eigenspaces_k_points_around[i][j,1]==1:
+                    eigenvectors_around_array[j,:3]=k_points_list[eigenspaces_k_points_around[i][j,0],:3]+brillouin_primitive_vectors_2d[0]
+                elif eigenspaces_k_points_around[i][j,1]==2:
+                    eigenvectors_around_array[j,:3]=k_points_list[eigenspaces_k_points_around[i][j,0],:3]+brillouin_primitive_vectors_2d[1]
+                else:
+                    eigenvectors_around_array[j,:3]=k_points_list[eigenspaces_k_points_around[i][j,0],:3]+brillouin_primitive_vectors_2d[1]+brillouin_primitive_vectors_2d[0]
+                eigenvectors_around_array[j,3]=k_points_list[eigenspaces_k_points_around[i][j,0],3]
+                border_indices.append(eigenspaces_k_points_around[i][j,0])
+            distance=np.zeros(number_eigenvectors_around*number_eigenvectors,dtype=float)
+            for s in range(number_eigenvectors):
+                for t in range(number_eigenvectors_around):
+                    distance[s*number_eigenvectors_around+t]=np.linalg.norm(eigenvectors_array[s,:3]-eigenvectors_around_array[t,:3],2)
+                    print(eigenvectors_array[s,:3],eigenvectors_around_array[t,:3],s,t)
+            minimal_distance = np.min(distance)
+            try:
+                1./minimal_distance
+            except ZeroDivisionError:
+                print("Acthung distance: ",minimal_distance)
+            refined_k_points_list_tmp=[]
+            local_refinment_with_symmetry_analysis(
+                    eigenvectors_array,
+                    refined_k_points_list_tmp,
+                    minimal_distance,
+                    refinment_iterations,
+                    symmetries,
+                    threshold_symmetry,
+                    brillouin_primitive_vectors_3d,
+                    brillouin_primitive_vectors_2d,
+                    normalized_brillouin_primitive_vectors_2d,
+                    False
+                    )
+            ###transforming the list into an array-like object (calling it list as well)
+            refined_k_points_list_tmp = np.reshape(refined_k_points_list_tmp,(int(len(refined_k_points_list_tmp)/4), 4))
+            ###check if the points are inside the border
+            refined_k_points_list = check_inside_closed_shape_2d(
+                                        eigenvectors_around_array,
+                                        refined_k_points_list_tmp,
+                                        brillouin_primitive_vectors_2d)
+            ### triangulation
+            refined_k_points_list_tmp = np.append(refined_k_points_list,eigenvectors_around_array,axis=0)
+            refined_k_points_list_tmp,triangles=k_points_triangulation_2D(
+                                                    refined_k_points_list_tmp,
+                                                    brillouin_primitive_vectors_2d,
+                                                    counting_offset,
+                                                    border_indices)
+            ### checking border BZ
+            refined_k_points_list_tmp[:,:3],indices=downfold_inside_brillouin_zone(
+                                                    refined_k_points_list_tmp[:,:3],
+                                                    brillouin_primitive_vectors_3d,
+                                                    )
+            for triangle in triangles:
+                for vertex in triangle:
+                    index=vertex[0]
+                    print(index,counting_offset)
+                    if index >= counting_offset:
+                        print("dentro")
+                        vertex[1]=indices[index-counting_offset]
+            ### adding the new k points and triangles to the list of output
+                
+            counting_offset+=len(refined_k_points_list)
+            k_points_list_tmp.extend(refined_k_points_list)
+            only_new_little_paths.extend(triangles)
+
+        ### ordering the lists
+        only_new_little_paths=np.reshape(only_new_little_paths,(int(len(only_new_little_paths)),3,2))
+        new_k_points_list=np.append(new_k_points_list,k_points_list_tmp,axis=0)
+    else:
+        ### here it is sufficient to find for each eigenspace the extremal k points
+        ### these k points are then used to draw a simil-BZ, which is refined using the grid-generation 2D methods
+        ### first up-folding the k points 
+        for i in range(number_eigenspaces):
+            number_eigenvectors_around=len(eigenspaces_k_points_around[i])
+            eigenvectors_around_array=np.zeros((number_eigenvectors_around,4),dtype=float)
+            for j in range(number_eigenvectors_around):
+                if eigenspaces_k_points_around[i][j][1]==3:
+                    eigenvectors_around_array[j,:3]=k_points_list[eigenspaces_k_points_around[i][j][0],:3]+brillouin_primitive_vectors_2d[1]+brillouin_primitive_vectors_2d[0]
+                elif eigenspaces_k_points_around[i][j][1]==2:
+                    eigenvectors_around_array[j,:3]=k_points_list[eigenspaces_k_points_around[i][j][0],:3]+brillouin_primitive_vectors_2d[1]
+                elif eigenspaces_k_points_around[i][j][1]==1:
+                    eigenvectors_around_array[j,:3]=k_points_list[eigenspaces_k_points_around[i][j][0],:3]+brillouin_primitive_vectors_2d[0]
+                else:
+                    eigenvectors_around_array[j]=k_points_list[eigenspaces_k_points_around[i][j][0]]
+                eigenvectors_around_array[j,3]=k_points_list[eigenspaces_k_points_around[i][j][0],3]  
+            ### calculating the projections of the different k points on the primitive vectors
+            k_points_list_projections_border=np.zeros((number_eigenvectors_around,2),dtype=float)
+            k_points_list_projections_border_sum=np.zeros((number_eigenvectors_around),dtype=float)
+            for r in range(number_eigenvectors_around):
+                for j in range(2):
+                    k_points_list_projections_border[r,j]=eigenvectors_around_array[r,:3]@brillouin_primitive_vectors_2d[j,:]
+                k_points_list_projections_border_sum[r]=np.sum(k_points_list_projections_border[r])
+            ### sorting in order to find the simil-BZ
+            origin_ij=np.argmin(k_points_list_projections_border_sum)
+            origin=eigenvectors_around_array[origin_ij,:3]
+            for s in range(number_eigenvectors_around):
+                for j in range(2):
+                    k_points_list_projections_border[s,j]=(eigenvectors_around_array[s,:3]-origin)@brillouin_primitive_vectors_2d[j,:]
+            ##print(k_points_list_projections_border)
+            ### finding the bottom-right point
+            max_0=k_points_list_projections_border[0,0]
+            min_1=k_points_list_projections_border[0,1]
+            position_pair_0=0
+            for t in range(number_eigenvectors_around):
+                if k_points_list_projections_border[t,0]>=max_0 and k_points_list_projections_border[t,1]<=min_1:
+                    max_0=k_points_list_projections_border[t,0]
+                    min_1=k_points_list_projections_border[t,1]
+                    position_pair_0=t
+                    #print(position_pair_0)
+            ### finding the top-left point
+            min_0=k_points_list_projections_border[0,0]
+            max_1=k_points_list_projections_border[0,1]
+            position_pair_1=0
+            for t in range(number_eigenvectors_around):
+                if k_points_list_projections_border[t,0]<=min_0 and  k_points_list_projections_border[t,1]>=max_1:
+                    max_0=k_points_list_projections_border[t,0]
+                    min_1=k_points_list_projections_border[t,1]
+                    position_pair_1=t
+            print("extremal positions",position_pair_0,position_pair_1,origin_ij)
+            ### defining the new bordening
+            new_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
+            new_brillouin_primitive_vectors_2d[0]=eigenvectors_around_array[position_pair_0,:3]-origin
+            new_brillouin_primitive_vectors_2d[1]=eigenvectors_around_array[position_pair_1,:3]-origin
+            new_brillouin_primitive_vectors_3d=np.zeros((3,3),dtype=float)
+            count = 0
+            for s in range(3):
+                if chosen_plane[s] != 0:
+                    new_brillouin_primitive_vectors_3d[s] = new_brillouin_primitive_vectors_2d[count]
+                    count += 1
+                else:
+                    new_brillouin_primitive_vectors_3d[s] = brillouin_primitive_vectors_3d[s]
+            print("new brillouin zone \n", new_brillouin_primitive_vectors_2d)
+            ### finding the minimal grid spacing
+            max_value=np.linalg.norm(new_brillouin_primitive_vectors_2d[0]+new_brillouin_primitive_vectors_2d[1],2)
+            moduli=np.zeros(number_eigenvectors_around,dtype=float)
+            for s in range(number_eigenvectors_around):
+                moduli[s]=np.linalg.norm(eigenvectors_around_array[s,:3]-origin,2)
+                if moduli[s] < threshold_minimal_refinment:
+                    moduli[s]=max_value
+            initial_grid_spacing=np.min(moduli)/6
+            print("input 2d generation",initial_grid_spacing,counting_offset,origin)
+            new_k_points_list_tmp,parallelograms=k_points_generator_2D(
+                                                    new_brillouin_primitive_vectors_3d,
+                                                    brillouin_primitive_vectors_3d,
+                                                    chosen_plane,
+                                                    initial_grid_spacing,
+                                                    True,
+                                                    default_gridding,
+                                                    False,
+                                                    0,
+                                                    0,
+                                                    [[0,0,0]],
+                                                    0.0,
+                                                    [0,0],
+                                                    origin,
+                                                    counting_offset
+                                                    )
+            ### saving the parallelograms           
+            for parallelogram in parallelograms:
+                for vertex in parallelogram:
+                    vertex[0]+=counting_offset
+            counting_offset+=len(new_k_points_list_tmp)
+            new_k_points_list=np.append(new_k_points_list,new_k_points_list_tmp,axis=0)
+            only_new_little_paths.extend(parallelograms)
+            print("new little paths", np.shape(only_new_little_paths))
+            print("k points list", np.shape(new_k_points_list))
+    print("prima",only_new_little_paths)
+    return new_k_points_list,only_new_little_paths
+
+def printing_covering_BZ_2D(
+    brillouin_primitive_vectors_3d,
+    chosen_plane,
+    k_points_list,
+    little_paths,
+    number_vertices
+    ):
+    
+    brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
+    count = 0
+    for i in range(3):
+        if chosen_plane[i]!=0:
+            brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_3d[i]
+            count += 1
+    
+    number_little_paths=len(little_paths)
+    little_path=[0]*number_vertices
+    ### substituing to the vertices the k points coordinates
+    new_little_paths=[]
+    for i in range(number_little_paths):
+        indx_1=[little_paths[i][r][0] for r in range(number_vertices)]
+        indx_2=[little_paths[i][r][1] for r in range(number_vertices)]
+        count=0
+        for indx in indx_1:
+            little_path[count]=[k_points_list[indx,s] for s in range(3)]
+            if indx_2[count]!=0:
+                for s in range(3):
+                    if indx_2[count]==1:
+                        little_path[count][s]+=brillouin_primitive_vectors_2d[0,s]
+                    elif indx_2[count]==2:
+                        little_path[count][s]+=brillouin_primitive_vectors_2d[1,s]
+                    else:
+                        little_path[count][s]+=brillouin_primitive_vectors_2d[1,s]+brillouin_primitive_vectors_2d[0,s]
+            count+=1
+        new_little_paths.extend(little_path)
+
+    ### reordering the list
+    number_little_paths=int(len(new_little_paths)/number_vertices)
+    new_little_paths=np.reshape(new_little_paths,(number_little_paths,number_vertices,3))
+    ### considering only coordinates in the chosen plane
+    new_little_paths_projected=np.zeros((number_little_paths,number_vertices,2),dtype=float)
+    for i in range(number_little_paths):
+        for j in range(number_vertices):
+            for r in range(2):
+                new_little_paths_projected[i,j,r]+=(new_little_paths[i,j]@brillouin_primitive_vectors_2d[r])
+    fig,ax=plt.subplots()
+    patches=[]
+    for i in range(number_little_paths):
+        polygon=Polygon(new_little_paths_projected[i],closed=True,fill=None,edgecolor='c')
+        patches.append(polygon)
+    p = PatchCollection(patches,cmap=matplotlib.cm.jet,alpha=0.4)
+    colors = 100*np.random.rand(len(patches))
+    p.set_array(np.array(colors))
+    ax.add_collection(p)
+    fig=plt.figure()
+    ax=fig.add_subplot(projection='3d')
+    ax.scatter(k_points_list[:,0],k_points_list[:,1],k_points_list[:,3])
+    plt.show()
+
+### TESTING INPUT
+if __name__ == "__main__":
+    import timeit
+    import os
+    import matplotlib
+    from matplotlib.artist import Artist
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import Polygon
+    from matplotlib.collections import PatchCollection
+    import numpy as np
+    ##from termcolor import cprint
+    from radtools.io.internal import load_template
+    from radtools.io.tb2j import load_tb2j_model
+    from radtools.magnons.dispersion import MagnonDispersion
+    from radtools.decorate.stats import logo
+    from radtools.spinham.constants import TXT_FLAGS
+    from radtools.decorate.array import print_2d_array
+    from radtools.decorate.axes import plot_hlines
+
+    brillouin_primitive_vectors_3d=np.zeros((3,3),dtype=float)
+    brillouin_primitive_vectors_3d[0]=[1,0,0]
+    brillouin_primitive_vectors_3d[1]=[0,1,0]
+    brillouin_primitive_vectors_3d[2]=[0,0,1]
+    chosen_plane=[1,1,0]
+    symmetries=[[0,0,0]]
+    grid_spacing=0.1
+    refinment_iterations=3
+    refinment_spacing=0.001
+    threshold_symmetry=0.001
+    threshold_minimal_refinment=0.000000001
+    default_gridding=100
+    count=0
+    shift_in_plane=[0,0]
+    shift_in_space=[0,0,0]
+    covering_BZ=True
+
+    ### LITTLE PARALLELOGRAMS
+    ##number_vertices=4
+    ##not_refined_k_points_list,parallelograms=k_points_generator_2D(
+    ##    brillouin_primitive_vectors_3d,
+    ##    brillouin_primitive_vectors_3d,
+    ##    chosen_plane,
+    ##    grid_spacing,
+    ##    covering_BZ,
+    ##    default_gridding,
+    ##    False,
+    ##    refinment_spacing,
+    ##    refinment_iterations,
+    ##    symmetries,
+    ##    threshold_symmetry,
+    ##    shift_in_plane,
+    ##    shift_in_space,
+    ##    0
+    ##)
+    ##print(not_refined_k_points_list)
+    ##print(parallelograms)
+    ##printing_covering_BZ_2D(
+    ##    brillouin_primitive_vectors_3d,
+    ##    chosen_plane,
+    ##    not_refined_k_points_list,
+    ##    parallelograms,
+    ##    number_vertices
+    ##)
+    ###DYNAMICAL REFINMENT
+    ##brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
+    ##normalized_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
+    ##count = 0
+    ##for i in range(3):
+    ##    if chosen_plane[i]!=0:
+    ##        brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_3d[i]
+    ##        normalized_brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_2d[count]/(brillouin_primitive_vectors_2d[count]@brillouin_primitive_vectors_2d[count])
+    ##        count += 1
+    ##
+    ##position_little_paths_to_refine=[2,58,68]
+    ##not_refined_k_points_list,parallelograms=dynamical_refinment_little_paths_2D(
+    ##    parallelograms,
+    ##    not_refined_k_points_list,
+    ##    position_little_paths_to_refine,
+    ##    number_vertices,
+    ##    refinment_iterations,
+    ##    symmetries,
+    ##    threshold_symmetry,
+    ##    brillouin_primitive_vectors_3d
+    ##    chosen_plane,
+    ##    brillouin_primitive_vectors_2d,
+    ##    normalized_brillouin_primitive_vectors_2d,
+    ##    threshold_minimal_refinment,
+    ##    default_gridding
+    ##)
+    ##printing_covering_BZ_2D(
+    ##    brillouin_primitive_vectors_3d,
+    ##    chosen_plane,
+    ##    not_refined_k_points_list,
+    ##    parallelograms,
+    ##    number_vertices
+    ##)
+
+    ###LITTLE TRIANGLES
+    number_vertices=3
+    refined_k_points_list,triangles=k_points_generator_2D(
+        brillouin_primitive_vectors_3d,
+        brillouin_primitive_vectors_3d,
+        chosen_plane,
+        grid_spacing,
+        covering_BZ,
+        default_gridding,
+        True,
+        refinment_spacing,
+        refinment_iterations,
+        symmetries,
+        threshold_symmetry,
+        shift_in_plane,
+        shift_in_space,
+        0
+        )
+    ##print(refined_k_points_list)
+    ##print(triangles)
+    printing_covering_BZ_2D(
+        brillouin_primitive_vectors_3d,
+        chosen_plane,
+        refined_k_points_list,
+        triangles,
+        number_vertices
+    )
+    ###DYNAMICAL REFINMENT
+    brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
+    normalized_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
+    count = 0
+    for i in range(3):
+        if chosen_plane[i]!=0:
+            brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_3d[i]
+            normalized_brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_2d[count]/(brillouin_primitive_vectors_2d[count]@brillouin_primitive_vectors_2d[count])
+            count += 1
+    position_little_paths_to_refine=[37]
+    not_refined_k_points_list,triangles_plus=dynamical_refinment_little_paths_2D(
+        triangles,
+        refined_k_points_list,
+        position_little_paths_to_refine,
+        number_vertices,
+        refinment_iterations,
+        symmetries,
+        threshold_symmetry,
+        brillouin_primitive_vectors_3d,
+        chosen_plane,
+        brillouin_primitive_vectors_2d,
+        normalized_brillouin_primitive_vectors_2d,
+        threshold_minimal_refinment,
+        default_gridding
+    )
+    print("dopo",triangles_plus)
+    all_triangles=[]
+    all_triangles.extend(triangles)
+    all_triangles.extend(triangles_plus)
+    all_triangles=np.reshape(all_triangles,(int(len(all_triangles)),3,2))
+    printing_covering_BZ_2D(
+        brillouin_primitive_vectors_3d,
+        chosen_plane,
+        not_refined_k_points_list,
+        all_triangles,
+        number_vertices
+    )
