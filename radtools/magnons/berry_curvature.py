@@ -196,7 +196,6 @@ class Berry_curvature:
         dynamical_refinment_flag,
         threshold_dynamical_refinment
     ):  
-        
         refined_k_points_list,little_paths=k_points_generator_2D(
                                                     brillouin_primitive_vectors_3d,
                                                     brillouin_primitive_vectors_3d,
