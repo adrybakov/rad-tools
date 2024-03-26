@@ -740,6 +740,7 @@ def k_points_generator_2D(
     k_points_grid=np.zeros((k0*k1,4),dtype=float)
     for i in range(k0):
         for j in range(k1):
+            print(i/k0)
             k_points_grid[i*k1+j,:3] =(float(i + shift_in_plane[0]) / k0) * (brillouin_primitive_vectors_2d[0])\
                        + (float(j + shift_in_plane[1]) / k1) * (brillouin_primitive_vectors_2d[1])
             k_points_grid[i*k1+j,:3]+=shift_in_space
