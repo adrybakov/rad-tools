@@ -1321,65 +1321,65 @@ if __name__ == "__main__":
     covering_BZ=True
 
     ### LITTLE PARALLELOGRAMS
-    ##number_vertices=4
-    ##not_refined_k_points_list,parallelograms=k_points_generator_2D(
-    ##    brillouin_primitive_vectors_3d,
-    ##    brillouin_primitive_vectors_3d,
-    ##    chosen_plane,
-    ##    grid_spacing,
-    ##    covering_BZ,
-    ##    default_gridding,
-    ##    False,
-    ##    refinment_spacing,
-    ##    refinment_iterations,
-    ##    symmetries,
-    ##    threshold_symmetry,
-    ##    shift_in_plane,
-    ##    shift_in_space,
-    ##    0
-    ##)
-    ##print(not_refined_k_points_list)
-    ##print(parallelograms)
-    ##printing_covering_BZ_2D(
-    ##    brillouin_primitive_vectors_3d,
-    ##    chosen_plane,
-    ##    not_refined_k_points_list,
-    ##    parallelograms,
-    ##    number_vertices
-    ##)
-    ###DYNAMICAL REFINMENT
-    ##brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
-    ##normalized_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
-    ##count = 0
-    ##for i in range(3):
-    ##    if chosen_plane[i]!=0:
-    ##        brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_3d[i]
-    ##        normalized_brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_2d[count]/(brillouin_primitive_vectors_2d[count]@brillouin_primitive_vectors_2d[count])
-    ##        count += 1
-    ##
-    ##position_little_paths_to_refine=[2,58,68]
-    ##not_refined_k_points_list,parallelograms=dynamical_refinment_little_paths_2D(
-    ##    parallelograms,
-    ##    not_refined_k_points_list,
-    ##    position_little_paths_to_refine,
-    ##    number_vertices,
-    ##    refinment_iterations,
-    ##    symmetries,
-    ##    threshold_symmetry,
-    ##    brillouin_primitive_vectors_3d,
-    ##    chosen_plane,
-    ##    brillouin_primitive_vectors_2d,
-    ##    normalized_brillouin_primitive_vectors_2d,
-    ##    threshold_minimal_refinment,
-    ##    default_gridding
-    ##)
-    ##printing_covering_BZ_2D(
-    ##    brillouin_primitive_vectors_3d,
-    ##    chosen_plane,
-    ##    not_refined_k_points_list,
-    ##    parallelograms,
-    ##    number_vertices
-    ##)
+    number_vertices=4
+    not_refined_k_points_list,parallelograms=k_points_generator_2D(
+        brillouin_primitive_vectors_3d,
+        brillouin_primitive_vectors_3d,
+        chosen_plane,
+        grid_spacing,
+        covering_BZ,
+        default_gridding,
+        False,
+        refinment_spacing,
+        refinment_iterations,
+        symmetries,
+        threshold_symmetry,
+        shift_in_plane,
+        shift_in_space,
+        0
+    )
+    print(not_refined_k_points_list)
+    print(parallelograms)
+    printing_covering_BZ_2D(
+        brillouin_primitive_vectors_3d,
+        chosen_plane,
+        not_refined_k_points_list,
+        parallelograms,
+        number_vertices
+    )
+    #DYNAMICAL REFINMENT
+    brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
+    normalized_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
+    count = 0
+    for i in range(3):
+        if chosen_plane[i]!=0:
+            brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_3d[i]
+            normalized_brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_2d[count]/(brillouin_primitive_vectors_2d[count]@brillouin_primitive_vectors_2d[count])
+            count += 1
+    
+    position_little_paths_to_refine=[2,58,68]
+    not_refined_k_points_list,parallelograms=dynamical_refinment_little_paths_2D(
+        parallelograms,
+        not_refined_k_points_list,
+        position_little_paths_to_refine,
+        number_vertices,
+        refinment_iterations,
+        symmetries,
+        threshold_symmetry,
+        brillouin_primitive_vectors_3d,
+        chosen_plane,
+        brillouin_primitive_vectors_2d,
+        normalized_brillouin_primitive_vectors_2d,
+        threshold_minimal_refinment,
+        default_gridding
+    )
+    printing_covering_BZ_2D(
+        brillouin_primitive_vectors_3d,
+        chosen_plane,
+        not_refined_k_points_list,
+        parallelograms,
+        number_vertices
+    )
 
     ###LITTLE TRIANGLES
     number_vertices=3

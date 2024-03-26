@@ -99,40 +99,38 @@ class Berry_curvature:
         self.spinham=spinham
         self.nodmi=nodmi
         self.noaniso=noaniso
-        self.dispersion=MagnonDispersion(self.spinham,nodmi=self.nodmi,noaniso=self.noaniso)
+        self.dispersion=MagnonDispersion(self.spinham,None,None,nodmi=self.nodmi,noaniso=self.noaniso,custom_mask=None)
         self.N=self.dispersion.N
 
     def magnonic_surfaces(
-        self, k_points_list, noeigenvectors, nocheckdegeneracy, threshold_omega, grid
+        self, k_points_list, noeigenvectors, nocheckdegeneracy, threshold_omega
     ):
-        if grid == True:
-            np.reshape(k_points_list,k_points_list.shape[0]*k_points_list.shape[1],order='C')
         number_k_points=len(k_points_list)
         omegas=np.zeros((number_k_points,self.N),dtype=complex)
         us=np.zeros((number_k_points,self.N,self.N),dtype=complex)
         number_eigenspaces = self.N
         magnonic_branches = np.asarray([i for i in range(self.N)])
-        
+    
         if (nocheckdegeneracy == True) and (noeigenvectors == True):
             for i in range(number_k_points):
-                omegas[i]=self.dispersion(k_points_list[i][:3],False)
+                omegas[i]=self.dispersion.omega(k_points_list[i][:3],False,False)
                 omegas[i]=omegas[i]*k_points_list[i][3]
         elif (nocheckdegeneracy == True) and (noeigenvectors == False):
             us=np.zeros((number_k_points,self.N,self.N),dtype=complex)
             for i in range(number_k_points):
-                omegas[i],us[i]=self.dispersion(k_points_list[i][:3],True)
+                omegas[i],us[i]=self.dispersion.omega(k_points_list[i][:3],True,False)
                 omegas[i]=omegas[i]*k_points_list[i][3]
                 us[i]=us[i]*k_points_list[i][3]
         elif (nocheckdegeneracy == False) and (noeigenvectors == True):
             degeneracy_matrix = np.zeros((self.N,self.N),dtype=bool)  
             for i in range(number_k_points):
-                omegas[i]=self.dispersion(k_points_list[i][:3],False)
+                omegas[i]=self.dispersion.omega(k_points_list[i][:3],False,False)
                 omegas[i]=omegas[i]*k_points_list[i][3]
-                degeneracy=0
+                degeneracy=0                
                 for r in range(0,self.N-1):
                     for s in range(r+1,self.N):
                         degeneracy_matrix[i] = False
-                        degeneracy_matrix[i] = np.isclose(omegas[i][r],omegas[i][s],ato=threshold_omega)
+                        degeneracy_matrix[i] = np.isclose(omegas[i][r],omegas[i][s],atol=threshold_omega)
                         if degeneracy_matrix[i] == True:
                             degeneracy+=1
                 if degeneracy != 0:
@@ -140,16 +138,19 @@ class Berry_curvature:
                         degeneracy_matrix, self.N, magnonic_branches, number_eigenspaces)     
         else:
             degeneracy_matrix = np.zeros((self.N,self.N),dtype=bool)
+            for r in range(0,self.N):
+                    for s in range(self.N):
+                        degeneracy_matrix[r][s] = False
             for i in range(number_k_points):
-                omegas[i],us[i]=self.dispersion(k_points_list[i][:3],True)
+                omegas[i],us[i]=self.dispersion.omega(k_points_list[i][:3],True,False)
                 omegas[i]=omegas[i]*k_points_list[i][3]
                 us[i]=us[i]*k_points_list[i][3]
                 degeneracy=0
                 for r in range(0,self.N-1):
                     for s in range(r+1,self.N):
-                        degeneracy_matrix[i] = False
-                        degeneracy_matrix[i] = np.isclose(omegas[i][r],omegas[i][s],ato=threshold_omega)
-                        if degeneracy_matrix[i] == True:
+                        degeneracy_matrix[r][s] = False
+                        degeneracy_matrix[r][s] = np.isclose(omegas[i][r],omegas[i][s],atol=threshold_omega)
+                        if degeneracy_matrix[r][s] == True:
                             degeneracy+=1
                 if degeneracy != 0:
                     magnonic_branches,number_eigenspaces=update_magnonic_branches_degeneracies(
@@ -189,12 +190,10 @@ class Berry_curvature:
         shift_in_space,
         symmetries,
         threshold_symmetry,
-        refinment,
         refinment_spacing,
         refinment_iterations,
         threshold_omega,
         dynamical_refinment_flag,
-        dynamical_refinment_iteration,
         threshold_dynamical_refinment
     ):  
         
@@ -224,7 +223,7 @@ class Berry_curvature:
                 normalized_brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_2d[count]/(brillouin_primitive_vectors_2d[count]@brillouin_primitive_vectors_2d[count])
                 count += 1
         
-        _,us,magnonic_branches,number_eigenspaces=self.magnonic_surfaces(refined_k_points_list,False,False,threshold_omega,False)
+        _,us,magnonic_branches,number_eigenspaces=self.magnonic_surfaces(refined_k_points_list,False,False,threshold_omega)
 
         if triangulation==True:
             number_vertices=3
@@ -236,6 +235,8 @@ class Berry_curvature:
         old_chern=np.zeros(number_eigenspaces,dtype=float)
         chern=np.zeros(number_eigenspaces,dtype=float)
 
+        print("berry calculation")
+
         dynamical_refinment=True
         while dynamical_refinment==True:
             number_little_paths=little_paths.shape[0]
@@ -243,11 +244,13 @@ class Berry_curvature:
             i=0
             phases=np.zeros((number_little_paths,number_eigenspaces),dtype=complex)
             while i < number_little_paths:
+                print(i/number_little_paths)
                 for j in range(number_vertices):
                     u[j]=us[little_paths[i][j]]
                     weights[j]=refined_k_points_list[little_paths[i][j],3]
                 phases[i]=self.circuitation_over_a_path(u,weights,self.N,number_eigenspaces,magnonic_branches,triangulation)
                 chern+=phases
+                i+=1
             # condition for dynamical refinment (checking that the Chern numbers are integer numbers)
             if np.any(np.asarray(list(map(lambda x: float(x).is_integer(),chern)))) == False:
                 old_chern+=chern
@@ -305,7 +308,7 @@ if __name__ == "__main__":
         atom=spinham.get_atom(atom_name)
         atom_spin=list(values)
         atom.spin_vector=atom_spin
-        
+
     brillouin_primitive_vectors_3d=np.zeros((3,3),dtype=float)
     brillouin_primitive_vectors_3d[0]=[7.176,0,0]
     brillouin_primitive_vectors_3d[1]=[-3.588,6.215,0]
@@ -317,18 +320,30 @@ if __name__ == "__main__":
     refinment_spacing=0.001
     threshold_symmetry=0.001
     threshold_minimal_refinment=0.000000001
+    threshold_degeneracy=0.000001
     default_gridding=100
     count=0
     shift_in_plane=[0,0]
     shift_in_space=[0,0,0]
     covering_BZ=True
+    nodmi=False
+    noaniso=False
 
     kp = spinham.kpoints
     fig, ax = plt.subplots()
-    dispersion = MagnonDispersion(spinham,nodmi=False,noaniso=False)
+    dispersion = MagnonDispersion(spinham,None,None,nodmi,noaniso,None)
     omegas = dispersion(kp,True)
     ax.set_xticks(kp.coordinates(), kp.labels, fontsize=15)
     ax.set_ylabel("E, meV", fontsize=15)
     for omega_tmp in omegas:
         ax.plot(kp.flatten_points(), omega_tmp)
-    plt.show()
+    
+    ### plt.show()
+    triangulation=False
+    dynamical_refinment_flag=False
+    threshold_dynamical_refinment=0.000001
+    berry_curvature=Berry_curvature(spinham,nodmi,noaniso)
+    berry_curvature.berry_curvature(triangulation,brillouin_primitive_vectors_3d,chosen_plane,
+                                    grid_spacing,default_gridding,shift_in_plane,shift_in_space,
+                                    symmetries,threshold_symmetry,refinment_spacing,refinment_iterations,
+                                    threshold_degeneracy,dynamical_refinment_flag,threshold_dynamical_refinment)
