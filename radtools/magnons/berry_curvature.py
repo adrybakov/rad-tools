@@ -22,7 +22,7 @@ import numpy as np
 import os 
 from radtools import MagnonDispersion
 from scipy.spatial.transform import Rotation
-from radtools.crystal.kpoints import dynamical_refinment_little_paths_2D
+###from radtools.crystal.kpoints import dynamical_refinment_little_paths_2D
 from radtools.crystal.kpoints import k_points_generator_2D
 from radtools.geometry import span_orthonormal_set
 from radtools.magnons.diagonalization import ColpaFailed, solve_via_colpa
@@ -167,7 +167,7 @@ class Berry_curvature:
                 phases=phases+np.angle(np.asarray(u_values_along_the_path[count]@u_values_along_the_path[count+1]))*k_point_weights_along_the_path[count]
                 count+=1
             phases=phases+np.angle(np.asarray(u_values_along_the_path[number_vertices-1]@u_values_along_the_path[0]))*k_point_weights_along_the_path[number_vertices-1]  
-        ##In the degenerate case the Berry curvature is calculated using the Non-Abelian formulation
+        ### in the degenerate case the Berry curvature is calculated using the Non-Abelian formulation
         else:
             for n in range(number_eigenspaces):
                 bands=[magnonic_branches==n]
@@ -193,7 +193,7 @@ class Berry_curvature:
         refinment_spacing,
         refinment_iterations,
         threshold_omega,
-        dynamical_refinment,
+        dynamical_refinment_flag,
         dynamical_refinment_iteration,
         threshold_dynamical_refinment
     ):  
@@ -236,6 +236,7 @@ class Berry_curvature:
         old_chern=np.zeros(number_eigenspaces,dtype=float)
         chern=np.zeros(number_eigenspaces,dtype=float)
 
+        dynamical_refinment=True
         while dynamical_refinment==True:
             number_little_paths=little_paths.shape[0]
             _,us,magnonic_branches,number_eigenspaces=self.magnonic_surfaces(refined_k_points_list,False,False,threshold_omega,False)
@@ -274,8 +275,60 @@ class Berry_curvature:
                                                                 0.0000000000001,
                                                                 default_gridding
                                                             )
+                if dynamical_refinment_flag==True:
+                    dynamical_refinment=False
             else:
                 dynamical_refinment=False
         
         return chern
-    
+
+### TESTING INPUT
+if __name__ == "__main__":
+    import timeit
+    import os
+    import matplotlib.pyplot as plt
+    import numpy as np
+    from termcolor import cprint
+    from radtools.io.internal import load_template
+    from radtools.io.tb2j import load_tb2j_model
+    from radtools.magnons.dispersion import MagnonDispersion
+    from radtools.decorate.stats import logo
+    from radtools.spinham.constants import TXT_FLAGS
+    from radtools.decorate.array import print_2d_array
+    from radtools.decorate.axes import plot_hlines
+
+    spin={"Cr1":[0,0,1],"Cr2":[0,0,1]}
+    input_filename="/home/marco-marino/rad-tools/exchange.out"
+    spinham = load_tb2j_model(input_filename)
+    for key,values in spin.items():
+        atom_name=key
+        atom=spinham.get_atom(atom_name)
+        atom_spin=list(values)
+        atom.spin_vector=atom_spin
+        
+    brillouin_primitive_vectors_3d=np.zeros((3,3),dtype=float)
+    brillouin_primitive_vectors_3d[0]=[7.176,0,0]
+    brillouin_primitive_vectors_3d[1]=[-3.588,6.215,0]
+    brillouin_primitive_vectors_3d[2]=[0,0,21.000]
+    chosen_plane=[1,1,0]
+    symmetries=[[0,0,0]]
+    grid_spacing=0.1
+    refinment_iterations=3
+    refinment_spacing=0.001
+    threshold_symmetry=0.001
+    threshold_minimal_refinment=0.000000001
+    default_gridding=100
+    count=0
+    shift_in_plane=[0,0]
+    shift_in_space=[0,0,0]
+    covering_BZ=True
+
+    kp = spinham.kpoints
+    fig, ax = plt.subplots()
+    dispersion = MagnonDispersion(spinham,nodmi=False,noaniso=False)
+    omegas = dispersion(kp,True)
+    ax.set_xticks(kp.coordinates(), kp.labels, fontsize=15)
+    ax.set_ylabel("E, meV", fontsize=15)
+    for omega_tmp in omegas:
+        ax.plot(kp.flatten_points(), omega_tmp)
+    plt.show()

@@ -346,7 +346,7 @@ class MagnonDispersion:
             kpoints = kpoints.points()
 
         for point in kpoints:
-            data.append(self.omega(point, zeros_to_none=zeros_to_none))
+            data.append(self.omega(point,True,zeros_to_none=zeros_to_none))
 
         return np.array(data).T
 
