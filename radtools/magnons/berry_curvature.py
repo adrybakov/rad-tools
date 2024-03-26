@@ -114,18 +114,18 @@ class Berry_curvature:
         if (nocheckdegeneracy == True) and (noeigenvectors == True):
             for i in range(number_k_points):
                 omegas[i]=self.dispersion.omega(k_points_list[i][:3],False,False)
-                omegas[i]=omegas[i]*k_points_list[i][3]
+               # omegas[i]=omegas[i]*k_points_list[i][3]
         elif (nocheckdegeneracy == True) and (noeigenvectors == False):
             us=np.zeros((number_k_points,self.N,self.N),dtype=complex)
             for i in range(number_k_points):
                 omegas[i],us[i]=self.dispersion.omega(k_points_list[i][:3],True,False)
-                omegas[i]=omegas[i]*k_points_list[i][3]
-                us[i]=us[i]*k_points_list[i][3]
+              #  omegas[i]=omegas[i]*k_points_list[i][3]
+                # us[i]=us[i]*k_points_list[i][3]
         elif (nocheckdegeneracy == False) and (noeigenvectors == True):
             degeneracy_matrix = np.zeros((self.N,self.N),dtype=bool)  
             for i in range(number_k_points):
                 omegas[i]=self.dispersion.omega(k_points_list[i][:3],False,False)
-                omegas[i]=omegas[i]*k_points_list[i][3]
+               # omegas[i]=omegas[i]*k_points_list[i][3]
                 degeneracy=0                
                 for r in range(0,self.N-1):
                     for s in range(r+1,self.N):
@@ -142,10 +142,10 @@ class Berry_curvature:
                     for s in range(self.N):
                         degeneracy_matrix[r][s] = False
             for i in range(number_k_points):
-                print(i/number_k_points)
+                print("magn",i/number_k_points)
                 omegas[i],us[i]=self.dispersion.omega(k_points_list[i][:3],True,False)
-                omegas[i]=omegas[i]*k_points_list[i][3]
-                us[i]=us[i]*k_points_list[i][3]
+                #omegas[i]=omegas[i]*k_points_list[i][3]
+                #us[i]=us[i]*k_points_list[i][3]
                 degeneracy=0
                 for r in range(0,self.N-1):
                     for s in range(r+1,self.N):
@@ -159,10 +159,10 @@ class Berry_curvature:
         
         return omegas,us,magnonic_branches,number_eigenspaces
 
-    def circuitation_over_a_path(
-        u_values_along_the_path,k_point_weights_along_the_path,number_modes,number_eigenspaces,magnonic_branches,number_vertices
+    def circuitation_over_a_path(self,u_values_along_the_path,k_point_weights_along_the_path,number_modes,number_eigenspaces,magnonic_branches,number_vertices
     ):
-        phases=np.zeros(number_eigenspaces,dtype=complex)
+        phases=np.zeros(number_eigenspaces,dtype=float)
+
         if number_eigenspaces == number_modes:
             count=0
             while count<number_vertices-1:
@@ -178,6 +178,7 @@ class Berry_curvature:
                     phases[n]=phases[n]+np.angle(np.asarray(u_values_along_the_path[count][np.ix_(bands,bands)] @ u_values_along_the_path[count+1][np.ix_(bands,bands)]))*k_point_weights_along_the_path[count]
                     count+=1
                 phases[n]=phases[n]+np.angle(np.asarray(u_values_along_the_path[number_vertices-1][np.ix_(bands,bands)] @ u_values_along_the_path[0][np.ix_(bands,bands)]))*k_point_weights_along_the_path[number_vertices-1]
+        print(phases)
         return phases
 
     def berry_curvature(
@@ -197,6 +198,8 @@ class Berry_curvature:
         dynamical_refinment_flag,
         threshold_dynamical_refinment
     ):  
+        number_modes=self.N
+
         refined_k_points_list,little_paths=k_points_generator_2D(
                                                     brillouin_primitive_vectors_3d,
                                                     brillouin_primitive_vectors_3d,
@@ -230,7 +233,7 @@ class Berry_curvature:
         else:
             number_vertices=4
 
-        u=np.zeros((number_vertices,self.N,self.N),dtype=complex)
+        u=np.zeros((number_vertices,number_modes,number_modes),dtype=complex)
         weights=np.zeros(number_vertices,dtype=float)
         old_chern=np.zeros(number_eigenspaces,dtype=float)
         chern=np.zeros(number_eigenspaces,dtype=float)
@@ -240,15 +243,15 @@ class Berry_curvature:
         dynamical_refinment=True
         while dynamical_refinment==True:
             number_little_paths=little_paths.shape[0]
-            _,us,magnonic_branches,number_eigenspaces=self.magnonic_surfaces(refined_k_points_list,False,False,threshold_omega,False)
+            _,us,magnonic_branches,number_eigenspaces=self.magnonic_surfaces(refined_k_points_list,False,False,threshold_omega)
             i=0
-            phases=np.zeros((number_little_paths,number_eigenspaces),dtype=complex)
+            phases=np.zeros((number_little_paths,number_eigenspaces),dtype=float)
             while i < number_little_paths:
                 print(i/number_little_paths)
                 for j in range(number_vertices):
-                    u[j]=us[little_paths[i][j]]
-                    weights[j]=refined_k_points_list[little_paths[i][j],3]
-                phases[i]=self.circuitation_over_a_path(u,weights,self.N,number_eigenspaces,magnonic_branches,triangulation)
+                    u[j]=us[little_paths[i][j][0]]
+                    weights[j]=refined_k_points_list[little_paths[i][j][0],3]
+                phases[i]=(self.circuitation_over_a_path(u,weights,number_modes,number_eigenspaces,magnonic_branches,number_vertices)).T
                 chern+=phases
                 i+=1
             # condition for dynamical refinment (checking that the Chern numbers are integer numbers)
@@ -315,7 +318,7 @@ if __name__ == "__main__":
     brillouin_primitive_vectors_3d[2]=[0,0,21.000]
     chosen_plane=[1,1,0]
     symmetries=[[0,0,0]]
-    grid_spacing=0.1
+    grid_spacing=0.5
     refinment_iterations=3
     refinment_spacing=0.001
     threshold_symmetry=0.001
