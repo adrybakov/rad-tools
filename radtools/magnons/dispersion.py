@@ -267,7 +267,7 @@ class MagnonDispersion:
         h = np.concatenate((left, right), axis=1)
         return h
 
-    def omega(self, k, noeigenvector, zeros_to_none=False):
+    def omega(self, k, noeigenvector=True, zeros_to_none=False):
         r"""
         Computes magnon energies.
 
