@@ -31,6 +31,13 @@ from radtools.geometry import absolute_to_relative
 from scipy.spatial.distance import cdist
 import math
 from operator import itemgetter
+import matplotlib
+from matplotlib.artist import Artist
+import matplotlib.pyplot as plt
+from matplotlib.patches import Polygon
+from matplotlib.collections import PatchCollection
+import numpy as np
+from termcolor import cprint
 
 __all__ = ["Kpoints"]
 
@@ -1285,163 +1292,163 @@ def printing_covering_BZ_2D(
     plt.show()
 
 ### TESTING INPUT
-if __name__ == "__main__":
-    import timeit
-    import os
-    import matplotlib
-    from matplotlib.artist import Artist
-    import matplotlib.pyplot as plt
-    from matplotlib.patches import Polygon
-    from matplotlib.collections import PatchCollection
-    import numpy as np
-    ##from termcolor import cprint
-    from radtools.io.internal import load_template
-    from radtools.io.tb2j import load_tb2j_model
-    from radtools.magnons.dispersion import MagnonDispersion
-    from radtools.decorate.stats import logo
-    from radtools.spinham.constants import TXT_FLAGS
-    from radtools.decorate.array import print_2d_array
-    from radtools.decorate.axes import plot_hlines
-
-    brillouin_primitive_vectors_3d=np.zeros((3,3),dtype=float)
-    brillouin_primitive_vectors_3d[0]=[1,0,0]
-    brillouin_primitive_vectors_3d[1]=[0,1,0]
-    brillouin_primitive_vectors_3d[2]=[0,0,1]
-    chosen_plane=[1,1,0]
-    symmetries=[[0,0,0]]
-    grid_spacing=0.1
-    refinment_iterations=3
-    refinment_spacing=0.001
-    threshold_symmetry=0.001
-    threshold_minimal_refinment=0.000000001
-    default_gridding=100
-    count=0
-    shift_in_plane=[0,0]
-    shift_in_space=[0,0,0]
-    covering_BZ=True
-
-    ### LITTLE PARALLELOGRAMS
-    number_vertices=4
-    not_refined_k_points_list,parallelograms=k_points_generator_2D(
-        brillouin_primitive_vectors_3d,
-        brillouin_primitive_vectors_3d,
-        chosen_plane,
-        grid_spacing,
-        covering_BZ,
-        default_gridding,
-        False,
-        refinment_spacing,
-        refinment_iterations,
-        symmetries,
-        threshold_symmetry,
-        shift_in_plane,
-        shift_in_space,
-        0
-    )
-    print(not_refined_k_points_list)
-    print(parallelograms)
-    printing_covering_BZ_2D(
-        brillouin_primitive_vectors_3d,
-        chosen_plane,
-        not_refined_k_points_list,
-        parallelograms,
-        number_vertices
-    )
-    #DYNAMICAL REFINMENT
-    brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
-    normalized_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
-    count = 0
-    for i in range(3):
-        if chosen_plane[i]!=0:
-            brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_3d[i]
-            normalized_brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_2d[count]/(brillouin_primitive_vectors_2d[count]@brillouin_primitive_vectors_2d[count])
-            count += 1
-    
-    position_little_paths_to_refine=[2,58,68]
-    not_refined_k_points_list,parallelograms=dynamical_refinment_little_paths_2D(
-        parallelograms,
-        not_refined_k_points_list,
-        position_little_paths_to_refine,
-        number_vertices,
-        refinment_iterations,
-        symmetries,
-        threshold_symmetry,
-        brillouin_primitive_vectors_3d,
-        chosen_plane,
-        brillouin_primitive_vectors_2d,
-        normalized_brillouin_primitive_vectors_2d,
-        threshold_minimal_refinment,
-        default_gridding
-    )
-    printing_covering_BZ_2D(
-        brillouin_primitive_vectors_3d,
-        chosen_plane,
-        not_refined_k_points_list,
-        parallelograms,
-        number_vertices
-    )
-
-    ###LITTLE TRIANGLES
-    number_vertices=3
-    refined_k_points_list,triangles=k_points_generator_2D(
-        brillouin_primitive_vectors_3d,
-        brillouin_primitive_vectors_3d,
-        chosen_plane,
-        grid_spacing,
-        covering_BZ,
-        default_gridding,
-        True,
-        refinment_spacing,
-        refinment_iterations,
-        symmetries,
-        threshold_symmetry,
-        shift_in_plane,
-        shift_in_space,
-        0
-        )
-    ##print(refined_k_points_list)
-    ##print(triangles)
-    printing_covering_BZ_2D(
-        brillouin_primitive_vectors_3d,
-        chosen_plane,
-        refined_k_points_list,
-        triangles,
-        number_vertices
-    )
-    ###DYNAMICAL REFINMENT
-    brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
-    normalized_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
-    count = 0
-    for i in range(3):
-        if chosen_plane[i]!=0:
-            brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_3d[i]
-            normalized_brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_2d[count]/(brillouin_primitive_vectors_2d[count]@brillouin_primitive_vectors_2d[count])
-            count += 1
-    position_little_paths_to_refine=[37]
-    not_refined_k_points_list,triangles_plus=dynamical_refinment_little_paths_2D(
-        triangles,
-        refined_k_points_list,
-        position_little_paths_to_refine,
-        number_vertices,
-        refinment_iterations,
-        symmetries,
-        threshold_symmetry,
-        brillouin_primitive_vectors_3d,
-        chosen_plane,
-        brillouin_primitive_vectors_2d,
-        normalized_brillouin_primitive_vectors_2d,
-        threshold_minimal_refinment,
-        default_gridding
-    )
-    print("dopo",triangles_plus)
-    all_triangles=[]
-    all_triangles.extend(triangles)
-    all_triangles.extend(triangles_plus)
-    all_triangles=np.reshape(all_triangles,(int(len(all_triangles)),3,2))
-    printing_covering_BZ_2D(
-        brillouin_primitive_vectors_3d,
-        chosen_plane,
-        not_refined_k_points_list,
-        all_triangles,
-        number_vertices
-    )
+###if __name__ == "__main__":
+###    import timeit
+###    import os
+###    import matplotlib
+###    from matplotlib.artist import Artist
+###    import matplotlib.pyplot as plt
+###    from matplotlib.patches import Polygon
+###    from matplotlib.collections import PatchCollection
+###    import numpy as np
+###    ##from termcolor import cprint
+###    from radtools.io.internal import load_template
+###    from radtools.io.tb2j import load_tb2j_model
+###    from radtools.magnons.dispersion import MagnonDispersion
+###    from radtools.decorate.stats import logo
+###    from radtools.spinham.constants import TXT_FLAGS
+###    from radtools.decorate.array import print_2d_array
+###    from radtools.decorate.axes import plot_hlines
+###
+###    brillouin_primitive_vectors_3d=np.zeros((3,3),dtype=float)
+###    brillouin_primitive_vectors_3d[0]=[1,0,0]
+###    brillouin_primitive_vectors_3d[1]=[0,1,0]
+###    brillouin_primitive_vectors_3d[2]=[0,0,1]
+###    chosen_plane=[1,1,0]
+###    symmetries=[[0,0,0]]
+###    grid_spacing=0.1
+###    refinment_iterations=3
+###    refinment_spacing=0.001
+###    threshold_symmetry=0.001
+###    threshold_minimal_refinment=0.000000001
+###    default_gridding=100
+###    count=0
+###    shift_in_plane=[0,0]
+###    shift_in_space=[0,0,0]
+###    covering_BZ=True
+###
+###    ### LITTLE PARALLELOGRAMS
+###    number_vertices=4
+###    not_refined_k_points_list,parallelograms=k_points_generator_2D(
+###        brillouin_primitive_vectors_3d,
+###        brillouin_primitive_vectors_3d,
+###        chosen_plane,
+###        grid_spacing,
+###        covering_BZ,
+###        default_gridding,
+###        False,
+###        refinment_spacing,
+###        refinment_iterations,
+###        symmetries,
+###        threshold_symmetry,
+###        shift_in_plane,
+###        shift_in_space,
+###        0
+###    )
+###    print(not_refined_k_points_list)
+###    print(parallelograms)
+###    printing_covering_BZ_2D(
+###        brillouin_primitive_vectors_3d,
+###        chosen_plane,
+###        not_refined_k_points_list,
+###        parallelograms,
+###        number_vertices
+###    )
+###    #DYNAMICAL REFINMENT
+###    brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
+###    normalized_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
+###    count = 0
+###    for i in range(3):
+###        if chosen_plane[i]!=0:
+###            brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_3d[i]
+###            normalized_brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_2d[count]/(brillouin_primitive_vectors_2d[count]@brillouin_primitive_vectors_2d[count])
+###            count += 1
+###    
+###    position_little_paths_to_refine=[2,58,68]
+###    not_refined_k_points_list,parallelograms=dynamical_refinment_little_paths_2D(
+###        parallelograms,
+###        not_refined_k_points_list,
+###        position_little_paths_to_refine,
+###        number_vertices,
+###        refinment_iterations,
+###        symmetries,
+###        threshold_symmetry,
+###        brillouin_primitive_vectors_3d,
+###        chosen_plane,
+###        brillouin_primitive_vectors_2d,
+###        normalized_brillouin_primitive_vectors_2d,
+###        threshold_minimal_refinment,
+###        default_gridding
+###    )
+###    printing_covering_BZ_2D(
+###        brillouin_primitive_vectors_3d,
+###        chosen_plane,
+###        not_refined_k_points_list,
+###        parallelograms,
+###        number_vertices
+###    )
+###
+###    ###LITTLE TRIANGLES
+###    number_vertices=3
+###    refined_k_points_list,triangles=k_points_generator_2D(
+###        brillouin_primitive_vectors_3d,
+###        brillouin_primitive_vectors_3d,
+###        chosen_plane,
+###        grid_spacing,
+###        covering_BZ,
+###        default_gridding,
+###        True,
+###        refinment_spacing,
+###        refinment_iterations,
+###        symmetries,
+###        threshold_symmetry,
+###        shift_in_plane,
+###        shift_in_space,
+###        0
+###        )
+###    ##print(refined_k_points_list)
+###    ##print(triangles)
+###    printing_covering_BZ_2D(
+###        brillouin_primitive_vectors_3d,
+###        chosen_plane,
+###        refined_k_points_list,
+###        triangles,
+###        number_vertices
+###    )
+###    ###DYNAMICAL REFINMENT
+###    brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
+###    normalized_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
+###    count = 0
+###    for i in range(3):
+###        if chosen_plane[i]!=0:
+###            brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_3d[i]
+###            normalized_brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_2d[count]/(brillouin_primitive_vectors_2d[count]@brillouin_primitive_vectors_2d[count])
+###            count += 1
+###    position_little_paths_to_refine=[37]
+###    not_refined_k_points_list,triangles_plus=dynamical_refinment_little_paths_2D(
+###        triangles,
+###        refined_k_points_list,
+###        position_little_paths_to_refine,
+###        number_vertices,
+###        refinment_iterations,
+###        symmetries,
+###        threshold_symmetry,
+###        brillouin_primitive_vectors_3d,
+###        chosen_plane,
+###        brillouin_primitive_vectors_2d,
+###        normalized_brillouin_primitive_vectors_2d,
+###        threshold_minimal_refinment,
+###        default_gridding
+###    )
+###    print("dopo",triangles_plus)
+###    all_triangles=[]
+###    all_triangles.extend(triangles)
+###    all_triangles.extend(triangles_plus)
+###    all_triangles=np.reshape(all_triangles,(int(len(all_triangles)),3,2))
+###    printing_covering_BZ_2D(
+###        brillouin_primitive_vectors_3d,
+###        chosen_plane,
+###        not_refined_k_points_list,
+###        all_triangles,
+###        number_vertices
+###    )
