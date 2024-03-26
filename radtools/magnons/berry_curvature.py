@@ -142,6 +142,7 @@ class Berry_curvature:
                     for s in range(self.N):
                         degeneracy_matrix[r][s] = False
             for i in range(number_k_points):
+                print(i/number_k_points)
                 omegas[i],us[i]=self.dispersion.omega(k_points_list[i][:3],True,False)
                 omegas[i]=omegas[i]*k_points_list[i][3]
                 us[i]=us[i]*k_points_list[i][3]
