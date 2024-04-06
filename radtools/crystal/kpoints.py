@@ -727,12 +727,12 @@ def k_points_generator_2D(
     shift_in_space=[0,0,0],
     precedent_count=0
 ):
-    print("before",shift_in_space)
+    ##print("before",shift_in_space)
     if len([i for i in range(3) if shift_in_space[i]!=0])!=0:
         shift_in_space,_=downfold_inside_brillouin_zone(
                                     shift_in_space,
                                     old_brillouin_primitive_vectors_3d)
-        print("after",shift_in_space)
+        ##print("after",shift_in_space)
 
     ###individuating the 2D plane
     brillouin_primitive_vectors_2d=np.zeros((2, 3),dtype=float)
@@ -836,13 +836,15 @@ def k_points_generator_2D(
                 k_points_grid[:,:3],indices=downfold_inside_brillouin_zone(
                     k_points_grid[:,:3],
                     old_brillouin_primitive_vectors_3d)
+                print(k_points_grid,indices)
                 parallelogram=[]
                 for i in range(k0):
                     for j in range(k1):
                         if i<k0-1 and j<k1-1:
                             parallelogram=[[i*k1+j,indices[i*k1+j]],[(i+1)*k1+j,indices[(i+1)*k1+j]],[(i+1)*k1+j+1,indices[(i+1)*k1+j+1]],[i*k1+j+1,indices[i*k1+j+1]]]
                             parallelograms.append(parallelogram)
-                parallelograms=np.reshape(parallelograms,(len(parallelograms),4,2))        
+                parallelograms=np.reshape(parallelograms,(len(parallelograms),4,2))
+                print("parallelograms",parallelograms)      
             return k_points_grid,parallelograms
 
 def check_inside_closed_shape_2d(
@@ -1163,7 +1165,6 @@ def dynamical_refinment_little_paths_2D(
             number_eigenvectors_around=len(eigenspaces_k_points_around[i])
             eigenvectors_around_array=np.zeros((number_eigenvectors_around,4),dtype=float)
             ### check the shift of the different eigenvectors
-            ### all eigenvectors are uniformly shifted 
             any_shifting=[]
             for j in range(number_eigenvectors_around):
                 shift=eigenspaces_k_points_around[i][j][1]
@@ -1182,7 +1183,6 @@ def dynamical_refinment_little_paths_2D(
             ###for j in range(number_eigenvectors_around):
             ###    print("test",eigenvectors_around_array[j,:3])
             ###calculating the projections of the different k points on the primitive vectors
-            k_points_list_projections_border_tmp=np.zeros((number_eigenvectors_around,2),dtype=float)
             k_points_list_projections_border=np.zeros((number_eigenvectors_around,2),dtype=float)
             k_points_list_projections_border_sum=np.zeros((number_eigenvectors_around),dtype=float)
             ### clustering of the points in order to properly take into account periodicity
@@ -1190,56 +1190,50 @@ def dynamical_refinment_little_paths_2D(
             ### to the single group is then applied the refinment procedure
             for r in range(number_eigenvectors_around):
                 for j in range(2):
-                    k_points_list_projections_border_tmp[r,j]=eigenvectors_around_array[r,:3]@brillouin_primitive_vectors_2d[j,:]
-                k_points_list_projections_border_sum[r]=np.sum(k_points_list_projections_border_tmp[r])
+                    k_points_list_projections_border[r,j]=eigenvectors_around_array[r,:3]@brillouin_primitive_vectors_2d[j,:]
+                k_points_list_projections_border_sum[r]=np.sum(k_points_list_projections_border[r])
+            any_shifting=np.unique(any_shifting)
             print(any_shifting)
+            ### the option of more than 2 clusters is not considered
             if len(any_shifting)!=0:
-                num_clusters=len(np.unique(any_shifting))+1
+                num_clusters=len(any_shifting)+1
                 # Initialize KMeans model
                 kmeans = KMeans(n_clusters=num_clusters)
                 # Fit the model to the data
-                kmeans.fit(k_points_list_projections_border_tmp)
+                kmeans.fit(k_points_list_projections_border)
                 # Get the cluster labels
                 cluster_labels = kmeans.labels_
                 # Get the centroids of the clusters
                 centroids = kmeans.cluster_centers_
+                # Here i am individuating the different groups of points
                 norms = [np.linalg.norm(vec) for s, vec in enumerate(centroids)]
-                max_centroid_index = max(enumerate(norms),key=lambda x: x[1])[0]
-                #####DA AGGIUNGERE UNA CONDIZIONE PER I DIVERSI SHIFTIN E PER CLUSTERING MAGGIORE DI 2 
-                print("before clustering", k_points_list_projections_border_tmp)
+                max_centroid_index = max(enumerate(norms),key=lambda x: x[1])[0]                    
+                print("before clustering", k_points_list_projections_border)
                 print("max cluster", max_centroid_index)
-                count_start=0
-                count_end=0
-                for s in range(num_clusters):
-                    indices=[r for r in range(number_eigenvectors_around) if cluster_labels[r]==s]
-                    count_end+=len(indices)
-                    if s == max_centroid_index:
-                        k_points_list_projections_border[count_start:count_end]=k_points_list_projections_border_tmp[indices]
-                    else:
-                        shift=np.zeros((len(indices),2),dtype=float)
+                for s in range(number_eigenvectors_around):
+                    if cluster_labels[s]!=max_centroid_index:
+                        shift=np.zeros((2),dtype=float)
                         if any_shifting==2:
-                            shift[:,1]=1
-                            k_points_list_projections_border[count_start:count_end]=k_points_list_projections_border_tmp[indices]+shift
-                            eigenvectors_around_array[indices,:3]+=brillouin_primitive_vectors_2d[1]
+                            shift[1]=1
+                            k_points_list_projections_border[s]+=shift
+                            eigenvectors_around_array[s,:3]+=brillouin_primitive_vectors_2d[1]
                         elif any_shifting==1:
-                            shift[:,0]=1
-                            k_points_list_projections_border[count_start:count_end]=k_points_list_projections_border_tmp[indices]+shift
-                            eigenvectors_around_array[indices,:3]+=brillouin_primitive_vectors_2d[0]
+                            shift[0]=1
+                            k_points_list_projections_border[s]+=shift
+                            eigenvectors_around_array[s,:3]+=brillouin_primitive_vectors_2d[0]
                         else:
-                            shift[:,0]=1
-                            shift[:,1]=1
-                            k_points_list_projections_border[count_start:count_end]=k_points_list_projections_border_tmp[indices]+shift
-                            eigenvectors_around_array[indices,:3]+=brillouin_primitive_vectors_2d[0]+brillouin_primitive_vectors_2d[1]
-                    print(s,k_points_list_projections_border)
-                    count_start+=count_end
+                            shift[0]=1
+                            shift[1]=1
+                            k_points_list_projections_border[s]+=shift
+                            eigenvectors_around_array[s,:3]+=brillouin_primitive_vectors_2d[1]+brillouin_primitive_vectors_2d[0]
                 print("after clustering", k_points_list_projections_border)
                 for r in range(number_eigenvectors_around):
                     k_points_list_projections_border_sum[r]=np.sum(k_points_list_projections_border[r])
-            else:
-                k_points_list_projections_border=k_points_list_projections_border_tmp
+                print("sum",k_points_list_projections_border_sum)
             ### sorting in order to find the simil-BZ
             origin_ij=np.argmin(k_points_list_projections_border_sum)
             origin=eigenvectors_around_array[origin_ij,:3]
+            print("origin",origin_ij,origin)
             for s in range(number_eigenvectors_around):
                 for j in range(2):
                     k_points_list_projections_border[s,j]=(eigenvectors_around_array[s,:3]-origin)@brillouin_primitive_vectors_2d[j,:]
@@ -1276,7 +1270,8 @@ def dynamical_refinment_little_paths_2D(
                     count += 1
                 else:
                     new_brillouin_primitive_vectors_3d[s] = brillouin_primitive_vectors_3d[s]
-            print("new brillouin zone \n", new_brillouin_primitive_vectors_2d)
+            print("new brillouin zone \n", new_brillouin_primitive_vectors_3d)
+            print("old brillouin zone \n", brillouin_primitive_vectors_3d)
             ### finding the minimal grid spacing
             max_value=np.linalg.norm(new_brillouin_primitive_vectors_2d[0]+new_brillouin_primitive_vectors_2d[1],2)
             moduli=np.zeros(number_eigenvectors_around,dtype=float)
@@ -1342,9 +1337,9 @@ def printing_covering_BZ_2D(
             if indx_2[count]!=0:
                 for s in range(3):
                     if indx_2[count]==1:
-                        little_path[count][s]+=brillouin_primitive_vectors_2d[0,s]
-                    elif indx_2[count]==2:
                         little_path[count][s]+=brillouin_primitive_vectors_2d[1,s]
+                    elif indx_2[count]==2:
+                        little_path[count][s]+=brillouin_primitive_vectors_2d[0,s]
                     else:
                         little_path[count][s]+=brillouin_primitive_vectors_2d[1,s]+brillouin_primitive_vectors_2d[0,s]
             count+=1
@@ -1451,7 +1446,7 @@ if __name__ == "__main__":
             normalized_brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_2d[count]/(brillouin_primitive_vectors_2d[count]@brillouin_primitive_vectors_2d[count])
             count += 1
     
-    position_little_paths_to_refine=[21]
+    position_little_paths_to_refine=[20,25]
     not_refined_k_points_list,parallelograms=dynamical_refinment_little_paths_2D(
         parallelograms,
         not_refined_k_points_list,
