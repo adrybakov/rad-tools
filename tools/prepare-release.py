@@ -29,25 +29,6 @@ from termcolor import colored
 
 N = 60
 
-LICENSE_SHORT = f"""# RAD-tools - program for spin Hamiltonian and magnons.
-# Copyright (C) 2022-{datetime.now().year}  Andrey Rybakov
-#
-# e-mail: anry@uv.es, web: adrybakov.com
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-"""
 
 QUOTES_IF_BAD = [
     # Albus Dumbledore
@@ -370,39 +351,6 @@ def check_git_status(repo: git.Repo):
         )
 
 
-@envelope(message="Adding license info to source code files")
-def apply_license(root_dir):
-    with open(os.path.join(root_dir, "LICENSE.txt"), "r") as f:
-        lines = f.readlines()
-    with open(
-        os.path.join(root_dir, "radtools", "_license.py"), "w", encoding="utf-8"
-    ) as f:
-        f.writelines('LICENSE = """')
-        f.writelines(lines)
-        f.writelines('"""\n')
-
-    source_files = []
-    for dirpath, _, filenames in os.walk(os.path.join(root_dir, "radtools")):
-        for filename in filenames:
-            if filename.endswith(".py"):
-                source_files.append(os.path.join(dirpath, filename))
-
-    for file in source_files:
-        with open(file, "r") as f:
-            lines = f.readlines()
-        i = 0
-        if len(lines) > 0:
-            while i < len(lines) and (
-                lines[i].startswith("#") or lines[i].startswith("\n")
-            ):
-                i += 1
-            lines = lines[i:]
-
-        with open(file, "w", encoding="utf-8") as f:
-            f.write(LICENSE_SHORT)
-            f.writelines(lines)
-
-
 def main(version: str, root_dir: str, relax: bool = False):
     if version == "None":
         sys.tracebacklimit = 0
@@ -432,8 +380,6 @@ def main(version: str, root_dir: str, relax: bool = False):
     rtd = check_release_notes(version=version, root_dir=root_dir, relax=relax) and rtd
 
     rtd = check_git_status(repo, relax=relax) and rtd
-
-    rtd = apply_license(root_dir=root_dir, relax=relax) and rtd
 
     rtd = update_init(repo, version=version, root_dir=root_dir, relax=relax) and rtd
 
