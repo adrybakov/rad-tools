@@ -1,0 +1,21 @@
+.. _release-notes_0.9:
+
+***********
+Version 0.9
+***********
+
+**Date:** 12 April 2024
+
+Whats new?
+----------
+Move from setup.py based installation to the pyproject.toml based installation. Ideally
+nothing should change in the installation process for the user.
+
+Remove the ".py" extension from the script executables. I.e. for the PDOS plots one shall
+execute::
+
+    rad-plot-dos
+
+instead of::
+
+    rad-plot-dos.py
