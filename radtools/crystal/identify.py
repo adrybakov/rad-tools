@@ -126,7 +126,7 @@ def niggli(
         >>> gamma = acos(-22 / 2 / a / b) * TODEGREES
         >>> print(f"{alpha:.2f} {beta:.2f} {gamma:.2f}")
         103.92 109.47 134.88
-        >>> niggli_matrix_form = rad.niggli(a, b, c, alpha, beta, gamma, verbose=True)
+        >>> niggli_matrix_form = rad.niggli(a, b, c, alpha, beta, gamma, verbose=True) #doctest: +NORMALIZE_WHITESPACE
                        A         B         C        xi        eta      zeta
         start:       9.00000  27.00000   4.00000  -5.00000  -4.00000 -22.00000
         2 appl. to   9.00000  27.00000   4.00000  -5.00000  -4.00000 -22.00000
