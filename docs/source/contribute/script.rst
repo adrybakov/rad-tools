@@ -4,7 +4,7 @@
 New script
 **********
 
-Each script is meant to be an interface to the Python library. It is typically implemented 
+Each script is meant to be an interface to the Python library. It is typically implemented
 as a small ``manager()`` function in the :ref:`api_score` module.
 
 Workflow
@@ -73,7 +73,7 @@ You need to follow guidelines of |numpydoc|_ and some additional rules:
 
             Long description.
 
-            Console argument: ``-op2`` 
+            Console argument: ``-op2``
         default_param : int, default 34
             Description.
 
@@ -81,4 +81,3 @@ You need to follow guidelines of |numpydoc|_ and some additional rules:
 
             Console argument: ``-dp`` / ``--default-param``
         """
-

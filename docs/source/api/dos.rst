@@ -38,4 +38,3 @@ Fatbands plotting
 
     plot_fatbands
     plot_custom_fatbands
-

@@ -9,7 +9,7 @@ Getting started
 
 .. toctree::
     :maxdepth: 1
-    
+
     start/about
     start/installation
     start/quickstart
@@ -41,6 +41,5 @@ Library
     library/bravais-lattices/index
 
 .. div:: logo-custom-text
-    
-   There are no more guides. You are now guideless. Good luck.
 
+   There are no more guides. You are now guideless. Good luck.

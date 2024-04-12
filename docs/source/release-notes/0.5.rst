@@ -6,23 +6,23 @@ Version 0.5
 
 Whats new?
 ----------
-Rewrite the internals of the 
+Rewrite the internals of the
 :py:class:`.SpinHamiltonian`.
 
-The idea is to allow one to modify the model with respect to the expected 
+The idea is to allow one to modify the model with respect to the expected
 symmetry and desired accuracy of the parameters. Furthermore, :py:class:`.SpinHamiltonian`
 is iterable, support index access and ``in`` function.
 
 The distances of the bonds are not directly read from the TB2J exchange file, but computed based on the atoms's positions.
 
-:ref:`Bond <api_parameter>` class does 
-not contain information about the distance. 
+:ref:`Bond <api_parameter>` class does
+not contain information about the distance.
 
-When exchange model is read from the TB2J exchange file the order of bonds is 
+When exchange model is read from the TB2J exchange file the order of bonds is
 kept as the insert order of the python's dicts.
 
-Remove double-bonds argument from :ref:`rad-plot-tb2j.py <rad-plot-tb2j>` 
-script and add :ref:`--form-model <rad-plot-tb2j_form-model>` argument, 
+Remove double-bonds argument from :ref:`rad-plot-tb2j.py <rad-plot-tb2j>`
+script and add :ref:`--form-model <rad-plot-tb2j_form-model>` argument,
 which form the model based on the template.
 
 
@@ -42,12 +42,12 @@ Bugfix in :ref:`rad-extract-tb2j.py <rad-extract-tb2j>`
 
 0.5.6
 -----
-Move the scripts 
+Move the scripts
 :ref:`rad-extract-tb2j.py <rad-extract-tb2j>`,
 :ref:`rad-plot-tb2j.py <rad-plot-tb2j>` and
 :ref:`rad-make-template.py <rad-make-template>` to the package.
 
-Remake :ref:`rad-extract-tb2j.py <rad-extract-tb2j>` script, remove python file output, 
+Remake :ref:`rad-extract-tb2j.py <rad-extract-tb2j>` script, remove python file output,
 create only two modes of outputs.
 
 0.5.7
@@ -66,16 +66,16 @@ Bugfix when seedname of pdos files contains pdos_tot
 
 0.5.12
 ------
-Renamed ``--tb2j-filename`` argument 
+Renamed ``--tb2j-filename`` argument
 to the :ref:`--input-filename.py <rad-make-template_input-filename>`
-in the :ref:`rad-make-template.py <rad-make-template>` script in order to match 
+in the :ref:`rad-make-template.py <rad-make-template>` script in order to match
 naming style.
 
 Remove ``phonopy-plotter.py`` script.
 
 0.5.13
 ------
-Plot atoms in 0 0 0 unit cell in colour for 
+Plot atoms in 0 0 0 unit cell in colour for
 :ref:`rad-plot-tb2j.py <rad-plot-tb2j>` script.
 
 0.5.14
@@ -85,35 +85,35 @@ Problem with :ref:`--form-model <rad-plot-tb2j_form-model>` if there is filterin
 
 0.5.15
 ------
-Add version of the package to the information header of the output files. 
+Add version of the package to the information header of the output files.
 
 0.5.16
 ------
-Add :py:meth:`SpinHamiltonian.remove` method to the 
+Add :py:meth:`SpinHamiltonian.remove` method to the
 :py:class:`.SpinHamiltonian`
 
 0.5.17
 ------
-Rewrite parsers of the scripts and 
+Rewrite parsers of the scripts and
 add |black|_ code formatter.
 
 0.5.18
 ------
-Change the colours in :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
+Change the colours in :ref:`rad-plot-dos.py <rad-plot-dos>` script.
 Add support for the k-resolved DOS.
 
 0.5.19
 ------
-Bugfix in :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
+Bugfix in :ref:`rad-plot-dos.py <rad-plot-dos>` script.
 
 0.5.20
 ------
-Remove search for the middle of the bond 
-in :ref:`rad-identify-wannier-centres.py <rad-identify-wannier-centres>` script. 
+Remove search for the middle of the bond
+in :ref:`rad-identify-wannier-centres.py <rad-identify-wannier-centres>` script.
 
 0.5.21
 ------
-Major change of :ref:`rad-plot-dos.py <rad-plot-dos>` script. Add ``dos`` module. 
+Major change of :ref:`rad-plot-dos.py <rad-plot-dos>` script. Add ``dos`` module.
 Release for debugging. Main release will happen with the change to 0.6.* version.
 
 0.5.22
@@ -127,25 +127,25 @@ Bugfix with pickle outputs.
 
 0.5.24
 ------
-In :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
+In :ref:`rad-plot-dos.py <rad-plot-dos>` script.
 Make all legends draggable only for interactive mode.
 
 0.5.25
 ------
-In :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
+In :ref:`rad-plot-dos.py <rad-plot-dos>` script.
 Add plotting regime :ref:`--background-total <rad-plot-dos_background-total>`.
 
 0.5.26
 ------
-In :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
+In :ref:`rad-plot-dos.py <rad-plot-dos>` script.
 Correct ``efermi`` bug in pdos-vs-dos plot (there was no shift).
 
 0.5.27
 ------
-In :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
+In :ref:`rad-plot-dos.py <rad-plot-dos>` script.
 Correct ``efermi`` bug in pdos-vs-dos plot (shift lead to the disappearance of the states).
 
 0.5.28/0.5.29
 -------------
-In :ref:`rad-plot-dos.py <rad-plot-dos>` script. 
+In :ref:`rad-plot-dos.py <rad-plot-dos>` script.
 Fix previous bugfix.

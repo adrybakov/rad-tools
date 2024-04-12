@@ -8,7 +8,7 @@ For the full reference see :ref:`api_score`.
 
 .. currentmodule:: radtools
 
-This module groups the functions, which define the logic of scripts from the 
+This module groups the functions, which define the logic of scripts from the
 script interface of the package.
 
 Import

@@ -6,11 +6,11 @@ Version 0.4
 
 Whats new?
 ----------
-Refractor most of the code. 
+Refractor most of the code.
 Move input in the separate submodule.
 Remove molecule plot type from :ref:`rad-plot-tb2j.py <rad-plot-tb2j>` script.
 
-Major change in the logic of reading exchange files and templates. 
+Major change in the logic of reading exchange files and templates.
 Instead of using the class to load the file as before:
 
 .. code-block:: python
@@ -34,7 +34,7 @@ Now one need to use read functions from input-output module:
 0.4.1
 -----
 
-Add :ref:`--accuracy <rad-extract-tb2j_decimals>` argument to the 
+Add :ref:`--accuracy <rad-extract-tb2j_decimals>` argument to the
 :ref:`rad-extract-tb2j <rad-extract-tb2j>` script.
 
 0.4.2
@@ -61,7 +61,7 @@ There are two ways to import read functions:
 
 .. code-block:: python
 
-    from radtools.io.internal import 
+    from radtools.io.internal import
     from radtools.io import load_template
 
 Add :py:meth:`.number_spins_in_unit_cell` property to the :py:class:`.SpinHamiltonian`.
@@ -91,7 +91,7 @@ There are two ways to import read functions:
 0.4.7
 -----
 
-Add High symmetry k-points. 
+Add High symmetry k-points.
 
 Add methods to round up the exchange model.
 

@@ -11,7 +11,7 @@ crystal
 Classes
 =======
 
-.. toctree:: 
+.. toctree::
     :maxdepth: 1
 
     crystal
@@ -63,7 +63,7 @@ Examples
     lattice_example
 
 Constructors
------------- 
+------------
 
 .. autosummary::
     :toctree: generated/
@@ -72,7 +72,7 @@ Constructors
     FCC
     BCC
     TET
-    BCT    
+    BCT
     ORC
     ORCF
     ORCI
@@ -93,7 +93,7 @@ High-symmetry k points
     FCC_hs_points
     BCC_hs_points
     TET_hs_points
-    BCT_hs_points    
+    BCT_hs_points
     ORC_hs_points
     ORCF_hs_points
     ORCI_hs_points
@@ -115,7 +115,7 @@ Cell`s standardization
     FCC_standardize_cell
     BCC_standardize_cell
     TET_standardize_cell
-    BCT_standardize_cell    
+    BCT_standardize_cell
     ORC_standardize_cell
     ORCF_standardize_cell
     ORCI_standardize_cell
@@ -138,7 +138,7 @@ Lattice variations
     MCLC_variation
     TRI_variation
 
-Constants 
+Constants
 =========
 
 .. currentmodule:: radtools.crystal

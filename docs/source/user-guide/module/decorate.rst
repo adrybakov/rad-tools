@@ -8,7 +8,7 @@ For the full reference see :ref:`api_decorate`.
 
 .. currentmodule:: radtools
 
-This module contains functions to decorate data for plotting or printing. 
+This module contains functions to decorate data for plotting or printing.
 It does not fall into the scope of intended functionality of the package,
 but is included for convenience.
 
@@ -370,18 +370,18 @@ Logo
     ██████╔╝███████║██║  ██║█████╗   ██║   ██║  ██║██║  ██║██║     ╚═█████╗
     ██╔══██╗██╔══██║██║  ██║╚════╝   ██║   ██║  ██║██║  ██║██║       ╚══██║
     ██║  ██║██║  ██║██████╔╝         ██║   ╚█████╔╝╚█████╔╝███████╗██████╔╝
-    ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝          ╚═╝    ╚════╝  ╚════╝ ╚══════╝╚═════╝ 
-                                                                ▄   ▄      
-                          Version: 0.8.4                        █▀█▀█      
-                   Documentation: rad-tools.org                 █▄█▄█      
-                  Release date: 20 September 2023                ███   ▄▄  
-        Git hash: 5b4dc9b04aecb7efebb9cd710c02e0ad7fb68e44       ████ █  █ 
-                        Licence: GNU GPLv3                       ████    █ 
-                                                                 ▀▀▀▀▀▀▀▀  
+    ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝          ╚═╝    ╚════╝  ╚════╝ ╚══════╝╚═════╝
+                                                                ▄   ▄
+                          Version: 0.8.4                        █▀█▀█
+                   Documentation: rad-tools.org                 █▄█▄█
+                  Release date: 20 September 2023                ███   ▄▄
+        Git hash: 5b4dc9b04aecb7efebb9cd710c02e0ad7fb68e44       ████ █  █
+                        Licence: GNU GPLv3                       ████    █
+                                                                 ▀▀▀▀▀▀▀▀
 
 The same behaviour can be achieved within the console (you may need to use ``python3``):
 
-.. code-block:: 
+.. code-block::
 
     python -m radtools
 
@@ -408,6 +408,6 @@ This code prints the full text of the GNU GPLv3 license.
 
 The same behaviour can be achieved within the console (you may need to use ``python3``):
 
-.. code-block:: 
+.. code-block::
 
     python -m radtools --license

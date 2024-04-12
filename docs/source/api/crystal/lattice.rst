@@ -97,5 +97,3 @@ Numerical accuracy
     :toctree: generated/
 
     Lattice.eps
-
-

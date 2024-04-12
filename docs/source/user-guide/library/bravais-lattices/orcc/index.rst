@@ -8,7 +8,7 @@ Base-centred orthorhombic (ORCC)
 
 **Constructor**:  :py:func:`.ORCC`
 
-It is defined by three parameter: :math:`a`, :math:`b` and :math:`c` 
+It is defined by three parameter: :math:`a`, :math:`b` and :math:`c`
 with conventional lattice:
 
 .. math::
@@ -34,7 +34,7 @@ Order of parameters: :math:`a < b`
 Cell standardization
 ====================
 
-Lengths of the lattice vectors of the conventional cell have to satisfy 
+Lengths of the lattice vectors of the conventional cell have to satisfy
 :math:`\vert\boldsymbol{a}_1\vert < \vert\boldsymbol{a}_2\vert`.
 Length of third vector of the primitive cell has to be different from
 the lengths of the first two vectors of the primitive cell.
@@ -44,33 +44,33 @@ If these conditions are not satisfied, then the lattice is transformed to the st
 Before the standardization we check if all angles are equal to :math:`90^{\circ}`.
 If yes, then the standardization for :ref:`guide_tet` is called.
 
-First we find the third lattice vector of the primitive cell. 
+First we find the third lattice vector of the primitive cell.
 For this step we use lattice vectors of the primitive cell:
 
 * If :math:`\beta \ne 90^{\circ}`
     .. math::
 
-        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow
         (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
 
 * If :math:`\alpha \ne 90^{\circ}`
     .. math::
 
-        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow
         (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
 
-Then we order first two lattice vector. 
+Then we order first two lattice vector.
 For this step we use lattice vectors of the conventional cell:
 
 * If :math:`\vert\boldsymbol{a}_1\vert > \vert\boldsymbol{a}_2\vert`
     .. math::
 
-        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow
         (-\boldsymbol{a}_2, \boldsymbol{a}_1, \boldsymbol{a}_3)
 
 .. note::
 
-    The second lattice vector is multiplied by :math:`-1` in some cases to 
+    The second lattice vector is multiplied by :math:`-1` in some cases to
     preserve the handedness of the cell.
 
 K-path
@@ -101,8 +101,8 @@ Point                      :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsym
 Variations
 ==========
 
-There are no variations for base-centered orthorombic. 
-One example is predefined: ``orcc`` with 
+There are no variations for base-centered orthorombic.
+One example is predefined: ``orcc`` with
 :math:`a = \pi`, :math:`b  = 1.3\pi` and :math:`c = 1.7\pi`.
 
 Examples

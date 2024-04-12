@@ -5,7 +5,7 @@ SpinHamiltonian
 *******************
 
 .. currentmodule:: radtools
- 
+
 Class
 =====
 
@@ -14,9 +14,9 @@ Class
 
     SpinHamiltonian
 
-.. hint:: 
-    All properties and methods of :ref:`api_crystal` are accessible directly 
-    from the hamiltonian instance. As a consequence all properties and methods 
+.. hint::
+    All properties and methods of :ref:`api_crystal` are accessible directly
+    from the hamiltonian instance. As a consequence all properties and methods
     of :ref:`api_lattice` are accessible directly from the hamiltonian instance.
 
 Energy
@@ -34,7 +34,7 @@ Structure
     :toctree: generated/
 
     SpinHamiltonian.cell_list
-    SpinHamiltonian.number_spins_in_unit_cell   
+    SpinHamiltonian.number_spins_in_unit_cell
     SpinHamiltonian.space_dimensions
 
 Manipulation with the model

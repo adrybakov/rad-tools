@@ -11,8 +11,8 @@ For the full reference see :ref:`api_parameter`
 :py:class:`ExchangeParameter` is a wrap around :numpy:`ndarray` with a number
 of predefined properties, which are specific for the exchange parameter.
 
-The full exchange parameter :math:`\boldsymbol{J}` is a :math:`3\times3` matrix 
-of real numbers. It is usually separated into three parts: 
+The full exchange parameter :math:`\boldsymbol{J}` is a :math:`3\times3` matrix
+of real numbers. It is usually separated into three parts:
 
 .. _guide_spinham_parameter_iso:
 
@@ -40,7 +40,7 @@ of real numbers. It is usually separated into three parts:
 
 .. math::
 
-    \mathbf{J}_{asymm} = \dfrac{\boldsymbol{J} - \boldsymbol{J}^T}{2} = 
+    \mathbf{J}_{asymm} = \dfrac{\boldsymbol{J} - \boldsymbol{J}^T}{2} =
     \begin{bmatrix}
     0    & D_z  & -D_y \\
     -D_z & 0    & D_x  \\
@@ -48,8 +48,8 @@ of real numbers. It is usually separated into three parts:
     \end{bmatrix}
 
 
-Isotropic exchange is a scalar, anisotropic part is a traceless symmetric part of the 
-full matrix and antisymmetric part of full matrix can be described 
+Isotropic exchange is a scalar, anisotropic part is a traceless symmetric part of the
+full matrix and antisymmetric part of full matrix can be described
 via Dzyaloshinskii-Moriya vector.
 
 Import
@@ -87,7 +87,7 @@ the other parameters are used to calculate the matrix.
            [0., 1., 0.],
            [0., 0., 1.]]))
 
-For the full list of constructor parameters see 
+For the full list of constructor parameters see
 :py:class:`.ExchangeParameter` documentation.
 
 String representation
@@ -120,7 +120,7 @@ It supports string formatting. The format is passed to :py:func:`.print_2d_array
      -1.00e+00  0.00e+00  1.00e+00
       1.00e+00 -1.00e+00  0.00e+00
 
-The full matrix of the exchange parameter is stored as a 
+The full matrix of the exchange parameter is stored as a
 :math:`3 \times 3` :numpy:`ndarray`. Every other parameter is calculated from it.
 The examples below are grouped by the type of exchange interaction.
 
@@ -174,7 +174,7 @@ For each element of the exchange matrix the following properties are defined:
 Isotropic exchange
 ==================
 
-Isotropic exchange is a scalar and it is defined as a trace of the exchange matrix 
+Isotropic exchange is a scalar and it is defined as a trace of the exchange matrix
 divided by 3:
 
 .. doctest::
@@ -195,7 +195,7 @@ Anisotropic exchange
 ====================
 
 .. note::
-    
+
     Anisotropic exchange is a traceless part of symmetric part of full exchange matrix.
 
 .. doctest::
@@ -205,7 +205,7 @@ Anisotropic exchange
            [ 3.,  0.,  7.],
            [ 5.,  7.,  4.]])
 
-Anisotropic exchange is often reduced to the diagonal part, 
+Anisotropic exchange is often reduced to the diagonal part,
 thus diagonal part and its matrix form are explicitly defined:
 
 .. doctest::
@@ -221,7 +221,7 @@ Dzyaloshinskii-Moriya interaction
 =================================
 
 .. note::
-    
+
     Dzyaloshinskii-Moriya interaction is an antisymmetric part of full exchange matrix.
 
 .. doctest::
@@ -254,7 +254,7 @@ Two useful values are defined for DMI: its module and relative strength to isotr
 Arithmetic operations
 =====================
 
-Arithmetic operations are defined for the exchange parameter. 
+Arithmetic operations are defined for the exchange parameter.
 They act on the full exchange matrix and return :py:class:`.ExchangeParameter` instance.
 
 .. doctest::
@@ -298,7 +298,7 @@ They act on the full exchange matrix and return :py:class:`.ExchangeParameter` i
     >>> J1 != J2
     False
 
-Matrix multiplication works with instances of :py:class:`.ExchangeParameter` as well, but 
+Matrix multiplication works with instances of :py:class:`.ExchangeParameter` as well, but
 it returns instance of :numpy:`ndarray`:
 
 .. doctest::
@@ -314,7 +314,7 @@ it returns instance of :numpy:`ndarray`:
 |NumPy|_ interface
 ==================
 
-|array_interface|_ is defined for the exchange parameter. 
+|array_interface|_ is defined for the exchange parameter.
 It aims any numpy function on the full exchange matrix.
 
 Transpose is defined explicitly in order to return :py:class:`.ExchangeParameter` instance:
@@ -338,17 +338,3 @@ Any other numpy function should work as expected, however it is not tested:
     array([[False, False, False],
            [False, False, False],
            [False, False, False]])
-
-
-
-
-
-
-
-
-
-
-
-
-
-

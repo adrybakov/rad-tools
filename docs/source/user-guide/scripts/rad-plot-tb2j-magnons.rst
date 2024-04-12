@@ -6,15 +6,15 @@ rad-plot-tb2j-magnons.py
 
 Script for plotting magnon dispersion from |TB2J|_ "exchange.out" file.
 
-.. versionadded:: 0.7.12 
+.. versionadded:: 0.7.12
 
-Script plots magnon dispersion spectra following the algorithm described in 
+Script plots magnon dispersion spectra following the algorithm described in
 :ref:`library_magnon-dispersion-method`.
 
-It requires |TB2J|_ output file "exchange.out" and 
+It requires |TB2J|_ output file "exchange.out" and
 the information about the magnetic ground state.
 
-Example is based on the files from 
+Example is based on the files from
 :examples:`examples folder <rad-plot-tb2j-magnons>`.
 
 Ground state input
@@ -23,7 +23,7 @@ Ground state input
 Ground state is defined by two sets of parameters:
 
 * Directions of spin in the unit cell (or supercell)
-    To define direction of spins in the supercell use :ref:`rad-plot-tb2j-magnons_spin` 
+    To define direction of spins in the supercell use :ref:`rad-plot-tb2j-magnons_spin`
     parameter. You need to use the names of the atoms in the "exchange.out" file. Each name
     has to be followed by three numbers, separated by spaces. The numbers represent the x, y,
     and z components of the spin vector:
@@ -34,7 +34,7 @@ Ground state is defined by two sets of parameters:
 
 
 * Spin-spiral vector. (single-Q incommensurate structure).
-    Spin spiral is defined by two parameters, each parameter is a vector: 
+    Spin spiral is defined by two parameters, each parameter is a vector:
 
     * :math:`\boldsymbol{\vec{Q}}` (:ref:`rad-plot-tb2j-magnons_spiral-vector`)
         It is relative to the reciprocal cell.
@@ -52,7 +52,7 @@ necessary.
 Custom k-points
 ===============
 
-By default you can use predefined k-points based on the high symmetry points for each 
+By default you can use predefined k-points based on the high symmetry points for each
 :ref:`Bravais lattice <library_bravais-lattices>`. However, you can specify your own
 high symmetry points using :ref:`rad-plot-tb2j-magnons_k-points` argument:
 
@@ -75,15 +75,15 @@ where:
 * <name> is the name of the k-point
     It can be used in the :ref:`rad-plot-tb2j-magnons_k-path` argument.
 
-    .. note:: 
-        
+    .. note::
+
         If an error like:
 
         .. code-block:: text
 
             ValueError: Point 'X' already defined.
-        
-        appears, then you need to use different name for the k-points, because 
+
+        appears, then you need to use different name for the k-points, because
         the name "X" is already used. Only the name is checked for uniqueness. Therefore,
         you can provide the same label for different k-points or custom label for one of the predefined
         k-points.
@@ -95,8 +95,8 @@ Template file
 =============
 
 Exchange template file (see :ref:`template-draft`) can be used to form the model or
-to filter the spin Hamiltonian. Formation of the model means that the exchange parameters 
-from the |TB2J|_ are averaged over the individual bonds following the 
+to filter the spin Hamiltonian. Formation of the model means that the exchange parameters
+from the |TB2J|_ are averaged over the individual bonds following the
 :ref:`specification <template-draft>` of the template.
 
 Filtering of the model
@@ -126,7 +126,7 @@ Examples
 CrSBr
 -----
 
-CrSBr is a ferromagnet with two magnetic sites in the unit cell. The minimum input is 
+CrSBr is a ferromagnet with two magnetic sites in the unit cell. The minimum input is
 the "exchange.out" file and the spin vectors for the two Cr atoms:
 
 .. code-block:: bash
@@ -145,7 +145,7 @@ Default k-path was detected based on the symmetry (:ref:`guide_orc`) of the latt
 
     Sometimes due to numerical inaccuracies detected symmetry of the lattice is not the one
     that you expect. In that case you may want to use :ref:`--bravais-type <rad-plot-tb2j-magnons_bravais-type>`
-    argument. With this argument the script tries to reduce numerical accuracy to match the desired 
+    argument. With this argument the script tries to reduce numerical accuracy to match the desired
     Bravais lattice type. If it fails, then check your lattice, maybe it is not the one you expect.
 
 You can customise the k-path using :ref:`--k-path <rad-plot-tb2j-magnons_k-path>` argument
@@ -424,4 +424,3 @@ Whether to ignore anisotropic symmetric exchange in the spinham.
 
     default: False
     type: bool
-

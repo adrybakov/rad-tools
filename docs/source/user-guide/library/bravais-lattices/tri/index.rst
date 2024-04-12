@@ -23,7 +23,7 @@ with primitive and conventional lattice:
 Cell standardization
 ====================
 
-Standardization is performed based on the reciprocal cell. 
+Standardization is performed based on the reciprocal cell.
 
 One of the conditions have to be met:
 
@@ -35,23 +35,23 @@ One of the conditions have to be met:
 
 * :math:`k_{\gamma} = 90^{\circ}` and other two angles are :math:`< 90^{\circ}`.
 
-If these conditions are not satisfied, then the lattice is transformed to the 
+If these conditions are not satisfied, then the lattice is transformed to the
 standard form:
 
 Last two cases
 --------------
 First we check for the last two cases:
 
-* If :math:`k_{\alpha} = 90^{\circ}` 
+* If :math:`k_{\alpha} = 90^{\circ}`
     .. math::
-        
-        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow
         (\boldsymbol{b}_2, \boldsymbol{b}_3, \boldsymbol{b}_1)
 
 * If :math:`k_{\beta} = 90^{\circ}`
     .. math::
-        
-        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow
         (\boldsymbol{b}_3, \boldsymbol{b}_1, \boldsymbol{b}_2)
 
 If one of the last two conditions were met, then now we have :math:`k_{\gamma} = 90^{\circ}`.
@@ -59,51 +59,51 @@ We need to choose appropriate values for the remaining two angles:
 
 * If :math:`k_{\alpha} > 90^{\circ}` and :math:`k_{\beta} < 90^{\circ}` or :math:`k_{\alpha} < 90^{\circ}` and :math:`k_{\beta} > 90^{\circ}`:
     .. math::
-        
-        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow
         (\boldsymbol{b}_2, -\boldsymbol{b}_1, \boldsymbol{b}_3)
 
 First two cases
 ---------------
 
-If none of the last two conditions were met, then we check for the first two. 
+If none of the last two conditions were met, then we check for the first two.
 First we ensure that all angles are :math:`> 90^{\circ}` or :math:`< 90^{\circ}`:
 
 
 * If :math:`k_{\alpha} > 90^{\circ}` and :math:`k_{\beta} > 90^{\circ}` and :math:`k_{\gamma} < 90^{\circ}`:
     .. math::
-        
-        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow
         (-\boldsymbol{b}_1, -\boldsymbol{b}_2, \boldsymbol{b}_3)
 
 * If :math:`k_{\alpha} > 90^{\circ}` and :math:`k_{\beta} < 90^{\circ}` and :math:`k_{\gamma} > 90^{\circ}`:
     .. math::
-        
-        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow
         (-\boldsymbol{b}_1, \boldsymbol{b}_2, -\boldsymbol{b}_3)
 
 * If :math:`k_{\alpha} > 90^{\circ}` and :math:`k_{\beta} < 90^{\circ}` and :math:`k_{\gamma} < 90^{\circ}`:
     .. math::
-        
-        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow
         (\boldsymbol{b}_1, -\boldsymbol{b}_2, -\boldsymbol{b}_3)
 
 * If :math:`k_{\alpha} < 90^{\circ}` and :math:`k_{\beta} > 90^{\circ}` and :math:`k_{\gamma} > 90^{\circ}`:
     .. math::
-        
-        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow
         (\boldsymbol{b}_1, -\boldsymbol{b}_2, -\boldsymbol{b}_3)
 
 * If :math:`k_{\alpha} < 90^{\circ}` and :math:`k_{\beta} > 90^{\circ}` and :math:`k_{\gamma} < 90^{\circ}`:
     .. math::
-        
-        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow
         (-\boldsymbol{b}_1, \boldsymbol{b}_2, -\boldsymbol{b}_3)
 
 * If :math:`k_{\alpha} < 90^{\circ}` and :math:`k_{\beta} < 90^{\circ}` and :math:`k_{\gamma} > 90^{\circ}`:
     .. math::
-        
-        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow
         (-\boldsymbol{b}_1, -\boldsymbol{b}_2, \boldsymbol{b}_3)
 
 As the last step we reorder the reciprocal vectors:
@@ -112,14 +112,14 @@ Reordering if all angles are :math:`> 90^{\circ}`:
 
 * If :math:`k_{\alpha} = min(k_{\alpha}, k_{\beta}, k_{\gamma})`, then:
     .. math::
-        
-        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow
         (\boldsymbol{b}_2, \boldsymbol{b}_3, \boldsymbol{b}_1)
 
 * If :math:`k_{\beta} = min(k_{\alpha}, k_{\beta}, k_{\gamma})`, then:
     .. math::
-        
-        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow
         (\boldsymbol{b}_3, \boldsymbol{b}_1, \boldsymbol{b}_2)
 
 
@@ -127,14 +127,14 @@ Reordering if all angles are :math:`< 90^{\circ}`:
 
 * If :math:`k_{\alpha} = max(k_{\alpha}, k_{\beta}, k_{\gamma})`, then:
     .. math::
-        
-        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow
         (\boldsymbol{b}_2, \boldsymbol{b}_3, \boldsymbol{b}_1)
 
 * If :math:`k_{\beta} = max(k_{\alpha}, k_{\beta}, k_{\gamma})`, then:
     .. math::
-        
-        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow 
+
+        (\boldsymbol{b}_1, \boldsymbol{b}_2, \boldsymbol{b}_3) \rightarrow
         (\boldsymbol{b}_3, \boldsymbol{b}_1, \boldsymbol{b}_2)
 
 

@@ -8,7 +8,7 @@ For the full reference see :ref:`api_spin-hamiltonian`.
 
 .. currentmodule:: radtools
 
-Main idea of the spin Hamiltonian structure could be expressed as 
+Main idea of the spin Hamiltonian structure could be expressed as
 
 .. code-block:: text
 
@@ -16,8 +16,8 @@ Main idea of the spin Hamiltonian structure could be expressed as
 
 where ``atom1`` and ``atom2`` are instances of :py:class:`.Atom`, ``(i,j,k)`` is a tuple of
 integers, which defines the unit cell (in relative coordinates). ``exchange_parameter`` is an instance of
-:py:class:`.ExchangeParameter`. The :py:class:`.SpinHamiltonian` supports 
-dictionary-like access to the exchange parameters 
+:py:class:`.ExchangeParameter`. The :py:class:`.SpinHamiltonian` supports
+dictionary-like access to the exchange parameters
 (see :ref:`examples <guide_spin-hamiltonian_dictionary>`).
 
 Import
@@ -49,8 +49,8 @@ Creation
 ========
 
 .. hint::
-    
-    For the creation of the spin Hamiltonian from the |TB2J|_ file see 
+
+    For the creation of the spin Hamiltonian from the |TB2J|_ file see
     :py:func:`.load_tb2j_model`.
 
 .. doctest::
@@ -67,10 +67,10 @@ instance of the :py:class:`.Crystal` class or keyword arguments, which will be p
     >>> # Is equivalent to
     >>> hamiltonian = SpinHamiltonian(a1 = [1, 0, 0], a2 = [0, 1, 0], a3 = [0, 0, 1], atoms=[Cr])
 
-For the full list of constructor parameters see 
+For the full list of constructor parameters see
 :py:class:`.SpinHamiltonian` documentation.
 
-After the creation of the :py:class:`.SpinHamiltonian` you 
+After the creation of the :py:class:`.SpinHamiltonian` you
 need to add atoms and bonds to it.
 
 Adding atoms
@@ -104,7 +104,7 @@ The bond is added to the Hamiltonian via :py:meth:`.SpinHamiltonian.add_bond` me
 .. note::
 
     The bond is added to the Hamiltonian, but no atom is explicitly added to the crystal.
-    You can skip the atom addition if you are using :py:class:`.Atom` instances, 
+    You can skip the atom addition if you are using :py:class:`.Atom` instances,
     not the names in the :py:meth:`.SpinHamiltonian.add_bond` method.
     The atom will be silently added to the system.
     When atom`s name is used, atom object is extracted from the spin Hamiltonian, thus
@@ -136,9 +136,9 @@ Equivalent way to  add bond:
 
 .. note::
 
-    If the atom is already added to the Hamiltonian, then you can use both atom`s name and 
-    the instance of the atom class. 
-    If you have more then one atom with the same name in the Hamiltonian, 
+    If the atom is already added to the Hamiltonian, then you can use both atom`s name and
+    the instance of the atom class.
+    If you have more then one atom with the same name in the Hamiltonian,
     then you have to use :py:meth:`.Atom.fullname` instead of the name:
 
     .. doctest::
@@ -162,7 +162,7 @@ Removing atoms
 
 Removing an atom from the :py:class:`.SpinHamiltonian` is not the same as removing
 it from the :py:class:`.Crystal`. When atom is removed from the :py:class:`.SpinHamiltonian`
-all bonds, which are connected to it are removed as well. 
+all bonds, which are connected to it are removed as well.
 
 .. doctest::
 
@@ -240,7 +240,7 @@ They could be accessed with :py:attr:`.SpinHamiltonian.magnetic_atoms` property:
 Atom name vs instance
 =====================
 
-In many situations atom name (:py:attr:`.Atom.name`) or 
+In many situations atom name (:py:attr:`.Atom.name`) or
 fullname (:py:attr:`.Atom.fullname`) can be used with the :py:class:`.SpinHamiltonian`.
 
 You can use name if you have only one atom with this name in the Hamiltonian. Otherwise
@@ -287,7 +287,7 @@ you can use :py:meth:`.SpinHamiltonian.get_atom` method:
 Filtering
 =========
 
-Spin Hamiltonian could be filtered by distance, template or set of (i, j, k) tuples 
+Spin Hamiltonian could be filtered by distance, template or set of (i, j, k) tuples
 (R vectors).
 
 Use :py:meth:`.SpinHamiltonian.filter` to filter the instance of the
@@ -395,25 +395,25 @@ Ferromagnetic energy of the Hamiltonian could be calculated with
 Saving
 ======
 
-The Hamiltonian could be saved in as a text file with 
+The Hamiltonian could be saved in as a text file with
 :py:func:`.dump_spinham_txt` function:
 
 .. doctest::
 
-    >>> from radtools import dump_spinham_txt 
+    >>> from radtools import dump_spinham_txt
     >>> hamiltonian = SpinHamiltonian() # doctest: +SKIP
     >>> # Saves the hamiltonian into the file "hamiltonian.txt"
     >>> dump_spinham_txt(hamiltonian, "hamiltonian.txt") # doctest: +SKIP
 
 The format of the file is inspired by the output files of the |TB2J|_ code.
-Isotropic exchange is always written. DMI, full matrix and symmetric anisotropic 
+Isotropic exchange is always written. DMI, full matrix and symmetric anisotropic
 exchange can be removed from the output.
 
 It can be serialized with :py:func:`.dump_pickle` function.
 
 .. doctest::
 
-    >>> from radtools import dump_pickle 
+    >>> from radtools import dump_pickle
     >>> hamiltonian = SpinHamiltonian() # doctest: +SKIP
     >>> # Saves the hamiltonian into the file "hamiltonian.pickle"
     >>> dump_pickle(hamiltonian, "hamiltonian") # doctest: +SKIP
@@ -422,16 +422,16 @@ It can be serialized with :py:func:`.dump_pickle` function.
 
     Note that the file extension is added automatically only for the
     :py:func:`.dump_pickle` function. It is done intentionally to
-    emphasize that the Hamiltonian is saved in a python-specific binary file. 
+    emphasize that the Hamiltonian is saved in a python-specific binary file.
 
-    While the :py:func:`.dump_spinham_txt` offers you complete control over the file name. 
+    While the :py:func:`.dump_spinham_txt` offers you complete control over the file name.
 
 .. _guide_spin-hamiltonian_dictionary:
 
 Dictionary-like behaviour
 =========================
 
-Spin Hamiltonian supports the logic of a dictionary, where the keys are the tuples of the 
+Spin Hamiltonian supports the logic of a dictionary, where the keys are the tuples of the
 form:
 
 .. math::
@@ -439,9 +439,9 @@ form:
     (\text{atom}_1, \text{atom}_2, (i, j, k))
 
 And the values are the :py:class:`.ExchangeParameter` instances.
-Key-value pair is called bond. It describes the exchange interaction between two atoms, 
-:math:`\text{atom}_1` is always located in the unit cell :math:`(0, 0, 0)`, 
-:math:`\text{atom}_2` is located in the unit cell :math:`(i, j, k)`. 
+Key-value pair is called bond. It describes the exchange interaction between two atoms,
+:math:`\text{atom}_1` is always located in the unit cell :math:`(0, 0, 0)`,
+:math:`\text{atom}_2` is located in the unit cell :math:`(i, j, k)`.
 The coordinate of unit cells are always relative to the lattice vectors.
 
 It supports the following operations:
@@ -469,7 +469,7 @@ It supports the following operations:
     >>> hamiltonian.add_bond(Cr, Cr, (0, 1, 0), iso=2)
     >>> for atom1, atom2, (i, j, k), J in hamiltonian:
     ...     print(atom1.fullname, atom2.fullname, (i, j, k), J.iso)
-    ... 
+    ...
     Cr__1 Cr__1 (1, 0, 0) 1.0
     Cr__1 Cr__1 (0, 1, 0) 2.0
 
@@ -588,7 +588,7 @@ The notation could be defined in three ways:
 Changing
 --------
 
-Once the full notation or any individual property is set, 
+Once the full notation or any individual property is set,
 the following redefinition of the notation or corresponding property changes exchange
 parameters. For example:
 
@@ -615,7 +615,7 @@ The rule for the notation change is simple: Conserve the value of energy.
 Resetting
 ---------
 
-If you want to reset the notation once it is set, but keep the parameters intact use 
+If you want to reset the notation once it is set, but keep the parameters intact use
 :py:meth:`.SpinHamiltonian.set_interpretation` method:
 
 .. doctest::
@@ -732,7 +732,7 @@ Crystal of the spin Hamiltonian
 ===============================
 
 :py:class:`.SpinHamiltonian` is a child of :py:class:`.Crystal` and inherits all its
-properties and methods. Any property, which is related to the crystal is expected to 
+properties and methods. Any property, which is related to the crystal is expected to
 be called directly from the :py:class:`.SpinHamiltonian` instance. For example:
 
 .. doctest::
@@ -747,8 +747,8 @@ be called directly from the :py:class:`.SpinHamiltonian` instance. For example:
            [0.        , 3.14159265, 0.        ],
            [0.        , 0.        , 4.71238898]])
 
-The crystal of the Spin Hamiltonian can be access through the 
-:py:attr:`.SpinHamiltonian.crystal` attribute. It returns an independent instance of 
+The crystal of the Spin Hamiltonian can be access through the
+:py:attr:`.SpinHamiltonian.crystal` attribute. It returns an independent instance of
 the :py:class:`.Crystal` class:
 
 .. doctest::

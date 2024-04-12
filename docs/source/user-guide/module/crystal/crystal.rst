@@ -10,14 +10,14 @@ For the full reference see :ref:`api_crystal`
 
 .. currentmodule:: radtools
 
-Crystal is a child of the the :py:class:`.Lattice` and utilize  
-:py:class:`.Atom` for the storage of atoms. We recommend you to read 
+Crystal is a child of the the :py:class:`.Lattice` and utilize
+:py:class:`.Atom` for the storage of atoms. We recommend you to read
 :ref:`guide_crystal_lattice` and :ref:`guide_crystal_atom` first.
 
 Crystal behaves like a list of atoms. See :ref:`guide_crystal_list-like` for the details.
 
 
-Import 
+Import
 ======
 
     >>> # Exact import
@@ -47,7 +47,7 @@ To create a crystal you would typically need to define the lattice and the set o
     >>> atoms = [Atom('Si', (0.0, 0.0, 0.0))]
     >>> crystal = Crystal(lattice, atoms)
 
-Parameters for lattice creation can be passed to the :py:class:`.Crystal` constructor as 
+Parameters for lattice creation can be passed to the :py:class:`.Crystal` constructor as
 keyword arguments:
 
 .. doctest::
@@ -73,7 +73,7 @@ By default the :py:class:`.Crystal` is created with the cubic lattice (:math:`a 
 Adding atoms
 ============
 
-Adding atoms to the crystal is straightforward: 
+Adding atoms to the crystal is straightforward:
 
 .. doctest::
 
@@ -86,7 +86,7 @@ Adding atoms to the crystal is straightforward:
     Cr__1 [0. 0. 0.]
     Cr__2 [0.5 0.5 0.5]
 
-By default atom coordinates are interpreted as relative. 
+By default atom coordinates are interpreted as relative.
 In order to add atom with absolute coordinates set
 the ``relative`` keyword argument to ``False``:
 
@@ -101,9 +101,9 @@ the ``relative`` keyword argument to ``False``:
     Cr__1 [0. 0. 0.]
     Cr__2 [0.5 0.5 0.5]
 
-.. note::   
+.. note::
 
-    :py:meth:`.Crystal.get_distance` and :py:meth:`.Crystal.get_vector` methods 
+    :py:meth:`.Crystal.get_distance` and :py:meth:`.Crystal.get_vector` methods
     are the ones which returns absolute coordinates by default.
 
 It is possible to add atoms by passing the :py:class:`.Atom` instance:
@@ -221,13 +221,13 @@ Magnetic dipole-dipole interaction energy
 =========================================
 
 If magnetic moments of crystal`s atoms are defined, the magnetic dipole-dipole interaction energy
-can be calculated. 
+can be calculated.
 
 Two functions are used for this purpose:
 
 * :py:meth:`.Crystal.mag_dipdip_energy` - calculate the energy of the magnetic dipole-dipole interaction.
 
-    It returns energy in meV if atom`s positions are in Angstroms 
+    It returns energy in meV if atom`s positions are in Angstroms
     and magnetic moments are in Bohr magnetons.
 
 .. doctest::
@@ -260,7 +260,7 @@ Two functions are used for this purpose:
 List-like behaviour
 ===================
 
-:py:class:`.Crystal` class supports the logic of a list of atoms. 
+:py:class:`.Crystal` class supports the logic of a list of atoms.
 The following list-like methods are implemented:
 
 * ``len(crystal)`` - returns the number of atoms in the crystal
@@ -307,12 +307,12 @@ The following list-like methods are implemented:
 Attribute and item access
 =========================
 
-For the access to the atoms objects two additional interfaces are implemented. 
+For the access to the atoms objects two additional interfaces are implemented.
 They both rely on the :py:meth:`.Crystal.get_atom` method.
 
 * Access via attribute
 
-It is identical to passing the name to 
+It is identical to passing the name to
 the :py:meth:`.Crystal.get_atom` method with ``return_all=False``.
 
 .. doctest::
@@ -333,7 +333,7 @@ the :py:meth:`.Crystal.get_atom` method with ``return_all=False``.
 
 * Access via item
 
-It is identical to passing the name to 
+It is identical to passing the name to
 the :py:meth:`.Crystal.get_atom` method with ``return_all=True``.
 
 .. doctest::
@@ -356,8 +356,3 @@ the :py:meth:`.Crystal.get_atom` method with ``return_all=True``.
 
 .. note::
     Second method returns a list of atoms, while the first one returns a single atom.
-
-
-
-
-

@@ -8,7 +8,7 @@ Hexagonal (HEX)
 
 **Constructor**:  :py:func:`.HEX`
 
-It is defined by two parameter: :math:`a` and :math:`c` 
+It is defined by two parameter: :math:`a` and :math:`c`
 with primitive and conventional lattice:
 
 .. math::
@@ -30,13 +30,13 @@ If this condition is not satisfied, then the lattice is transformed to the stand
 * If :math:`\beta = 120^{\circ}`
     .. math::
 
-        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow
         (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
 
 * If :math:`\alpha = 120^{\circ}`
     .. math::
 
-        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow
         (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
 
 K-path
@@ -58,7 +58,7 @@ Point                      :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsym
 Variations
 ==========
 
-There are no variations for hexagonal lattice. 
+There are no variations for hexagonal lattice.
 One example is predefined: ``hex`` with :math:`a = \pi` and :math:`c = 2\pi`.
 
 Examples

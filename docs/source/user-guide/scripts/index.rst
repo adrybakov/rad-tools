@@ -6,11 +6,11 @@ Scripts guide
 
 Script guide is aimed at the users who want to use console interface via prepared scripts.
 
-For any script use ``--help`` or ``-h`` option in the terminal in order to display 
+For any script use ``--help`` or ``-h`` option in the terminal in order to display
 help message with the short summary of the arguments.
 
 .. code-block:: console
-   
+
     script-name.py -h
 
 Files from the usage examples are available :examples:`here <>`.

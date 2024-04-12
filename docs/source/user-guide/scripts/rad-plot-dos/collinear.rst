@@ -10,7 +10,7 @@ Default style
 
 .. code-block:: bash
 
-    rad-plot-dos.py -if collinear/ -ew -6.5 6.5 -ef -1.7806 
+    rad-plot-dos.py -if collinear/ -ew -6.5 6.5 -ef -1.7806
 
 Relative style, normalized
 --------------------------
@@ -142,4 +142,3 @@ Nickel
     :align: center
 
     s (#4) orbitals, relative style, normalized
-

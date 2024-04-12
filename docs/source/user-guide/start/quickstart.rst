@@ -26,16 +26,16 @@ To use RAD-tools in your python code import it like this:
 
     import radtools as rad
 
-The shorten import name ``rad`` simplifies the readability of python code. 
+The shorten import name ``rad`` simplifies the readability of python code.
 It is used in the examples and we encourage you to use it as well.
 
 Further reading
 ===============
 
-If you want to use predefined scenarios from the command line 
+If you want to use predefined scenarios from the command line
 check out :ref:`scripts-guide`.
-If you want to use RAD-tools in your python scripts 
-check out :ref:`module-guide`. 
+If you want to use RAD-tools in your python scripts
+check out :ref:`module-guide`.
 For the full reference of modules, classes and methods see :ref:`api`.
-If you want to check some of the algorithms used in RAD-tools 
+If you want to check some of the algorithms used in RAD-tools
 check out Library section in :ref:`user guide <user-guide>`.

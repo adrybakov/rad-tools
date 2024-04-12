@@ -36,7 +36,7 @@ help:
 	@echo
 
 # $(O) is meant as a shortcut for $(SPHINXOPTS).
-html: 
+html:
 	@$(SPHINXBUILD) -M html "docs/$(SOURCEDIR)" "docs/$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 clean-html: clean install html
@@ -45,7 +45,7 @@ clean-html: clean install html
 html-examples: examples bravais-pictures
 	@$(SPHINXBUILD) -M html "docs/$(SOURCEDIR)" "docs/$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-doctest: 
+doctest:
 	@$(SPHINXBUILD) -b doctest "docs/$(SOURCEDIR)" "docs/$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 clean:
@@ -75,7 +75,7 @@ clean:
 install:
 	@python3 -m pip install .
 
-test: 
+test:
 	@pytest -s
 
 test-all: clean install test bravais-pictures examples html doctest
@@ -88,7 +88,7 @@ pip: prepare-release
 	-@rm -r dist
 	-@rm -r build
 	-@rm -r radtools.egg-info
-	@python3 setup.py sdist bdist_wheel 
+	@python3 setup.py sdist bdist_wheel
 	@python3 -m twine upload --repository pypi dist/* --verbose
 	@git tag -a "v$(VERSION)" -m "Version $(VERSION)"
 	@git push origin "v$(VERSION)"
@@ -107,8 +107,8 @@ docs-pictures:
 new-script:
 	@python3 tools/new-script.py -n $(NAME)
 
-examples: 
-	@python3 tools/plot-script-guide.py -s $(SCRIPT) 
+examples:
+	@python3 tools/plot-script-guide.py -s $(SCRIPT)
 
-generate-script-docs: 
-	@python3 tools/generate-script-docs.py -s $(SCRIPT) 
+generate-script-docs:
+	@python3 tools/generate-script-docs.py -s $(SCRIPT)

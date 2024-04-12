@@ -15,7 +15,7 @@
   occupations = 'smearing'
   smearing = 'cold'
   nspin = 1
-  noinv=.true. 
+  noinv=.true.
   nosym=.true.
 /
 &ELECTRONS
@@ -29,12 +29,12 @@ I      126.90447 I.upf
 ATOMIC_POSITIONS crystal
 Ni           0.0000000000       0.0000000000       0.5000000000
 I            0.3333333330       0.6666666670       0.5615401010
-I            0.6666666670       0.3333333330       0.4384598990 
+I            0.6666666670       0.3333333330       0.4384598990
 K_POINTS crystal_b
 4
 0.0000 0.0000 0.0000 20 ! Gamma
 0.3333 0.3333 0.0000 20 ! K
-0.5000 0.0000 0.0000 20 ! M 
+0.5000 0.0000 0.0000 20 ! M
 0.0000 0.0000 0.0000 0  ! Gamma
 CELL_PARAMETERS angstrom
       3.8949985504       0.0000000000       0.0000000000

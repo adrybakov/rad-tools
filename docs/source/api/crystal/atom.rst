@@ -6,7 +6,7 @@ Atom
 
 .. currentmodule:: radtools
 
-Class 
+Class
 =====
 
 .. autosummary::

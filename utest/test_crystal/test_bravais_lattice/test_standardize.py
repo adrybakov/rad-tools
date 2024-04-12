@@ -1,28 +1,30 @@
-# NOTE Relative size of lattice parameters have to be consistent with the REL_TOL, in order for the tests to be correct.
+# RAD-tools - Sandbox (mainly condense matter plotting).
+# Copyright (C) 2022-2024  Andrey Rybakov
+#
+# e-mail: anry@uv.es, web: rad-tools.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from math import acos, cos, sqrt, pi
+from math import acos, cos, pi, sqrt
 
 import numpy as np
-from hypothesis import given
-from hypothesis import strategies as st, example
+from hypothesis import example, given
+from hypothesis import strategies as st
 from scipy.spatial.transform import Rotation
 
-from radtools.crystal.bravais_lattice.standardize import (
-    BCC_standardize_cell,
-    BCT_standardize_cell,
-    CUB_standardize_cell,
-    FCC_standardize_cell,
-    HEX_standardize_cell,
-    MCL_standardize_cell,
-    MCLC_standardize_cell,
-    ORC_standardize_cell,
-    ORCC_standardize_cell,
-    ORCF_standardize_cell,
-    ORCI_standardize_cell,
-    RHL_standardize_cell,
-    TET_standardize_cell,
-    TRI_standardize_cell,
-)
+import radtools.crystal.cell as Cell
+from radtools.constants import TODEGREES, TORADIANS
 from radtools.crystal.bravais_lattice.constructor import (
     BCC,
     BCT,
@@ -39,6 +41,22 @@ from radtools.crystal.bravais_lattice.constructor import (
     TET,
     TRI,
 )
+from radtools.crystal.bravais_lattice.standardize import (
+    BCC_standardize_cell,
+    BCT_standardize_cell,
+    CUB_standardize_cell,
+    FCC_standardize_cell,
+    HEX_standardize_cell,
+    MCL_standardize_cell,
+    MCLC_standardize_cell,
+    ORC_standardize_cell,
+    ORCC_standardize_cell,
+    ORCF_standardize_cell,
+    ORCI_standardize_cell,
+    RHL_standardize_cell,
+    TET_standardize_cell,
+    TRI_standardize_cell,
+)
 from radtools.crystal.constants import (
     ABS_TOL,
     ABS_TOL_ANGLE,
@@ -48,13 +66,8 @@ from radtools.crystal.constants import (
     REL_TOL,
     REL_TOL_ANGLE,
 )
-from radtools.constants import TODEGREES, TORADIANS
-
-import radtools.crystal.cell as Cell
-
-from radtools.numerical import compare_numerically
 from radtools.geometry import parallelepiped_check
-
+from radtools.numerical import compare_numerically
 
 n_order = 5
 
@@ -573,13 +586,14 @@ def test_MCL_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, or
         # Check that chirality is the same
         assert np.linalg.det(cell) * old_det > 0
 
+
 # @example(r1=0.0,
-# r2=0.0,  
+# r2=0.0,
 # r3=1.0,
 # conv_a=1.0,
 # conv_b=0.5,
 # conv_c=0.0078125,
-# conv_alpha=1.0,  
+# conv_alpha=1.0,
 # order=2)
 @given(
     st.floats(min_value=0, max_value=2 * pi),
@@ -602,7 +616,6 @@ def test_MCLC_standardize_cell(r1, r2, r3, conv_a, conv_b, conv_c, conv_alpha, o
             ),
             order,
         )
-        
 
         conv_b, conv_c = sorted([conv_b, conv_c])
         if conv_alpha > 90.0:

@@ -38,7 +38,7 @@ No standardization is performed.
 Variations
 ==========
 
-There are no variations for face-centered cubic lattice. 
+There are no variations for face-centered cubic lattice.
 One example is predefined: ``fcc`` with :math:`a = \pi`.
 
 K-path

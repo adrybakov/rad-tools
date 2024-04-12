@@ -12,7 +12,7 @@ Every Bravais lattice is an instance of the :py:class:`.Lattice` class.
 For the guide about Bravais lattices see :ref:`guide_crystal_bravais-lattices`.
 This page describes the :py:class:`.Lattice` class and its methods.
 
-Import 
+Import
 ======
 
     >>> # Exact import
@@ -45,7 +45,7 @@ Lattice can be created in three different ways:
            [0, 0, 1]])
 
 When a lattice created from the cell orientation of the cell is respected,
-however the lattice vectors may be renamed. 
+however the lattice vectors may be renamed.
 :ref:`docs for each Bravais lattice <library_bravais-lattices>`.
 
 Creation may change the angles and the lengths of the cell vectors.
@@ -63,7 +63,7 @@ equivalent.
 * From three lattice vectors :math:`\vec{a}_1`, :math:`\vec{a}_2`, :math:`\vec{a}_3`:
 
 .. doctest::
-    
+
         >>> a1 = [1, 0, 0]
         >>> a2 = [0, 1, 0]
         >>> a3 = [0, 0, 1]
@@ -76,7 +76,7 @@ equivalent.
 * From lattice parameters :math:`a`, :math:`b`, :math:`c`, :math:`\alpha`, :math:`\beta`, :math:`\gamma`:
 
 .. doctest::
-    
+
         >>> lattice = Lattice(1, 1, 1, 90, 90, 90)
         >>> import numpy as np
         >>> np.round(lattice.cell, decimals=1)
@@ -90,29 +90,29 @@ Lattice type
 Bravais lattice type is lazily identified when it is needed:
 
 .. doctest::
-    
+
         >>> lattice = Lattice(1, 1, 1, 90, 90, 90)
         >>> lattice.type()
         'CUB'
 
-Identification procedure is implemented in the :py:func:`.lepage` function. 
+Identification procedure is implemented in the :py:func:`.lepage` function.
 For the algorithm description and reference see :ref:`library_lepage`.
 
 .. note::
-    
+
     Lattice identification is not a trivial task and may be time consuming.
     The algorithm is based on the assumption that the lattice`s unit cell is primitive.
 
-    By default the lattice type is identified during the creation of the lattice 
+    By default the lattice type is identified during the creation of the lattice
     (It is required for the lattice standardization). Therefore, the creation of the
     lattice may be time consuming. To avoid this, you can disable the standardization
     of the cell via the ``standardize=False`` argument:
 
     .. doctest::
-    
+
         >>> lattice = Lattice(1, 1, 1, 90, 90, 90, standardize=False)
 
-    Note that the predefined paths and k points for the lattice are not guaranteed to 
+    Note that the predefined paths and k points for the lattice are not guaranteed to
     be correct and reproducible if the lattice is not standardized.
 
 Variation of the lattice
@@ -133,7 +133,7 @@ To check the variation of the lattice use :py:attr:`.Lattice.variation` attribut
 Reference attributes
 ====================
 
-You can use the following attributes for the information about the lattice 
+You can use the following attributes for the information about the lattice
 based on the Bravais type:
 
 .. doctest::
@@ -156,7 +156,7 @@ All lattice parameters can be accessed as attributes:
 .. doctest::
 
     >>> lattice = Lattice([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-    >>> lattice.a1  
+    >>> lattice.a1
     array([1, 0, 0])
     >>> lattice.a2
     array([0, 1, 0])
@@ -214,18 +214,18 @@ All lattice parameters can be accessed as attributes:
 
 .. hint::
 
-    Not all properties of the lattice are listed here (for examples the once 
-    for the conventional cell are not even mentioned). 
+    Not all properties of the lattice are listed here (for examples the once
+    for the conventional cell are not even mentioned).
     See :ref:`api_lattice` for the full list of properties.
 
 K points
 ========
 
-Path in reciprocal space and k points for plotting and calculation are 
-implemented in a separate class :py:class:`.Kpoints`. It is expected to be accessed 
-through the :py:attr:`.Lattice.kpoints` attribute. Note that you can work with 
-kpoints from the instance of the :py:class:`.Lattice`, since the instance of the 
-:py:class:`.Kpoints` class is created when the property is accessed for the first 
+Path in reciprocal space and k points for plotting and calculation are
+implemented in a separate class :py:class:`.Kpoints`. It is expected to be accessed
+through the :py:attr:`.Lattice.kpoints` attribute. Note that you can work with
+kpoints from the instance of the :py:class:`.Lattice`, since the instance of the
+:py:class:`.Kpoints` class is created when the property is accessed for the first
 time and stored internally for the future:
 
 .. doctest::
@@ -246,19 +246,8 @@ time and stored internally for the future:
 
 .. note::
 
-    For each Bravais lattice type there is a predefined path and set of 
+    For each Bravais lattice type there is a predefined path and set of
     kpoints in reciprocal space. See :ref:`library_bravais-lattices` for more details.
     The unit cell has to be standardized to use the predefined paths and kpoints.
 
 For the full guide on how to use :py:class:`.Kpoints` class see :ref:`guide_crystal_kpoints`.
-
-
-
-
-
-
-
-
-
-
-

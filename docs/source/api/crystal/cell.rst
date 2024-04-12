@@ -7,9 +7,9 @@ Cell*
 .. currentmodule:: radtools
 
 .. note::
-    Cell is not a class, but a submodule, 
+    Cell is not a class, but a submodule,
     which follows the style of the class with the @classmethods.
-    It does not create the cell object, but group the functions, 
+    It does not create the cell object, but group the functions,
     which corresponds to the cell logic. It is intended to be used as:
 
     .. doctest::

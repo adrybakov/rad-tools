@@ -8,7 +8,7 @@ At the moment the package did not reach the stage of the publication.
 However, if you use it, please cite in the following form:
 
 .. code-block::
-        
+
     RAD-tools v<version>, rad-tools.org. Git hash: <hash>.
 
 It is not necessary to include the Git hash but it is recommended for the

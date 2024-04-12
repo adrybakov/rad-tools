@@ -10,13 +10,13 @@ Add script :ref:`rad-plot-dos.py <rad-plot-dos>`
 
 0.2.12
 ------
-Bugfix in :ref:`rad-plot-tb2j.py <rad-plot-tb2j>` script. 
+Bugfix in :ref:`rad-plot-tb2j.py <rad-plot-tb2j>` script.
 
 0.2.11
 ------
-Rename --template option in 
-:ref:`rad-extract-tb2j.py <rad-extract-tb2j>` script into 
-:ref:`--template-file <rad-extract-tb2j_template-file>`. 
+Rename --template option in
+:ref:`rad-extract-tb2j.py <rad-extract-tb2j>` script into
+:ref:`--template-file <rad-extract-tb2j_template-file>`.
 
 0.2.10
 ------
@@ -34,7 +34,7 @@ to the :ref:`rad-extract-tb2j.py <rad-extract-tb2j>` script.
 
 0.2.7
 -----
-Change the behaviour of the drawing in 
+Change the behaviour of the drawing in
 :ref:`rad-plot-tb2j.py <rad-plot-tb2j>` script.
 
 0.2.6
@@ -44,12 +44,12 @@ to :ref:`tb2j-refractor.py <rad-extract-tb2j>` script.
 
 0.2.5
 -----
-Add \|DMI\| as an output data type to :ref:`rad-plot-tb2j.py <rad-plot-tb2j>` 
+Add \|DMI\| as an output data type to :ref:`rad-plot-tb2j.py <rad-plot-tb2j>`
 (see: :ref:`--what-to-plot <rad-plot-tb2j_what-to-plot>`)
 
 0.2.4
 -----
-Bug fix in :ref:`tb2j-refractor.py <rad-extract-tb2j>`. 
+Bug fix in :ref:`tb2j-refractor.py <rad-extract-tb2j>`.
 Only last exchange from template was shown, now all of them are.
 
 0.2.3

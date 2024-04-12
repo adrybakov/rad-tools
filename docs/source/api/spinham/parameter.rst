@@ -13,7 +13,7 @@ Class
     :toctree: generated/
 
     ExchangeParameter
-    
+
 Modification
 ============
 
@@ -70,5 +70,3 @@ Dzyaroshinsky-Moria
     ExchangeParameter.dmi_module
     ExchangeParameter.dmi_matrix
     ExchangeParameter.rel_dmi
-
-

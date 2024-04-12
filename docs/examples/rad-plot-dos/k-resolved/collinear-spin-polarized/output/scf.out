@@ -1,12 +1,12 @@
 
-     Program PWSCF v.7.1 starts on 27Jun2023 at 15:45:59 
+     Program PWSCF v.7.1 starts on 27Jun2023 at 15:45:59
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
          "P. Giannozzi et al., J. Phys.:Condens. Matter 21 395502 (2009);
          "P. Giannozzi et al., J. Phys.:Condens. Matter 29 465901 (2017);
          "P. Giannozzi et al., J. Chem. Phys. 152 154105 (2020);
-          URL http://www.quantum-espresso.org", 
+          URL http://www.quantum-espresso.org",
      in publications or presentations arising from this work. More details at
      http://www.quantum-espresso.org/quote
 
@@ -16,7 +16,7 @@
 
      MPI processes distributed on     1 nodes
      227164 MiB available memory on the printing compute node when the environment starts
- 
+
      Reading input from input/scf.in
 
      Current dimensions of program PWSCF are:
@@ -25,21 +25,21 @@
      Max angular momentum in pseudopotentials (lmaxx) =  4
      Message from routine setup:
      using ibrav=0 with symmetry is DISCOURAGED, use correct ibrav instead
- 
+
      R & G space division:  proc/nbgrp/npool/nimage =      20
      Subspace diagonalization in iterative solution of the eigenvalue problem:
      a serial algorithm will be used
 
- 
+
      Parallelization info
      --------------------
      sticks:   dense  smooth     PW     G-vecs:    dense   smooth      PW
      Min          93      89     24                20481    19267    2770
      Max          94      90     25                20502    19300    2795
      Sum        1879    1789    499               409943   385631   55807
- 
+
      Using Slab Decomposition
- 
+
 
 
      bravais-lattice index     =            0
@@ -61,14 +61,14 @@
      celldm(4)=   0.000000  celldm(5)=   0.000000  celldm(6)=   0.000000
 
      crystal axes: (cart. coord. in units of alat)
-               a(1) = (   1.000000   0.000000   0.000000 )  
-               a(2) = (  -0.500000   0.866025   0.000000 )  
-               a(3) = (   0.000000   0.000000   6.284350 )  
+               a(1) = (   1.000000   0.000000   0.000000 )
+               a(2) = (  -0.500000   0.866025   0.000000 )
+               a(3) = (   0.000000   0.000000   6.284350 )
 
      reciprocal axes: (cart. coord. in units 2 pi/alat)
-               b(1) = (  1.000000  0.577350  0.000000 )  
-               b(2) = (  0.000000  1.154701  0.000000 )  
-               b(3) = (  0.000000  0.000000  0.159125 )  
+               b(1) = (  1.000000  0.577350  0.000000 )
+               b(2) = (  0.000000  1.154701  0.000000 )
+               b(3) = (  0.000000  0.000000  0.159125 )
 
 
      PseudoPot. # 1 for Ni read from file:
@@ -76,7 +76,7 @@
      MD5 check sum: 14a7e289c5fff9cacaba393040e62f02
      Pseudo is Norm-conserving + core correction, Zval = 18.0
      Generated using ONCVPSP code by D. R. Hamann
-     Using radial grid of 1372 points,  6 beta functions with: 
+     Using radial grid of 1372 points,  6 beta functions with:
                 l(1) =   0
                 l(2) =   0
                 l(3) =   1
@@ -89,7 +89,7 @@
      MD5 check sum: 301f7009ca0a2b18b0adf53dca02d42f
      Pseudo is Norm-conserving + core correction, Zval =  7.0
      Generated using ONCVPSP code by D. R. Hamann
-     Using radial grid of 1210 points,  6 beta functions with: 
+     Using radial grid of 1210 points,  6 beta functions with:
                 l(1) =   0
                 l(2) =   0
                 l(3) =   1
@@ -101,7 +101,7 @@
         Ni            18.00    58.69340     Ni( 1.00)
         I              7.00   126.90447     I ( 1.00)
 
-     Starting magnetic structure 
+     Starting magnetic structure
      atomic species   magnetization
         Ni           0.278
         I            0.100
@@ -111,7 +111,7 @@
 
                                     s                        frac. trans.
 
-      isym =  1     identity                                     
+      isym =  1     identity
 
  cryst.   s( 1) = (     1          0          0      )
                   (     0          1          0      )
@@ -122,7 +122,7 @@
                   (  0.0000000  0.0000000  1.0000000 )
 
 
-      isym =  2     180 deg rotation - cart. axis [1,0,0]        
+      isym =  2     180 deg rotation - cart. axis [1,0,0]
 
  cryst.   s( 2) = (     1          0          0      )
                   (    -1         -1          0      )
@@ -133,7 +133,7 @@
                   (  0.0000000  0.0000000 -1.0000000 )
 
 
-      isym =  3     120 deg rotation - cryst. axis [0,0,1]       
+      isym =  3     120 deg rotation - cryst. axis [0,0,1]
 
  cryst.   s( 3) = (     0          1          0      )
                   (    -1         -1          0      )
@@ -144,7 +144,7 @@
                   (  0.0000000  0.0000000  1.0000000 )
 
 
-      isym =  4     120 deg rotation - cryst. axis [0,0,-1]      
+      isym =  4     120 deg rotation - cryst. axis [0,0,-1]
 
  cryst.   s( 4) = (    -1         -1          0      )
                   (     1          0          0      )
@@ -155,7 +155,7 @@
                   (  0.0000000  0.0000000  1.0000000 )
 
 
-      isym =  5     180 deg rotation - cryst. axis [0,1,0]       
+      isym =  5     180 deg rotation - cryst. axis [0,1,0]
 
  cryst.   s( 5) = (    -1         -1          0      )
                   (     0          1          0      )
@@ -166,7 +166,7 @@
                   (  0.0000000  0.0000000 -1.0000000 )
 
 
-      isym =  6     180 deg rotation - cryst. axis [1,1,0]       
+      isym =  6     180 deg rotation - cryst. axis [1,1,0]
 
  cryst.   s( 6) = (     0          1          0      )
                   (     1          0          0      )
@@ -177,7 +177,7 @@
                   (  0.0000000  0.0000000 -1.0000000 )
 
 
-      isym =  7     inversion                                    
+      isym =  7     inversion
 
  cryst.   s( 7) = (    -1          0          0      )
                   (     0         -1          0      )
@@ -188,7 +188,7 @@
                   (  0.0000000  0.0000000 -1.0000000 )
 
 
-      isym =  8     inv. 180 deg rotation - cart. axis [1,0,0]   
+      isym =  8     inv. 180 deg rotation - cart. axis [1,0,0]
 
  cryst.   s( 8) = (    -1          0          0      )
                   (     1          1          0      )
@@ -199,7 +199,7 @@
                   (  0.0000000  0.0000000  1.0000000 )
 
 
-      isym =  9     inv. 120 deg rotation - cryst. axis [0,0,1]  
+      isym =  9     inv. 120 deg rotation - cryst. axis [0,0,1]
 
  cryst.   s( 9) = (     0         -1          0      )
                   (     1          1          0      )
@@ -210,7 +210,7 @@
                   (  0.0000000  0.0000000 -1.0000000 )
 
 
-      isym = 10     inv. 120 deg rotation - cryst. axis [0,0,-1] 
+      isym = 10     inv. 120 deg rotation - cryst. axis [0,0,-1]
 
  cryst.   s(10) = (     1          1          0      )
                   (    -1          0          0      )
@@ -221,7 +221,7 @@
                   (  0.0000000  0.0000000 -1.0000000 )
 
 
-      isym = 11     inv. 180 deg rotation - cryst. axis [0,1,0]  
+      isym = 11     inv. 180 deg rotation - cryst. axis [0,1,0]
 
  cryst.   s(11) = (     1          1          0      )
                   (     0         -1          0      )
@@ -232,7 +232,7 @@
                   (  0.0000000  0.0000000  1.0000000 )
 
 
-      isym = 12     inv. 180 deg rotation - cryst. axis [1,1,0]  
+      isym = 12     inv. 180 deg rotation - cryst. axis [1,1,0]
 
  cryst.   s(12) = (     0         -1          0      )
                   (    -1          0          0      )
@@ -526,7 +526,7 @@
         222123 MiB available memory on the node where the printing process lives
 ------------------
      ethr =  4.49E-09,  avg # of iterations =  2.0
- 
+
      Magnetic moment per site  (integrated on atomic sphere of radius R)
      atom   1 (R=0.287)  charge= 16.8825  magn=  1.2604
      atom   2 (R=0.287)  charge=  4.0503  magn=  0.2265
@@ -545,7 +545,7 @@
     -5.8097  -4.2761  -4.2761  -3.9111  -3.7901  -2.8792  -2.8792  -1.9810
     -1.9810   1.7683   2.5098   3.0551
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   0.0000   0.0000   0.0000
@@ -556,7 +556,7 @@
     -5.7972  -4.5404  -4.3424  -4.0618  -3.6165  -3.3208  -3.0257  -2.5747
     -2.0682   2.2381   2.8207   2.9593
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   0.0000   0.0000   0.0000
@@ -567,7 +567,7 @@
     -5.7729  -5.5128  -4.4680  -4.2032  -3.9006  -3.5950  -3.4155  -2.9549
     -2.1870   1.9591   2.9332   3.2258
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   0.0000   0.0000   0.0000
@@ -578,7 +578,7 @@
     -5.7615  -5.6256  -4.6163  -4.5160  -4.2490  -3.8436  -3.7810  -2.6476
     -2.2468   1.1415   3.0562   3.5023
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   0.0000   0.0000   0.0000
@@ -589,7 +589,7 @@
     -5.7623  -5.5732  -4.6533  -4.4817  -4.3191  -4.0588  -3.9336  -2.5305
     -2.2637   0.8553   2.9621   3.6819
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   0.0000   0.0000   0.0000
@@ -600,7 +600,7 @@
     -5.8140  -5.0483  -4.7862  -4.0955  -3.6513  -3.5546  -3.3855  -2.6537
     -2.5113   2.6620   2.9092   3.0420
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   0.0000   0.0000   0.0000
@@ -611,7 +611,7 @@
     -5.8172  -5.6079  -5.0822  -4.3017  -4.0745  -3.7994  -3.5390  -2.8366
     -2.5045   1.9709   3.2734   3.6689
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   0.0000   0.0000   0.0000
@@ -622,7 +622,7 @@
     -5.7743  -5.5442  -5.2109  -4.7227  -4.0692  -4.0117  -3.7752  -2.6990
     -2.5150   1.4036   3.5774   3.9835
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   0.0000   0.0000   0.0000
@@ -633,7 +633,7 @@
     -5.9943  -5.6178  -5.4900  -4.7677  -4.0433  -3.9444  -3.6376  -3.0792
     -2.5584   2.0283   3.3685   4.6351
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   0.0000   0.0000   0.0000
@@ -644,7 +644,7 @@
     -6.1712  -5.6247  -5.4841  -5.0962  -4.0846  -3.8412  -3.7639  -2.9699
     -2.7196   1.8489   4.0027   4.1727
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   0.0000   0.0000   0.0000
@@ -658,7 +658,7 @@
     -4.5648  -3.5471  -3.3354  -3.3354  -3.1759  -2.6265  -2.6265  -0.8845
     -0.8845   1.9004   2.6130   2.7570
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   0.0000
      0.0000   0.0000   0.0000   0.0000
@@ -669,7 +669,7 @@
     -4.5529  -3.8620  -3.5215  -3.3489  -3.2888  -2.7901  -2.6657  -1.3534
     -0.9594   2.3666   2.9050   3.1040
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   0.0000
      0.0000   0.0000   0.0000   0.0000
@@ -680,7 +680,7 @@
     -4.9202  -4.5256  -3.8758  -3.5051  -3.3059  -2.9018  -2.8528  -1.6060
     -1.0484   2.1584   3.0523   3.3373
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   0.0000
      0.0000   0.0000   0.0000   0.0000
@@ -691,7 +691,7 @@
     -5.0082  -4.5017  -4.1627  -4.0239  -3.3308  -3.0755  -3.0418  -1.3505
     -1.0766   1.3702   3.2107   3.6704
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   0.0000
      0.0000   0.0000   0.0000   0.0000
@@ -702,7 +702,7 @@
     -4.6017  -4.4933  -4.4323  -4.2694  -3.3395  -3.1670  -3.1545  -1.2194
     -1.0807   1.1101   3.1060   3.8988
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   0.0000
      0.0000   0.0000   0.0000   0.0000
@@ -713,7 +713,7 @@
     -4.7305  -4.5649  -3.8837  -3.3400  -3.3128  -2.8743  -2.7917  -1.4391
     -1.2911   2.8807   3.0178   3.1464
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   0.0000
      0.0000   0.0000   0.0000   0.0000
@@ -724,7 +724,7 @@
     -5.1832  -4.7199  -4.3040  -3.7560  -3.2954  -3.0233  -2.8918  -1.5320
     -1.2492   2.2023   3.4216   3.7771
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   0.0000
      0.0000   0.0000   0.0000   0.0000
@@ -735,7 +735,7 @@
     -5.0565  -4.6278  -4.6062  -4.2042  -3.2400  -3.1617  -3.0397  -1.4151
     -1.2148   1.6503   3.7277   4.1588
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   0.0000
      0.0000   0.0000   0.0000   0.0000
@@ -746,7 +746,7 @@
     -5.5537  -4.7917  -4.7196  -4.1052  -3.2115  -3.1620  -2.9374  -1.6719
     -1.2354   2.2774   3.5110   4.7481
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   0.0000
      0.0000   0.0000   0.0000   0.0000
@@ -757,7 +757,7 @@
     -5.9041  -5.0416  -4.4397  -4.3623  -3.2905  -3.0717  -3.0174  -1.5671
     -1.3667   2.0933   4.1690   4.3286
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   0.0000
      0.0000   0.0000   0.0000   0.0000
@@ -781,7 +781,7 @@
      convergence has been achieved in  10 iterations
 
      Writing all to output data dir ./tmp/csp.save/
- 
+
      init_run     :      1.95s CPU      1.98s WALL (       1 calls)
      electrons    :     14.36s CPU     14.45s WALL (       1 calls)
 
@@ -830,13 +830,13 @@
      ffts         :      0.03s CPU      0.03s WALL (      42 calls)
      fftw         :      7.36s CPU      7.38s WALL (   24554 calls)
      interpolate  :      0.05s CPU      0.05s WALL (      22 calls)
- 
+
      Parallel routines
- 
+
      PWSCF        :     16.68s CPU     16.97s WALL
 
- 
-   This run was terminated on:  15:46:16  27Jun2023            
+
+   This run was terminated on:  15:46:16  27Jun2023
 
 =------------------------------------------------------------------------------=
    JOB DONE.

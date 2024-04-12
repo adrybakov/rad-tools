@@ -17,7 +17,7 @@
   starting_magnetization(1) =   2.7777777778d-01
   starting_magnetization(2) =   1.0000000000d-01
   nspin = 2
-  noinv=.true. 
+  noinv=.true.
   nosym=.true.
 /
 &ELECTRONS
@@ -31,7 +31,7 @@ I      126.90447 I.upf
 ATOMIC_POSITIONS crystal
 Ni           0.0000000000       0.0000000000       0.5000000000
 I            0.3333333330       0.6666666670       0.5615401010
-I            0.6666666670       0.3333333330       0.4384598990 
+I            0.6666666670       0.3333333330       0.4384598990
 K_POINTS automatic
 16 16 1 0 0 0
 CELL_PARAMETERS angstrom

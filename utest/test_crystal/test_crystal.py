@@ -1,10 +1,28 @@
-import pytest
-
-from radtools.crystal.crystal import Crystal
-from radtools.crystal.atom import Atom
-from hypothesis import given, strategies as st, settings, example
+# RAD-tools - Sandbox (mainly condense matter plotting).
+# Copyright (C) 2022-2024  Andrey Rybakov
+#
+# e-mail: anry@uv.es, web: rad-tools.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import numpy as np
+import pytest
+from hypothesis import example, given, settings
+from hypothesis import strategies as st
+
+from radtools.crystal.atom import Atom
+from radtools.crystal.crystal import Crystal
 
 
 def test_deepcopy():
@@ -13,7 +31,8 @@ def test_deepcopy():
     c = Crystal()
     a = deepcopy(c)
 
-@example(name="__", position=[0,0,0])
+
+@example(name="__", position=[0, 0, 0])
 @given(
     st.text(min_size=1, max_size=10),
     st.lists(st.floats(min_value=0, max_value=1), min_size=3, max_size=3),

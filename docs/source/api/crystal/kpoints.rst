@@ -16,14 +16,14 @@ Class
 
 Attributes
 ==========
-* Kpoints.b1              
-* Kpoints.b2              
-* Kpoints.b3              
-* Kpoints.hs_names        
-* Kpoints.hs_coordinates  
-* Kpoints.hs_labels      
+* Kpoints.b1
+* Kpoints.b2
+* Kpoints.b3
+* Kpoints.hs_names
+* Kpoints.hs_coordinates
+* Kpoints.hs_labels
 
-Settings parameters    
+Settings parameters
 ===================
 
 .. autosummary::

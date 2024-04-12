@@ -8,7 +8,7 @@
 
 Main output of TB2J is the "exchange.out" file with the exchange parameters.
 
-Function :py:func:`load_tb2j_model` reads this file 
+Function :py:func:`load_tb2j_model` reads this file
 and construct :py:class:`SpinHamiltonian` from it.
 
 Import

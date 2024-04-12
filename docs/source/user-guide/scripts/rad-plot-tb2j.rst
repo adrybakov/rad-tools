@@ -4,51 +4,51 @@
 rad-plot-tb2j.py
 ****************
 
-Script for visualizations of 
+Script for visualizations of
 |TB2J|_  results.
 
 .. versionchanged:: 0.6 Renamed from ``tb2j-plotter.py``
 
-The script displays isotropic exchange, distances and DMI 
-(one output file for each). 
+The script displays isotropic exchange, distances and DMI
+(one output file for each).
 
-Supports filtering by 
-R vectors (see :ref:`--R-vector <rad-plot-tb2j_R-vector>`), 
+Supports filtering by
+R vectors (see :ref:`--R-vector <rad-plot-tb2j_R-vector>`),
 distances (see :ref:`--max-distance <rad-plot-tb2j_max-distance>`,
 :ref:`--min-distance <rad-plot-tb2j_min-distance>` and
-:ref:`--distance <rad-plot-tb2j_distance>`), 
-and template file (see :ref:`--template-file <rad-plot-tb2j_template-file>`). 
+:ref:`--distance <rad-plot-tb2j_distance>`),
+and template file (see :ref:`--template-file <rad-plot-tb2j_template-file>`).
 The result is defined by logical conjugate of the specified conditions.
 
-:ref:`--input-filename <rad-plot-tb2j_input-filename>` 
-(or :ref:`-if <rad-plot-tb2j_input-filename>`) argument is required, 
+:ref:`--input-filename <rad-plot-tb2j_input-filename>`
+(or :ref:`-if <rad-plot-tb2j_input-filename>`) argument is required,
 the rest of them are optional.
 
 
-Output files have the following name structure: 
-"output-name.display-data-type.png" 
+Output files have the following name structure:
+"output-name.display-data-type.png"
 
 .. _rad-plot-tb2j_example:
 
 Usage example
 =============
 
-Example is based on the exchange.out file from 
-:examples:`examples folder <rad-plot-tb2j>`. 
+Example is based on the exchange.out file from
+:examples:`examples folder <rad-plot-tb2j>`.
 
-There is one required argument in the script 
-(:ref:`--input-filename <rad-plot-tb2j_input-filename>`), therefore a minimum input 
+There is one required argument in the script
+(:ref:`--input-filename <rad-plot-tb2j_input-filename>`), therefore a minimum input
 for the script to run is:
 
 .. code-block:: bash
 
     rad-plot-tb2j.py -if exchange.out
 
-which produces three pictures "exchange.iso.png", 
+which produces three pictures "exchange.iso.png",
 "exchange.distance.png", "exchange.distance.png". each file name has a shared
-default seedname ("exchange", use 
-:ref:`--output-name <rad-plot-tb2j_output-name>` to change it), data type 
-("iso", "dmi", "distance", see 
+default seedname ("exchange", use
+:ref:`--output-name <rad-plot-tb2j_output-name>` to change it), data type
+("iso", "dmi", "distance", see
 :ref:`--what-to-plot <rad-plot-tb2j_what-to-plot>`) and file extension ".png".
 
 .. dropdown:: Output images
@@ -70,14 +70,14 @@ default seedname ("exchange", use
 
 .. note::
 
-    In the following text only "exchange.iso.png" file is produced with the help 
+    In the following text only "exchange.iso.png" file is produced with the help
     of  :ref:`--what-to-plot <rad-plot-tb2j_what-to-plot>` argument.
 
 Basic adjustments
 -----------------
 
-Since "the exchange.out" file contains a lot of exchange bonds the pictures with 
-all of them are not really useful. Lets plot the isotropic exchange picture 
+Since "the exchange.out" file contains a lot of exchange bonds the pictures with
+all of them are not really useful. Lets plot the isotropic exchange picture
 with some adjustments:
 
 * Filter the spin Hamiltonian by maximum distance (:ref:`-md <rad-plot-tb2j_max-distance>`).
@@ -106,7 +106,7 @@ For filtering the spin Hamiltonian there are a few options available:
 * :ref:`--R-vector <rad-plot-tb2j_R-vector>`
 * :ref:`--template <rad-plot-tb2j_template-file>`
 
-Here is an example of how to filter spin Hamiltonian in order to show 
+Here is an example of how to filter spin Hamiltonian in order to show
 first exchange neighbour, using different options:
 :ref:`--max_distance <rad-plot-tb2j_max-distance>`
 :ref:`--R-vector <rad-plot-tb2j_R-vector>` or
@@ -170,11 +170,11 @@ to reproduce particular spin Hamiltonian:
 
         exchange_formed_model.distance.png
 
-Only one exchange parameter is present in the template file, 
-therefore the model is filtered with respect to the template 
-and then the value of the exchange for each bond is set to 
+Only one exchange parameter is present in the template file,
+therefore the model is filtered with respect to the template
+and then the value of the exchange for each bond is set to
 the medium value of all bonds from the same exchange group.
-The direction of the DMI vectors is kept, but the magnitude 
+The direction of the DMI vectors is kept, but the magnitude
 of the DMI vector is scaled to the medium value.
 
 .. note::
@@ -391,4 +391,3 @@ Verbose output, propagates to the called methods.
 
     default: False
     type: bool
-

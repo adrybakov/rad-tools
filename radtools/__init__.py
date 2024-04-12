@@ -1,7 +1,7 @@
-# RAD-tools - program for spin Hamiltonian and magnons.
+# RAD-tools - Sandbox (mainly condense matter plotting).
 # Copyright (C) 2022-2024  Andrey Rybakov
 #
-# e-mail: anry@uv.es, web: adrybakov.com
+# e-mail: anry@uv.es, web: rad-tools.org
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ RAD-tools
 
 __version__ = "0.8.13"
 __doclink__ = "rad-tools.org"
-__git_hash__ = "058e6bbaeebaae0f63199f98eb38be8f9a134743"
+__git_hash__ = "43a49a2aaa1472db5dd040fa5186cc293e9b7e45"
 __release_date__ = "4 March 2024"
 
 

@@ -1,12 +1,12 @@
 
-     Program PWSCF v.7.1 starts on 27Jun2023 at 15:34:28 
+     Program PWSCF v.7.1 starts on 27Jun2023 at 15:34:28
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
          "P. Giannozzi et al., J. Phys.:Condens. Matter 21 395502 (2009);
          "P. Giannozzi et al., J. Phys.:Condens. Matter 29 465901 (2017);
          "P. Giannozzi et al., J. Chem. Phys. 152 154105 (2020);
-          URL http://www.quantum-espresso.org", 
+          URL http://www.quantum-espresso.org",
      in publications or presentations arising from this work. More details at
      http://www.quantum-espresso.org/quote
 
@@ -16,7 +16,7 @@
 
      MPI processes distributed on     1 nodes
      226788 MiB available memory on the printing compute node when the environment starts
- 
+
      Reading input from input/scf.in
 
      Current dimensions of program PWSCF are:
@@ -25,21 +25,21 @@
      Max angular momentum in pseudopotentials (lmaxx) =  4
      Message from routine setup:
      using ibrav=0 with symmetry is DISCOURAGED, use correct ibrav instead
- 
+
      R & G space division:  proc/nbgrp/npool/nimage =      20
      Subspace diagonalization in iterative solution of the eigenvalue problem:
      a serial algorithm will be used
 
- 
+
      Parallelization info
      --------------------
      sticks:   dense  smooth     PW     G-vecs:    dense   smooth      PW
      Min          93      89     24                20481    19267    2770
      Max          94      90     25                20502    19300    2795
      Sum        1879    1789    499               409943   385631   55807
- 
+
      Using Slab Decomposition
- 
+
 
 
      bravais-lattice index     =            0
@@ -61,14 +61,14 @@
      celldm(4)=   0.000000  celldm(5)=   0.000000  celldm(6)=   0.000000
 
      crystal axes: (cart. coord. in units of alat)
-               a(1) = (   1.000000   0.000000   0.000000 )  
-               a(2) = (  -0.500000   0.866025   0.000000 )  
-               a(3) = (   0.000000   0.000000   6.284350 )  
+               a(1) = (   1.000000   0.000000   0.000000 )
+               a(2) = (  -0.500000   0.866025   0.000000 )
+               a(3) = (   0.000000   0.000000   6.284350 )
 
      reciprocal axes: (cart. coord. in units 2 pi/alat)
-               b(1) = (  1.000000  0.577350  0.000000 )  
-               b(2) = (  0.000000  1.154701  0.000000 )  
-               b(3) = (  0.000000  0.000000  0.159125 )  
+               b(1) = (  1.000000  0.577350  0.000000 )
+               b(2) = (  0.000000  1.154701  0.000000 )
+               b(3) = (  0.000000  0.000000  0.159125 )
 
 
      PseudoPot. # 1 for Ni read from file:
@@ -76,7 +76,7 @@
      MD5 check sum: 14a7e289c5fff9cacaba393040e62f02
      Pseudo is Norm-conserving + core correction, Zval = 18.0
      Generated using ONCVPSP code by D. R. Hamann
-     Using radial grid of 1372 points,  6 beta functions with: 
+     Using radial grid of 1372 points,  6 beta functions with:
                 l(1) =   0
                 l(2) =   0
                 l(3) =   1
@@ -89,7 +89,7 @@
      MD5 check sum: 301f7009ca0a2b18b0adf53dca02d42f
      Pseudo is Norm-conserving + core correction, Zval =  7.0
      Generated using ONCVPSP code by D. R. Hamann
-     Using radial grid of 1210 points,  6 beta functions with: 
+     Using radial grid of 1210 points,  6 beta functions with:
                 l(1) =   0
                 l(2) =   0
                 l(3) =   1
@@ -106,7 +106,7 @@
 
                                     s                        frac. trans.
 
-      isym =  1     identity                                     
+      isym =  1     identity
 
  cryst.   s( 1) = (     1          0          0      )
                   (     0          1          0      )
@@ -117,7 +117,7 @@
                   (  0.0000000  0.0000000  1.0000000 )
 
 
-      isym =  2     180 deg rotation - cart. axis [1,0,0]        
+      isym =  2     180 deg rotation - cart. axis [1,0,0]
 
  cryst.   s( 2) = (     1          0          0      )
                   (    -1         -1          0      )
@@ -128,7 +128,7 @@
                   (  0.0000000  0.0000000 -1.0000000 )
 
 
-      isym =  3     120 deg rotation - cryst. axis [0,0,1]       
+      isym =  3     120 deg rotation - cryst. axis [0,0,1]
 
  cryst.   s( 3) = (     0          1          0      )
                   (    -1         -1          0      )
@@ -139,7 +139,7 @@
                   (  0.0000000  0.0000000  1.0000000 )
 
 
-      isym =  4     120 deg rotation - cryst. axis [0,0,-1]      
+      isym =  4     120 deg rotation - cryst. axis [0,0,-1]
 
  cryst.   s( 4) = (    -1         -1          0      )
                   (     1          0          0      )
@@ -150,7 +150,7 @@
                   (  0.0000000  0.0000000  1.0000000 )
 
 
-      isym =  5     180 deg rotation - cryst. axis [0,1,0]       
+      isym =  5     180 deg rotation - cryst. axis [0,1,0]
 
  cryst.   s( 5) = (    -1         -1          0      )
                   (     0          1          0      )
@@ -161,7 +161,7 @@
                   (  0.0000000  0.0000000 -1.0000000 )
 
 
-      isym =  6     180 deg rotation - cryst. axis [1,1,0]       
+      isym =  6     180 deg rotation - cryst. axis [1,1,0]
 
  cryst.   s( 6) = (     0          1          0      )
                   (     1          0          0      )
@@ -172,7 +172,7 @@
                   (  0.0000000  0.0000000 -1.0000000 )
 
 
-      isym =  7     inversion                                    
+      isym =  7     inversion
 
  cryst.   s( 7) = (    -1          0          0      )
                   (     0         -1          0      )
@@ -183,7 +183,7 @@
                   (  0.0000000  0.0000000 -1.0000000 )
 
 
-      isym =  8     inv. 180 deg rotation - cart. axis [1,0,0]   
+      isym =  8     inv. 180 deg rotation - cart. axis [1,0,0]
 
  cryst.   s( 8) = (    -1          0          0      )
                   (     1          1          0      )
@@ -194,7 +194,7 @@
                   (  0.0000000  0.0000000  1.0000000 )
 
 
-      isym =  9     inv. 120 deg rotation - cryst. axis [0,0,1]  
+      isym =  9     inv. 120 deg rotation - cryst. axis [0,0,1]
 
  cryst.   s( 9) = (     0         -1          0      )
                   (     1          1          0      )
@@ -205,7 +205,7 @@
                   (  0.0000000  0.0000000 -1.0000000 )
 
 
-      isym = 10     inv. 120 deg rotation - cryst. axis [0,0,-1] 
+      isym = 10     inv. 120 deg rotation - cryst. axis [0,0,-1]
 
  cryst.   s(10) = (     1          1          0      )
                   (    -1          0          0      )
@@ -216,7 +216,7 @@
                   (  0.0000000  0.0000000 -1.0000000 )
 
 
-      isym = 11     inv. 180 deg rotation - cryst. axis [0,1,0]  
+      isym = 11     inv. 180 deg rotation - cryst. axis [0,1,0]
 
  cryst.   s(11) = (     1          1          0      )
                   (     0         -1          0      )
@@ -227,7 +227,7 @@
                   (  0.0000000  0.0000000  1.0000000 )
 
 
-      isym = 12     inv. 180 deg rotation - cryst. axis [1,1,0]  
+      isym = 12     inv. 180 deg rotation - cryst. axis [1,1,0]
 
  cryst.   s(12) = (     0         -1          0      )
                   (    -1          0          0      )
@@ -520,7 +520,7 @@
     -4.8288  -3.7397  -3.2447  -3.2447  -2.9895  -2.8282  -2.8282  -1.2995
     -1.2995   1.8462   2.5795   2.7236
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   0.0000
      0.0000   0.0000   0.0000   0.0000
@@ -531,7 +531,7 @@
     -4.8231  -3.9603  -3.5376  -3.5282  -3.1599  -2.7327  -2.7216  -1.7876
     -1.3959   2.3088   2.8659   3.0901
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   0.6588
      0.0000   0.0000   0.0000   0.0000
@@ -542,7 +542,7 @@
     -5.0940  -4.8110  -3.9598  -3.6667  -3.2116  -2.7920  -2.7562  -2.0699
     -1.5038   2.1370   2.9958   3.2864
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      0.0000   0.0000   0.0000   0.0000
@@ -553,7 +553,7 @@
     -5.1748  -4.7982  -4.2912  -4.2173  -3.2526  -2.9574  -2.8672  -1.7993
     -1.5222   1.3354   3.1387   3.5974
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0058
      0.0000   0.0000   0.0000   0.0000
@@ -564,7 +564,7 @@
     -4.8076  -4.7896  -4.5995  -4.4180  -3.2719  -3.0318  -2.9609  -1.6638
     -1.5193   1.0674   3.0239   3.8203
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   0.0000
      0.0000   0.0000   0.0000   0.0000
@@ -575,7 +575,7 @@
     -4.8698  -4.8151  -4.0328  -3.5233  -3.1389  -2.7491  -2.7368  -1.9060
     -1.7471   2.8441   2.9791   3.0930
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      0.0018   0.0000   0.0000   0.0000
@@ -586,7 +586,7 @@
     -5.3116  -4.9812  -4.4908  -3.9639  -3.1257  -2.8819  -2.7854  -1.9902
     -1.7163   2.1586   3.3553   3.7158
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      0.0000   0.0000   0.0000   0.0000
@@ -597,7 +597,7 @@
     -5.1705  -4.8843  -4.7960  -4.4446  -3.1154  -3.0090  -2.8888  -1.8598
     -1.6770   1.5979   3.6470   4.0702
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      0.0000   0.0000   0.0000   0.0000
@@ -608,7 +608,7 @@
     -5.6802  -4.9729  -4.9587  -4.3658  -3.0341  -3.0024  -2.8012  -2.1362
     -1.7179   2.2246   3.4344   4.6890
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      0.0000   0.0000   0.0000   0.0000
@@ -619,7 +619,7 @@
     -6.0112  -5.2044  -4.6982  -4.6501  -3.0935  -2.9121  -2.8582  -2.0481
     -1.8469   2.0419   4.0856   4.2389
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0003   0.0000   0.0000   0.0000
@@ -640,7 +640,7 @@
      convergence has been achieved in  11 iterations
 
      Writing all to output data dir ./tmp/c.save/
- 
+
      init_run     :      1.71s CPU      1.73s WALL (       1 calls)
      electrons    :      7.04s CPU      7.10s WALL (       1 calls)
 
@@ -689,13 +689,13 @@
      ffts         :      0.02s CPU      0.02s WALL (      23 calls)
      fftw         :      3.79s CPU      3.81s WALL (   13316 calls)
      interpolate  :      0.02s CPU      0.02s WALL (      12 calls)
- 
+
      Parallel routines
- 
+
      PWSCF        :      8.95s CPU      9.19s WALL
 
- 
-   This run was terminated on:  15:34:37  27Jun2023            
+
+   This run was terminated on:  15:34:37  27Jun2023
 
 =------------------------------------------------------------------------------=
    JOB DONE.

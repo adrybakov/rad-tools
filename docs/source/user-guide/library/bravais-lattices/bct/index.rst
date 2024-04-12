@@ -8,7 +8,7 @@ Body-centred tetragonal (BCT)
 
 **Constructor**:  :py:func:`.BCT`
 
-It is defined by two parameters: :math:`a` and :math:`c` 
+It is defined by two parameters: :math:`a` and :math:`c`
 with conventional lattice:
 
 .. math::
@@ -31,21 +31,21 @@ And primitive lattice:
 
 Cell standardization
 ====================
- 
-Length of third lattice vector of the conventional cell has to be different from the first two. 
-If this condition is not satisfied, 
+
+Length of third lattice vector of the conventional cell has to be different from the first two.
+If this condition is not satisfied,
 then the lattice is transformed to the standard form:
 
 * If :math:`\vert\boldsymbol{a}_1\vert = \vert\boldsymbol{a}_3\vert \ne \vert\boldsymbol{a}_2\vert`
     .. math::
-        
-        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow
         (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
 
 * If :math:`\vert\boldsymbol{a}_2\vert = \vert\boldsymbol{a}_3\vert \ne \vert\boldsymbol{a}_1\vert`
     .. math::
-        
-        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow
         (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
 
 K-path
@@ -102,19 +102,19 @@ Point                      :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsym
 Variations
 ==========
 
-There are two variations of body-centered tetragonal lattice. 
+There are two variations of body-centered tetragonal lattice.
 
 BCT\ :sub:`1`
 -------------
 
-:math:`c < a`. 
+:math:`c < a`.
 
 Predefined example: ``bct1`` with :math:`a = 1.5\pi` and :math:`c = \pi`.
 
 BCT\ :sub:`2`
 -------------
 
-:math:`c > a`. 
+:math:`c > a`.
 
 Predefined example: ``bct2`` with :math:`a = \pi` and :math:`c = 1.5\pi`.
 

@@ -26,7 +26,7 @@ No standardization is required.
 Variations
 ==========
 
-There are no variations for cubic lattice. 
+There are no variations for cubic lattice.
 One example is predefined: ``cub`` with :math:`a = \pi`.
 
 K-path
@@ -48,7 +48,7 @@ Examples
 
 Brillouin zone and default kpath
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. literalinclude:: cub_brillouin.py 
+.. literalinclude:: cub_brillouin.py
     :language: py
 
 .. raw:: html
@@ -69,4 +69,3 @@ Wigner-Seitz cell
 
 .. raw:: html
     :file: cub_wigner-seitz.html
-

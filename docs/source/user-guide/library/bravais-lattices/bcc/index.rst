@@ -50,7 +50,7 @@ Point                    :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbo
 Variations
 ==========
 
-There are no variations for body-centered cubic lattice. 
+There are no variations for body-centered cubic lattice.
 One example is predefined: ``bcc`` with :math:`a = \pi`.
 
 Examples
@@ -63,7 +63,7 @@ Brillouin zone and default kpath
 
 .. raw:: html
     :file: bcc_brillouin.html
-    
+
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

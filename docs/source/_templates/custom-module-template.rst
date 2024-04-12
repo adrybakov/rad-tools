@@ -1,8 +1,8 @@
 {{ name | escape | underline}}
 
 .. automodule:: {{ fullname }}
-   :show-inheritance: 
-  
+   :show-inheritance:
+
    {% block attributes %}
    {% if attributes %}
    .. rubric:: Module Attributes
@@ -58,7 +58,7 @@
 .. rubric:: Modules
 
 .. autosummary::
-   :toctree: 
+   :toctree:
    :template: custom-module-template.rst
    :recursive:
 {% for item in modules %}

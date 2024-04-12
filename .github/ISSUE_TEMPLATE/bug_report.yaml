@@ -31,12 +31,12 @@ body:
         python3 -m radtools
         ```
         or (version >= 0.8 < 0.8.4)
-        ```bash 
+        ```bash
         python3 -m radtools --info
-        ``` 
+        ```
         or (version < 0.8)
         ```bash
-        python3 -c "exec('from radtools import __version__\nprint(__version__)')" 
+        python3 -c "exec('from radtools import __version__\nprint(__version__)')"
         ```
         in your terminal to check the version and commit hash of RAD-tools.
   - type: input
@@ -69,8 +69,8 @@ body:
       label: OS
       description: What operating system are you using?
       options:
-        - MacOS 
-        - Linux 
+        - MacOS
+        - Linux
         - Windows
     validations:
       required: true

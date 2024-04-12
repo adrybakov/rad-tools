@@ -8,7 +8,7 @@ Rhombohedral (RHL)
 
 **Constructor**:  :py:func:`.RHL`
 
-It is defined by two parameter: :math:`a` and :math:`\alpha` 
+It is defined by two parameter: :math:`a` and :math:`\alpha`
 with primitive and conventional lattice:
 
 .. math::
@@ -16,7 +16,7 @@ with primitive and conventional lattice:
     \begin{matrix}
     \boldsymbol{a}_1 &=& (a\cos(\alpha / 2), &-a\sin(\alpha/2), &0)\\
     \boldsymbol{a}_2 &=& (a\cos(\alpha / 2), &a\sin(\alpha/2), &0)\\
-    \boldsymbol{a}_3 &=& \left(\dfrac{\cos\alpha}{\cos(\alpha/2)}\right., 
+    \boldsymbol{a}_3 &=& \left(\dfrac{\cos\alpha}{\cos(\alpha/2)}\right.,
     &0, &\left.a\sqrt{1 - \dfrac{\cos^2\alpha}{\cos^2(\alpha/2)}}\right)
     \end{matrix}
 
@@ -65,7 +65,7 @@ RHL\ :sub:`2`
 .. math::
 
     \begin{matrix}
-    \eta = \dfrac{1}{2\tan^2(\alpha/2)} & 
+    \eta = \dfrac{1}{2\tan^2(\alpha/2)} &
     \nu = \dfrac{3-2\eta}{4}
     \end{matrix}
 
@@ -92,14 +92,14 @@ RHL\ :sub:`1`
 
 :math:`\alpha < 90^{\circ}`.
 
-Predefined example: ``rhl1`` with :math:`a = \pi` and :math:`\alpha = 70^{\circ}` 
+Predefined example: ``rhl1`` with :math:`a = \pi` and :math:`\alpha = 70^{\circ}`
 
 RHL\ :sub:`2`
 -------------
 
 :math:`\alpha > 90^{\circ}`.
 
-Predefined example: ``rhl2`` with :math:`a = \pi` and :math:`\alpha = 110^{\circ}` 
+Predefined example: ``rhl2`` with :math:`a = \pi` and :math:`\alpha = 110^{\circ}`
 
 Examples
 ========
@@ -113,7 +113,7 @@ Brillouin zone and default kpath
     :language: py
 
 .. raw:: html
-    :file: rhl1_brillouin.html 
+    :file: rhl1_brillouin.html
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -160,12 +160,12 @@ Wigner-Seitz cell
 
 Edge cases
 ==========
-In rhombohedral lattice :math:`a = b = c` and :math:`\alpha = \beta = \gamma`, 
+In rhombohedral lattice :math:`a = b = c` and :math:`\alpha = \beta = \gamma`,
 thus three edge cases exist:
 
 If :math:`\alpha = 60^{\circ}`, then the lattice is :ref:`guide_fcc`
 
-If :math:`\alpha \approx 109.47122063^{\circ}` (:math:`\cos(\alpha) = -1/3`), 
+If :math:`\alpha \approx 109.47122063^{\circ}` (:math:`\cos(\alpha) = -1/3`),
 then the lattice is :ref:`guide_bcc`.
 
 If :math:`\alpha = 90^{\circ}`, then the lattice is :ref:`guide_cub`.

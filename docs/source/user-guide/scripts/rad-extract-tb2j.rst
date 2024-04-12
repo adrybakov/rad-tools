@@ -4,18 +4,18 @@
 rad-extract-tb2j.py
 *******************
 
-Script for extracting of template-based Hamiltonian from 
+Script for extracting of template-based Hamiltonian from
 |TB2J|_ results.
 
 .. versionchanged: 0.6 Renamed from ``tb2j-extractor.py``
 
-If :ref:`--output_name <rad-extract-tb2j_output-name>` is not provided, then the result is 
+If :ref:`--output_name <rad-extract-tb2j_output-name>` is not provided, then the result is
 printed to the console, otherwise it is written to the text file.
 
 Exchange types
 ==============
 
-There are several options to control which exchange types are included in 
+There are several options to control which exchange types are included in
 the summary:
 
 * :ref:`--no-anisotropic <rad-extract-tb2j_no-anisotropic>`
@@ -28,15 +28,15 @@ included.
 Usage example
 =============
 
-Example is based on the files from 
-:examples:`examples folder <rad-extract-tb2j>`. 
+Example is based on the files from
+:examples:`examples folder <rad-extract-tb2j>`.
 
-There are two modes in which exchange summary can be printed: 
+There are two modes in which exchange summary can be printed:
 
 * With the model of the template
 * Full Hamiltonian
 
-In the first case the model of the template template is constructed from the Hamiltonian 
+In the first case the model of the template template is constructed from the Hamiltonian
 and exchange output is grouped based on the names provided in the template:
 
 .. code-block:: bash
@@ -48,9 +48,9 @@ and exchange output is grouped based on the names provided in the template:
    .. literalinclude:: /../examples/rad-extract-tb2j/summary_formed_model.txt
     :language: text
 
-In the second case exchange summary is printed for every bond in the Hamiltonian. 
+In the second case exchange summary is printed for every bond in the Hamiltonian.
 Hamiltonian is filtered with the :ref:`--max-distance <rad-extract-tb2j_max-distance>`,
-:ref:`--min-distance <rad-extract-tb2j_min-distance>` and 
+:ref:`--min-distance <rad-extract-tb2j_min-distance>` and
 :ref:`--template-file <rad-extract-tb2j_template-file>`.
 
 .. code-block:: bash

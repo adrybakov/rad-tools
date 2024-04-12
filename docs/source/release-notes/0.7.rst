@@ -8,14 +8,14 @@ Version 0.7
 
 Whats new?
 ----------
-Major change: name of the package for pip installation is kept the 
+Major change: name of the package for pip installation is kept the
 same: "rad-tools". All imports in python code moved to "radtools".
 
 New module, which affected other modules as well: :ref:`guide_crystal`.
 
 
 
-Add :py:func:`.print_2d_array`. 
+Add :py:func:`.print_2d_array`.
 
 Rename :py:func:`.read_exchange_model` to :py:func:`.load_tb2j_model`.
 
@@ -40,21 +40,21 @@ Write correct behaviour of :py:class:`.SpinHamiltonian` with the :py:attr:`.Spin
     >>> m.add_bond("Cr", "Cr", (1, 0, 0), iso=1)
     >>> # First time - only setting interpretation, no modification of values
     >>> m.notation = "standard"
-    >>> m["Cr", "Cr", (1, 0, 0)].iso 
+    >>> m["Cr", "Cr", (1, 0, 0)].iso
     1.0
-    >>> m["Cr", "Cr", (-1, 0, 0)].iso 
+    >>> m["Cr", "Cr", (-1, 0, 0)].iso
     1.0
     >>> m.double_counting
     True
     >>> m.double_counting = False
-    >>> m["Cr", "Cr", (1, 0, 0)].iso 
+    >>> m["Cr", "Cr", (1, 0, 0)].iso
     2.0
     >>> ("Cr", "Cr", (1, 0, 0)) in m
     True
     >>> ("Cr", "Cr", (-1, 0, 0)) in m
     False
     >>> m.double_counting = True
-    >>> m["Cr", "Cr", (1, 0, 0)].iso 
+    >>> m["Cr", "Cr", (1, 0, 0)].iso
     1.0
     >>> ("Cr", "Cr", (-1, 0, 0)) in m
     True
@@ -90,7 +90,7 @@ Add magnetic dipole-dipole energy calculator to the :ref:`api_crystal`.
 -----
 
 Bugfix in convergence of magnetic dipole-dipole energy (:py:attr:`.Crystal.converge_mag_dipdip_energy`).
-Energy difference between steps was not calculated correctly (overestimated). 
+Energy difference between steps was not calculated correctly (overestimated).
 
 0.7.4
 -----
@@ -100,23 +100,23 @@ was causing problems with overlapping colours. It is fixed.
 
 0.7.5
 -----
-Add :ref:`rad-plot-dos_custom-plots` and :ref:`rad-plot-dos_colours` to the :ref:`rad-plot-dos`. 
+Add :ref:`rad-plot-dos_custom-plots` and :ref:`rad-plot-dos_colours` to the :ref:`rad-plot-dos`.
 
 0.7.6
 -----
-Add summing over atom types to the :ref:`rad-plot-dos_custom-plots`. 
+Add summing over atom types to the :ref:`rad-plot-dos_custom-plots`.
 
 0.7.7
 -----
-Add the option for removing background label to :ref:`rad-plot-dos_custom-plots`. 
+Add the option for removing background label to :ref:`rad-plot-dos_custom-plots`.
 
 0.7.8
 -----
-Add fontsize options to :ref:`rad-plot-dos_custom-plots`. 
+Add fontsize options to :ref:`rad-plot-dos_custom-plots`.
 
 0.7.9
 -----
-Bugfix in :ref:`rad-plot-dos`. 
+Bugfix in :ref:`rad-plot-dos`.
 
 0.7.10
 ------

@@ -8,7 +8,7 @@ Body-centred orthorhombic (ORCI)
 
 **Constructor**:  :py:func:`.ORCI`
 
-It is defined by three parameter: :math:`a`, :math:`b` and :math:`c` 
+It is defined by three parameter: :math:`a`, :math:`b` and :math:`c`
 with conventional lattice:
 
 .. math::
@@ -34,9 +34,9 @@ Order of parameters: :math:`a < b < c`
 Cell standardization
 ====================
 
-Lengths of the lattice vectors of the conventional cell have to satisfy 
+Lengths of the lattice vectors of the conventional cell have to satisfy
 :math:`\vert\boldsymbol{a}_1\vert < \vert\boldsymbol{a}_2\vert < \vert\boldsymbol{a}_3\vert`.
-All vectors of the primitive cell have the same length, therefore we use 
+All vectors of the primitive cell have the same length, therefore we use
 conventional lattice vectors for the standardization.
 
 If this condition is not satisfied, then the lattice is transformed to the standard form:
@@ -62,7 +62,7 @@ Then we find a correct place for the third vector:
 
 .. note::
 
-    The third lattice vector is multiplied by :math:`-1` in some cases to 
+    The third lattice vector is multiplied by :math:`-1` in some cases to
     preserve the handedness of the cell.
 
 K-path
@@ -101,8 +101,8 @@ Point                      :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsym
 Variations
 ==========
 
-There are no variations for body-centered orthorombic. 
-One example is predefined: ``orci`` with 
+There are no variations for body-centered orthorombic.
+One example is predefined: ``orci`` with
 :math:`a = \pi`, :math:`b  = 1.3\pi` and :math:`c = 1.7\pi`.
 
 Examples
@@ -134,7 +134,7 @@ Wigner-Seitz cell
 
 Edge cases
 ==========
-If :math:`a = b \ne c` or :math:`a = c \ne b` or :math:`b = c \ne a`, 
+If :math:`a = b \ne c` or :math:`a = c \ne b` or :math:`b = c \ne a`,
 then the lattice is :ref:`guide_bct`.
 
 If :math:`a = b = c`, then the lattice is :ref:`guide_bcc`.

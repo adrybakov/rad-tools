@@ -8,7 +8,7 @@ Plotting
 
 For the full reference see :ref:`api_crystal-plotting`
 
-More examples of the plots with the code snippets can be found in the 
+More examples of the plots with the code snippets can be found in the
 :ref:`library_bravais-lattices` guide.
 
 .. note::
@@ -16,7 +16,7 @@ More examples of the plots with the code snippets can be found in the
     The plotting is written for the :py:class:`.Lattice` and consequently
     available for :py:class`.Crystal` and :py:class:`.SpinHamiltonian` classes.
 
-Import 
+Import
 ======
 
 .. doctest::

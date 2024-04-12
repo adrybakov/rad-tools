@@ -1,12 +1,12 @@
 
-     Program PWSCF v.7.1 starts on 27Jun2023 at 15:45:59 
+     Program PWSCF v.7.1 starts on 27Jun2023 at 15:45:59
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
          "P. Giannozzi et al., J. Phys.:Condens. Matter 21 395502 (2009);
          "P. Giannozzi et al., J. Phys.:Condens. Matter 29 465901 (2017);
          "P. Giannozzi et al., J. Chem. Phys. 152 154105 (2020);
-          URL http://www.quantum-espresso.org", 
+          URL http://www.quantum-espresso.org",
      in publications or presentations arising from this work. More details at
      http://www.quantum-espresso.org/quote
 
@@ -16,7 +16,7 @@
 
      MPI processes distributed on     1 nodes
      226994 MiB available memory on the printing compute node when the environment starts
- 
+
      Reading input from input/scf.in
 
      Current dimensions of program PWSCF are:
@@ -27,21 +27,21 @@
      Fixed quantization axis for GGA:     0.000000    0.000000    1.000000
      Message from routine setup:
      using ibrav=0 with symmetry is DISCOURAGED, use correct ibrav instead
- 
+
      R & G space division:  proc/nbgrp/npool/nimage =      20
      Subspace diagonalization in iterative solution of the eigenvalue problem:
      a serial algorithm will be used
 
- 
+
      Parallelization info
      --------------------
      sticks:   dense  smooth     PW     G-vecs:    dense   smooth      PW
      Min          93      89     24                20481    19267    2770
      Max          94      90     25                20502    19300    2795
      Sum        1879    1789    499               409943   385631   55807
- 
+
      Using Slab Decomposition
- 
+
 
 
      bravais-lattice index     =            0
@@ -65,14 +65,14 @@
      celldm(4)=   0.000000  celldm(5)=   0.000000  celldm(6)=   0.000000
 
      crystal axes: (cart. coord. in units of alat)
-               a(1) = (   1.000000   0.000000   0.000000 )  
-               a(2) = (  -0.500000   0.866025   0.000000 )  
-               a(3) = (   0.000000   0.000000   6.284350 )  
+               a(1) = (   1.000000   0.000000   0.000000 )
+               a(2) = (  -0.500000   0.866025   0.000000 )
+               a(3) = (   0.000000   0.000000   6.284350 )
 
      reciprocal axes: (cart. coord. in units 2 pi/alat)
-               b(1) = (  1.000000  0.577350  0.000000 )  
-               b(2) = (  0.000000  1.154701  0.000000 )  
-               b(3) = (  0.000000  0.000000  0.159125 )  
+               b(1) = (  1.000000  0.577350  0.000000 )
+               b(2) = (  0.000000  1.154701  0.000000 )
+               b(3) = (  0.000000  0.000000  0.159125 )
 
 
      PseudoPot. # 1 for Ni read from file:
@@ -80,7 +80,7 @@
      MD5 check sum: 14a7e289c5fff9cacaba393040e62f02
      Pseudo is Norm-conserving + core correction, Zval = 18.0
      Generated using ONCVPSP code by D. R. Hamann
-     Using radial grid of 1372 points,  6 beta functions with: 
+     Using radial grid of 1372 points,  6 beta functions with:
                 l(1) =   0
                 l(2) =   0
                 l(3) =   1
@@ -93,7 +93,7 @@
      MD5 check sum: 301f7009ca0a2b18b0adf53dca02d42f
      Pseudo is Norm-conserving + core correction, Zval =  7.0
      Generated using ONCVPSP code by D. R. Hamann
-     Using radial grid of 1210 points,  6 beta functions with: 
+     Using radial grid of 1210 points,  6 beta functions with:
                 l(1) =   0
                 l(2) =   0
                 l(3) =   1
@@ -110,7 +110,7 @@
 
                                     s                        frac. trans.
 
-      isym =  1     identity                                     
+      isym =  1     identity
 
  Time Reversal            0
  cryst.   s( 1) = (     1          0          0      )
@@ -122,7 +122,7 @@
                   (  0.0000000  0.0000000  1.0000000 )
 
 
-      isym =  2     180 deg rotation - cart. axis [1,0,0]        
+      isym =  2     180 deg rotation - cart. axis [1,0,0]
 
  Time Reversal            1
  cryst.   s( 2) = (     1          0          0      )
@@ -134,7 +134,7 @@
                   (  0.0000000  0.0000000 -1.0000000 )
 
 
-      isym =  3     120 deg rotation - cryst. axis [0,0,1]       
+      isym =  3     120 deg rotation - cryst. axis [0,0,1]
 
  Time Reversal            0
  cryst.   s( 3) = (     0          1          0      )
@@ -146,7 +146,7 @@
                   (  0.0000000  0.0000000  1.0000000 )
 
 
-      isym =  4     120 deg rotation - cryst. axis [0,0,-1]      
+      isym =  4     120 deg rotation - cryst. axis [0,0,-1]
 
  Time Reversal            0
  cryst.   s( 4) = (    -1         -1          0      )
@@ -158,7 +158,7 @@
                   (  0.0000000  0.0000000  1.0000000 )
 
 
-      isym =  5     180 deg rotation - cryst. axis [0,1,0]       
+      isym =  5     180 deg rotation - cryst. axis [0,1,0]
 
  Time Reversal            1
  cryst.   s( 5) = (    -1         -1          0      )
@@ -170,7 +170,7 @@
                   (  0.0000000  0.0000000 -1.0000000 )
 
 
-      isym =  6     180 deg rotation - cryst. axis [1,1,0]       
+      isym =  6     180 deg rotation - cryst. axis [1,1,0]
 
  Time Reversal            1
  cryst.   s( 6) = (     0          1          0      )
@@ -182,7 +182,7 @@
                   (  0.0000000  0.0000000 -1.0000000 )
 
 
-      isym =  7     inversion                                    
+      isym =  7     inversion
 
  Time Reversal            0
  cryst.   s( 7) = (    -1          0          0      )
@@ -194,7 +194,7 @@
                   (  0.0000000  0.0000000 -1.0000000 )
 
 
-      isym =  8     inv. 180 deg rotation - cart. axis [1,0,0]   
+      isym =  8     inv. 180 deg rotation - cart. axis [1,0,0]
 
  Time Reversal            1
  cryst.   s( 8) = (    -1          0          0      )
@@ -206,7 +206,7 @@
                   (  0.0000000  0.0000000  1.0000000 )
 
 
-      isym =  9     inv. 120 deg rotation - cryst. axis [0,0,1]  
+      isym =  9     inv. 120 deg rotation - cryst. axis [0,0,1]
 
  Time Reversal            0
  cryst.   s( 9) = (     0         -1          0      )
@@ -218,7 +218,7 @@
                   (  0.0000000  0.0000000 -1.0000000 )
 
 
-      isym = 10     inv. 120 deg rotation - cryst. axis [0,0,-1] 
+      isym = 10     inv. 120 deg rotation - cryst. axis [0,0,-1]
 
  Time Reversal            0
  cryst.   s(10) = (     1          1          0      )
@@ -230,7 +230,7 @@
                   (  0.0000000  0.0000000 -1.0000000 )
 
 
-      isym = 11     inv. 180 deg rotation - cryst. axis [0,1,0]  
+      isym = 11     inv. 180 deg rotation - cryst. axis [0,1,0]
 
  Time Reversal            1
  cryst.   s(11) = (     1          1          0      )
@@ -242,7 +242,7 @@
                   (  0.0000000  0.0000000  1.0000000 )
 
 
-      isym = 12     inv. 180 deg rotation - cryst. axis [1,1,0]  
+      isym = 12     inv. 180 deg rotation - cryst. axis [1,1,0]
 
  Time Reversal            1
  cryst.   s(12) = (     0         -1          0      )
@@ -604,7 +604,7 @@
     -3.3358  -3.1763  -2.8793  -2.8793  -2.6267  -2.6267  -1.9811  -1.9811
     -0.8847  -0.8847   1.7682   1.9004   2.5083   2.6128   2.6835   2.7570
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
@@ -619,7 +619,7 @@
     -3.3491  -3.3209  -3.2891  -3.0259  -2.7904  -2.6659  -2.5748  -2.0684
     -1.3537  -0.9597   2.2380   2.3665   2.8207   2.9048   2.9588   3.1041
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
@@ -634,7 +634,7 @@
     -3.5952  -3.5053  -3.4157  -3.3062  -2.9550  -2.9021  -2.8531  -2.1871
     -1.6063  -1.0487   1.9588   2.1582   2.9332   3.0523   3.2259   3.3373
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
@@ -649,7 +649,7 @@
     -4.0241  -3.8439  -3.7812  -3.3311  -3.0759  -3.0422  -2.6477  -2.2469
     -1.3507  -1.0769   1.1413   1.3700   3.0560   3.2105   3.5022   3.6702
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
@@ -664,7 +664,7 @@
     -4.2696  -4.0590  -3.9339  -3.3399  -3.1673  -3.1549  -2.5307  -2.2638
     -1.2196  -1.0809   0.8551   1.1099   2.9619   3.6817   3.8318   3.8982
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
@@ -679,7 +679,7 @@
     -3.5548  -3.3856  -3.3401  -3.3132  -2.8747  -2.7920  -2.6538  -2.5114
     -1.4394  -1.2913   2.6617   2.8805   2.9092   3.0178   3.0420   3.1464
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
@@ -694,7 +694,7 @@
     -3.7996  -3.7562  -3.5392  -3.2958  -3.0237  -2.8921  -2.8367  -2.5046
     -1.5323  -1.2495   1.9707   2.2021   3.2733   3.4216   3.6689   3.7771
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
@@ -709,7 +709,7 @@
     -4.0694  -4.0119  -3.7754  -3.2403  -3.1621  -3.0401  -2.6992  -2.5151
     -1.4153  -1.2151   1.4034   1.6501   3.5773   3.7276   3.9834   4.1593
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
@@ -724,7 +724,7 @@
     -4.0435  -3.9446  -3.6378  -3.2119  -3.1624  -3.0793  -2.9377  -2.5585
     -1.6722  -1.2356   2.0281   2.2772   3.3684   3.5110   4.6350   4.7480
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
@@ -739,7 +739,7 @@
     -4.0848  -3.8414  -3.7641  -3.2908  -3.0721  -3.0177  -2.9700  -2.7197
     -1.5674  -1.3670   1.8487   2.0932   4.0026   4.1689   4.1726   4.3285
 
-     occupation numbers 
+     occupation numbers
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
      1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
@@ -765,7 +765,7 @@
      convergence has been achieved in  10 iterations
 
      Writing all to output data dir ./tmp/nnso.save/
- 
+
      init_run     :      2.39s CPU      2.46s WALL (       1 calls)
      electrons    :     30.42s CPU     30.56s WALL (       1 calls)
 
@@ -814,13 +814,13 @@
      ffts         :      0.05s CPU      0.05s WALL (      84 calls)
      fftw         :     15.95s CPU     16.01s WALL (   48692 calls)
      interpolate  :      0.08s CPU      0.08s WALL (      44 calls)
- 
+
      Parallel routines
- 
+
      PWSCF        :     33.25s CPU     34.15s WALL
 
- 
-   This run was terminated on:  15:46:33  27Jun2023            
+
+   This run was terminated on:  15:46:33  27Jun2023
 
 =------------------------------------------------------------------------------=
    JOB DONE.

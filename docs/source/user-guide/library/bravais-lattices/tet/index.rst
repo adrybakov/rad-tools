@@ -8,7 +8,7 @@ Tetragonal (TET)
 
 **Constructor**:  :py:func:`.TET`
 
-It is defined by two parameters: :math:`a` and :math:`c` 
+It is defined by two parameters: :math:`a` and :math:`c`
 with primitive and conventional lattice:
 
 .. math::
@@ -22,20 +22,20 @@ with primitive and conventional lattice:
 Cell standardization
 ====================
 
-Length of third lattice vector has to be different from the first two. 
-If this condition is not satisfied, 
+Length of third lattice vector has to be different from the first two.
+If this condition is not satisfied,
 then the lattice is transformed to the standard form:
 
 * If :math:`\vert\boldsymbol{a}_1\vert = \vert\boldsymbol{a}_3\vert \ne \vert\boldsymbol{a}_2\vert`
     .. math::
-        
-        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow
         (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
 
 * If :math:`\vert\boldsymbol{a}_2\vert = \vert\boldsymbol{a}_3\vert \ne \vert\boldsymbol{a}_1\vert`
     .. math::
-        
-        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow
         (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
 
 
@@ -58,7 +58,7 @@ Point                    :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsymbo
 Variations
 ==========
 
-There are no variations for tetragonal lattice. 
+There are no variations for tetragonal lattice.
 One example is predefined: ``tet`` with :math:`a = \pi` and :math:`c = 1.5\pi`
 
 Examples

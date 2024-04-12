@@ -5,7 +5,7 @@ MagnonDispersion
 *******************
 
 .. currentmodule:: radtools
- 
+
 Class
 =====
 

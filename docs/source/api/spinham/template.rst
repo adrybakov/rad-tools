@@ -17,7 +17,5 @@ Class
 Attributes
 ==========
 
-* ExchangeTemplate.names       
-* ExchangeTemplate.latex_names 
-
-    
+* ExchangeTemplate.names
+* ExchangeTemplate.latex_names

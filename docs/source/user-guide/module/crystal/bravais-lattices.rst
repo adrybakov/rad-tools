@@ -16,8 +16,8 @@ Each Bravais lattice is an instance of :py:class:`.Lattice` class.
 
 
 For each Bravais lattice system there is a function defined, which constructs
-the instance of :py:class:`.Lattice` class from the parameters. For the names of the 
-constructors and corresponding parameters see the :ref:`dedicated page <library_bravais-lattices>` 
+the instance of :py:class:`.Lattice` class from the parameters. For the names of the
+constructors and corresponding parameters see the :ref:`dedicated page <library_bravais-lattices>`
 (for full reference see :ref:`Api reference <api_bravais-lattices>`). Before the main table we present
 an example of the usage of the constructor for the cubic lattice.
 
@@ -53,7 +53,7 @@ Constructor can be used to get the cell instead of the lattice:
 Predefined examples
 ===================
 
-For each type and variation a predefined example of the lattice is available. 
+For each type and variation a predefined example of the lattice is available.
 It could be accessed in a following way:
 
 .. doctest::
@@ -71,6 +71,6 @@ It could be accessed in a following way:
 
 References
 ==========
-.. [1] Setyawan, W. and Curtarolo, S., 2010. 
-    High-throughput electronic band structure calculations: Challenges and tools. 
-    Computational materials science, 49(2), pp.299-312. 
+.. [1] Setyawan, W. and Curtarolo, S., 2010.
+    High-throughput electronic band structure calculations: Challenges and tools.
+    Computational materials science, 49(2), pp.299-312.

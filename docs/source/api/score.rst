@@ -11,7 +11,7 @@ score
 Scenarios
 =========
 
-.. autosummary:: 
+.. autosummary::
     :toctree: generated/
 
     identify_wannier_centres

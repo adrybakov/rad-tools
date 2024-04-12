@@ -83,8 +83,8 @@ Coordinates
 ===========
 
 Computes relative coordinates of a vector with respect to some basis.
-Basis is defined by three vectors, which are passed to the function in a form of a 
-:math:`3\times3` array. Rows of the cell are the basis vectors, columns are the 
+Basis is defined by three vectors, which are passed to the function in a form of a
+:math:`3\times3` array. Rows of the cell are the basis vectors, columns are the
 :math:`xyz` coordinates.
 
 .. doctest::
@@ -121,7 +121,7 @@ Orthonormal basis
 =================
 
 Spans an orthonormal basis from one vector. The input vector is normalized and
-forms :math:`\vec{e}_3`. The orthonormal basis is computed by rotation of the 
+forms :math:`\vec{e}_3`. The orthonormal basis is computed by rotation of the
 standard basis
 
 .. math::

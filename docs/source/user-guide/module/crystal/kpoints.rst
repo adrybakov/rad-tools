@@ -56,7 +56,7 @@ However, it could be created explicitly:
     >>> kp.hs_names
     ['G', 'X']
 
-For the full list of constructor parameters see 
+For the full list of constructor parameters see
 :py:class:`.Kpoints` documentation.
 
 High-symmetry points
@@ -112,8 +112,8 @@ Path
 The path is the route in the reciprocal space, defined by the high symmetry points.
 
 We use a specific format in the package: "G-K-X|R-S".
-"-" separates high symmetry points in each subpath, "|" separates sections of the path.  
-In the example n points are generated between "G" and "K", between "K" ans "X", 
+"-" separates high symmetry points in each subpath, "|" separates sections of the path.
+In the example n points are generated between "G" and "K", between "K" ans "X",
 between "R" and "S", but not between "X" and "R".
 By default path is constructed from the list of high symmetry points.
 
@@ -173,7 +173,7 @@ Once the configuration of the Kpoints are done, it can be used for calculation o
 Calculation
 -----------
 
-There is one property suitable for calculation: :py:attr:`Kpoints.points`. which is an array 
+There is one property suitable for calculation: :py:attr:`Kpoints.points`. which is an array
 of all generated kpoints. For each pair of high symmetry points it generates :py:attr:`Kpoints.n`
 between them. The first and the last points are always the high symmetry points of this section of the path.
 
@@ -199,8 +199,8 @@ between them. The first and the last points are always the high symmetry points 
            [0.5, 0. , 0. ]])
 
 .. note::
-    For each section the last point is repeated twice, because it is the first point 
-    of the next section of the path.    
+    For each section the last point is repeated twice, because it is the first point
+    of the next section of the path.
 
     .. code-block:: python
 
@@ -228,7 +228,7 @@ and describe the labels and position of ticks on the x-axis:
     >>> kp.labels
     ['$\\Gamma$', 'K', 'X']
     >>> import numpy as np
-    >>> np.around(kp.coordinates(), decimals=4)    
+    >>> np.around(kp.coordinates(), decimals=4)
     array([0.    , 0.7071, 1.2071])
 
 The third property gives the coordinates of the :py:attr:`.Kpoints.points` for the plot:
@@ -237,7 +237,7 @@ The third property gives the coordinates of the :py:attr:`.Kpoints.points` for t
 
     >>> for point in kp.flatten_points():
     ...     print(round(point, 4))
-    ... 
+    ...
     0.0
     0.1414
     0.2828
@@ -252,10 +252,10 @@ The third property gives the coordinates of the :py:attr:`.Kpoints.points` for t
     1.2071
 
 .. note::
-    Those coordinates are directly corresponds to the k-points from the previous subsection. 
+    Those coordinates are directly corresponds to the k-points from the previous subsection.
 
     .. code-block:: python
- 
+
         0.0    # <--- Gamma
         0.1414
         0.2828
@@ -271,8 +271,5 @@ The third property gives the coordinates of the :py:attr:`.Kpoints.points` for t
 
 .. hint::
 
-    Repeated :py:attr:`.Kpoints.points` or :py:attr:`.Kpoints.flatten_points` 
+    Repeated :py:attr:`.Kpoints.points` or :py:attr:`.Kpoints.flatten_points`
     can be used to restore the position of high symmetry points in the path.
-    
-
-

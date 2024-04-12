@@ -11,7 +11,7 @@ io
 External inputs
 ===========================
 
-.. autosummary:: 
+.. autosummary::
     :toctree: generated/
 
     load_tb2j_model
@@ -20,7 +20,7 @@ External inputs
 Internal inputs
 ===========================
 
-.. autosummary:: 
+.. autosummary::
     :toctree: generated/
 
     load_template
@@ -29,7 +29,7 @@ Internal inputs
 Internal outputs
 ================
 
-.. autosummary:: 
+.. autosummary::
     :toctree: generated/
 
     dump_pickle
@@ -38,7 +38,7 @@ Internal outputs
 External outputs
 ================
 
-.. autosummary:: 
+.. autosummary::
     :toctree: generated/
 
     dump_vampire

@@ -8,10 +8,10 @@ Atom
 
 For the full reference see :ref:`api_atom`.
 
-:py:class:`.Atom` class describe an atom. :py:class:`.Atom` is hashable and can be 
+:py:class:`.Atom` class describe an atom. :py:class:`.Atom` is hashable and can be
 used as a dictionary key. The hash is calculated from the atom name and index.
 
-Import 
+Import
 ======
 
 .. doctest::
@@ -39,7 +39,7 @@ Creation of an Atom object is straightforward:
     'X'
 
 
-For the full list of constructor parameters see 
+For the full list of constructor parameters see
 :py:class:`.Atom` documentation.
 
 .. doctest::
@@ -78,13 +78,13 @@ All other properties of the atom are ignored when comparing atoms.
 
 Usually index is automatically generated when a set of atoms appears in some context.
 For example, when atoms are added to the :py:class:`.Crystal` object, the index is
-silently assigned to each atom. 
+silently assigned to each atom.
 
 Hash of the atom is calculated from the atom name and index.
 
 .. note::
 
-    If the index of the atom is not defined, then you can still compare it to other atoms 
+    If the index of the atom is not defined, then you can still compare it to other atoms
     with a different name:
 
     .. doctest::
@@ -111,7 +111,7 @@ Hash of the atom is calculated from the atom name and index.
 Fullname
 ========
 For the simplicity :py:meth:`.Atom.fullname` property is defined. It returns
-a string which is a combination of the atom name and index. It is simply an 
+a string which is a combination of the atom name and index. It is simply an
 atom`s name with two underscores and index appended to it:
 
 .. doctest::
@@ -148,7 +148,7 @@ Atom type is derived from its name:
     'Cr'
 
 The atom type is automatically determined from the atom name and can not
-be changed directly. 
+be changed directly.
 
 Position
 ========
@@ -182,7 +182,7 @@ Spin of the atom is describe by three properties:
 * :py:attr:`.spin_direction` - spin direction of the atom
 
 These three properties are interconnected. Setting each one of them changes the
-other two with one exception: :py:attr:`.spin` does not affect :py:attr:`.spin_direction` 
+other two with one exception: :py:attr:`.spin` does not affect :py:attr:`.spin_direction`
 and vice versa.
 
 .. doctest::
@@ -212,12 +212,12 @@ Magnetic moment of the atom can be set by assigning a value to the
     >>> atom.magmom
     array([0., 0., 1.])
 
-The units of magnetic moment depend on you interpretation. In RAD-tools usually 
+The units of magnetic moment depend on you interpretation. In RAD-tools usually
 Bohr magneton is used.
 
-.. note:: 
+.. note::
 
-    Magnetic moment is independent from the spin of the atom. 
+    Magnetic moment is independent from the spin of the atom.
     This behaviour may change in the future.
 
 Charge
@@ -232,7 +232,7 @@ Electrical charge of the atom can be set by assigning a value to the
     >>> atom.charge
     1.0
 
-The units of magnetic moment depend on you interpretation. In RAD-tools usually 
+The units of magnetic moment depend on you interpretation. In RAD-tools usually
 charge of an electron is used.
 
 String representation

@@ -15,7 +15,7 @@ Cubic lattice system
 
 .. toctree::
     :hidden:
-    
+
     cub/index
     fcc/index
     bcc/index
@@ -33,18 +33,18 @@ Tetragonal lattice system
 
 .. toctree::
     :hidden:
-    
+
     tet/index
     bct/index
 
 =================  ==========  ===============  ================
 Name               Examples    Parameters       Constructor
 =================  ==========  ===============  ================
-:ref:`guide_tet`   ``tet``     :math:`a`,       :py:func:`.TET`         
-                               :math:`c`   
+:ref:`guide_tet`   ``tet``     :math:`a`,       :py:func:`.TET`
+                               :math:`c`
 :ref:`guide_bct`   ``bct``,    :math:`a`,       :py:func:`.BCT`
                    ``bct1``,   :math:`c`
-                   ``bct2`` 
+                   ``bct2``
 =================  ==========  ===============  ================
 
 Orthorhombic lattice system
@@ -52,7 +52,7 @@ Orthorhombic lattice system
 
 .. toctree::
     :hidden:
-    
+
     orc/index
     orcf/index
     orci/index
@@ -61,19 +61,19 @@ Orthorhombic lattice system
 =================  ==========  ===============  ================
 Name               Examples    Parameters       Constructor
 =================  ==========  ===============  ================
-:ref:`guide_orc`   ``orc``     :math:`a`,       :py:func:`.ORC`         
+:ref:`guide_orc`   ``orc``     :math:`a`,       :py:func:`.ORC`
                                :math:`b`,
-                               :math:`c`   
-:ref:`guide_orcf`  ``orcf``,   :math:`a`,       :py:func:`.ORCF`         
+                               :math:`c`
+:ref:`guide_orcf`  ``orcf``,   :math:`a`,       :py:func:`.ORCF`
                    ``orcf1``,  :math:`b`,
                    ``orcf2``,  :math:`c`
-                   ``orcf3``   
-:ref:`guide_orci`  ``orci``    :math:`a`,       :py:func:`.ORCI`         
+                   ``orcf3``
+:ref:`guide_orci`  ``orci``    :math:`a`,       :py:func:`.ORCI`
                                :math:`b`,
-                               :math:`c`  
-:ref:`guide_orcc`  ``orcc``    :math:`a`,       :py:func:`.ORCC`         
+                               :math:`c`
+:ref:`guide_orcc`  ``orcc``    :math:`a`,       :py:func:`.ORCC`
                                :math:`b`,
-                               :math:`c`  
+                               :math:`c`
 =================  ==========  ===============  ================
 
 Hexagonal lattice system
@@ -81,14 +81,14 @@ Hexagonal lattice system
 
 .. toctree::
     :hidden:
-    
+
     hex/index
 
 =================  ==========  ===============  ================
 Name               Examples    Parameters       Constructor
 =================  ==========  ===============  ================
-:ref:`guide_hex`   ``hex``     :math:`a`,       :py:func:`.HEX`         
-                               :math:`c`   
+:ref:`guide_hex`   ``hex``     :math:`a`,       :py:func:`.HEX`
+                               :math:`c`
 =================  ==========  ===============  ================
 
 Rhombohedral lattice system
@@ -96,15 +96,15 @@ Rhombohedral lattice system
 
 .. toctree::
     :hidden:
-    
+
     rhl/index
 
 =================  ==========  ===============  ================
 Name               Examples    Parameters       Constructor
 =================  ==========  ===============  ================
-:ref:`guide_rhl`   ``rhl``,    :math:`a`,       :py:func:`.RHL`         
+:ref:`guide_rhl`   ``rhl``,    :math:`a`,       :py:func:`.RHL`
                    ``rhl1``,   :math:`c`
-                   ``rhl2``    
+                   ``rhl2``
 =================  ==========  ===============  ================
 
 Monoclinic lattice system
@@ -119,16 +119,16 @@ Monoclinic lattice system
 =================  ==========  ===============  ================
 Name               Examples    Parameters       Constructor
 =================  ==========  ===============  ================
-:ref:`guide_mcl`   ``mcl``     :math:`a`,       :py:func:`.MCL`         
+:ref:`guide_mcl`   ``mcl``     :math:`a`,       :py:func:`.MCL`
                                :math:`b`,
-                               :math:`c`,  
-                               :math:`\alpha` 
-:ref:`guide_mclc`  ``mclc``,   :math:`a`,       :py:func:`.MCLC`         
+                               :math:`c`,
+                               :math:`\alpha`
+:ref:`guide_mclc`  ``mclc``,   :math:`a`,       :py:func:`.MCLC`
                    ``mclc1``,  :math:`b`,
                    ``mclc2``,  :math:`c`,
                    ``mclc3``,  :math:`\alpha`
                    ``mclc4``,
-                   ``mclc5``   
+                   ``mclc5``
 =================  ==========  ===============  ================
 
 Triclinic lattice system
@@ -144,10 +144,10 @@ Predefined examples: ``tri1a``, ``tri1b``, ``tri2a``, ``tri2b``.
 =================  ==========  ===============  ================
 Name               Examples    Parameters       Constructor
 =================  ==========  ===============  ================
-:ref:`guide_tri`   ``tri1a``,  :math:`a`,       :py:func:`.TRI`         
+:ref:`guide_tri`   ``tri1a``,  :math:`a`,       :py:func:`.TRI`
                    ``tri1b``,  :math:`b`,
-                   ``tri2a``,  :math:`c`,  
-                   ``tri2b``   :math:`\alpha`, 
+                   ``tri2a``,  :math:`c`,
+                   ``tri2b``   :math:`\alpha`,
                                :math:`\beta`,
                                :math:`\gamma`
 =================  ==========  ===============  ================

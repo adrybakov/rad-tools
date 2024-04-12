@@ -12,7 +12,7 @@ spinham
 Classes
 =======
 
-.. toctree:: 
+.. toctree::
     :maxdepth: 1
 
     hamiltonian

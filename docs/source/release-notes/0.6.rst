@@ -10,7 +10,7 @@ Whats new?
 ----------
 
 Refractor most of the code. Rewrite whole documentation,
-add better organisation of the :ref:`api`. 
+add better organisation of the :ref:`api`.
 Add version switcher to the header of the page.
 
 Make the script's names follow unified concept:
@@ -19,10 +19,10 @@ Make the script's names follow unified concept:
 
     rad-action-object.py
 
-Debugged :ref:`rad-plot-dos.py <rad-plot-dos>` on the real-world data. 
+Debugged :ref:`rad-plot-dos.py <rad-plot-dos>` on the real-world data.
 Add several new features to it.
 
-Remade the import structure of the package. 
+Remade the import structure of the package.
 The main entry point is ``radtools``:
 
 .. code-block:: console

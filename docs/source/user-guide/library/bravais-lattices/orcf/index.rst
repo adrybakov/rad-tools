@@ -8,7 +8,7 @@ Face-centred orthorhombic (ORCF)
 
 **Constructor**:  :py:func:`.ORCF`
 
-It is defined by three parameters: :math:`a`, :math:`b` and :math:`c` 
+It is defined by three parameters: :math:`a`, :math:`b` and :math:`c`
 with conventional lattice:
 
 .. math::
@@ -32,13 +32,13 @@ And primitive lattice:
 Cell standardization
 ====================
 
-Lengths of the lattice vectors of the conventional cell have to satisfy 
+Lengths of the lattice vectors of the conventional cell have to satisfy
 :math:`\vert\boldsymbol{a}_1\vert < \vert\boldsymbol{a}_2\vert < \vert\boldsymbol{a}_3\vert`.
 That means that lattice vectors of the primitive cell have to satisfy:
 :math:`\vert\boldsymbol{a}_1\vert > \vert\boldsymbol{a}_2\vert > \vert\boldsymbol{a}_3\vert`.
 
 
-If this condition is not satisfied, then the lattice is transformed to the standard form. 
+If this condition is not satisfied, then the lattice is transformed to the standard form.
 We use the primitive lattice vectors for the standardization:
 
 First we order first two vectors by length:
@@ -46,7 +46,7 @@ First we order first two vectors by length:
 * If :math:`\vert\boldsymbol{a}_1\vert < \vert\boldsymbol{a}_2\vert`
     .. math::
 
-        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow
         (\boldsymbol{a}_2, \boldsymbol{a}_1, -\boldsymbol{a}_3)
 
 Then we find a correct place for the third vector:
@@ -54,18 +54,18 @@ Then we find a correct place for the third vector:
 * If :math:`\vert\boldsymbol{a}_1\vert < \vert\boldsymbol{a}_3\vert`
     .. math::
 
-        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow
         (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
 
 * If :math:`\vert\boldsymbol{a}_2\vert < \vert\boldsymbol{a}_3\vert`
     .. math::
 
-        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow
         (\boldsymbol{a}_1, -\boldsymbol{a}_3, \boldsymbol{a}_2)
 
 .. note::
 
-    The third lattice vector is multiplied by :math:`-1` in some cases to 
+    The third lattice vector is multiplied by :math:`-1` in some cases to
     preserve the handedness of the cell.
 
 K-path
@@ -107,7 +107,7 @@ ORCF\ :sub:`2`
     \begin{matrix}
     \eta = \dfrac{1 + a^2/b^2 - a^2/c^2}{4} &
     \delta = \dfrac{1 + b^2/a^2 - b^2/c^2}{4} &
-    \phi = \dfrac{1 + c^2/b^2 - c^2/a^2}{4} 
+    \phi = \dfrac{1 + c^2/b^2 - c^2/a^2}{4}
     \end{matrix}
 
 =========================  ==============================  ==============================  ==============================
@@ -155,7 +155,7 @@ Point                      :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsym
 Variations
 ==========
 
-There are three  variations of face-centered orthorombic lattice. 
+There are three  variations of face-centered orthorombic lattice.
 
 For the examples of variations
 :math:`a` is set to :math:`1`; :math:`b` and :math:`c` fulfil the conditions:
@@ -165,8 +165,8 @@ For the examples of variations
 * :math:`c > \sqrt{2}`
 
 First condition defines in ORCF\ :sub:`3` lattice and ensures
-ordering of lattice parameters :math:`b > a`. 
-Ordering :math:`c > b` is forced by second condition. 
+ordering of lattice parameters :math:`b > a`.
+Ordering :math:`c > b` is forced by second condition.
 
 For ORCF\ :sub:`1` and ORCF\ :sub:`2` lattices :math:`a < 1` and :math:`a > 1` is chosen.
 While :math:`b` and :math:`c` are the same as for ORCF\ :sub:`3` lattice.
@@ -178,7 +178,7 @@ ORCF\ :sub:`1`
 
 :math:`\dfrac{1}{a^2} > \dfrac{1}{b^2} + \dfrac{1}{c^2}`.
 
-Predefined example: ``orcf1`` with 
+Predefined example: ``orcf1`` with
 :math:`a = 0.7\pi`, :math:`b = 5\pi/4` and :math:`c = 5\pi/3`.
 
 ORCF\ :sub:`2`
@@ -186,7 +186,7 @@ ORCF\ :sub:`2`
 
 :math:`\dfrac{1}{a^2} < \dfrac{1}{b^2} + \dfrac{1}{c^2}`.
 
-Predefined example: ``orcf2`` with 
+Predefined example: ``orcf2`` with
 :math:`a = 1.2\pi`, :math:`b = 5\pi/4` and :math:`c = 5\pi/3`.
 
 ORCF\ :sub:`3`
@@ -194,7 +194,7 @@ ORCF\ :sub:`3`
 
 :math:`\dfrac{1}{a^2} = \dfrac{1}{b^2} + \dfrac{1}{c^2}`.
 
-Predefined example: ``orcf3`` with 
+Predefined example: ``orcf3`` with
 :math:`a = \pi`, :math:`b = 5\pi/4` and :math:`c = 5\pi/3`.
 
 Examples
@@ -283,7 +283,7 @@ Wigner-Seitz cell
 
 Edge cases
 ==========
-If :math:`a = b \ne c` or :math:`a = c \ne b` or :math:`b = c \ne a`, 
+If :math:`a = b \ne c` or :math:`a = c \ne b` or :math:`b = c \ne a`,
 then the lattice is :ref:`guide_bct`.
 
 If :math:`a = b = c`, then the lattice is :ref:`guide_fcc`.

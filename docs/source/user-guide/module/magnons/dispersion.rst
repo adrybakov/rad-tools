@@ -56,7 +56,7 @@ Calculation
 ===========
 
 To compute the dispersion simply call the dispersion object with the desired k-points.
-K-points are an instance of :py:class:`Kpoints` class or list of k-points, where each 
+K-points are an instance of :py:class:`Kpoints` class or list of k-points, where each
 k-point is a list of three numbers.
 
 .. doctest::
@@ -65,4 +65,3 @@ k-point is a list of three numbers.
     'G-X-M-G-R-X|M-R'
     >>> dispersion(kp)
     array([[ 0.,  8.,  8., 16., 16.,  0.,  0., 24., 24.,  8., 16., 24.]])
-

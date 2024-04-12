@@ -9,9 +9,9 @@ Script for the creation of template`s draft.
 For the full template specification see :ref:`template-draft`.
 
 This script can provide blank template file or template file based on the TB2J
-"exchange.out" file (see :ref:`--input-filename <rad-make-template_input-filename>`). 
-Several filtering options are supported for the case of TB2J-based template file 
-(:ref:`--R-vector <rad-make-template_R-vector>`, 
+"exchange.out" file (see :ref:`--input-filename <rad-make-template_input-filename>`).
+Several filtering options are supported for the case of TB2J-based template file
+(:ref:`--R-vector <rad-make-template_R-vector>`,
 :ref:`--max-distance <rad-make-template_max-distance>`,
 :ref:`--min-distance <rad-make-template_min-distance>`,
 :ref:`--distance <rad-make-template_distance>`).
@@ -25,7 +25,7 @@ Several filtering options are supported for the case of TB2J-based template file
 Usage example
 =============
 Example is based on the "exchange.out" file from the
-:examples:`examples folder <rad-make-template>`. 
+:examples:`examples folder <rad-make-template>`.
 
 Minimal usage scenario creates template draft`s with the command
 (see :ref:`template specification <template-draft>`):
@@ -47,8 +47,8 @@ produces the file with the full template:
    .. literalinclude:: /../examples/rad-make-template/full_template.txt
     :language: text
 
-This template is very long since original TB2J file includes a lot of 
-interaction pairs, lets filter some of them and keep only the interactions 
+This template is very long since original TB2J file includes a lot of
+interaction pairs, lets filter some of them and keep only the interactions
 with the distance less or equal 8 Angstroms.
 
 .. code-block:: bash
@@ -60,8 +60,8 @@ with the distance less or equal 8 Angstroms.
    .. literalinclude:: /../examples/rad-make-template/filtered_template.txt
     :language: text
 
-For further usage of the template it is necessary to check if the 
-bounds are grouped correctly and regroup if necessary. 
+For further usage of the template it is necessary to check if the
+bounds are grouped correctly and regroup if necessary.
 By default the bonds are grouped by distance.
 
 Check the :ref:`rad-make-template_arguments` section for more sorting options.
@@ -186,4 +186,3 @@ Epsilon for the distance comparison.
 
     default: 1e-3
     type: float
-

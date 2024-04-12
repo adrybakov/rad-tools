@@ -5,4 +5,3 @@ Centre ['X', array([0.90034182, 1.20456455, 0.02140611])] unidentified, try to i
 Centre ['X', array([2.70102542, 3.61369366, 5.54938336])] unidentified, try to increase span
     span limit = 0.1
     minimum distance to the atom (Br2) = 0.10017450
-

@@ -8,7 +8,7 @@ Monoclinic (MCL)
 
 **Constructor**:  :py:func:`.MCL`
 
-It is defined by four parameter: :math:`a`, :math:`b`, :math:`c` and :math:`\alpha` 
+It is defined by four parameter: :math:`a`, :math:`b`, :math:`c` and :math:`\alpha`
 with primitive and conventional lattice:
 
 .. math::
@@ -39,13 +39,13 @@ First we ensure the :math:`\beta = 90^{\circ}` and :math:`\gamma = 90^{\circ}`:
 * If :math:`\beta \ne 90^{\circ}`:
     .. math::
 
-        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow
         (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
 
 * If :math:`\gamma \ne 90^{\circ}`:
     .. math::
 
-        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow
         (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
 
 Then we ensure the :math:`\alpha < 90^{\circ}`:
@@ -53,7 +53,7 @@ Then we ensure the :math:`\alpha < 90^{\circ}`:
 * If :math:`\alpha > 90^{\circ}`:
     .. math::
 
-        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow
         (\boldsymbol{a}_1, \boldsymbol{a}_3, -\boldsymbol{a}_2)
 
 Finally, we ensure the :math:`b \le c`:
@@ -61,12 +61,12 @@ Finally, we ensure the :math:`b \le c`:
 * If :math:`b > c`:
     .. math::
 
-        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow
         (-\boldsymbol{a}_1, \boldsymbol{a}_3, \boldsymbol{a}_2)
 
 .. note::
 
-    First and second lattice vectors are multiplied by :math:`-1` in some cases to 
+    First and second lattice vectors are multiplied by :math:`-1` in some cases to
     preserve the handedness of the cell.
 
 K-path
@@ -105,8 +105,8 @@ Point                      :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsym
 Variations
 ==========
 
-There are two variations for monoclinic lattice. 
-One example is predefined: ``mcl`` with 
+There are two variations for monoclinic lattice.
+One example is predefined: ``mcl`` with
 MCL(pi, 1.3 * pi, 1.6 * pi, alpha=75)
 :math:`a = \pi`, :math:`b = 1.3 \pi` :math:`c = 1.6 \pi` and :math:`\alpha = 75^{\circ}`.
 
@@ -139,19 +139,19 @@ Wigner-Seitz cell
 Edge cases
 ==========
 
-If (:math:`\alpha = 60^{\circ}` or :math:`\alpha = 120^{\circ}`) and :math:`b = c`, 
+If (:math:`\alpha = 60^{\circ}` or :math:`\alpha = 120^{\circ}`) and :math:`b = c`,
 then the lattice is :ref:`guide_hex`.
 
 If (:math:`\alpha = 30^{\circ}` or :math:`\alpha = 150^{\circ}`
-or :math:`\alpha = 45^{\circ}` or :math:`\alpha = 145^{\circ}`) and :math:`b = c`, 
+or :math:`\alpha = 45^{\circ}` or :math:`\alpha = 145^{\circ}`) and :math:`b = c`,
 then the lattice is :ref:`guide_orcc`.
 
-If (:math:`\alpha = 60^{\circ}` or :math:`\alpha = 120^{\circ}`) and :math:`a \ne b = c/2`, 
+If (:math:`\alpha = 60^{\circ}` or :math:`\alpha = 120^{\circ}`) and :math:`a \ne b = c/2`,
 then the lattice is :ref:`guide_orc`.
 
 If :math:`a \ne b \ne c` and :math:`\alpha = 90^{\circ}`, then the lattice is :ref:`guide_orc`.
 
-If (:math:`\alpha = 60^{\circ}` or :math:`\alpha = 120^{\circ}`) and :math:`a = b = c/2`, 
+If (:math:`\alpha = 60^{\circ}` or :math:`\alpha = 120^{\circ}`) and :math:`a = b = c/2`,
 then the lattice is :ref:`guide_tet`.
 
 If (:math:`a = b \ne c` or :math:`a = c \ne b` or :math:`b = c \ne a`) and :math:`\alpha = 90^{\circ}`, then the lattice is :ref:`guide_tet`.

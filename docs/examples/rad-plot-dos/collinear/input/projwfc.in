@@ -7,4 +7,3 @@
   diag_basis = .true.
   Emin = -10
 /
-    

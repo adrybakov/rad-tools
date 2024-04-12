@@ -15,7 +15,7 @@ Add possibility to make draft of the template file form TB2J file in
 
 0.0.2
 -----
-Add :ref:`rad-make-template.py <rad-make-template>` script. 
+Add :ref:`rad-make-template.py <rad-make-template>` script.
 Fix bugs in :ref:`rad-plot-tb2j.py <rad-plot-tb2j>`.
 
 0.0.1
@@ -34,10 +34,10 @@ Better help messages in :ref:`rad-plot-tb2j.py <rad-plot-tb2j>` script.
 0.0.0.8
 -------
 Add possibility to plot parameters vs distance from the center of the molecule
-to the center of the bond (see 
+to the center of the bond (see
 --mode and --atoms).
 
-Add argument to :ref:`rad-plot-tb2j.py <rad-plot-tb2j>` for title for the pictures 
+Add argument to :ref:`rad-plot-tb2j.py <rad-plot-tb2j>` for title for the pictures
 (see :ref:`--title <rad-plot-tb2j_title>`).
 
 0.0.0.7
@@ -46,13 +46,13 @@ Add the ``phonopy-plotter.py`` script. (Removed in 0.5.12)
 
 0.0.0.6
 -------
-Add arguments :ref:`--scale-data <rad-plot-tb2j_scale-data>` and 
-:ref:`--scale-atoms <rad-plot-tb2j_scale-atoms>` to the 
+Add arguments :ref:`--scale-data <rad-plot-tb2j_scale-data>` and
+:ref:`--scale-atoms <rad-plot-tb2j_scale-atoms>` to the
 :ref:`rad-plot-tb2j.py <rad-plot-tb2j>`.
 
 0.0.0.5
 -------
-Fix the problem with the :py:mod:`.spinham` docs. 
+Fix the problem with the :py:mod:`.spinham` docs.
 
 0.0.0.4
 -------

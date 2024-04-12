@@ -1,6 +1,6 @@
 name: Test stable branch
 
-on: 
+on:
   push:
     branches: [ stable ]
   pull_request:
@@ -16,7 +16,7 @@ jobs:
     uses: adrybakov/rad-tools/.github/workflows/run-tests.yml@stable
     with:
       python-version: '3.9'
-  
+
   test-310:
     uses: adrybakov/rad-tools/.github/workflows/run-tests.yml@stable
     with:

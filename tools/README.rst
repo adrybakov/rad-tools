@@ -33,7 +33,7 @@ Plot all examples of the bravais lattice.
 plot-data-structure.py
 -----------------------
 
-Plot the data structure of the package. 
+Plot the data structure of the package.
 
 plot-notation.py
 ----------------

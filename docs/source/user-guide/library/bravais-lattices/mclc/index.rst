@@ -8,7 +8,7 @@ Base-centred monoclinic (MCLC)
 
 **Constructor**:  :py:func:`.MCLC`
 
-It is defined by four parameter: :math:`a`, :math:`b`, :math:`c` and :math:`\alpha` 
+It is defined by four parameter: :math:`a`, :math:`b`, :math:`c` and :math:`\alpha`
 with conventional lattice:
 
 .. math::
@@ -34,13 +34,13 @@ Order of parameters: :math:`b \le c`, :math:`\alpha < 90^{\circ}`.
 Cell standardization
 ====================
 
-Length of the third vector of the primitive lattice has to be different from the 
+Length of the third vector of the primitive lattice has to be different from the
 length of the other two lattice vectors.
 
-Angle between second and third lattice vectors of conventional lattice (:math:`\alpha`) 
+Angle between second and third lattice vectors of conventional lattice (:math:`\alpha`)
 has to be less then :math:`90^{\circ}`.
 
-Length of the second lattice vector of the conventional lattice has to be less or 
+Length of the second lattice vector of the conventional lattice has to be less or
 equal to the length of the third lattice vector.
 
 If these conditions are not satisfied, then the lattice is transformed to the standard form:
@@ -51,13 +51,13 @@ For this step we use vectors of the primitive lattice:
 * If :math:`\vert\boldsymbol{a}_1\vert = \vert\boldsymbol{a}_3\vert`:
     .. math::
 
-        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow
         (\boldsymbol{a}_3, \boldsymbol{a}_1, \boldsymbol{a}_2)
 
 * If :math:`\vert\boldsymbol{a}_2\vert = \vert\boldsymbol{a}_3\vert`:
     .. math::
 
-        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow
         (\boldsymbol{a}_2, \boldsymbol{a}_3, \boldsymbol{a}_1)
 
 Then we ensure the :math:`\alpha < 90^{\circ}`. For this step we use vectors of the conventional lattice:
@@ -65,7 +65,7 @@ Then we ensure the :math:`\alpha < 90^{\circ}`. For this step we use vectors of 
 * If :math:`\alpha > 90^{\circ}`:
     .. math::
 
-        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow
         (\boldsymbol{a}_1, \boldsymbol{a}_3, -\boldsymbol{a}_2)
 
 Finally, we ensure the :math:`b \le c`. For this step we use vectors of the conventional lattice:
@@ -73,12 +73,12 @@ Finally, we ensure the :math:`b \le c`. For this step we use vectors of the conv
 * If :math:`b > c`:
     .. math::
 
-        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow 
+        (\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3) \rightarrow
         (-\boldsymbol{a}_1, \boldsymbol{a}_3, \boldsymbol{a}_2)
 
 .. note::
 
-    First and second lattice vectors are multiplied by :math:`-1` in some cases to 
+    First and second lattice vectors are multiplied by :math:`-1` in some cases to
     preserve the handedness of the cell.
 
 K-path
@@ -183,7 +183,7 @@ Point                      :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsym
 :math:`\mathrm{H}`         :math:`\zeta`                   :math:`\zeta`                   :math:`\eta`
 :math:`\mathrm{H_1}`       :math:`1-\zeta`                 :math:`-\zeta`                  :math:`1-\eta`
 :math:`\mathrm{H_2}`       :math:`-\zeta`                  :math:`-\zeta`                  :math:`1-\eta`
-:math:`\mathrm{I}`         :math:`1/2`                     :math:`-1/2`                    :math:`1/2` 
+:math:`\mathrm{I}`         :math:`1/2`                     :math:`-1/2`                    :math:`1/2`
 :math:`\mathrm{M}`         :math:`1/2`                     :math:`0`                       :math:`1/2`
 :math:`\mathrm{N}`         :math:`1/2`                     :math:`0`                       :math:`0`
 :math:`\mathrm{N_1}`       :math:`0`                       :math:`-1/2`                    :math:`0`
@@ -192,7 +192,7 @@ Point                      :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsym
 :math:`\mathrm{Y_1}`       :math:`1-\mu`                   :math:`-\mu`                    :math:`-\delta`
 :math:`\mathrm{Y_2}`       :math:`-\mu`                    :math:`-\mu`                    :math:`-\delta`
 :math:`\mathrm{Y_3}`       :math:`\mu`                     :math:`\mu-1`                   :math:`\delta`
-:math:`\mathrm{Z}`         :math:`0`                       :math:`0`                       :math:`1/2`                   
+:math:`\mathrm{Z}`         :math:`0`                       :math:`0`                       :math:`1/2`
 =========================  ==============================  ==============================  ==============================
 
 
@@ -222,7 +222,7 @@ Point                      :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsym
 :math:`\mathrm{H}`         :math:`\zeta`                   :math:`\zeta`                   :math:`\eta`
 :math:`\mathrm{H_1}`       :math:`1-\zeta`                 :math:`-\zeta`                  :math:`1-\eta`
 :math:`\mathrm{H_2}`       :math:`-\zeta`                  :math:`-\zeta`                  :math:`1-\eta`
-:math:`\mathrm{I}`         :math:`1/2`                     :math:`-1/2`                    :math:`1/2` 
+:math:`\mathrm{I}`         :math:`1/2`                     :math:`-1/2`                    :math:`1/2`
 :math:`\mathrm{M}`         :math:`1/2`                     :math:`0`                       :math:`1/2`
 :math:`\mathrm{N}`         :math:`1/2`                     :math:`0`                       :math:`0`
 :math:`\mathrm{N_1}`       :math:`0`                       :math:`-1/2`                    :math:`0`
@@ -231,7 +231,7 @@ Point                      :math:`\times\boldsymbol{b}_1`  :math:`\times\boldsym
 :math:`\mathrm{Y_1}`       :math:`1-\mu`                   :math:`-\mu`                    :math:`-\delta`
 :math:`\mathrm{Y_2}`       :math:`-\mu`                    :math:`-\mu`                    :math:`-\delta`
 :math:`\mathrm{Y_3}`       :math:`\mu`                     :math:`\mu-1`                   :math:`\delta`
-:math:`\mathrm{Z}`         :math:`0`                       :math:`0`                       :math:`1/2`                   
+:math:`\mathrm{Z}`         :math:`0`                       :math:`0`                       :math:`1/2`
 =========================  ==============================  ==============================  ==============================
 
 
@@ -289,8 +289,8 @@ Reciprocal :math:`\gamma` (:math:`k_{\gamma}`) is defined by the equation (for p
 
     \cos(k_{\gamma}) = \frac{a^2 - b^2\sin^2(\alpha)}{a^2 + b^2\sin^2(\alpha)}
 
-For MCLC\ :sub:`2` :math:`k_{\gamma} = 90`, therefore :math:`a = b \sin(\alpha)`. 
-For MCLC\ :sub:`1` we choose :math:`a < b \sin(\alpha)` and 
+For MCLC\ :sub:`2` :math:`k_{\gamma} = 90`, therefore :math:`a = b \sin(\alpha)`.
+For MCLC\ :sub:`1` we choose :math:`a < b \sin(\alpha)` and
 for MCLC\ :sub:`3`, MCLC\ :sub:`4` and MCLC\ :sub:`5` we choose :math:`a > b \sin(\alpha)`.
 
 For the variations 3-5 we define :math:`a = xb\sin(\alpha)`, where :math:`x > 1`.
@@ -309,7 +309,7 @@ And the ordering condition :math:`b \le c` gives:
 
     \cos(\alpha) \ge \frac{x^2 - 1}{x^2}
 
-For MCLC\ :sub:`3` (MCLC\ :sub:`5`) we choose parameters in a same way as for MCLC\ :sub:`4`, 
+For MCLC\ :sub:`3` (MCLC\ :sub:`5`) we choose parameters in a same way as for MCLC\ :sub:`4`,
 but with :math:`c > \frac{x^2}{x^2 - 1}b\cos(\alpha)` (:math:`c < \frac{x^2}{x^2 - 1}b\cos(\alpha)`)
 
 MCLC\ :sub:`1`
@@ -317,14 +317,14 @@ MCLC\ :sub:`1`
 
 :math:`k_{\gamma} > 90^{\circ}`,
 
-Predefined example: ``mclc1`` with :math:`a = \pi`, :math:`b = 1.4\cdot\pi`, :math:`c = 1.7\cdot\pi` and :math:`\alpha = 80^{\circ}` 
+Predefined example: ``mclc1`` with :math:`a = \pi`, :math:`b = 1.4\cdot\pi`, :math:`c = 1.7\cdot\pi` and :math:`\alpha = 80^{\circ}`
 
 MCLC\ :sub:`2`
 --------------
 
 :math:`k_{\gamma} = 90^{\circ}`,
 
-Predefined example: ``mclc2`` with :math:`a = 1.4\cdot\pi\cdot\sin(75^{\circ})`, :math:`b = 1.4\cdot\pi`, :math:`c = 1.7\cdot\pi` and :math:`\alpha=75^{\circ}` 
+Predefined example: ``mclc2`` with :math:`a = 1.4\cdot\pi\cdot\sin(75^{\circ})`, :math:`b = 1.4\cdot\pi`, :math:`c = 1.7\cdot\pi` and :math:`\alpha=75^{\circ}`
 
 MCLC\ :sub:`3`
 --------------
@@ -333,8 +333,8 @@ MCLC\ :sub:`3`
 
 Predefined example with :math:`b = \pi`, :math:`x = 1.1`, :math:`\alpha = 78^{\circ}`, which produce:
 
-``mclc4`` with :math:`a = 1.1\cdot\sin(78)\cdot\pi`, :math:`b = \pi`, 
-:math:`c = 1.8\cdot 121\cdot\cos(65)\cdot\pi/21` and :math:`\alpha = 78^{\circ}` 
+``mclc4`` with :math:`a = 1.1\cdot\sin(78)\cdot\pi`, :math:`b = \pi`,
+:math:`c = 1.8\cdot 121\cdot\cos(65)\cdot\pi/21` and :math:`\alpha = 78^{\circ}`
 
 MCLC\ :sub:`4`
 --------------
@@ -343,8 +343,8 @@ MCLC\ :sub:`4`
 
 Predefined example with :math:`b = \pi`, :math:`x = 1.2`, :math:`\alpha = 65^{\circ}`, which produce:
 
-``mclc4`` with :math:`a = 1.2\sin(65)\pi`, :math:`b = \pi`, 
-:math:`c = 36\cos(65)\pi/11` and :math:`\alpha = 65^{\circ}` 
+``mclc4`` with :math:`a = 1.2\sin(65)\pi`, :math:`b = \pi`,
+:math:`c = 36\cos(65)\pi/11` and :math:`\alpha = 65^{\circ}`
 
 MCLC\ :sub:`5`
 --------------
@@ -353,7 +353,7 @@ MCLC\ :sub:`5`
 
 Predefined example with :math:`b = \pi`, :math:`x = 1.4`, :math:`\alpha = 53^{\circ}`, which produce:
 
-``mclc5`` with :math:`a = 1.4\cdot\sin(53)\cdot\pi`, :math:`b = \pi`, 
+``mclc5`` with :math:`a = 1.4\cdot\sin(53)\cdot\pi`, :math:`b = \pi`,
 :math:`c = 0.9\cdot 11\cdot\cos(53)\cdot\pi/6` and :math:`\alpha = 53^{\circ}`
 
 
@@ -450,7 +450,7 @@ Brillouin zone and default kpath
     :language: py
 
 .. raw:: html
-    :file: mclc4_brillouin.html 
+    :file: mclc4_brillouin.html
 
 Primitive and conventional cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

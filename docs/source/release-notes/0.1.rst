@@ -26,7 +26,7 @@ map_logic to map
 
 tb2j_tools was renamed to exchange
 
-Module map was moved out of 
+Module map was moved out of
 exchange.
 
 0.1.1

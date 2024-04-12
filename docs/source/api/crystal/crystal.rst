@@ -14,8 +14,8 @@ Class
 
     Crystal
 
-.. hint:: 
-    All properties and methods of :ref:`api_lattice` 
+.. hint::
+    All properties and methods of :ref:`api_lattice`
     are accessible directly from the crystal instance:
 
     .. doctest::
