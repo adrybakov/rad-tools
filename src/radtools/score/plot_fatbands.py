@@ -21,6 +21,7 @@ from argparse import ArgumentParser
 
 from termcolor import cprint
 
+from radtools._osfix import _winwait
 from radtools.dos.dos import DOSQE, detect_seednames
 from radtools.dos.fatbands_plotting import plot_custom_fatbands
 from radtools.dos.plotting import COLOURS
@@ -375,3 +376,14 @@ def create_parser():
     )
 
     return parser
+
+
+def main():
+    parser = create_parser()
+    args = parser.parse_args()
+    manager(**vars(args))
+    _winwait()
+
+
+if __name__ == "__main__":
+    main()

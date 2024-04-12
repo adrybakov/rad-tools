@@ -57,7 +57,7 @@ clean:
 	-@rm -r docs/source/api/spinham/generated
 	-@rm -r docs/source/api/magnons/generated
 	-@rm -r docs/source/api/_autosummary
-	-@rm -r rad_tools.egg-info
+	-@rm -r src/rad_tools.egg-info
 	-@rm -r build
 	-@rm -r dist
 	-@rm -r .env3.11/lib/python3.11/site-packages/radtools

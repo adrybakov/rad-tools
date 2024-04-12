@@ -25,6 +25,7 @@ import numpy as np
 from termcolor import cprint
 
 from radtools import __version__ as version
+from radtools._osfix import _winwait
 from radtools.decorate.stats import logo
 from radtools.io.tb2j import load_tb2j_model
 
@@ -304,3 +305,14 @@ def create_parser():
     )
 
     return parser
+
+
+def main():
+    parser = create_parser()
+    args = parser.parse_args()
+    manager(**vars(args))
+    _winwait()
+
+
+if __name__ == "__main__":
+    main()

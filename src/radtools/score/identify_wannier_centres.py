@@ -22,6 +22,8 @@ from argparse import ArgumentParser
 import numpy as np
 from termcolor import cprint
 
+from radtools._osfix import _winwait
+
 
 def manager(input_filename, span=0.1, output_name=""):
     r"""
@@ -188,3 +190,14 @@ def create_parser():
     )
 
     return parser
+
+
+def main():
+    parser = create_parser()
+    args = parser.parse_args()
+    manager(**vars(args))
+    _winwait()
+
+
+if __name__ == "__main__":
+    main()
