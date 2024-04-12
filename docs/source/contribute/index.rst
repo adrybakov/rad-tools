@@ -23,75 +23,128 @@ and familiar with `Git <https://git-scm.com/>`_.
 Development workflow
 ====================
 
-For the detailed explanation of the development workflow, please visit
-the corresponding links below.
+For the detailed explanation of the development workflow see the table of content at the
+end of the page or click on the links in the short summary below.
 
-1. Fork and clone.
+Fork and clone
+--------------
 
-   * Go to the |RAD-repo|_ and click on the "Fork" button.
-     Now you have your own copy of the RAD-tools repository in your GitHub account.
-   * Clone your copy of the repository to your local machine:
+* Go to the |RAD-repo|_ (:ref:`upstream <contribute_origin-upstream_upstream>`) and
+  click on the "Fork" button. Now you have your own copy of the RAD-tools repository
+  under your GitHub account (:ref:`origin <contribute_origin-upstream_origin>`).
+* Clone your fork to your local machine:
 
-     - If you are using ssh-key::
+  - If you are using ssh-key::
 
-         git clone git@github.com:your-username/rad-tools.git
+      git clone git@github.com:your-username/rad-tools.git
 
-     - If you are not using ssh-key::
+  - If you are not using ssh-key::
 
-         git clone https://github.com/your-username/rad-tools.git
+      git clone https://github.com/your-username/rad-tools.git
 
-   * Change the directory::
+* Change the directory::
 
-      cd rad-tools
-   * Add the upstream repository::
+    cd rad-tools
 
-      git remote add upstream https://github.com/adrybakov/rad-tools.git
+  Now you are in the root folder of you local repository
+  (:ref:`local <contribute_origin-upstream_local>`)
 
-2. Set up the environment.
+* Add the :ref:`upstream <contribute_origin-upstream>` repository to your
+  :ref:`local <contribute_origin-upstream_local>` repository::
 
-   We recommend to use virtual environment. Once the virtual environment is created,
-   you can install requirements:
+    git remote add upstream https://github.com/adrybakov/rad-tools.git
 
-   * For the package development::
+* Pull the latest changes from the RAD-tools repository if necessary::
 
-      pip install -r requirements.txt
-   * For the docs::
+    git pull upstream stable
 
-      pip install -r docs/requirements.txt
-   * For the tests::
+  or::
 
-      pip install -r utest/requirements.txt
+    git fetch upstream
+    git merge upstream/stable
 
-3. Develop the contribution.
+Set up the environment
+----------------------
 
-   * Create a dedicated branch for your feature, that you are going to develop::
+We recommend to use virtual environment. Once the virtual environment is created,
+you can install requirements:
 
-      git checkout -b feature-name
+* Package dependencies::
 
-   * Develop your contribution. Commit your progress locally
-     (`git-add <https://git-scm.com/docs/git-add>`_
-     and `git-commit <https://git-scm.com/docs/git-commit>`_).
-     Use meaningful commit messages. Write `tests <contribute_tests>`.
-     Write `documentation <contribute_docs>`.
+    pip install -r requirements.txt
 
-4. Submit your contribution.
+* For the package development::
 
-   * Push the changes to your forked repository::
+    pip install -r requirements-dev.txt
 
-      git push origin feature-name
+* For the documentation::
 
-   * Go to your forked repository on GitHub and click on the
-     green "Compare & pull request" button.
-     Describe your contribution and submit the pull request.
-     Please mention the issue number if it is related to any.
+    pip install -r docs/requirements.txt
 
-5. Review and merge.
+* For the tests::
 
-   * Once the pull request is submitted, the code will be reviewed.
-     If there are any comments, please fix them.
-   * Once the pull request is approved, it will be merged to the
-     `stable <https://github.com/adrybakov/rad-tools>`_ or
-     `dev <https://github.com/adrybakov/rad-tools/tree/dev>`_ branch.
+    pip install -r utest/requirements.txt
+
+.. note::
+  For the linux and OSX systems there is a scenario defined.
+  It installs all requirements. Note: it does NOT create a virtual environment::
+
+    make requirements
+
+Enable pre-commit
+-----------------
+
+We use `pre-commit <https://pre-commit.com/>`_ to enforce some rules on the code style
+before each commit.
+To enable it, run the following command::
+
+  pre-commit install
+
+Now, every time you commit the code, pre-commit will check it for you. If some checks fail,
+pre-commit will automatically fix them and abort the commit. You need to add the fixed files
+to the staging area and commit again.
+
+.. hint::
+  If you want to run pre-commit manually, you can use the following command::
+
+    pre-commit run --all-files
+
+Develop your contribution
+-------------------------
+
+* Create a :ref:`dedicated branch <contribute_branches>` for your feature,
+  that you are going to develop::
+
+    git checkout -b feature-name
+
+* Develop your contribution. Commit your progress locally
+  (`git-add <https://git-scm.com/docs/git-add>`_
+  and `git-commit <https://git-scm.com/docs/git-commit>`_).
+  Use |good-commit-messages|_. Write :ref:`tests <contribute_tests>`.
+  Write :ref:`documentation <contribute_documentation>`.
+
+Submit your contribution
+------------------------
+
+* Push the changes to your forked repository::
+
+    git push origin feature-name
+
+* Go to your forked repository on GitHub and click on the
+  green "Compare & pull request" button.
+  Describe your contribution and submit the pull request.
+  Please mention the issue number if it is related to any.
+
+Review and merge
+----------------
+
+* Once the pull request is submitted, the code will be reviewed.
+  If there are any comments, please fix them. You can make the changes locally, commit
+  them and push to the same branch of :ref:`origin <contribute_origin-upstream_origin>`
+  repository and they will be added to the pull request automatically.
+* Once the pull request is approved, it will be merged to the
+  `stable <https://github.com/adrybakov/rad-tools>`_ branch.
+
 
 
 Development process in details
@@ -105,6 +158,8 @@ Development process in details
 .. toctree::
    :maxdepth: 2
 
+   origin-upstream
+   branches
    features
    bugs
    documentation

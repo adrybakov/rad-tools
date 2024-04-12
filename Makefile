@@ -33,6 +33,7 @@ help:
 	@echo "    new-script - create templates for the new script"
 	@echo "    examples - update examples for all scripts"
 	@echo "    generate-script-docs - generate docs for all scripts"
+	@echo "    requirements - install all requirements for the development of the package"
 	@echo
 
 # $(O) is meant as a shortcut for $(SPHINXOPTS).
@@ -103,6 +104,7 @@ prepare-release:
 docs-pictures:
 	@python3 tools/plot-data-structure.py
 	@python3 tools/plot-notation.py
+	@python3 tools/plot-repositories.py
 
 new-script:
 	@python3 tools/new-script.py -n $(NAME)
@@ -112,3 +114,9 @@ examples:
 
 generate-script-docs:
 	@python3 tools/generate-script-docs.py -s $(SCRIPT)
+
+requirements:
+	@pip install -r requirements.txt
+	@pip install -r requirements-dev.txt
+	@pip install -r docs/requirements.txt
+	@pip install -r utest/requirements.txt

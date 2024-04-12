@@ -4,16 +4,3 @@ scipy
 matplotlib
 tqdm
 termcolor
-
-# PyPI
-twine
-wheel
-setuptools
-
-# code-linters
-black
-isort
-
-# dev-tools
-gitpython
-pre-commit
