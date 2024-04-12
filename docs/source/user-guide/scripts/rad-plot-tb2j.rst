@@ -1,13 +1,15 @@
 .. _rad-plot-tb2j:
 
-****************
-rad-plot-tb2j.py
-****************
+*************
+rad-plot-tb2j
+*************
 
 Script for visualizations of
 |TB2J|_  results.
 
 .. versionchanged:: 0.6 Renamed from ``tb2j-plotter.py``
+
+.. versionchanged:: 0.6 Renamed from ``rad-plot-tb2j.py`` to ``rad-plot-tb2j``
 
 The script displays isotropic exchange, distances and DMI
 (one output file for each).
@@ -42,7 +44,7 @@ for the script to run is:
 
 .. code-block:: bash
 
-    rad-plot-tb2j.py -if exchange.out
+    rad-plot-tb2j -if exchange.out
 
 which produces three pictures "exchange.iso.png",
 "exchange.distance.png", "exchange.distance.png". each file name has a shared
@@ -88,7 +90,7 @@ with some adjustments:
 
 .. code-block:: bash
 
-    rad-plot-tb2j.py -if exchange.out -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange" -on exchange_filtered
+    rad-plot-tb2j -if exchange.out -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange" -on exchange_filtered
 
 .. figure:: /../examples/rad-plot-tb2j/exchange_filtered.iso.png
     :align: center
@@ -114,9 +116,9 @@ first exchange neighbour, using different options:
 
 .. code-block:: bash
 
-    rad-plot-tb2j.py -if exchange.out -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange" -on exchange_filtered
-    rad-plot-tb2j.py -if exchange.out -wtp iso -tf template.txt -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange" -on exchange_template
-    rad-plot-tb2j.py -if exchange.out -wtp iso -R 1 0 0  1 1 0  0 1 0  -1 0 0  -1 -1 0  0 -1 0  -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange" -on exchange_R
+    rad-plot-tb2j -if exchange.out -wtp iso -maxd 5 -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange" -on exchange_filtered
+    rad-plot-tb2j -if exchange.out -wtp iso -tf template.txt -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange" -on exchange_template
+    rad-plot-tb2j -if exchange.out -wtp iso -R 1 0 0  1 1 0  0 1 0  -1 0 0  -1 -1 0  0 -1 0  -dc -sa 1.2 -sd 1.2 -t "First neighbour exchange" -on exchange_R
 
 where template file is the following:
 
@@ -145,13 +147,13 @@ The images should be the same:
 Modifying the Hamiltonian
 -------------------------
 
-By default ``rad-plot-tb2j.py`` displays the bonds as it is in the model.
+By default ``rad-plot-tb2j`` displays the bonds as it is in the model.
 :ref:`-fm <rad-plot-tb2j_form-model>` argument helps
 to reproduce particular spin Hamiltonian:
 
 .. code-block:: bash
 
-    rad-plot-tb2j.py -if exchange.out -tf template.txt -fm -dc -sa 1.2 -sd 1.2 -t "Forced symmetry exchange" -on exchange_formed_model
+    rad-plot-tb2j -if exchange.out -tf template.txt -fm -dc -sa 1.2 -sd 1.2 -t "Forced symmetry exchange" -on exchange_formed_model
 
 .. figure:: /../examples/rad-plot-tb2j/exchange_formed_model.iso.png
     :align: center

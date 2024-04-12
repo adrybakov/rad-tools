@@ -5,13 +5,13 @@
     ██╔══██╗██╔══██║██║  ██║╚════╝   ██║   ██║  ██║██║  ██║██║       ╚══██║
     ██║  ██║██║  ██║██████╔╝         ██║   ╚█████╔╝╚█████╔╝███████╗██████╔╝
     ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝          ╚═╝    ╚════╝  ╚════╝ ╚══════╝╚═════╝
-                          Version: 0.8.3                        ▄   ▄
+                          Version: 0.8.13                       ▄   ▄
                    Documentation: rad-tools.org                 █▀█▀█
-                  Release date: 14 September 2023               █▄█▄█
-        Git hash: 5b4dc9b04aecb7efebb9cd710c02e0ad7fb68e44       ███   ▄▄
+                    Release date: 4 March 2024                  █▄█▄█
+        Git hash: 43a49a2aaa1472db5dd040fa5186cc293e9b7e45       ███   ▄▄
                         Licence: GNU GPLv3                       ████ █  █
                                                                  ████    █
-            Generated on 20 September 2023 at 2:21:39            ▀▀▀▀▀▀▀▀
+              Generated on 12 April 2024 at 17:19:52             ▀▀▀▀▀▀▀▀
 Template is created based on the file:
 /Users/rybakov.ad/Codes/rad-tools/docs/examples/rad-make-template/exchange.out
 ================================================================================

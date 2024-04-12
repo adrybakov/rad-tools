@@ -39,22 +39,14 @@ def main(name: str):
         )
     name_py = name.replace("-", "_")
     # Check if the script already exists
-    if os.path.isfile(os.path.join(ROOT_DIR, "radtools", "score", f"{name_py}.py")):
+    if os.path.isfile(
+        os.path.join(ROOT_DIR, "src", "radtools", "score", f"{name_py}.py")
+    ):
         sys.tracebacklimit = 0
         raise FileExistsError(
             "".join(
                 [
                     colored("\nScript implementation file already exists\n", "red"),
-                    "If you want to rewrite it, delete it manually\n",
-                ]
-            )
-        )
-    if os.path.isfile(os.path.join(ROOT_DIR, "scripts", f"rad-{name}.py")):
-        sys.tracebacklimit = 0
-        raise FileExistsError(
-            "".join(
-                [
-                    colored("\nScript file already exists\n", "red"),
                     "If you want to rewrite it, delete it manually\n",
                 ]
             )
@@ -74,31 +66,15 @@ def main(name: str):
             )
         )
 
-    # Script interface
-    with open(
-        os.path.join(ROOT_DIR, "scripts", f"rad-{name}.py"), "w", encoding="utf-8"
-    ) as file:
-        file.write(
-            "#! /usr/local/bin/python3\n"
-            + "\n"
-            + "from radtools._osfix import _winwait\n"
-            + f"from radtools.score.{name_py} import create_parser, manager\n"
-            + "\n"
-            + 'if __name__ == "__main__":\n'
-            + "    parser = create_parser()\n"
-            + "    args = parser.parse_args()\n"
-            + "    manager(**vars(args))\n"
-            + "    _winwait()\n"
-        )
-
     # Script implementation
     with open(
-        os.path.join(ROOT_DIR, "radtools", "score", f"{name_py}.py"),
+        os.path.join(ROOT_DIR, "src", "radtools", "score", f"{name_py}.py"),
         "w",
         encoding="utf-8",
     ) as file:
         file.write(
             "from argparse import ArgumentParser\n"
+            + "from radtools._osfix import _winwait\n"
             + "\n"
             + "# This function is called by the script\n"
             + "def manager(input_filename):\n"
@@ -114,30 +90,30 @@ def main(name: str):
         "w",
         encoding="utf-8",
     ) as file:
-        N = len(f"rad-{name}.py")
+        N = len(f"rad-{name}")
         file.write(
             f".. _rad-{name}:\n"
             + "\n"
             + "*" * N
             + "\n"
-            + f"rad-{name}.py"
+            + f"rad-{name}"
             + "\n"
             + "*" * N
             + "\n"
         )
-    # setup.py
-    setup_content = []
-    with open(os.path.join(ROOT_DIR, "setup.py"), "r") as file:
+    # pyproject.toml
+    pyproject_content = []
+    with open(os.path.join(ROOT_DIR, "pyproject.toml"), "r") as file:
         for line in file:
-            setup_content.append(line)
-            if line.startswith("    scripts=["):
-                setup_content.append(f'        "scripts/rad-{name}.py",\n')
-    with open(os.path.join(ROOT_DIR, "setup.py"), "w", encoding="utf-8") as file:
-        file.writelines(setup_content)
+            pyproject_content.append(line)
+            if line.startswith("[project.scripts]"):
+                pyproject_content.append(f'rad-{name} = "radtools.score.{name}:main"\n')
+    with open(os.path.join(ROOT_DIR, "pyproject.toml"), "w", encoding="utf-8") as file:
+        file.writelines(pyproject_content)
 
     print("Templates are created")
     print(
-        f"Write manager() function in \n{os.path.abspath(os.path.join(ROOT_DIR, 'radtools', 'score', f'{name_py}.py'))}"
+        f"Write manager() function in \n{os.path.abspath(os.path.join(ROOT_DIR, 'src','radtools', 'score', f'{name_py}.py'))}"
     )
     print(
         f"Write documentation in \n{os.path.abspath(os.path.join(ROOT_DIR, 'docs', 'source', 'user-guide', 'scripts', f'rad-{name}.rst'))}"

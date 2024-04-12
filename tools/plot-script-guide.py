@@ -55,8 +55,6 @@ def main(script="all", debug=False):
     # Check versus input
     if re.fullmatch("rad\-.*", script):
         script = re.split("rad\-", script)[1]
-    if re.fullmatch(".*\.py", script):
-        script = re.split("\.py", script)[0]
     if script != "all":
         if script in dirnames:
             dirnames = [script]

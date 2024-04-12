@@ -89,10 +89,13 @@ pip: prepare-release
 	-@rm -r dist
 	-@rm -r build
 	-@rm -r radtools.egg-info
-	@python3 setup.py sdist bdist_wheel
+	@python3 -m build
 	@python3 -m twine upload --repository pypi dist/* --verbose
 	@git tag -a "v$(VERSION)" -m "Version $(VERSION)"
 	@git push origin "v$(VERSION)"
+	@git add src/radtools/__init__.py
+	@git commit -m "Post-release commit"
+	@git push
 
 
 bravais-pictures:

@@ -1,13 +1,15 @@
 .. _rad-identify-wannier-centres:
 
-*******************************
-rad-identify-wannier-centres.py
-*******************************
+****************************
+rad-identify-wannier-centres
+****************************
 
 Identifies wannier centres with respect to the atom or to
 the point between the atom`s pair.
 
 .. versionchanged:: 0.6 Renamed from ``identify-wannier-centres.py``
+
+.. versionchanged:: 0.9.0 Renamed from ``rad-identify-wannier-centres.py`` to ``rad-identify-wannier-centres``
 
 Use :ref:`--span <rad-identify-wannier-centres_span>` option to increase the
 distance span for the search.
@@ -33,7 +35,7 @@ Lets run the code:
 
 .. code-block:: bash
 
-    rad-identify-wannier-centres.py -if example_centres.xyz
+    rad-identify-wannier-centres -if example_centres.xyz
 
 This command creates an output file "example_centre.xyz_identified"
 in the directory of the input file with the following content:
@@ -52,7 +54,7 @@ all the atoms:
 
 .. code-block:: bash
 
-    rad-identify-wannier-centres.py -if example_centres.xyz --span 0.11 --output-name example_centres.xyz_bigger_span
+    rad-identify-wannier-centres -if example_centres.xyz --span 0.11 --output-name example_centres.xyz_bigger_span
 
 This command produces example_centres.xyz_bigger_span file:
 

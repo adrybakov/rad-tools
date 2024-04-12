@@ -31,13 +31,14 @@ classifiers = [
 ]
 
 [project.scripts]
+rad-test = "radtools.score.test:main"
 radtools = "radtools.__main__:main"
 rad-plot-tb2j = "radtools.score.plot_tb2j:main"
 rad-plot-tb2j-magnons = "radtools.score.plot_tb2j_magnons:main"
 rad-plot-dos = "radtools.score.plot_dos:main"
 rad-plot-flatbands = "radtools.score.plot_fatbands:main"
 rad-make-template = "radtools.score.make_template:main"
-rad-extract-tb2j = "radtools.score.exctract_tb2j:main"
+rad-extract-tb2j = "radtools.score.extract_tb2j:main"
 rad-identify-wannier-centres = "radtools.score.identify_wannier_centres:main"
 compute-energies = "radtools.score.compute_energies:main"
 phonopy-plotter = "radtools.phonopy_plotter:main"

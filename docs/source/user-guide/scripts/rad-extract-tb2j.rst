@@ -1,13 +1,15 @@
 .. _rad-extract-tb2j:
 
-*******************
-rad-extract-tb2j.py
-*******************
+****************
+rad-extract-tb2j
+****************
 
 Script for extracting of template-based Hamiltonian from
 |TB2J|_ results.
 
 .. versionchanged: 0.6 Renamed from ``tb2j-extractor.py``
+
+.. versionchanged: 0.9.0 Renamed from ``rad-extract-tb2j.py`` to ``rad-extract-tb2j``
 
 If :ref:`--output_name <rad-extract-tb2j_output-name>` is not provided, then the result is
 printed to the console, otherwise it is written to the text file.
@@ -41,7 +43,7 @@ and exchange output is grouped based on the names provided in the template:
 
 .. code-block:: bash
 
-    rad-extract-tb2j.py -fm -if exchange.out -tf template.txt -on summary_formed_model.txt
+    rad-extract-tb2j -fm -if exchange.out -tf template.txt -on summary_formed_model.txt
 
 .. dropdown:: summary with forced symmetry
 
@@ -55,7 +57,7 @@ Hamiltonian is filtered with the :ref:`--max-distance <rad-extract-tb2j_max-dist
 
 .. code-block:: bash
 
-    rad-extract-tb2j.py -if exchange.out -tf template.txt -on summary.txt
+    rad-extract-tb2j -if exchange.out -tf template.txt -on summary.txt
 
 .. dropdown:: summary without forced symmetry
 

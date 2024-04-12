@@ -11,7 +11,7 @@ help message with the short summary of the arguments.
 
 .. code-block:: console
 
-    script-name.py -h
+    script-name -h
 
 Files from the usage examples are available :examples:`here <>`.
 

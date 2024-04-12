@@ -1,8 +1,11 @@
 .. _rad-make-template:
 
-********************
-rad-make-template.py
-********************
+*****************
+rad-make-template
+*****************
+
+
+.. versionchanged:: 0.9.0 Renamed from ``rad-make-template.py`` to ``rad-make-template``
 
 Script for the creation of template`s draft.
 
@@ -32,13 +35,13 @@ Minimal usage scenario creates template draft`s with the command
 
 .. code-block:: bash
 
-    rad-make-template.py
+    rad-make-template
 
 The code:
 
 .. code-block:: bash
 
-    rad-make-template.py -if exchange.out -on full_template.txt
+    rad-make-template -if exchange.out -on full_template.txt
 
 produces the file with the full template:
 
@@ -53,7 +56,7 @@ with the distance less or equal 8 Angstroms.
 
 .. code-block:: bash
 
-    rad-make-template.py -if exchange.out -on filtered_template.txt -maxd 8
+    rad-make-template -if exchange.out -on filtered_template.txt -maxd 8
 
 .. dropdown:: filtered_template.txt
 

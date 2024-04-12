@@ -1,12 +1,14 @@
 .. _rad-plot-tb2j-magnons:
 
-************************
-rad-plot-tb2j-magnons.py
-************************
+*********************
+rad-plot-tb2j-magnons
+*********************
 
 Script for plotting magnon dispersion from |TB2J|_ "exchange.out" file.
 
 .. versionadded:: 0.7.12
+
+.. versionchanged:: 0.9.0 Renamed from ``rad-plot-tb2j-magnons.py`` to ``rad-plot-tb2j-magnons``
 
 Script plots magnon dispersion spectra following the algorithm described in
 :ref:`library_magnon-dispersion-method`.
@@ -58,7 +60,7 @@ high symmetry points using :ref:`rad-plot-tb2j-magnons_k-points` argument:
 
 .. code-block:: bash
 
-    rad-plot-tb2j-magnons.py -if exchange.out -kps X1 "$\mathrm{X_1}$" -0.5 0 0 Y1 "$\mathrm{Y_1}$" 0 -0.5 0 -kp X1-G-Y1 -s Cr1 0 0 1.5 Cr2 0 0 1.5 -on CrSBr-custom-kpoints
+    rad-plot-tb2j-magnons -if exchange.out -kps X1 "$\mathrm{X_1}$" -0.5 0 0 Y1 "$\mathrm{Y_1}$" 0 -0.5 0 -kp X1-G-Y1 -s Cr1 0 0 1.5 Cr2 0 0 1.5 -on CrSBr-custom-kpoints
 
 .. figure:: ../../../examples/rad-plot-tb2j-magnons/CrSBr-custom-kpoints.png
     :target: ../../../_images/CrSBr-custom-kpoints.png
@@ -131,7 +133,7 @@ the "exchange.out" file and the spin vectors for the two Cr atoms:
 
 .. code-block:: bash
 
-    rad-plot-tb2j-magnons.py -if exchange.out -s Cr1 0 0 1.5 Cr2 0 0 1.5 -on CrSBr
+    rad-plot-tb2j-magnons -if exchange.out -s Cr1 0 0 1.5 Cr2 0 0 1.5 -on CrSBr
 
 .. figure:: ../../../examples/rad-plot-tb2j-magnons/CrSBr.png
     :target: ../../../_images/CrSBr.png
@@ -153,7 +155,7 @@ You can customise the k-path using :ref:`--k-path <rad-plot-tb2j-magnons_k-path>
 
 .. code-block:: bash
 
-    rad-plot-tb2j-magnons.py -if exchange.out -s Cr1 0 0 1.5 Cr2 0 0 1.5 -kp G-X-S-Y-G -on CrSBr-custom-path
+    rad-plot-tb2j-magnons -if exchange.out -s Cr1 0 0 1.5 Cr2 0 0 1.5 -kp G-X-S-Y-G -on CrSBr-custom-path
 
 .. figure:: ../../../examples/rad-plot-tb2j-magnons/CrSBr-custom-path.png
     :target: ../../../_images/CrSBr-custom-path.png
