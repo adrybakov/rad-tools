@@ -404,7 +404,8 @@ class Kpoints:
 ###function checking if the k points in the list k list are inside the BZ
 def downfold_inside_brillouin_zone(
     k_points_list,
-    brillouin_primitive_vectors_3D):
+    brillouin_primitive_vectors_3D,
+    chosen_plane=[1,1,1]):
    
     matrix_transformation_crystal_to_cartesian=np.zeros((3,3),dtype=float)
     matrix_transformation_cartesian_to_crystal=np.zeros((3,3),dtype=float)
@@ -423,29 +424,34 @@ def downfold_inside_brillouin_zone(
         indices=[]
         for i in range(number_k_points):
             count=0
+            shift=0
             for r in range(3):
-                if transformed_k_points_list[i,r]>=1.0 or transformed_k_points_list[i,r]<0:
-                    count+=r
-                    for d in range(3):
-                        k_points_list[i,d]=k_points_list[i,d]-brillouin_primitive_vectors_3D[r,d]*np.sign(transformed_k_points_list[i,r])
-            indices.append(count)
+                if chosen_plane[r]!=0:
+                    if transformed_k_points_list[i,r]>=1.0 or transformed_k_points_list[i,r]<0.0:
+                        for d in range(3):
+                            k_points_list[i,d]=k_points_list[i,d]-brillouin_primitive_vectors_3D[r,d]*np.sign(transformed_k_points_list[i,r])
+                        shift=count+1
+                count+=1
+            indices.append(shift)
     else:
         transformed_k_points_list = np.zeros(3,dtype=float)
         ### writing k points in crystal coordinates
         for  r in range(3):
             for s in range(3):
                 transformed_k_points_list[r]+=matrix_transformation_cartesian_to_crystal[r,s]*k_points_list[s]
-    
         ### checking if any point of the list is outside the first brillouin zone
         ### to each k point is associated a int 0,1,2,3 if it goes over the boundaries
         indices=[]
         count=0
+        shift=0
         for r in range(3):
-            if transformed_k_points_list[r]>=1.0 or transformed_k_points_list[r]<0:
-                count+=r
-                for d in range(3):
-                    k_points_list[d]=k_points_list[d]-brillouin_primitive_vectors_3D[r,d]*np.sign(transformed_k_points_list[r])
-            indices.append(count)
+            if chosen_plane[r]!=0:
+                if transformed_k_points_list[r]>=1.0 or transformed_k_points_list[r]<0.0:
+                    for d in range(3):
+                        k_points_list[d]=k_points_list[d]-brillouin_primitive_vectors_3D[r,d]*np.sign(transformed_k_points_list[r])
+                    shift=count+1
+            count+=1
+            indices.append(shift)
     return k_points_list,indices
 
 ### function applying symmetry analysis to a list of k points, the symmetry operations considered are the point group ones
@@ -855,8 +861,21 @@ def k_points_generator_2D(
             else:
                 k_points_grid[:,:3],indices=downfold_inside_brillouin_zone(
                     k_points_grid[:,:3],
-                    old_brillouin_primitive_vectors_3d)
-                print(k_points_grid,indices)
+                    old_brillouin_primitive_vectors_3d,
+                    chosen_plane)
+                ##indices=[0]*len(indices_tmp)
+                ##counting=1
+                ##for i in range(3):
+                ##    if chosen_plane[i]!=0:
+                ##        for j in range(len(indices_tmp)):
+                ##            if i==indices_tmp[j]:
+                ##                indices[j]=counting
+                ##        counting+=1
+                ##    else:
+                ##        for j in range(len(indices_tmp)):
+                ##            if i==indices_tmp[j]:
+                ##                indices[j]=0
+                ##print(k_points_grid,indices)
                 parallelogram=[]
                 for i in range(k0):
                     for j in range(k1):
@@ -1446,15 +1465,15 @@ if __name__ == "__main__":
         shift_in_space,
         0
     )
-    ##print(not_refined_k_points_list)
-    ##print(parallelograms)
-    ##printing_covering_BZ_2D(
-    ##    brillouin_primitive_vectors_3d,
-    ##    chosen_plane,
-    ##    not_refined_k_points_list,
-    ##    parallelograms,
-    ##    number_vertices
-    ##)
+    print(not_refined_k_points_list)
+    print(parallelograms)
+    printing_covering_BZ_2D(
+        brillouin_primitive_vectors_3d,
+        chosen_plane,
+        not_refined_k_points_list,
+        parallelograms,
+        number_vertices
+    )
 
     #DYNAMICAL REFINMENT
     brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
@@ -1467,7 +1486,7 @@ if __name__ == "__main__":
             count += 1
     
     ####tuple with final 8 are giving problems????
-    position_little_paths_to_refine=[39]
+    position_little_paths_to_refine=[40,50]
     not_refined_k_points_list,parallelograms=dynamical_refinment_little_paths_2D(
         parallelograms,
         not_refined_k_points_list,
@@ -1491,34 +1510,34 @@ if __name__ == "__main__":
         number_vertices
     )
 
-    #####LITTLE TRIANGLES
-    number_vertices=3
-    refined_k_points_list,triangles=k_points_generator_2D(
-        brillouin_primitive_vectors_3d,
-        brillouin_primitive_vectors_3d,
-        chosen_plane,
-        grid_spacing,
-        covering_BZ,
-        default_gridding,
-        True,
-        refinment_spacing,
-        refinment_iterations,
-        symmetries,
-        threshold_symmetry,
-        shift_in_plane,
-        shift_in_space,
-        0
-        )
-    
+    #######LITTLE TRIANGLES
+    ##number_vertices=3
+    ##refined_k_points_list,triangles=k_points_generator_2D(
+    ##    brillouin_primitive_vectors_3d,
+    ##    brillouin_primitive_vectors_3d,
+    ##    chosen_plane,
+    ##    grid_spacing,
+    ##    covering_BZ,
+    ##    default_gridding,
+    ##    True,
+    ##    refinment_spacing,
+    ##    refinment_iterations,
+    ##    symmetries,
+    ##    threshold_symmetry,
+    ##    shift_in_plane,
+    ##    shift_in_space,
+    ##    0
+    ##    )
+    ##
     ##print(refined_k_points_list)
     ##print(triangles)
-    printing_covering_BZ_2D(
-        brillouin_primitive_vectors_3d,
-        chosen_plane,
-        refined_k_points_list,
-        triangles,
-        number_vertices
-    )
+    ##printing_covering_BZ_2D(
+    ##    brillouin_primitive_vectors_3d,
+    ##    chosen_plane,
+    ##    refined_k_points_list,
+    ##    triangles,
+    ##    number_vertices
+    ##)
     #####DYNAMICAL REFINMENT
     ##brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
     ##normalized_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
