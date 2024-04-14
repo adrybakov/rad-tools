@@ -29,6 +29,7 @@ from scipy.interpolate import griddata
 from scipy.spatial.transform import Rotation
 from scipy.spatial import Delaunay
 from radtools.geometry import absolute_to_relative
+import random
 from scipy.spatial.distance import cdist
 import math
 from operator import itemgetter
@@ -478,18 +479,21 @@ def symmetry_analysis(
         for j in range(i+1,number_elements):
             ### for each pair considering all the symmetry operations
             for rotvec in symmetries:
-                transformed_k_point = (
-                    Rotation.from_rotvec(rotvec).as_matrix()
-                    @ (k_points_list[j] - k_fixed_point)
-                    + k_fixed_point
-                )
-                ### if any degeneracy is detected, the check on all the symmetry operations given is stopped
-                if np.allclose(
-                    k_points_list[i], transformed_k_point, atol=threshold_symmetry
-                ):
-                    check_degeneracy[i][j] = True
-                    no_degeneracies = False
-                    break
+                multiple_rotations=int(2*np.pi//np.linalg.norm(rotvec)+1)
+                for t in range(1,multiple_rotations):
+                    rotvec_rotated=[rotvec[s]*t for s in range(3)] 
+                    transformed_k_point = (
+                        Rotation.from_rotvec(rotvec_rotated).as_matrix()
+                        @ (k_points_list[j] - k_fixed_point)
+                        + k_fixed_point
+                    )
+                    ### if any degeneracy is detected, the check on all the symmetry operations given is stopped
+                    if np.allclose(
+                        k_points_list[i], transformed_k_point, atol=threshold_symmetry
+                    ):
+                        check_degeneracy[i][j] = True
+                        no_degeneracies = False
+                        break
 
     ### if no degeneracy is detected, the same result as in the case of no symmetry operation is given
     if no_degeneracies:
@@ -671,11 +675,27 @@ def local_refinment_with_symmetry_analysis(
             if k_point_tmp_weight != 0:
                 ### a sub_grid of points is associated to each k point
                 k_point_tmp_subgrid = np.zeros((4, 4),dtype=float)
-                k_point_tmp_subgrid[:,:3] = k_point_tmp
-                k_point_tmp_subgrid[0,:3] +=  normalized_brillouin_primitive_vectors_2d[0,:]*refinment_spacing
-                k_point_tmp_subgrid[1,:3] -=  normalized_brillouin_primitive_vectors_2d[0,:]*refinment_spacing
-                k_point_tmp_subgrid[2,:3] +=  normalized_brillouin_primitive_vectors_2d[1,:]*refinment_spacing
-                k_point_tmp_subgrid[3,:3] -=  normalized_brillouin_primitive_vectors_2d[1,:]*refinment_spacing
+                ### the subset of points is randomly built
+                k_point_tmp_subgrid[:,:3] = k_point_tmp 
+                ### considering a grid orthogonal to the brillouin primitive vectors or along randomly
+                case=random.uniform(-1,1)
+                if case<0:
+                    rotvec=np.cross(normalized_brillouin_primitive_vectors_2d[0],normalized_brillouin_primitive_vectors_2d[1])
+                    rotvec=(rotvec*np.pi/2)/(rotvec@rotvec)
+                    orthogonal_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
+                    for s in range(2):
+                        orthogonal_brillouin_primitive_vectors_2d[s]= Rotation.from_rotvec(rotvec).as_matrix() @ normalized_brillouin_primitive_vectors_2d[s]
+                else:
+                    orthogonal_brillouin_primitive_vectors_2d=normalized_brillouin_primitive_vectors_2d
+                ##orthogonal_brillouin_primitive_vectors_2d=normalized_brillouin_primitive_vectors_2d
+                k_point_tmp_subgrid[0,:3] += orthogonal_brillouin_primitive_vectors_2d[0,:]*refinment_spacing
+                k_point_tmp_subgrid[1,:3] -= orthogonal_brillouin_primitive_vectors_2d[0,:]*refinment_spacing
+                k_point_tmp_subgrid[2,:3] += orthogonal_brillouin_primitive_vectors_2d[1,:]*refinment_spacing
+                k_point_tmp_subgrid[3,:3] -= orthogonal_brillouin_primitive_vectors_2d[1,:]*refinment_spacing
+                #for t in range(0,8,2):
+                #    a_coefficient=random.uniform(-1,1)
+                #    k_point_tmp_subgrid[t,:3] += a_coefficient*normalized_brillouin_primitive_vectors_2d[0,:]*refinment_spacing \
+                #                                    +np.sqrt(1-pow(a_coefficient,2))*normalized_brillouin_primitive_vectors_2d[1,:]*refinment_spacing
                 ### the weight of the k point is redistributed on the subgrid taking into account a symmetry analysis
                 k_point_tmp_subgrid = symmetry_analysis(
                     k_point_tmp,
@@ -1336,9 +1356,9 @@ def printing_covering_BZ_2D(
             little_path[count]=[k_points_list[indx,s] for s in range(3)]
             if indx_2[count]!=0:
                 for s in range(3):
-                    if indx_2[count]==1:
+                    if indx_2[count]==2:
                         little_path[count][s]+=brillouin_primitive_vectors_2d[1,s]
-                    elif indx_2[count]==2:
+                    elif indx_2[count]==1:
                         little_path[count][s]+=brillouin_primitive_vectors_2d[0,s]
                     else:
                         little_path[count][s]+=brillouin_primitive_vectors_2d[1,s]+brillouin_primitive_vectors_2d[0,s]
@@ -1396,13 +1416,13 @@ if __name__ == "__main__":
     ###brillouin_primitive_vectors_3d[1]=[-3.588,6.215,0]
     ###brillouin_primitive_vectors_3d[2]=[0,0,21.000]
     chosen_plane=[1,1,0]
-    symmetries=[[0,0,0]]
+    symmetries=[[0,0,np.pi]]
     grid_spacing=0.1
-    refinment_iterations=2
-    refinment_spacing=0.001
+    refinment_iterations=4
+    refinment_spacing=0.05
     threshold_symmetry=0.001
     threshold_minimal_refinment=0.000000001
-    default_gridding=10
+    default_gridding=100
     ###count=0
     shift_in_plane=[0,0]
     shift_in_space=[0,0,0]
@@ -1446,7 +1466,8 @@ if __name__ == "__main__":
             normalized_brillouin_primitive_vectors_2d[count] = brillouin_primitive_vectors_2d[count]/(brillouin_primitive_vectors_2d[count]@brillouin_primitive_vectors_2d[count])
             count += 1
     
-    position_little_paths_to_refine=[20,25]
+    ####tuple with final 8 are giving problems????
+    position_little_paths_to_refine=[39]
     not_refined_k_points_list,parallelograms=dynamical_refinment_little_paths_2D(
         parallelograms,
         not_refined_k_points_list,
@@ -1471,32 +1492,33 @@ if __name__ == "__main__":
     )
 
     #####LITTLE TRIANGLES
-    ##number_vertices=3
-    ##refined_k_points_list,triangles=k_points_generator_2D(
-    ##    brillouin_primitive_vectors_3d,
-    ##    brillouin_primitive_vectors_3d,
-    ##    chosen_plane,
-    ##    grid_spacing,
-    ##    covering_BZ,
-    ##    default_gridding,
-    ##    True,
-    ##    refinment_spacing,
-    ##    refinment_iterations,
-    ##    symmetries,
-    ##    threshold_symmetry,
-    ##    shift_in_plane,
-    ##    shift_in_space,
-    ##    0
-    ##    )
-    ####print(refined_k_points_list)
-    ####print(triangles)
-    ##printing_covering_BZ_2D(
-    ##    brillouin_primitive_vectors_3d,
-    ##    chosen_plane,
-    ##    refined_k_points_list,
-    ##    triangles,
-    ##    number_vertices
-    ##)
+    number_vertices=3
+    refined_k_points_list,triangles=k_points_generator_2D(
+        brillouin_primitive_vectors_3d,
+        brillouin_primitive_vectors_3d,
+        chosen_plane,
+        grid_spacing,
+        covering_BZ,
+        default_gridding,
+        True,
+        refinment_spacing,
+        refinment_iterations,
+        symmetries,
+        threshold_symmetry,
+        shift_in_plane,
+        shift_in_space,
+        0
+        )
+    
+    ##print(refined_k_points_list)
+    ##print(triangles)
+    printing_covering_BZ_2D(
+        brillouin_primitive_vectors_3d,
+        chosen_plane,
+        refined_k_points_list,
+        triangles,
+        number_vertices
+    )
     #####DYNAMICAL REFINMENT
     ##brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
     ##normalized_brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
