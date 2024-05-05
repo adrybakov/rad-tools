@@ -1507,12 +1507,15 @@ def printing_covering_BZ_2D(
     ### substituing to the vertices the k points coordinates
     new_little_paths=[]
     for i in range(number_little_paths):
+        ###print(little_paths[i])
         indx_1=[little_paths[i][r][0] for r in range(number_vertices)]
         indx_2=[little_paths[i][r][1] for r in range(number_vertices)]
+        ###print(indx_2)
         count=0
         for indx in indx_1:
             little_path[count]=[k_points_list[indx,s] for s in range(3)]
             if indx_2[count]!=0:
+                ###print(little_path[count])
                 for s in range(3):
                     if indx_2[count]==2:
                         little_path[count][s]+=brillouin_primitive_vectors_2d[1,s]
@@ -1521,17 +1524,24 @@ def printing_covering_BZ_2D(
                     else:
                         little_path[count][s]+=brillouin_primitive_vectors_2d[1,s]+brillouin_primitive_vectors_2d[0,s]
             count+=1
+        ###print(little_path)
         new_little_paths.extend(little_path)
 
     ### reordering the list
     number_little_paths=int(len(new_little_paths)/number_vertices)
     new_little_paths=np.reshape(new_little_paths,(number_little_paths,number_vertices,3))
+   
     ### considering only coordinates in the chosen plane
+    ### converting to crystal coordinates and selecting only those in coordinates in the plane
+    matrix_transformation_crystal_to_cartesian=np.matrix(brillouin_primitive_vectors_3d).transpose()
+    matrix_transformation_cartesian_to_crystal=np.linalg.inv(matrix_transformation_crystal_to_cartesian)
     new_little_paths_projected=np.zeros((number_little_paths,number_vertices,2),dtype=float)
+    chosen_directions=[s for s in range(3) if chosen_plane[s]!=0]
     for i in range(number_little_paths):
         for j in range(number_vertices):
-            for r in range(2):
-                new_little_paths_projected[i,j,r]+=(new_little_paths[i,j]@brillouin_primitive_vectors_2d[r])
+            for s in range(2):
+                new_little_paths_projected[i,j,s]=(matrix_transformation_cartesian_to_crystal[chosen_directions[s],:]@new_little_paths[i,j,:])
+    ##new_little_paths_projected=new_little_paths[:,:,:2]
     fig,ax=plt.subplots()
     patches=[]
     for i in range(number_little_paths):
@@ -1547,72 +1557,73 @@ def printing_covering_BZ_2D(
     plt.show()
 ##
 ####### TESTING INPUT
-##if __name__ == "__main__":
-##    import timeit
-##    import os
-##    import matplotlib
-##    from matplotlib.artist import Artist
-##    import matplotlib.pyplot as plt
-##    from matplotlib.patches import Polygon
-##    from matplotlib.collections import PatchCollection
-##    import numpy as np
-##    ##from termcolor import cprint
-##    from radtools.io.internal import load_template
-##    from radtools.io.tb2j import load_tb2j_model
-##    from radtools.magnons.dispersion import MagnonDispersion
-##    from radtools.decorate.stats import logo
-##    from radtools.spinham.constants import TXT_FLAGS
-##    from radtools.decorate.array import print_2d_array
-##    from radtools.decorate.axes import plot_hlines
-##
-##    brillouin_primitive_vectors_3d=np.zeros((3,3),dtype=float)
-##    brillouin_primitive_vectors_3d[0]=[1,0,0]
-##    brillouin_primitive_vectors_3d[1]=[0,1,0]
-##    brillouin_primitive_vectors_3d[2]=[0,0,1]
-##    ###brillouin_primitive_vectors_3d=np.zeros((3,3),dtype=float)
-##    ###brillouin_primitive_vectors_3d[0]=[7.176,0,0]
-##    ###brillouin_primitive_vectors_3d[1]=[-3.588,6.215,0]
-##    ###brillouin_primitive_vectors_3d[2]=[0,0,21.000]
-##    chosen_plane=[1,1,0]
-##    symmetries=[[0,0,np.pi]]
-##    grid_spacing=0.1
-##    refinment_iterations=4
-##    refinment_spacing=0.05
-##    threshold_symmetry=0.001
-##    threshold_minimal_refinment=0.000000001
-##    default_gridding=100
-##    ###count=0
-##    shift_in_plane=[0,0]
-##    shift_in_space=[0,0,0]
-##    covering_BZ=True
-##
-##    ### LITTLE PARALLELOGRAMS
-##    number_vertices=4
-##    not_refined_k_points_list,parallelograms=k_points_generator_2D(
-##        brillouin_primitive_vectors_3d,
-##        brillouin_primitive_vectors_3d,
-##        chosen_plane,
-##        grid_spacing,
-##        covering_BZ,
-##        default_gridding,
-##        False,
-##        refinment_spacing,
-##        refinment_iterations,
-##        symmetries,
-##        threshold_symmetry,
-##        shift_in_plane,
-##        shift_in_space,
-##        0
-##    )
-##    print(not_refined_k_points_list)
-##    print(parallelograms)
-##    ###printing_covering_BZ_2D(
-##    ###    brillouin_primitive_vectors_3d,
-##    ###    chosen_plane,
-##    ###    not_refined_k_points_list,
-##    ###    parallelograms,
-##    ###    number_vertices
-##    ###)
+if __name__ == "__main__":
+    import timeit
+    import os
+    import matplotlib
+    from matplotlib.artist import Artist
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import Polygon
+    from matplotlib.collections import PatchCollection
+    import numpy as np
+    ##from termcolor import cprint
+    from radtools.io.internal import load_template
+    from radtools.io.tb2j import load_tb2j_model
+    from radtools.magnons.dispersion import MagnonDispersion
+    from radtools.decorate.stats import logo
+    from radtools.spinham.constants import TXT_FLAGS
+    from radtools.decorate.array import print_2d_array
+    from radtools.decorate.axes import plot_hlines
+
+    brillouin_primitive_vectors_3d=np.zeros((3,3),dtype=float)
+    brillouin_primitive_vectors_3d[0]=[1,1,0]
+    brillouin_primitive_vectors_3d[1]=[0,1,0]
+    brillouin_primitive_vectors_3d[2]=[0,0,1]
+    ###brillouin_primitive_vectors_3d=np.zeros((3,3),dtype=float)
+    ###brillouin_primitive_vectors_3d[0]=[7.176,0,0]
+    ###brillouin_primitive_vectors_3d[1]=[-3.588,6.215,0]
+    ###brillouin_primitive_vectors_3d[2]=[0,0,21.000]
+    chosen_plane=[1,1,0]
+    symmetries=[[0,0,0]]
+    grid_spacing=0.1
+    refinment_iterations=4
+    refinment_spacing=0.05
+    threshold_symmetry=0.001
+    threshold_minimal_refinment=0.000000001
+    default_gridding=100
+    ###count=0
+    shift_in_plane=[0,0]
+    shift_in_space=[0,0,0]
+    covering_BZ=True
+
+    ### LITTLE PARALLELOGRAMS
+    number_vertices=4
+    not_refined_k_points_list,parallelograms=k_points_generator_2D(
+        brillouin_primitive_vectors_3d,
+        brillouin_primitive_vectors_3d,
+        chosen_plane,
+        grid_spacing,
+        covering_BZ,
+        default_gridding,
+        False,
+        refinment_spacing,
+        refinment_iterations,
+        symmetries,
+        threshold_symmetry,
+        shift_in_plane,
+        shift_in_space,
+        0
+    )
+    ##print(not_refined_k_points_list)
+    ###print(parallelograms)
+    printing_covering_BZ_2D(
+        brillouin_primitive_vectors_3d,
+        chosen_plane,
+        not_refined_k_points_list,
+        parallelograms,
+        number_vertices
+    )
+
 ##
 ##    #DYNAMICAL REFINMENT
 ##    brillouin_primitive_vectors_2d=np.zeros((2,3),dtype=float)
