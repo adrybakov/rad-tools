@@ -186,7 +186,8 @@ class Berry_curvature:
 
     def circuitation_over_a_path(self,u_values_along_the_path,k_point_weights_along_the_path,number_modes,number_eigenspaces,magnonic_branches,number_vertices
     ):
-        print(u_values_along_the_path)
+        print(u_values_along_the_path,number_eigenspaces,magnonic_branches,k_point_weights_along_the_path)
+        print(u_values_along_the_path[0][0])
         phases=np.zeros(number_eigenspaces,dtype=complex)
         if number_eigenspaces == number_modes:
             for n in range(number_eigenspaces):
@@ -195,9 +196,10 @@ class Berry_curvature:
                     phases[n]+=np.angle(np.asarray(u_values_along_the_path[count,n]@u_values_along_the_path[count+1,n]))*k_point_weights_along_the_path[count]
                     count+=1
                 phases[n]+=np.angle(np.asarray(u_values_along_the_path[number_vertices-1,n]@u_values_along_the_path[0,n]))*k_point_weights_along_the_path[number_vertices-1]  
-                print(phases)
+                ###print(phases)
         ### in the degenerate case the Berry curvature is calculated using the Non-Abelian formulation
         else:
+           ## print("dentro degenerate procedure")
             for n in range(number_eigenspaces):
                 bands=[magnonic_branches==n]
                 count=0
@@ -262,14 +264,14 @@ class Berry_curvature:
         
         print("magnonic_surfaces ")
         _,us,magnonic_branches,number_eigenspaces=self.magnonic_surfaces(refined_k_points_list,False,True,threshold_omega)
-        print(us)
+        print(magnonic_branches)
         
         number_k_points=refined_k_points_list.shape[0]
         with open("magnonic_surfaces.data",'w') as file:
             for i in range(number_k_points):
                 file.write(str(refined_k_points_list[i][0])+" "+str(refined_k_points_list[i][1])+" "+str(refined_k_points_list[i][2])+" ")
                 for j in range(number_eigenspaces):
-                    file.write(str(float(_[i][j]))+" ")
+                    file.write(str(_[i][j].real)+" ")
                 file.write("\n")
 
         if triangulation==True:
@@ -291,43 +293,43 @@ class Berry_curvature:
             while i < number_little_paths:
                # print(i/number_little_paths)
                 for j in range(number_vertices):
+                    print(i,j,little_paths[i][j])
                     u[j]=us[little_paths[i][j][0]]
-                    weights[j]=1.0
+                    weights[j]=1.0/number_k_points
                 phases[i]=self.circuitation_over_a_path(u,weights,number_modes,number_eigenspaces,magnonic_branches,number_vertices)
                 chern+=phases[i]
                 i+=1
             
-            ###dynamical_refinment=False
+            dynamical_refinment=False
 
             #### condition for dynamical refinment (checking that the Chern numbers are integer numbers)
             if np.any(np.asarray(list(map(lambda x: float(x).is_integer(),chern)))) == False:
                 average_phase=np.mean(phases)
-                print("dentro")
                 old_chern+=chern
                 max_indices=[i for i in range(number_little_paths) if np.mean(phases[i])>average_phase-threshold_dynamical_refinment or np.mean(phases[i])<average_phase+threshold_dynamical_refinment]
                 selected_little_paths=little_paths[max_indices,:]
-
-                refined_k_points_list,little_paths=dynamical_refinment_little_paths_2D(
-                                                                little_paths,
-                                                                refined_k_points_list,
-                                                                selected_little_paths,
-                                                                number_vertices,
-                                                                refinment_iterations,
-                                                                symmetries,
-                                                                threshold_symmetry,
-                                                                brillouin_primitive_vectors_3d,
-                                                                chosen_plane,
-                                                                brillouin_primitive_vectors_2d,
-                                                                normalized_brillouin_primitive_vectors_2d,
-                                                                0.0000000000001,
-                                                                default_gridding
-                                                            )
+              
+                ###refined_k_points_list,little_paths=dynamical_refinment_little_paths_2D(
+                ###                                                little_paths,
+                ###                                                refined_k_points_list,
+                ###                                                selected_little_paths,
+                ###                                                number_vertices,
+                ###                                                refinment_iterations,
+                ###                                                symmetries,
+                ###                                                threshold_symmetry,
+                ###                                                brillouin_primitive_vectors_3d,
+                ###                                                chosen_plane,
+                ###                                                brillouin_primitive_vectors_2d,
+                ###                                                normalized_brillouin_primitive_vectors_2d,
+                ###                                                0.0000000000001,
+                ###                                                default_gridding
+                ###                                            )
                 if dynamical_refinment_flag==True:
                     dynamical_refinment=False
             else:
                 dynamical_refinment=False
         
-        return number_eigenspaces,phases,refined_k_points_list,little_paths,brillouin_primitive_vectors_2d
+        return number_eigenspaces,phases,refined_k_points_list,little_paths,brillouin_primitive_vectors_2d,chern
 
 ### TESTING INPUT
 if __name__ == "__main__":
@@ -353,13 +355,21 @@ if __name__ == "__main__":
         atom_spin=list(values)
         atom.spin_vector=atom_spin
 
+    primitive_vectors_3d=np.zeros((3,3),dtype=float)
+    primitive_vectors_3d[0]=[7.176,0,0]
+    primitive_vectors_3d[1]=[-3.588,6.215,0]
+    primitive_vectors_3d[2]=[0,0,21.000]
+    volume=np.dot(np.cross(primitive_vectors_3d[0],primitive_vectors_3d[1]),primitive_vectors_3d[2])/(2*np.pi)
+
     brillouin_primitive_vectors_3d=np.zeros((3,3),dtype=float)
-    brillouin_primitive_vectors_3d[0]=[5.074,0,0]
-    brillouin_primitive_vectors_3d[1]=[-3.588,3.588,0]
-    brillouin_primitive_vectors_3d[2]=[0,0,21.000]
+    brillouin_primitive_vectors_3d[0]=np.cross(primitive_vectors_3d[1],primitive_vectors_3d[2])/volume
+    brillouin_primitive_vectors_3d[1]=np.cross(primitive_vectors_3d[2],primitive_vectors_3d[0])/volume
+    brillouin_primitive_vectors_3d[2]=np.cross(primitive_vectors_3d[0],primitive_vectors_3d[1])/volume
+    print(brillouin_primitive_vectors_3d)
+
     chosen_plane=[1,1,0]
     symmetries=[[0,0,0]]
-    grid_spacing=0.5
+    grid_spacing=0.1
     refinment_iterations=3
     refinment_spacing=0.001
     threshold_symmetry=0.001
@@ -388,14 +398,14 @@ if __name__ == "__main__":
     threshold_dynamical_refinment=0.000001
     berry_curvature=Berry_curvature(spinham,nodmi,noaniso)
     number_vertices=4
-    number_eigenspaces,phases,refined_k_points_list,little_paths,brillouin_primitive_vectors_2d=berry_curvature.berry_curvature(triangulation,brillouin_primitive_vectors_3d,chosen_plane,
+    number_eigenspaces,phases,refined_k_points_list,little_paths,brillouin_primitive_vectors_2d,chern=berry_curvature.berry_curvature(triangulation,brillouin_primitive_vectors_3d,chosen_plane,
                                     grid_spacing,default_gridding,shift_in_plane,shift_in_space,
                                     symmetries,threshold_symmetry,refinment_spacing,refinment_iterations,
                                     threshold_degeneracy,dynamical_refinment_flag,threshold_dynamical_refinment)
     
-    file_writing="berry_curvature.dat"
-    printing_berry_curvature(number_vertices,phases,number_eigenspaces,refined_k_points_list,little_paths,brillouin_primitive_vectors_2d,file_writing)
-
-    ###set hideen3d
-    ###set dgrid3d 50,50 qnorm 2
-    ###splot '' w lines
+   ## file_writing="berry_curvature.dat"
+   ## printing_berry_curvature(number_vertices,phases,number_eigenspaces,refined_k_points_list,little_paths,brillouin_primitive_vectors_2d,file_writing)
+   ## print(number_eigenspaces,phases,chern)
+   ###set hideen3d
+   ###set dgrid3d 50,50 qnorm 2
+   ###splot '' w lines
