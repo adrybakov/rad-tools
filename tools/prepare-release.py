@@ -88,8 +88,8 @@ def only_githash_in_init(repo: git.Repo):
     if (
         len(a_files) == 1
         and len(b_files) == 1
-        and b_files[0] == "radtools/__init__.py"
-        and a_files[0] == "radtools/__init__.py"
+        and b_files[0] == "src/radtools/__init__.py"
+        and a_files[0] == "src/radtools/__init__.py"
         and len(minus_lines) == 1
         and len(plus_lines) == 1
         and minus_lines[0].startswith("__git_hash__")
