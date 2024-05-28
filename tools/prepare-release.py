@@ -181,7 +181,7 @@ def update_init(repo: git.Repo, version, root_dir: str):
     good_message = {False: "not updated", True: "updated"}
 
     # Read __init__.py
-    init_file_path = os.path.join(root_dir, "radtools", "__init__.py")
+    init_file_path = os.path.join(root_dir, "src", "radtools", "__init__.py")
     init_file = open(init_file_path, "r")
     init_file_content = init_file.readlines()
     init_file.close()
