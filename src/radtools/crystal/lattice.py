@@ -199,7 +199,7 @@ class Lattice:
         """
         if self._cell is None:
             raise AttributeError(f"Cell is not defined for lattice {self}")
-        return self._cell
+        return np.array(self._cell)
 
     # For the child`s overriding
     def _set_cell(self, new_cell, standardize=True):
@@ -738,12 +738,12 @@ class Lattice:
         eps_rel : float
         """
 
-        return eps_rel
+        return self._eps_rel
 
     @eps_rel.setter
     def eps_rel(self, new_value):
         try:
-            self.eps_rel = float(new_value)
+            self._eps_rel = float(new_value)
         except ValueError:
             raise ValueError("Not a float")
         self._type = None
