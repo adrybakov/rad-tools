@@ -47,7 +47,7 @@ output folders.
     the second one creates output folder with the name "bar" in the folder "foo": "foo/bar/".
 
 
-The ``script.py`` script is executed from the
+The ``script`` script is executed from the
 folder "example" and the file structure is:
 
 .. code-block:: text
@@ -58,7 +58,7 @@ folder "example" and the file structure is:
 
 .. code-block:: bash
 
-   script.py -if input-file
+   script -if input-file
 
 After the execution the "example" folder looks similar to:
 
@@ -82,7 +82,7 @@ Next command saves the output in the "output" folder:
 
 .. code-block:: bash
 
-    script.py -if input-file -on output/
+    script -if input-file -on output/
 
 After it's execution "example" folder should have the structure:
 
@@ -104,7 +104,7 @@ for example after the command:
 
 .. code-block:: bash
 
-    script.py -if input-file -on output/bar/foo/
+    script -if input-file -on output/bar/foo/
 
 the script creates folder "bar" inside of the folder "output" and folder
 "foo" inside of the folder "bar". The structure of the "example" folder
@@ -128,7 +128,7 @@ In order to change the shared output name one may run:
 
 .. code-block:: bash
 
-    script.py -if input-file -on output/custom-output-name
+    script -if input-file -on output/custom-output-name
 
 The structure of the "example" folder now should be the following:
 

@@ -57,7 +57,7 @@ clean:
 	-@rm -r docs/source/api/spinham/generated
 	-@rm -r docs/source/api/magnons/generated
 	-@rm -r docs/source/api/_autosummary
-	-@rm -r rad_tools.egg-info
+	-@rm -r src/rad_tools.egg-info
 	-@rm -r build
 	-@rm -r dist
 	-@rm -r .env3.11/lib/python3.11/site-packages/radtools
@@ -89,10 +89,13 @@ pip: prepare-release
 	-@rm -r dist
 	-@rm -r build
 	-@rm -r radtools.egg-info
-	@python3 setup.py sdist bdist_wheel
+	@python3 -m build
 	@python3 -m twine upload --repository pypi dist/* --verbose
 	@git tag -a "v$(VERSION)" -m "Version $(VERSION)"
 	@git push origin "v$(VERSION)"
+	@git add src/radtools/__init__.py
+	@git commit -m "Post-release commit"
+	@git push
 
 
 bravais-pictures:

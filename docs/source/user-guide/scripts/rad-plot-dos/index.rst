@@ -1,10 +1,11 @@
 .. _rad-plot-dos:
 
-***************
-rad-plot-dos.py
-***************
+************
+rad-plot-dos
+************
 
 .. versionchanged:: 0.5.21 Renamed from ``rad-dos-plotter.py``
+.. versionchanged:: 0.9.0 Renamed from ``rad-plot-dos.py`` to ``rad-plot-dos``
 
 Script for visualization of projected density of states.
 It supports the result of the calculation from:
@@ -60,7 +61,7 @@ There are two main plot style:
 
     .. code-block:: bash
 
-        rad-plot-dos.py --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
+        rad-plot-dos --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
 
     .. figure:: /../examples/rad-plot-dos/style-examples/csp/custom.png
         :align: center
@@ -74,7 +75,7 @@ There are two main plot style:
 
     .. code-block:: bash
 
-        rad-plot-dos.py -r --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
+        rad-plot-dos -r --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
 
     .. figure:: /../examples/rad-plot-dos/style-examples/csp-relative/custom.png
         :align: center
@@ -91,7 +92,7 @@ Each of these styles could be modified by the following "substyles":
 
     .. code-block:: bash
 
-        rad-plot-dos.py -n --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
+        rad-plot-dos -n --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
 
     .. figure:: /../examples/rad-plot-dos/style-examples/csp-normalized/custom.png
         :align: center
@@ -101,7 +102,7 @@ Each of these styles could be modified by the following "substyles":
 
     .. code-block:: bash
 
-        rad-plot-dos.py -r -n --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
+        rad-plot-dos -r -n --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
 
     .. figure:: /../examples/rad-plot-dos/style-examples/csp-relative-normalized/custom.png
         :align: center
@@ -115,7 +116,7 @@ Each of these styles could be modified by the following "substyles":
 
     .. code-block:: bash
 
-        rad-plot-dos.py -bt --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
+        rad-plot-dos -bt --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
 
     .. figure:: /../examples/rad-plot-dos/style-examples/csp-vstotal/custom.png
         :align: center
@@ -125,7 +126,7 @@ Each of these styles could be modified by the following "substyles":
 
     .. code-block:: bash
 
-        rad-plot-dos.py -r -bt --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
+        rad-plot-dos -r -bt --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
 
     .. figure:: /../examples/rad-plot-dos/style-examples/csp-relative-vstotal/custom.png
         :align: center
@@ -136,7 +137,7 @@ Each of these styles could be modified by the following "substyles":
 * Both of them
     .. code-block:: bash
 
-        rad-plot-dos.py -n -bt --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
+        rad-plot-dos -n -bt --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
 
     .. figure:: /../examples/rad-plot-dos/style-examples/csp-normalized-vstotal/custom.png
         :align: center
@@ -146,7 +147,7 @@ Each of these styles could be modified by the following "substyles":
 
     .. code-block:: bash
 
-        rad-plot-dos.py -r -n -bt --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
+        rad-plot-dos -r -n -bt --custom "Ni (d)" "I (p)" -if collinear-spin-polarized/ -ew -7 -2 -on style-examples/
 
     .. figure:: /../examples/rad-plot-dos/style-examples/csp-relative-normalized-vstotal/custom.png
         :align: center

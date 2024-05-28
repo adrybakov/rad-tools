@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "rad-tools"
+license = { text = "MIT license" }
+dynamic = ["version"]
+description = "Sandbox (mainly condense matter plotting)"
+dependencies = ["numpy", "matplotlib", "scipy", "tqdm", "termcolor"]
+authors = [{ name = "Andrey Rybakov", email = "rybakov.ad@icloud.com" }]
+requires-python = ">=3.8"
+readme = "README.rst"
+classifiers = [
+    'Development Status :: 4 - Beta',
+    'Intended Audience :: Science/Research',
+    'Intended Audience :: Developers',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3 :: Only',
+    'Topic :: Software Development',
+    'Topic :: Scientific/Engineering',
+    'Operating System :: OS Independent',
+    'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+]
+
+[project.scripts]
+rad-test = "radtools.score.test:main"
+radtools = "radtools.__main__:main"
+rad-plot-tb2j = "radtools.score.plot_tb2j:main"
+rad-plot-tb2j-magnons = "radtools.score.plot_tb2j_magnons:main"
+rad-plot-dos = "radtools.score.plot_dos:main"
+rad-plot-flatbands = "radtools.score.plot_fatbands:main"
+rad-make-template = "radtools.score.make_template:main"
+rad-extract-tb2j = "radtools.score.extract_tb2j:main"
+rad-identify-wannier-centres = "radtools.score.identify_wannier_centres:main"
+compute-energies = "radtools.score.compute_energies:main"
+phonopy-plotter = "radtools.phonopy_plotter:main"
+
+[project.urls]
+Homepage = "https://rad-tools.org"
+Documentation = "https://rad-tools.org"
+Repository = "https://github.com/adrybakov/rad-tools.git"
+Issues = "https://github.com/adrybakov/rad-tools/issues"
+Changelog = "https://rad-tools.org/en/stable/release-notes/index.html"
+
+[tool.setuptools.dynamic]
+version = { attr = "radtools.__version__" }

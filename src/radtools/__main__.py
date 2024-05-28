@@ -16,11 +16,28 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from radtools._osfix import _winwait
-from radtools.score.extract_tb2j import create_parser, manager
+from argparse import ArgumentParser
+
+from radtools.decorate.stats import license, logo
+
+
+def main():
+    parser = ArgumentParser(
+        description="RAD-tools package",
+    )
+    parser.add_argument(
+        "--license",
+        action="store_true",
+        default=False,
+        help="Prints the license of the package.",
+    )
+    args = parser.parse_args()
+
+    if args.license:
+        print(license())
+    else:
+        print(logo())
+
 
 if __name__ == "__main__":
-    parser = create_parser()
-    args = parser.parse_args()
-    manager(**vars(args))
-    _winwait()
+    main()

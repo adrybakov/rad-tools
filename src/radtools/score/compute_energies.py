@@ -110,7 +110,7 @@ def compute(filename):
                 print(f"    J1 = {J1:.6f} J2 = {J2:.6f} J3 = {J3:.6f}")
 
 
-if __name__ == "__main__":
+def main():
     parser = ArgumentParser(formatter_class=RawTextHelpFormatter)
     parser.add_argument(
         "filename",
@@ -124,3 +124,7 @@ grep "!" *mode/*F*/{neg,pos}/crsbr.scf*out > summary.txt
     args = parser.parse_args()
 
     compute(args.filename)
+
+
+if __name__ == "__main__":
+    main()

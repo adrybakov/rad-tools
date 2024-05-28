@@ -24,6 +24,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from termcolor import cprint
 
+from radtools._osfix import _winwait
 from radtools.constants import TODEGREES
 from radtools.io.internal import load_template
 from radtools.io.tb2j import load_tb2j_model
@@ -550,3 +551,14 @@ def create_parser():
     )
 
     return parser
+
+
+def main():
+    parser = create_parser()
+    args = parser.parse_args()
+    manager(**vars(args))
+    _winwait()
+
+
+if __name__ == "__main__":
+    main()

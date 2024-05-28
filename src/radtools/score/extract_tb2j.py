@@ -21,6 +21,7 @@ from argparse import ArgumentParser
 
 from termcolor import cprint
 
+from radtools._osfix import _winwait
 from radtools.io.internal import dump_spinham_txt, load_template
 from radtools.io.tb2j import load_tb2j_model
 
@@ -266,3 +267,14 @@ def create_parser():
     )
 
     return parser
+
+
+def main():
+    parser = create_parser()
+    args = parser.parse_args()
+    manager(**vars(args))
+    _winwait()
+
+
+if __name__ == "__main__":
+    main()

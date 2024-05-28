@@ -144,7 +144,6 @@ Change default colors for the magnon dispersion plots.
 ------
 
 Minor improvements. Add parameters to the :py:meth:`.MagnonDispersion.omega`.
-Move from `setup.py`` to ``pyproject.toml``.
 
 0.8.11
 ------

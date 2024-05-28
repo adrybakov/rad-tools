@@ -23,6 +23,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from termcolor import cprint
 
+from radtools._osfix import _winwait
 from radtools.decorate.array import print_2d_array
 from radtools.decorate.axes import plot_hlines
 from radtools.decorate.stats import logo
@@ -631,3 +632,14 @@ def create_parser():
     )
 
     return parser
+
+
+def main():
+    parser = create_parser()
+    args = parser.parse_args()
+    manager(**vars(args))
+    _winwait()
+
+
+if __name__ == "__main__":
+    main()

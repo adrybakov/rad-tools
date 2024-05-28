@@ -91,7 +91,7 @@ def plot(file, kp=None, constant=1, on="output"):
             file.write(output)
 
 
-if __name__ == "__main__":
+def main():
     parser = ArgumentParser(description="Fit Exchange parameters map")
 
     parser.add_argument(
@@ -110,3 +110,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.file:
         plot(args.file, kp=args.kp, constant=args.constant, on=args.on)
+
+
+if __name__ == "__main__":
+    main()

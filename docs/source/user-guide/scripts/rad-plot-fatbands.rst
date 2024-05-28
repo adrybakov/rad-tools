@@ -1,8 +1,10 @@
 .. _rad-plot-fatbands:
 
-********************
-rad-plot-fatbands.py
-********************
+*****************
+rad-plot-fatbands
+*****************
+
+.. versionchanged:: 0.9.0 Renamed from ``rad-plot-fatbands.py`` to ``rad-plot-fatbands``
 
 
 Script for visualization of projected density of states.

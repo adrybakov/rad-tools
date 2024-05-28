@@ -25,7 +25,7 @@ ROOT_DIR = "."
 DOCS_DIR = os.path.abspath(
     os.path.join(ROOT_DIR, "docs", "source", "user-guide", "scripts")
 )
-SCRIPT_DIR = os.path.abspath(os.path.join(ROOT_DIR, "radtools", "score"))
+SCRIPT_DIR = os.path.abspath(os.path.join(ROOT_DIR, "src", "radtools", "score"))
 
 
 def parse_manager(scriptfile, debug=False):
@@ -348,7 +348,19 @@ def main(script="all", debug=False):
 
                 # Write help
                 file.write(f"        help='{docs[parameter][0].strip()}',\n    )\n")
-            file.write("\n    return parser\n")
+            file.write("\n    return parser\n\n")
+
+            # write the main function
+
+            file.write(
+                "def main():\n"
+                + "    parser = create_parser()\n"
+                + "    args = parser.parse_args()\n"
+                + "    manager(**vars(args))\n"
+                + "    _winwait()\n\n"
+                + 'if __name__ == "__main__":\n'
+                + "    main()"
+            )
         print(f"Updated {script}")
 
 

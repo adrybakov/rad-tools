@@ -10,14 +10,14 @@ Default style
 
 .. code-block:: bash
 
-    rad-plot-dos.py -if collinear/ -ew -6.5 6.5 -ef -1.7806
+    rad-plot-dos -if collinear/ -ew -6.5 6.5 -ef -1.7806
 
 Relative style, normalized
 --------------------------
 
 .. code-block:: bash
 
-    rad-plot-dos.py -if collinear/ -ew -6.5 6.5 -ef -1.7806  -r -n
+    rad-plot-dos -if collinear/ -ew -6.5 6.5 -ef -1.7806  -r -n
 
 pdos-vs-dos
 ===========
