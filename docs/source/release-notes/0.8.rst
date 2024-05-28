@@ -160,3 +160,8 @@ Hotfix for 0.8.11 (Missed imports).
 ------
 
 Add the summary message to the :ref:`rad-identify-wannier-centres` script.
+
+0.8.14
+------
+
+Resolve :issue:`19`

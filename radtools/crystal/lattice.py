@@ -130,7 +130,7 @@ class Lattice:
     """
 
     def __init__(self, *args, standardize=True, **kwargs) -> None:
-        self.eps_rel = REL_TOL
+        self._eps_rel = REL_TOL
         self._cell = None
         self._type = None
         self._kpoints = None
@@ -727,6 +727,26 @@ class Lattice:
         """
 
         return self.eps_rel * abs(self.unit_cell_volume) ** (1 / 3.0)
+
+    @property
+    def eps_rel(self):
+        r"""
+        Relative epsilon
+
+        Returns
+        -------
+        eps_rel : float
+        """
+
+        return eps_rel
+
+    @eps_rel.setter
+    def eps_rel(self, new_value):
+        try:
+            self.eps_rel = float(new_value)
+        except ValueError:
+            raise ValueError("Not a float")
+        self._type = None
 
     def type(self, eps_rel=None):
         r"""
