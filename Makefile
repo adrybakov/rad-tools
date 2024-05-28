@@ -88,7 +88,7 @@ pip: prepare-release
 	@read -p "Press Enter to publish to PyPI"
 	-@rm -r dist
 	-@rm -r build
-	-@rm -r radtools.egg-info
+	-@rm -r src/radtools.egg-info
 	@python3 -m build
 	@python3 -m twine upload --repository pypi dist/* --verbose
 	@git tag -a "v$(VERSION)" -m "Version $(VERSION)"
