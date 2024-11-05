@@ -174,7 +174,9 @@ def plot_fatbands(
             k_points[0].append(float(tmp[2 * i + 1]))
 
     if not separate:
-        pass
+        raise NotImplementedError(
+            "flag -sep (or --separate) is required at the moment. Non-separate plots are not implemented yet."
+        )
 
     def plot_entry(axs, pdos, projector, xlim, ylim, efermi):
         if pdos.spin_pol:
