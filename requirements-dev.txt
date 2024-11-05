@@ -2,6 +2,7 @@
 twine
 wheel
 setuptools
+build
 
 # code-linters
 black
