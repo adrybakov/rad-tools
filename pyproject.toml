@@ -8,9 +8,9 @@ name = "rad-tools"
 license = { text = "MIT license" }
 dynamic = ["version"]
 description = "Sandbox (mainly condense matter plotting)"
-dependencies = ["numpy", "matplotlib", "scipy", "tqdm", "termcolor"]
+dependencies = ["numpy<2", "matplotlib", "scipy", "tqdm", "termcolor"]
 authors = [{ name = "Andrey Rybakov", email = "rybakov.ad@icloud.com" }]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 readme = "README.rst"
 classifiers = [
     'Development Status :: 4 - Beta',
@@ -18,11 +18,11 @@ classifiers = [
     'Intended Audience :: Developers',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
     'Programming Language :: Python :: 3 :: Only',
     'Topic :: Software Development',
     'Topic :: Scientific/Engineering',

@@ -10,19 +10,24 @@ jobs:
   test-38:
     uses: adrybakov/rad-tools/.github/workflows/run-tests.yml@stable
     with:
-      python-version: '3.8'
+      python-version: '3.9'
 
   test-39:
     uses: adrybakov/rad-tools/.github/workflows/run-tests.yml@stable
     with:
-      python-version: '3.9'
+      python-version: '3.10'
 
   test-310:
     uses: adrybakov/rad-tools/.github/workflows/run-tests.yml@stable
     with:
-      python-version: '3.10'
+      python-version: '3.11'
 
   test-311:
     uses: adrybakov/rad-tools/.github/workflows/run-tests.yml@stable
     with:
-      python-version: '3.11'
+      python-version: '3.12'
+
+  test-311:
+    uses: adrybakov/rad-tools/.github/workflows/run-tests.yml@stable
+    with:
+      python-version: '3.13'

@@ -19,3 +19,8 @@ execute::
 instead of::
 
     rad-plot-dos.py
+
+0.9.1
+-----
+
+Pin numpy at ``numpy<2``. Remove tests for python3.8 and add tests for python3.13.

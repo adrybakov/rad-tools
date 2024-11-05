@@ -1,5 +1,5 @@
 # Package dependencies
-numpy
+numpy<2
 scipy
 matplotlib
 tqdm
