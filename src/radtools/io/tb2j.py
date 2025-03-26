@@ -27,7 +27,9 @@ from radtools.crystal.constants import REL_TOL
 from radtools.spinham.hamiltonian import SpinHamiltonian
 
 
-def load_tb2j_model(filename, quiet=True, bravais_type=None) -> SpinHamiltonian:
+def load_tb2j_model(
+    filename, quiet=True, bravais_type=None, standardize=True
+) -> SpinHamiltonian:
     r"""
     Read spin Hamiltonian from |TB2J|_ output file.
 
@@ -66,6 +68,8 @@ def load_tb2j_model(filename, quiet=True, bravais_type=None) -> SpinHamiltonian:
         automatically. See :py:meth:`.Crystal.identify` for more details.
         The bravais lattice type is reached by reducing the accuracy for the :ref:`library_lepage`.
         If the desired lattice type is not reached, the error is raised.
+    standardize : bool, default True
+        Whether to standardize the unit cell upon loading.
 
     Returns
     -------
@@ -114,12 +118,15 @@ def load_tb2j_model(filename, quiet=True, bravais_type=None) -> SpinHamiltonian:
             except:
                 model.eps_rel = REL_TOL
 
-            model.cell = np.array(
-                [
-                    list(map(float, a)),
-                    list(map(float, b)),
-                    list(map(float, c)),
-                ]
+            model._set_cell(
+                np.array(
+                    [
+                        list(map(float, a)),
+                        list(map(float, b)),
+                        list(map(float, c)),
+                    ]
+                ),
+                standardize=standardize,
             )
 
         # Read atoms

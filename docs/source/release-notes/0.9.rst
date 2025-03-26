@@ -24,3 +24,8 @@ instead of::
 -----
 
 Pin numpy at ``numpy<2``. Remove tests for python3.8 and add tests for python3.13.
+
+0.9.2
+-----
+
+Fix :issue:`22`
