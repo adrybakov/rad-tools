@@ -97,7 +97,9 @@ def solve_via_colpa(D):
 
         .. math::
 
-            \boldsymbol{\hat{c}} = \boldsymbol{G} \boldsymbol{\hat{a}}
+            \boldsymbol{\hat{a}} = \boldsymbol{G} \boldsymbol{\hat{c}}
+            \\
+            \boldsymbol{\hat{c}} = \boldsymbol{G}^{-1} \boldsymbol{\hat{a}}
 
     Notes
     -----
