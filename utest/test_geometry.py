@@ -27,8 +27,8 @@ from scipy.spatial.transform import Rotation
 
 from radtools.constants import TORADIANS
 from radtools.crystal.constants import (
-    ABS_TOL,
-    ABS_TOL_ANGLE,
+    1e-8,
+    1e-4,
     MAX_LENGTH,
     MIN_ANGLE,
     MIN_LENGTH,
@@ -105,7 +105,7 @@ def test_angle(v1, v2):
 def test_angle_values(alpha):
     v1 = np.array([1.0, 0.0, 0.0])
     v2 = np.array([cos(alpha * TORADIANS), sin(alpha * TORADIANS), 0.0])
-    assert abs(angle(v1, v2) - alpha) < ABS_TOL_ANGLE
+    assert abs(angle(v1, v2) - alpha) < 1e-4
 
 
 def test_angle_raises():
@@ -209,19 +209,19 @@ def test_span_orthonormal_set(e3):
 )
 def test_parallelepiped_check(a, b, c, alpha, beta, gamma):
     assert parallelepiped_check(a, b, c, alpha, beta, gamma) == (
-        compare_numerically(a, ">", 0.0, ABS_TOL)
-        and compare_numerically(b, ">", 0.0, ABS_TOL)
-        and compare_numerically(c, ">", 0.0, ABS_TOL)
-        and compare_numerically(alpha, "<", 180.0, ABS_TOL_ANGLE)
-        and compare_numerically(beta, "<", 180.0, ABS_TOL_ANGLE)
-        and compare_numerically(gamma, "<", 180.0, ABS_TOL_ANGLE)
-        and compare_numerically(alpha, ">", 0.0, ABS_TOL_ANGLE)
-        and compare_numerically(beta, ">", 0.0, ABS_TOL_ANGLE)
-        and compare_numerically(gamma, ">", 0.0, ABS_TOL_ANGLE)
-        and compare_numerically(gamma, "<", alpha + beta, ABS_TOL_ANGLE)
-        and compare_numerically(alpha + beta, "<", 360.0 - gamma, ABS_TOL_ANGLE)
-        and compare_numerically(beta, "<", alpha + gamma, ABS_TOL_ANGLE)
-        and compare_numerically(alpha + gamma, "<", 360.0 - beta, ABS_TOL_ANGLE)
-        and compare_numerically(alpha, "<", beta + gamma, ABS_TOL_ANGLE)
-        and compare_numerically(beta + gamma, "<", 360.0 - alpha, ABS_TOL_ANGLE)
+        compare_numerically(a, ">", 0.0, 1e-8)
+        and compare_numerically(b, ">", 0.0, 1e-8)
+        and compare_numerically(c, ">", 0.0, 1e-8)
+        and compare_numerically(alpha, "<", 180.0, 1e-4)
+        and compare_numerically(beta, "<", 180.0, 1e-4)
+        and compare_numerically(gamma, "<", 180.0, 1e-4)
+        and compare_numerically(alpha, ">", 0.0, 1e-4)
+        and compare_numerically(beta, ">", 0.0, 1e-4)
+        and compare_numerically(gamma, ">", 0.0, 1e-4)
+        and compare_numerically(gamma, "<", alpha + beta, 1e-4)
+        and compare_numerically(alpha + beta, "<", 360.0 - gamma, 1e-4)
+        and compare_numerically(beta, "<", alpha + gamma, 1e-4)
+        and compare_numerically(alpha + gamma, "<", 360.0 - beta, 1e-4)
+        and compare_numerically(alpha, "<", beta + gamma, 1e-4)
+        and compare_numerically(beta + gamma, "<", 360.0 - alpha, 1e-4)
     )

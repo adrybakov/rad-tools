@@ -30,8 +30,8 @@ Tolerance for the comparison is given as:
 
     \varepsilon = atol + rtol \cdot y
 
-By default :math:`atol` and :math:`rtol` are equal to :py:const:`.crystal.REL_TOL`
-and :py:const:`.crystal.ABS_TOL` respectively. You can pass exact values for eps.
+By default :math:`atol` and :math:`rtol` are equal to ``1e-4`` and ``1e-8`` 
+respectively. You can pass exact values for eps.
 
 The conditions are translated as (source [1]_):
 

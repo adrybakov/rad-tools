@@ -23,14 +23,11 @@ which are used across the whole package.
 It's purpose is to serve as an "other" folder.
 """
 
-from radtools.crystal.constants import ABS_TOL, REL_TOL
 
-__all__ = [
-    "compare_numerically",
-]
+__all__ = ["compare_numerically"]
 
 
-def compare_numerically(x, condition, y, eps=None, rtol=REL_TOL, atol=ABS_TOL):
+def compare_numerically(x, condition, y, eps=None, rtol=1e-4, atol=1e-8):
     r"""
     Compare two numbers numerically.
 
