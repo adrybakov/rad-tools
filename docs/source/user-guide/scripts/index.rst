@@ -23,16 +23,6 @@ Files from the usage examples are available :examples:`here <>`.
     rad-plot-fatbands
 
 .. toctree::
-    :caption: for TB2J (deprecated and removed)
-    :maxdepth: 1
-
-
-    rad-make-template
-    rad-extract-tb2j
-    rad-plot-tb2j
-    rad-plot-tb2j-magnons
-
-.. toctree::
     :caption: for Wannier90:
     :maxdepth: 1
 
