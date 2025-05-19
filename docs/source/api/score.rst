@@ -17,7 +17,3 @@ Scenarios
     identify_wannier_centres
     plot_dos
     plot_fatbands
-    make_template
-    extract_tb2j
-    plot_tb2j
-    plot_tb2j_magnons

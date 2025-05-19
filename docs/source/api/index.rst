@@ -23,14 +23,9 @@ In the examples across the documentation it is expected to be imported in that w
    :caption: Modules
    :maxdepth: 1
 
-   crystal/index
-   spinham/index
-   magnons/index
    dos
-   io
    score
    geometry
    numerical
    decorate
-   exceptions
    constants
