@@ -23,7 +23,7 @@ Files from the usage examples are available :examples:`here <>`.
     rad-plot-fatbands
 
 .. toctree::
-    :caption: for TB2J:
+    :caption: for TB2J (deprecated and removed)
     :maxdepth: 1
 
 
