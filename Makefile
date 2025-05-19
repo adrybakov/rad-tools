@@ -27,7 +27,6 @@ help:
 	@echo "    test - execute unit tests"
 	@echo "    test-all - execute full testing suite"
 	@echo "    pip - publish the package to the PyPi index"
-	@echo "    bravais-pictures - update pictures of bravais lattices"
 	@echo "    prepare-release - prepare the package for release"
 	@echo "    docs-pictures - update pictures for the docs"
 	@echo "    new-script - create templates for the new script"
@@ -79,7 +78,7 @@ install:
 test:
 	@pytest -s
 
-test-all: clean install test bravais-pictures examples html doctest
+test-all: clean install test examples html doctest
 	@echo "Done"
 
 
@@ -98,15 +97,11 @@ pip: prepare-release
 	@git push
 
 
-bravais-pictures:
-	@python3 tools/plot-bravais-lattices.py
 
 prepare-release:
 	@python3 -u tools/prepare-release.py -v $(VERSION) -rd $(ROOT_DIR) -r
 
 docs-pictures:
-	@python3 tools/plot-data-structure.py
-	@python3 tools/plot-notation.py
 	@python3 tools/plot-repositories.py
 
 new-script:

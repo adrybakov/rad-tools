@@ -1,7 +1,7 @@
 *********
 RAD-TOOLS
 *********
-Spin Hamiltonians, magnons and condense matter post-processing.
+Condense matter post-processing.
 
 .. image:: https://badge.fury.io/py/rad-tools.svg
     :target: https://badge.fury.io/py/rad-tools
@@ -23,8 +23,7 @@ Spin Hamiltonians, magnons and condense matter post-processing.
    :alt: GitHub
 
 The package covers post-processing scenarios for the results of
-`Quantum Espresso <https://www.quantum-espresso.org>`_,
-`TB2J <https://tb2j.readthedocs.io/en/latest/>`_
+`Quantum Espresso <https://www.quantum-espresso.org>`_
 and `Wannier90 <http://www.wannier.org/>`_, as well as provides some custom scripts.
 
 It is expected to be used in two ways:
