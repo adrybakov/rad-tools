@@ -16,14 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from math import pi
-
-import numpy as np
-from tqdm import tqdm
+from radtools._redirect import *
 
 __all__ = ["dipole_dipole_energy", "dipole_dipole_interaction"]
-
-CONSTANT = 1.25663706212 * 9.2740100783**2 * 6.241509074 / 1000 / 4 / pi
 
 
 def dipole_dipole_energy(magnetic_centres, progress_bar=True, normalize=True):

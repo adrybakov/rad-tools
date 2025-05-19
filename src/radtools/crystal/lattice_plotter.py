@@ -15,26 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-from random import choices
-from string import ascii_lowercase
-from typing import Iterable
-
-import matplotlib.pyplot as plt
-import numpy as np
-from matplotlib import rcParams
-from matplotlib.patches import FancyArrowPatch
-from mpl_toolkits.mplot3d import Axes3D, proj3d
-
-from radtools.crystal.constants import HS_PLOT_NAMES
-from radtools.geometry import volume
-
-try:
-    import plotly.graph_objects as go
-
-    PLOTLY_AVAILABLE = True
-except ImportError:
-    PLOTLY_AVAILABLE = False
+from radtools._redirect import *
 
 __all__ = ["MatplotlibBackend", "PlotlyBackend"]
 

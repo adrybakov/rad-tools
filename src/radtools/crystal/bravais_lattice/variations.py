@@ -15,11 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-from math import cos, sin
-
-from radtools.constants import TORADIANS
-from radtools.numerical import compare_numerically
+from radtools._redirect import *
 
 __all__ = [
     "BCT_variation",

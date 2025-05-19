@@ -31,7 +31,6 @@ from . import (
     crystal,
     decorate,
     dos,
-    exceptions,
     geometry,
     io,
     magnons,

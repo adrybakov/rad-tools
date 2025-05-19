@@ -16,10 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-r"""
-Crystal module describes the structure and its properties.
-"""
-
 from . import cell as Cell
 from . import constants as crystal_constants
 from .atom import Atom

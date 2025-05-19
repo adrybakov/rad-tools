@@ -15,12 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-from math import cos, sin, tan
-
-import numpy as np
-
-from radtools.constants import TORADIANS
+from radtools._redirect import *
 
 __all__ = [
     "CUB_hs_points",

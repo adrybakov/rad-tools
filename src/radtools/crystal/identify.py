@@ -15,21 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-r"""
-Crystal/lattice identification.
-"""
-
-from math import acos, cos, floor, log10, sqrt
-
-import numpy as np
-from termcolor import cprint
-
-import radtools.crystal.cell as Cell
-from radtools.constants import TODEGREES, TORADIANS
-from radtools.decorate.array import print_2d_array
-from radtools.geometry import volume
-from radtools.numerical import compare_numerically
+from radtools._redirect import *
 
 __all__ = ["niggli", "lepage"]
 

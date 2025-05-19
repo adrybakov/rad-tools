@@ -36,8 +36,6 @@ radtools = "radtools.__main__:main"
 rad-plot-dos = "radtools.score.plot_dos:main"
 rad-plot-flatbands = "radtools.score.plot_fatbands:main"
 rad-identify-wannier-centres = "radtools.score.identify_wannier_centres:main"
-compute-energies = "radtools.score.compute_energies:main"
-phonopy-plotter = "radtools.phonopy_plotter:main"
 
 [project.urls]
 Homepage = "https://rad-tools.org"

@@ -15,16 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-r"""
-General 3D lattice.
-"""
-
-from typing import Iterable
-
-import numpy as np
-
-from radtools.geometry import absolute_to_relative
+from radtools._redirect import *
 
 __all__ = ["Kpoints"]
 

@@ -15,50 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-r"""
-General 3D lattice.
-"""
-
-import numpy as np
-from scipy.spatial import Voronoi
-
-import radtools.crystal.cell as Cell
-from radtools.crystal.bravais_lattice.hs_points import (
-    BCC_hs_points,
-    BCT_hs_points,
-    CUB_hs_points,
-    FCC_hs_points,
-    HEX_hs_points,
-    MCL_hs_points,
-    MCLC_hs_points,
-    ORC_hs_points,
-    ORCC_hs_points,
-    ORCF_hs_points,
-    ORCI_hs_points,
-    RHL_hs_points,
-    TET_hs_points,
-    TRI_hs_points,
-)
-from radtools.crystal.bravais_lattice.standardize import standardize_cell
-from radtools.crystal.bravais_lattice.variations import (
-    BCT_variation,
-    MCLC_variation,
-    ORCF_variation,
-    RHL_variation,
-    TRI_variation,
-)
-from radtools.crystal.constants import (
-    BRAVAIS_LATTICE_NAMES,
-    DEFAULT_K_PATHS,
-    HS_PLOT_NAMES,
-    PEARSON_SYMBOLS,
-    REL_TOL,
-    TRANSFORM_TO_CONVENTIONAL,
-)
-from radtools.crystal.identify import lepage
-from radtools.crystal.kpoints import Kpoints
-from radtools.geometry import angle, volume
+from radtools._redirect import *
 
 __all__ = ["Lattice"]
 
