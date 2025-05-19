@@ -25,7 +25,7 @@ class ColpaFailed(Exception):
     """
 
     def __init__(self):
-        self.message = "Diagonalization via Colpa failed."
+        self.message = "This exception is deprecated."
 
     def __str__(self):
         return self.message
@@ -45,18 +45,7 @@ class NotationError(ValueError):
     """
 
     def __init__(self, name):
-        self.message = (
-            f"\n\nNotation`s interpretation is not set for the property {name}.\n"
-            + f"Set the notation first:\n"
-            + f"    SpinHamiltonian.{name} = True  "
-            + f"or  SpinHamiltonian.{name} = False\n\n"
-            + f"Note: When the attribute is set for the first time it sets the interpretation, "
-            + "afterwards it change the notation.\n\n"
-            + f"If you want to set the interpretation again, use \n"
-            + f"    SpinHamiltonian.set_interpretation({name} = True)"
-            + "\nor\n"
-            + f"    SpinHamiltonian.set_interpretation({name} = False)\n"
-        )
+        self.message = "This exception is deprecated."
 
     def __str__(self):
         return self.message
