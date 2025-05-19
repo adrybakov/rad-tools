@@ -57,21 +57,21 @@ clean:
 	-@rm -r docs/source/api/spinham/generated
 	-@rm -r docs/source/api/magnons/generated
 	-@rm -r docs/source/api/_autosummary
-	-@rm -r src/rad_tools.egg-info
-	-@rm -r build
-	-@rm -r dist
-	-@rm -r .env3.11/lib/python3.11/site-packages/radtools
-	-@rm -r .env3.11/lib/python3.11/site-packages/rad_tools*
-	-@rm -r .env3.11/bin/rad-*
-	-@rm -r .env3.10/lib/python3.10/site-packages/radtools
-	-@rm -r .env3.10/lib/python3.10/site-packages/rad_tools*
-	-@rm -r .env3.10/bin/rad-*
-	-@rm -r .env3.9/lib/python3.9/site-packages/radtools
-	-@rm -r .env3.9/lib/python3.9/site-packages/rad_tools*
-	-@rm -r .env3.9/bin/rad-*
-	-@rm -r .env3.8/lib/python3.8/site-packages/radtools
-	-@rm -r .env3.8/lib/python3.8/site-packages/rad_tools*
-	-@rm -r .env3.8/bin/rad-*
+	# -@rm -r src/rad_tools.egg-info
+	# -@rm -r build
+	# -@rm -r dist
+	# -@rm -r .env3.11/lib/python3.11/site-packages/radtools
+	# -@rm -r .env3.11/lib/python3.11/site-packages/rad_tools*
+	# -@rm -r .env3.11/bin/rad-*
+	# -@rm -r .env3.10/lib/python3.10/site-packages/radtools
+	# -@rm -r .env3.10/lib/python3.10/site-packages/rad_tools*
+	# -@rm -r .env3.10/bin/rad-*
+	# -@rm -r .env3.9/lib/python3.9/site-packages/radtools
+	# -@rm -r .env3.9/lib/python3.9/site-packages/rad_tools*
+	# -@rm -r .env3.9/bin/rad-*
+	# -@rm -r .env3.8/lib/python3.8/site-packages/radtools
+	# -@rm -r .env3.8/lib/python3.8/site-packages/rad_tools*
+	# -@rm -r .env3.8/bin/rad-*
 
 install:
 	@python3 -m pip install .
