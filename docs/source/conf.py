@@ -288,6 +288,8 @@ custom_links = {
         "remote",
         "https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes",
     ),
+    "wulfric": ("wulfric", "https://wulfric.org"),
+    "magnopy": ("magnopy", "https://magnopy.org"),
 }
 
 
