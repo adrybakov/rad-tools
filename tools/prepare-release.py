@@ -308,7 +308,10 @@ def check_git_status(repo: git.Repo):
                 status,
             ]
         )
-    if "Your branch is up to date with" not in status:
+    if (
+        "Your branch is up to date with" not in status
+        and "HEAD detached at v" not in status
+    ):
         sys.tracebacklimit = 0
         return "".join(
             [
