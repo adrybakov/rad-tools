@@ -19,7 +19,7 @@
 from calendar import month_name
 from datetime import datetime
 
-from radtools import __doclink__, __git_hash__, __release_date__, __version__
+from radtools import __doclink__, __release_date__, __version__
 from radtools._license import LICENSE
 
 __all__ = ["logo", "stamp_line", "license"]
@@ -61,7 +61,6 @@ def logo(info=None, line_length=71, flat=False, date_time=False, comment=None):
             f"Version: {__version__}",
             f"Documentation: {__doclink__}",
             f"Release date: {__release_date__}",
-            f"Git hash: {__git_hash__}",
             f"Licence: GNU GPLv3",
         ]
         if date_time:
@@ -131,7 +130,7 @@ def logo(info=None, line_length=71, flat=False, date_time=False, comment=None):
     return "".join(logo_info)[:-1]
 
 
-def stamp_line(date_time=True, version=True, githash=False, doclink=False):
+def stamp_line(date_time=True, version=True, doclink=False):
     """
     Return one-line information about the package.
 
@@ -141,8 +140,6 @@ def stamp_line(date_time=True, version=True, githash=False, doclink=False):
         Whether to include the release date or not.
     version : bool, default True
         Whether to include the version number or not.
-    githash : bool, default False
-        Whether to include the git hash or not.
     doclink : bool, default False
         Whether to include the documentation link or not.
 
@@ -162,8 +159,6 @@ def stamp_line(date_time=True, version=True, githash=False, doclink=False):
     line.append("by rad-tools ")
     if version:
         line.append(f"{__version__} ")
-    if githash:
-        line.append(f"(githash {__git_hash__}) ")
     if doclink:
         line.append(f"Documentation: {__doclink__}")
     return "".join(line)
