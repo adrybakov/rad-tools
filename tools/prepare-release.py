@@ -105,29 +105,6 @@ def envelope(message: str):
     return wrapper
 
 
-@envelope(message="Checking git branch")
-def check_active_branch(repo: git.Repo):
-    """
-    Check if the active branch is stable.
-
-    Parameters
-    ----------
-    repo : git.Repo
-        Git repository object.
-    """
-
-    if repo.active_branch.name != "stable":
-        sys.tracebacklimit = 0
-        return "".join(
-            [
-                colored("\nYou are not on stable branch\n", "red"),
-                f"You are on '{repo.active_branch.name}' branch.\n",
-                "Please checkout to the stable branch by running\n\n",
-                "    git checkout stable\n",
-            ]
-        )
-
-
 @envelope(message="Updating __init__.py")
 def update_init(repo: git.Repo, version, root_dir: str):
     """
@@ -365,8 +342,6 @@ def main(version: str, root_dir: str, relax: bool = False):
     rtd = update_init(repo, version=version, root_dir=root_dir, relax=relax) and rtd
 
     rtd = check_git_status(repo, relax=relax) and rtd
-
-    rtd = check_active_branch(repo, relax=relax) and rtd
 
     if rtd:
         print(colored(f"{f'{version} ready to deploy':^{N}}", "green"))
