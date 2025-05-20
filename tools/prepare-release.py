@@ -147,7 +147,7 @@ def update_init(repo: git.Repo, version, root_dir: str):
 
     variables = ["__release_date__", "__version__"]
     values = [sha, f"{cd.day} {month_name[cd.month]} {cd.year}", version]
-    good = [False, False, False]
+    good = [False, False]
     good_message = {False: "not updated", True: "updated"}
 
     # Read __init__.py
