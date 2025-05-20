@@ -2,7 +2,10 @@ name: Test stable branch
 
 on:
   push:
-    branches: [ stable ]
+    tags-ignore:
+      - '*'
+    branches: 
+      - 'stable'
   pull_request:
     branches: [ stable ]
 
