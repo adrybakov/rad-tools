@@ -91,7 +91,7 @@ pip: prepare-release
 
 
 prepare-release:
-	@python3 -u tools/prepare-release.py -v $(VERSION) -rd $(ROOT_DIR) -r
+	@python3 -u tools/prepare-release.py -v $(VERSION) -rd $(ROOT_DIR)
 
 docs-pictures:
 	@python3 tools/plot-repositories.py

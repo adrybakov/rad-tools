@@ -10,7 +10,7 @@ on:
         type: string
 
 jobs:
-  unit-tests:
+  code:
 
     runs-on: ubuntu-latest
 
@@ -32,7 +32,7 @@ jobs:
     - name: Run unit tests
       run: make test
 
-  doc-tests:
+  documentation:
 
     runs-on: ubuntu-latest
 

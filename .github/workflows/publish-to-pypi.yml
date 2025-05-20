@@ -7,7 +7,22 @@ on:
 
 
 jobs:
+  check-release-metadata:
+    name: Check release metadata
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "3.x"
+    - name: Install dev tools
+      run: pip install gitpython termcolor
+    - name: Inspect metadata
+      run: python3 -u tools/prepare-release.py -v ${{  github.ref_name }} -rd .
   test:
+    name: Test
+    needs:
+    - check-release-metadata
     uses: adrybakov/rad-tools/.github/workflows/run-tests.yml@stable
     with:
       python-version: "3.x"

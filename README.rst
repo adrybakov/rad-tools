@@ -41,7 +41,7 @@ Installation
 Requirement for RAD-tools installation are:
 
 * Python (>=3.9)
-* NumPy (<2)
+* NumPy
 * SciPy
 * matplotlib
 * tqdm

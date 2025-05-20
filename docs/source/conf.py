@@ -109,7 +109,7 @@ html_css_files = ["rad-tools.css"]
 
 # Logo
 # html_logo = 'img/logo-black.png'
-html_title = f"{project} {version}"
+html_title = f"{project}"
 html_favicon = "img/favicon.png"
 
 if ".dev" in version:

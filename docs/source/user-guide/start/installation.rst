@@ -7,11 +7,10 @@ Installation
 Requirement for RAD-tools installation are:
 
 * |Python|_ (>=3.9)
-* |NumPy|_ (<2)
-* |SciPy|_
-* |matplotlib|_
-* |tqdm|_
-* |termcolor|_
+
+And several libraries:
+
+.. literalinclude:: ../../../requirements.txt
 
 Most likely you already have Python installed on your machine
 (if not check these links: |Python-installation|_).
