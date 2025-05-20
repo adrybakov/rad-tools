@@ -21,7 +21,7 @@ RAD-tools
 """
 
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __doclink__ = "rad-tools.org"
 __release_date__ = "20 May 2025"
 

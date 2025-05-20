@@ -17,3 +17,8 @@ Most of the things related with spin Hamiltonian and magnons has been removed. P
 
 Functions and classes remain in the package, but they print a message with the hint on
 which package to use and where to go for the specific functionality, when possible.
+
+1.0.1
+-----
+
+Relax numpy dependency.
