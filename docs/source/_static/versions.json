@@ -1,13 +1,13 @@
 [
     {
-        "name": "v0.9 (latest)",
-        "version": "0.9",
+        "name": "v1.0 (latest)",
+        "version": "1.0",
         "url": "https://rad-tools.org/en/stable/"
     },
     {
-        "name": "dev",
-        "version": "dev",
-        "url": "https://rad-tools.org/en/dev/"
+        "name": "v0.9",
+        "version": "0.9",
+        "url": "https://rad-tools.org/en/0.9/"
     },
     {
         "name": "v0.8",
