@@ -85,8 +85,8 @@ test-all: clean install test examples html doctest
 .ONESHELL:
 pip: prepare-release
 	@read -p "Press Enter to publish to PyPI"
-	@git tag -a "v$(VERSION)" -m "Version $(VERSION)"
-	@git push origin tag "v$(VERSION)"
+	@git tag -a "$(VERSION)" -m "Version $(VERSION)"
+	@git push origin tag "$(VERSION)"
 
 
 
