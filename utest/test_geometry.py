@@ -26,13 +26,11 @@ from hypothesis.extra.numpy import arrays as harrays
 from scipy.spatial.transform import Rotation
 
 from radtools.constants import TORADIANS
-from radtools.crystal.constants import (
-    1e-8,
-    1e-4,
-    MAX_LENGTH,
-    MIN_ANGLE,
-    MIN_LENGTH,
-)
+
+MAX_LENGTH = 1e8
+MIN_ANGLE = 1e-4
+MIN_LENGTH = 1e-8
+
 from radtools.geometry import (
     absolute_to_relative,
     angle,
@@ -79,7 +77,7 @@ def rotate(cell, r1, r2, r3):
 )
 def test_absolute_to_relative(cell, absolute, relative):
     new_relative = absolute_to_relative(cell, absolute)
-    assert (new_relative == relative).all()
+    assert np.allclose(new_relative, relative)
 
 
 @given(

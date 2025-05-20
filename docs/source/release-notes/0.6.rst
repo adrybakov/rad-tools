@@ -19,7 +19,7 @@ Make the script's names follow unified concept:
 
     rad-action-object.py
 
-Debugged :ref:`rad-plot-dos.py <rad-plot-dos>` on the real-world data.
+Debugged ``rad-plot-dos.py`` on the real-world data.
 Add several new features to it.
 
 Remade the import structure of the package.

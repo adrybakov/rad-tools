@@ -8,7 +8,7 @@ Whats new?
 ----------
 Refractor most of the code.
 Move input in the separate submodule.
-Remove molecule plot type from :ref:`rad-plot-tb2j.py <rad-plot-tb2j>` script.
+Remove molecule plot type from ``rad-plot-tb2j.py`` script.
 
 Major change in the logic of reading exchange files and templates.
 Instead of using the class to load the file as before:
@@ -34,23 +34,23 @@ Now one need to use read functions from input-output module:
 0.4.1
 -----
 
-Add :ref:`--accuracy <rad-extract-tb2j_decimals>` argument to the
-:ref:`rad-extract-tb2j <rad-extract-tb2j>` script.
+Add ``--accuracy`` argument to the
+``rad-extract-tb2j`` script.
 
 0.4.2
 -----
 
-Add :py:meth:`.get_bond_vector` to the SpinHamiltonian.
+Add ``get_bond_vector()`` to the ``SpinHamiltonian``.
 
 0.4.3
 -----
 
-Add reciprocal vectors to the SpinHamiltonian.
+Add reciprocal vectors to the ``SpinHamiltonian``.
 
 0.4.4
 -----
 
-Add :ref:`api_io` interface.
+Add ``api_io`` interface.
 
 There are two ways to import read functions:
 
@@ -64,12 +64,12 @@ There are two ways to import read functions:
     from radtools.io.internal import
     from radtools.io import load_template
 
-Add :py:meth:`.number_spins_in_unit_cell` property to the :py:class:`.SpinHamiltonian`.
+Add ``number_spins_in_unit_cell()`` property to the ``SpinHamiltonian``.
 
 0.4.5
 -----
 
-Add ``reduced_parameters`` to the :py:class:`.SpinHamiltonian` class.
+Add ``reduced_parameters`` to the ``SpinHamiltonian`` class.
 
 0.4.6
 -----
@@ -103,8 +103,8 @@ Add script for energy extractor.
 0.4.9
 -----
 Add --legend_location option (removed in 0.5.7)
-to the :ref:`rad-plot-dos.py <rad-plot-dos>` script.
+to the ``rad-plot-dos.py`` script.
 
 0.4.10
 ------
-Bugfix in :ref:`rad-plot-dos.py <rad-plot-dos>` script
+Bugfix in ``rad-plot-dos.py`` script

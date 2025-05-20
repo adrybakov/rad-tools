@@ -6,63 +6,63 @@ Version 0.2
 
 Whats new?
 ----------
-Add script :ref:`rad-plot-dos.py <rad-plot-dos>`
+Add script ``rad-plot-dos.py``
 
 0.2.12
 ------
-Bugfix in :ref:`rad-plot-tb2j.py <rad-plot-tb2j>` script.
+Bugfix in ``rad-plot-tb2j.py`` script.
 
 0.2.11
 ------
 Rename --template option in
-:ref:`rad-extract-tb2j.py <rad-extract-tb2j>` script into
-:ref:`--template-file <rad-extract-tb2j_template-file>`.
+``rad-extract-tb2j.py`` script into
+``--template-file``.
 
 0.2.10
 ------
-Rename tb2j-refractor.py to :ref:`rad-extract-tb2j.py <rad-extract-tb2j>`
+Rename tb2j-refractor.py to ``rad-extract-tb2j.py``
 
 0.2.9
 -----
 Add pythonic --verbose output
-to the :ref:`rad-extract-tb2j.py <rad-extract-tb2j>` script.
+to the ``rad-extract-tb2j.py`` script.
 
 0.2.8
 -----
 Add --verbose flag
-to the :ref:`rad-extract-tb2j.py <rad-extract-tb2j>` script.
+to the ``rad-extract-tb2j.py`` script.
 
 0.2.7
 -----
 Change the behaviour of the drawing in
-:ref:`rad-plot-tb2j.py <rad-plot-tb2j>` script.
+``rad-plot-tb2j.py`` script.
 
 0.2.6
 -----
-Add :ref:`-dmi <rad-extract-tb2j_nodmi>` flag
-to :ref:`tb2j-refractor.py <rad-extract-tb2j>` script.
+Add ``-dmi`` flag
+to ``tb2j-refractor.py`` script.
 
 0.2.5
 -----
-Add \|DMI\| as an output data type to :ref:`rad-plot-tb2j.py <rad-plot-tb2j>`
-(see: :ref:`--what-to-plot <rad-plot-tb2j_what-to-plot>`)
+Add \|DMI\| as an output data type to ``rad-plot-tb2j.py``
+(see: ``--what-to-plot``)
 
 0.2.4
 -----
-Bug fix in :ref:`tb2j-refractor.py <rad-extract-tb2j>`.
+Bug fix in ``tb2j-refractor.py``.
 Only last exchange from template was shown, now all of them are.
 
 0.2.3
 -----
-Change output behaviour in :ref:`tb2j-refractor.py <rad-extract-tb2j>`.
+Change output behaviour in ``tb2j-refractor.py``.
 Now by default output is passed to the standard output stream.
 
 
 0.2.2
 -----
-Add interactive mode to the :ref:`rad-plot-dos.py <rad-plot-dos>`.
+Add interactive mode to the ``rad-plot-dos.py``.
 
 0.2.1
 -----
 
-Correct output file name in :ref:`rad-plot-dos.py <rad-plot-dos>`.
+Correct output file name in ``rad-plot-dos.py``.

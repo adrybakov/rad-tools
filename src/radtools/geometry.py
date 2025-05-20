@@ -22,7 +22,6 @@ import numpy as np
 from scipy.spatial.transform import Rotation
 
 from radtools.constants import TODEGREES, TORADIANS
-from radtools.crystal.constants import 1e-8, 1e-4
 from radtools.numerical import compare_numerically
 
 __all__ = [

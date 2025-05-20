@@ -6,25 +6,24 @@ Version 0.3
 
 Whats new?
 ----------
-Add script :ref:`rad-identify-wannier-centres.py<rad-identify-wannier-centres>`
+Add script ``rad-identify-wannier-centres.py``
 
 0.3.4
 -----
 Move as much as possible of
-:ref:`rad-extract-tb2j.py <rad-extract-tb2j>` script to the library.
+``rad-extract-tb2j.py`` script to the library.
 
 0.3.3
 -----
 Moved from output_name and output_dir parameter to one
-:ref:`--output-name <rad-make-template_output-name>` parameter in
-:ref:`rad-make-template.py <rad-make-template>` script.
+``--output-name`` parameter in ``rad-make-template.py`` script.
 
 0.3.2
 -----
-Bugfix in :ref:`rad-identify-wannier-centres.py <rad-identify-wannier-centres>` script.
+Bugfix in ``rad-identify-wannier-centres.py`` script.
 
 0.3.1
 -----
 Add ``--output-dir`` (renamed in 0.5.8, removed in 0.8.0)
-and :ref:`--output-name <rad-identify-wannier-centres_output-name>` options
-to the :ref:`rad-identify-wannier-centres.py <rad-identify-wannier-centres>` script.
+and ``--output-name`` options
+to the ``rad-identify-wannier-centres.py`` script.

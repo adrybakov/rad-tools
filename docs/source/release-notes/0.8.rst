@@ -10,37 +10,37 @@ Whats new?
 ----------
 Restructure the class hierarchy:
 
-* :py:class:`.Lattice` is now a parent of the :py:class:`.Crystal` class.
-* :py:class:`.Crystal` is now a parent of the :py:class:`.SpinHamiltonian` class.
+* ``Lattice`` is now a parent of the ``Crystal`` class.
+* ``Crystal`` is now a parent of the ``SpinHamiltonian`` class.
 
 Rename module ``exchange`` to ``spinham``. The idea is to focus on the general spin
-Hamiltonian, which is not limited to exchange interactions. :py:class:`.ExchangeHamiltonian`
-is now :py:class:`.SpinHamiltonian`. The name ``ExchangeHamiltonian`` is still available
+Hamiltonian, which is not limited to exchange interactions. ``ExchangeHamiltonian``
+is now ``SpinHamiltonian``. The name ``ExchangeHamiltonian`` is still available
 as an alias for backwards compatibility.
 
-Introduce new module: :ref:`api_magnons`. This module envelope magnon-related logic.
-Corresponding script :ref:`rad-plot-tb2j-magnons` plots magnon dispersion from |TB2J|_
+Introduce new module: ``api_magnons``. This module envelope magnon-related logic.
+Corresponding script ``rad-plot-tb2j-magnons`` plots magnon dispersion from |TB2J|_
 file.
 
 ``routines`` module is separated into different modules, which are grouped by the logic:
 
-* :ref:`api_geometry`
-* :ref:`api_decorate`
-* :ref:`api_numerical`
+* ``api_geometry``
+* ``api_decorate``
+* ``api_numerical``
 
-All custom exceptions are gathered in the :ref:`api_exceptions` module. As the amount of
+All custom exceptions are gathered in the ``api_exceptions`` module. As the amount of
 custom exceptions is intended to be small, they are placed in the one file.
 
 On contrary, the constants are placed in the corresponding ``constants.py``
 files across submodules.
 
-Fully functional :py:class:`.Kpoints` class is introduced. It covers the details of the high
+Fully functional ``Kpoints`` class is introduced. It covers the details of the high
 symmetry points and paths for the Brillouin zone. The class offers simple interface to
 generate k-points mesh and to plot the paths.
 
 :py:func:`.print_2d_array` now supports headers and footers both for rows and columns.
 
-:ref:`rad-identify-wannier-centres_input-filename` is no longer a positional one.
+``rad-identify-wannier-centres_input-filename`` is no longer a positional one.
 
 Concept ``output_path`` + ``output_name`` is changed to the concept of ``output_name``.
 In all scripts the argument ``output_path`` is removed and the argument ``output_name``
@@ -53,28 +53,28 @@ In all scripts the output now is saved at the same place where the input is loca
 0.8.1
 -----
 
-Add new attributes to the :py:class:`.ExchangeParameter` class:
+Add new attributes to the ``ExchangeParameter`` class:
 
-* :py:attr:`.ExchangeParameter.xx`
-* :py:attr:`.ExchangeParameter.xy`
-* :py:attr:`.ExchangeParameter.xz`
-* :py:attr:`.ExchangeParameter.yx`
-* :py:attr:`.ExchangeParameter.yy`
-* :py:attr:`.ExchangeParameter.yz`
-* :py:attr:`.ExchangeParameter.zx`
-* :py:attr:`.ExchangeParameter.zy`
-* :py:attr:`.ExchangeParameter.zz`
+* ``ExchangeParameter.xx``
+* ``ExchangeParameter.xy``
+* ``ExchangeParameter.xz``
+* ``ExchangeParameter.yx``
+* ``ExchangeParameter.yy``
+* ``ExchangeParameter.yz``
+* ``ExchangeParameter.zx``
+* ``ExchangeParameter.zy``
+* ``ExchangeParameter.zz``
 
 Add :py:meth:`.dump_vampire`. (preliminary version, to be improved)
 
-Add new predefined notation to the :py:class:`.SpinHamiltonian` class: "vampire"
+Add new predefined notation to the ``SpinHamiltonian`` class: "vampire"
 
 Fix :issue:`5`.
 
 0.8.2
 -----
 
-Correct behaviour of :py:attr:`.SpinHamiltonian.notation` for single-ion like terms.
+Correct behaviour of ``SpinHamiltonian.notation`` for single-ion like terms.
 
 0.8.3
 -----
@@ -101,7 +101,7 @@ Fix :issue:`6`.
 
         python3 -m radtools --license
 
-* Change path to abspath for the input file in the txt output of :ref:`rad-plot-tb2j-magnons`.
+* Change path to abspath for the input file in the txt output of ``rad-plot-tb2j-magnons``.
     Every input source in each script is now saved as an absolute path.
     If not the case, please :ref:`report a bug <contribute_bug>`.
 
@@ -125,7 +125,7 @@ Fix problems with the new plotting backend.
 0.8.7
 -----
 
-Add io for the |POSCAR|_ files: :py:func:`.load_poscar` and :py:func:`.dump_poscar`.
+Add io for the |POSCAR|_ files: ``load_poscar`` and ``dump_poscar``.
 Add ``encoding="utf-8"`` to all txt outputs.
 It was causing the problems when saving outputs on the windows platform.
 
@@ -137,18 +137,18 @@ Add utf-8 to the one forgotten place. It is advised to skip 0.8.7 and install 0.
 0.8.9
 -----
 
-Add :ref:`custom k-points <rad-plot-tb2j-magnons_custom-k-points>` to the :ref:`rad-plot-tb2j-magnons` script.
+Add ``custom k-points`` to the ``rad-plot-tb2j-magnons`` script.
 Change default colors for the magnon dispersion plots.
 
 0.8.10
 ------
 
-Minor improvements. Add parameters to the :py:meth:`.MagnonDispersion.omega`.
+Minor improvements. Add parameters to the ``MagnonDispersion.omega``.
 
 0.8.11
 ------
 
-Bugfix in :py:func:`.dump_ucf`. - number of materials was not written. It is working properly now. SKIP, install 0.8.12 instead.
+Bugfix in ``dump_ucf``. - number of materials was not written. It is working properly now. SKIP, install 0.8.12 instead.
 
 0.8.12
 ------
@@ -158,7 +158,7 @@ Hotfix for 0.8.11 (Missed imports).
 0.8.13
 ------
 
-Add the summary message to the :ref:`rad-identify-wannier-centres` script.
+Add the summary message to the ``rad-identify-wannier-centres`` script.
 
 0.8.14
 ------

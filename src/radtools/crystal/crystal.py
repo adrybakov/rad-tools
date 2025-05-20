@@ -18,7 +18,7 @@
 from radtools._redirect import *
 
 
-class Crystal(Lattice):
+class Crystal:
 
     def __init__(
         self,

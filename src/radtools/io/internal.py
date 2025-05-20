@@ -31,7 +31,7 @@ read_template = load_template
 
 
 def dump_spinham_txt(
-    spinham: SpinHamiltonian,
+    spinham,
     filename=None,
     anisotropic=True,
     matrix=True,

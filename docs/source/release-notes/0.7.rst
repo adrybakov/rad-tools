@@ -11,28 +11,28 @@ Whats new?
 Major change: name of the package for pip installation is kept the
 same: "rad-tools". All imports in python code moved to "radtools".
 
-New module, which affected other modules as well: :ref:`guide_crystal`.
+New module, which affected other modules as well: ``guide_crystal``.
 
 
 
-Add :py:func:`.print_2d_array`.
+Add ``print_2d_array``.
 
-Rename :py:func:`.read_exchange_model` to :py:func:`.load_tb2j_model`.
+Rename ``read_exchange_model`` to ``load_tb2j_model``.
 
-Major design change in the :py:mod:`.spinham`:
+Major design change in the ``spinham``:
 
-* Renamed :py:class:`ExchangeModel` to :py:class:`.ExchangeHamiltonian`
+* Renamed ``ExchangeModel`` to ``ExchangeHamiltonian``
 * Move from the concept (atom1, atom2, R) -> bond to the concept (atom1, atom2, R) -> J.
-* Made class :py:class:`.ExchangeParameter` from the :py:class:`Bond`.
-* Introduce new interface design for the :py:class:`.SpinHamiltonian`.
-* Iteration over :py:class:`.SpinHamiltonian` returns (atom1, atom2, R, J) instead of (atom1, atom2, R).
+* Made class ``ExchangeParameter`` from the ``Bond``.
+* Introduce new interface design for the ``SpinHamiltonian``.
+* Iteration over ``SpinHamiltonian`` returns (atom1, atom2, R, J) instead of (atom1, atom2, R).
 
 0.7.1
 -----
 
-Write correct behaviour of :py:class:`.SpinHamiltonian` with the :py:attr:`.SpinHamiltonian.double_counting`:
+Write correct behaviour of ``SpinHamiltonian`` with the ``SpinHamiltonian.double_counting``:
 
-.. doctest::
+.. code-block:: python
 
     >>> import radtools as rad
     >>> m = rad.SpinHamiltonian()
@@ -60,9 +60,9 @@ Write correct behaviour of :py:class:`.SpinHamiltonian` with the :py:attr:`.Spin
     True
 
 
-Add attribute access to the atoms through atom names to the :py:class:`.Crystal`:
+Add attribute access to the atoms through atom names to the ``Crystal``:
 
-.. doctest::
+.. code-block:: python
 
     >>> import radtools as rad
     >>> c = rad.Crystal()
@@ -84,54 +84,54 @@ Add attribute access to the atoms through atom names to the :py:class:`.Crystal`
 0.7.2
 -----
 
-Add magnetic dipole-dipole energy calculator to the :ref:`api_crystal`.
+Add magnetic dipole-dipole energy calculator to the ``api_crystal``.
 
 0.7.3
 -----
 
-Bugfix in convergence of magnetic dipole-dipole energy (:py:attr:`.Crystal.converge_mag_dipdip_energy`).
+Bugfix in convergence of magnetic dipole-dipole energy (``Crystal.converge_mag_dipdip_energy``).
 Energy difference between steps was not calculated correctly (overestimated).
 
 0.7.4
 -----
 
-Bugfix in the :ref:`rad-plot-dos`: For spin-polarized PDOS :ref:rad-plot-dos_relative` Arguments
+Bugfix in the ``rad-plot-dos``: For spin-polarized PDOS :ref:rad-plot-dos_relative` Arguments
 was causing problems with overlapping colours. It is fixed.
 
 0.7.5
 -----
-Add :ref:`rad-plot-dos_custom-plots` and :ref:`rad-plot-dos_colours` to the :ref:`rad-plot-dos`.
+Add ``rad-plot-dos_custom-plots`` and ``rad-plot-dos_colours`` to the ``rad-plot-dos``.
 
 0.7.6
 -----
-Add summing over atom types to the :ref:`rad-plot-dos_custom-plots`.
+Add summing over atom types to the ``rad-plot-dos_custom-plots``.
 
 0.7.7
 -----
-Add the option for removing background label to :ref:`rad-plot-dos_custom-plots`.
+Add the option for removing background label to ``rad-plot-dos_custom-plots``.
 
 0.7.8
 -----
-Add fontsize options to :ref:`rad-plot-dos_custom-plots`.
+Add fontsize options to ``rad-plot-dos_custom-plots``.
 
 0.7.9
 -----
-Bugfix in :ref:`rad-plot-dos`.
+Bugfix in ``rad-plot-dos``.
 
 0.7.10
 ------
-Changes in :ref:`rad-make-template`. Now bonds are grouped by distances by default.
+Changes in ``rad-make-template``. Now bonds are grouped by distances by default.
 
 0.7.11
 ------
-Bugfix in :py:func:`.print_2d_array`. Refractor the whole module. Extend documentation.
-Add ``shift`` and ``borders`` options to :py:func:`.print_2d_array`.
+Bugfix in ``print_2d_array``. Refractor the whole module. Extend documentation.
+Add ``shift`` and ``borders`` options to ``print_2d_array``.
 Bugfix in ``dos.py``.
 
 0.7.12
 ------
 
-First version of magnons module, Add :ref:`rad-plot-tb2j-magnons` script.
+First version of magnons module, Add ``rad-plot-tb2j-magnons`` script.
 
 0.7.13
 ------
@@ -141,9 +141,9 @@ Bugfix, some scripts did not work before.
 0.7.14
 ------
 
-Preliminary version of :ref:`rad-plot-fatbands` script.
+Preliminary version of ``rad-plot-fatbands`` script.
 
 0.7.15
 ------
 
-Bugfix if :ref:`rad-plot-dos` script. With custom plotting.
+Bugfix if ``rad-plot-dos`` script. With custom plotting.

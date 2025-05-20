@@ -10,9 +10,9 @@ The big renaming passed.
 
 Scripts were renamed:
 
-tb2j_plotter.py to :ref:`rad-plot-tb2j.py <rad-plot-tb2j>`
+tb2j_plotter.py to ``rad-plot-tb2j.py``
 
-tb2j_refractor.py to :ref:`tb2j-refractor.py <rad-extract-tb2j>`
+tb2j_refractor.py to ``tb2j-refractor.py``
 
 phonopy_plotter.py to ``phonopy-plotter.py``  (Removed in 0.5.12)
 
@@ -31,4 +31,4 @@ exchange.
 
 0.1.1
 -----
-Fix bugs in :ref:`tb2j-refractor.py <rad-extract-tb2j>`.
+Fix bugs in ``tb2j-refractor.py``.

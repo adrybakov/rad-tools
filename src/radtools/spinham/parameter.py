@@ -174,13 +174,11 @@ class ExchangeParameter:
 
     @property
     def zz(self):
-       redirect_to_magnopy()
+        redirect_to_magnopy()
 
     @zz.setter
     def zz(self, new_zz):
         redirect_to_magnopy()
-
-    # Definition of arithmetic operations5t
 
     # + (add)
     def __add__(self, other):
@@ -188,34 +186,35 @@ class ExchangeParameter:
 
     # - (sub)
     def __sub__(self, other):
-       redirect_to_magnopy()
+        redirect_to_magnopy()
 
     # *
     def __mul__(self, number):
-       redirect_to_magnopy()
+        redirect_to_magnopy()
 
     # @
     def __matmul__(self, other):
-       redirect_to_magnopy()
+        redirect_to_magnopy()
 
     # /
     def __truediv__(self, number):
-       redirect_to_magnopy()
+        redirect_to_magnopy()
 
     # //
     def __floordiv__(self, number):
-        redirect_to_magnopy())
+        redirect_to_magnopy()
 
     # %
     def __mod__(self, number):
-       redirect_to_magnopy()
+        redirect_to_magnopy()
 
     # *
     def __rmul__(self, number):
-       redirect_to_magnopy()
+        redirect_to_magnopy()
+
     # @
     def __rmatmul__(self, other):
-       redirect_to_magnopy()
+        redirect_to_magnopy()
 
     # - (neg)
     def __neg__(self):
@@ -223,7 +222,7 @@ class ExchangeParameter:
 
     # + (pos)
     def __pos__(self):
-       redirect_to_magnopy()
+        redirect_to_magnopy()
 
     # abs()
     def __abs__(self):
@@ -235,5 +234,4 @@ class ExchangeParameter:
 
     # !=
     def __neq__(self, other):
-       redirect_to_magnopy()
-
+        redirect_to_magnopy()

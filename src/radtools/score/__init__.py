@@ -19,17 +19,15 @@
 r"""
 Script interface to the radtools package.
 
-The behaviour of the command line interface is defined by the
+The behavior of the command line interface is defined by the
 functions in this module.
 
 The functions are called with the same names as the scripts,
 but the prefix "rad-" is removed and "-" are substituted by "_".
 Function`s arguments directly correspond to the full names of the
-arguments of the script (i.e. the argument :ref:`rad-extract-tb2j_input-filename`
-of the script :ref:`rad-extract-tb2j` is passed to the function :py:func:`.extract_tb2j` as the
-argument ``input_filename``).
+arguments of the script.
 
-Full documentation on the behaviour is available in the
+Full documentation on the behavior is available in the
 :ref:`scripts-guide`.
 
 
