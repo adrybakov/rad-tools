@@ -120,7 +120,7 @@ else:
     switcher_version = f"{major}.{minor}"
     github_version = "stable"
 html_theme_options = {
-    "announcement": "RAD-tools splits into WULFRIC  <a href='https://rad-tools.org/en/stable/announcement.html'>Read more here</a>",
+    "announcement": "Release of magnopy and wulfric  <a href='https://rad-tools.org/en/stable/announcement.html'>Read more here</a>",
     "collapse_navigation": True,
     "use_edit_page_button": True,
     "navbar_center": ["version-switcher", "navbar-nav"],
