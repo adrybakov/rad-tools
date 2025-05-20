@@ -143,10 +143,9 @@ def update_init(repo: git.Repo, version, root_dir: str):
         Target version for the release.
     """
     cd = datetime.now()
-    sha = repo.head.object.hexsha
 
     variables = ["__release_date__", "__version__"]
-    values = [sha, f"{cd.day} {month_name[cd.month]} {cd.year}", version]
+    values = [f"{cd.day} {month_name[cd.month]} {cd.year}", version]
     good = [False, False]
     good_message = {False: "not updated", True: "updated"}
 

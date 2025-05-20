@@ -21,9 +21,9 @@ RAD-tools
 """
 
 
-__version__ = "20 May 2025"
+__version__ = "1.0.0"
 __doclink__ = "rad-tools.org"
-__release_date__ = "9fadcc9467e80af9aafaa2f0c3434dbed78f258a"
+__release_date__ = "20 May 2025"
 
 from . import (
     constants,
