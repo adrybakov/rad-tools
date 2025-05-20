@@ -85,16 +85,8 @@ test-all: clean install test examples html doctest
 .ONESHELL:
 pip: prepare-release
 	@read -p "Press Enter to publish to PyPI"
-	-@rm -r dist
-	-@rm -r build
-	-@rm -r src/radtools.egg-info
-	@python3 -m build
-	@python3 -m twine upload --repository pypi dist/* --verbose
 	@git tag -a "v$(VERSION)" -m "Version $(VERSION)"
-	@git push origin "v$(VERSION)"
-	@git add src/radtools/__init__.py
-	@git commit -m "Post-release commit"
-	@git push
+	@git push origin tag "v$(VERSION)"
 
 
 

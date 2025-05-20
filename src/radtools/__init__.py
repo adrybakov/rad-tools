@@ -23,8 +23,8 @@ RAD-tools
 
 __version__ = "1.0.0"
 __doclink__ = "rad-tools.org"
-__git_hash__ = "undefined"
-__release_date__ = "undefined"
+__git_hash__ = "5158e8021e78591f24a38190de4f028e63c33c4c"
+__release_date__ = "20 May 2025"
 
 from . import (
     constants,

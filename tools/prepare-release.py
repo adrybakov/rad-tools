@@ -233,7 +233,7 @@ def check_release_notes(version: str, root_dir: str):
     # (major, minor)
     files = []
     for filename in sorted(filenames):
-        if re.fullmatch("[0-9]*\.[0-9]*\.rst", filename):
+        if re.fullmatch(R"[0-9]*\.[0-9]*\.rst", filename):
             files.append(tuple(map(int, filename.split(".")[:2])))
 
     # Check the minor version file
@@ -264,7 +264,7 @@ def check_release_notes(version: str, root_dir: str):
             lines.append(untouched_line + "\n")
             skip_empty = True
             lines.extend([f"    {major}.{i}\n" for i in range(minor, -1, -1)])
-        elif not re.match(f"{major}\.", line) and (not skip_empty or line != ""):
+        elif not re.match(f"{major}.", line) and (not skip_empty or line != ""):
             lines.append(untouched_line)
     index_file.close()
     # Write new content
@@ -278,8 +278,8 @@ def check_release_notes(version: str, root_dir: str):
     found_note = False
     for line in file:
         line = line.translate(str.maketrans("", "", " \n"))
-        if re.fullmatch(f"{major}.{minor}.{rest}", line) or (
-            re.fullmatch("Whatsnew\?", line) and rest == 0
+        if re.fullmatch(f"{major}" R"\." f"{minor}" R"\." f"{rest}", line) or (
+            re.fullmatch(R"Whatsnew\?", line) and rest == 0
         ):
             found_note = True
             break
