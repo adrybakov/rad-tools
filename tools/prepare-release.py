@@ -336,8 +336,6 @@ def main(version: str, root_dir: str, relax: bool = False):
     print(f"{'':=^{N}}\n{f'Preparing {version} release':^{N}}\n{'':=^{N}}")
     repo = git.Repo(search_parent_directories=True)
 
-    return
-
     # the order of checks is important, for example,
     # if the update_init() is called before check_active_branch()
     # it will never pass the check_active_branch() because the
