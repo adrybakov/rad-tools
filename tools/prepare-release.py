@@ -70,36 +70,6 @@ class ERROR(Exception):
     pass
 
 
-def only_githash_in_init(repo: git.Repo):
-    data = repo.git.diff(repo.head.commit.tree).split("\n")
-    a_files = []
-    b_files = []
-    minus_lines = []
-    plus_lines = []
-    for line in data:
-        if line.startswith("+++"):
-            b_files.append(line[6:])
-        elif line.startswith("---"):
-            a_files.append(line[6:])
-        elif line.startswith("-"):
-            minus_lines.append(line[1:])
-        elif line.startswith("+"):
-            plus_lines.append(line[1:])
-    if (
-        len(a_files) == 1
-        and len(b_files) == 1
-        and b_files[0] == "src/radtools/__init__.py"
-        and a_files[0] == "src/radtools/__init__.py"
-        and len(minus_lines) == 1
-        and len(plus_lines) == 1
-        and minus_lines[0].startswith("__git_hash__")
-        and plus_lines[0].startswith("__git_hash__")
-    ):
-        return True
-
-    return False
-
-
 def envelope(message: str):
     """
     Decorator for printing a message before and "Done" after a function.
@@ -163,7 +133,7 @@ def update_init(repo: git.Repo, version, root_dir: str):
     """
     Update __init__.py file.
 
-    Change the __git_hash__, __release_date__ and __version__ variables.
+    Change the  __release_date__ and __version__ variables.
 
     Parameters
     ----------
@@ -175,7 +145,7 @@ def update_init(repo: git.Repo, version, root_dir: str):
     cd = datetime.now()
     sha = repo.head.object.hexsha
 
-    variables = ["__git_hash__", "__release_date__", "__version__"]
+    variables = ["__release_date__", "__version__"]
     values = [sha, f"{cd.day} {month_name[cd.month]} {cd.year}", version]
     good = [False, False, False]
     good_message = {False: "not updated", True: "updated"}
@@ -331,15 +301,14 @@ def check_git_status(repo: git.Repo):
     """
     status = repo.git.status()
     if "nothing to commit, working tree clean" not in status:
-        if not only_githash_in_init(repo):
-            sys.tracebacklimit = 0
-            return "".join(
-                [
-                    colored("\nThere are uncommitted changes\n", "red"),
-                    "Please commit them:\n\n",
-                    status,
-                ]
-            )
+        sys.tracebacklimit = 0
+        return "".join(
+            [
+                colored("\nThere are uncommitted changes\n", "red"),
+                "Please commit them:\n\n",
+                status,
+            ]
+        )
     if "Your branch is up to date with" not in status:
         sys.tracebacklimit = 0
         return "".join(
@@ -366,6 +335,8 @@ def main(version: str, root_dir: str, relax: bool = False):
 
     print(f"{'':=^{N}}\n{f'Preparing {version} release':^{N}}\n{'':=^{N}}")
     repo = git.Repo(search_parent_directories=True)
+
+    return
 
     # the order of checks is important, for example,
     # if the update_init() is called before check_active_branch()

@@ -23,7 +23,6 @@ RAD-tools
 
 __version__ = "1.0.0"
 __doclink__ = "rad-tools.org"
-__git_hash__ = "5158e8021e78591f24a38190de4f028e63c33c4c"
 __release_date__ = "20 May 2025"
 
 from . import (
@@ -49,7 +48,7 @@ from .numerical import *
 from .score import *
 from .spinham import *
 
-__all__ = ["__version__", "__doclink__", "__git_hash__", "__release_date__"]
+__all__ = ["__version__", "__doclink__", "__release_date__"]
 __all__.extend(crystal.__all__)
 __all__.extend(decorate.__all__)
 __all__.extend(dos.__all__)

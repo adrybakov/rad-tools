@@ -48,14 +48,6 @@ body:
     validations:
       required: true
   - type: input
-    id: commit
-    attributes:
-      label: Git commit hash
-      description: What commit is the base for the release?
-      placeholder: only for versions >= 0.8
-    validations:
-      required: false
-  - type: input
     id: python-version
     attributes:
       label: Python version
