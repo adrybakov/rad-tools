@@ -12,7 +12,7 @@ Whats new?
 Symmetry analysis of Bravais lattices and all that was connected to it is removed. 
 Please use |wulfric|_ instead.
 
-Most of the things related with spin Hamiltonian and magnons has been removed. Please use|
+Most of the things related with spin Hamiltonian and magnons has been removed. Please use
 |magnopy|_ instead.
 
 Functions and classes remain in the package, but they print a message with the hint on
