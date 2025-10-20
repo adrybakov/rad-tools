@@ -6,7 +6,7 @@ Change of the domain
 
 **DATE: 20.10.2025**
 
-As of today RAD_tools will be primarily served from the `rad-tools.readthedocs.io <https://rad-tools.readthedocs.io>`_ domain.
+As of today RAD-tools will be primarily served from the `rad-tools.readthedocs.io <https://rad-tools.readthedocs.io>`_ domain.
 
 `rad-tools.org <https://rad-tools.ord>`_ domain will redirect to the new one and **will be disabled** in the future.
 
