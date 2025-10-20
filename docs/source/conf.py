@@ -100,7 +100,7 @@ copybutton_exclude = ".go"
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-
+htmlhelp_basename = "rad-tools"
 html_theme = "pydata_sphinx_theme"
 # html_theme = 'alabaster'
 # html_theme = "sphinx_rtd_theme"
