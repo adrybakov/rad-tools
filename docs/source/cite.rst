@@ -9,7 +9,7 @@ However, if you use it, please cite in the following form:
 
 .. code-block::
 
-    RAD-tools v<version>, rad-tools.org. Git hash: <hash>.
+    RAD-tools v<version>, https://github.com/adrybakov/rad-tools. Git hash: <hash>.
 
 It is not necessary to include the Git hash but it is recommended for the
 reproducibility of the calculations.
